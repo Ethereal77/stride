@@ -187,7 +187,7 @@ namespace Xenko.Core.AssemblyProcessor
                 if (!serializableType.Value.Local && xenkoEngineAssembly != context.Assembly)
                     continue;
 
-                // Try to find if original method definition was generated  
+                // Try to find if original method definition was generated
                 var typeDefinition = serializableType.Key.Resolve();
 
                 // If using List<T>, register this type in UpdateEngine
@@ -272,7 +272,8 @@ namespace Xenko.Core.AssemblyProcessor
                         Attributes = genericParameter.Attributes,
                     };
                     foreach (var constraint in genericParameter.Constraints)
-                        genericParameterCopy.Constraints.Add(context.Assembly.MainModule.ImportReference(constraint));
+                        genericParameterCopy.Constraints.Add(
+                            new GenericParameterConstraint(context.Assembly.MainModule.ImportReference(constraint.ConstraintType)));
                     updateCurrentMethod.GenericParameters.Add(genericParameterCopy);
 
                     genericsMapping[genericParameter] = genericParameterCopy;

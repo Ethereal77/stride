@@ -80,7 +80,8 @@ namespace Xenko.Core.AssemblyProcessor
             {
                 newType.GenericParameters.Add(new GenericParameter(type.GenericParameters[i].Name, newType));
                 foreach (var constraint in type.GenericParameters[i].Constraints)
-                    newType.GenericParameters[i].Constraints.Add(ProcessTypeReference(constraint, newType));
+                    newType.GenericParameters[i].Constraints.Add(
+                        new GenericParameterConstraint(ProcessTypeReference(constraint.ConstraintType, newType)));
             }
 
             if (genericInstanceType != null)
@@ -121,7 +122,7 @@ namespace Xenko.Core.AssemblyProcessor
             {
                 method = genericInstanceMethod.ElementMethod;
             }
-            
+
             var newMethod = new MethodReference(method.Name, assembly.MainModule.TypeSystem.Void, declaringType);
             newMethod.HasThis = method.HasThis;
             newMethod.ExplicitThis = method.ExplicitThis;
@@ -133,9 +134,10 @@ namespace Xenko.Core.AssemblyProcessor
             {
                 newMethod.GenericParameters.Add(new GenericParameter(method.GenericParameters[i].Name, newMethod));
                 foreach (var constraint in method.GenericParameters[i].Constraints)
-                    newMethod.GenericParameters[i].Constraints.Add(ProcessTypeReference(constraint, newMethod));
+                    newMethod.GenericParameters[i].Constraints.Add(
+                        new GenericParameterConstraint(ProcessTypeReference(constraint.ConstraintType, newMethod)));
             }
-            
+
             for (int i = 0; i < method.Parameters.Count; ++i)
             {
                 var parameterDefinition = new ParameterDefinition(method.Parameters[i].Name, method.Parameters[i].Attributes, ProcessTypeReference(method.Parameters[i].ParameterType, newMethod));
