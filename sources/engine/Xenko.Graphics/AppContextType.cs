@@ -49,11 +49,6 @@ namespace Xenko.Games
         DesktopOpenTK,
 
         /// <summary>
-        /// Game running on Android in an AndroidXenkoGameView.
-        /// </summary>
-        Android,
-
-        /// <summary>
         /// Game running on UWP in a Xaml SwapChainPanel.
         /// </summary>
         UWPXaml,

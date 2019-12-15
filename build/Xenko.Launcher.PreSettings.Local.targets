@@ -3,7 +3,7 @@
   <PropertyGroup>
     <XenkoCommonPreSettingsName>Xenko</XenkoCommonPreSettingsName>
 
-    <!-- Defines the platform used by Xenko - Values are Windows/Android...etc. -->
+    <!-- Defines the platform used by Xenko - Values are Windows... etc. -->
     <XenkoPlatform Condition=" '$(XenkoPlatform)' == '' ">Windows</XenkoPlatform>
   </PropertyGroup>
 </Project>

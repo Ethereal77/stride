@@ -115,13 +115,6 @@ namespace Xenko.Graphics
 #if DEBUG
             GraphicsDevice.EnsureContextActive();
 #endif
-
-#if XENKO_PLATFORM_ANDROID
-            // Device with no background loading context: check if some loading is pending
-            if (GraphicsDevice.AsyncPendingTaskWaiting)
-                GraphicsDevice.ExecutePendingTasks();
-#endif
-
             var clearFBO = GraphicsDevice.FindOrCreateFBO(depthStencilBuffer);
             if (clearFBO != boundFBO)
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, clearFBO);
@@ -788,7 +781,7 @@ namespace Xenko.Graphics
 #if XENKO_GRAPHICS_API_OPENGLES
             if (baseVertexLocation != 0)
                 throw new NotSupportedException("DrawIndexed with no null baseVertexLocation is not supported on OpenGL ES.");
-            GL.DrawElements(newPipelineState.PrimitiveType, indexCount, indexBuffer.Type, IntPtr.Zero + indexBuffer.Offset + (startIndexLocation * indexBuffer.ElementSize)); // conversion to IntPtr required on Android
+            GL.DrawElements(newPipelineState.PrimitiveType, indexCount, indexBuffer.Type, IntPtr.Zero + indexBuffer.Offset + (startIndexLocation * indexBuffer.ElementSize));
 #else
             GL.DrawElementsBaseVertex(newPipelineState.PrimitiveType, indexCount, indexBuffer.Type, IntPtr.Zero + indexBuffer.Offset + (startIndexLocation * indexBuffer.ElementSize), baseVertexLocation);
 #endif
@@ -1112,11 +1105,6 @@ namespace Xenko.Graphics
 
         internal unsafe void PreDraw()
         {
-#if XENKO_PLATFORM_ANDROID
-            // Device with no background loading context: check if some loading is pending
-            if (GraphicsDevice.AsyncPendingTaskWaiting)
-                GraphicsDevice.ExecutePendingTasks();
-#endif
             // Bind program
             var program = newPipelineState.EffectProgram.ProgramId;
             if (program != boundProgram)

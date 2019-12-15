@@ -123,11 +123,6 @@ set Project=Xenko.Linux.Vulkan.CoreCLR.sln
 call :compile
 if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
 
-set Project=Xenko.Android.sln
-set _platform_target=Android
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
 set Project=Xenko.UWP.sln
 set _platform_target=UWP
 call :compile

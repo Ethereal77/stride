@@ -23,11 +23,6 @@ namespace Xenko.Core
         /// The current running <see cref="PlatformType"/>.
         /// </summary>
         public static readonly PlatformType Type = PlatformType.UWP;
-#elif XENKO_PLATFORM_ANDROID
-        /// <summary>
-        /// The current running <see cref="PlatformType"/>.
-        /// </summary>
-        public static readonly PlatformType Type = PlatformType.Android;
 #elif XENKO_PLATFORM_LINUX
         /// <summary>
         /// The current running <see cref="PlatformType"/>.

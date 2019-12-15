@@ -40,17 +40,6 @@ namespace Xenko.Assets.Media
             VideoAsset asset = (VideoAsset)assetItem.Asset;
 
             AVCodecID[] listSupportedCodecNames = null;
-            switch (context.Platform)
-            {
-                case Core.PlatformType.Android:
-                    {
-                        listSupportedCodecNames = new []
-                        {
-                           AVCodecID.AV_CODEC_ID_H264
-                        };
-                        break;
-                    }
-            }
 
             VideoConvertParameters parameter = new VideoConvertParameters(GetAbsolutePath(assetItem, asset.Source), asset, context.Platform);
             result.BuildSteps = new AssetBuildStep(assetItem);
@@ -91,7 +80,7 @@ namespace Xenko.Assets.Media
 
                     //=====================================================================================
                     //Get the info from the video codec
-                    
+
                     //Check if we need to reencode the video
                     var mustReEncodeVideo = false;
                     var sidedataStripCommand = "";
@@ -114,7 +103,7 @@ namespace Xenko.Assets.Media
                         if (videoStream == null)
                             throw new AssetException("Failed to compile a video asset. Did not find the VideoStream from the media.");
 
-                        // On windows MediaEngineEx player only decode the first video if the video is detected as a stereoscopic video, 
+                        // On windows MediaEngineEx player only decode the first video if the video is detected as a stereoscopic video,
                         // so we remove the tags inside the video in order to ensure the same behavior as on other platforms (side by side decoded texture)
                         // Unfortunately it does seem possible to disable this behavior from the MediaEngineEx API.
                         if (Parameters.Platform == PlatformType.Windows && media.IsStereoscopicVideo(videoStream))
@@ -189,13 +178,13 @@ namespace Xenko.Assets.Media
                             var duration = videoDuration.EndTime - videoDuration.StartTime;
                             var trimmingOptions = videoDuration.Enabled ?
                                     $" -ss {startTime.Hours:D2}:{startTime.Minutes:D2}:{startTime.Seconds:D2}.{startTime.Milliseconds:D3}" +
-                                    $" -t {duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}.{duration.Milliseconds:D3}": 
+                                    $" -t {duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}.{duration.Milliseconds:D3}":
                                     "";
 
                             var commandLine = "  -hide_banner -loglevel error" + // hide most log output
                                               "  -nostdin" + // no interaction (background process)
                                               $" -i \"{assetSource.ToWindowsPath()}\"" + // input file
-                                              $"{trimmingOptions}" + 
+                                              $"{trimmingOptions}" +
                                               "  -f mp4 -vcodec " + targetCodecFormat + // codec
                                               channelFlag + // audio channels
                                               $"  -vf scale={targetSize.Width}:{targetSize.Height} " + // adjust the resolution

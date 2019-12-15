@@ -107,7 +107,6 @@ namespace Xenko.Core.Assets
                     var outputType = msProject.GetPropertyValue("OutputType");
                     project.Type = outputType.ToLowerInvariant() == "winexe" || outputType.ToLowerInvariant() == "exe"
                         || outputType.ToLowerInvariant() == "appcontainerexe" // UWP
-                        || msProject.GetPropertyValue("AndroidApplication").ToLowerInvariant() == "true" // Android
                         ? ProjectType.Executable
                         : ProjectType.Library;
 
@@ -442,7 +441,7 @@ namespace Xenko.Core.Assets
             else
             {
                 // External references were passed, but the top level project wasn't found.
-                // This is always due to an internal issue and typically caused by errors 
+                // This is always due to an internal issue and typically caused by errors
                 // building the project closure.
                 throw new InvalidOperationException($"Missing external reference metadata for {_request.Project.Name}");
             }

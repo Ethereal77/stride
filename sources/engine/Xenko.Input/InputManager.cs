@@ -588,11 +588,6 @@ namespace Xenko.Input
                     Sources.Add(new InputSourceSDL());
                     break;
 #endif
-#if XENKO_PLATFORM_ANDROID
-                case AppContextType.Android:
-                    Sources.Add(new InputSourceAndroid());
-                    break;
-#endif
 #if XENKO_PLATFORM_UWP
                 case AppContextType.UWPXaml:
                 case AppContextType.UWPCoreWindow:

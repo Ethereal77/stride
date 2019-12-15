@@ -6,7 +6,6 @@
     <!-- Defaults for CPU and GraphicsApi based on platform-->
     <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'Windows'">Direct3D11</XenkoDefaultGraphicsApi>
     <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'UWP'">Direct3D11</XenkoDefaultGraphicsApi>
-    <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'Android'">OpenGLES</XenkoDefaultGraphicsApi>
     <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'Linux'">OpenGL</XenkoDefaultGraphicsApi>
     <XenkoGraphicsApiOriginal>$(XenkoGraphicsApi)</XenkoGraphicsApiOriginal>
     <XenkoGraphicsApi Condition="'$(XenkoGraphicsApi)' == '' and '$(XenkoDefaultGraphicsApi)' != ''">$(XenkoDefaultGraphicsApi)</XenkoGraphicsApi>
@@ -119,11 +118,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(XenkoPlatform)' == 'Linux'">
-    <FrameworkShaderUseSharpDX>false</FrameworkShaderUseSharpDX>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Android' ">
-    <XenkoExternalSuffix>.Android</XenkoExternalSuffix>
     <FrameworkShaderUseSharpDX>false</FrameworkShaderUseSharpDX>
   </PropertyGroup>
 

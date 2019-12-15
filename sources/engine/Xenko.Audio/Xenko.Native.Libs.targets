@@ -8,6 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <XenkoNativePathLibs2 Condition="'$(XenkoPlatform)' == 'Linux' Or '$(XenkoPlatform)' == 'Android'" Include="libCelt.a;libCompilerRt.a" />
+    <XenkoNativePathLibs2 Condition="'$(XenkoPlatform)' == 'Linux'" Include="libCelt.a;libCompilerRt.a" />
   </ItemGroup>
 </Project>

@@ -81,7 +81,7 @@ namespace Xenko.Video
             if (originalTargetTexture == newTargetTexture) // the target content is already set to the video stream
                 return;  // -> nothing to do
 
-            if (originalTargetTexture != null) // the target Texture changed, we need to revert the previous one 
+            if (originalTargetTexture != null) // the target Texture changed, we need to revert the previous one
                 SetTargetContentToOriginalPlaceholder();
 
             if (newTargetTexture == null)
@@ -120,7 +120,6 @@ namespace Xenko.Video
             var previousDepthStencilBuffer = context.CommandList.DepthStencilBuffer;
             var previousRenderTarget = context.CommandList.RenderTarget;
 
-            // Use the OES texture copy effect on Android:
             CopyTexture(context,
                         effectDecoderTextureCopy,
                         decoderOutputTexture, // Use the inputTexture as the input texture.

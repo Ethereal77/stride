@@ -127,7 +127,6 @@ namespace Xenko.Audio.Tests
 //            test.TestSubmitBuffer();
 //            test.TestPlayableInterface();
 //            test.TestImplementationSpecific();
-//            test.TestImplementationSpecificAndroid();
 //            test.Uninitialize();
 //        }
 

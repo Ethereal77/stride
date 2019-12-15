@@ -16,10 +16,6 @@
 #ifndef VR_GVR_CAPI_INCLUDE_GVR_AUDIO_H_
 #define VR_GVR_CAPI_INCLUDE_GVR_AUDIO_H_
 
-#if __ANDROID__
-#include <jni.h>
-#endif  // __ANDROID__
-
 #include <stdint.h>
 
 #include "vr/gvr/capi/include/gvr.h"
@@ -336,32 +332,15 @@ typedef struct gvr_audio_context_ gvr_audio_context;
 /// the audio interface and starts the audio engine. Note that the returned
 /// instance must be deleted with gvr_audio_destroy.
 ///
-#ifdef __ANDROID__
-/// @param env The JNI Env associated with the current thread.
-/// @param android_context The Android application context. This must be the
-///     application context, NOT an Activity context (Note: from any Android
-///     Activity in your app, you can call getApplicationContext() to
-///     retrieve the application context).
-/// @param class_loader The class loader to use when loading Java
-///     classes. This must be your app's main class loader (usually
-///     accessible through activity.getClassLoader() on any of your Activities).
-/// @param rendering_mode The gvr_audio_rendering_mode value which determines
-///     the rendering configuration preset. This is passed as an int32_t to
-///     ensure API compatibility.
-/// @return gvr_audio_context instance.
-gvr_audio_context* gvr_audio_create(JNIEnv* env, jobject android_context,
-                                    jobject class_loader,
-                                    int32_t rendering_mode);
-#else
+
 /// @param rendering_mode The gvr_audio_rendering_mode value which determines
 ///     the rendering configuration preset. This is passed as an int32_t to
 ///     ensure API compatibility.
 /// @return gvr_audio_context instance.
 gvr_audio_context* gvr_audio_create(int32_t rendering_mode);
-#endif  // #ifdef __ANDROID__
 
 /// Destroys a gvr_audio_context that was previously created with
-/// gvr_audio_create or gvr_audio_create_android.
+/// gvr_audio_create.
 ///
 /// @param api Pointer to a pointer to a gvr_audio_context. The pointer
 ///     will be set to NULL after destruction.
@@ -613,19 +592,10 @@ class AudioApi {
 
 /// Creates and initializes a gvr_audio_context.
 /// For more information, see gvr_audio_create().
-#ifdef __ANDROID__
-  bool Init(JNIEnv* env, jobject android_context, jobject class_loader,
-            AudioRenderingMode rendering_mode) {
-    context_ =
-        gvr_audio_create(env, android_context, class_loader, rendering_mode);
-    return context_ != nullptr;
-  }
-#else
   bool Init(AudioRenderingMode rendering_mode) {
     context_ = gvr_audio_create(rendering_mode);
     return context_ != nullptr;
   }
-#endif  // #ifdef __ANDROID__
 
   /// Pauses the audio engine.
   /// For more information, see gvr_audio_pause().

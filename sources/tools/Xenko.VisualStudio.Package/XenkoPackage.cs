@@ -206,17 +206,6 @@ namespace Xenko.VisualStudio
             if (configurationLock || newConfiguration == null)
                 return;
 
-            foreach (System.Diagnostics.StackFrame stackFrame in new StackTrace().GetFrames())
-            {
-                var method = stackFrame.GetMethod();
-                if (method.DeclaringType.FullName == "Xamarin.VisualStudio.TastyFlavoredProject" && method.Name == "OnAfterSetStartupProjectCommandExecuted" ||
-                    method.DeclaringType.FullName == "Xamarin.VisualStudio.SolutionConfigurationManager" && method.Name == "ChangePlatform")
-                {
-                    UpdateConfigurationFromStartupProject();
-                    return;
-                }
-            }
-
             UpdateStartupProjectFromConfiguration();
         }
 

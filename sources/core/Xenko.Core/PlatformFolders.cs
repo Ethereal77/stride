@@ -94,11 +94,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationLocalDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            var directory = Path.Combine(PlatformAndroid.Context.FilesDir.AbsolutePath, "local");
-            Directory.CreateDirectory(directory);
-            return directory;
-#elif XENKO_PLATFORM_UWP
+#if XENKO_PLATFORM_UWP
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 #else
             // TODO: Should we add "local" ?
@@ -111,11 +107,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationRoamingDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            var directory = Path.Combine(PlatformAndroid.Context.FilesDir.AbsolutePath, "roaming");
-            Directory.CreateDirectory(directory);
-            return directory;
-#elif XENKO_PLATFORM_UWP
+#if XENKO_PLATFORM_UWP
             return Windows.Storage.ApplicationData.Current.RoamingFolder.Path;
 #else
             // TODO: Should we add "local" ?
@@ -128,9 +120,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationCacheDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            var directory = Path.Combine(PlatformAndroid.Context.FilesDir.AbsolutePath, "cache");
-#elif XENKO_PLATFORM_UWP
+#if XENKO_PLATFORM_UWP
             var directory = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "cache");
 #else
             // TODO: Should we add "local" ?
@@ -142,7 +132,7 @@ namespace Xenko.Core
 
         private static string GetApplicationExecutablePath()
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_MONO_MOBILE || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
             return Assembly.GetEntryAssembly()?.Location;
 #else
             return null;
@@ -158,9 +148,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationTemporaryDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            return PlatformAndroid.Context.CacheDir.AbsolutePath;
-#elif XENKO_PLATFORM_UWP
+#if XENKO_PLATFORM_UWP
             return Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
 #else
             return Path.GetTempPath();
@@ -170,7 +158,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationBinaryDirectory()
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_MONO_MOBILE || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
             var executableName = GetApplicationExecutablePath();
             if (!string.IsNullOrEmpty(executableName))
             {
@@ -191,9 +179,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationDataDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            return Android.OS.Environment.ExternalStorageDirectory.AbsolutePath + "/Android/data/" + PlatformAndroid.Context.PackageName + "/data";
-#elif XENKO_PLATFORM_UWP
+#if XENKO_PLATFORM_UWP
             return Windows.ApplicationModel.Package.Current.InstalledLocation.Path + @"\data";
 #else
             return Path.Combine(GetApplicationBinaryDirectory(), "data");

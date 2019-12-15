@@ -17,16 +17,6 @@
     <XenkoCodeAnalysis>true</XenkoCodeAnalysis>
   </PropertyGroup>
   <Choose>
-    <When Condition=" '$(XenkoPlatform)' == 'Android'">
-      <ItemGroup>
-        <Reference Include="Mono.Android" />
-        <Reference Include="GoogleVRJava">
-          <HintPath>..\..\..\deps\GoogleVR\lib\Android\GoogleVRJava.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
     <When Condition=" '$(XenkoGraphicsApi)' == 'Direct3D11' Or '$(XenkoGraphicsApi)' == 'Direct3D12' ">
       <ItemGroup>
         <XenkoNativeLib Include="..\..\..\deps\OpenVR\$(XenkoPlatform)\**\openvr_api.*">
@@ -68,8 +58,5 @@
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeExtraAssemblies</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
   <Target Name="IncludeExtraAssemblies">
-    <ItemGroup>
-      <BuildOutputInPackage Include="$(OutputPath)GoogleVRJava.dll" Condition=" '$(XenkoPlatform)' == 'Android' " />
-    </ItemGroup>
   </Target>
 </Project>

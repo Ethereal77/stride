@@ -16,10 +16,6 @@
 #ifndef VR_GVR_CAPI_INCLUDE_GVR_CONTROLLER_H_
 #define VR_GVR_CAPI_INCLUDE_GVR_CONTROLLER_H_
 
-#ifdef __ANDROID__
-#include <jni.h>
-#endif
-
 #include <stdint.h>
 
 #include "vr/gvr/capi/include/gvr.h"
@@ -99,8 +95,7 @@ int32_t gvr_controller_get_default_options();
 /// Creates and initializes a gvr_controller_context instance which can be used
 /// to invoke the Daydream Controller API functions. Important: after creation
 /// the API will be in the paused state (the controller will be inactive).
-/// You must call gvr_controller_resume() explicitly (typically, in your Android
-/// app's onResume() callback).
+/// You must call gvr_controller_resume() explicitly.
 ///
 /// @param options The API options. To get the defaults, use
 ///     gvr_controller_get_default_options().
@@ -114,33 +109,6 @@ int32_t gvr_controller_get_default_options();
 /// @return A pointer to the initialized API, or NULL if an error occurs.
 gvr_controller_context* gvr_controller_create_and_init(
     int32_t options, gvr_context* context);
-
-#ifdef __ANDROID__
-/// Creates and initializes a gvr_controller_context instance with an explicit
-/// Android context and class loader.
-///
-/// @param env The JNI Env associated with the current thread.
-/// @param android_context The Android application context. This must be the
-///     application context, NOT an Activity context (Note: from any Android
-///     Activity in your app, you can call getApplicationContext() to
-///     retrieve the application context).
-/// @param class_loader The class loader to use when loading Java
-///     classes. This must be your app's main class loader (usually
-///     accessible through activity.getClassLoader() on any of your Activities).
-/// @param options The API options. To get the defaults, use
-///     gvr_controller_get_default_options().
-/// @param context The GVR Context object to sync with (optional).
-///     This can be nullptr. If provided, the context's state will
-///     be synchronized with the controller's state where possible. For
-///     example, when the user recenters the controller, this will
-///     automatically recenter head tracking as well.
-///     WARNING: the caller is responsible for making sure the pointer
-///     remains valid for the lifetime of this object.
-/// @return A pointer to the initialized API, or NULL if an error occurs.
-gvr_controller_context* gvr_controller_create_and_init_android(
-    JNIEnv *env, jobject android_context, jobject class_loader,
-    int32_t options, gvr_context* context);
-#endif  // #ifdef __ANDROID__
 
 /// Destroys a gvr_controller_context that was previously created with
 /// gvr_controller_init.
@@ -515,18 +483,6 @@ class ControllerApi {
     context_ = gvr_controller_create_and_init(options, context);
     return context_ != nullptr;
   }
-
-#ifdef __ANDROID__
-  /// Overload of Init() with explicit Android context and class loader
-  /// (for Android only). For more information, see:
-  /// gvr_controller_create_and_init_android().
-  bool Init(JNIEnv *env, jobject android_context, jobject class_loader,
-            int32_t options, gvr_context* context) {
-    context_ = gvr_controller_create_and_init_android(
-        env, android_context, class_loader, options, context);
-    return context_ != nullptr;
-  }
-#endif  // #ifdef __ANDROID__
 
   /// Convenience overload that calls Init without a gvr_context.
   // TODO(btco): remove once it is no longer being used.

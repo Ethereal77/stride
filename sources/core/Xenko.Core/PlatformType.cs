@@ -34,11 +34,6 @@ namespace Xenko.Core
         Windows,
 
         /// <summary>
-        /// The android OS.
-        /// </summary>
-        Android,
-
-        /// <summary>
         /// The Universal Windows Platform (UWP).
         /// </summary>
         UWP,

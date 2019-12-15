@@ -51,8 +51,6 @@ namespace Xenko.Games
         {
 #if XENKO_PLATFORM_UWP
             return new GamePlatformUWP(game);
-#elif XENKO_PLATFORM_ANDROID
-            return new GamePlatformAndroid(game);
 #else
             // Here we cover all Desktop variants: OpenTK, SDL, Winforms,...
             return new GamePlatformWindows(game);

@@ -126,7 +126,6 @@ namespace Xenko.Assets.Presentation.ViewModel
         {
             base.OnSessionSaved();
 
-            //display orientation needs changes in android manifest files
             var currentOrientation = gameSettingsAsset.GetOrCreate<RenderingSettings>().DisplayOrientation;
             if (displayOrientation != currentOrientation && Session.CurrentProject != null)
             {

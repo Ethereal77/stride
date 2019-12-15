@@ -15,10 +15,6 @@
     <XenkoBuildTags>*</XenkoBuildTags>
     <XenkoCodeAnalysis>true</XenkoCodeAnalysis>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(XenkoPlatform)' == 'Android'">
-    <!-- <DefineConstants>XENKO_VIDEO_FFMPEG;$(DefineConstants)</DefineConstants> -->
-    <DefineConstants>XENKO_VIDEO_MEDIACODEC;$(DefineConstants)</DefineConstants>
-  </PropertyGroup>
   <Choose>
     <When Condition=" '$(AutoIncludeSystemAssembly)' != 'true'">
     </When>
@@ -44,9 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Native\OpenAL.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Native\OpenSLES.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Native\XAudio2.cpp" />

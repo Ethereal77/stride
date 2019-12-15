@@ -22,13 +22,6 @@
   </PropertyGroup>
 
   <Choose>
-    <When Condition=" '$(XenkoPlatform)' == 'Android' ">
-      <ItemGroup>
-        <Reference Include="Mono.Android" />
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
     <When Condition=" '$(XenkoNETRuntime)' == 'CoreCLR' ">
       <ItemGroup>
         <None Include="..\..\data\Linux\runtimeconfig.json">

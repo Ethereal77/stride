@@ -12,11 +12,7 @@ namespace Xenko.Core.Threading
 {
     public class Dispatcher
     {
-#if XENKO_PLATFORM_ANDROID
-        public static int MaxDegreeOfParallelism = 1;
-#else
         public static int MaxDegreeOfParallelism = Environment.ProcessorCount;
-#endif
 
         public delegate void ValueAction<T>(ref T obj);
 

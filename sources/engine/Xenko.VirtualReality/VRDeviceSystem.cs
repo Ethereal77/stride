@@ -91,19 +91,14 @@ namespace Xenko.VirtualReality
                             break;
                         }
                         //case VRApi.Fove:
-                        //{
                         //#if XENKO_GRAPHICS_API_DIRECT3D11
                         //    Device = new FoveHmd();
                         //#endif
-                        //break;
-                        //}
-                        //case VRApi.Google:
-                        //{
-                        //#if XENKO_PLATFORM_ANDROID
-                        //    VRDevice = new GoogleVrHmd();
-                        //#endif
                         //    break;
-                        //}
+                        //
+                        //case VRApi.Google:
+                        //    break;
+                        //
                         default:
                             throw new ArgumentOutOfRangeException();
                     }

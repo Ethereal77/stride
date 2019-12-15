@@ -21,7 +21,7 @@ namespace Xenko.Video.FFmpeg
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool CheckPlatformSupport()
         {
-#if (XENKO_PLATFORM_WINDOWS && !XENKO_RUNTIME_CORECLR) || XENKO_PLATFORM_ANDROID
+#if XENKO_PLATFORM_WINDOWS && !XENKO_RUNTIME_CORECLR
             return true;
 #else
             return false;

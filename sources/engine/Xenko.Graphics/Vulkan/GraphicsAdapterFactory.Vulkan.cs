@@ -151,10 +151,6 @@ namespace Xenko.Graphics
             desiredExtensionNames.Add("VK_KHR_win32_surface");
             if (!availableExtensionNames.Contains("VK_KHR_win32_surface"))
                 throw new InvalidOperationException("Required extension VK_KHR_win32_surface is not available");
-#elif XENKO_PLATFORM_ANDROID
-                desiredExtensionNames.Add("VK_KHR_android_surface");
-                if (!availableExtensionNames.Contains("VK_KHR_android_surface"))
-                    throw new InvalidOperationException("Required extension VK_KHR_android_surface is not available");
 #elif XENKO_PLATFORM_LINUX
                 if (availableExtensionNames.Contains("VK_KHR_xlib_surface"))
                 {
@@ -269,4 +265,4 @@ namespace Xenko.Graphics
         private unsafe delegate Result CreateDebugReportCallbackDelegate(Instance instance, ref DebugReportCallbackCreateInfo createInfo, AllocationCallbacks* allocator, out DebugReportCallback callback);
     }
 }
-#endif 
+#endif

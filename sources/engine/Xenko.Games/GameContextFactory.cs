@@ -31,8 +31,6 @@ namespace Xenko.Games
     #endif
 #elif XENKO_PLATFORM_UWP
             type = AppContextType.UWPXaml; // Can change later to CoreWindow
-#elif XENKO_PLATFORM_ANDROID
-            type = AppContextType.Android;
 #endif
             return NewGameContext(type);
         }
@@ -46,9 +44,6 @@ namespace Xenko.Games
             GameContext res = null;
             switch (type)
             {
-                case AppContextType.Android:
-                    res = NewGameContextAndroid();
-                    break;
                 case AppContextType.Desktop:
                     res = NewGameContextDesktop();
                     break;
@@ -75,15 +70,6 @@ namespace Xenko.Games
             }
 
             return res;
-        }
-
-        public static GameContext NewGameContextAndroid()
-        {
-#if XENKO_PLATFORM_ANDROID
-            return new GameContextAndroid(null, null);
-#else
-            return null;
-#endif
         }
 
         public static GameContext NewGameContextDesktop()

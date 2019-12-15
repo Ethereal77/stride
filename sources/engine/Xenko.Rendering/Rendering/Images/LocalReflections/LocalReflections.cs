@@ -6,11 +6,6 @@
 #define SSLR_DEBUG
 #endif
 
-#if XENKO_PLATFORM_ANDROID
-// Use different render targets formats on mobile
-#define SSLR_MOBILE
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,13 +36,8 @@ namespace Xenko.Rendering.Images
         // 4) Temporal blur [optional]
         // 5) Combine final image
 
-#if SSLR_MOBILE
-        private const PixelFormat RayTraceTargetFormat = PixelFormat.R8G8B8A8_UNorm;
-        private const PixelFormat ReflectionsFormat = PixelFormat.R16G16B16A16_Float;
-#else
         private const PixelFormat RayTraceTargetFormat = PixelFormat.R11G11B10_Float;
         private const PixelFormat ReflectionsFormat = PixelFormat.R11G11B10_Float;
-#endif
 
         private ImageEffectShader depthPassShader;
         private ImageEffectShader blurPassShaderH;

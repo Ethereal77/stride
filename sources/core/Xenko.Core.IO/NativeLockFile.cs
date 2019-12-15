@@ -23,13 +23,6 @@ namespace Xenko.Core.IO
 
         public static void LockFile(FileStream fileStream, long offset, long count, bool exclusive)
         {
-#if XENKO_PLATFORM_ANDROID
-            // Android does not support large file and thus is limited to files
-            // whose sizes are less than 2GB.
-            // We substract the offset to not go beyond the 2GB limit.
-            count =  (count + offset > int.MaxValue) ? int.MaxValue - offset: count;
-#endif
-
 #if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UWP
             var countLow = (uint)count;
             var countHigh = (uint)(count >> 32);
@@ -66,11 +59,6 @@ namespace Xenko.Core.IO
 
         public static void UnlockFile(FileStream fileStream, long offset, long count)
         {
-#if XENKO_PLATFORM_ANDROID
-            // See comment on `LockFile`.
-            count =  (count + offset > int.MaxValue) ? int.MaxValue - offset: count;
-#endif
-
 #if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UWP
             var countLow = (uint)count;
             var countHigh = (uint)(count >> 32);

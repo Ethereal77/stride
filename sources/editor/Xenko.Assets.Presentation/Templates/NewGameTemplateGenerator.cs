@@ -106,7 +106,6 @@ namespace Xenko.Assets.Presentation.Templates
             //     Assets\
             //     $Name$.Game\
             //     $Name$.Windows\
-            //     $Name$.Android\
 
             var logger = parameters.Logger;
             var platforms = parameters.GetTag(PlatformsKey);

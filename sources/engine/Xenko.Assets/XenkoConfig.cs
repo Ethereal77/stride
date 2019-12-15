@@ -22,12 +22,6 @@ namespace Xenko.Assets
         private static readonly Version VS2015Version = new Version(14, 0);
         private static readonly Version VSAnyVersion = new Version(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue);
 
-        internal static readonly Dictionary<Version, string> XamarinAndroidComponents = new Dictionary<Version, string>
-        {
-            { VSAnyVersion, @"Component.Xamarin" },
-            { VS2015Version, @"MSBuild\Xamarin\Android\Xamarin.Android.CSharp.targets" }
-        };
-
         internal static readonly Dictionary<Version, string> UniversalWindowsPlatformComponents = new Dictionary<Version, string>
         {
             { VSAnyVersion, @"Microsoft.VisualStudio.Component.UWP.Support" },
@@ -136,32 +130,6 @@ namespace Xenko.Assets
             linuxPlatform.DefineConstants.Add("XENKO_PLATFORM_UNIX");
             linuxPlatform.DefineConstants.Add("XENKO_PLATFORM_LINUX");
             solutionPlatforms.Add(linuxPlatform);
-
-            // Android
-            var androidPlatform = new SolutionPlatform()
-            {
-                Name = PlatformType.Android.ToString(),
-                Type = PlatformType.Android,
-                TargetFramework = "monoandroid81",
-                IsAvailable = IsVSComponentAvailableAnyVersion(XamarinAndroidComponents)
-            };
-            androidPlatform.DefineConstants.Add("XENKO_PLATFORM_MONO_MOBILE");
-            androidPlatform.DefineConstants.Add("XENKO_PLATFORM_ANDROID");
-            androidPlatform.Configurations.Add(new SolutionConfiguration("Testing"));
-            androidPlatform.Configurations.Add(new SolutionConfiguration("AppStore"));
-            androidPlatform.Configurations["Debug"].Properties.AddRange(new[]
-                {
-                    "<AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>",
-                    "<AndroidLinkMode>None</AndroidLinkMode>",
-                });
-            androidPlatform.Configurations["Release"].Properties.AddRange(new[]
-                {
-                    "<AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>",
-                    "<AndroidLinkMode>SdkOnly</AndroidLinkMode>",
-                });
-            androidPlatform.Configurations["Testing"].Properties.AddRange(androidPlatform.Configurations["Release"].Properties);
-            androidPlatform.Configurations["AppStore"].Properties.AddRange(androidPlatform.Configurations["Release"].Properties);
-            solutionPlatforms.Add(androidPlatform);
 
             AssetRegistry.RegisterSupportedPlatforms(solutionPlatforms);
         }

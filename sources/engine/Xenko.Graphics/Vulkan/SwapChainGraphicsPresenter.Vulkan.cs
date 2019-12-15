@@ -121,7 +121,7 @@ namespace Xenko.Graphics
 //                    Resize(backBuffer.ViewWidth, backBuffer.ViewHeight, backBuffer.ViewFormat);
 //                }
 
-//                // If going to window mode: 
+//                // If going to window mode:
 //                if (!switchToFullScreen)
 //                {
 //                    // call 1) SwapChain.IsFullScreen 2) SwapChain.Resize
@@ -158,7 +158,7 @@ namespace Xenko.Graphics
             }
             catch (SharpVulkanException e) when (e.Result == Result.ErrorOutOfDate)
             {
-                // TODO VULKAN 
+                // TODO VULKAN
             }
         }
 
@@ -367,8 +367,6 @@ namespace Xenko.Graphics
                 WindowHandle = controlHandle,
             };
             surface = GraphicsDevice.NativeInstance.CreateWin32Surface(surfaceCreateInfo);
-#elif XENKO_PLATFORM_ANDROID
-            throw new NotImplementedException();
 #elif XENKO_PLATFORM_LINUX
             throw new NotSupportedException("Only SDL is supported for the time being on Linux");
 #else
@@ -449,7 +447,7 @@ namespace Xenko.Graphics
 
             // Get next image
             currentBufferIndex = GraphicsDevice.NativeDevice.AcquireNextImage(swapChain, ulong.MaxValue, GraphicsDevice.GetNextPresentSemaphore(), Fence.Null);
-            
+
             // Apply the first swap chain image to the texture
             backbuffer.SetNativeHandles(swapchainImages[currentBufferIndex].NativeImage, swapchainImages[currentBufferIndex].NativeColorAttachmentView);
         }

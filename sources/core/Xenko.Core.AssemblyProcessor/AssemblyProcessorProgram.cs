@@ -107,7 +107,7 @@ namespace Xenko.Core.AssemblyProcessor
                 string.Empty,
                 { "h|help", "Show this message and exit", v => localShowHelp = v != null },
                 { "o|output=", "Output file name", v => localOutputFilePath = v },
-                { "p|platform=", "The platform (Windows, Android)", v => app.Platform = (PlatformType)Enum.Parse(typeof(PlatformType), v) },
+                { "p|platform=", "The platform (Windows)", v => app.Platform = (PlatformType)Enum.Parse(typeof(PlatformType), v) },
                 { "t|targetFramework=", "The .NET target platform (platform specific)", v => app.TargetFramework = v },
                 { "auto-notify-property", "Automatically implements INotifyPropertyChanged", v => app.AutoNotifyProperty = true },
                 { "parameter-key", "Automatically initialize parameter keys in module static constructor", v => app.ParameterKey = true },

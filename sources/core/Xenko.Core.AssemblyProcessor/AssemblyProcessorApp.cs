@@ -100,7 +100,7 @@ namespace Xenko.Core.AssemblyProcessor
                 {
                     assemblyResolver = CreateAssemblyResolver();
                     var readWriteSymbols = UseSymbols;
-                    // Double check that 
+                    // Double check that
                     var symbolFile = Path.ChangeExtension(inputFile, "pdb");
                     if (!File.Exists(symbolFile))
                     {
@@ -204,7 +204,6 @@ namespace Xenko.Core.AssemblyProcessor
 
                 // Always applies the interop processor
                 processors.Add(new InteropProcessor());
-                processors.Add(new MonoFixedProcessor());
 
                 processors.Add(new AssemblyVersionProcessor());
 
@@ -330,7 +329,7 @@ namespace Xenko.Core.AssemblyProcessor
                 OnErrorEvent(errorMessage, exception);
             }
         }
- 
+
         private void OnInfoAction(string infoMessage)
         {
             if (OnInfoEvent == null)

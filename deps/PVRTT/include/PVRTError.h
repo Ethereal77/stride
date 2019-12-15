@@ -2,20 +2,16 @@
 
  @file         PVRTError.h
  @copyright    Copyright (c) Imagination Technologies Limited.
- @brief        PVRT error codes.  
+ @brief        PVRT error codes.
 
 ******************************************************************************/
 #ifndef _PVRTERROR_H_
 #define _PVRTERROR_H_
 
-#if defined(ANDROID)
-	#include <android/log.h>
+#if defined(_WIN32)
+	#include <windows.h>
 #else
-	#if defined(_WIN32)
-		#include <windows.h>
-	#else
-		#include <stdio.h>
-	#endif
+	#include <stdio.h>
 #endif
 /*!***************************************************************************
  Macros
@@ -24,9 +20,7 @@
 /*! Outputs a string to the standard error if built for debugging. */
 #if !defined(PVRTERROR_OUTPUT_DEBUG)
 	#if defined(_DEBUG) || defined(DEBUG)
-		#if defined(ANDROID)
-			#define PVRTERROR_OUTPUT_DEBUG(A) __android_log_print(ANDROID_LOG_INFO, "PVRTools", A);
-		#elif defined(_WIN32) && !defined(UNDER_CE)
+		#if defined(_WIN32) && !defined(UNDER_CE)
 			#define PVRTERROR_OUTPUT_DEBUG(A) OutputDebugStringA(A);
 		#else
 			#define PVRTERROR_OUTPUT_DEBUG(A) fprintf(stderr,"%s",A);
@@ -62,4 +56,3 @@ void PVRTErrorOutputDebug(char const * const format, ...);
 /*****************************************************************************
 End of file (PVRTError.h)
 *****************************************************************************/
-

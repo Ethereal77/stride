@@ -16,7 +16,6 @@
 			- `.xktpl` : Directory containing icons/screenshots used to display the template in the UI
 			- `Assets` : contains assets (.xk files)
 			- `Resources` : contains resource files (.jpg, .fbx ... files)
-			- `SimpleAudio.Android` : Android executable
 			- `SimpleAudio.Game` : Common Game code
 			- `SimpleAudio.Windows` : Windows Desktop executable
 			- `SimpleAudio.xkpkg` : Package description

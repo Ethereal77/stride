@@ -137,26 +137,7 @@ namespace Xenko.Graphics.Regression
         public BackBufferSizeMode BackBufferSizeMode
         {
             get { return backBufferSizeMode; }
-            set
-            {
-                backBufferSizeMode = value;
-#if XENKO_PLATFORM_ANDROID
-                switch (backBufferSizeMode)
-                {
-                    case BackBufferSizeMode.FitToDesiredValues:
-                        SwapChainGraphicsPresenter.ProcessPresentationParametersOverride = FitPresentationParametersToDesiredValues;
-                        break;
-                    case BackBufferSizeMode.FitToWindowSize:
-                        SwapChainGraphicsPresenter.ProcessPresentationParametersOverride = FitPresentationParametersToWindowSize;
-                        break;
-                    case BackBufferSizeMode.FitToWindowRatio:
-                        SwapChainGraphicsPresenter.ProcessPresentationParametersOverride = FitPresentationParametersToWindowRatio;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-#endif // TODO implement it other mobile platforms
-            }
+            set { backBufferSizeMode = value; }
         }
 
         protected internal void EnableSimulatedInputSource()
@@ -370,7 +351,7 @@ namespace Xenko.Graphics.Regression
             var testFilenameUser = GenerateName(Path.Combine(rootFolder, @"tests\local"), frame, platformSpecific);
 
             var testFilenames = new[] { testFilename };
-            
+
             // First, if exact match doesn't exist, test any other pattern
             // TODO: We might want to sort/filter partially (platform, etc...)?
             if (!File.Exists(testFilename))
@@ -379,7 +360,7 @@ namespace Xenko.Graphics.Regression
                     ? Directory.GetFiles(Path.GetDirectoryName(testFilenamePattern), Path.GetFileName(testFilenamePattern))
                     : new string[0];
             }
-            
+
             if (testFilenames.Length == 0)
             {
                 // No source image, save this one so that user can later copy it to validated folder

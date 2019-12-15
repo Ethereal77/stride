@@ -563,11 +563,7 @@ namespace Xenko.ProjectGenerator
             switch (requestedPlatform)
             {
                 case PlatformType.Windows:
-                        // Nothing to do here.
-                    break;
-                case PlatformType.Android:
-                    configurations.Add(platform, platform);
-                    needDeploy = true;
+                    // Nothing to do here.
                     break;
 
                 case PlatformType.Linux:

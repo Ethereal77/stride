@@ -14,9 +14,3 @@ REM NET Standard
 msbuild %opentk%\source\OpenTK\OpenTK.NETStandard.csproj /Property:Configuration=Release;Platform="AnyCPU"
 copy /Y %opentk%\Binaries\OpenTK\Release\netstandard2.0\OpenTK.dll .
 copy /Y %opentk%\Binaries\OpenTK\Release\netstandard2.0\OpenTK.pdb .
-
-REM Android
-msbuild %opentk%\OpenTK.Android.sln /Property:Configuration=Release;Platform="Any CPU"
-if not exist Android mkdir Android
-copy /Y %opentk%\Binaries\Android\Release\OpenTK-1.1.dll Android
-copy /Y %opentk%\Binaries\Android\Release\OpenTK-1.1.dll.mdb Android

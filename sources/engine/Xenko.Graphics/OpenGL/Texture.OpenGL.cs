@@ -132,27 +132,6 @@ namespace Xenko.Graphics
             InitializeFromImpl();
         }
 
-#if XENKO_PLATFORM_ANDROID //&& USE_GLES_EXT_OES_TEXTURE
-        //Prototype: experiment creating GlTextureExternalOes texture
-        private void InitializeForExternalOESImpl()
-        {
-            // TODO: We should probably also set the other parameters if possible, because otherwise we end up with a texture whose metadata says it's of 0x0x0 size and has no format.
-
-            if (TextureId == 0)
-            {
-                GL.GenTextures(1, out TextureId);
-
-                //Android.Opengl.GLES20.GlBindTexture(Android.Opengl.GLES11Ext.GlTextureExternalOes, TextureId);
-
-                //Any "proper" way to do this? (GLES20 could directly accept it, not GLES30 anymore)
-                TextureTarget = (TextureTarget)Android.Opengl.GLES11Ext.GlTextureExternalOes;
-                GL.BindTexture(TextureTarget, TextureId);
-
-                //GL.BindTexture(TextureTarget, 0);
-            }
-        }
-#endif
-
         private TextureTarget GetTextureTarget(TextureDimension dimension)
         {
             switch (Dimension)

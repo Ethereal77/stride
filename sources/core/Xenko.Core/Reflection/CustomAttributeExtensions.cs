@@ -17,20 +17,12 @@ namespace Xenko.Core.Reflection
 
         public static Attribute GetCustomAttributeEx([NotNull] this Assembly assembly, [NotNull] Type attributeType)
         {
-#if XENKO_PLATFORM_MONO_MOBILE
-            return Attribute.GetCustomAttribute(assembly, attributeType);
-#else
             return assembly.GetCustomAttribute(attributeType);
-#endif
         }
 
         public static IEnumerable<Attribute> GetCustomAttributesEx([NotNull] this Assembly assembly, [NotNull] Type attributeType)
         {
-#if XENKO_PLATFORM_MONO_MOBILE
-            return Attribute.GetCustomAttributes(assembly, attributeType);
-#else
             return assembly.GetCustomAttributes(attributeType);
-#endif
         }
 
         [NotNull]

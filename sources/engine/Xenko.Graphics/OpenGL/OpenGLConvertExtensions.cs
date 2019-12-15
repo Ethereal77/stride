@@ -254,7 +254,6 @@ namespace Xenko.Graphics
                     if (!graphicsDevice.HasExtTextureFormatBGRA8888)
                         throw new NotSupportedException();
 
-                    // It seems Android expects different things
                     internalFormat = (PixelInternalFormat)ExtTextureFormatBgra8888.BgraExt;
                     format = (PixelFormatGl)ExtTextureFormatBgra8888.BgraExt;
 #else
@@ -272,7 +271,6 @@ namespace Xenko.Graphics
                     break;
 #if XENKO_GRAPHICS_API_OPENGLCORE
                 case PixelFormat.B8G8R8A8_UNorm_SRgb:
-                    // TODO: Check on Android and OpenGL 3
                     internalFormat = PixelInternalFormat.Srgb8Alpha8;
                     format = PixelFormatGl.Bgra;
                     type = PixelType.UnsignedByte;

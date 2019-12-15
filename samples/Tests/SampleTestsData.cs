@@ -15,10 +15,6 @@ namespace Xenko.Samples.Tests
 {
     class SampleTestsData
     {
-#if TEST_ANDROID
-        public const PlatformType TestPlatform = PlatformType.Android;
-#else
         public const PlatformType TestPlatform = PlatformType.Windows;
-#endif
     }
 }

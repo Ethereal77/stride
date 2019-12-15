@@ -203,51 +203,6 @@ namespace Xenko.Assets.Textures
                 case true:
                     switch (parameters.Platform)
                     {
-                        case PlatformType.Android:
-                            if (inputImageFormat.IsHDR())
-                            {
-                                outputFormat = inputImageFormat;
-                            }
-                            else
-                            {
-                                switch (parameters.GraphicsProfile)
-                                {
-                                    case GraphicsProfile.Level_9_1:
-                                    case GraphicsProfile.Level_9_2:
-                                    case GraphicsProfile.Level_9_3:
-                                        outputFormat = alphaMode == AlphaFormat.None && !parameters.IsSRgb ? PixelFormat.ETC1 : parameters.IsSRgb ? PixelFormat.R8G8B8A8_UNorm_SRgb : PixelFormat.R8G8B8A8_UNorm;
-                                        break;
-                                    case GraphicsProfile.Level_10_0:
-                                    case GraphicsProfile.Level_10_1:
-                                    case GraphicsProfile.Level_11_0:
-                                    case GraphicsProfile.Level_11_1:
-                                    case GraphicsProfile.Level_11_2:
-                                        // GLES3.0 starting from Level_10_0, this profile enables ETC2 compression on Android
-                                        switch (alphaMode)
-                                        {
-                                            case AlphaFormat.None:
-                                                outputFormat = parameters.IsSRgb ? PixelFormat.ETC2_RGB_SRgb : PixelFormat.ETC2_RGB;
-                                                break;
-                                            case AlphaFormat.Mask:
-                                                // DXT1 handles 1-bit alpha channel
-                                                // TODO: Not sure about the equivalent here?
-                                                outputFormat = parameters.IsSRgb ? PixelFormat.ETC2_RGBA_SRgb : PixelFormat.ETC2_RGB_A1;
-                                                break;
-                                            case AlphaFormat.Explicit:
-                                            case AlphaFormat.Interpolated:
-                                                // DXT3 is good at sharp alpha transitions
-                                                // TODO: Not sure about the equivalent here?
-                                                outputFormat = parameters.IsSRgb ? PixelFormat.ETC2_RGBA_SRgb : PixelFormat.ETC2_RGBA;
-                                                break;
-                                            default:
-                                                throw new ArgumentOutOfRangeException();
-                                        }
-                                        break;
-                                    default:
-                                        throw new ArgumentOutOfRangeException("GraphicsProfile");
-                                }
-                            }
-                            break;
                         case PlatformType.Windows:
                         case PlatformType.UWP:
                         case PlatformType.Linux:
@@ -334,7 +289,7 @@ namespace Xenko.Assets.Textures
                                             case GraphicsProfile.Level_11_0:
                                             case GraphicsProfile.Level_11_1:
                                             case GraphicsProfile.Level_11_2:
-                                                // GLES3.0 starting from Level_10_0, this profile enables ETC2 compression on Android
+                                                // GLES3.0 starting from Level_10_0
                                                 outputFormat = alphaMode == AlphaFormat.None ? PixelFormat.ETC1 : PixelFormat.ETC2_RGBA;
                                                 break;
                                             default:

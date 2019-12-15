@@ -79,8 +79,8 @@ namespace Xenko.Shaders.Compiler.OpenGL
             if (shader == null)
                 return shaderBytecodeResult;
 
-            if (effectParameters.Platform == GraphicsPlatform.OpenGLES)      // TODO: Add check to run on android only. The current version breaks OpenGL ES on windows.
-            { 
+            if (effectParameters.Platform == GraphicsPlatform.OpenGLES)      // TODO: The current version breaks OpenGL ES on Windows.
+            {
                 //TODO: Remove this ugly hack!
                 if (shaderSource.Contains($"Texture2D XenkoInternal_TextureExt0") && shader.Contains("uniform sampler2D"))
                 {
@@ -147,13 +147,13 @@ namespace Xenko.Shaders.Compiler.OpenGL
                 // store string on OpenGL platforms
                 rawData = Encoding.UTF8.GetBytes(shader);
             }
-            
+
             var bytecodeId = ObjectId.FromBytes(rawData);
             var bytecode = new ShaderBytecode(bytecodeId, rawData);
             bytecode.Stage = stage;
 
             shaderBytecodeResult.Bytecode = bytecode;
-            
+
             return shaderBytecodeResult;
         }
 
@@ -243,7 +243,7 @@ namespace Xenko.Shaders.Compiler.OpenGL
                         MarkResourceBindingAsUsed(reflection, resourceBindingIndex, stage);
                     }
                 }
-                
+
                 foreach (var variable in glslShader.Declarations.OfType<Variable>().Where(x => (x.Qualifiers.Contains(StorageQualifier.Uniform))))
                 {
                     // Check if we have a variable that starts or ends with this name (in case of samplers)

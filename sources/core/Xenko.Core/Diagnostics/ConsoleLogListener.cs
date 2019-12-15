@@ -5,9 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Xenko.Core.Annotations;
-#if XENKO_PLATFORM_ANDROID
-using Android.Util;
-#endif
 #if XENKO_PLATFORM_WINDOWS_DESKTOP
 using Microsoft.Win32.SafeHandles;
 #endif
@@ -48,36 +45,6 @@ namespace Xenko.Core.Diagnostics
             // Make sure the console is opened when the debugger is not attached
             EnsureConsole();
 
-#if XENKO_PLATFORM_ANDROID
-            const string appliName = "Xenko";
-            var exceptionMsg = GetExceptionText(logMessage);
-            var messageText = GetDefaultText(logMessage);
-            if (!string.IsNullOrEmpty(exceptionMsg))
-                messageText += exceptionMsg;
-
-            // set the color depending on the message log level
-            switch (logMessage.Type)
-            {
-                case LogMessageType.Debug:
-                    Log.Debug(appliName, messageText);
-                    break;
-                case LogMessageType.Verbose:
-                    Log.Verbose(appliName, messageText);
-                    break;
-                case LogMessageType.Info:
-                    Log.Info(appliName, messageText);
-                    break;
-                case LogMessageType.Warning:
-                    Log.Warn(appliName, messageText);
-                    break;
-                case LogMessageType.Error:
-                case LogMessageType.Fatal:
-                    Log.Error(appliName, messageText);
-                    break;
-            }
-            return;
-#else // XENKO_PLATFORM_ANDROID
-
             var exceptionMsg = GetExceptionText(logMessage);
 
 #if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
@@ -105,7 +72,7 @@ namespace Xenko.Core.Diagnostics
                     break;
             }
 #endif
-            
+
             if (Debugger.IsAttached)
             {
                 // Log the actual message
@@ -130,7 +97,6 @@ namespace Xenko.Core.Diagnostics
             // revert console initial color
             Console.ForegroundColor = initialColor;
 #endif
-#endif // !XENKO_PLATFORM_ANDROID
         }
 
 #if XENKO_PLATFORM_WINDOWS_DESKTOP

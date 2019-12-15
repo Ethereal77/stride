@@ -16,10 +16,6 @@
 #ifndef VR_GVR_CAPI_INCLUDE_GVR_H_
 #define VR_GVR_CAPI_INCLUDE_GVR_H_
 
-#ifdef __ANDROID__
-#include <jni.h>
-#endif
-
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -42,14 +38,7 @@ extern "C" {
 ///
 /// Example API usage:
 ///
-///     #ifdef __ANDROID__
-///     // On Android, the gvr_context should almost always be obtained from
-///     // the Java GvrLayout object via
-///     // GvrLayout.getGvrApi().getNativeGvrContext().
-///     gvr_context* gvr = ...;
-///     #else
 ///     gvr_context* gvr = gvr_create();
-///     #endif
 ///
 ///     gvr_initialize_gl(gvr);
 ///
@@ -102,11 +91,7 @@ extern "C" {
 ///     gvr_buffer_viewport_destroy(&left_eye_vp);
 ///     gvr_buffer_viewport_destroy(&right_eye_vp);
 ///
-///     #ifdef __ANDROID__
-///     // On Android, The Java GvrLayout owns the gvr_context.
-///     #else
 ///     gvr_destroy(gvr);
-///     #endif
 ///
 /// Head tracking is enabled by default, and will begin as soon as the
 /// gvr_context is created. The client should call gvr_pause_tracking() and
@@ -123,29 +108,8 @@ extern "C" {
 /// The instance must remain valid as long as any GVR object is in use. When
 /// the application no longer needs to use the GVR SDK, call gvr_destroy().
 ///
-///
-/// On Android, the gvr_context should *almost always* be obtained from the Java
-/// GvrLayout object, rather than explicitly created here. The GvrLayout should
-/// live in the app's View hierarchy, and its use is required to ensure
-/// consistent behavior across all varieties of GVR-compatible viewers. See
-/// the Java GvrLayout and GvrApi documentation for more details.
-///
-#ifdef __ANDROID__
-/// @param env The JNIEnv associated with the current thread.
-/// @param app_context The Android application context. This must be the
-///     application context, NOT an Activity context (Note: from any Android
-///     Activity in your app, you can call getApplicationContext() to
-///     retrieve the application context).
-/// @param class_loader The class loader to use when loading Java classes.
-///     This must be your app's main class loader (usually accessible through
-///     activity.getClassLoader() on any of your Activities).
-///
-/// @return Pointer to the created gvr instance, NULL on failure.
-gvr_context* gvr_create(JNIEnv* env, jobject app_context, jobject class_loader);
-#else
 /// @return Pointer to the created gvr instance, NULL on failure.
 gvr_context* gvr_create();
-#endif  // #ifdef __ANDROID__
 
 /// Gets the current GVR runtime version.
 ///
@@ -230,10 +194,6 @@ void gvr_initialize_gl(gvr_context* gvr);
 /// asynchronously re-projected in sync with the scanout of the display. This
 /// feature may not be available on every platform, and requires a
 /// high-priority render thread with special extensions to function properly.
-///
-/// Note: On Android, this feature can be enabled solely via the GvrLayout Java
-/// instance which (indirectly) owns this gvr_context. The corresponding
-/// method call is GvrLayout.setAsyncReprojectionEnabled().
 ///
 /// @param gvr Pointer to the gvr instance.
 /// @return Whether async reprojection is enabled. Defaults to false.
@@ -1373,14 +1333,7 @@ class SwapChain {
 ///
 ///     // Functionality supplied by the application in the example below has
 ///     // the "app-" prefix.
-///     #ifdef __ANDROID__
-///     // On Android, the gvr_context should almost always be obtained from the
-///     // Java GvrLayout object via
-///     // GvrLayout.getGvrApi().getNativeGvrContext().
-///     std::unique_ptr<GvrApi> gvr = GvrApi::WrapNonOwned(gvr_context);
-///     #else
 ///     std::unique_ptr<GvrApi> gvr = GvrApi::Create();
-///     #endif
 ///
 ///     gvr->InitializeGl();
 ///
@@ -1431,27 +1384,6 @@ class SwapChain {
 ///
 class GvrApi {
  public:
-#ifdef __ANDROID__
-  /// Instantiates and returns a GvrApi instance that owns a gvr_context.
-  ///
-  /// @param env The JNIEnv associated with the current thread.
-  /// @param app_context The Android application context. This must be the
-  ///     application context, NOT an Activity context (Note: from any Android
-  ///     Activity in your app, you can call getApplicationContext() to
-  ///     retrieve the application context).
-  /// @param class_loader The class loader to use when loading Java classes.
-  ///     This must be your app's main class loader (usually accessible through
-  ///     activity.getClassLoader() on any of your Activities).
-  /// @return unique_ptr to the created GvrApi instance, nullptr on failure.
-  static std::unique_ptr<GvrApi> Create(JNIEnv* env, jobject app_context,
-                                        jobject class_loader) {
-    gvr_context* context = gvr_create(env, app_context, class_loader);
-    if (!context) {
-      return nullptr;
-    }
-    return std::unique_ptr<GvrApi>(new GvrApi(context, true /* owned */));
-  }
-#else
   /// Instantiates and returns a GvrApi instance that owns a gvr_context.
   ///
   /// @return unique_ptr to the created GvrApi instance, nullptr on failure.
@@ -1462,7 +1394,6 @@ class GvrApi {
     }
     return std::unique_ptr<GvrApi>(new GvrApi(context, true /* owned */));
   }
-#endif  // #ifdef __ANDROID__
 
   ~GvrApi() {
     if (context_ && owned_) {

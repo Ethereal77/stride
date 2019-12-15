@@ -2,17 +2,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2012 SharpDX - Alexandre Mutel
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -307,7 +307,7 @@ namespace Xenko.Graphics
         /// <summary>
         /// Gets the name of the shared Nt handle when created with TextureOption.SharedNthandle.
         /// </summary>
-        public string SharedNtHandleName { get; private set; } = string.Empty; 
+        public string SharedNtHandleName { get; private set; } = string.Empty;
 #endif
 
         /// <summary>
@@ -392,7 +392,7 @@ namespace Xenko.Graphics
         /// </summary>
         /// <value>The size.</value>
         public Size3 Size => new Size3(ViewWidth, ViewHeight, ViewDepth);
-        
+
         /// <summary>
         /// When texture streaming is activated, the size of the texture when loaded at full quality.
         /// </summary>
@@ -402,7 +402,7 @@ namespace Xenko.Graphics
             internal set => fullQualitySize = value;
         }
 
-        /// <summary> 
+        /// <summary>
         /// The width stride in bytes (number of bytes per row).
         /// </summary>
         internal int RowStride { get; private set; }
@@ -451,14 +451,6 @@ namespace Xenko.Graphics
         {
             return InitializeFrom(null, description, new TextureViewDescription(), textureDatas);
         }
-
-#if XENKO_PLATFORM_ANDROID //&& USE_GLES_EXT_OES_TEXTURE
-        internal Texture InitializeForExternalOES()
-        {
-            InitializeForExternalOESImpl();
-            return this;
-        }
-#endif
 
         internal Texture InitializeFrom(TextureDescription description, TextureViewDescription viewDescription, DataBox[] textureDatas = null)
         {
@@ -1104,20 +1096,6 @@ namespace Xenko.Graphics
 
             return new Texture(graphicsDevice).InitializeFrom(description, viewDescription, boxes);
         }
-
-#if XENKO_PLATFORM_ANDROID //&& USE_GLES_EXT_OES_TEXTURE
-        //create a new GL_TEXTURE_EXTERNAL_OES texture which will be managed by external API
-        //TODO: check how to integrate this properly in Xenko API
-        public static Texture NewExternalOES(GraphicsDevice graphicsDevice)
-        {
-            if (graphicsDevice == null)
-            {
-                throw new ArgumentNullException("graphicsDevice");
-            }
-
-            return new Texture(graphicsDevice).InitializeForExternalOES();
-        }
-#endif
 
         /// <summary>
         /// Saves this texture to a stream with a specified format.

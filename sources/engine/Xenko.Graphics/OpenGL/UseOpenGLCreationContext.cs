@@ -30,10 +30,6 @@ namespace Xenko.Graphics
 
         private readonly IGraphicsContext deviceCreationContext;
 
-#if XENKO_PLATFORM_ANDROID
-        private readonly bool tegraWorkaround;
-#endif
-
         public bool UseDeviceCreationContext => useDeviceCreationContext;
 
         public UseOpenGLCreationContext(GraphicsDevice graphicsDevice)
@@ -44,26 +40,10 @@ namespace Xenko.Graphics
                 needUnbindContext = true;
                 useDeviceCreationContext = true;
 
-#if XENKO_PLATFORM_ANDROID
-                tegraWorkaround = graphicsDevice.Workaround_Context_Tegra2_Tegra3;
-
-                // Notify main rendering thread there is some pending async work to do
-                if (tegraWorkaround)
-                {
-                    useDeviceCreationContext = false; // We actually use real main context, so states will be kept
-                    graphicsDevice.AsyncPendingTaskWaiting = true;
-                }
-#endif
-
                 // Lock, since there is only one deviceCreationContext.
                 // TODO: Support multiple deviceCreationContext (TLS creation of context was crashing, need to investigate why)
                 asyncCreationLockObject = graphicsDevice.asyncCreationLockObject;
                 Monitor.Enter(graphicsDevice.asyncCreationLockObject, ref asyncCreationLockTaken);
-
-#if XENKO_PLATFORM_ANDROID
-                if (tegraWorkaround)
-                    graphicsDevice.AsyncPendingTaskWaiting = false;
-#endif
 
                 // Bind the context
                 deviceCreationContext = graphicsDevice.deviceCreationContext;
@@ -93,13 +73,6 @@ namespace Xenko.Graphics
                 // Unlock
                 if (asyncCreationLockTaken)
                 {
-#if XENKO_PLATFORM_ANDROID
-                    if (tegraWorkaround)
-                    {
-                        // Notify GraphicsDevice.ExecutePendingTasks() that we are done.
-                        Monitor.Pulse(asyncCreationLockObject);
-                    }
-#endif
                     Monitor.Exit(asyncCreationLockObject);
                 }
             }

@@ -14,9 +14,6 @@
     <XenkoCodeAnalysis>true</XenkoCodeAnalysis>
     <XenkoPackAssets>true</XenkoPackAssets>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(XenkoPlatform)' == 'Android'">
-    <DefineConstants>XENKO_VIDEO_MEDIACODEC;$(DefineConstants)</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup Condition="('$(XenkoPlatform)' == 'Windows') and ('$(XenkoNETRuntime)' != 'CoreCLR')">
     <DefineConstants>XENKO_VIDEO_FFMPEG;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
@@ -33,13 +30,6 @@
   </ItemGroup>
   <Choose>
     <When Condition="$(DefineConstants.Contains(XENKO_VIDEO_FFMPEG))">
-      <ItemGroup Condition="'$(XenkoPlatform)' == 'Android'">
-        <XenkoNativeLib Include="$(XenkoDependenciesDir)\FFmpeg\$(XenkoPlatform)\**\*.so">
-          <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-          <RelativePath>%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </XenkoNativeLib>
-      </ItemGroup>
       <ItemGroup Condition="'$(XenkoPlatform)' == 'Windows'">
         <XenkoNativeLib Include="$(XenkoDependenciesDir)\FFmpeg\$(XenkoPlatform)\**\*.dll">
           <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>

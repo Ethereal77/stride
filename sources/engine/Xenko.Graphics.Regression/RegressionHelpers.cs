@@ -59,10 +59,6 @@ namespace Xenko.Graphics.Regression
     #elif XENKO_GRAPHICS_API_VULKAN
             result.DeviceName = "Vulkan";
     #endif
-#elif XENKO_PLATFORM_ANDROID
-            result.Platform = "Android";
-            result.DeviceName = Android.OS.Build.Manufacturer + " " + Android.OS.Build.Model;
-            result.Serial = Android.OS.Build.Serial ?? "Unknown";
 #elif XENKO_PLATFORM_UWP
             result.Platform = "UWP";
             var deviceInfo = new EasClientDeviceInformation();
@@ -95,8 +91,7 @@ namespace Xenko.Graphics.Regression
                     return "Windows_OpenGL";
                 case TestPlatform.WindowsOgles:
                     return "Windows_OpenGLES";
-                case TestPlatform.Android:
-                    return "Android";
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -104,9 +99,7 @@ namespace Xenko.Graphics.Regression
 
         public static TestPlatform GetPlatform()
         {
-#if XENKO_PLATFORM_ANDROID
-            return TestPlatform.Android;
-#elif XENKO_GRAPHICS_API_NULL
+#if XENKO_GRAPHICS_API_NULL
             return TestPlatform.None;
 #elif XENKO_GRAPHICS_API_DIRECT3D
             return TestPlatform.WindowsDx;
@@ -117,7 +110,6 @@ namespace Xenko.Graphics.Regression
 #elif XENKO_GRAPHICS_API_VULKAN
             return TestPlatform.WindowsVulkan;
 #endif
-
         }
     }
 
@@ -175,7 +167,6 @@ namespace Xenko.Graphics.Regression
         WindowsDx,
         WindowsOgl,
         WindowsOgles,
-        WindowsVulkan,
-        Android
+        WindowsVulkan
     }
 }

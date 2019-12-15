@@ -40,85 +40,6 @@ namespace Xenko.TestRunner
             branchName = branch;
         }
 
-        public int RunAndroidTest(ConnectedDevice device, bool reinstall, string packageName, string packageFile, string resultFilename)
-        {
-            resultFile = resultFilename;
-
-            try
-            {
-                ProcessOutputs adbOutputs;
-
-                var adbPath = AndroidDeviceEnumerator.GetAdbPath();
-                if (adbPath == null)
-                    throw new InvalidOperationException("Can't find adb");
-
-                // force stop - only works for Android 3.0 and above.
-                ShellHelper.RunProcessAndGetOutput(adbPath, $@"-s {device.Serial} shell am force-stop {packageName}");
-
-                if (reinstall)
-                {
-                    // uninstall
-                    ShellHelper.RunProcessAndGetOutput(adbPath, $@"-s {device.Serial} uninstall {packageName}");
-
-                    // install
-                    adbOutputs = ShellHelper.RunProcessAndGetOutput(adbPath, $@"-s {device.Serial} install {packageFile}");
-                    Console.WriteLine("adb install: exitcode {0}\nOutput: {1}\nErrors: {2}", adbOutputs.ExitCode, adbOutputs.OutputAsString, adbOutputs.ErrorsAsString);
-                    if (adbOutputs.ExitCode != 0)
-                        throw new InvalidOperationException("Invalid error code from adb install.\n Shell log: {0}");
-                }
-
-                // run
-                var parameters = new StringBuilder();
-                parameters.Append("-s "); parameters.Append(device.Serial);
-                parameters.Append(@" shell am start -a android.intent.action.MAIN -n " + packageName + "/nunitlite.tests.MainActivity");
-                AddAndroidParameter(parameters, Graphics.Regression.TestRunner.XenkoVersion, XenkoVersion.NuGetVersion);
-                AddAndroidParameter(parameters, Graphics.Regression.TestRunner.XenkoBuildNumber, buildNumber.ToString());
-                if (!IsNullOrEmpty(branchName))
-                    AddAndroidParameter(parameters, Graphics.Regression.TestRunner.XenkoBranchName, branchName);
-                Console.WriteLine(parameters.ToString());
-
-                adbOutputs = ShellHelper.RunProcessAndGetOutput(adbPath, parameters.ToString());
-                Console.WriteLine("adb shell am start: exitcode {0}\nOutput: {1}\nErrors: {2}", adbOutputs.ExitCode, adbOutputs.OutputAsString, adbOutputs.ErrorsAsString);
-                if (adbOutputs.ExitCode != 0)
-                    throw new InvalidOperationException("Invalid error code from adb shell am start.");
-
-                if (!clientResultsEvent.WaitOne(TimeSpan.FromSeconds(300))) //wait 30 seconds for client connection
-                {
-                    Console.WriteLine(@"Device failed to connect.");
-                    return -1;
-                }
-
-                Console.WriteLine(@"Device client connected, waiting for test results...");
-
-                // if we receive no events during more than 5 minutes, something is wrong
-                // we also check that test session is not finished as well
-                while (clientResultsEvent.WaitOne(TimeSpan.FromMinutes(5)) && !testFinished)
-                {
-                }
-
-                return testFailed ? -1 : 0;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(@"An error was thrown when running the test on Android: {0}", e);
-                return -1;
-            }
-        }
-
-        /// <summary>
-        /// Add the parameter as an extra in an Android launch command line
-        /// </summary>
-        /// <param name="builder">The string builder.</param>
-        /// <param name="parameterName">The name of the parameter.</param>
-        /// <param name="parameterValue">The value of the parameter.</param>
-        private static void AddAndroidParameter(StringBuilder builder, string parameterName, string parameterValue)
-        {
-            builder.Append(@" -e ");
-            builder.Append(parameterName);
-            builder.Append(@" ");
-            builder.Append(parameterValue);
-        }
-
         /// <summary>
         /// A structure to store information about the connected test devices.
         /// </summary>
@@ -235,7 +156,7 @@ namespace Xenko.TestRunner
 
                 // Make sure path exists
                 Directory.CreateDirectory(resultPath);
-                exitCode = BuildAndRunAndroidTests(commandArgs, reinstall, resultPath);
+                exitCode = 0;
             }
             catch (Exception e)
             {
@@ -243,59 +164,6 @@ namespace Xenko.TestRunner
                 if (e is OptionException)
                     p.WriteOptionDescriptions(Console.Out);
                 exitCode = 1;
-            }
-
-            return exitCode;
-        }
-
-        private static int BuildAndRunAndroidTests(List<string> commandArgs, bool reinstall, string resultPath)
-        {
-            if (commandArgs.Count == 0)
-                throw new OptionException("One APK should be provided", "apk");
-
-            // get build number
-            int buildNumber;
-            if (!Int32.TryParse(Environment.GetEnvironmentVariable("XENKO_BUILD_NUMBER"), out buildNumber))
-                buildNumber = -1;
-
-            // get branch name
-            var branchName = Environment.GetEnvironmentVariable("XENKO_BRANCH_NAME");
-
-            var exitCode = 0;
-
-            foreach (var packageFile in commandArgs)
-            {
-                if (!packageFile.EndsWith("-Signed.apk"))
-                    throw new OptionException("APK should end up with \"-Signed.apk\"", "apk");
-
-                // Remove -Signed.apk suffix
-                var packageName = Path.GetFileName(packageFile);
-                packageName = packageName.Replace("-Signed.apk", Empty);
-
-                var androidDevices = AndroidDeviceEnumerator.ListAndroidDevices();
-                if (androidDevices.Length == 0)
-                    throw new InvalidOperationException("Could not find any Android device connected.");
-
-                foreach (var device in androidDevices)
-                {
-                    var testServerHost = new TestServerHost(buildNumber, branchName);
-                    testServerHost.TryConnect("127.0.0.1", RouterClient.DefaultPort, true).Wait();
-                    Directory.CreateDirectory(resultPath);
-                    var deviceResultFile = Path.Combine(resultPath, "TestResult_" + packageName + "_Android_" + device.Name + "_" + device.Serial + ".xml");
-
-                    var currentExitCode = testServerHost.RunAndroidTest(new TestServerHost.ConnectedDevice
-                    {
-                        Name = device.Name, Serial = device.Serial, Platform = TestPlatform.Android,
-                    }, reinstall, packageName, packageFile, deviceResultFile);
-
-                    var adbPath = AndroidDeviceEnumerator.GetAdbPath();
-
-                    // force stop - only works for Android 3.0 and above.
-                    ShellHelper.RunProcessAndGetOutput(adbPath, $@"-s {device.Serial} shell am force-stop {packageName}");
-
-                    if (currentExitCode != 0)
-                        exitCode = currentExitCode;
-                }
             }
 
             return exitCode;

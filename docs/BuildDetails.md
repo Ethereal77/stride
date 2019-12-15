@@ -9,7 +9,7 @@ This is a technical description what happens in our build and how it is organize
 
 Since 3.1, we switched from our custom build system to the new csproj system with one nuget package per assembly.
 
-We use `TargetFrameworks` to properly compile the different platforms using a single project (Android, etc...).
+We use `TargetFrameworks` to properly compile the different platforms using a single project.
 
 Also, we use `RuntimeIdentifiers` to select graphics platform. [MSBuild.Sdk.Extras](https://github.com/onovotny/MSBuildSdkExtras) is used to properly build NuGet packages with multiple `RuntimeIdentifiers` (not supported out of the box).
 

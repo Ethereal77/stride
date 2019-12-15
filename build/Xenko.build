@@ -85,7 +85,7 @@ Example of use:
   </Target>
 
   <!--
-  Build Xenko: Windows, Android, Windows 10 (UWP)
+  Build Xenko: Windows, Windows 10 (UWP)
   -->
   <Target Name="Clean">
     <Exec Command="RMDIR /Q /S $(XenkoRoot)\Bin"/>
@@ -176,11 +176,6 @@ Example of use:
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=OpenGLES;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
 
-  <Target Name="BuildAndroid" DependsOnTargets="CopyXenkoKey">
-    <Exec Command='"$(NuGetPath)" restore "$(XenkoSolution).Android.sln"' />
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).Android.sln" Properties="$(BuildProperties);XenkoPlatforms=Android;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target>
-
   <Target Name="BuildWindowsStore" DependsOnTargets="CopyXenkoKey">
     <!-- Only a warning since build servers might still call this target for old branches -->
     <Warning Text="Windows Store doesn't exist anymore"/>
@@ -241,8 +236,7 @@ Example of use:
       <XenkoTestCategories Condition="'$(XenkoTestCategories)' == ''">Simple;Game;VSPackage</XenkoTestCategories>
       <!-- We enclose everything with ;, so that we could do full word matches more easily with string.Contains() -->
       <XenkoTestCategories>;$(XenkoTestCategories);</XenkoTestCategories>
-	  <XenkoTestExtraTargets></XenkoTestExtraTargets>
-      <XenkoTestExtraTargets Condition="$(XenkoTestCategories.Contains(';GameAndroid;'))">$(XenkoTestExtraTargets);SignAndroidPackage</XenkoTestExtraTargets>
+	    <XenkoTestExtraTargets></XenkoTestExtraTargets>
     </PropertyGroup>
 
     <!-- Simple standalone unit tests -->
@@ -271,16 +265,6 @@ Example of use:
       <UnitTestGame Include="21-XenkoRuntime.Tests\Xenko.Particles.Tests.Windows"/>
       <UnitTestGame Include="21-XenkoRuntime.Tests\Xenko.Physics.Tests.Windows"/>
       <UnitTestGame Include="21-XenkoRuntime.Tests\Xenko.UI.Tests.Windows"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.Engine.Tests.Android"/>
-      <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.Graphics.Tests.10_0.Android"/>
-      <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.Graphics.Tests.Android"/>
-      <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.Input.Tests.Android"/>
-      <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.Particles.Tests.Android"/>
-      <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.Physics.Tests.Android"/>
-      <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.UI.Tests.Android"/>
     </ItemGroup>
 
     <!-- Direct3D11 unit tests -->
@@ -319,12 +303,6 @@ Example of use:
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameVulkan;'))">
       <UnitTestPrerequisites Include="@(UnitTestGame)"/>
       <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).Vulkan.sln</Solution></UnitTest>
-    </ItemGroup>
-
-	<!-- Android unit tests -->
-    <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameAndroid;'))">
-      <UnitTestPrerequisites Include="@(UnitTestGame)"/>
-      <UnitTest Include="@(UnitTestGameAndroid)"><Solution>$(XenkoSolution).Android.sln</Solution></UnitTest>
     </ItemGroup>
 
 	<!-- Samples unit tests -->
@@ -371,48 +349,6 @@ Example of use:
     </ItemGroup>
     <Exec Condition="'@(AssembliesToTestDefault)' != ''" Command="&quot;$(XunitRunnerConsolePathDefault)&quot; @(AssembliesToTestDefault->'%(Identity)', ' ')"/>
     <Exec Condition="'@(AssembliesToTestX86)' != ''" Command="&quot;$(XunitRunnerConsolePathX86)&quot; @(AssembliesToTestX86->'%(Identity)', ' ')"/>
-  </Target>
-
-  <ItemGroup>
-    <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Engine.Tests\Xenko.Engine.Tests.$(PlatformToBuild).csproj"/>
-    <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Audio.Tests\Xenko.Audio.Tests.$(PlatformToBuild).csproj"/>
-    <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Graphics.Tests\Xenko.Graphics.Tests.$(PlatformToBuild).csproj"/>
-    <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Graphics.Tests.10_0\Xenko.Graphics.Tests.10_0.$(PlatformToBuild).csproj"/>
-    <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Input.Tests\Xenko.Input.Tests.$(PlatformToBuild).csproj"/>
-    <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Particles.Tests\Xenko.Particles.Tests.$(PlatformToBuild).csproj"/>
-    <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Physics.Tests\Xenko.Physics.Tests.$(PlatformToBuild).csproj"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Engine.Tests\Xenko.Engine.Tests-Signed.apk"/>
-    <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Physics.Tests\Xenko.Physics.Tests-Signed.apk"/>
-    <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Audio.Tests\Xenko.Audio.Tests-Signed.apk"/>
-    <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Graphics.Tests.10_0\Xenko.Graphics.Tests_10_0-Signed.apk"/>
-    <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Graphics.Tests\Xenko.Graphics.Tests-Signed.apk"/>
-    <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Input.Tests\Xenko.Input.Tests-Signed.apk"/>
-    <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Particles.Tests\Xenko.Particles.Tests-Signed.apk"/>
-  </ItemGroup>
-
-  <Target Name="RunTestsMobile" DependsOnTargets="DownloadXunitRunnerConsole" Outputs="%(MobileUnitTestProject.Identity)">
-    <PropertyGroup>
-      <XenkoRoot>$(MSBuildThisFileDirectory)..\</XenkoRoot>
-      <XenkoPlatform></XenkoPlatform>
-      <XenkoPlatform Condition="'$(PlatformToBuild)' == 'Android'">Platform=Android</XenkoPlatform>
-      <XenkoBuildOptions></XenkoBuildOptions>
-      <XenkoBuildTargets>Rebuild</XenkoBuildTargets>
-      <XenkoBuildTargets Condition="'$(PlatformToBuild)' == 'Android'">SignAndroidPackage</XenkoBuildTargets>
-      <XenkoBuildConfig>Release</XenkoBuildConfig>
-      <XenkoBuildConfig Condition="'$(PlatformToBuild)' == 'Windows'">Debug</XenkoBuildConfig>
-    </PropertyGroup>
-
-    <MSBuild Projects ="%(MobileUnitTestProject.Identity)" Targets="SignAndroidPackage"
-             Properties="SolutionName=Xenko.Android; SolutionDir=$(MSBuildThisFileDirectory);$(XenkoPlatform);Configuration=$(XenkoBuildConfig);$(XenkoBuildOptions)">
-    </MSBuild>
-    <Exec IgnoreExitCode="True" Command='taskkill /F /FI "Imagename eq Xenko.Core.Assets.CompilerApp*"' />
-
-    <Exec Condition="'$(PlatformToBuild)' == 'Android'" Command="$(XenkoRoot)sources\tools\Xenko.TestRunner\bin\Release\net472\Xenko.TestRunner.exe %(MobileUnitTestApk.Identity)">
-      <Output TaskParameter="ExitCode" ItemName="exitCode" />
-    </Exec>
   </Target>
 
   <!--

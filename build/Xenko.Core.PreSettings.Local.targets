@@ -6,7 +6,7 @@
     <XenkoPlatformFullName>$(XenkoPlatform)</XenkoPlatformFullName>
     <XenkoPlatformFullName Condition="'$(XenkoBuildDirExtension)' != ''">$(XenkoPlatformFullName)-$(XenkoBuildDirExtension)</XenkoPlatformFullName>
 
-    <!-- Resolve path (remove ".." elements), for better support on Xamarin -->
+    <!-- Resolve path (remove ".." elements), for better support -->
     <XenkoPackageXenko>$([System.IO.Path]::GetFullPath('$(XenkoPackageXenko)'))</XenkoPackageXenko>
     <XenkoPackageXenkoBin Condition="'$(XenkoPackageXenkoBin)' == ''">$(XenkoPackageXenko)\Bin</XenkoPackageXenkoBin>
     <XenkoPackageXenkoSdkBin Condition="'$(XenkoPackageXenkoSdkBin)' == ''">$(XenkoPackageXenkoBin)\Windows</XenkoPackageXenkoSdkBin>

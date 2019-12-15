@@ -112,8 +112,7 @@ typedef struct gvr_quatf {
   float qw;
 } gvr_quatf;
 
-/// A *monotonic system time* representation. On Android, this is equivalent to
-/// System.nanoTime(), or clock_gettime(CLOCK_MONOTONIC). If there is any doubt
+/// A *monotonic system time* representation. If there is any doubt
 /// about how to get the current time for the current platform, simply use
 /// gvr_get_time_point_now().
 typedef struct gvr_clock_time_point {

@@ -103,7 +103,7 @@ namespace Xenko.Games.Testing
 
             Initialized = true;
 
-#if XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_WINDOWS_DESKTOP
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
             Console.WriteLine(@"Test initialized, waiting to start...");
 #endif
         }
@@ -140,9 +140,6 @@ namespace Xenko.Games.Testing
 
         public static void Quit()
         {
-#if XENKO_PLATFORM_ANDROID
-            global::Android.OS.Process.KillProcess(global::Android.OS.Process.MyPid());
-#endif
         }
     }
 }

@@ -62,8 +62,6 @@ namespace Xenko.Assets
                 case PlatformType.Windows:
                 case PlatformType.UWP:
                     return GraphicsPlatform.Direct3D11;
-                case PlatformType.Android:
-                    return GraphicsPlatform.OpenGLES;
                 case PlatformType.Linux:
                     return GraphicsPlatform.OpenGL;
                 default:

@@ -87,9 +87,6 @@ namespace Xenko.ConnectionRouter
                     // Start router (in listen server mode)
                     router.Listen(RouterClient.DefaultPort).Wait();
 
-                    // Start Android management thread
-                    new Thread(() => AndroidTracker.TrackDevices(router)) { IsBackground = true }.Start();
-
                     // Start Windows Phone management thread
                     new Thread(() => WindowsPhoneTracker.TrackDevices(router)) { IsBackground = true }.Start();
 

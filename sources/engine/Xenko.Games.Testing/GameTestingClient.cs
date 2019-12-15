@@ -42,9 +42,6 @@ namespace Xenko.Games.Testing
                 case PlatformType.Windows:
                     platformName = "Windows";
                     break;
-                case PlatformType.Android:
-                    platformName = "Android";
-                    break;
                 case PlatformType.UWP:
                     platformName = "UWP";
                     break;
@@ -88,12 +85,6 @@ namespace Xenko.Games.Testing
 
             // Wait up to one minute
             var waitMs = 60 * 1000;
-            switch (platform)
-            {
-                case PlatformType.Android:
-                    waitMs *= 2;
-                    break;
-            }
 
             if (!ev.WaitOne(waitMs))
             {

@@ -2,17 +2,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2012 SharpDX - Alexandre Mutel
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,51 +25,51 @@
 // -----------------------------------------------------------------------------
 // Microsoft Public License (Ms-PL)
 //
-// This license governs use of the accompanying software. If you use the 
+// This license governs use of the accompanying software. If you use the
 // software, you accept this license. If you do not accept the license, do not
 // use the software.
 //
 // 1. Definitions
-// The terms "reproduce," "reproduction," "derivative works," and 
+// The terms "reproduce," "reproduction," "derivative works," and
 // "distribution" have the same meaning here as under U.S. copyright law.
-// A "contribution" is the original software, or any additions or changes to 
+// A "contribution" is the original software, or any additions or changes to
 // the software.
-// A "contributor" is any person that distributes its contribution under this 
+// A "contributor" is any person that distributes its contribution under this
 // license.
-// "Licensed patents" are a contributor's patent claims that read directly on 
+// "Licensed patents" are a contributor's patent claims that read directly on
 // its contribution.
 //
 // 2. Grant of Rights
-// (A) Copyright Grant- Subject to the terms of this license, including the 
-// license conditions and limitations in section 3, each contributor grants 
+// (A) Copyright Grant- Subject to the terms of this license, including the
+// license conditions and limitations in section 3, each contributor grants
 // you a non-exclusive, worldwide, royalty-free copyright license to reproduce
-// its contribution, prepare derivative works of its contribution, and 
+// its contribution, prepare derivative works of its contribution, and
 // distribute its contribution or any derivative works that you create.
 // (B) Patent Grant- Subject to the terms of this license, including the license
-// conditions and limitations in section 3, each contributor grants you a 
+// conditions and limitations in section 3, each contributor grants you a
 // non-exclusive, worldwide, royalty-free license under its licensed patents to
 // make, have made, use, sell, offer for sale, import, and/or otherwise dispose
-// of its contribution in the software or derivative works of the contribution 
+// of its contribution in the software or derivative works of the contribution
 // in the software.
 //
 // 3. Conditions and Limitations
-// (A) No Trademark License- This license does not grant you rights to use any 
+// (A) No Trademark License- This license does not grant you rights to use any
 // contributors' name, logo, or trademarks.
-// (B) If you bring a patent claim against any contributor over patents that 
-// you claim are infringed by the software, your patent license from such 
+// (B) If you bring a patent claim against any contributor over patents that
+// you claim are infringed by the software, your patent license from such
 // contributor to the software ends automatically.
-// (C) If you distribute any portion of the software, you must retain all 
+// (C) If you distribute any portion of the software, you must retain all
 // copyright, patent, trademark, and attribution notices that are present in the
 // software.
-// (D) If you distribute any portion of the software in source code form, you 
-// may do so only under this license by including a complete copy of this 
+// (D) If you distribute any portion of the software in source code form, you
+// may do so only under this license by including a complete copy of this
 // license with your distribution. If you distribute any portion of the software
-// in compiled or object code form, you may only do so under a license that 
+// in compiled or object code form, you may only do so under a license that
 // complies with this license.
 // (E) The software is licensed "as-is." You bear the risk of using it. The
 // contributors give no express warranties, guarantees or conditions. You may
-// have additional consumer rights under your local laws which this license 
-// cannot change. To the extent permitted under your local laws, the 
+// have additional consumer rights under your local laws which this license
+// cannot change. To the extent permitted under your local laws, the
 // contributors exclude the implied warranties of merchantability, fitness for a
 // particular purpose and non-infringement.
 //
@@ -163,13 +163,13 @@ namespace Xenko.Graphics
                                                                  new LegacyMap(PixelFormat.B5G5R5A1_UNorm, ConversionFlags.Format5551, DDS.DDSPixelFormat.A1R5G5B5), // D3DFMT_A1R5G5B5
                                                                  new LegacyMap(PixelFormat.B5G5R5A1_UNorm, ConversionFlags.Format5551
                                                                                                            | ConversionFlags.NoAlpha, new DDS.DDSPixelFormat(DDS.PixelFormatFlags.Rgb, 0, 16, 0x7c00, 0x03e0, 0x001f, 0x0000)), // D3DFMT_X1R5G5B5
-     
+
                                                                  new LegacyMap(PixelFormat.R8G8B8A8_UNorm, ConversionFlags.Expand
                                                                                                            | ConversionFlags.Format8332, new DDS.DDSPixelFormat(DDS.PixelFormatFlags.Rgb, 0, 16, 0x00e0, 0x001c, 0x0003, 0xff00)),
                                                                  // D3DFMT_A8R3G3B2
                                                                  new LegacyMap(PixelFormat.B5G6R5_UNorm, ConversionFlags.Expand
                                                                                                          | ConversionFlags.Format332, new DDS.DDSPixelFormat(DDS.PixelFormatFlags.Rgb, 0, 8, 0xe0, 0x1c, 0x03, 0x00)), // D3DFMT_R3G3B2
-  
+
                                                                  new LegacyMap(PixelFormat.R8_UNorm, ConversionFlags.None, DDS.DDSPixelFormat.L8), // D3DFMT_L8
                                                                  new LegacyMap(PixelFormat.R16_UNorm, ConversionFlags.None, DDS.DDSPixelFormat.L16), // D3DFMT_L16
                                                                  new LegacyMap(PixelFormat.R8G8_UNorm, ConversionFlags.None, DDS.DDSPixelFormat.A8L8), // D3DFMT_A8L8
@@ -773,7 +773,7 @@ namespace Xenko.Graphics
         /// <param name="inFormat"></param>
         /// <param name="pal8"></param>
         /// <param name="flags"></param>
-        static unsafe bool LegacyExpandScanline( IntPtr pDestination, int outSize, PixelFormat outFormat, 
+        static unsafe bool LegacyExpandScanline( IntPtr pDestination, int outSize, PixelFormat outFormat,
                                             IntPtr pSource, int inSize, TEXP_LEGACY_FORMAT inFormat,
                                             uint* pal8, ScanlineFlags flags )
         {
@@ -911,7 +911,7 @@ namespace Xenko.Graphics
                     {
 #if DIRECTX11_1
                 case PixelFormat.B4G4R4A4_UNorm :
-                    // D3DFMT_A4L4 -> PixelFormat.B4G4R4A4_UNorm 
+                    // D3DFMT_A4L4 -> PixelFormat.B4G4R4A4_UNorm
                     {
                         byte * sPtr = (byte*)(pSource);
                         short * dPtr = (short*)(pDestination);
@@ -988,11 +988,6 @@ namespace Xenko.Graphics
         public static unsafe Image LoadFromDDSMemory(IntPtr pSource, int size, bool makeACopy, GCHandle? handle)
         {
             var flags = makeACopy ? DDSFlags.CopyMemory : DDSFlags.None;
-
-#if XENKO_PLATFORM_ANDROID
-            // Directly load image as RGBA instead of BGRA, because OpenGL ES devices don't support it out of the box (extension).
-            flags |= DDSFlags.ForceRgb;
-#endif
 
             ConversionFlags convFlags;
             ImageDescription mdata;
@@ -1628,6 +1623,6 @@ namespace Xenko.Graphics
 
             Utilities.CopyMemory(pDestination, pSource, Math.Min(outSize, inSize));
         }
- 
+
     }
 }

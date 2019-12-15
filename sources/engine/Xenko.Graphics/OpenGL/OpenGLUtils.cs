@@ -87,26 +87,6 @@ namespace Xenko.Graphics.OpenGL
             return GraphicsProfile.Level_9_1;
         }
 #endif
-#if XENKO_PLATFORM_ANDROID
-        public static GLVersion GetGLVersion(GraphicsProfile graphicsProfile)
-        {
-            switch (graphicsProfile)
-            {
-                case GraphicsProfile.Level_9_1:
-                case GraphicsProfile.Level_9_2:
-                case GraphicsProfile.Level_9_3:
-                    return GLVersion.ES2;
-                case GraphicsProfile.Level_10_0:
-                case GraphicsProfile.Level_10_1:
-                case GraphicsProfile.Level_11_0:
-                case GraphicsProfile.Level_11_1:
-                case GraphicsProfile.Level_11_2:
-                    return GLVersion.ES3;
-                default:
-                    throw new ArgumentOutOfRangeException("graphicsProfile");
-            }
-        }
-#endif
 
         private static readonly Regex MatchOpenGLVersion = new Regex(@"OpenGL\s+ES\s+([0-9\.]+)");
 

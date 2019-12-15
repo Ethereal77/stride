@@ -14,11 +14,6 @@ using Xenko.Rendering;
 using Xenko.Shaders;
 using Xenko.Graphics.OpenGL;
 using Color4 = Xenko.Core.Mathematics.Color4;
-#if XENKO_PLATFORM_ANDROID
-using System.Text;
-using System.Runtime.InteropServices;
-using OpenTK.Platform.Android;
-#endif
 #if XENKO_GRAPHICS_API_OPENGLES
 using OpenTK.Graphics.ES30;
 using DrawBuffersEnum = OpenTK.Graphics.ES30.DrawBufferMode;
@@ -72,18 +67,6 @@ namespace Xenko.Graphics
                                                             GraphicsPlatform.OpenGLES;
 #else
                                                             GraphicsPlatform.OpenGL;
-#endif
-
-#if XENKO_PLATFORM_ANDROID
-        // If context was set before Begin(), try to keep it after End()
-        // (otherwise devices with no backbuffer flicker)
-        private bool keepContextOnEnd;
-
-        private IntPtr graphicsContextEglPtr;
-        internal bool AsyncPendingTaskWaiting; // Used when Workaround_Context_Tegra2_Tegra3
-
-        // Workarounds for specific GPUs
-        internal bool Workaround_Context_Tegra2_Tegra3;
 #endif
 
         internal SamplerState DefaultSamplerState;
@@ -146,13 +129,6 @@ namespace Xenko.Graphics
 #else
         private OpenTK.GameWindow gameWindow;
 #endif
-#elif XENKO_PLATFORM_ANDROID
-        private AndroidGameView gameWindow;
-#endif
-
-#if XENKO_PLATFORM_ANDROID
-        [DllImport("libEGL.dll", EntryPoint = "eglGetCurrentContext")]
-        internal static extern IntPtr EglGetCurrentContext();
 #endif
 
 #if XENKO_GRAPHICS_API_OPENGLES
@@ -189,13 +165,6 @@ namespace Xenko.Graphics
         {
             get
             {
-#if XENKO_PLATFORM_ANDROID
-                if (graphicsContext != gameWindow.GraphicsContext)
-                {
-                    return GraphicsDeviceStatus.Reset;
-                }
-#endif
-
                 // TODO implement GraphicsDeviceStatus for OpenGL
                 return GraphicsDeviceStatus.Normal;
             }
@@ -237,23 +206,6 @@ namespace Xenko.Graphics
             {
                 FrameCounter++;
 
-#if XENKO_PLATFORM_ANDROID
-                if (Workaround_Context_Tegra2_Tegra3)
-                {
-                    Monitor.Enter(asyncCreationLockObject, ref asyncCreationLockTaken);
-                }
-                else
-                {
-                    // On first set, check if context was not already set before,
-                    // in which case we won't unset it during End().
-                    keepContextOnEnd = graphicsContextEglPtr == GraphicsDevice.EglGetCurrentContext();
-
-                    if (keepContextOnEnd)
-                    {
-                        return;
-                    }
-                }
-#endif
                 graphicsContext.MakeCurrent(windowInfo);
             }
         }
@@ -270,25 +222,7 @@ namespace Xenko.Graphics
             --contextBeginCounter;
             if (contextBeginCounter == 0)
             {
-#if XENKO_PLATFORM_ANDROID
-                if (Workaround_Context_Tegra2_Tegra3)
-                {
-                    graphicsContext.MakeCurrent(null);
-
-                    // Notify that main context can be used from now on
-                    if (asyncCreationLockTaken)
-                    {
-                        Monitor.Exit(asyncCreationLockObject);
-                        asyncCreationLockTaken = false;
-                    }
-                }
-                else if (!keepContextOnEnd)
-                {
-                    GraphicsDevice.UnbindGraphicsContext(graphicsContext);
-                }
-#else
                 UnbindGraphicsContext(graphicsContext);
-#endif
             }
             else if (contextBeginCounter < 0)
             {
@@ -408,14 +342,9 @@ namespace Xenko.Graphics
         internal void EnsureContextActive()
         {
             // TODO: Better checks (is active context the expected one?)
-#if XENKO_PLATFORM_ANDROID
-            if (EglGetCurrentContext() == IntPtr.Zero)
-                throw new InvalidOperationException("No OpenGL context bound.");
-#else
             var context = OpenTK.Graphics.GraphicsContext.CurrentContext; //static cannot be debugged easy
             if (context == null)
                 throw new InvalidOperationException("No OpenGL context bound.");
-#endif
         }
 
         public void ExecuteCommandList(CompiledCommandList commandList)
@@ -769,49 +698,9 @@ namespace Xenko.Graphics
 #else
             gameWindow = (OpenTK.GameWindow)windowHandle.NativeWindow;
 #endif
-#elif XENKO_PLATFORM_ANDROID
-            gameWindow = (AndroidGameView)windowHandle.NativeWindow;
 #endif
-
             windowInfo = gameWindow.WindowInfo;
 
-            // Doesn't seems to be working on Android
-#if XENKO_PLATFORM_ANDROID
-            graphicsContext = gameWindow.GraphicsContext;
-            gameWindow.Load += OnApplicationResumed;
-            gameWindow.Unload += OnApplicationPaused;
-
-            Workaround_Context_Tegra2_Tegra3 = renderer == "NVIDIA Tegra 3" || renderer == "NVIDIA Tegra 2";
-
-            if (Workaround_Context_Tegra2_Tegra3)
-            {
-                // On Tegra2/Tegra3, we can't do any background context
-                // As a result, we reuse main graphics context even when loading.
-                // Of course, main graphics context need to be either available, or we register ourself for next ExecutePendingTasks().
-                deviceCreationContext = graphicsContext;
-                deviceCreationWindowInfo = windowInfo;
-
-                // We don't want context to be set or it might collide with our internal use to create async resources
-                // TODO: Reenabled, since the context seems to change otherwise. Do we need this in the first place, since we only want a single context?
-                //gameWindow.AutoSetContextOnRenderFrame = false;
-            }
-            else
-            {
-                if (deviceCreationContext != null)
-                {
-                    deviceCreationContext.Dispose();
-                    deviceCreationWindowInfo.Dispose();
-                }
-
-                // Create PBuffer
-                deviceCreationWindowInfo = new AndroidWindow(null);
-                ((AndroidWindow)deviceCreationWindowInfo).CreateSurface(graphicsContext.GraphicsMode.Index.Value);
-
-                deviceCreationContext = new OpenTK.Graphics.GraphicsContext(graphicsContext.GraphicsMode, deviceCreationWindowInfo, version / 100, (version % 100) / 10, creationFlags);
-            }
-
-            graphicsContextEglPtr = EglGetCurrentContext();
-#else
 #if XENKO_UI_SDL
             // Because OpenTK really wants a Sdl2GraphicsContext and not a dummy one, we will create
             // a new one using the dummy one and invalidate the dummy one.
@@ -822,7 +711,6 @@ namespace Xenko.Graphics
 #endif
             deviceCreationWindowInfo = windowInfo;
             deviceCreationContext = new OpenTK.Graphics.GraphicsContext(graphicsContext.GraphicsMode, deviceCreationWindowInfo, version/100, (version%100)/10, creationFlags);
-#endif
 
             // Restore main context
             graphicsContext.MakeCurrent(windowInfo);
@@ -908,16 +796,10 @@ namespace Xenko.Graphics
         protected void DestroyPlatformDevice()
         {
             // Hack: Reset the lock so that UseOpenGLCreationContext works (even if locked by previously called OnApplicationPaused, which might have been done in an unaccessible event thread)
-            // TODO: Does it work with Tegra3?
             if (ApplicationPaused)
             {
                 asyncCreationLockObject = new object();
             }
-
-#if XENKO_PLATFORM_ANDROID
-            gameWindow.Load -= OnApplicationResumed;
-            gameWindow.Unload -= OnApplicationPaused;
-#endif
         }
 
         internal void OnDestroyed()
@@ -1060,22 +942,6 @@ namespace Xenko.Graphics
 #endif
             }
         }
-
-#if XENKO_PLATFORM_ANDROID
-    // Execute pending asynchronous object creation
-    // (on android devices where we can't create background context such as Tegra2/Tegra3)
-        internal void ExecutePendingTasks()
-        {
-            // Unbind context
-            graphicsContext.MakeCurrent(null);
-
-            // Release and reacquire lock
-            Monitor.Wait(asyncCreationLockObject);
-
-            // Rebind context
-            graphicsContext.MakeCurrent(windowInfo);
-        }
-#endif
 
         internal struct FBOTexture : IEquatable<FBOTexture>
         {

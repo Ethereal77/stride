@@ -50,39 +50,8 @@
     <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Android' ">
-    <XenkoPlatformDefines>XENKO_PLATFORM_MONO_MOBILE;XENKO_PLATFORM_ANDROID;NET45</XenkoPlatformDefines>
-    <AndroidStoreUncompressedFileExtensions />
-    <MandroidI18n />
-    <!-- Avoid Xamarin.Android.Common.targets(519,3): error MSB4044: The "FilterAssemblies" task was not given a value for the required parameter "DesignTimeBuild". -->
-    <DesignTimeBuild Condition="'$(DesignTimeBuild)' == ''">False</DesignTimeBuild>
-    <!-- Use AssemblyName rather than RootNamespace for Resource class otherwise it might clash between some assemblies (i.e. Xenko and Xenko.Engine) -->
-    <AndroidResgenNamespace>$(AssemblyName)</AndroidResgenNamespace>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Android' And '$(OutputType)' == 'Exe' ">
-    <AndroidApplication>true</AndroidApplication>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Android' And '$(Configuration)' == 'Debug' ">
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
-    <AndroidLinkMode>None</AndroidLinkMode>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Android' And '$(Configuration)' == 'Release' ">
-    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-  </PropertyGroup>
-  <!-- Workaround for https://github.com/xamarin/xamarin-android/issues/1235 -->
-  <Target Name="_FixupLibraryProjectsEmbeddedResource" AfterTargets="_AddLibraryProjectsEmbeddedResourceToProject">
-    <ItemGroup>
-	  <_LibraryProjectsEmbeddedResource Include="@(EmbeddedResource)" Condition="'%(Identity)' == '$(IntermediateOutputPath)__AndroidLibraryProjects__.zip'"/>
-	  <EmbeddedResource Remove="@(_LibraryProjectsEmbeddedResource)"/>
-      <EmbeddedResource Include="@(_LibraryProjectsEmbeddedResource)">
-        <LogicalName>__AndroidLibraryProjects__.zip</LogicalName>
-      </EmbeddedResource>
-    </ItemGroup>
-  </Target>
-
   <Choose>
-    <When Condition=" '$(XenkoPlatform)' == 'Android' Or '$(XenkoPlatform)' == 'UWP' ">
+    <When Condition=" '$(XenkoPlatform)' == 'UWP' ">
       <ItemGroup>
         <Reference Include="System" />
         <Reference Include="System.Core" />

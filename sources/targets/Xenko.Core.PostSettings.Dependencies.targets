@@ -70,12 +70,6 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
-
-    <!-- Android -->
-    <ItemGroup Condition=" '$(XenkoPlatform)' == 'Android' ">
-      <AndroidNativeLibrary Include="@(_XenkoDependencyNativeLib)"/>
-    </ItemGroup>
-
   </Target>
 
   <!--
