@@ -25,11 +25,6 @@
         </Reference>
       </ItemGroup>
     </When>
-    <When Condition=" '$(XenkoPlatform)' == 'iOS'">
-      <ItemGroup>
-        <Reference Include="Xamarin.iOS" />
-      </ItemGroup>
-    </When>
   </Choose>
   <Choose>
     <When Condition=" '$(XenkoGraphicsApi)' == 'Direct3D11' Or '$(XenkoGraphicsApi)' == 'Direct3D12' ">

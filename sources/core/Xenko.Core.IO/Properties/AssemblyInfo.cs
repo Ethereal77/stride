@@ -9,7 +9,3 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Xenko.Engine" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Engine.Step1" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Core.Tests" + Xenko.PublicKeys.Default)]
-
-#if XENKO_PLATFORM_IOS
-[assembly: InternalsVisibleTo("XenkoCoreTests" + Xenko.PublicKeys.Default)]
-#endif

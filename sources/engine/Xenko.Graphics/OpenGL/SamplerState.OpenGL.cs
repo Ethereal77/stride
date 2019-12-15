@@ -1,6 +1,6 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-#if XENKO_GRAPHICS_API_OPENGL 
+#if XENKO_GRAPHICS_API_OPENGL
 using System;
 using Xenko.Core.Mathematics;
 #if XENKO_GRAPHICS_API_OPENGLES
@@ -134,10 +134,8 @@ namespace Xenko.Graphics
                 GL.TexParameter(target, TextureParameterName.TextureMinFilter, hasMipmap ? (int)minFilter : (int)minFilterNoMipmap);
 #endif
 
-#if !XENKO_PLATFORM_IOS
             if (maxAnisotropy != oldSamplerState.maxAnisotropy && GraphicsDevice.HasAnisotropicFiltering)
                 GL.TexParameter(target, (TextureParameterName)OpenTK.Graphics.ES20.ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, Description.MaxAnisotropy);
-#endif
             if (magFilter != oldSamplerState.magFilter)
                 GL.TexParameter(target, TextureParameterName.TextureMagFilter, (int)magFilter);
             if (textureWrapS != oldSamplerState.textureWrapS)
@@ -148,4 +146,4 @@ namespace Xenko.Graphics
     }
 }
 
-#endif 
+#endif

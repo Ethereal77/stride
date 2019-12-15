@@ -7,11 +7,7 @@ namespace Xenko.Navigation
 {
     internal static class NativeInvoke
     {
-#if XENKO_PLATFORM_IOS
-        internal const string Library = "__Internal";
-#else
         internal const string Library = "libxenkonavigation";
-#endif
 
         internal static void PreLoad()
         {

@@ -12,11 +12,5 @@ ilasm /dll /debug /key:..\..\build\paradox.snk  Android\Debug\SharpFont.il
 ildasm /all /out:Android\Release\SharpFont.il Android\Release\SharpFont.dll
 ilasm /dll /pdb /key:..\..\build\paradox.snk Android\Release\SharpFont.il
 
-ildasm /all /out:iOS\Debug\SharpFont.il iOS\Debug\SharpFont.dll
-ilasm /dll /debug /key:..\..\build\paradox.snk iOS\Debug\SharpFont.il
-
-ildasm /all /out:iOS\Release\SharpFont.il iOS\Release\SharpFont.dll
-ilasm /dll /pdb /key:..\..\build\paradox.snk iOS\Release\SharpFont.il
-
 del /s .\*.il
 del /s .\*.res

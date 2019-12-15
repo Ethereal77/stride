@@ -41,54 +41,6 @@ namespace Xenko.SamplesTestServer
         {
             GameTestingSystem.Initialized = true;
 
-            //start logging the iOS device if we have the proper tools avail
-            if (IosTracker.CanProxy())
-            {
-                var loggerProcess = Process.Start(new ProcessStartInfo($"idevicesyslog.exe", "-d")
-                {
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                });
-
-                if (loggerProcess != null)
-                {
-                    loggerProcess.OutputDataReceived += (sender, args) =>
-                    {
-                        try
-                        {
-                            lock (loggerLock)
-                            {
-                                currentTester?.Send(new LogRequest { Message = $"STDIO: {args.Data}" }).Wait();
-                            }
-                        }
-                        catch
-                        {
-                        }
-                    };
-
-                    loggerProcess.ErrorDataReceived += (sender, args) =>
-                    {
-                        try
-                        {
-                            lock (loggerLock)
-                            {
-                                currentTester?.Send(new LogRequest { Message = $"STDERR: {args.Data}" }).Wait();
-                            }
-                        }
-                        catch
-                        {
-                        }
-                    };
-
-                    loggerProcess.BeginOutputReadLine();
-                    loggerProcess.BeginErrorReadLine();
-
-                    new AttachedChildProcessJob(loggerProcess);
-                }
-            }
-
             //Start also adb in case of android device
             var adbPath = AndroidDeviceEnumerator.GetAdbPath();
             if (!string.IsNullOrEmpty(adbPath) && AndroidDeviceEnumerator.ListAndroidDevices().Length > 0)
@@ -254,48 +206,6 @@ namespace Xenko.SamplesTestServer
                                             Process.Start("cmd.exe", $"/C adb shell am force-stop {request.GameAssembly}.{request.GameAssembly}");
 }
                                     };
-                                    lock (processes)
-                                    {
-                                        processes[request.GameAssembly] = currenTestPair;
-                                        testerToGame[socketMessageLayer] = currenTestPair;
-                                    }
-                                    await socketMessageLayer.Send(new LogRequest { Message = "Process created, id: " + process.Id.ToString() });
-                                }
-                                break;
-                            }
-                        case (int)PlatformType.iOS:
-                            {
-                                Process process = null;
-                                var debugInfo = "";
-                                try
-                                {
-                                    Thread.Sleep(5000); //ios processes might be slow to close, we must make sure that we start clean
-                                    var start = new ProcessStartInfo
-                                    {
-                                        FileName = $"idevicedebug.exe",
-                                        Arguments = $"run com.your-company.{request.GameAssembly}",
-                                        UseShellExecute = false
-                                    };
-                                    debugInfo = "Starting process " + start.FileName + " with path " + start.WorkingDirectory;
-                                    process = Process.Start(start);
-                                }
-                                catch (Exception ex)
-                                {
-                                    await socketMessageLayer.Send(new StatusMessageRequest { Error = true, Message = $"Launch exception: {ex.Message} info: {debugInfo}" });
-                                }
-
-                                if (process == null)
-                                {
-                                    await socketMessageLayer.Send(new StatusMessageRequest { Error = true, Message = "Failed to start game process. " + debugInfo });
-                                }
-                                else
-                                {
-                                    lock (loggerLock)
-                                    {
-                                        currentTester = socketMessageLayer;
-                                    }
-
-                                    var currenTestPair = new TestPair { TesterSocket = socketMessageLayer, GameName = request.GameAssembly, Process = process };
                                     lock (processes)
                                     {
                                         processes[request.GameAssembly] = currenTestPair;

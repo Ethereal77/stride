@@ -12,10 +12,6 @@ namespace Xenko.Core.IO
     /// </summary>
     public partial class FileSystemProvider
     {
-#if XENKO_PLATFORM_IOS
-        public bool AutoSetSkipBackupAttribute { get; set; }
-#endif
-
         public override string GetAbsolutePath(string path)
         {
             return ConvertUrlToFullPath(path);
@@ -36,13 +32,6 @@ namespace Xenko.Core.IO
                 throw new InvalidOperationException("Relative path is not allowed in FileSystemProvider.");
             var filename = ConvertUrlToFullPath(url);
             var result = new FileStream(filename, (FileMode)mode, (FileAccess)access, (FileShare)share);
-
-#if XENKO_PLATFORM_IOS
-            if (AutoSetSkipBackupAttribute && (mode == VirtualFileMode.CreateNew || mode == VirtualFileMode.Create || mode == VirtualFileMode.OpenOrCreate))
-            {
-                Foundation.NSFileManager.SetSkipBackupAttribute(filename, true);
-            }
-#endif
 
             return result;
         }

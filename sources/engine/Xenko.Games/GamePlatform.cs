@@ -2,17 +2,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -53,8 +53,6 @@ namespace Xenko.Games
             return new GamePlatformUWP(game);
 #elif XENKO_PLATFORM_ANDROID
             return new GamePlatformAndroid(game);
-#elif XENKO_PLATFORM_IOS
-            return new GamePlatformiOS(game);
 #else
             // Here we cover all Desktop variants: OpenTK, SDL, Winforms,...
             return new GamePlatformWindows(game);
@@ -108,7 +106,7 @@ namespace Xenko.Games
         {
             gameWindow = CreateWindow(gameContext);
 
-            // Register on Activated 
+            // Register on Activated
             gameWindow.Activated += OnActivated;
             gameWindow.Deactivated += OnDeactivated;
             gameWindow.InitCallback = OnInitCallback;
@@ -255,7 +253,7 @@ namespace Xenko.Games
             {
                 if (!string.IsNullOrEmpty(preferredParameters.RequiredAdapterUid) && graphicsAdapter.AdapterUid != preferredParameters.RequiredAdapterUid) continue;
 
-                // Skip adapeters that don't have graphics output 
+                // Skip adapeters that don't have graphics output
                 // but only if no RequiredAdapterUid is provided (OculusVR at init time might be in a device with no outputs)
                 if (graphicsAdapter.Outputs.Length == 0 && string.IsNullOrEmpty(preferredParameters.RequiredAdapterUid))
                 {

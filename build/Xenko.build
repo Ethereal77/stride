@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 Build file used to build Xenko and package it from the command line.
-Example of use: 
+Example of use:
 "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild" Xenko.build /t:Package
 -->
 <Project ToolsVersion="15.0" DefaultTarget="Help" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -20,14 +20,14 @@ Example of use:
   </PropertyGroup>
 
   <UsingTask TaskName="Xenko.GitVersioning.GenerateVersionFile" AssemblyFile="$(XenkoRoot)deps\Xenko.GitVersioning\bin\Debug\net472\Xenko.GitVersioning.dll" />
-  
+
   <Target Name="Help">
     <Message Importance="high" Text="TODO"/>
   </Target>
-  
+
   <!--
   VSIX Xenko plugin
-  Don't forget to build for VS2013 by using MSBuild 12.0, 
+  Don't forget to build for VS2013 by using MSBuild 12.0,
   or if you're using a newer version of MSBuild, pass the flag /p:VisualStudioVersion=12.0 when calling MSBuild in the command line.
   -->
   <Target Name="VSIXPlugin" DependsOnTargets="Restore">
@@ -40,7 +40,7 @@ Example of use:
     <MSBuild Targets="91-VisualStudio\Xenko_VisualStudio_Package;91-VisualStudio\Xenko_VisualStudio_PackageInstall" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);Platform=Mixed Platforms"/>
     <Exec Command='"$(NuGetPath)" pack "$(XenkoRoot)sources\tools\Xenko.VisualStudio.Package\Xenko.VisualStudio.Package.nuspec" -BasePath "$(XenkoRoot)sources\tools\Xenko.VisualStudio.Package" -OutputDirectory "$(XenkoRoot)bin\vsix"' />
   </Target>
-  
+
   <!--
   Package Installer: install-prerequisites.exe
   -->
@@ -57,7 +57,7 @@ Example of use:
     <CallTarget Targets="Package"/>
     <CallTarget Targets="VSIXPlugin"/>
   </Target>
-  
+
   <!--
   Publish Xenko nupkg from this folder to the store
   -->
@@ -83,20 +83,20 @@ Example of use:
     <Error Condition="'$(XenkoStoreApiKey)' == ''" Text="Missing env variable XenkoStoreApiKey"/>
     <Exec Command='"$(NuGetPath)" push ..\bin\vsix\*.nupkg -ApiKey $(XenkoStoreApiKey) -Source $(XenkoStoreUrl) -NoSymbols'/>
   </Target>
-  
+
   <!--
-  Build Xenko: Windows, Android, iOS, Windows 10 (UWP)
+  Build Xenko: Windows, Android, Windows 10 (UWP)
   -->
   <Target Name="Clean">
     <Exec Command="RMDIR /Q /S $(XenkoRoot)\Bin"/>
   </Target>
-  
+
   <!-- Package -->
   <Target Name="PreparePackageBuild">
     <PropertyGroup>
       <BuildProperties>$(BuildProperties);XenkoPublicApi=true;XenkoPackageBuild=true;XenkoSignTool=true</BuildProperties>
     </PropertyGroup>
-	
+
     <ItemGroup>
       <FilesToDeletePackages Include="$(XenkoRoot)bin\packages\*.nupkg"/>
     </ItemGroup>
@@ -108,7 +108,7 @@ Example of use:
     -->
 	<MSBuild Targets="Restore" Projects="$(XenkoRoot)deps\Xenko.GitVersioning\Xenko.GitVersioning.csproj"/>
     <MSBuild Targets="Build" Projects="$(XenkoRoot)deps\Xenko.GitVersioning\Xenko.GitVersioning.csproj"/>
-    
+
     <!-- Create SharedAssemblyInfo.NuGet.cs with Git information (different between official build and internal builds) -->
     <GenerateVersionFile Condition="'$(XenkoOfficialBuild)' == 'true'" RootDirectory="$(XenkoRoot)" VersionFile="sources\shared\SharedAssemblyInfo.cs" GeneratedVersionFile="sources\shared\SharedAssemblyInfo.NuGet.cs" NuGetVersionSuffixOverride="" SpecialVersionGitCommit="true">
       <Output TaskParameter="NuGetVersion" PropertyName="XenkoPackageVersion"/>
@@ -121,7 +121,7 @@ Example of use:
 	<TeamCitySetBuildNumber BuildNumber="$(XenkoPackageVersion)" Condition="'$(TEAMCITY_BUILD_PROPERTIES_FILE)' != '' " />
   </Target>
   <Target Name="Package" DependsOnTargets="PreparePackageBuild;PrerequisitesInstaller;Build;VSIXPlugin"/>
-  
+
   <Target Name="CopyXenkoKey">
     <Copy Condition="'$(XenkoSign)' == 'true' And Exists('$(LOCALAPPDATA)\Xenko\XenkoBuildKey\xenko.snk')" SourceFiles="$(LOCALAPPDATA)\Xenko\XenkoBuildKey\xenko.snk" DestinationFolder="$(MSBuildThisFileDirectory)"/>
   </Target>
@@ -150,7 +150,7 @@ Example of use:
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution)"/>
 	<MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties)"/>
   </Target>
-  
+
   <Target Name="BuildWindows" DependsOnTargets="CopyXenkoKey">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution);XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);XenkoSkipAutoPack=true;XenkoSkipUnitTests=true;XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
@@ -160,7 +160,7 @@ Example of use:
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
-  
+
   <Target Name="BuildWindowsDirect3D12" DependsOnTargets="CopyXenkoKey">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime;XenkoGraphicsApi=Direct3D12"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=Direct3D12;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
@@ -181,11 +181,6 @@ Example of use:
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Android.sln" Properties="$(BuildProperties);XenkoPlatforms=Android;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
 
-  <Target Name="BuildiOS" DependsOnTargets="CopyXenkoKey">
-    <Exec Command='"$(NuGetPath)" restore "$(XenkoSolution).iOS.sln"' />
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).iOS.sln" Properties="$(BuildProperties);XenkoPlatforms=iOS;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target>
-  
   <Target Name="BuildWindowsStore" DependsOnTargets="CopyXenkoKey">
     <!-- Only a warning since build servers might still call this target for old branches -->
     <Warning Text="Windows Store doesn't exist anymore"/>
@@ -201,17 +196,17 @@ Example of use:
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution)"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);XenkoPlatforms=$(XenkoPlatforms);XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
-  
+
   <Target Name="BuildWindowsPhone" DependsOnTargets="CopyXenkoKey">
     <!-- Only a warning since build servers might still call this target for old branches -->
     <Warning Text="Windows Phone doesn't exist anymore"/>
   </Target>
-  
+
   <Target Name="BuildWindowsVulkan" DependsOnTargets="CopyXenkoKey">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime;XenkoGraphicsApi=Vulkan"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=Vulkan;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
-  
+
   <Target Name="BuildLinux" DependsOnTargets="CopyXenkoKey">
     <PropertyGroup>
       <XenkoSolution>$(XenkoSolution).Runtime</XenkoSolution>
@@ -219,7 +214,7 @@ Example of use:
     </PropertyGroup>
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution);XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);XenkoPlatforms=$(XenkoPlatforms);XenkoSkipAutoPack=true;XenkoSkipUnitTests=true;XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
-  </Target> 
+  </Target>
 
   <Target Name="BuildLinuxVulkan" DependsOnTargets="CopyXenkoKey">
     <PropertyGroup>
@@ -228,12 +223,7 @@ Example of use:
     </PropertyGroup>
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution);XenkoGraphicsApi=Vulkan"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);XenkoPlatforms=$(XenkoPlatforms);XenkoGraphicsApi=Vulkan;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target> 
-  
-  <Target Name="BuildmacOS" DependsOnTargets="CopyXenkoKey">
-    <Exec Command='"$(NuGetPath)" restore "$(XenkoSolution).macOS.sln"' />
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).macOS.sln" Properties="$(BuildProperties);Platform=macOS"/>
-  </Target> 
+  </Target>
 
   <Target Name="DownloadXunitRunnerConsole">
     <MakeDir Directories="$(MSBuildThisFileDirectory)packages"/>
@@ -244,7 +234,7 @@ Example of use:
     <Exec Command='"$(NuGetPath)" install xunit.runner.console -Version $(XunitRunnerConsoleVersion)' Condition="!Exists('$(XunitRunnerConsolePathDefault)')" WorkingDirectory="$(MSBuildThisFileDirectory)packages" />
     <Error Text="Could not find xunit.runner at expected location [$(XunitRunnerConsolePathDefault)]" Condition="!Exists('$(XunitRunnerConsolePathDefault)')"/>
   </Target>
-  
+
   <Target Name="RunTestsWindows" DependsOnTargets="DownloadXunitRunnerConsole">
     <!-- By default, enable all known categories -->
     <PropertyGroup>
@@ -254,7 +244,7 @@ Example of use:
 	  <XenkoTestExtraTargets></XenkoTestExtraTargets>
       <XenkoTestExtraTargets Condition="$(XenkoTestCategories.Contains(';GameAndroid;'))">$(XenkoTestExtraTargets);SignAndroidPackage</XenkoTestExtraTargets>
     </PropertyGroup>
-    
+
     <!-- Simple standalone unit tests -->
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';Simple;'))">
       <UnitTest Include="11-CoreRuntime.Tests\Xenko.Core.Tests"/>
@@ -271,7 +261,7 @@ Example of use:
       <UnitTest Include="61-Editor.Tests\Xenko.GameStudio.Tests"/>
       <UnitTest Include="71-XenkoAssets.Tests\Xenko.Assets.Tests2"/>
     </ItemGroup>
-    
+
     <ItemGroup>
       <UnitTestGame Include="21-XenkoRuntime.Tests\Xenko.Engine.Tests.Windows"/>
       <UnitTestGame Include="21-XenkoRuntime.Tests\Xenko.Graphics.Tests.10_0.Windows"/>
@@ -292,7 +282,7 @@ Example of use:
       <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.Physics.Tests.Android"/>
       <UnitTestGameAndroid Include="21-XenkoRuntime.Tests\Xenko.UI.Tests.Android"/>
     </ItemGroup>
-    
+
     <!-- Direct3D11 unit tests -->
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';Game;'))">
       <UnitTest Include="@(UnitTestGame)"/>
@@ -324,25 +314,25 @@ Example of use:
       <UnitTestPrerequisites Include="@(UnitTestGame)"/>
       <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).OpenGLES.sln</Solution></UnitTest>
     </ItemGroup>
-    
+
     <!-- Vulkan unit tests -->
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameVulkan;'))">
       <UnitTestPrerequisites Include="@(UnitTestGame)"/>
       <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).Vulkan.sln</Solution></UnitTest>
     </ItemGroup>
-	
+
 	<!-- Android unit tests -->
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameAndroid;'))">
       <UnitTestPrerequisites Include="@(UnitTestGame)"/>
-      <UnitTest Include="@(UnitTestGameAndroid)"><Solution>$(XenkoSolution).Android.sln</Solution></UnitTest> 
+      <UnitTest Include="@(UnitTestGameAndroid)"><Solution>$(XenkoSolution).Android.sln</Solution></UnitTest>
     </ItemGroup>
-	
+
 	<!-- Samples unit tests -->
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';Samples;'))">
       <UnitTest Include="72-XenkoSamples\Xenko.Samples.Tests"/>
     </ItemGroup>
-    
-    <!-- Compute TargetName and default Solution -->    
+
+    <!-- Compute TargetName and default Solution -->
     <ItemGroup>
       <UnitTestPrerequisites>
         <!-- Replace . into _ (needed for .sln targets) -->
@@ -357,12 +347,12 @@ Example of use:
         <Solution Condition="'%(UnitTest.Solution)' == ''">$(XenkoSolution).sln</Solution>
       </UnitTest>
     </ItemGroup>
-	
+
     <!-- Restore NuGet packages -->
     <Message Importance="High" Text="Restoring NuGet packages"/>
     <Exec Condition="'%(UnitTestPrerequisites.Solution)' != ''" Command='"$(NuGetPath)" restore "%(UnitTestPrerequisites.Solution)"' />
     <Exec Condition="'%(UnitTest.Solution)' != ''" Command='"$(NuGetPath)" restore "%(UnitTest.Solution)"' />
-    
+
     <!-- First, build prerequisites -->
     <Message Importance="High" Text="Building unit test prerequisites from solution %(Solution): @(UnitTestPrerequisites->'%(TargetName)')"/>
     <MSBuild Targets="@(UnitTestPrerequisites->'%(TargetName)')" Projects="%(Solution)" Properties="$(BuildProperties);Platform=Mixed Platforms;DeployExtension=true"/>
@@ -382,7 +372,7 @@ Example of use:
     <Exec Condition="'@(AssembliesToTestDefault)' != ''" Command="&quot;$(XunitRunnerConsolePathDefault)&quot; @(AssembliesToTestDefault->'%(Identity)', ' ')"/>
     <Exec Condition="'@(AssembliesToTestX86)' != ''" Command="&quot;$(XunitRunnerConsolePathX86)&quot; @(AssembliesToTestX86->'%(Identity)', ' ')"/>
   </Target>
-  
+
   <ItemGroup>
     <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Engine.Tests\Xenko.Engine.Tests.$(PlatformToBuild).csproj"/>
     <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Audio.Tests\Xenko.Audio.Tests.$(PlatformToBuild).csproj"/>
@@ -392,7 +382,7 @@ Example of use:
     <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Particles.Tests\Xenko.Particles.Tests.$(PlatformToBuild).csproj"/>
     <MobileUnitTestProject Include="$(XenkoRoot)sources\engine\Xenko.Physics.Tests\Xenko.Physics.Tests.$(PlatformToBuild).csproj"/>
   </ItemGroup>
-  
+
   <ItemGroup>
     <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Engine.Tests\Xenko.Engine.Tests-Signed.apk"/>
     <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Physics.Tests\Xenko.Physics.Tests-Signed.apk"/>
@@ -402,31 +392,29 @@ Example of use:
     <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Input.Tests\Xenko.Input.Tests-Signed.apk"/>
     <MobileUnitTestApk Include="$(XenkoRoot)\Bin\Android\Tests\OpenGLES\Xenko.Particles.Tests\Xenko.Particles.Tests-Signed.apk"/>
   </ItemGroup>
-  
+
   <Target Name="RunTestsMobile" DependsOnTargets="DownloadXunitRunnerConsole" Outputs="%(MobileUnitTestProject.Identity)">
     <PropertyGroup>
       <XenkoRoot>$(MSBuildThisFileDirectory)..\</XenkoRoot>
       <XenkoPlatform></XenkoPlatform>
-      <XenkoPlatform Condition="'$(PlatformToBuild)' == 'iOS'">Platform=iPhone</XenkoPlatform>
       <XenkoPlatform Condition="'$(PlatformToBuild)' == 'Android'">Platform=Android</XenkoPlatform>
       <XenkoBuildOptions></XenkoBuildOptions>
-      <XenkoBuildOptions Condition="'$(PlatformToBuild)' == 'iOS'">ServerAddress=pc13095;ServerUser=virgile;BuildIpa=true;MtouchUseLlvm=true</XenkoBuildOptions>
       <XenkoBuildTargets>Rebuild</XenkoBuildTargets>
       <XenkoBuildTargets Condition="'$(PlatformToBuild)' == 'Android'">SignAndroidPackage</XenkoBuildTargets>
       <XenkoBuildConfig>Release</XenkoBuildConfig>
       <XenkoBuildConfig Condition="'$(PlatformToBuild)' == 'Windows'">Debug</XenkoBuildConfig>
     </PropertyGroup>
-  
+
     <MSBuild Projects ="%(MobileUnitTestProject.Identity)" Targets="SignAndroidPackage"
              Properties="SolutionName=Xenko.Android; SolutionDir=$(MSBuildThisFileDirectory);$(XenkoPlatform);Configuration=$(XenkoBuildConfig);$(XenkoBuildOptions)">
     </MSBuild>
     <Exec IgnoreExitCode="True" Command='taskkill /F /FI "Imagename eq Xenko.Core.Assets.CompilerApp*"' />
-    
+
     <Exec Condition="'$(PlatformToBuild)' == 'Android'" Command="$(XenkoRoot)sources\tools\Xenko.TestRunner\bin\Release\net472\Xenko.TestRunner.exe %(MobileUnitTestApk.Identity)">
       <Output TaskParameter="ExitCode" ItemName="exitCode" />
     </Exec>
   </Target>
-  
+
   <!--
   Package Launcher
   -->
@@ -437,11 +425,11 @@ Example of use:
 
     <!-- Note: we avoid building again if BuildWindows was already ran just before -->
     <Delete Files="@(FilesToDeleteLauncher)"/>
-    
+
     <!-- Generate the nuget package for the launcher application -->
     <Exec Command='"$(NuGetPath)" pack "$(XenkoRoot)sources\launcher\Xenko.LauncherApp\Xenko.LauncherApp.nuspec" -BasePath "$(XenkoRoot)sources\launcher\Xenko.LauncherApp\bin\Release" -OutputDirectory "$(XenkoRoot)bin\launcher"' />
   </Target>
-  
+
   <!--
   Package Installer: XenkoSetup.exe
   -->
@@ -456,7 +444,7 @@ Example of use:
     <PropertyGroup>
       <CustomInstallerNoSpace>$(CustomInstaller.Replace(' ', ''))</CustomInstallerNoSpace>
     </PropertyGroup>
-  
+
     <Delete Files="XenkoSetup$(CustomInstallerNoSpace).exe"/>
     <!-- Make sure it is deleted otherwise Advanced Installer complains (in case previous run didn't complete -->
     <Delete Files="$(XenkoRoot)sources\launcher\Setup\setup-$(CustomInstallerNoSpace).aip"/>
@@ -469,18 +457,18 @@ Example of use:
 
     <!-- Backup store.config -->
     <Copy SourceFiles="$(XenkoRoot)sources\launcher\Xenko.LauncherApp\bin\Release\store.config" DestinationFiles="$(XenkoRoot)sources\launcher\Xenko.LauncherApp\bin\Release\store.config.backup"/>
-    
+
     <!-- Update store.config with additional parameters -->
     <Exec Command='"$(NuGetPath)" sources Add -Name "Xenko $(CustomInstaller)" -Source "$(CustomInstallerStoreUrl)" -ConfigFile "$(XenkoRoot)sources\launcher\Xenko.LauncherApp\bin\Release\store.config"'/>
-	
+
     <!-- Run advanced installer -->
     <Exec Command='"$(AdvancedInstallerPath)" /rebuild "$(XenkoRoot)sources\launcher\Setup\setup-$(CustomInstallerNoSpace).aip"'/>
     <Copy SourceFiles="$(XenkoRoot)sources\launcher\Setup\setup-$(CustomInstallerNoSpace)-SetupFiles\XenkoSetup$(CustomInstallerNoSpace).exe" DestinationFolder="$(MSBuildThisFileDirectory)"/>
     <Delete Files="$(XenkoRoot)sources\launcher\Setup\setup-$(CustomInstallerNoSpace).aip"/>
-	
+
     <!-- Restore store.config -->
     <Copy SourceFiles="$(XenkoRoot)sources\launcher\Xenko.LauncherApp\bin\Release\store.config.backup" DestinationFiles="$(XenkoRoot)Xenko.LauncherApp\bin\Release\store.config"/>
-    <Delete Files="$(XenkoRoot)sources\launcher\Xenko.LauncherApp\bin\Release\store.config.backup"/>	
+    <Delete Files="$(XenkoRoot)sources\launcher\Xenko.LauncherApp\bin\Release\store.config.backup"/>
   </Target>
   <PropertyGroup>
     <!-- Choose proper target to execute -->
@@ -488,7 +476,7 @@ Example of use:
     <PackageInstallerTarget Condition="'$(CustomInstaller)' != ''">PackageInstallerCustom</PackageInstallerTarget>
   </PropertyGroup>
   <Target Name="PackageInstaller" DependsOnTargets="$(PackageInstallerTarget)"/>
-  
+
   <!--
   Package Installer: launcher-prerequisites.exe
   -->
@@ -503,7 +491,7 @@ Example of use:
     <CallTarget Targets="BuildLauncher"/>
     <CallTarget Targets="PackageInstaller"/>
   </Target>
-  
+
   <!--
   Publish Launcher nupkg from this folder to the store
   -->
@@ -511,7 +499,7 @@ Example of use:
     <Error Condition="'$(XenkoStoreApiKey)' == ''" Text="Missing env variable XenkoStoreApiKey"/>
     <Exec Command='"$(NuGetPath)" push ..\bin\launcher\*.nupkg -ApiKey $(XenkoStoreApiKey) -Source $(XenkoStoreUrl) -NoSymbols'/>
   </Target>
-  
+
   <Target Name="BuildLauncher" DependsOnTargets="CopyXenkoKey">
     <Exec Command='"$(NuGetPath)" restore "$(XenkoSolutionLauncher).sln"' />
 	<MSBuild Targets="Build" Projects="$(XenkoSolutionLauncher).sln" Properties="$(BuildProperties);XenkoSignTool=true;Platform=Any CPU"/>

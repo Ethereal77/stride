@@ -90,10 +90,7 @@ namespace Xenko.Core.IO
             ApplicationData = new FileSystemProvider("/data", Path.Combine(PlatformFolders.ApplicationDataDirectory, PlatformFolders.ApplicationDataSubDirectory));
 #endif
             ApplicationCache = new FileSystemProvider("/cache", PlatformFolders.ApplicationCacheDirectory);
-#if XENKO_PLATFORM_IOS
-            // On iOS, we don't want cache folder to be cleared by the OS.
-            ((FileSystemProvider)ApplicationCache).AutoSetSkipBackupAttribute = true;
-#endif
+
             ApplicationRoaming = new FileSystemProvider("/roaming", PlatformFolders.ApplicationRoamingDirectory);
             ApplicationLocal = new FileSystemProvider("/local", PlatformFolders.ApplicationLocalDirectory);
             ApplicationTemporary = new FileSystemProvider("/tmp", PlatformFolders.ApplicationTemporaryDirectory);
@@ -122,7 +119,7 @@ namespace Xenko.Core.IO
             if (provider.RootPath != null)
             {
                if (providers.ContainsKey(provider.RootPath))
-                   throw new InvalidOperationException(string.Format("A Virtual File Provider with the root path \"{0}\" already exists.", provider.RootPath)); 
+                   throw new InvalidOperationException(string.Format("A Virtual File Provider with the root path \"{0}\" already exists.", provider.RootPath));
 
                providers.Add(provider.RootPath, provider);
             }
@@ -202,7 +199,7 @@ namespace Xenko.Core.IO
 
             return result.Provider.DirectoryExists(result.Path);
         }
-        
+
         public static void FileDelete(string path)
         {
             var result = ResolveProvider(path, true);
@@ -229,7 +226,7 @@ namespace Xenko.Core.IO
             var result = ResolveProvider(path, true);
             return result.Provider.FileSize(result.Path);
         }
-        
+
         public static DateTime GetLastWriteTime(string path)
         {
             var result = ResolveProvider(path, true);

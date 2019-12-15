@@ -15,8 +15,7 @@ namespace Xenko.Core.IO
     /// <typeparam name="T">The type of elements in the store.</typeparam>
     public abstract class Store<T> : IDisposable where T : new()
     {
-        // macOS doesn't support Lock/Unlock (https://github.com/dotnet/corefx/issues/5964)
-        private static readonly bool LockEnabled = Platform.Type != PlatformType.macOS;
+        private static readonly bool LockEnabled = true;
 
         protected Stream stream;
 

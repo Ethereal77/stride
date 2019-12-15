@@ -12,9 +12,7 @@ namespace Xenko.Data
         None = 0,
         Windows = 1 << PlatformType.Windows,
         UWP = 1 << PlatformType.UWP,
-        iOS = 1 << PlatformType.iOS,
         Android = 1 << PlatformType.Android,
         Linux = 1 << PlatformType.Linux,
-        macOS = 1 << PlatformType.macOS,
     }
 }

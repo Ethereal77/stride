@@ -34,11 +34,6 @@ namespace Xenko.Assets.Tests2
             { Tuple.Create(PlatformType.Android, AlphaFormat.Mask), PixelFormat.ETC2_RGB_A1 },
             { Tuple.Create(PlatformType.Android, AlphaFormat.Explicit), PixelFormat.ETC2_RGBA },
             { Tuple.Create(PlatformType.Android, AlphaFormat.Interpolated), PixelFormat.ETC2_RGBA },
-
-            { Tuple.Create(PlatformType.iOS, AlphaFormat.None), PixelFormat.ETC1 },
-            { Tuple.Create(PlatformType.iOS, AlphaFormat.Mask), PixelFormat.ETC2_RGB_A1 },
-            { Tuple.Create(PlatformType.iOS, AlphaFormat.Explicit), PixelFormat.ETC2_RGBA },
-            { Tuple.Create(PlatformType.iOS, AlphaFormat.Interpolated), PixelFormat.ETC2_RGBA },
         };
 
         private static void CheckTextureFormat(Game game, string textureUrl, AlphaFormat expectedFormat)

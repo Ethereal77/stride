@@ -75,7 +75,7 @@ namespace FreeImageAPI.Plugins
 		public OpenProc openProc;
 
 		/// <summary>
-		/// Delegate to a function that closes a previosly opened file.
+		/// Delegate to a function that closes a previously opened file.
 		/// </summary>
 		public CloseProc closeProc;
 

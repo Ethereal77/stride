@@ -12,7 +12,7 @@ namespace Xenko.Core.Threading
 {
     public class Dispatcher
     {
-#if XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID
+#if XENKO_PLATFORM_ANDROID
         public static int MaxDegreeOfParallelism = 1;
 #else
         public static int MaxDegreeOfParallelism = Environment.ProcessorCount;
@@ -109,7 +109,7 @@ namespace Xenko.Core.Threading
                 }
             }
         }
-        
+
         public static void ForEach<TItem, TLocal>([NotNull] IReadOnlyList<TItem> collection, [Pooled] Func<TLocal> initializeLocal, [Pooled] Action<TItem, TLocal> action, [Pooled] Action<TLocal> finalizeLocal = null)
         {
             For(0, collection.Count, initializeLocal, (i, local) => action(collection[i], local), finalizeLocal);
@@ -713,7 +713,7 @@ namespace Xenko.Core.Threading
                         caller = new StackFrame(skipFrames++, true).GetMethod();
                     }
                     while (caller.DeclaringType == typeof(Dispatcher));
-                    
+
                     node = nodes.GetOrAdd(Action.Method, key => new DispatcherNode());
                     node.Caller = caller;
                 }

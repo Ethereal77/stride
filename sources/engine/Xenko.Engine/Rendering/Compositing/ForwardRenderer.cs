@@ -112,7 +112,7 @@ namespace Xenko.Rendering.Compositing
         /// </summary>
         /// <remarks>
         /// This is needed by some effects such as particles soft edges.
-        /// 
+        ///
         /// On recent platforms that can bind depth buffer as read-only (<see cref="GraphicsDeviceFeatures.HasDepthAsReadOnlyRT"/>), depth buffer will be used as is. Otherwise, a copy will be generated.
         /// </remarks>
         [DefaultValue(true)]
@@ -146,11 +146,6 @@ namespace Xenko.Rendering.Compositing
                 {
                     logger.Warning("Multisample count of " + (int)MSAALevel + " samples not supported. Falling back to highest supported sample count of " + (int)actualMultisampleCount + " samples.");
                 }
-
-#if XENKO_PLATFORM_IOS
-                // MSAA is not supported on iOS currently because OpenTK doesn't expose "GL.BlitFramebuffer()" on iOS for some reason.
-                actualMultisampleCount = MultisampleCount.None;
-#endif
             }
 
             var camera = Context.GetCurrentCamera();
@@ -241,7 +236,7 @@ namespace Xenko.Rendering.Compositing
             {
                 if (PostEffects.RequiresNormalBuffer)
                 {
-#if XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_IOS
+#if XENKO_PLATFORM_ANDROID
                     renderOutputValidator.Add<NormalTargetSemantic>(PixelFormat.R16G16B16A16_Float);
 #else
                     renderOutputValidator.Add<NormalTargetSemantic>(PixelFormat.R10G10B10A2_UNorm);

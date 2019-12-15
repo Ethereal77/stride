@@ -129,7 +129,7 @@ namespace FreeImageAPI.Plugins
 	public delegate IntPtr OpenProc(ref FreeImageIO io, fi_handle handle, bool read);
 
 	/// <summary>
-	/// Delegate to a function that closes a previosly opened file.
+	/// Delegate to a function that closes a previously opened file.
 	/// </summary>
 	public delegate void CloseProc(ref FreeImageIO io, fi_handle handle, IntPtr data);
 

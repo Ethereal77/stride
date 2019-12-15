@@ -74,7 +74,7 @@ namespace Xenko.Graphics
         /// <userdoc>
         /// The desired back buffer width.
         /// Might be overriden depending on actual device resolution and/or ratio.
-        /// On Windows, it will be the window size. On Android/iOS, it will be the off-screen target resolution.
+        /// On Windows, it will be the window size. On Android, it will be the off-screen target resolution.
         /// </userdoc>
         [DataMember(0)]
         public int DefaultBackBufferWidth = 1280;
@@ -85,7 +85,7 @@ namespace Xenko.Graphics
         /// <userdoc>
         /// The desired back buffer height.
         /// Might be overriden depending on actual device resolution and/or ratio.
-        /// On Windows, it will be the window size. On Android/iOS, it will be the off-screen target resolution.
+        /// On Windows, it will be the window size. On Android, it will be the off-screen target resolution.
         /// </userdoc>
         [DataMember(10)]
         public int DefaultBackBufferHeight = 720;

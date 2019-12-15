@@ -7,11 +7,7 @@ namespace Xenko.VirtualReality
 {
     internal static class NativeInvoke
     {
-#if XENKO_PLATFORM_IOS
-        internal const string Library = "__Internal";
-#else
         internal const string Library = "libxenkovr";
-#endif
 
         internal static void PreLoad()
         {

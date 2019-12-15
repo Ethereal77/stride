@@ -15,7 +15,7 @@ namespace Xenko.Core.AssemblyProcessor
     {
         public bool Process(AssemblyProcessorContext context)
         {
-            if (context.Platform != Core.PlatformType.Android && context.Platform != Core.PlatformType.iOS)
+            if (context.Platform != Core.PlatformType.Android)
                 return false;
 
             bool changed = false;

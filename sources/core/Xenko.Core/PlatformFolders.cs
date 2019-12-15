@@ -56,9 +56,9 @@ namespace Xenko.Core
 
             set
             {
-                if (virtualFileSystemInitialized) 
-                    throw new InvalidOperationException("ApplicationDataSubDirectory cannot be modified after the VirtualFileSystem has been initialized."); 
-                
+                if (virtualFileSystemInitialized)
+                    throw new InvalidOperationException("ApplicationDataSubDirectory cannot be modified after the VirtualFileSystem has been initialized.");
+
                 applicationDataSubDirectory = value;
             }
         }
@@ -100,10 +100,6 @@ namespace Xenko.Core
             return directory;
 #elif XENKO_PLATFORM_UWP
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
-#elif XENKO_PLATFORM_IOS
-            var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "Library", "Local");
-            Directory.CreateDirectory(directory);
-            return directory;
 #else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "local");
@@ -121,10 +117,6 @@ namespace Xenko.Core
             return directory;
 #elif XENKO_PLATFORM_UWP
             return Windows.Storage.ApplicationData.Current.RoamingFolder.Path;
-#elif XENKO_PLATFORM_IOS
-            var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "Library", "Roaming");
-            Directory.CreateDirectory(directory);
-            return directory;
 #else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "roaming");
@@ -140,8 +132,6 @@ namespace Xenko.Core
             var directory = Path.Combine(PlatformAndroid.Context.FilesDir.AbsolutePath, "cache");
 #elif XENKO_PLATFORM_UWP
             var directory = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "cache");
-#elif XENKO_PLATFORM_IOS
-            var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "Library", "Caches");
 #else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "cache");
@@ -172,8 +162,6 @@ namespace Xenko.Core
             return PlatformAndroid.Context.CacheDir.AbsolutePath;
 #elif XENKO_PLATFORM_UWP
             return Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
-#elif XENKO_PLATFORM_IOS
-            return Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "tmp");
 #else
             return Path.GetTempPath();
 #endif
@@ -205,8 +193,6 @@ namespace Xenko.Core
         {
 #if XENKO_PLATFORM_ANDROID
             return Android.OS.Environment.ExternalStorageDirectory.AbsolutePath + "/Android/data/" + PlatformAndroid.Context.PackageName + "/data";
-#elif XENKO_PLATFORM_IOS
-            return Foundation.NSBundle.MainBundle.BundlePath + "/data";
 #elif XENKO_PLATFORM_UWP
             return Windows.ApplicationModel.Package.Current.InstalledLocation.Path + @"\data";
 #else

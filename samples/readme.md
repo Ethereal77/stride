@@ -3,7 +3,7 @@
 - Each sample must be a **self-contained Xenko Game Package, created with GameStudio**
 	- It means that a sample package must not reference assets/files outside its directory
 - A sample package must use a package name that is unique and can be replaced by a simple regex in files using it (.csproj, .cs ...etc.). For example: `SimpleAudio`
-- We are currently using the following categories as directories to group samples under a same category 
+- We are currently using the following categories as directories to group samples under a same category
 	- `Audio` : All samples related to audio
 	- `Games` : All small game samples
 	- `Graphics` : All graphics samples (display 3d models, sprites, text...etc.)
@@ -18,12 +18,6 @@
 			- `Resources` : contains resource files (.jpg, .fbx ... files)
 			- `SimpleAudio.Android` : Android executable
 			- `SimpleAudio.Game` : Common Game code
-			- `SimpleAudio.iOS` : iOS executable
 			- `SimpleAudio.Windows` : Windows Desktop executable
 			- `SimpleAudio.xkpkg` : Package description
 			- `SimpleAudio.xktpl` : Package Template description
-
-
-
-
-

@@ -38,13 +38,6 @@ namespace Xenko.Core
         /// </summary>
         Android,
 
-#pragma warning disable SA1300 // Element must begin with upper-case letter
-        /// <summary>
-        /// The iOS.
-        /// </summary>
-        iOS,
-#pragma warning restore SA1300 // Element must begin with upper-case letter
-
         /// <summary>
         /// The Universal Windows Platform (UWP).
         /// </summary>
@@ -54,13 +47,6 @@ namespace Xenko.Core
         /// The Linux OS.
         /// </summary>
         Linux,
-
-#pragma warning disable SA1300 // Element must begin with upper-case letter
-        /// <summary>
-        /// macOS
-        /// </summary>
-        macOS,
-#pragma warning restore SA1300 // Element must begin with upper-case letter
 
         /// <summary>
         /// The Universal Windows Platform (UWP). Please use <see cref="UWP"/> intead.

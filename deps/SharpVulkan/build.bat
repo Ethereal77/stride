@@ -16,13 +16,6 @@ if %ERRORLEVEL% neq 0 (
 	EXIT /B %ERRORLEVEL%
 )
 
-msbuild /p:Configuration="%1" /p:SharpVulkanPlatformDefine=PLATFORM_MACOS /p:SharpVulkanPlatformName=macOS SharpVulkan.csproj /restore
-if %ERRORLEVEL% neq 0 (
-	echo Error during compilation
-	popd
-	EXIT /B %ERRORLEVEL%
-)
-
 msbuild /p:Configuration="%1" /p:SharpVulkanPlatformName=Other SharpVulkan.csproj /restore
 if %ERRORLEVEL% neq 0 (
 	echo Error during compilation
@@ -34,5 +27,4 @@ popd
 
 rem Copying assemblies
 copy ..\..\externals\SharpVulkan\Source\SharpVulkan\bin\%1\Windows\*.* Windows
-copy ..\..\externals\SharpVulkan\Source\SharpVulkan\bin\%1\macOS\*.* macOS
 copy ..\..\externals\SharpVulkan\Source\SharpVulkan\bin\%1\Other\*.* Other

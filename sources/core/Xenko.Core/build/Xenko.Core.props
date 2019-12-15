@@ -1,13 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  
-  <!-- Support for TargetFramework xamarinios10 -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'xamarinios10' ">
-    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
-    <TargetFrameworkIdentifier>Xamarin.iOS</TargetFrameworkIdentifier>
-    <XenkoPlatformDefines>XENKO_PLATFORM_MONO_MOBILE;XENKO_PLATFORM_IOS;NET45</XenkoPlatformDefines>
-    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <LanguageTargets>$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets</LanguageTargets>
-  </PropertyGroup>
+
   <!-- Support for TargetFramework monoandroid81 -->
   <PropertyGroup Condition=" '$(TargetFramework)' == 'monoandroid81' ">
     <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
@@ -31,5 +23,5 @@
     <LanguageTargets>$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets</LanguageTargets>
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
   </PropertyGroup>
-  
+
 </Project>

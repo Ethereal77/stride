@@ -30,12 +30,7 @@ namespace Xenko.Graphics.SDL
             int res = SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_PROFILE_MASK, (int)SDL.SDL_GLprofile.SDL_GL_CONTEXT_PROFILE_CORE);
             // 4.2 is the lowest version we support.
             res = SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-#if XENKO_PLATFORM_MACOS
-            res = SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MINOR_VERSION, 1);
-#else
             res = SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#endif
-
 #endif
         }
 
@@ -57,7 +52,7 @@ namespace Xenko.Graphics.SDL
 
             if (SdlHandle == IntPtr.Zero)
             {
-                throw new Exception("Cannot allocate SDL Window: " + SDL.SDL_GetError()); 
+                throw new Exception("Cannot allocate SDL Window: " + SDL.SDL_GetError());
             }
             else
             {
@@ -74,8 +69,6 @@ namespace Xenko.Graphics.SDL
 #elif XENKO_PLATFORM_LINUX
                     Handle = info.info.x11.window;
                     Display = info.info.x11.display;
-#elif XENKO_PLATFORM_MACOS
-                    Handle = info.info.cocoa.window;
 #endif
                 }
                 Application.RegisterWindow(this);
@@ -671,7 +664,7 @@ namespace Xenko.Graphics.SDL
                 Handle = IntPtr.Zero;
             }
         }
-  
+
         // This code added to correctly implement the disposable pattern.
         public void Dispose()
         {

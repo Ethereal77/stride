@@ -433,23 +433,10 @@ namespace Xenko.GameStudio
 
                             extraProperties.Add("SolutionPlatform", "Android");
                             break;
-                        case PlatformType.iOS:
-                            platformName = "iPhone";
-                            extraProperties.Add("SolutionPlatform", "iPhone");
-                            break;
 
                         case PlatformType.Linux:
                             platformName = "Linux";
                             extraProperties.Add("SolutionPlatform", "Linux");
-                            if (XenkoEditorSettings.UseCoreCLR.GetValue())
-                            {
-                                configuration = "CoreCLR_" + configuration;
-                            }
-                            break;
-
-                        case PlatformType.macOS:
-                            platformName = "macOS";
-                            extraProperties.Add("SolutionPlatform", "macOS");
                             if (XenkoEditorSettings.UseCoreCLR.GetValue())
                             {
                                 configuration = "CoreCLR_" + configuration;
@@ -529,7 +516,6 @@ namespace Xenko.GameStudio
 
                             break;
                         case PlatformType.Linux:
-                        case PlatformType.macOS:
                             {
                                 // Sanity check to verify executable was compiled properly
                                 if (string.Equals(Path.GetExtension(assemblyPath), ".exe", StringComparison.InvariantCultureIgnoreCase))

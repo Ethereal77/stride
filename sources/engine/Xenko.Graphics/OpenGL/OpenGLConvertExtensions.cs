@@ -1,6 +1,6 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-#if XENKO_GRAPHICS_API_OPENGL 
+#if XENKO_GRAPHICS_API_OPENGL
 using System;
 using OpenTK.Graphics;
 #if XENKO_GRAPHICS_API_OPENGLES
@@ -254,12 +254,8 @@ namespace Xenko.Graphics
                     if (!graphicsDevice.HasExtTextureFormatBGRA8888)
                         throw new NotSupportedException();
 
-                    // It seems iOS and Android expects different things
-#if XENKO_PLATFORM_IOS
-                    internalFormat = PixelInternalFormat.Rgba;
-#else
+                    // It seems Android expects different things
                     internalFormat = (PixelInternalFormat)ExtTextureFormatBgra8888.BgraExt;
-#endif
                     format = (PixelFormatGl)ExtTextureFormatBgra8888.BgraExt;
 #else
                     internalFormat = PixelInternalFormat.Rgba;
@@ -276,7 +272,7 @@ namespace Xenko.Graphics
                     break;
 #if XENKO_GRAPHICS_API_OPENGLCORE
                 case PixelFormat.B8G8R8A8_UNorm_SRgb:
-                    // TODO: Check on iOS/Android and OpenGL 3
+                    // TODO: Check on Android and OpenGL 3
                     internalFormat = PixelInternalFormat.Srgb8Alpha8;
                     format = PixelFormatGl.Bgra;
                     type = PixelType.UnsignedByte;
@@ -494,64 +490,7 @@ namespace Xenko.Graphics
                     type = PixelType.Float;
                     pixelSize = 4;
                     break;
-#if XENKO_PLATFORM_IOS
-                case PixelFormat.PVRTC_4bpp_RGB:
-                    internalFormat = (PixelInternalFormat)ImgTextureCompressionPvrtc.CompressedRgbPvrtc4Bppv1Img;
-                    format = (PixelFormatGl)ImgTextureCompressionPvrtc.CompressedRgbPvrtc4Bppv1Img;
-                    compressed = true;
-                    pixelSize = 4;
-                    type = PixelType.UnsignedByte;
-                    break;
-                case PixelFormat.PVRTC_2bpp_RGB:
-                    internalFormat = (PixelInternalFormat)ImgTextureCompressionPvrtc.CompressedRgbPvrtc2Bppv1Img;
-                    format = (PixelFormatGl)ImgTextureCompressionPvrtc.CompressedRgbPvrtc2Bppv1Img;
-                    compressed = true;
-                    pixelSize = 2;
-                    type = PixelType.UnsignedByte;
-                    break;
-                case PixelFormat.PVRTC_4bpp_RGBA:
-                    internalFormat = (PixelInternalFormat)ImgTextureCompressionPvrtc.CompressedRgbaPvrtc4Bppv1Img;
-                    format = (PixelFormatGl)ImgTextureCompressionPvrtc.CompressedRgbaPvrtc4Bppv1Img;
-                    compressed = true;
-                    pixelSize = 4;
-                    type = PixelType.UnsignedByte;
-                    break;
-                case PixelFormat.PVRTC_2bpp_RGBA:
-                    internalFormat = (PixelInternalFormat)ImgTextureCompressionPvrtc.CompressedRgbaPvrtc2Bppv1Img;
-                    format = (PixelFormatGl)ImgTextureCompressionPvrtc.CompressedRgbaPvrtc2Bppv1Img;
-                    compressed = true;
-                    pixelSize = 2;
-                    type = PixelType.UnsignedByte;
-                    break;
-                case PixelFormat.PVRTC_4bpp_RGB_SRgb:
-                    internalFormat = (PixelInternalFormat)ExtPvrtcSrgb.CompressedSrgbPvrtc4Bppv1Ext;
-                    format = (PixelFormatGl)ExtPvrtcSrgb.CompressedSrgbPvrtc4Bppv1Ext;
-                    compressed = true;
-                    pixelSize = 4;
-                    type = PixelType.UnsignedByte;
-                    break;
-                case PixelFormat.PVRTC_2bpp_RGB_SRgb:
-                    internalFormat = (PixelInternalFormat)ExtPvrtcSrgb.CompressedSrgbPvrtc2Bppv1Ext;
-                    format = (PixelFormatGl)ExtPvrtcSrgb.CompressedSrgbPvrtc2Bppv1Ext;
-                    compressed = true;
-                    pixelSize = 2;
-                    type = PixelType.UnsignedByte;
-                    break;
-                case PixelFormat.PVRTC_4bpp_RGBA_SRgb:
-                    internalFormat = (PixelInternalFormat)ExtPvrtcSrgb.CompressedSrgbAlphaPvrtc4Bppv1Ext;
-                    format = (PixelFormatGl)ExtPvrtcSrgb.CompressedSrgbAlphaPvrtc4Bppv1Ext;
-                    compressed = true;
-                    pixelSize = 4;
-                    type = PixelType.UnsignedByte;
-                    break;
-                case PixelFormat.PVRTC_2bpp_RGBA_SRgb:
-                    internalFormat = (PixelInternalFormat)ExtPvrtcSrgb.CompressedSrgbAlphaPvrtc2Bppv1Ext;
-                    format = (PixelFormatGl)ExtPvrtcSrgb.CompressedSrgbAlphaPvrtc2Bppv1Ext;
-                    compressed = true;
-                    pixelSize = 2;
-                    type = PixelType.UnsignedByte;
-                    break;
-#elif XENKO_GRAPHICS_API_OPENGLES
+#if XENKO_GRAPHICS_API_OPENGLES
                 // Desktop OpenGLES
                 case PixelFormat.ETC1:
                     // TODO: Runtime check for extension?
@@ -588,5 +527,5 @@ namespace Xenko.Graphics
         }
     }
 }
- 
+
 #endif

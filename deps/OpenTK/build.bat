@@ -20,9 +20,3 @@ msbuild %opentk%\OpenTK.Android.sln /Property:Configuration=Release;Platform="An
 if not exist Android mkdir Android
 copy /Y %opentk%\Binaries\Android\Release\OpenTK-1.1.dll Android
 copy /Y %opentk%\Binaries\Android\Release\OpenTK-1.1.dll.mdb Android
-
-REM iOS
-msbuild %opentk%\OpenTK.iOS.sln /Property:Configuration=Release;Platform="Any CPU"
-if not exist iOS mkdir iOS
-copy /Y %opentk%\Binaries\iOS\Release\OpenTK-1.1.dll iOS
-copy /Y %opentk%\Binaries\iOS\Release\OpenTK-1.1.dll.mdb iOS

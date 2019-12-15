@@ -262,7 +262,7 @@ namespace Xenko.Core.Serialization.Serializers
 
         public override void Initialize(SerializerSelector serializerSelector)
         {
-            // Use Marshal SizeOf to avoid AOT issues on iOS
+            // Use Marshal SizeOf to avoid AOT issues
             enumSize = Marshal.SizeOf(Enum.GetUnderlyingType(typeof(T)));
         }
 

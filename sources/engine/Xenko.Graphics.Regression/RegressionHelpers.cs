@@ -35,7 +35,7 @@ namespace Xenko.Graphics.Regression
         SendImage = 1,
         RequestImageComparisonStatus = 2,
     }
-    
+
     public class PlatformPermutator
     {
         public static ImageTestResultConnection GetDefaultImageTestResultConnection()
@@ -63,10 +63,6 @@ namespace Xenko.Graphics.Regression
             result.Platform = "Android";
             result.DeviceName = Android.OS.Build.Manufacturer + " " + Android.OS.Build.Model;
             result.Serial = Android.OS.Build.Serial ?? "Unknown";
-#elif XENKO_PLATFORM_IOS
-            result.Platform = "iOS";
-            result.DeviceName = iOSDeviceType.Version.ToString();
-            result.Serial = UIKit.UIDevice.CurrentDevice.Name;
 #elif XENKO_PLATFORM_UWP
             result.Platform = "UWP";
             var deviceInfo = new EasClientDeviceInformation();
@@ -101,8 +97,6 @@ namespace Xenko.Graphics.Regression
                     return "Windows_OpenGLES";
                 case TestPlatform.Android:
                     return "Android";
-                case TestPlatform.Ios:
-                    return "IOS";
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -112,8 +106,6 @@ namespace Xenko.Graphics.Regression
         {
 #if XENKO_PLATFORM_ANDROID
             return TestPlatform.Android;
-#elif XENKO_PLATFORM_IOS
-            return TestPlatform.Ios;
 #elif XENKO_GRAPHICS_API_NULL
             return TestPlatform.None;
 #elif XENKO_GRAPHICS_API_DIRECT3D
@@ -184,7 +176,6 @@ namespace Xenko.Graphics.Regression
         WindowsOgl,
         WindowsOgles,
         WindowsVulkan,
-        Android,
-        Ios
+        Android
     }
 }

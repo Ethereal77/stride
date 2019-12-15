@@ -12,11 +12,7 @@ namespace Xenko.Audio
         public static AudioEngine NewAudioEngine(AudioDevice device = null, AudioLayer.DeviceFlags deviceFlags = AudioLayer.DeviceFlags.None)
         {
             AudioEngine engine = null;
-#if XENKO_PLATFORM_IOS
-            engine = new AudioEngineIos();
-#else
             engine = new AudioEngine(device);
-#endif
             engine.InitializeAudioEngine(deviceFlags);
             return engine;
         }

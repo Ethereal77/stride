@@ -95,7 +95,6 @@ namespace Xenko.Games
 
         public override void DeviceChanged(GraphicsDevice currentDevice, GraphicsDeviceInformation deviceInformation)
         {
-            // TODO: Check when it needs to be disabled on iOS (OpenGL)?
             // Force to resize the gameWindow
             //gameWindow.Resize(deviceInformation.PresentationParameters.BackBufferWidth, deviceInformation.PresentationParameters.BackBufferHeight);
         }

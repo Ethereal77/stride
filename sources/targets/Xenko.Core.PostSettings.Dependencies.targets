@@ -5,7 +5,7 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.ssdeps; $(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);_XenkoRegisterDependenciesOutputs</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
-  <!-- 
+  <!--
   *****************************************************************************************************************************
   Dependencies reading (from .ssdeps)
   *****************************************************************************************************************************
@@ -58,14 +58,14 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
+  <!--
   *****************************************************************************************************************************
   Native libraries setup (from .ssdeps)
   *****************************************************************************************************************************
   -->
   <Target Name="_XenkoSetupNativeLibraries" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="'$(XenkoDependenciesCopy)' != 'false'">
-    <!-- Windows, UWP, Linux & macOS -->
-    <ItemGroup Condition=" '$(XenkoPlatform)' == '' Or '$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux' Or '$(XenkoPlatform)' == 'macOS' Or '$(XenkoPlatform)' == 'UWP' ">
+    <!-- Windows, UWP, Linux -->
+    <ItemGroup Condition=" '$(XenkoPlatform)' == '' Or '$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux' Or '$(XenkoPlatform)' == 'UWP' ">
       <None Include="@(_XenkoDependencyNativeLib)">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -76,25 +76,9 @@
       <AndroidNativeLibrary Include="@(_XenkoDependencyNativeLib)"/>
     </ItemGroup>
 
-    <!--iOS -->
-    <ItemGroup Condition=" '$(XenkoPlatform)' == 'iOS' ">
-      <!-- strip any "lib" prefix and populate the LibraryName value -->
-      <_XenkoDependencyNativeLib>
-        <LibraryName>$([System.Text.RegularExpressions.Regex]::Match('%(Filename)', `(lib)*(.+)`).get_Groups().get_Item(2).ToString())</LibraryName>
-      </_XenkoDependencyNativeLib>
-
-      <None Include="@(_XenkoDependencyNativeLib)">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-  
-    <PropertyGroup Condition=" '$(XenkoPlatform)' == 'iOS' ">
-      <MtouchExtraArgsLibs>$(XenkoMTouchExtras) -L"%24{ProjectDir}" @(_XenkoDependencyNativeLib->'-l%(LibraryName) "%24{ProjectDir}/%(Filename)%(Extension)"',' ')</MtouchExtraArgsLibs>
-      <MtouchExtraArgs>$(MtouchExtraArgs) --compiler=clang -cxx -gcc_flags '-lstdc++ $(MtouchExtraArgsLibs)'</MtouchExtraArgs>
-    </PropertyGroup>
   </Target>
 
-  <!-- 
+  <!--
   *****************************************************************************************************************************
   Dependencies generation (to .ssdeps)
   *****************************************************************************************************************************
@@ -125,7 +109,7 @@
         <Type>NativeLib</Type>
         <Destination>$(OutDir)%(TargetPath)</Destination>
       </_XenkoDependencyToCopy>
-      
+
       <_XenkoDependencyToCopy Remove="@(_XenkoNativeLibAssigned)" Condition=" '$(XenkoPackageBuild)' == 'true' And '%(_XenkoNativeLibAssigned.Extension)' == '.pdb' "/>
 
       <_XenkoDependencyToCopy>

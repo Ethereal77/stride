@@ -57,25 +57,6 @@
     </Reference>-->
   </ItemGroup>
 
-  <!-- Override PostSettings target CopyXenkoNativeLibraries. 
-       Copy the libcore.a library to the project root directory for future native link. -->
-  <Target Name="CopyXenkoNativeLibraries" Condition=" '$(XenkoPlatform)' == 'iOS' and '$(OutputType)' == 'Exe'">
-    <Copy SourceFiles="$(XenkoPackageXenkoPlatformBin)\libcore.a" DestinationFolder="$(ProjectDir)"/>
-  </Target>
-  
-  <!-- Override PostSettings target CopyXenkoNativeLibraries. 
-       Copy the libfreetype.a library to the project root directory for future native link. -->
-  <Target Name="CopyXenkoNativeLibraries" Condition=" '$(XenkoPlatform)' == 'iOS' and '$(OutputType)' == 'Exe'">
-    <Copy SourceFiles="$(XenkoPackageXenkoPlatformBin)\libfreetype.a" DestinationFolder="$(ProjectDir)"/>
-  </Target>
-  
-  <!-- On Windows platform automatically add the following references -->
-  <ItemGroup Condition=" '$(XenkoPlatform)' == 'iOS' ">
-    <!--<Reference Include="AsyncBridge">
-      <HintPath>$(XenkoSdkDir)deps\AsyncBridge\AsyncBridge.Android.dll</HintPath>
-    </Reference>-->
-  </ItemGroup>
-
   <!-- On Windows platform automatically add the following references -->
   <ItemGroup Condition="$(XenkoPlatform) == 'Windows'">
 
@@ -85,7 +66,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="WindowsBase" />
     <Reference Include="System.Xaml" />
-    
+
     <Content Include="$(XenkoPackageXenkoPlatformBin)\x86\freetype.dll">
       <Link>x86\freetype.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

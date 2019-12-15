@@ -18,7 +18,7 @@ Folders and projects layout
    Micro-threading library based on C# 5.0 async (a.k.a. stackless programming)
 * __Xenko.Core.AssemblyProcessor__:
    Internal tool used to patch assemblies to add various features, such as Serialization auto-generation, various memory/pinning operations, module initializers, etc...
-   
+
 ### presentation ###
 
 * __Xenko.Core.Presentation__: WPF UI library (themes, controls such as propertygrid, behaviors, etc...)
@@ -41,7 +41,7 @@ and used by most projects.
 
 ### targets ###
 
-* MSBuild target files to create easily cross-platform solutions (Android, iOS, WinRT, WinPhone, etc...), and define behaviors and targets globally. Extensible.
+* MSBuild target files to create easily cross-platform solutions (Android, WinRT, WinPhone, etc...), and define behaviors and targets globally. Extensible.
 
 ----------
 

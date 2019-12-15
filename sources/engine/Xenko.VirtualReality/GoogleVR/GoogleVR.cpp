@@ -1,14 +1,10 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if defined(DONT_BUILD_FOR_NOW) && (defined(ANDROID) || defined(IOS)) || !defined(__clang__)
+#if defined(DONT_BUILD_FOR_NOW) && defined(ANDROID) || !defined(__clang__)
 
 #if !defined(__clang__)
 #define size_t unsigned long //shutup a error on resharper
-#endif
-
-#if defined(IOS)
-#define NP_STATIC_LINKING
 #endif
 
 #include "../../../common/core/Xenko.Core.Native/CoreNative.h"
@@ -170,7 +166,7 @@ extern "C" {
 
 			if (gGvrContext == NULL) return 4;
 		}
-		
+
 		NP_LOAD(gGvrLibrary, gvr_get_maximum_effective_render_target_size);
 		NP_CHECK(gvr_get_maximum_effective_render_target_size, return 5);
 
@@ -285,7 +281,7 @@ extern "C" {
 		NP_CALL(gvr_clear_error, gGvrContext);
 		NP_CALL(gvr_buffer_spec_set_depth_stencil_format, bufferSpec, GVR_DEPTH_STENCIL_FORMAT_NONE);
 		if (NP_CALL(gvr_get_error, gGvrContext) != GVR_ERROR_NONE) return false;
-	
+
 		NP_CALL(gvr_clear_error, gGvrContext);
 		const gvr_buffer_spec* specs[] = { bufferSpec };
 		xnGvr_swap_chain = NP_CALL(gvr_swap_chain_create, gGvrContext, specs, 1);
@@ -302,9 +298,7 @@ extern "C" {
 
 	void xnGvrGetPerspectiveMatrix(int eyeIndex, float near_clip, float far_clip, gvr_mat4f* outResult)
 	{
-#ifdef IOS
 		//eyeIndex = eyeIndex == 0 ? 1 : 0;
-#endif
 
 		auto fov = NP_CALL(gvr_buffer_viewport_get_source_fov, eyeIndex == 0 ? xnGvr_LeftVieport : xnGvr_RightVieport);
 		float x_left = -tan(fov.left * M_PI / 180.0f) * near_clip;
@@ -319,9 +313,9 @@ extern "C" {
 		const auto C = (near_clip + far_clip) / (near_clip - far_clip);
 		const auto D = (2 * near_clip * far_clip) / (near_clip - far_clip);
 
-		for (auto i = 0; i < 4; ++i) 
+		for (auto i = 0; i < 4; ++i)
 		{
-			for (auto j = 0; j < 4; ++j) 
+			for (auto j = 0; j < 4; ++j)
 			{
 				outResult->m[i][j] = 0.0f;
 			}
@@ -346,9 +340,7 @@ extern "C" {
 
 	void xnGvrGetEyeMatrix(int eyeIndex, float* outMatrix)
 	{
-#ifdef IOS
 		//eyeIndex = eyeIndex == 0 ? 1 : 0;
-#endif
 
 		auto gvrMat4 = reinterpret_cast<gvr_mat4f*>(outMatrix);
 		*gvrMat4 = NP_CALL(gvr_get_eye_from_head_matrix, gGvrContext, eyeIndex);
@@ -430,7 +422,7 @@ extern "C" {
 		GLint indexBuffer;
 		NP_CALL(glGetIntegerv, GL_ELEMENT_ARRAY_BUFFER_BINDING, &indexBuffer);
 
-		NP_CALL(gvr_clear_error, gGvrContext);		
+		NP_CALL(gvr_clear_error, gGvrContext);
 		gvr_mat4f* gvrMat4 = reinterpret_cast<gvr_mat4f*>(headMatrix);
 		NP_CALL(gvr_frame_submit, &frame, xnGvr_ViewportsList, *gvrMat4);
 		auto err = NP_CALL(gvr_get_error, gGvrContext);
@@ -438,7 +430,7 @@ extern "C" {
 		NP_CALL(glViewport, viewport[0], viewport[1], viewport[2], viewport[3]);
 
 		NP_CALL(glColorMask, masks[0], masks[1], masks[2], masks[3]);
-		
+
 		if (scissor)
 		{
 			NP_CALL(glEnable, GL_SCISSOR_TEST);

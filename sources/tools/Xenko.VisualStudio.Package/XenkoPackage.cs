@@ -31,7 +31,7 @@ namespace Xenko.VisualStudio
     ///  Quick and temporary VS package to allow platform switch for Xenko.
     ///  This code needs to be largely refactored and correctly designed.
     ///  - alex
-    /// 
+    ///
     ///     This is the class that implements the package exposed by this assembly.
     ///     The minimum requirement for a class to be considered a valid package for Visual Studio
     ///     is to implement the IVsPackage interface and register itself with the shell.
@@ -103,7 +103,7 @@ namespace Xenko.VisualStudio
         {
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", ToString()));
         }
-        
+
         #region Package Members
 
         /// <summary>
@@ -206,7 +206,6 @@ namespace Xenko.VisualStudio
             if (configurationLock || newConfiguration == null)
                 return;
 
-            // TODO: Intercept Xamarin more gracefully. It tries to to set platform to "Any Cpu" for android and "iPhone"/"iPhoneSimulator" for iOS.
             foreach (System.Diagnostics.StackFrame stackFrame in new StackTrace().GetFrames())
             {
                 var method = stackFrame.GetMethod();
@@ -286,7 +285,7 @@ namespace Xenko.VisualStudio
         }
 
         private void UpdateStartupProjectFromConfiguration()
-        { 
+        {
             var solution = (IVsSolution)GetGlobalService(typeof(IVsSolution));
             var buildManager = (IVsSolutionBuildManager)GetGlobalService(typeof(IVsSolutionBuildManager));
             var dte = (DTE)GetService(typeof(DTE));

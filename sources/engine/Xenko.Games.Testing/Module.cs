@@ -21,7 +21,7 @@ namespace Xenko.Games.Testing
                 await Task.Delay(20000);
                 if (!GameTestingSystem.Initialized)
                 {
-#if XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_WINDOWS_DESKTOP
+#if XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_WINDOWS_DESKTOP
                     Console.WriteLine(@"FATAL: Test launch timeout. Aborting.");
 #endif
                     GameTestingSystem.Quit();
@@ -30,7 +30,7 @@ namespace Xenko.Games.Testing
 
             //quit after 10 seconds in any case
             Game.GameStarted += (sender, args) =>
-            {              
+            {
                 var game = (Game)sender;
                 var testingSystem = new GameTestingSystem(game.Services);
                 game.GameSystems.Add(testingSystem);

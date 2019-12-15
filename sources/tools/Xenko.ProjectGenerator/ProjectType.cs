@@ -5,9 +5,7 @@ namespace Xenko.ProjectGenerator
     public enum ProjectType
     {
         Android,
-        iOS,
         UWP,
         Linux,
-        macOS
     }
 }

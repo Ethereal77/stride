@@ -10,8 +10,8 @@
   <!--Import Local Pre Settings for the solution being loaded -->
   <Import Project="$(SolutionDir)$(SolutionName).PreSettings.Local.targets" Condition="Exists('$(SolutionDir)$(SolutionName).PreSettings.Local.targets')" />
   <Import Project="$(SolutionDir)Xenko.Core.PreSettings.Local.targets" Condition="Exists('$(SolutionDir)Xenko.Core.PreSettings.Local.targets')" />
-  
-    <!-- 
+
+    <!--
     Settings XenkoPlatform specific
   -->
   <PropertyGroup>
@@ -28,7 +28,7 @@
     <XenkoPlatforms>$([MSBuild]::Unescape('$(XenkoPlatforms)'))</XenkoPlatforms>
     <_XenkoPlatforms>;$(XenkoPlatforms);</_XenkoPlatforms>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="$(TargetFramework.StartsWith('uap10.0'))">
     <!-- Reset runtime identifier by default (otherwise GetPackagingOutputs fail) -->
     <RuntimeIdentifier></RuntimeIdentifier>
@@ -44,17 +44,15 @@
     <XenkoRuntimeTargetFrameworks Condition="$(_XenkoPlatforms.Contains(';Windows;')) And '$(XenkoRuntimeWindowsDotNet)' == 'true'">$(XenkoRuntimeTargetFrameworks);net461</XenkoRuntimeTargetFrameworks>
     <XenkoRuntimeTargetFrameworks Condition="$(_XenkoPlatforms.Contains(';UWP;'))">$(XenkoRuntimeTargetFrameworks);uap10.0.16299</XenkoRuntimeTargetFrameworks>
     <XenkoRuntimeTargetFrameworks Condition="$(_XenkoPlatforms.Contains(';Android;'))">$(XenkoRuntimeTargetFrameworks);monoandroid81</XenkoRuntimeTargetFrameworks>
-    <XenkoRuntimeTargetFrameworks Condition="$(_XenkoPlatforms.Contains(';iOS;'))">$(XenkoRuntimeTargetFrameworks);xamarinios10</XenkoRuntimeTargetFrameworks>
 
     <XenkoRuntimeIdentifiers Condition="'$(XenkoRuntimeNetStandardNoRuntimeIdentifiers)' != 'true' And '$(TargetFramework)' == 'netstandard2.0' And $(_XenkoPlatforms.Contains(';Windows;'))">$(XenkoRuntimeIdentifiers);win</XenkoRuntimeIdentifiers>
     <XenkoRuntimeIdentifiers Condition="'$(XenkoRuntimeNetStandardNoRuntimeIdentifiers)' != 'true' And '$(TargetFramework)' == 'netstandard2.0' And $(_XenkoPlatforms.Contains(';Linux;'))">$(XenkoRuntimeIdentifiers);linux</XenkoRuntimeIdentifiers>
-    <XenkoRuntimeIdentifiers Condition="'$(XenkoRuntimeNetStandardNoRuntimeIdentifiers)' != 'true' And '$(TargetFramework)' == 'netstandard2.0' And $(_XenkoPlatforms.Contains(';macOS;'))">$(XenkoRuntimeIdentifiers);osx</XenkoRuntimeIdentifiers>
     <!-- Default: at least win (used when compiling only a single platform such as UWP for netstandard assemblies) -->
     <XenkoRuntimeIdentifiers Condition="'$(XenkoRuntimeNetStandardNoRuntimeIdentifiers)' != 'true' And '$(TargetFramework)' == 'netstandard2.0' And '$(XenkoRuntimeIdentifiers)' == ''">win</XenkoRuntimeIdentifiers>
 
     <!-- Need to use "win" runtime identifier for all other platforms as a workaround https://github.com/NuGet/Home/issues/7661#issuecomment-450040204 -->
     <XenkoRuntimeIdentifiers Condition="'$(XenkoRuntimeNetStandardNoRuntimeIdentifiers)' != 'true' And '$(TargetFramework)' != 'netstandard2.0'">any</XenkoRuntimeIdentifiers>
-    
+
     <XenkoRuntimeIdentifiers Condition="'$(XenkoRuntimeIdentifiers)' != ''">;$(XenkoRuntimeIdentifiers);</XenkoRuntimeIdentifiers>
 
     <!-- Make sure RuntimeIdentifier is part of the list -->
@@ -67,7 +65,7 @@
 
     <TargetFrameworks>$(XenkoRuntimeTargetFrameworks)</TargetFrameworks>
     <RuntimeIdentifiers Condition="'$(XenkoRuntimeIdentifiers)' != ''">$(XenkoRuntimeIdentifiers)</RuntimeIdentifiers>
-	
+
     <!-- docfx doesn't like if there is no TargetFramework/RuntimeIdentifier set by default -->
     <TargetFramework Condition="'$(XenkoBuildDoc)' == 'true' And '$(TargetFramework)' == ''">$(TargetFrameworks.Split(';', StringSplitOptions.RemoveEmptyEntries)[0])</TargetFramework>
     <RuntimeIdentifier Condition="'$(XenkoBuildDoc)' == 'true' And '$(RuntimeIdentifier)' == ''">$(XenkoRuntimeIdentifier)</RuntimeIdentifier>
@@ -76,7 +74,7 @@
 
     <!-- UpToDate check doesn't work with multi-TFM projects! https://github.com/dotnet/project-system/issues/2487 -->
     <!--<DisableFastUpToDateCheck Condition="$(TargetFrameworks.Contains(';')) Or $(RuntimeIdentifiers.Contains(';'))">true</DisableFastUpToDateCheck>-->
-    <!--<TargetFrameworks>net461;uap10.0.16299;monoandroid81;xamarinios10;netstandard2.0</TargetFrameworks>-->
+    <!--<TargetFrameworks>net461;uap10.0.16299;monoandroid81;netstandard2.0</TargetFrameworks>-->
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(XenkoRuntime)' == 'true' And '$(XenkoRuntimeNetStandard)' == 'true' ">
@@ -85,11 +83,11 @@
 
   <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' != 'true'">
     <!-- Force default runtime identifier -->
-    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' != 'win' And '$(RuntimeIdentifier)' != 'linux' And '$(RuntimeIdentifier)' != 'osx'">$(XenkoRuntimeIdentifier)</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' != 'win' And '$(RuntimeIdentifier)' != 'linux'">$(XenkoRuntimeIdentifier)</RuntimeIdentifier>
   </PropertyGroup>
 
   <!-- Those two targets are used to properly set the RuntimeIdentifier of ProjectReference (since we have sometimes weird transitions like win => win-d3d11 or win => noRID)
-       If we don't do it, MSBuild slap current RID, and even if this RID is overriden inside the build of the project, it will still trigger an unecessary build w/ double writes -->  
+       If we don't do it, MSBuild slap current RID, and even if this RID is overriden inside the build of the project, it will still trigger an unecessary build w/ double writes -->
   <Target Name="_XenkoSdkGetDefaultRidForTfm" Returns="$(RuntimeIdentifier)">
     <PropertyGroup>
       <ExtrasBuildEachRuntimeIdentifier Condition="'$(ExtrasBuildEachRuntimeIdentifier)' == ''">false</ExtrasBuildEachRuntimeIdentifier>
@@ -110,7 +108,7 @@
         <SetTargetFramework>%(_MSBuildProjectReferenceExistentWithRID.SetTargetFramework);RuntimeIdentifier=%(Identity)</SetTargetFramework>
         <GlobalPropertiesToRemove>$([System.String]::Copy('%(_MSBuildProjectReferenceExistentWithRID.GlobalPropertiesToRemove)').Replace(';RuntimeIdentifier', ''))</GlobalPropertiesToRemove>
       </_MSBuildProjectReferenceExistentWithRID2>
-      
+
       <_MSBuildProjectReferenceExistent Remove="@(_MSBuildProjectReferenceExistentWithRID2)"/>
       <_MSBuildProjectReferenceExistent Include="@(_MSBuildProjectReferenceExistentWithRID2)"/>
     </ItemGroup>
@@ -143,15 +141,13 @@
     <XenkoPlatformOriginal>$(XenkoPlatform)</XenkoPlatformOriginal>
     <XenkoPlatform Condition=" ($(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0') And ('$(RuntimeIdentifier)' == '' Or $(RuntimeIdentifier.StartsWith('win'))) ">Windows</XenkoPlatform>
     <XenkoPlatform Condition=" ($(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0') And $(RuntimeIdentifier.StartsWith('linux')) ">Linux</XenkoPlatform>
-    <XenkoPlatform Condition=" ($(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0') And $(RuntimeIdentifier.StartsWith('osx')) ">macOS</XenkoPlatform>
     <XenkoPlatform Condition=" $(TargetFramework.StartsWith('uap10.0')) ">UWP</XenkoPlatform>
     <XenkoPlatform Condition=" '$(TargetFramework)' == 'monoandroid81' ">Android</XenkoPlatform>
-    <XenkoPlatform Condition=" '$(TargetFramework)' == 'xamarinios10' ">iOS</XenkoPlatform>
     <!-- Default fallback -->
     <XenkoPlatform Condition=" '$(XenkoPlatform)' == '' ">Windows</XenkoPlatform>
 
     <XenkoPlatformFullName Condition="'$(XenkoPlatformFullName)' == ''">$(XenkoPlatform)</XenkoPlatformFullName>
-    
+
     <XenkoGlobalSettingsTargets Condition="'$(XenkoGlobalSettingsTargets)' == ''">$(MSBuildThisFileDirectory)Xenko.Core.GlobalSettings.targets</XenkoGlobalSettingsTargets>
     <XenkoPostSettingsTargets Condition="'$(XenkoPostSettingsTargets)' == ''">$(MSBuildThisFileDirectory)Xenko.Core.PostSettings.targets</XenkoPostSettingsTargets>
   </PropertyGroup>
@@ -160,10 +156,6 @@
   <Choose>
     <When  Condition=" '$(XenkoPlatform)' == 'Android' ">
       <PropertyGroup Condition=" '$(Platform)' == 'Android' "/>
-    </When>
-    <When  Condition=" '$(XenkoPlatform)' == 'iOS' ">
-      <PropertyGroup Condition=" '$(Platform)' == 'iPhone' "/>
-      <PropertyGroup Condition=" '$(Platform)' == 'iPhoneSimulator' "/>
     </When>
   </Choose>
 

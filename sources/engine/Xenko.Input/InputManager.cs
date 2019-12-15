@@ -21,12 +21,12 @@ namespace Xenko.Input
         //this is used in some mobile platform for accelerometer stuff
         internal const float G = 9.81f;
         internal const float DesiredSensorUpdateRate = 60;
-        
+
         /// <summary>
         /// The deadzone amount applied to all game controller axes
         /// </summary>
         public static float GameControllerAxisDeadZone = 0.05f;
-        
+
         internal static Logger Logger = GlobalLogger.GetLogger("Input");
 
         private readonly List<IInputDevice> devices = new List<IInputDevice>();
@@ -63,7 +63,7 @@ namespace Xenko.Input
         internal InputManager(IServiceRegistry registry) : base(registry)
         {
             Enabled = true;
-            
+
             Gestures = new TrackingCollection<GestureConfig>();
             Gestures.CollectionChanged += GesturesOnCollectionChanged;
 
@@ -81,7 +81,7 @@ namespace Xenko.Input
         /// List of the gestures to recognize.
         /// </summary>
         public TrackingCollection<GestureConfig> Gestures { get; }
-        
+
         /// <summary>
         /// Input sources
         /// </summary>
@@ -224,7 +224,7 @@ namespace Xenko.Input
         /// Gets the collection of connected sensor devices
         /// </summary>
         public IReadOnlyList<ISensorDevice> Sensors => sensors;
-        
+
         /// <summary>
         /// Should raw input be used on windows
         /// </summary>
@@ -261,7 +261,7 @@ namespace Xenko.Input
             get { return false; }
             set { }
 #endif
-        }   
+        }
 
         /// <summary>
         /// Raised before new input is sent to their respective event listeners
@@ -277,7 +277,7 @@ namespace Xenko.Input
         /// Raised when a device was added to the system
         /// </summary>
         public event EventHandler<DeviceChangedEventArgs> DeviceAdded;
-        
+
         /// <summary>
         /// Helper method to transform mouse and pointer event positions to sub rectangles
         /// </summary>
@@ -303,7 +303,7 @@ namespace Xenko.Input
             // After adding initial devices, reassign gamepad id's
             // this creates a beter index assignment in the case where you have both an xbox controller and another controller at startup
             var sortedGamePads = GamePads.OrderBy(x => x.CanChangeIndex);
-            
+
             foreach (var gamePad in sortedGamePads)
             {
                 if (gamePad.CanChangeIndex)
@@ -420,7 +420,7 @@ namespace Xenko.Input
 
             // Notify PreUpdateInput
             PreUpdateInput?.Invoke(this, new InputPreUpdateEventArgs { GameTime = gameTime });
-            
+
             // Send events to input listeners
             foreach (var evt in events)
             {
@@ -461,7 +461,7 @@ namespace Xenko.Input
                 pair.Value.Listeners.Remove(listener);
             }
         }
-        
+
         /// <summary>
         /// Gets a binding value for the specified name and the specified config extract from the current <see cref="VirtualButtonConfigSet"/>.
         /// </summary>
@@ -479,7 +479,7 @@ namespace Xenko.Input
             virtualButtonValues[configIndex].TryGetValue(bindingName, out value);
             return value;
         }
-        
+
         private void OnApplicationPaused(object sender, EventArgs e)
         {
             // Pause sources
@@ -497,7 +497,7 @@ namespace Xenko.Input
                 source.Resume();
             }
         }
-        
+
         private void SourcesOnCollectionChanged(object o, TrackingCollectionChangedEventArgs e)
         {
             var source = (IInputSource)e.Item;
@@ -549,7 +549,7 @@ namespace Xenko.Input
             Sources.Clear();
             AddSources();
         }
-        
+
         /// <summary>
         /// Suggests an index that is unused for a given <see cref="IGamePadDevice"/>
         /// </summary>
@@ -591,11 +591,6 @@ namespace Xenko.Input
 #if XENKO_PLATFORM_ANDROID
                 case AppContextType.Android:
                     Sources.Add(new InputSourceAndroid());
-                    break;
-#endif
-#if XENKO_PLATFORM_IOS
-                case AppContextType.iOS:
-                    Sources.Add(new InputSourceiOS());
                     break;
 #endif
 #if XENKO_PLATFORM_UWP
@@ -663,7 +658,7 @@ namespace Xenko.Input
 
         private void StartGestureRecognition(GestureConfig config)
         {
-            float aspectRatio = Pointer?.SurfaceAspectRatio ?? 1.0f; 
+            float aspectRatio = Pointer?.SurfaceAspectRatio ?? 1.0f;
             gestureConfigToRecognizer.Add(config, config.CreateRecognizer(aspectRatio));
         }
 
@@ -827,7 +822,7 @@ namespace Xenko.Input
             {
                 gamePad.Index = GetFreeGamePadIndex(gamePad);
             }
-            
+
             // Handle later index changed
             gamePad.IndexChanged += GamePadOnIndexChanged;
             UpdateGamePadRequestedIndices();

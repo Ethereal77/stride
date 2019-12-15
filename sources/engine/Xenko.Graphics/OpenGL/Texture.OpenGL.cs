@@ -53,7 +53,7 @@ namespace Xenko.Graphics
         internal bool IsDepthBuffer { get; private set; }   // TODO: Isn't this redundant? This gets set to the same value as IsDepthStencil...
         internal bool HasStencil { get; private set; }
         internal bool IsRenderbuffer { get; private set; }
-        
+
         internal int PixelBufferObjectId
         {
             get { return pixelBufferObjectId; }
@@ -147,7 +147,7 @@ namespace Xenko.Graphics
                 //Any "proper" way to do this? (GLES20 could directly accept it, not GLES30 anymore)
                 TextureTarget = (TextureTarget)Android.Opengl.GLES11Ext.GlTextureExternalOes;
                 GL.BindTexture(TextureTarget, TextureId);
-                
+
                 //GL.BindTexture(TextureTarget, 0);
             }
         }
@@ -378,10 +378,7 @@ namespace Xenko.Graphics
 
             if (Description.IsMultisample)
             {
-#if !XENKO_PLATFORM_IOS
-                // MSAA is not supported on iOS currently because OpenTK doesn't expose "GL.BlitFramebuffer()" on iOS for some reason.
                 GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, multisampleCount, internalFormat, width, height);
-#endif
             }
             else
             {
@@ -413,10 +410,7 @@ namespace Xenko.Graphics
 
                 if (IsRenderbuffer)
                 {
-#if !XENKO_PLATFORM_IOS
-                    // MSAA is not supported on iOS currently because OpenTK doesn't expose "GL.BlitFramebuffer()" on iOS for some reason.
                     GL.RenderbufferStorageMultisample(RenderbufferTarget.Renderbuffer, (int)Description.MultisampleCount, (RenderbufferStorage)TextureInternalFormat, width, height);
-#endif
                 }
                 else
                 {

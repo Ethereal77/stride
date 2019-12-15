@@ -2,17 +2,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 #if XENKO_GRAPHICS_API_OPENGL
 // Copyright (c) 2010-2012 SharpDX - Alexandre Mutel
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -41,7 +41,7 @@ namespace Xenko.Graphics
     public partial struct GraphicsDeviceFeatures
     {
         private const GetPName GL_MAX_SAMPLES = (GetPName)36183;    // We define this constant here because it is not contained within OpenTK...
-    
+
         private static Logger logger = GlobalLogger.GetLogger(nameof(GraphicsDeviceFeatures));
 
         private void EnumerateMSAASupportPerFormat(GraphicsDevice deviceRoot)
@@ -108,7 +108,7 @@ namespace Xenko.Graphics
             deviceRoot.HasTimerQueries = SupportedExtensions.Contains("GL_EXT_disjoint_timer_query");
 
             // Either 3.2+, or 3.1+ with GL_EXT_texture_buffer
-            // TODO: For now we don't have proper ES3 bindings on Android (and possibly iOS)
+            // TODO: For now we don't have proper ES3 bindings on Android
             deviceRoot.HasTextureBuffers = false;
             //deviceRoot.HasTextureBuffers = (deviceRoot.version >= 320)
             //                            || (deviceRoot.version >= 310 && SupportedExtensions.Contains("GL_EXT_texture_buffer"));
@@ -122,7 +122,7 @@ namespace Xenko.Graphics
             HasMultisampleDepthAsSRV = true;
 
             deviceRoot.HasDepthClamp = SupportedExtensions.Contains("GL_ARB_depth_clamp");
-  
+
             // TODO: from 3.1: draw indirect, separate shader object
             // TODO: check tessellation & geometry shaders: GL_ANDROID_extension_pack_es31a
 #else

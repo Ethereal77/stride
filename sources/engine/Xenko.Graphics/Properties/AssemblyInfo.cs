@@ -13,9 +13,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Xenko.Games" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.UI" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Graphics.Tests" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("XenkoGraphicsTests" + Xenko.PublicKeys.Default)] // iOS removes dot
 [assembly: InternalsVisibleTo("Xenko.Engine.Tests" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("XenkoEngineTests" + Xenko.PublicKeys.Default)] // iOS removes dot
 [assembly: InternalsVisibleTo("Xenko.Graphics.Regression" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Assets" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.VirtualReality" + Xenko.PublicKeys.Default)]

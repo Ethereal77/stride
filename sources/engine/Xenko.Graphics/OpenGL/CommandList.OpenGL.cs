@@ -102,7 +102,7 @@ namespace Xenko.Graphics
 
         public void Flush()
         {
-            
+
         }
 
         public CompiledCommandList Close()
@@ -704,11 +704,8 @@ namespace Xenko.Graphics
                 blitFramebufferFilter = BlitFramebufferFilter.Linear;   // TODO: STABILITY: For integer formats this has to be set to Nearest.
             }
 
-#if !XENKO_PLATFORM_IOS
-            // MSAA is not supported on iOS currently because OpenTK doesn't expose "GL.BlitFramebuffer()" on iOS for some reason.
             // Do the actual blitting operation:
             GL.BlitFramebuffer(0, 0, sourceMultisampleTexture.Width, sourceMultisampleTexture.Height, 0, 0, destTexture.Width, destTexture.Height, clearBufferMask, blitFramebufferFilter);
-#endif
         }
 
         public void CopyCount(Buffer sourceBuffer, Buffer destBuffer, int offsetToDest)
@@ -896,7 +893,6 @@ namespace Xenko.Graphics
 
         public void BeginProfile(Color4 profileColor, string name)
         {
-#if !XENKO_PLATFORM_IOS
             if (GraphicsDevice.ProfileEnabled)
             {
 #if XENKO_GRAPHICS_API_OPENGLES
@@ -906,12 +902,10 @@ namespace Xenko.Graphics
 #endif
                     GL.PushDebugGroup(DebugSourceExternal.DebugSourceApplication, 1, -1, name);
             }
-#endif
         }
 
         public void EndProfile()
         {
-#if !XENKO_PLATFORM_IOS
             if (GraphicsDevice.ProfileEnabled)
             {
 #if XENKO_GRAPHICS_API_OPENGLES
@@ -921,7 +915,6 @@ namespace Xenko.Graphics
 #endif
                     GL.PopDebugGroup();
             }
-#endif
         }
 
         /// <summary>
@@ -931,9 +924,9 @@ namespace Xenko.Graphics
         /// <param name="index">The query index.</param>
         public void WriteTimestamp(QueryPool queryPool, int index)
         {
-#if XENKO_GRAPHICS_API_OPENGLES && !XENKO_PLATFORM_IOS
+#if XENKO_GRAPHICS_API_OPENGLES
             GL.Ext.QueryCounter(queryPool.NativeQueries[index], QueryCounterTarget.TimestampExt);
-#elif !XENKO_PLATFORM_IOS
+#else
             GL.QueryCounter(queryPool.NativeQueries[index], QueryCounterTarget.Timestamp);
 #endif
         }
@@ -1392,7 +1385,7 @@ namespace Xenko.Graphics
 
             Internal.Refactor.ThrowNotImplementedException();
         }
-        
+
         /// <summary>
         /// Unsets an unordered access view from the shader pipeline.
         /// </summary>
@@ -1402,7 +1395,7 @@ namespace Xenko.Graphics
 #if DEBUG
             GraphicsDevice.EnsureContextActive();
 #endif
-            
+
             //Internal.Refactor.ThrowNotImplementedException();
         }
 

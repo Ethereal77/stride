@@ -69,7 +69,7 @@ namespace Xenko.VirtualReality
                         {
 #if XENKO_GRAPHICS_API_DIRECT3D11
                             Device = new OculusOvrHmd();
-                                
+
 #endif
                             break;
                         }
@@ -99,7 +99,7 @@ namespace Xenko.VirtualReality
                         //}
                         //case VRApi.Google:
                         //{
-                        //#if XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID
+                        //#if XENKO_PLATFORM_ANDROID
                         //    VRDevice = new GoogleVrHmd();
                         //#endif
                         //    break;

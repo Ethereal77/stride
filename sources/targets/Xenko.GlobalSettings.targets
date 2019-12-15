@@ -7,9 +7,7 @@
     <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'Windows'">Direct3D11</XenkoDefaultGraphicsApi>
     <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'UWP'">Direct3D11</XenkoDefaultGraphicsApi>
     <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'Android'">OpenGLES</XenkoDefaultGraphicsApi>
-    <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'iOS'">OpenGLES</XenkoDefaultGraphicsApi>
     <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'Linux'">OpenGL</XenkoDefaultGraphicsApi>
-    <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'macOS'">Vulkan</XenkoDefaultGraphicsApi>
     <XenkoGraphicsApiOriginal>$(XenkoGraphicsApi)</XenkoGraphicsApiOriginal>
     <XenkoGraphicsApi Condition="'$(XenkoGraphicsApi)' == '' and '$(XenkoDefaultGraphicsApi)' != ''">$(XenkoDefaultGraphicsApi)</XenkoGraphicsApi>
     <XenkoAssemblyProcessorOptions Condition="'$(XenkoAssemblyProcessorOptions)' == ''">$(XenkoAssemblyProcessorDefaultOptions)</XenkoAssemblyProcessorOptions>
@@ -29,7 +27,7 @@
     <XenkoGraphicsApisWindows Condition="'$(XenkoGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12;OpenGL;OpenGLES;Vulkan</XenkoGraphicsApisWindows>
     <XenkoGraphicsApisWindows Condition="'$(XenkoGraphicsApisWindows)' == ''">Direct3D11</XenkoGraphicsApisWindows>
     <_XenkoGraphicsApisWindows>;$(XenkoGraphicsApisWindows);</_XenkoGraphicsApisWindows>
-    
+
     <XenkoGraphicsApisLinux Condition="'$(XenkoGraphicsApiDependentBuildAll)' == 'true'">OpenGL;Vulkan</XenkoGraphicsApisLinux>
     <XenkoGraphicsApisLinux Condition="'$(XenkoGraphicsApisLinux)' == ''">OpenGL</XenkoGraphicsApisLinux>
     <_XenkoGraphicsApisLinux>;$(XenkoGraphicsApisLinux);</_XenkoGraphicsApisLinux>
@@ -44,24 +42,21 @@
     <RuntimeIdentifiers Condition="$(_XenkoPlatforms.Contains(';Windows;')) And ($(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0') And $(_XenkoGraphicsApisWindows.Contains(';Vulkan;'))">$(RuntimeIdentifiers);win-vulkan</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$(_XenkoPlatforms.Contains(';Linux;')) And '$(TargetFramework)' == 'netstandard2.0' And $(_XenkoGraphicsApisLinux.Contains(';OpenGL;'))">$(RuntimeIdentifiers);linux</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$(_XenkoPlatforms.Contains(';Linux;')) And '$(TargetFramework)' == 'netstandard2.0' And $(_XenkoGraphicsApisLinux.Contains(';Vulkan;'))">$(RuntimeIdentifiers);linux-vulkan</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$(_XenkoPlatforms.Contains(';macOS;')) And '$(TargetFramework)' == 'netstandard2.0'">$(RuntimeIdentifiers);osx</RuntimeIdentifiers>
-    
+
     <RuntimeIdentifiers>$([MSBuild]::Unescape($(RuntimeIdentifiers.Trim(';'))))</RuntimeIdentifiers>
     <!-- Default fallbacks -->
     <RuntimeIdentifiers Condition="'$(TargetFramework)' == 'netstandard2.0' And '$(XenkoPlatform)' == 'Linux' And '$(RuntimeIdentifiers)' == ''">linux</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="'$(TargetFramework)' == 'netstandard2.0' And '$(XenkoPlatform)' == 'Windows' And '$(RuntimeIdentifiers)' == ''">win</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="'$(TargetFramework)' == 'netstandard2.0' And '$(XenkoPlatform)' == 'macOS' And '$(RuntimeIdentifiers)' == ''">osx</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="'$(TargetFramework)' != 'netstandard2.0' And '$(RuntimeIdentifiers)' == ''">any</RuntimeIdentifiers>
     <RuntimeIdentifierDefault Condition="'$(RuntimeIdentifiers)' != ''">$(RuntimeIdentifiers.Split(';')[0])</RuntimeIdentifierDefault>
 
     <ExtrasBuildEachRuntimeIdentifier Condition="'$(RuntimeIdentifiers)' != ''">true</ExtrasBuildEachRuntimeIdentifier>
-    
+
     <!-- Compute RuntimeIdentifier (it might be different if passed from a ProjectReference) -->
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' And '$(RuntimeIdentifierDefault)' != ''">$(RuntimeIdentifierDefault)</RuntimeIdentifier>
     <!-- Properly setup RuntimeIdentifier if it was not a Graphics-API-specific one -->
     <RuntimeIdentifier Condition="'$(XenkoPlatform)' == 'Windows' And '$(RuntimeIdentifier)' != 'win' And '$(RuntimeIdentifier)' != 'win-d3d12' And '$(RuntimeIdentifier)' != 'win-opengl' And '$(RuntimeIdentifier)' != 'win-opengles' And '$(RuntimeIdentifier)' != 'win-vulkan'">$(RuntimeIdentifierDefault)</RuntimeIdentifier>
     <RuntimeIdentifier Condition="'$(XenkoPlatform)' == 'Linux' And '$(RuntimeIdentifier)' != 'linux' And '$(RuntimeIdentifier)' != 'linux-vulkan'">$(RuntimeIdentifierDefault)</RuntimeIdentifier>
-    <RuntimeIdentifier Condition="'$(XenkoPlatform)' == 'macOS' And '$(RuntimeIdentifier)' != 'osx'">$(RuntimeIdentifierDefault)</RuntimeIdentifier>
 
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win'">Direct3D11</XenkoGraphicsApi>
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-d3d12'">Direct3D12</XenkoGraphicsApi>
@@ -71,10 +66,8 @@
 
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'linux'">OpenGL</XenkoGraphicsApi>
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'linux-vulkan'">Vulkan</XenkoGraphicsApi>
-
-    <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'osx'">Vulkan</XenkoGraphicsApi>
   </PropertyGroup>
-  
+
   <!-- Workaround: Remove RuntimeIdentifier from Solution references (https://github.com/onovotny/MSBuildSdkExtras/issues/139)
                    additionally, also remove it from all references to avoid issues -->
   <Target Name="_XenkoRemoveRuntimeIdentifier" AfterTargets="AssignProjectConfiguration">
@@ -84,8 +77,8 @@
       </ProjectReferenceWithConfiguration>
     </ItemGroup>
   </Target>
-  
-  <!-- 
+
+  <!--
     Settings XenkoGraphicsApi specific
   -->
   <PropertyGroup Condition=" '$(XenkoGraphicsApi)' == 'Direct3D11' ">
@@ -111,8 +104,8 @@
   <PropertyGroup Condition=" '$(XenkoGraphicsApi)' == 'Vulkan' ">
     <XenkoGraphicsApiDefines>XENKO_GRAPHICS_API_VULKAN</XenkoGraphicsApiDefines>
   </PropertyGroup>
-  
-  <!-- 
+
+  <!--
     Settings XenkoPlatform specific
   -->
   <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Windows' ">
@@ -125,7 +118,7 @@
     <ProjectLockFile Condition="'$(ProjectLockFile)' == ''">$(MSBuildThisFileDirectory)..\build\project.lock.json</ProjectLockFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="('$(XenkoPlatform)' == 'Linux') or ('$(XenkoPlatform)' == 'macOS')">
+  <PropertyGroup Condition="'$(XenkoPlatform)' == 'Linux'">
     <FrameworkShaderUseSharpDX>false</FrameworkShaderUseSharpDX>
   </PropertyGroup>
 
@@ -133,14 +126,8 @@
     <XenkoExternalSuffix>.Android</XenkoExternalSuffix>
     <FrameworkShaderUseSharpDX>false</FrameworkShaderUseSharpDX>
   </PropertyGroup>
-  
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'iOS' ">
-    <XenkoExternalSuffix>.iOS</XenkoExternalSuffix>
-    <FrameworkShaderUseSharpDX>false</FrameworkShaderUseSharpDX>
-    <NUnitLiteBinDir>$(XenkoDependenciesDir)NUnitLite\net-monotouch\</NUnitLiteBinDir>
-  </PropertyGroup>
 
-  <!-- 
+  <!--
     Global Defines
   -->
   <PropertyGroup>
@@ -156,9 +143,9 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);$(XenkoGraphicsApiDefines)</DefineConstants>
   </PropertyGroup>
-  
+
   <PropertyGroup>
-    <XenkoUI Condition="'$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux' Or '$(XenkoPlatform)' == 'macOS'">SDL</XenkoUI>
+    <XenkoUI Condition="'$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux'">SDL</XenkoUI>
     <XenkoUI Condition="'$(XenkoGraphicsApi)' == 'OpenGL'">$(XenkoUI);OPENTK</XenkoUI>
     <XenkoUI Condition="'$(XenkoPlatform)' == 'Windows' AND $(TargetFramework.StartsWith('net4')) AND ('$(XenkoGraphicsApi)' == 'Direct3D11' Or '$(XenkoGraphicsApi)' == 'Direct3D12')">$(XenkoUI);WINFORMS;WPF</XenkoUI>
 
@@ -173,7 +160,7 @@
     <XenkoUIList Condition="'$(XenkoUI)' == ''" Include="None" />
   </ItemGroup>
 
-  
+
   <!--Building Xenko SDK itself?-->
   <PropertyGroup Condition=" '$(XenkoUserBuild)' != 'true' ">
     <!--Output All files in solution\Bin directory-->

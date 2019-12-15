@@ -26,11 +26,6 @@ var needSigning = true;
     <JavaMaximumHeapSize />
     <JavaOptions />
     <AssemblyName><#= ProjectName #></AssemblyName>
-<# } else if (curPlatform == Xenko.Core.PlatformType.iOS) { #>
-    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <OutputType>Exe</OutputType>
-    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName><#= ProjectName.Replace(".", "") #></AssemblyName>
 <# } else { #>
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
@@ -70,17 +65,6 @@ var needSigning = true;
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-<# } else if (curPlatform == Xenko.Core.PlatformType.iOS) { #>
-  <ItemGroup>
-    <Reference Label="Xenko.DoNotSync" Include="Xamarin.iOS" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Label="Xenko.DoNotSync" Include="Info.plist" />
-    <Compile Label="Xenko.DoNotSync" Include="<#= Properties.XenkoSdkRelativeDir #>\sources\shared\tests\nunitlite\NUnitLiteLauncher.iPhone.cs">
-      <Link>NUnitLiteLauncher.iPhone.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 <# } else { #>
   <Import Condition="'$(XenkoNETRuntime)' == ''" Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 <# } #>
@@ -92,4 +76,3 @@ var needSigning = true;
   </Target>
   -->
 </Project>
-

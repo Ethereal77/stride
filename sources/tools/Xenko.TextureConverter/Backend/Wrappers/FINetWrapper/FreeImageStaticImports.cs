@@ -328,7 +328,7 @@ namespace FreeImageAPI
 		public static extern FIBITMAP LoadFromHandle(FREE_IMAGE_FORMAT fif, ref FreeImageIO io, fi_handle handle, FREE_IMAGE_LOAD_FLAGS flags);
 
 		/// <summary>
-		/// Saves a previosly loaded FIBITMAP to a file.
+		/// Saves a previously loaded FIBITMAP to a file.
 		/// </summary>
 		/// <param name="fif">Type of the bitmap.</param>
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
@@ -339,7 +339,7 @@ namespace FreeImageAPI
 		public static extern bool Save(FREE_IMAGE_FORMAT fif, FIBITMAP dib, string filename, FREE_IMAGE_SAVE_FLAGS flags);
 
 		/// <summary>
-		/// Saves a previosly loaded FIBITMAP to a file.
+		/// Saves a previously loaded FIBITMAP to a file.
 		/// The filename supports UNICODE.
 		/// </summary>
 		/// <param name="fif">Type of the bitmap.</param>
@@ -397,7 +397,7 @@ namespace FreeImageAPI
 		public static extern FIBITMAP LoadFromMemory(FREE_IMAGE_FORMAT fif, FIMEMORY stream, FREE_IMAGE_LOAD_FLAGS flags);
 
 		/// <summary>
-		/// Saves a previosly loaded FIBITMAP to a stream.
+		/// Saves a previously loaded FIBITMAP to a stream.
 		/// </summary>
 		/// <param name="fif">Type of the bitmap.</param>
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
@@ -1156,7 +1156,7 @@ namespace FreeImageAPI
 		/// passing <c>null</c> in the <paramref name="bkcolor"/> parameter. This is similar to the
 		/// original C/C++ function. Passing <c>null</c> as <paramref name="bkcolor"/> parameter will
 		/// unset the dib's previously set background color.
-		/// </para> 
+		/// </para>
 		/// </summary>
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
 		/// <param name="bkcolor">The new background color.
@@ -1166,10 +1166,10 @@ namespace FreeImageAPI
 		/// <code>
 		/// // create a RGBQUAD color
 		/// RGBQUAD color = new RGBQUAD(Color.Green);
-		/// 
+		///
 		/// // set the dib's background color (using the other version of the function)
 		/// FreeImage.SetBackgroundColor(dib, ref color);
-		/// 
+		///
 		/// // remove it again (this only works due to the array parameter RGBQUAD[])
 		/// FreeImage.SetBackgroundColor(dib, null);
 		/// </code>
@@ -1361,7 +1361,7 @@ namespace FreeImageAPI
 		/// <param name="pitch">Defines the total width of a scanline in the raw bitmap,
 		/// including padding bytes.</param>
 		/// <param name="bpp">The bit depth (bits per pixel) of the raw bitmap.</param>
-		/// <param name="red_mask">The bit mask describing the bits used to store a single 
+		/// <param name="red_mask">The bit mask describing the bits used to store a single
 		/// pixel's red component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
 		/// <param name="green_mask">The bit mask describing the bits used to store a single
 		/// pixel's green component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
@@ -1383,7 +1383,7 @@ namespace FreeImageAPI
 		/// <param name="pitch">Defines the total width of a scanline in the raw bitmap,
 		/// including padding bytes.</param>
 		/// <param name="bpp">The bit depth (bits per pixel) of the raw bitmap.</param>
-		/// <param name="red_mask">The bit mask describing the bits used to store a single 
+		/// <param name="red_mask">The bit mask describing the bits used to store a single
 		/// pixel's red component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
 		/// <param name="green_mask">The bit mask describing the bits used to store a single
 		/// pixel's green component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
@@ -1404,7 +1404,7 @@ namespace FreeImageAPI
 		/// <param name="pitch">The desired total width in bytes of a scanline in the raw bitmap,
 		/// including any padding bytes.</param>
 		/// <param name="bpp">The desired bit depth (bits per pixel) of the raw bitmap.</param>
-		/// <param name="red_mask">The desired bit mask describing the bits used to store a single 
+		/// <param name="red_mask">The desired bit mask describing the bits used to store a single
 		/// pixel's red component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
 		/// <param name="green_mask">The desired bit mask describing the bits used to store a single
 		/// pixel's green component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
@@ -1424,7 +1424,7 @@ namespace FreeImageAPI
 		/// <param name="pitch">The desired total width in bytes of a scanline in the raw bitmap,
 		/// including any padding bytes.</param>
 		/// <param name="bpp">The desired bit depth (bits per pixel) of the raw bitmap.</param>
-		/// <param name="red_mask">The desired bit mask describing the bits used to store a single 
+		/// <param name="red_mask">The desired bit mask describing the bits used to store a single
 		/// pixel's red component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
 		/// <param name="green_mask">The desired bit mask describing the bits used to store a single
 		/// pixel's green component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
@@ -1835,7 +1835,7 @@ namespace FreeImageAPI
 
 		/// <summary>
 		/// This function rotates a 1-, 8-bit greyscale or a 24-, 32-bit color image by means of 3 shears.
-		/// 1-bit images rotation is limited to integer multiple of 90°.
+		/// 1-bit images rotation is limited to integer multiple of 90ï¿½.
 		/// <c>null</c> is returned for other values.
 		/// </summary>
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
@@ -2163,7 +2163,7 @@ namespace FreeImageAPI
 		/// <code>
 		/// // snippet 1: contrast, brightness
 		/// AdjustContrast(dib, 15.0);
-		/// AdjustBrightness(dib, 50.0); 
+		/// AdjustBrightness(dib, 50.0);
 		/// </code>
 		/// <para/>
 		/// <code>
@@ -2265,12 +2265,12 @@ namespace FreeImageAPI
 		/// in <paramref name="srccolors"/>. For high color images, the actual image data will be
 		/// modified whereas, for palletized images only the palette will be changed.
 		/// <para/>
-		/// The function returns the number of pixels changed or zero, if no pixels were changed. 
+		/// The function returns the number of pixels changed or zero, if no pixels were changed.
 		/// <para/>
 		/// Both arrays <paramref name="srccolors"/> and <paramref name="dstcolors"/> are assumed
 		/// not to hold less than <paramref name="count"/> colors.
 		/// <para/>
-		/// For 16-bit images, all colors specified are transparently converted to their 
+		/// For 16-bit images, all colors specified are transparently converted to their
 		/// proper 16-bit representation (either in RGB555 or RGB565 format, which is determined
 		/// by the image's red- green- and blue-mask).
 		/// <para/>
@@ -2324,7 +2324,7 @@ namespace FreeImageAPI
 		/// <paramref name="srcindices"/> to these specified in <paramref name="dstindices"/>.
 		/// Thereby, index <i>srcindices[N]</i>, if present in the image, will be replaced by index
 		/// <i>dstindices[N]</i>. If <paramref name="swap"/> is <b>true</b>, additionally all indices
-		/// specified in <paramref name="dstindices"/> are also mapped to these specified in 
+		/// specified in <paramref name="dstindices"/> are also mapped to these specified in
 		/// <paramref name="srcindices"/>.
 		/// <para/>
 		/// The function returns the number of pixels changed or zero, if no pixels were changed.

@@ -34,10 +34,6 @@ namespace Xenko.Graphics
         private readonly bool tegraWorkaround;
 #endif
 
-#if XENKO_PLATFORM_IOS
-        private OpenGLES.EAGLContext previousContext;
-#endif
-
         public bool UseDeviceCreationContext => useDeviceCreationContext;
 
         public UseOpenGLCreationContext(GraphicsDevice graphicsDevice)
@@ -69,16 +65,9 @@ namespace Xenko.Graphics
                     graphicsDevice.AsyncPendingTaskWaiting = false;
 #endif
 
-
-#if XENKO_PLATFORM_IOS
-                previousContext = OpenGLES.EAGLContext.CurrentContext;
-                var localContext = graphicsDevice.ThreadLocalContext.Value;
-                OpenGLES.EAGLContext.SetCurrentContext(localContext);
-#else
                 // Bind the context
                 deviceCreationContext = graphicsDevice.deviceCreationContext;
                 deviceCreationContext.MakeCurrent(graphicsDevice.deviceCreationWindowInfo);
-#endif
             }
             else
             {
@@ -95,13 +84,8 @@ namespace Xenko.Graphics
                 {
                     GL.Flush();
 
-#if XENKO_PLATFORM_IOS
-                    if (previousContext != null)
-                        OpenGLES.EAGLContext.SetCurrentContext(previousContext);
-#else
                     // Restore graphics context
                     GraphicsDevice.UnbindGraphicsContext(deviceCreationContext);
-#endif
                 }
             }
             finally

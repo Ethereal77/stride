@@ -6,7 +6,7 @@
 #define SSLR_DEBUG
 #endif
 
-#if XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_IOS
+#if XENKO_PLATFORM_ANDROID
 // Use different render targets formats on mobile
 #define SSLR_MOBILE
 #endif
@@ -478,7 +478,7 @@ namespace Xenko.Rendering.Images
             if (DepthResolution != ResolutionMode.Full)
             {
                 // Smaller depth buffer improves ray tracing performance.
-                
+
                 var depthBuffersSize = GetBufferResolution(depthBuffer, DepthResolution);
                 smallerDepthBuffer = NewScopedRenderTarget2D(depthBuffersSize.Width, depthBuffersSize.Height, PixelFormat.R32_Float, 1);
 

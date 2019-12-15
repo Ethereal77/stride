@@ -26,11 +26,5 @@
 <#     }
      }
    } #>
-    "osx": {
-      "#import": [
-        "osx-vulkan",
-        "unix"
-      ]
-    }
   }
 }

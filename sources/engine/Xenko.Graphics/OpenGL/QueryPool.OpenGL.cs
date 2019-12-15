@@ -17,9 +17,6 @@ namespace Xenko.Graphics
 
         public bool TryGetData(long[] dataArray)
         {
-#if XENKO_PLATFORM_IOS
-            return false;
-#else
             for (var index = 0; index < NativeQueries.Length; index++)
             {
 #if XENKO_GRAPHICS_API_OPENGLES
@@ -38,16 +35,13 @@ namespace Xenko.Graphics
             }
 
             return true;
-#endif
         }
 
         /// <inheritdoc/>
         protected internal override void OnDestroyed()
         {
-#if !XENKO_PLATFORM_IOS
             GL.DeleteQueries(QueryCount, NativeQueries);
             NativeQueries = null;
-#endif
             base.OnDestroyed();
         }
 
@@ -63,9 +57,7 @@ namespace Xenko.Graphics
             }
 
             NativeQueries = new int[QueryCount];
-#if !XENKO_PLATFORM_IOS
             GL.GenQueries(QueryCount, NativeQueries);
-#endif
         }
     }
 }

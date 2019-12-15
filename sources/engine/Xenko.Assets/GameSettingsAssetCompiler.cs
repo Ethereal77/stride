@@ -151,41 +151,6 @@ namespace Xenko.Assets
                         File.WriteAllText(activityFile, activitySource);
                     }
                     break;
-                case PlatformType.iOS:
-                    {
-                        var exeProjectLocation = project.FullPath;
-                        if (exeProjectLocation == null) return;
-
-                        var plistFile = UPath.Combine(exeProjectLocation.GetFullDirectory(), new UFile("Info.plist"));
-                        if (!File.Exists(plistFile)) return;
-
-                        var xmlDoc = XDocument.Load(plistFile);
-                        var orientationKey = xmlDoc.Descendants("key").FirstOrDefault(x => x.Value == "UISupportedInterfaceOrientations");
-                        var orientationElement = ((XElement)orientationKey?.NextNode)?.Descendants("string").FirstOrDefault();
-                        if (orientationElement != null)
-                        {
-                            switch (orientation)
-                            {
-                                case RequiredDisplayOrientation.Default:
-                                    orientationElement.Value = "UIInterfaceOrientationLandscapeRight";
-                                    break;
-                                case RequiredDisplayOrientation.LandscapeLeft:
-                                    orientationElement.Value = "UIInterfaceOrientationLandscapeLeft";
-                                    break;
-                                case RequiredDisplayOrientation.LandscapeRight:
-                                    orientationElement.Value = "UIInterfaceOrientationLandscapeRight";
-                                    break;
-                                case RequiredDisplayOrientation.Portrait:
-                                    orientationElement.Value = "UIInterfaceOrientationPortrait";
-                                    break;
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
-                        }
-
-                        xmlDoc.Save(plistFile);
-                    }
-                    break;
             }
         }
     }

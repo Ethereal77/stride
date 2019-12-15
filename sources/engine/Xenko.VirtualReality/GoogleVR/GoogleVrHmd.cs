@@ -1,7 +1,7 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if DONT_BUILD_FOR_NOW && (XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID)
+#if DONT_BUILD_FOR_NOW && XENKO_PLATFORM_ANDROID
 
 using System;
 #if XENKO_PLATFORM_ANDROID
@@ -81,11 +81,6 @@ namespace Xenko.VirtualReality
             Matrix projLeft, projRight;
             GoogleVr.GetPerspectiveMatrix(0, LeftCameraComponent.NearClipPlane, LeftCameraComponent.FarClipPlane, out projLeft);
             GoogleVr.GetPerspectiveMatrix(1, LeftCameraComponent.NearClipPlane, LeftCameraComponent.FarClipPlane, out projRight);
-
-//            var iosRotL = Matrix.RotationYawPitchRoll(0, 0, MathUtil.Pi);
-//            var iosRotR = Matrix.RotationYawPitchRoll(0, 0, MathUtil.Pi);
-//            projLeft *= iosRotL;
-//            projRight *= iosRotR;
 
             Vector3 scale, camPos;
             Quaternion camRot;

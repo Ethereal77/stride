@@ -571,15 +571,8 @@ namespace Xenko.ProjectGenerator
                     break;
 
                 case PlatformType.Linux:
-                case PlatformType.macOS:
                 case PlatformType.UWP:
                     configurations.Add("Any CPU", "Any CPU");
-                    needDeploy = true;
-                    break;
-
-                case PlatformType.iOS:
-                    configurations.Add("iPhone", "iPhone");
-                    configurations.Add("iPhoneSimulator", "iPhoneSimulator");
                     needDeploy = true;
                     break;
 

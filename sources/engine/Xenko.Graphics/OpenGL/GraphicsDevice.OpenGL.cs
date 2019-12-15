@@ -18,8 +18,6 @@ using Color4 = Xenko.Core.Mathematics.Color4;
 using System.Text;
 using System.Runtime.InteropServices;
 using OpenTK.Platform.Android;
-#elif XENKO_PLATFORM_IOS
-using OpenTK.Platform.iPhoneOS;
 #endif
 #if XENKO_GRAPHICS_API_OPENGLES
 using OpenTK.Graphics.ES30;
@@ -117,7 +115,7 @@ namespace Xenko.Graphics
         private int contextBeginCounter = 0;
 
         // TODO: Use some LRU scheme to clean up FBOs if not used frequently anymore.
-        internal Dictionary<FBOKey, int> existingFBOs = new Dictionary<FBOKey,int>(); 
+        internal Dictionary<FBOKey, int> existingFBOs = new Dictionary<FBOKey,int>();
 
         private static GraphicsDevice _currentGraphicsDevice = null;
 
@@ -150,9 +148,6 @@ namespace Xenko.Graphics
 #endif
 #elif XENKO_PLATFORM_ANDROID
         private AndroidGameView gameWindow;
-#elif XENKO_PLATFORM_IOS
-        private iPhoneOSGameView gameWindow;
-        public ThreadLocal<OpenGLES.EAGLContext> ThreadLocalContext { get; private set; }
 #endif
 
 #if XENKO_PLATFORM_ANDROID
@@ -176,7 +171,7 @@ namespace Xenko.Graphics
         internal float[] SquareVertices = {
             0.0f, 0.0f,
             1.0f, 0.0f,
-            0.0f, 1.0f, 
+            0.0f, 1.0f,
             1.0f, 1.0f,
         };
 
@@ -776,9 +771,6 @@ namespace Xenko.Graphics
 #endif
 #elif XENKO_PLATFORM_ANDROID
             gameWindow = (AndroidGameView)windowHandle.NativeWindow;
-#elif XENKO_PLATFORM_IOS
-            gameWindow = (iPhoneOSGameView)windowHandle.NativeWindow;
-            ThreadLocalContext = new ThreadLocal<OpenGLES.EAGLContext>(() => new OpenGLES.EAGLContext(OpenGLES.EAGLRenderingAPI.OpenGLES3, gameWindow.EAGLContext.ShareGroup));
 #endif
 
             windowInfo = gameWindow.WindowInfo;
@@ -788,7 +780,7 @@ namespace Xenko.Graphics
             graphicsContext = gameWindow.GraphicsContext;
             gameWindow.Load += OnApplicationResumed;
             gameWindow.Unload += OnApplicationPaused;
-            
+
             Workaround_Context_Tegra2_Tegra3 = renderer == "NVIDIA Tegra 3" || renderer == "NVIDIA Tegra 2";
 
             if (Workaround_Context_Tegra2_Tegra3)
@@ -819,16 +811,6 @@ namespace Xenko.Graphics
             }
 
             graphicsContextEglPtr = EglGetCurrentContext();
-#elif XENKO_PLATFORM_IOS
-            graphicsContext = gameWindow.GraphicsContext;
-            gameWindow.Load += OnApplicationResumed;
-            gameWindow.Unload += OnApplicationPaused;
-
-            var asyncContext = new OpenGLES.EAGLContext(OpenGLES.EAGLRenderingAPI.OpenGLES3, gameWindow.EAGLContext.ShareGroup);
-            OpenGLES.EAGLContext.SetCurrentContext(asyncContext);
-            deviceCreationContext = new OpenTK.Graphics.GraphicsContext(new OpenTK.ContextHandle(asyncContext.Handle), null, graphicsContext, version / 100, (version % 100) / 10, creationFlags);
-            deviceCreationWindowInfo = windowInfo;
-            gameWindow.MakeCurrent();
 #else
 #if XENKO_UI_SDL
             // Because OpenTK really wants a Sdl2GraphicsContext and not a dummy one, we will create
@@ -869,7 +851,6 @@ namespace Xenko.Graphics
             // Restore FBO
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, boundFBO);
 
-#if !XENKO_PLATFORM_IOS
             if (IsDebugMode && HasKhronosDebug)
             {
 #if XENKO_GRAPHICS_API_OPENGLES
@@ -906,7 +887,6 @@ namespace Xenko.Graphics
                 GL.Enable((EnableCap)KhrDebug.DebugOutputSynchronous);
                 graphicsContext.MakeCurrent(windowInfo);
             }
-#endif
 
             // Create the main command list
             InternalMainCommandList = CommandList.New(this);
@@ -934,7 +914,7 @@ namespace Xenko.Graphics
                 asyncCreationLockObject = new object();
             }
 
-#if XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_IOS
+#if XENKO_PLATFORM_ANDROID
             gameWindow.Load -= OnApplicationResumed;
             gameWindow.Unload -= OnApplicationPaused;
 #endif
@@ -984,13 +964,6 @@ namespace Xenko.Graphics
 #endif
 
             // TODO: Provide unified ClientSize from GameWindow
-#if XENKO_PLATFORM_IOS
-            WindowProvidedFrameBuffer = gameWindow.Framebuffer;
-
-            // Scale for Retina display
-            var width = (int)(gameWindow.Size.Width * gameWindow.ContentScaleFactor);
-            var height = (int)(gameWindow.Size.Height * gameWindow.ContentScaleFactor);
-#else
 #if XENKO_GRAPHICS_API_OPENGLCORE
             var width = gameWindow.ClientSize.Width;
             var height = gameWindow.ClientSize.Height;
@@ -999,14 +972,12 @@ namespace Xenko.Graphics
             var height = gameWindow.Size.Height;
 #endif
             WindowProvidedFrameBuffer = 0;
-#endif
 
             // TODO OPENGL detect if created framebuffer is sRGB or not (note: improperly reported by FramebufferParameterName.FramebufferAttachmentColorEncoding)
             isFramebufferSRGB = true;
 
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, WindowProvidedFrameBuffer);
 
-            // TODO: iOS (and possibly other platforms): get real render buffer ID for color/depth?
             WindowProvidedRenderTexture = Texture.New2D(this, width, height, 1,
                 // TODO: As a workaround, because OpenTK(+OpenGLES) doesn't support to create SRgb backbuffer, we fake it by creating a non-SRgb here and CopyScaler2D is responsible to transform it to non SRgb
                 isFramebufferSRGB ? presentationParameters.BackBufferFormat : presentationParameters.BackBufferFormat.ToNonSRgb(), TextureFlags.RenderTarget | Texture.TextureFlagsCustomResourceId);
@@ -1131,7 +1102,7 @@ namespace Xenko.Graphics
 
                 return new FBOTexture(texture, arraySlice, mipLevel);
             }
-            
+
             public bool Equals(FBOTexture other)
             {
                 return Texture == other.Texture && ArraySlice == other.ArraySlice && MipLevel == other.MipLevel;

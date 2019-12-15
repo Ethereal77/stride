@@ -9,7 +9,7 @@ using Xenko.Native;
 namespace Xenko.Audio
 {
     /// <summary>
-    /// Represents a 3D audio listener in the audio scene. 
+    /// Represents a 3D audio listener in the audio scene.
     /// This object, used in combination with an <see cref="AudioEmitter"/>, can simulate 3D audio localization effects for a sound implemention the <see cref="IPositionableSound"/> interface.
     /// For more details take a look at the <see cref="IPositionableSound.Apply3D"/> function.
     /// </summary>
@@ -21,20 +21,8 @@ namespace Xenko.Audio
         {
             if (engine.State == AudioEngineState.Invalidated) return;
 
-#if XENKO_PLATFORM_IOS
-            if (engine.DefaultListener == null)
-            {
-                Listener = AudioLayer.ListenerCreate(engine.AudioDevice);
-                AudioLayer.ListenerEnable(Listener);
-            }
-            else
-            {
-                Listener = engine.DefaultListener.Listener;
-            }
-#else
             Listener = AudioLayer.ListenerCreate(engine.AudioDevice);
             AudioLayer.ListenerEnable(Listener);
-#endif    
         }
 
         /// <summary>
@@ -43,7 +31,7 @@ namespace Xenko.Audio
         public Vector3 Position;
 
         /// <summary>
-        /// The velocity of the listener in the 3D world. 
+        /// The velocity of the listener in the 3D world.
         /// </summary>
         /// <remarks>This is only used to calculate the doppler effect on the sound effect</remarks>
         public Vector3 Velocity;
@@ -56,7 +44,7 @@ namespace Xenko.Audio
         /// <remarks>
         /// <para>By default, this value is (0,1,0).</para>
         /// <para>The value provided will be normalized if it is not already.</para>
-        /// <para>The values of the Forward and Up vectors must be orthonormal (at right angles to one another). 
+        /// <para>The values of the Forward and Up vectors must be orthonormal (at right angles to one another).
         /// Behavior is undefined if these vectors are not orthonormal.</para>
         /// <para>Doppler and Matrix values between an <see name="AudioEmitter"/> and an <see cref="AudioListener"/> are effected by the listener orientation.</para>
         /// </remarks>
@@ -84,7 +72,7 @@ namespace Xenko.Audio
         /// <remarks>
         /// <para>By default, this value is (0,0,1).</para>
         /// <para>The value provided will be normalized if it is not already.</para>
-        /// <para>The values of the Forward and Up vectors must be orthonormal (at right angles to one another). 
+        /// <para>The values of the Forward and Up vectors must be orthonormal (at right angles to one another).
         /// Behavior is undefined if these vectors are not orthonormal.</para>
         /// <para>Doppler and Matrix values between an <see name="AudioEmitter"/> and an <see cref="AudioListener"/> are effected by the listener orientation.</para>
         /// </remarks>
@@ -127,10 +115,8 @@ namespace Xenko.Audio
         {
             if (Listener.Ptr == IntPtr.Zero) return;
 
-#if !XENKO_PLATFORM_IOS
             AudioLayer.ListenerDisable(Listener);
             AudioLayer.ListenerDestroy(Listener);
-#endif
         }
 
         internal void Update()

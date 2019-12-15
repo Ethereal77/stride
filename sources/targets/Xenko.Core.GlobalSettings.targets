@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$(MSBuildThisFileDirectory)Xenko.PackageVersion.targets"/>
-  
+
   <!-- Sdk settings -->
   <PropertyGroup>
     <!-- If we don't set it, default targets will add PlatformName in some cases -->
@@ -21,8 +21,8 @@
     <XenkoAssemblyProcessor Condition="'$(XenkoAssemblyProcessor)' == ''">false</XenkoAssemblyProcessor>
     <XenkoAssemblyProcessorOptions Condition="'$(XenkoAssemblyProcessorOptions)' == ''">--auto-notify-property --auto-module-initializer --serialization</XenkoAssemblyProcessorOptions>
   </PropertyGroup>
-  
-  <!-- 
+
+  <!--
     Global Settings per project
   -->
   <PropertyGroup>
@@ -37,7 +37,7 @@
     <XenkoPlatformDefines>XENKO_PLATFORM_WINDOWS;XENKO_PLATFORM_WINDOWS_DESKTOP;NET45</XenkoPlatformDefines>
     <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(XenkoPlatform)' == 'UWP' ">
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <XenkoPlatformDefines>XENKO_PLATFORM_WINDOWS;XENKO_PLATFORM_UWP;NET45;NETFX_CORE;WINDOWS_UAP</XenkoPlatformDefines>
@@ -47,11 +47,6 @@
 
   <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Linux' ">
     <XenkoPlatformDefines>XENKO_PLATFORM_LINUX;XENKO_PLATFORM_UNIX;NET45</XenkoPlatformDefines>
-    <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'macOS' ">
-    <XenkoPlatformDefines>XENKO_PLATFORM_MACOS;XENKO_PLATFORM_UNIX;NET45</XenkoPlatformDefines>
     <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
   </PropertyGroup>
 
@@ -86,13 +81,8 @@
     </ItemGroup>
   </Target>
 
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'iOS' ">
-    <Platform Condition=" '$(Platform)' == '' ">iPhone</Platform>
-    <XenkoPlatformDefines>XENKO_PLATFORM_MONO_MOBILE;XENKO_PLATFORM_IOS;NET45</XenkoPlatformDefines>
-  </PropertyGroup>
-
   <Choose>
-    <When Condition=" '$(XenkoPlatform)' == 'Android' Or '$(XenkoPlatform)' == 'iOS' Or '$(XenkoPlatform)' == 'UWP' ">
+    <When Condition=" '$(XenkoPlatform)' == 'Android' Or '$(XenkoPlatform)' == 'UWP' ">
       <ItemGroup>
         <Reference Include="System" />
         <Reference Include="System.Core" />
@@ -102,13 +92,7 @@
     </When>
   </Choose>
 
-  <!-- Create empty project platform configuration so that MSBuild and Visual Studio Configuration Manager know about it -->
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'iOS' And '$(Configuration)|$(Platform)' == 'Debug|iPhone' "/>
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'iOS' And '$(Configuration)|$(Platform)' == 'Release|iPhone' "/>
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'iOS' And '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' "/>
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'iOS' And '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' "/>
-
-  <!-- 
+  <!--
     Settings XenkoNETRuntime specific
   -->
   <PropertyGroup Condition=" '$(XenkoNETRuntime)' == 'CoreCLR' ">
@@ -131,16 +115,11 @@
     <AssemblyOriginatorKeyFile Condition="'$(XenkoOpenSourceSign)' != 'true'">$(SolutionDir)xenko.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyFile Condition="'$(XenkoOpenSourceSign)' == 'true'">$(SolutionDir)xenko.public.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  
+
   <!-- SourceLink -->
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Condition="'$(XenkoProjectType)' == 'CSharp'" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
   </ItemGroup>
-
-  <!-- Copy the libcore.a and libfreetype.a libraries to the project root directory for future native link.
-       Note: this target is redefined in References.targets for user projects -->
-  <Target Name="CopyXenkoNativeLibraries" Condition=" '$(XenkoPlatform)' == 'iOS' and '$(OutputType)' == 'Exe'">
-  </Target>
 
   <!-- Used by Xenko.build to detect if unit tests prefer to run in 32 or 64 bits (note: it's a copy of Xenko.UnitTests.targets one because some unit tests import Xenko.Core.PreSettings.targets rather than Xenko.UnitTests.targets) -->
   <Target Name="_XenkoAfterGetTargetPathWithTargetPlatformMoniker" AfterTargets="GetTargetPathWithTargetPlatformMoniker">

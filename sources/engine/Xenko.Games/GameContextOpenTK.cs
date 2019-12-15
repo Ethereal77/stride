@@ -2,17 +2,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -54,7 +54,7 @@ namespace Xenko.Games
             // force the stencil buffer to be not null.
             var defaultMode = GraphicsMode.Default;
             var graphicMode = new GraphicsMode(defaultMode.ColorFormat, 0, 0, defaultMode.Samples, defaultMode.AccumulatorFormat, defaultMode.Buffers, defaultMode.Stereo);
-            
+
             GraphicsContext.ShareContexts = true;
 
             if (control == null)
@@ -66,7 +66,6 @@ namespace Xenko.Games
                     version = 300;
 #else
                     // PC: 4.3 is commonly available (= compute shaders)
-                    // MacOS X: 4.1 maximum
                     version = 410;
 #endif
                     Control = TryGameWindow(requestedWidth, requestedHeight, graphicMode, version / 100, (version % 100) / 10, creationFlags);

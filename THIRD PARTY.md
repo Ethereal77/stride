@@ -27,7 +27,7 @@ Xenko uses the following open-source products.
 * [V-HACD](https://github.com/kmammou/v-hacd) (zlib License)
 * [YamlDotNet](https://github.com/aaubry/YamlDotNet) (MIT License)
 
-### Linux, iOS, Android
+### Linux, Android
 * [Mono Class Libraries](https://github.com/mono/mono/tree/master/mcs/class) (MIT License)
 * [OpenTK](http://www.opentk.com/) (MIT License)
 
@@ -142,7 +142,7 @@ respective owners.
   XFN icon is licensed under a Creative Commons
   Attribution-Share Alike 2.5 License.
   <http://creativecommons.org/licenses/by-sa/2.5/>
-  
+
 ### ModernUIIcons.com
 
 Please carefully understand the license and download the latest icons at ModernUIIcons.com.

@@ -3,10 +3,6 @@
 using System;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
-#if XENKO_PLATFORM_IOS
-using UIKit;
-using Xenko.Starter;
-#endif
 using Xenko.Core;
 using Xenko.Core.Diagnostics;
 using Xenko.Engine;
@@ -34,7 +30,7 @@ namespace Xenko.Graphics.Regression
 
             throw new NotImplementedException();
 
-#elif XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID
+#elif XENKO_PLATFORM_ANDROID
 
             lock(uniThreadLock)
             {
@@ -60,31 +56,7 @@ namespace Xenko.Graphics.Regression
                     game.UnhandledException += exceptionhandler;
 
                     Logger.Info(@"Starting activity");
-#if XENKO_PLATFORM_IOS
-                    game.Exiting += gameFinishedCallback;
-
-                    UIApplication.SharedApplication.InvokeOnMainThread(() =>
-                    {
-                        var window = UIApplication.SharedApplication.KeyWindow;
-                        var rootNavigationController = (UINavigationController)window.RootViewController;
-
-                        // create the xenko game view 
-                        var bounds = UIScreen.MainScreen.Bounds;
-                        var xenkoGameView = new iOSXenkoView((System.Drawing.RectangleF)bounds) { ContentScaleFactor = UIScreen.MainScreen.Scale };
-
-                        // create the view controller used to display the xenko game
-                        var xenkoGameController = new iOSGameTestController(game) { View = xenkoGameView };
-
-                        // create the game context
-                        var gameContext = new GameContextiOS(new iOSWindow(window, xenkoGameView, xenkoGameController));
-
-                        // push view
-                        rootNavigationController.PushViewController(gameContext.Control.GameViewController, false);
-
-                        // launch the game
-                        game.Run(gameContext);
-                    });
-#elif XENKO_PLATFORM_ANDROID
+#if XENKO_PLATFORM_ANDROID
                     // Start activity
                     AndroidGameTestActivity.GameToStart = game;
                     AndroidGameTestActivity.Destroyed += gameFinishedCallback;
@@ -104,16 +76,7 @@ namespace Xenko.Graphics.Regression
                 }
                 finally
                 {
-#if XENKO_PLATFORM_IOS
-                    // iOS Cleanup
-                    UIApplication.SharedApplication.InvokeOnMainThread(() =>
-                    {
-                        var window = UIApplication.SharedApplication.KeyWindow;
-                        var rootNavigationController = (UINavigationController)window.RootViewController;
-
-                        rootNavigationController.PopViewController(false);
-                    });
-#elif XENKO_PLATFORM_ANDROID
+#if XENKO_PLATFORM_ANDROID
                     AndroidGameTestActivity.Destroyed -= gameFinishedCallback;
                     AndroidGameTestActivity.GameToStart = null;
 #endif

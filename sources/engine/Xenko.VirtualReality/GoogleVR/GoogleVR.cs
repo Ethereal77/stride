@@ -1,7 +1,7 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if DONT_BUILD_FOR_NOW && (XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID)
+#if DONT_BUILD_FOR_NOW && XENKO_PLATFORM_ANDROID
 
 using System;
 using System.Runtime.InteropServices;
@@ -61,21 +61,6 @@ namespace Xenko.VirtualReality
                 }
             };
         }
-
-#elif XENKO_PLATFORM_IOS
-
-        public static void Startup(Game game)
-        {
-            game.WindowCreated += (sender1, args1) =>
-            {
-                var res = InternalStartup(IntPtr.Zero);
-                if (res != 0)
-                {
-                    throw new Exception("Failed to init Google cardboad SDK.");
-                }
-            };
-        }
-
 #endif
 
         [SuppressUnmanagedCodeSecurity]

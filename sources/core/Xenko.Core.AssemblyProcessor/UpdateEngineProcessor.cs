@@ -216,13 +216,6 @@ namespace Xenko.Core.AssemblyProcessor
                     il.Emit(OpCodes.Call, updateEngineRegisterMemberResolverMethod);
                 }
 
-                // Generic instantiation for AOT platforms
-                if (context.Platform == Core.PlatformType.iOS && serializableType.Key.Name == "ValueParameterKey`1")
-                {
-                    var keyType = ((GenericInstanceType)serializableType.Key).GenericArguments[0];
-                    il.Emit(OpCodes.Call, context.Assembly.MainModule.ImportReference(parameterCollectionResolverInstantiateValueAccessor).MakeGenericMethod(context.Assembly.MainModule.ImportReference(keyType)));
-                }
-
                 var genericInstanceType = serializableType.Key as GenericInstanceType;
                 if (genericInstanceType != null)
                 {

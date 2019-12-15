@@ -605,7 +605,7 @@ namespace Xenko.Core.AssemblyProcessor
             end = result.Length;
 
 #if XENKO_PLATFORM_MONO_MOBILE
-            // Xamarin iOS and Android remap some assemblies
+            // Xamarin Android remap some assemblies
             const string oldTypeEnding = "2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
             const string newTypeEnding = "4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
             result = result.Replace(oldTypeEnding, newTypeEnding, start, end);

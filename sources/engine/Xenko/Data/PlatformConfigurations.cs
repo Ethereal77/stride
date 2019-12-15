@@ -19,7 +19,7 @@ namespace Xenko.Data
         public List<ConfigurationOverride> Configurations = new List<ConfigurationOverride>();
 
         [DataMember]
-        public List<string> PlatformFilters = new List<string>(); 
+        public List<string> PlatformFilters = new List<string>();
 
         public T Get<T>() where T : Configuration, new()
         {
@@ -39,17 +39,11 @@ namespace Xenko.Data
                 case PlatformType.Android:
                     platform = ConfigPlatforms.Android;
                     break;
-                case PlatformType.iOS:
-                    platform = ConfigPlatforms.iOS;
-                    break;
                 case PlatformType.UWP:
                     platform = ConfigPlatforms.UWP;
                     break;
                 case PlatformType.Linux:
                     platform = ConfigPlatforms.Linux;
-                    break;
-                case PlatformType.macOS:
-                    platform = ConfigPlatforms.macOS;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

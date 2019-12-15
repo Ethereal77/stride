@@ -103,7 +103,7 @@ namespace Xenko.Games.Testing
 
             Initialized = true;
 
-#if XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_WINDOWS_DESKTOP
+#if XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_WINDOWS_DESKTOP
             Console.WriteLine(@"Test initialized, waiting to start...");
 #endif
         }
@@ -138,17 +138,10 @@ namespace Xenko.Games.Testing
             }
         }
 
-#if XENKO_PLATFORM_IOS
-        [DllImport("__Internal", EntryPoint = "exit")]
-        public static extern void exit(int status);
-#endif
-
         public static void Quit()
         {
 #if XENKO_PLATFORM_ANDROID
             global::Android.OS.Process.KillProcess(global::Android.OS.Process.MyPid());
-#elif XENKO_PLATFORM_IOS
-            exit(0);
 #endif
         }
     }
