@@ -204,7 +204,6 @@ namespace Xenko.Assets.Textures
                     switch (parameters.Platform)
                     {
                         case PlatformType.Windows:
-                        case PlatformType.UWP:
                         case PlatformType.Linux:
                             switch (parameters.GraphicsPlatform)
                             {

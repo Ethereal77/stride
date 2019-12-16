@@ -82,12 +82,6 @@ namespace Xenko.VirtualReality
                         }
                         case VRApi.WindowsMixedReality:
                         {
-#if XENKO_GRAPHICS_API_DIRECT3D11 && XENKO_PLATFORM_UWP
-                            if (Windows.Graphics.Holographic.HolographicSpace.IsAvailable && GraphicsDevice.Presenter is WindowsMixedRealityGraphicsPresenter)
-                            {
-                                Device = new WindowsMixedRealityHmd();
-                            }
-#endif
                             break;
                         }
                         //case VRApi.Fove:

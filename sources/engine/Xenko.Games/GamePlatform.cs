@@ -49,12 +49,8 @@ namespace Xenko.Games
 
         public static GamePlatform Create(GameBase game)
         {
-#if XENKO_PLATFORM_UWP
-            return new GamePlatformUWP(game);
-#else
             // Here we cover all Desktop variants: OpenTK, SDL, Winforms,...
             return new GamePlatformWindows(game);
-#endif
         }
 
         public abstract string DefaultAppDirectory { get; }
@@ -314,18 +310,7 @@ namespace Xenko.Games
         {
             var graphicsDevice = GraphicsDevice.New(deviceInformation.Adapter, deviceInformation.DeviceCreationFlags, gameWindow.NativeWindow, deviceInformation.GraphicsProfile);
             graphicsDevice.ColorSpace = deviceInformation.PresentationParameters.ColorSpace;
-
-#if XENKO_GRAPHICS_API_DIRECT3D11 && XENKO_PLATFORM_UWP
-            if (game.Context is GameContextUWPCoreWindow context && context.IsWindowsMixedReality)
-            {
-                graphicsDevice.Recreate(deviceInformation.Adapter, new[] { deviceInformation.GraphicsProfile }, deviceInformation.DeviceCreationFlags |= DeviceCreationFlags.BgraSupport, gameWindow.NativeWindow);
-                graphicsDevice.Presenter = new WindowsMixedRealityGraphicsPresenter(graphicsDevice, deviceInformation.PresentationParameters);
-            }
-            else
-#endif
-            {
-                graphicsDevice.Presenter = new SwapChainGraphicsPresenter(graphicsDevice, deviceInformation.PresentationParameters);
-            }
+            graphicsDevice.Presenter = new SwapChainGraphicsPresenter(graphicsDevice, deviceInformation.PresentationParameters);
 
             return graphicsDevice;
         }

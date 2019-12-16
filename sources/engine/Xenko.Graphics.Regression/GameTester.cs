@@ -25,10 +25,6 @@ namespace Xenko.Graphics.Regression
             {
                 game.Run();
             }
-
-#elif XENKO_PLATFORM_UWP
-
-            throw new NotImplementedException();
 #endif
         }
     }

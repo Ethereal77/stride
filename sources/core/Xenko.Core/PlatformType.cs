@@ -34,19 +34,8 @@ namespace Xenko.Core
         Windows,
 
         /// <summary>
-        /// The Universal Windows Platform (UWP).
-        /// </summary>
-        UWP,
-
-        /// <summary>
         /// The Linux OS.
         /// </summary>
-        Linux,
-
-        /// <summary>
-        /// The Universal Windows Platform (UWP). Please use <see cref="UWP"/> intead.
-        /// </summary>
-        [Obsolete("Please use UWP instead")]
-        Windows10 = UWP,
+        Linux
     }
 }

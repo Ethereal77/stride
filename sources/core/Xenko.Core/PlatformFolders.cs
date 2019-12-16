@@ -94,38 +94,26 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationLocalDirectory()
         {
-#if XENKO_PLATFORM_UWP
-            return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
-#else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "local");
             Directory.CreateDirectory(directory);
             return directory;
-#endif
         }
 
         [NotNull]
         private static string GetApplicationRoamingDirectory()
         {
-#if XENKO_PLATFORM_UWP
-            return Windows.Storage.ApplicationData.Current.RoamingFolder.Path;
-#else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "roaming");
             Directory.CreateDirectory(directory);
             return directory;
-#endif
         }
 
         [NotNull]
         private static string GetApplicationCacheDirectory()
         {
-#if XENKO_PLATFORM_UWP
-            var directory = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "cache");
-#else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "cache");
-#endif
             Directory.CreateDirectory(directory);
             return directory;
         }
@@ -148,11 +136,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationTemporaryDirectory()
         {
-#if XENKO_PLATFORM_UWP
-            return Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
-#else
             return Path.GetTempPath();
-#endif
         }
 
         [NotNull]
@@ -169,8 +153,6 @@ namespace Xenko.Core
     #else
             return AppDomain.CurrentDomain.BaseDirectory;
     #endif
-#elif XENKO_PLATFORM_UWP
-            return Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
 #else
             throw new NotImplementedException();
 #endif
@@ -179,11 +161,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationDataDirectory()
         {
-#if XENKO_PLATFORM_UWP
-            return Windows.ApplicationModel.Package.Current.InstalledLocation.Path + @"\data";
-#else
             return Path.Combine(GetApplicationBinaryDirectory(), "data");
-#endif
         }
     }
 }

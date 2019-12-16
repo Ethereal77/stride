@@ -60,7 +60,6 @@ namespace Xenko.Assets
             switch (platformType)
             {
                 case PlatformType.Windows:
-                case PlatformType.UWP:
                     return GraphicsPlatform.Direct3D11;
                 case PlatformType.Linux:
                     return GraphicsPlatform.OpenGL;

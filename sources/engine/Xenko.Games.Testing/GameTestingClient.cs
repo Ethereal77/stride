@@ -42,9 +42,6 @@ namespace Xenko.Games.Testing
                 case PlatformType.Windows:
                     platformName = "Windows";
                     break;
-                case PlatformType.UWP:
-                    platformName = "UWP";
-                    break;
                 default:
                     platformName = "";
                     break;

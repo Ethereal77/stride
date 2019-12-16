@@ -642,25 +642,6 @@ namespace Xenko.Rendering.Compositing
 
                             for (var i = 0; i < 2; i++)
                             {
-#if XENKO_PLATFORM_UWP
-                                if (GraphicsDevice.Platform == GraphicsPlatform.Direct3D11 && drawContext.GraphicsDevice.Presenter is WindowsMixedRealityGraphicsPresenter graphicsPresenter)
-                                {
-                                    isWindowsMixedReality = true;
-
-                                    MSAALevel = MultisampleCount.None;
-                                    currentRenderTargets.Clear();
-
-                                    if (i == 0)
-                                    {
-                                        currentRenderTargets.Add(graphicsPresenter.LeftEyeBuffer);
-                                    }
-                                    else
-                                    {
-                                        currentRenderTargets.Add(graphicsPresenter.RightEyeBuffer);
-                                    }
-                                }
-#endif
-
                                 drawContext.CommandList.SetRenderTargets(currentDepthStencil, currentRenderTargets.Count, currentRenderTargets.Items);
 
                                 if (!hasPostEffects && !isWindowsMixedReality) // need to change the viewport between each eye

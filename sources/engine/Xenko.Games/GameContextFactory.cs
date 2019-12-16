@@ -29,8 +29,6 @@ namespace Xenko.Games
     #else
             type = AppContextType.Desktop;
     #endif
-#elif XENKO_PLATFORM_UWP
-            type = AppContextType.UWPXaml; // Can change later to CoreWindow
 #endif
             return NewGameContext(type);
         }
@@ -56,12 +54,6 @@ namespace Xenko.Games
                 case AppContextType.DesktopWpf:
                     res = NewGameContextWpf();
                     break;
-                case AppContextType.UWPXaml:
-                    res = NewGameContextUWPXaml();
-                    break;
-                case AppContextType.UWPCoreWindow:
-                    res = NewGameContextUWPCoreWindow();
-                    break;
             }
 
             if (res == null)
@@ -86,24 +78,6 @@ namespace Xenko.Games
             return null;
         #endif
     #endif
-#else
-            return null;
-#endif
-        }
-
-        public static GameContext NewGameContextUWPXaml()
-        {
-#if XENKO_PLATFORM_UWP
-            return new GameContextUWPXaml(null);
-#else
-            return null;
-#endif
-        }
-
-        public static GameContext NewGameContextUWPCoreWindow()
-        {
-#if XENKO_PLATFORM_UWP
-            return new GameContextUWPCoreWindow(null);
 #else
             return null;
 #endif

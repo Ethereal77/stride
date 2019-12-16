@@ -132,9 +132,6 @@ namespace Xenko.Assets
                 case PlatformType.Windows:
                     configPlatform = ConfigPlatforms.Windows;
                     break;
-                case PlatformType.UWP:
-                    configPlatform = ConfigPlatforms.UWP;
-                    break;
                 case PlatformType.Linux:
                     configPlatform = ConfigPlatforms.Linux;
                     break;

@@ -70,33 +70,6 @@
     <RemoveDir Condition="Exists('$(XenkoCompileAssetOutputPath)')" ContinueOnError="true"  Directories="$(XenkoCompileAssetOutputPath)"/>
   </Target>
 
-  <!-- UWP: Adjust Appx folders -->
-  <PropertyGroup Condition="'$(XenkoIsExecutable)' == 'true' And '$(XenkoPlatform)' == 'UWP'">
-    <!-- Use OutputPath to define AppxPackage directory -->
-    <AppxPackageDir>$(OutputPath)\$(AppxPackageDirName)\</AppxPackageDir>
-    <AppxPackageTestDir>$(AppxPackageDir)Test\</AppxPackageTestDir>
-    <AppxPackageName>$(AssemblyName)</AppxPackageName>
-  </PropertyGroup>
-
-  <!-- UWP: Compile and Transform Assets into Content during PrepareResources phase -->
-  <PropertyGroup Condition="'$(XenkoIsExecutable)' == 'true' And '$(XenkoPlatform)' == 'UWP'">
-    <PrepareResourcesDependsOn>
-      _XenkoDeployAssetsAsContent;
-      $(PrepareResourcesDependsOn)
-    </PrepareResourcesDependsOn>
-  </PropertyGroup>
-  <Target Name="_XenkoDeployAssetsAsContent" DependsOnTargets="XenkoCompileAsset">
-    <ItemGroup>
-      <!-- Define the Assets to deploy -->
-      <AssetsToDeploy Include="$(XenkoCompileAssetOutputPath)\**\*.*"/>
-
-      <Content Include="@(AssetsToDeploy)">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <Link>data\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      </Content>
-    </ItemGroup>
-  </Target>
-
   <!-- Publish: always deploy files as content -->
   <Target Name="_XenkoDeployAssetsPublish" DependsOnTargets="XenkoCompileAsset" AfterTargets="ComputeFilesToPublish">
     <ItemGroup>

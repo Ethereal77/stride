@@ -12,10 +12,11 @@ namespace Xenko.Graphics
 {
     /// <summary>
     /// This class is responsible to provide image loader for png, gif, bmp.
-    /// TODO: Replace using System.Drawing, as it is not available on all platforms (not on Windows 8/WP8).
+    /// TODO: Replace using System.Drawing, as it is not available on all platforms.
     /// </summary>
     partial class StandardImageHelper
     {
+#if USE_WIC
         public static unsafe Image LoadFromMemory(IntPtr pSource, int size, bool makeACopy, GCHandle? handle)
         {
             using (var memoryStream = new UnmanagedMemoryStream((byte*)pSource, size))
@@ -116,6 +117,7 @@ namespace Xenko.Graphics
                 bitmap.Save(imageStream, imageFormat);
             }
         }
+#endif
     }
 }
 #endif

@@ -4,7 +4,6 @@ namespace Xenko.ProjectGenerator
 {
     public enum ProjectType
     {
-        UWP,
         Linux
     }
 }

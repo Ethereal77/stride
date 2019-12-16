@@ -9,13 +9,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Xenko.Core.LZ4;
 
-#if XENKO_PLATFORM_UWP
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.System.Profile;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-#endif
-
 namespace Xenko.Graphics.Regression
 {
     public partial class TestRunner
@@ -59,18 +52,6 @@ namespace Xenko.Graphics.Regression
     #elif XENKO_GRAPHICS_API_VULKAN
             result.DeviceName = "Vulkan";
     #endif
-#elif XENKO_PLATFORM_UWP
-            result.Platform = "UWP";
-            var deviceInfo = new EasClientDeviceInformation();
-            result.DeviceName = deviceInfo.SystemManufacturer + " " + deviceInfo.SystemProductName;
-            try
-            {
-                result.Serial = deviceInfo.Id.ToString();
-            }
-            catch (Exception)
-            {
-                // Ignored on UWP
-            }
 #endif
 
             return result;

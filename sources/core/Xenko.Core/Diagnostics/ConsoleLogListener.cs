@@ -83,14 +83,12 @@ namespace Xenko.Core.Diagnostics
                 }
             }
 
-#if !XENKO_PLATFORM_UWP
             // Log the actual message
             Console.WriteLine(GetDefaultText(logMessage));
             if (!string.IsNullOrEmpty(exceptionMsg))
             {
                 Console.WriteLine(exceptionMsg);
             }
-#endif
 
 #if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
 

@@ -23,35 +23,24 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.so; .a; $(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
-  <Choose>
-    <When Condition="('$(XenkoPlatform)' == 'UWP')">
-      <PropertyGroup>
-        <XenkoNativeClang Condition="'$(Configuration)' == 'Debug'">$(XenkoNativeClang) -Od</XenkoNativeClang>
-        <XenkoNativeClang Condition="'$(Configuration)' == 'Release'">$(XenkoNativeClang) -O2</XenkoNativeClang>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <XenkoNativeClang Condition="'$(Configuration)' == 'Debug'">$(XenkoNativeClang) -O0 -g</XenkoNativeClang>
-        <XenkoNativeClang Condition="'$(Configuration)' == 'Release'">$(XenkoNativeClang) -O3</XenkoNativeClang>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
+  <PropertyGroup>
+    <XenkoNativeClang Condition="'$(Configuration)' == 'Debug'">$(XenkoNativeClang) -O0 -g</XenkoNativeClang>
+    <XenkoNativeClang Condition="'$(Configuration)' == 'Release'">$(XenkoNativeClang) -O3</XenkoNativeClang>
+  </PropertyGroup>
 
   <!-- Define NEED_DLL_EXPORT for platforms that requires it. -->
   <PropertyGroup>
-    <XenkoNativeClang Condition=" '$(XenkoPlatform)' == 'Windows' OR '$(XenkoPlatform)' == 'UWP' ">$(XenkoNativeClang) -DNEED_DLL_EXPORT</XenkoNativeClang>
+    <XenkoNativeClang Condition=" '$(XenkoPlatform)' == 'Windows' ">$(XenkoNativeClang) -DNEED_DLL_EXPORT</XenkoNativeClang>
   </PropertyGroup>
 
   <!-- Define default CPU architectures -->
   <ItemGroup>
-    <XenkoNativeCPU Condition=" '$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'UWP' " Include="x86;x64"/>
-    <XenkoNativeCPU Condition=" '$(XenkoPlatform)' == 'UWP' " Include="ARM"/>
+    <XenkoNativeCPU Condition=" '$(XenkoPlatform)' == 'Windows' " Include="x86;x64"/>
   </ItemGroup>
 
   <!-- Define default dynamic library extensions -->
   <PropertyGroup>
-    <XenkoNativeLibraryTargetExt Condition=" '$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'UWP' ">.dll</XenkoNativeLibraryTargetExt>
+    <XenkoNativeLibraryTargetExt Condition=" '$(XenkoPlatform)' == 'Windows' ">.dll</XenkoNativeLibraryTargetExt>
     <XenkoNativeLibraryTargetExt Condition=" '$(XenkoPlatform)' == 'Linux' ">.so</XenkoNativeLibraryTargetExt>
   </PropertyGroup>
 
@@ -128,23 +117,6 @@
     <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\WindowsDesktop\WindowsDesktop.vcxproj" Targets="Build" Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)x64;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x64;Configuration=$(Configuration);Platform=x64" StopOnFirstFailure="true" />
 
     <SignFile Condition="'$(XenkoSignTool)' == 'true'" CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec" SigningTarget="%(XenkoNativeOutput.Identity)" TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
-
-    <!-- Workaround: forcing C# rebuild so that timestamp are up to date (ideally we should have separate input/output groups for C# and Native) -->
-    <Delete Files="@(IntermediateAssembly)"/>
-  </Target>
-
-  <Target Name="CompileNativeClang_UWP" Inputs="@(XenkoNativeCFile);@(XenkoNativeHFile)" Outputs="@(XenkoNativeOutput)"  Condition="'$(XenkoPlatform)' == 'UWP' And $(DesignTimeBuild) != true And $(BuildingProject) != false" BeforeTargets="CoreCompile" DependsOnTargets="_XenkoRegisterNativeOutputs">
-    <MakeDir Directories="$(OutputObjectPath)\x86"/>
-    <Exec Command="&quot;$(XenkoDependenciesDir)\LLVM\clang-cl.exe&quot; $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x86\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -WX -GS- -MD -DUWP -m32" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\UWP\UWP.vcxproj" Targets="Build" Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)\x86;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x86;Configuration=$(Configuration);Platform=x86" StopOnFirstFailure="true" />
-
-    <MakeDir Directories="$(OutputObjectPath)\x64"/>
-    <Exec Command="&quot;$(XenkoDependenciesDir)\LLVM\clang-cl.exe&quot; $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x64\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -WX -GS- -MD -DUWP -m64" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\UWP\UWP.vcxproj" Targets="Build" Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)\x64;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x64;Configuration=$(Configuration);Platform=x64" StopOnFirstFailure="true" />
-
-    <MakeDir Directories="$(OutputObjectPath)\ARM"/>
-    <Exec Command="&quot;$(XenkoDependenciesDir)\LLVM\clang-cl.exe&quot; $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\ARM\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -WX -GS- -MD -DUWP -m32 --target=thumbv7-windows-msvc" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\UWP\UWP.vcxproj" Targets="Build" Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)\ARM;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\ARM;Configuration=$(Configuration);Platform=ARM" StopOnFirstFailure="true" />
 
     <!-- Workaround: forcing C# rebuild so that timestamp are up to date (ideally we should have separate input/output groups for C# and Native) -->
     <Delete Files="@(IntermediateAssembly)"/>

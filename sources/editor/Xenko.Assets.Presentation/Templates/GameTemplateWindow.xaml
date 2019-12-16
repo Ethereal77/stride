@@ -35,7 +35,6 @@
                     <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding CanBeUnselected}"  Margin="5"/>
                   </StackPanel>
                   <!-- TODO: The margin is a hack to align it with previous checkbox; this should be done differently (the checkbox content should be the stack panel with text + this?) -->
-                  <!-- FIXME: UWP CoreWindow - temporarily disable template selection -->
                   <!--<ComboBox ItemsSource="{Binding AvailableTemplates}" SelectedValue="{Binding SelectedTemplate}" Visibility="{Binding HasTemplates, Converter={xk:VisibleOrCollapsed}}" IsEnabled="{Binding IsSelected}" Margin="44,0,0,0" HorizontalAlignment="Left">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>

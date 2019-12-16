@@ -2,17 +2,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -177,21 +177,11 @@ namespace Xenko.Games
         {
             if (Presenter == null)
             {
-                PixelFormat resizeFormat;
-                var size = GetRequestedSize(out resizeFormat);
-                var presentationParameters = new PresentationParameters((int)size.X, (int)size.Y, Window.NativeWindow, resizeFormat) { DepthStencilFormat = PreferredDepthStencilFormat };
+                var size = GetRequestedSize(out PixelFormat resizeFormat);
+                var presentationParameters = new PresentationParameters((int)size.X, (int)size.Y, Window.NativeWindow, resizeFormat);
+                presentationParameters.DepthStencilFormat = PreferredDepthStencilFormat;
                 presentationParameters.PresentationInterval = PresentInterval.Immediate;
-
-#if XENKO_GRAPHICS_API_DIRECT3D11 && XENKO_PLATFORM_UWP
-                if (Game.Context is GameContextUWPCoreWindow context && context.IsWindowsMixedReality)
-                {
-                    Presenter = new WindowsMixedRealityGraphicsPresenter(GraphicsDevice, presentationParameters);
-                }
-                else
-#endif
-                {
-                    Presenter = new SwapChainGraphicsPresenter(GraphicsDevice, presentationParameters);
-                }
+                Presenter = new SwapChainGraphicsPresenter(GraphicsDevice, presentationParameters);
 
                 isBackBufferToResize = false;
             }

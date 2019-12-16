@@ -46,16 +46,6 @@ namespace Xenko.Games
         /// <summary>
         /// Game running on desktop in an OpenTK form.
         /// </summary>
-        DesktopOpenTK,
-
-        /// <summary>
-        /// Game running on UWP in a Xaml SwapChainPanel.
-        /// </summary>
-        UWPXaml,
-
-        /// <summary>
-        /// Game running on UWP in a CoreWindow.
-        /// </summary>
-        UWPCoreWindow,
+        DesktopOpenTK
     }
 }

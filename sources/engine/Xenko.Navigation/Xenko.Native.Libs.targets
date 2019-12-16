@@ -4,7 +4,6 @@
   -->
   <PropertyGroup>
     <XenkoNativePathLibs Condition="'$(XenkoPlatform)' == 'Windows'">Recast.lib Detour.lib</XenkoNativePathLibs>
-    <XenkoNativePathLibs Condition="'$(XenkoPlatform)' == 'UWP'">Recast.lib Detour.lib</XenkoNativePathLibs>
   </PropertyGroup>
 
   <ItemGroup>

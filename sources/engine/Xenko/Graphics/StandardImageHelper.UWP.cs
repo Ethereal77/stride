@@ -1,6 +1,6 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-#if XENKO_PLATFORM_UWP
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -9,7 +9,7 @@ namespace Xenko.Graphics
 {
     /// <summary>
     /// This class is responsible to provide image loader for png, gif, bmp.
-    /// TODO: Replace using System.Drawing, as it is not available on all platforms (not on Windows 8/WP8).
+    /// TODO: Replace using System.Drawing, as it is not available on all platforms.
     /// </summary>
     partial class StandardImageHelper
     {
@@ -49,4 +49,3 @@ namespace Xenko.Graphics
         }
     }
 }
-#endif

@@ -2,17 +2,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -84,13 +84,9 @@ namespace Xenko.Games
         {
             get
             {
-#if XENKO_PLATFORM_UWP
-                return "Xenko Game";
-#else
                 var assembly = Assembly.GetEntryAssembly();
                 var productAttribute = assembly?.GetCustomAttribute<AssemblyProductAttribute>();
                 return productAttribute?.Product ?? "Xenko Game";
-#endif
             }
         }
 
@@ -102,18 +98,15 @@ namespace Xenko.Games
         {
             get
             {
-#if XENKO_PLATFORM_UWP
-                return string.Empty;
-#else
                 var assembly = Assembly.GetEntryAssembly();
                 return assembly?.Location;
-#endif
             }
         }
 
         // This code is for backward compatibility only where the generated games
         // would not explicitly create the context, but would just use a Winform
-#if XENKO_PLATFORM_WINDOWS_DESKTOP && (XENKO_UI_WINFORMS || XENKO_UI_WPF)        /// <summary>
+#if XENKO_PLATFORM_WINDOWS_DESKTOP && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+        /// <summary>
         /// Performs an implicit conversion from <see cref="Control"/> to <see cref="GameContextWinforms"/>.
         /// </summary>
         /// <param name="control">Winform control</param>

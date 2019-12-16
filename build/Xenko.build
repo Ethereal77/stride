@@ -85,7 +85,7 @@ Example of use:
   </Target>
 
   <!--
-  Build Xenko: Windows, Windows 10 (UWP)
+  Build Xenko: Windows
   -->
   <Target Name="Clean">
     <Exec Command="RMDIR /Q /S $(XenkoRoot)\Bin"/>
@@ -174,27 +174,6 @@ Example of use:
   <Target Name="BuildWindowsOpenGLES" DependsOnTargets="CopyXenkoKey">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime;XenkoGraphicsApi=OpenGLES"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=OpenGLES;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target>
-
-  <Target Name="BuildWindowsStore" DependsOnTargets="CopyXenkoKey">
-    <!-- Only a warning since build servers might still call this target for old branches -->
-    <Warning Text="Windows Store doesn't exist anymore"/>
-  </Target>
-
-  <Target Name="BuildWindows10" DependsOnTargets="BuildUWP" />
-
-  <Target Name="BuildUWP" DependsOnTargets="CopyXenkoKey">
-    <PropertyGroup>
-      <XenkoSolution>$(XenkoSolution).Runtime</XenkoSolution>
-      <XenkoPlatforms>UWP</XenkoPlatforms>
-    </PropertyGroup>
-    <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution)"/>
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);XenkoPlatforms=$(XenkoPlatforms);XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target>
-
-  <Target Name="BuildWindowsPhone" DependsOnTargets="CopyXenkoKey">
-    <!-- Only a warning since build servers might still call this target for old branches -->
-    <Warning Text="Windows Phone doesn't exist anymore"/>
   </Target>
 
   <Target Name="BuildWindowsVulkan" DependsOnTargets="CopyXenkoKey">

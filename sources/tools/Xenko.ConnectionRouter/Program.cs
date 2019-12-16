@@ -22,7 +22,6 @@ namespace Xenko.ConnectionRouter
         {
             var exeName = Path.GetFileName(Assembly.GetExecutingAssembly().Location);
             var showHelp = false;
-            var windowsPhonePortMapping = false;
             int exitCode = 0;
             string logFileName = "routerlog.txt";
 
@@ -41,8 +40,7 @@ namespace Xenko.ConnectionRouter
                     "=== Options ===",
                     string.Empty,
                     { "h|help", "Show this message and exit", v => showHelp = v != null },
-                    { "log-file=", "Log build in a custom file (default: routerlog.txt).", v => logFileName = v },
-                    { "register-windowsphone-portmapping", "Register Windows Phone IpOverUsb port mapping", v => windowsPhonePortMapping = true },
+                    { "log-file=", "Log build in a custom file (default: routerlog.txt).", v => logFileName = v }
                 };
 
             try
@@ -57,12 +55,6 @@ namespace Xenko.ConnectionRouter
                 // Make sure path exists
                 if (commandArgs.Count > 0)
                     throw new OptionException("This command expect no additional arguments", "");
-
-                if (windowsPhonePortMapping)
-                {
-                    WindowsPhoneTracker.RegisterWindowsPhonePortMapping();
-                    return 0;
-                }
 
                 SetupTrayIcon(logFileName);
 
@@ -86,9 +78,6 @@ namespace Xenko.ConnectionRouter
 
                     // Start router (in listen server mode)
                     router.Listen(RouterClient.DefaultPort).Wait();
-
-                    // Start Windows Phone management thread
-                    new Thread(() => WindowsPhoneTracker.TrackDevices(router)) { IsBackground = true }.Start();
 
                     // Start WinForms loop
                     System.Windows.Forms.Application.Run();

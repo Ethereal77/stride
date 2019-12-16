@@ -1,8 +1,8 @@
 <#@ template inherits="ProjectTemplateTransformation" language="C#" #>
 <#
 var currentPlatform = (Xenko.Core.PlatformType)Properties.CurrentPlatform;
-foreach(var platform in Properties.Platforms) 
-{ 
+foreach(var platform in Properties.Platforms)
+{
     // Skip the platform if it is not current
     if (currentPlatform != platform.Type)
     {
@@ -11,7 +11,7 @@ foreach(var platform in Properties.Platforms)
 
 	var projectType = (Xenko.Core.Assets.ProjectType)Properties.ProjectType;
 
-    foreach(var platformPart in platform.GetParts()) 
+    foreach(var platformPart in platform.GetParts())
     {
         // If this is an alias, just skip it as it is only used in the solution
         if (platformPart.Alias != null)
@@ -27,7 +27,7 @@ foreach(var platform in Properties.Platforms)
         {
             platformName = "AnyCPU";
         }
-        foreach(var config in platformPart.Configurations) 
+        foreach(var config in platformPart.Configurations)
         {
 #>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == '<#= config.Name #>|<#= platformName #>' ">
@@ -35,13 +35,8 @@ foreach(var platform in Properties.Platforms)
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-<#  if (platformName == "iPhone") { #>
-	<MtouchFastDev>True</MtouchFastDev>
-<#  } #>
-<#  } else { #>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-<#  } #>
     <OutputPath>..\Bin\<#= platform.Name #><#= platformPart.Cpu != null ? "-" + platformPart.Cpu : string.Empty #>\<#= config.Name #>\</OutputPath>
     <IntermediateOutputPath>obj\<#= platform.Name #><#= platformPart.Cpu != null ? "-" + platformPart.Cpu : string.Empty #>\<#= config.Name #>\</IntermediateOutputPath>
     <ErrorReport>prompt</ErrorReport>

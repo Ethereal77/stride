@@ -27,14 +27,12 @@
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Remove="System.IO.Compression.Zip\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Xenko.Core\Xenko.Core.csproj">
-	  <PrivateAssets>contentfiles;analyzers</PrivateAssets>
-	</ProjectReference>
-    <PackageReference Include="SharpDX" Version="4.2.0" Condition="'$(XenkoPlatform)' == 'UWP'" />
+	     <PrivateAssets>contentfiles;analyzers</PrivateAssets>
+	  </ProjectReference>
   </ItemGroup>
 
   <Import Project="$(XenkoPostSettingsTargets)" />

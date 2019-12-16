@@ -38,28 +38,10 @@
     <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'UWP' ">
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <XenkoPlatformDefines>XENKO_PLATFORM_WINDOWS;XENKO_PLATFORM_UWP;NET45;NETFX_CORE;WINDOWS_UAP</XenkoPlatformDefines>
-    <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-win10\</NUnitLiteBinDir>
-    <ExtrasUwpMetaPackageVersion>6.2.2</ExtrasUwpMetaPackageVersion>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Linux' ">
     <XenkoPlatformDefines>XENKO_PLATFORM_LINUX;XENKO_PLATFORM_UNIX;NET45</XenkoPlatformDefines>
     <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
   </PropertyGroup>
-
-  <Choose>
-    <When Condition=" '$(XenkoPlatform)' == 'UWP' ">
-      <ItemGroup>
-        <Reference Include="System" />
-        <Reference Include="System.Core" />
-        <Reference Include="System.Xml" />
-        <Reference Include="System.Xml.Linq" />
-      </ItemGroup>
-    </When>
-  </Choose>
 
   <!--
     Settings XenkoNETRuntime specific

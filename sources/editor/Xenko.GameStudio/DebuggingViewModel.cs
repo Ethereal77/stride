@@ -388,7 +388,6 @@ namespace Xenko.GameStudio
                 var platformName = "AnyCPU";
                 var configuration = "Debug";
                 var target = "Build";
-                var cpu = string.Empty; // Used only for Windows Phone so far, default to ARM (need to provide a selector or detection)
                 var extraProperties = new Dictionary<string, string>
                 {
                     ["XenkoBuildEngineLogPipeUrl"] = BuildLog.PipeName,
@@ -471,7 +470,7 @@ namespace Xenko.GameStudio
                                 process.Start();
                             }
                             break;
-                        
+
                         case PlatformType.Linux:
                             {
                                 // Sanity check to verify executable was compiled properly

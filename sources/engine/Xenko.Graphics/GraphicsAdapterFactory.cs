@@ -16,7 +16,7 @@ namespace Xenko.Graphics
         private static GraphicsAdapter defaultAdapter;
 
         /// <summary>
-        /// Initializes the GraphicsAdapter. On Desktop and WinRT, this is done statically.
+        /// Initializes the GraphicsAdapter. On Desktop, this is done statically.
         /// </summary>
         public static void Initialize()
         {

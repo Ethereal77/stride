@@ -588,12 +588,6 @@ namespace Xenko.Input
                     Sources.Add(new InputSourceSDL());
                     break;
 #endif
-#if XENKO_PLATFORM_UWP
-                case AppContextType.UWPXaml:
-                case AppContextType.UWPCoreWindow:
-                    Sources.Add(new InputSourceUWP());
-                    break;
-#endif
                 case AppContextType.Desktop:
 #if XENKO_PLATFORM_WINDOWS && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
                     Sources.Add(new InputSourceWinforms());

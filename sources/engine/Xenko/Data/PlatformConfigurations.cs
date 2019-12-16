@@ -36,9 +36,6 @@ namespace Xenko.Data
                 case PlatformType.Windows:
                     platform = ConfigPlatforms.Windows;
                     break;
-                case PlatformType.UWP:
-                    platform = ConfigPlatforms.UWP;
-                    break;
                 case PlatformType.Linux:
                     platform = ConfigPlatforms.Linux;
                     break;

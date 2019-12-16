@@ -567,7 +567,6 @@ namespace Xenko.ProjectGenerator
                     break;
 
                 case PlatformType.Linux:
-                case PlatformType.UWP:
                     configurations.Add("Any CPU", "Any CPU");
                     needDeploy = true;
                     break;

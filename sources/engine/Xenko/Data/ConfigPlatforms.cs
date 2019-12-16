@@ -10,7 +10,6 @@ namespace Xenko.Data
     {
         None = 0,
         Windows = 1 << PlatformType.Windows,
-        UWP = 1 << PlatformType.UWP,
         Linux = 1 << PlatformType.Linux,
     }
 }

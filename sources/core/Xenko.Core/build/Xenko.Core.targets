@@ -25,10 +25,7 @@
   *****************************************************************************************************************************
   -->
   <PropertyGroup>
-    <!-- Windows10 was renammed into UWP -->
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == 'Windows10'">UWP</XenkoPlatform>
     <!-- Default mappings -->
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == '' And '$(TargetPlatformIdentifier)' == 'UAP'">UWP</XenkoPlatform>
     <XenkoPlatform Condition="'$(XenkoPlatform)' == '' And $(RuntimeIdentifier.StartsWith('linux'))">Linux</XenkoPlatform>
     <XenkoPlatform Condition="'$(XenkoPlatform)' == ''">Windows</XenkoPlatform>
   </PropertyGroup>
@@ -176,19 +173,6 @@
       <ResolvedFileToPublish Include="@(_XenkoDependencyNativeLib)">
         <RelativePath>%(_XenkoDependencyNativeLib.Link)</RelativePath>
       </ResolvedFileToPublish>
-    </ItemGroup>
-  </Target>
-  <Target Name="_XenkoSetupNativeLibrariesUWP" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="'$(XenkoPlatform)' == 'UWP'">
-    <PropertyGroup>
-      <XenkoCPU Condition="'$(Platform)' == 'x86'">x86</XenkoCPU>
-      <XenkoCPU Condition="'$(Platform)' == 'x64'">x64</XenkoCPU>
-      <XenkoCPU Condition="'$(Platform)' == 'ARM'">ARM</XenkoCPU>
-    </PropertyGroup>
-    <ItemGroup>
-      <Content Include="@(_XenkoDependencyNativeLib)" Condition="$([System.String]::Copy('%(_XenkoDependencyNativeLib.Link)').StartsWith('$(XenkoCPU)'))">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <Link Condition="'$(XenkoCPU)' != ''">$([System.String]::Copy('%(_XenkoDependencyNativeLib.Link)').Replace('$(XenkoCPU)\', ''))</Link>
-      </Content>
     </ItemGroup>
   </Target>
 </Project>
