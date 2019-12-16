@@ -15,7 +15,6 @@ Xenko uses the following open-source products.
 * [LZ4 for .NET](http://lz4net.codeplex.com/) (New BSD License)
 * [MurmurHash](https://github.com/darrenkopp/murmurhash-net) (Apache License 2.0)
 * [NativePath](https://github.com/sinkingsugar/NativePath) (MIT License)
-* [OpenVR SDK](https://github.com/ValveSoftware/openvr) (BSD-3-Clause)
 * [Recast & Detour](https://github.com/recastnavigation/recastnavigation) (zlib License)
 * [SDL2](https://www.libsdl.org/) (zlib License)
 * [SharpDX](http://sharpdx.org/) (MIT License)
@@ -26,13 +25,6 @@ Xenko uses the following open-source products.
 * [SocketsForPCL](https://github.com/rdavisau/sockets-for-pcl) (MIT License)
 * [V-HACD](https://github.com/kmammou/v-hacd) (zlib License)
 * [YamlDotNet](https://github.com/aaubry/YamlDotNet) (MIT License)
-
-### Linux, Android
-* [Mono Class Libraries](https://github.com/mono/mono/tree/master/mcs/class) (MIT License)
-* [OpenTK](http://www.opentk.com/) (MIT License)
-
-### Android
-* [Android.Play.ExpansionLibrary](https://github.com/mattleibow/Android.Play.ExpansionLibrary) (Apache License 2.0)
 
 ## Editor & Build
 
