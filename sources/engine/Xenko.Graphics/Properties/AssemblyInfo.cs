@@ -16,7 +16,6 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Xenko.Engine.Tests" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Graphics.Regression" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Assets" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("Xenko.VirtualReality" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Video" + Xenko.PublicKeys.Default)]
 
 #if !XENKO_SIGNED

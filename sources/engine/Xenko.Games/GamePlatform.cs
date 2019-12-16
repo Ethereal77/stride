@@ -247,8 +247,7 @@ namespace Xenko.Games
             {
                 if (!string.IsNullOrEmpty(preferredParameters.RequiredAdapterUid) && graphicsAdapter.AdapterUid != preferredParameters.RequiredAdapterUid) continue;
 
-                // Skip adapeters that don't have graphics output
-                // but only if no RequiredAdapterUid is provided (OculusVR at init time might be in a device with no outputs)
+                // Skip adapeters that don't have graphics output but only if no RequiredAdapterUid is provided
                 if (graphicsAdapter.Outputs.Length == 0 && string.IsNullOrEmpty(preferredParameters.RequiredAdapterUid))
                 {
                     continue;

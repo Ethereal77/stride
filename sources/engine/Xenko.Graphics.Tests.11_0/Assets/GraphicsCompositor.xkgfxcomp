@@ -119,10 +119,6 @@ SharedRenderers:
         GBufferRenderStage: ref!! 48b23041-b222-4549-879a-ded8a76bd65b
         PostEffects: !PostProcessingEffects ref!! a6af0de6-da56-46cf-ab6d-7cca25684c92
         LightShafts: null
-        VRSettings:
-            Enabled: false
-            RequiredApis: {}
-            Overlays: {}
         MSAALevel: None
         MSAAResolver: {}
     d5b2e71c088247e21556decdce138d96: !Xenko.Rendering.Compositing.ForwardRenderer,Xenko.Engine
@@ -138,10 +134,6 @@ SharedRenderers:
         GBufferRenderStage: ref!! 48b23041-b222-4549-879a-ded8a76bd65b
         PostEffects: null
         LightShafts: null
-        VRSettings:
-            Enabled: false
-            RequiredApis: {}
-            Overlays: {}
         MSAALevel: None
         MSAAResolver: {}
     34ecb9b2633eacfc439ba8744fe05102: !PostProcessingEffects

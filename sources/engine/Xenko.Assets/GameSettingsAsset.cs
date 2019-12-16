@@ -69,14 +69,6 @@ namespace Xenko.Assets
         [DataMember(5050)]
         public Color SplashScreenColor { get; set; } = Color.Black;
 
-        /// <userdoc>
-        /// If checked, the splash screen is display in VR double view.
-        /// </userdoc>
-        [DefaultValue(false)]
-        [Display("Double screen", "Splash screen")]
-        [DataMember(5100)]
-        public bool DoubleViewSplashScreen { get; set; } = false;
-
         [DataMember(2000)]
         [MemberCollection(ReadOnly = true, NotNullItems = true)]
         public List<Configuration> Defaults { get; } = new List<Configuration>();

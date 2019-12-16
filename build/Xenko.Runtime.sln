@@ -110,8 +110,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenko.Native", "..\sources\
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Xenko.Refactor", "..\sources\engine\Xenko.Shared\Refactor\Xenko.Refactor.shproj", "{B33E576F-2279-4BFC-A438-D9B84343B56B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenko.VirtualReality", "..\sources\engine\Xenko.VirtualReality\Xenko.VirtualReality.csproj", "{53782603-3096-40C2-ABD3-F8F311BAE4BE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenko.Navigation", "..\sources\engine\Xenko.Navigation\Xenko.Navigation.csproj", "{FBE1FA7B-E699-4BB2-9C8F-41F4C9F3F088}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00-Localization", "00-Localization", "{FC791F56-C1F1-4C41-A193-868D8197F8E2}"

@@ -129,10 +129,6 @@ SharedRenderers:
         GBufferRenderStage: ref!! 619b9ff9-c0fc-476f-a4bf-fc6742f1e379
         PostEffects: !PostProcessingEffects ref!! e92497d4-8f9d-4dbd-980c-3fa2d34cdd4a
         LightShafts: null
-        VRSettings:
-            Enabled: false
-            RequiredApis: {}
-            Overlays: {}
         SubsurfaceScatteringBlurEffect: null
         MSAALevel: None
         MSAAResolver: {}
@@ -149,10 +145,6 @@ SharedRenderers:
         GBufferRenderStage: ref!! 619b9ff9-c0fc-476f-a4bf-fc6742f1e379
         PostEffects: null
         LightShafts: null
-        VRSettings:
-            Enabled: false
-            RequiredApis: {}
-            Overlays: {}
         SubsurfaceScatteringBlurEffect: null
         MSAALevel: None
         MSAAResolver: {}

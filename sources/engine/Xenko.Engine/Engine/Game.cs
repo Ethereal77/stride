@@ -23,7 +23,6 @@ using Xenko.Rendering.Fonts;
 using Xenko.Rendering.Sprites;
 using Xenko.Shaders.Compiler;
 using Xenko.Streaming;
-using Xenko.VirtualReality;
 
 namespace Xenko.Engine
 {
@@ -112,11 +111,6 @@ namespace Xenko.Engine
         /// Gets the game profiler system.
         /// </summary>
         public GameProfilingSystem ProfilingSystem { get; }
-
-        /// <summary>
-        /// Gets the VR Device System.
-        /// </summary>
-        public VRDeviceSystem VRDeviceSystem { get; }
 
         /// <summary>
         /// Gets the font system.
@@ -223,9 +217,6 @@ namespace Xenko.Engine
             ProfilingSystem = new GameProfilingSystem(Services);
             Services.AddService(ProfilingSystem);
 
-            VRDeviceSystem = new VRDeviceSystem(Services);
-            Services.AddService(VRDeviceSystem);
-
             // Creates the graphics device manager
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
             Services.AddService<IGraphicsDeviceManager>(GraphicsDeviceManager);
@@ -293,7 +284,6 @@ namespace Xenko.Engine
                     SceneSystem.InitialGraphicsCompositorUrl = Settings?.DefaultGraphicsCompositorUrl;
                     SceneSystem.SplashScreenUrl = Settings?.SplashScreenUrl;
                     SceneSystem.SplashScreenColor = Settings?.SplashScreenColor ?? Color4.Black;
-                    SceneSystem.DoubleViewSplashScreen = Settings?.DoubleViewSplashScreen ?? false;
                 }
             }
         }
@@ -375,7 +365,7 @@ namespace Xenko.Engine
             // If requested in game settings, compile effects remotely and/or notify new shader requests
             EffectSystem.Compiler = EffectCompilerFactory.CreateEffectCompiler(Content.FileProvider, EffectSystem, Settings?.PackageName, Settings?.EffectCompilation ?? EffectCompilationMode.Local, Settings?.RecordUsedEffects ?? false);
 
-            // Setup shader compiler settings from a compilation mode. 
+            // Setup shader compiler settings from a compilation mode.
             // TODO: We might want to provide overrides on the GameSettings to specify debug and/or optim level specifically.
             if (Settings != null)
                 EffectSystem.SetCompilationMode(Settings.CompilationMode);
@@ -389,9 +379,6 @@ namespace Xenko.Engine
 
             // Add the Audio System
             GameSystems.Add(Audio);
-
-            // Add the VR System
-            GameSystems.Add(VRDeviceSystem);
 
             // TODO: data-driven?
             Content.Serializer.RegisterSerializer(new ImageSerializer());

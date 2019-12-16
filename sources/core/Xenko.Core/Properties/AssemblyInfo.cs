@@ -16,7 +16,5 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Xenko.Graphics" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Games" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Audio" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("Xenko.VirtualReality" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Video" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Core.Tests" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("XenkoCoreTests" + Xenko.PublicKeys.Default)]

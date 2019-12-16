@@ -1,9 +1,9 @@
 ![Xenko](https://xenko.com/images/external/xenko-logo-side.png)
-=======
+===============================================================
 
 Welcome to the Xenko source code repository!
 
-Xenko is an open-source C# game engine for realistic rendering and VR.
+Xenko is an open-source **C# game engine** for realistic rendering.
 The engine is highly modular and aims at giving game makers more flexibility in their development.
 Xenko comes with an editor that allows you create and manage the content of your games or applications in a visual and intuitive way.
 

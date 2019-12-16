@@ -98,10 +98,6 @@ SharedRenderers:
         GBufferRenderStage: null
         PostEffects: null
         LightShafts: null
-        VRSettings:
-            Enabled: false
-            RequiredApis: {}
-            Overlays: {}
         SubsurfaceScatteringBlurEffect: null
         MSAALevel: None
         MSAAResolver: {}
@@ -121,10 +117,6 @@ SharedRenderers:
         GBufferRenderStage: null
         PostEffects: null
         LightShafts: null
-        VRSettings:
-            Enabled: false
-            RequiredApis: {}
-            Overlays: {}
         SubsurfaceScatteringBlurEffect: null
         MSAALevel: None
         MSAAResolver: {}

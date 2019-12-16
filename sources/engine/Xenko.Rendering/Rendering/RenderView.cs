@@ -90,7 +90,7 @@ namespace Xenko.Rendering
         public RenderViewFlags Flags { get; set; }
 
         /// <summary>
-        /// The view used for lighting (useful to share lighting results for two very close views such as VR)
+        /// The view used for lighting (useful to share lighting results for two very close views).
         /// </summary>
         /// <remarks>This is a temporary workaround until shadow maps have a real scope: global or view-dependent (single view or multiple views).</remarks>
         public RenderView LightingView { get; set; }

@@ -120,12 +120,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpyJet.Windows", "Games\J
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JumpyJet.Game", "Games\JumpyJet\JumpyJet.Game\JumpyJet.Game.csproj", "{597B3943-F261-406D-ADAD-96C1F38F30A9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VRSandbox", "VRSandbox", "{2FD8E3C1-D573-48AF-8AEB-3F8D053F7D0D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VRSandbox.Windows", "Templates\VRSandbox\VRSandbox\VRSandbox.Windows\VRSandbox.Windows.csproj", "{BD079676-2C54-43C7-8476-14B007EE6780}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VRSandbox.Game", "Templates\VRSandbox\VRSandbox\VRSandbox.Game\VRSandbox.Game.csproj", "{577D2166-5B06-4119-96CF-70D6C1716A2F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MaterialShader", "MaterialShader", "{49E75772-2004-4975-A2CA-FAC7FCB12E70}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MaterialShader.Windows", "Graphics\MaterialShader\MaterialShader.Windows\MaterialShader.Windows.csproj", "{0BD87B72-191D-4F53-ABF7-A1B3B8A092AE}"

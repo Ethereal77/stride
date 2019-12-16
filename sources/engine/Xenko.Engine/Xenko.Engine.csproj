@@ -32,7 +32,10 @@
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.10.0" />
     <ProjectReference Include="..\Xenko.Audio\Xenko.Audio.csproj" />
     <ProjectReference Include="..\Xenko.Rendering\Xenko.Rendering.csproj" />
-    <ProjectReference Include="..\Xenko.VirtualReality\Xenko.VirtualReality.csproj" />
+    <ProjectReference Include="..\Xenko.Input\Xenko.Input.csproj">
+      <Project>{84deb606-77ed-49cd-9aed-d2b13c1f5a1e}</Project>
+      <Name>Xenko.Input</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Xenko.Shared\Refactor\Xenko.Refactor.projitems" Label="Shared" />
   <Choose>

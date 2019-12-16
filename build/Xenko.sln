@@ -338,8 +338,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenko.Core.Assets.Quantum",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenko.Core.Assets.Quantum.Tests", "..\sources\assets\Xenko.Core.Assets.Quantum.Tests\Xenko.Core.Assets.Quantum.Tests.csproj", "{A1A3EB96-46CE-4F2F-A3B6-EF869043DD49}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenko.VirtualReality", "..\sources\engine\Xenko.VirtualReality\Xenko.VirtualReality.csproj", "{53782603-3096-40C2-ABD3-F8F311BAE4BE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenko.Core.Presentation.Quantum.Tests", "..\sources\presentation\Xenko.Core.Presentation.Quantum.Tests\Xenko.Core.Presentation.Quantum.Tests.csproj", "{E8C458AE-7B42-4DCE-B326-7F3A9065EA19}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xenko.Code.Tests", "..\sources\tools\Xenko.Code.Tests\Xenko.Code.Tests.csproj", "{3C855DB2-EEA3-415C-A0A8-C834DEC40531}"

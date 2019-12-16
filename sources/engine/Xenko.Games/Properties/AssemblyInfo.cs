@@ -11,4 +11,3 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Xenko.UI" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Debugger" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Graphics.Regression" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("Xenko.VirtualReality" + Xenko.PublicKeys.Default)]

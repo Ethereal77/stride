@@ -13,7 +13,7 @@ namespace Xenko.Rendering
         None = 0,
 
         /// <summary>
-        /// Not being drawn directly (i.e. shared view for VR eyes).
+        /// Not being drawn directly (i.e. shared view).
         /// </summary>
         NotDrawn = 1,
     }
