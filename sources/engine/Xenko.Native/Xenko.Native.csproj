@@ -24,12 +24,10 @@
     <ProjectReference Include="..\..\core\Xenko.Core.Mathematics\Xenko.Core.Mathematics.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <XenkoContent Condition="'$(XenkoPlatform)' == 'Linux'" Include="Xenko.Native.dll.config" />
     <None Include="Xenko.Native.Libs.targets">
       <SubType>Designer</SubType>
     </None>
     <None Include="XenkoNative.h" />
-    <None Include="LinuxAllocator.cpp" />
 	<None Include="FastTextRenderer\FastTextRenderer.c" />
     <None Include="Sprite\SpriteBatchNative.c" />
     <None Include="DirectInput\XInputChecker.cpp" />

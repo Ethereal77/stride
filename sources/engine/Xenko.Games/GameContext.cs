@@ -118,7 +118,7 @@ namespace Xenko.Games
         }
 #endif
 
-#if (XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX) && XENKO_GRAPHICS_API_OPENGL && XENKO_UI_OPENTK
+#if XENKO_PLATFORM_WINDOWS_DESKTOP && XENKO_GRAPHICS_API_OPENGL && XENKO_UI_OPENTK
         /// <summary>
         /// Performs an implicit conversion from <see cref="OpenTK.GameWindow"/> to <see cref="GameContextOpenTK"/>.
         /// </summary>

@@ -64,19 +64,6 @@ namespace Xenko.Assets
             }
             solutionPlatforms.Add(windowsPlatform);
 
-            // Linux
-            var linuxPlatform = new SolutionPlatform()
-            {
-                Name = PlatformType.Linux.ToString(),
-                IsAvailable = true,
-                TargetFramework = "netcoreapp2.1",
-                RuntimeIdentifier = "linux-x64",
-                Type = PlatformType.Linux,
-            };
-            linuxPlatform.DefineConstants.Add("XENKO_PLATFORM_UNIX");
-            linuxPlatform.DefineConstants.Add("XENKO_PLATFORM_LINUX");
-            solutionPlatforms.Add(linuxPlatform);
-
             AssetRegistry.RegisterSupportedPlatforms(solutionPlatforms);
         }
 

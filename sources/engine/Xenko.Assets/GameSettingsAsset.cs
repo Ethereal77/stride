@@ -132,9 +132,7 @@ namespace Xenko.Assets
                 case PlatformType.Windows:
                     configPlatform = ConfigPlatforms.Windows;
                     break;
-                case PlatformType.Linux:
-                    configPlatform = ConfigPlatforms.Linux;
-                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(platform), platform, null);
             }

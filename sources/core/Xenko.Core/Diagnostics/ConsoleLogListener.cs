@@ -47,7 +47,7 @@ namespace Xenko.Core.Diagnostics
 
             var exceptionMsg = GetExceptionText(logMessage);
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
             // save initial console color
             var initialColor = Console.ForegroundColor;
 
@@ -90,7 +90,7 @@ namespace Xenko.Core.Diagnostics
                 Console.WriteLine(exceptionMsg);
             }
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
 
             // revert console initial color
             Console.ForegroundColor = initialColor;

@@ -21,9 +21,6 @@
     <XenkoNativeLib Include="..\..\..\deps\BulletPhysics\$(XenkoPlatform)\**\libbulletc.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </XenkoNativeLib>
-    <XenkoContent Condition="'$(XenkoPlatform)' == 'Linux'" Include="..\..\..\deps\BulletPhysics\BulletSharp.NetStandard.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </XenkoContent>
     <Reference Include="BulletSharp">
       <HintPath>..\..\..\deps\BulletPhysics\$(XenkoBulletPlatform)\$(XenkoBulletSignedDir)BulletSharp.NetStandard.dll</HintPath>
     </Reference>

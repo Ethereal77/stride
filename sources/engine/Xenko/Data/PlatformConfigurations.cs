@@ -33,12 +33,11 @@ namespace Xenko.Data
             {
                 case PlatformType.Shared:
                     break;
+
                 case PlatformType.Windows:
                     platform = ConfigPlatforms.Windows;
                     break;
-                case PlatformType.Linux:
-                    platform = ConfigPlatforms.Linux;
-                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

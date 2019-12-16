@@ -16,7 +16,6 @@
     <XenkoNativeToolingDebug></XenkoNativeToolingDebug>
 
     <XenkoNativeClang>$(XenkoNativeToolingDebug) -Wno-ignored-attributes -Wno-delete-non-virtual-dtor -Wno-macro-redefined -I&quot;$(XenkoDependenciesDir)\NativePath&quot; -I&quot;$(XenkoDependenciesDir)\NativePath\standard&quot;</XenkoNativeClang>
-    <XenkoNativeClang Condition="'$(XenkoPlatform)' == 'Linux'">$(XenkoNativeClang) -DPLATFORM_LINUX</XenkoNativeClang>
     <XenkoNativeClangCPP>-std=c++11 -fno-rtti -fno-exceptions</XenkoNativeClangCPP>
 
     <!--<XenkoNativeOutputPath>$([MSBuild]::MakeRelative('$(OutputPath)', '$(XenkoPackageXenkoPlatformBin)\'))</XenkoNativeOutputPath>-->
@@ -41,7 +40,6 @@
   <!-- Define default dynamic library extensions -->
   <PropertyGroup>
     <XenkoNativeLibraryTargetExt Condition=" '$(XenkoPlatform)' == 'Windows' ">.dll</XenkoNativeLibraryTargetExt>
-    <XenkoNativeLibraryTargetExt Condition=" '$(XenkoPlatform)' == 'Linux' ">.so</XenkoNativeLibraryTargetExt>
   </PropertyGroup>
 
   <ItemGroup>
@@ -120,12 +118,6 @@
 
     <!-- Workaround: forcing C# rebuild so that timestamp are up to date (ideally we should have separate input/output groups for C# and Native) -->
     <Delete Files="@(IntermediateAssembly)"/>
-  </Target>
-
-  <Target Name="CompileNativeClang_Linux" Inputs="@(XenkoNativeCFile);@(XenkoNativeHFile)" Outputs="@(XenkoNativeOutput)" Condition="'$(XenkoPlatform)' == 'Linux' And $(DesignTimeBuild) != true And $(BuildingProject) != false" BeforeTargets="CoreCompile" DependsOnTargets="_XenkoRegisterNativeOutputs">
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' != '.cpp'" Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\%(XenkoNativeCFile.Filename)_x64.o&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -fPIC -target x86_64-linux-gnu" />
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' == '.cpp'" Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; $(XenkoNativeClangCPP) $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\%(XenkoNativeCFile.Filename)_x64.o&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -fPIC -target x86_64-linux-gnu" />
-    <Exec Command="&quot;$(XenkoDependenciesDir)\LLVM\lld.exe&quot; -flavor gnu --eh-frame-hdr -m elf_x86_64 -shared -o &quot;$(XenkoNativeOutputPath)\$(XenkoNativeOutputName)$(XenkoNativeLibraryTargetExt)&quot; @(XenkoNativeCFile->'&quot;$(OutputObjectPath)\%(Filename)_x64.o&quot;', ' ') @(XenkoNativePathLibs2->'&quot;$(XenkoDependenciesDir)\NativePath\Linux\x86_64\%(Filename).a&quot;', ' ') &quot;$(XenkoDependenciesDir)\NativePath\Linux\x86_64\libNativePath.a&quot;" />
   </Target>
 
   <Target Name="CompileNativeClang_Clean" BeforeTargets="Clean" DependsOnTargets="_XenkoRegisterNativeOutputs">

@@ -365,8 +365,6 @@ namespace Xenko.Graphics
                 WindowHandle = controlHandle,
             };
             surface = GraphicsDevice.NativeInstance.CreateWin32Surface(surfaceCreateInfo);
-#elif XENKO_PLATFORM_LINUX
-            throw new NotSupportedException("Only SDL is supported for the time being on Linux");
 #else
             throw new NotSupportedException();
 #endif

@@ -123,7 +123,7 @@ namespace Xenko.Graphics
         private OpenTK.Graphics.IGraphicsContext graphicsContext;
         private OpenTK.Platform.IWindowInfo windowInfo;
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
 #if XENKO_UI_SDL
         private Xenko.Graphics.SDL.Window gameWindow;
 #else
@@ -692,7 +692,7 @@ namespace Xenko.Graphics
 
             renderer = GL.GetString(StringName.Renderer);
 
-#if XENKO_PLATFORM_UNIX || XENKO_PLATFORM_WINDOWS_DESKTOP
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
 #if XENKO_UI_SDL
             gameWindow = (Xenko.Graphics.SDL.Window)windowHandle.NativeWindow;
 #else
@@ -925,7 +925,7 @@ namespace Xenko.Graphics
         {
             get
             {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
                 return gameWindow.WindowState == WindowState.Fullscreen;
 #else
                 throw new NotImplementedException();
@@ -934,7 +934,7 @@ namespace Xenko.Graphics
 
             set
             {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
                 if (value ^ (gameWindow.WindowState == WindowState.Fullscreen))
                     gameWindow.WindowState = value ? WindowState.Fullscreen : WindowState.Normal;
 #else

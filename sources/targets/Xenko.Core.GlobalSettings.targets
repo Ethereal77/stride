@@ -38,11 +38,6 @@
     <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Linux' ">
-    <XenkoPlatformDefines>XENKO_PLATFORM_LINUX;XENKO_PLATFORM_UNIX;NET45</XenkoPlatformDefines>
-    <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
-  </PropertyGroup>
-
   <!--
     Settings XenkoNETRuntime specific
   -->

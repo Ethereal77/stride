@@ -1,7 +1,7 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
 using System;
 using Xenko.Core;
 using Xenko.Core.Mathematics;
@@ -22,14 +22,14 @@ namespace Xenko.UI.Controls
                 if (currentPosition < selectionStop)
                     Select(currentPosition, selectionStop - currentPosition, true);
                 else
-                    Select(selectionStop, currentPosition - selectionStop);  
+                    Select(selectionStop, currentPosition - selectionStop);
             }
             else
             {
                 if (currentPosition < SelectionStart)
                     Select(currentPosition, selectionStart - currentPosition, true);
                 else
-                    Select(selectionStart, currentPosition - selectionStart);  
+                    Select(selectionStart, currentPosition - selectionStart);
             }
         }
 
@@ -38,7 +38,7 @@ namespace Xenko.UI.Controls
             // Find the appropriate position for the caret.
             CaretPosition = FindNearestCharacterIndex(new Vector2(args.WorldPosition.X - WorldMatrix.M41, args.WorldPosition.Y - WorldMatrix.M42));
         }
-        
+
         /// <summary>
         /// Find the index of the nearest character to the provided position.
         /// </summary>
@@ -136,14 +136,14 @@ namespace Xenko.UI.Controls
 
         private void InterpretKey(Keys key, InputManager input)
         {
-            // delete and back space have same behavior when there is a selection 
+            // delete and back space have same behavior when there is a selection
             if (SelectionLength > 0 && (key == Keys.Delete || key == Keys.Back))
             {
                 SelectedText = "";
                 return;
             }
 
-            // backspace with caret 
+            // backspace with caret
             if (key == Keys.Back)
             {
                 selectionStart = Math.Max(0, selectionStart - 1);
@@ -193,7 +193,7 @@ namespace Xenko.UI.Controls
                 return;
             }
 
-            // select backward 
+            // select backward
             if (key == Keys.Left && (input.IsKeyDown(Keys.LeftShift) || input.IsKeyDown(Keys.RightShift)))
             {
                 if (caretAtStart || selectionStart == selectionStop)

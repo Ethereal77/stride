@@ -20,19 +20,6 @@
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
 
-  <Choose>
-    <When Condition=" '$(XenkoNETRuntime)' == 'CoreCLR' ">
-      <ItemGroup>
-        <None Include="..\..\data\Linux\runtimeconfig.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\..\data\Linux\CoreCLRSetup.sh">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-      </ItemGroup>
-    </When>
-  </Choose>
-
   <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="2.2.2" />
@@ -96,10 +83,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TupleSerializer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <XenkoContent Condition="'$(XenkoPlatform)' == 'Linux'" Include="Xenko.Core.dll.config" />
   </ItemGroup>
 
   <ItemGroup>

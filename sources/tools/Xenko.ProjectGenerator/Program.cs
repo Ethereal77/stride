@@ -566,11 +566,6 @@ namespace Xenko.ProjectGenerator
                     // Nothing to do here.
                     break;
 
-                case PlatformType.Linux:
-                    configurations.Add("Any CPU", "Any CPU");
-                    needDeploy = true;
-                    break;
-
                 default:
                     throw new InvalidOperationException("Unknown platform " + requestedPlatform);
             }

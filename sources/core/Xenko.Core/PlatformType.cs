@@ -31,11 +31,6 @@ namespace Xenko.Core
         /// <summary>
         /// The windows desktop OS.
         /// </summary>
-        Windows,
-
-        /// <summary>
-        /// The Linux OS.
-        /// </summary>
-        Linux
+        Windows
     }
 }

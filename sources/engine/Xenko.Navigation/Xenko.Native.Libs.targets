@@ -6,7 +6,4 @@
     <XenkoNativePathLibs Condition="'$(XenkoPlatform)' == 'Windows'">Recast.lib Detour.lib</XenkoNativePathLibs>
   </PropertyGroup>
 
-  <ItemGroup>
-    <XenkoNativePathLibs2 Condition="'$(XenkoPlatform)' == 'Linux'" Include="libDetour.a;libRecast.a" />
-  </ItemGroup>
 </Project>

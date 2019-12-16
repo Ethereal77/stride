@@ -18,11 +18,6 @@ namespace Xenko.Core
         /// The current running <see cref="PlatformType"/>.
         /// </summary>
         public static readonly PlatformType Type = PlatformType.Windows;
-#elif XENKO_PLATFORM_LINUX
-        /// <summary>
-        /// The current running <see cref="PlatformType"/>.
-        /// </summary>
-        public static readonly PlatformType Type = PlatformType.Linux;
 #endif
 
         /// <summary>

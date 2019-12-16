@@ -181,24 +181,6 @@ Example of use:
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=Vulkan;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
 
-  <Target Name="BuildLinux" DependsOnTargets="CopyXenkoKey">
-    <PropertyGroup>
-      <XenkoSolution>$(XenkoSolution).Runtime</XenkoSolution>
-      <XenkoPlatforms>Linux</XenkoPlatforms>
-    </PropertyGroup>
-    <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution);XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);XenkoPlatforms=$(XenkoPlatforms);XenkoSkipAutoPack=true;XenkoSkipUnitTests=true;XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
-  </Target>
-
-  <Target Name="BuildLinuxVulkan" DependsOnTargets="CopyXenkoKey">
-    <PropertyGroup>
-      <XenkoSolution>$(XenkoSolution).Runtime</XenkoSolution>
-      <XenkoPlatforms>Linux</XenkoPlatforms>
-    </PropertyGroup>
-    <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution);XenkoGraphicsApi=Vulkan"/>
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);XenkoPlatforms=$(XenkoPlatforms);XenkoGraphicsApi=Vulkan;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target>
-
   <Target Name="DownloadXunitRunnerConsole">
     <MakeDir Directories="$(MSBuildThisFileDirectory)packages"/>
     <PropertyGroup>

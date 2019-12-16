@@ -26,7 +26,6 @@
   -->
   <PropertyGroup>
     <!-- Default mappings -->
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == '' And $(RuntimeIdentifier.StartsWith('linux'))">Linux</XenkoPlatform>
     <XenkoPlatform Condition="'$(XenkoPlatform)' == ''">Windows</XenkoPlatform>
   </PropertyGroup>
 
@@ -108,7 +107,7 @@
   <!-- List dependency files from .ssdeps -->
   <PropertyGroup>
     <_XenkoListDepsFilesDependsOn>ResolveAssemblyReferences</_XenkoListDepsFilesDependsOn>
-    <_XenkoListDepsFilesDependsOn Condition="'$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux'">$(_XenkoListDepsFilesDependsOn);ResolvePackageAssets</_XenkoListDepsFilesDependsOn>
+    <_XenkoListDepsFilesDependsOn Condition="'$(XenkoPlatform)' == 'Windows'">$(_XenkoListDepsFilesDependsOn);ResolvePackageAssets</_XenkoListDepsFilesDependsOn>
   </PropertyGroup>
   <Target Name="_XenkoListDepsFiles" DependsOnTargets="$(_XenkoListDepsFilesDependsOn)">
     <ItemGroup>
@@ -160,7 +159,7 @@
   </Target>
 
   <!-- Copy native libraries to output -->
-  <Target Name="_XenkoSetupNativeLibrariesWindows" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="('$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux') And '$(CopyLocalLockFileAssemblies)' != 'false'">
+  <Target Name="_XenkoSetupNativeLibrariesWindows" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="('$(XenkoPlatform)' == 'Windows') And '$(CopyLocalLockFileAssemblies)' != 'false'">
     <ItemGroup>
       <None Include="@(_XenkoDependencyNativeLib)">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

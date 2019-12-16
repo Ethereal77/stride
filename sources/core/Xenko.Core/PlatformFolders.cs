@@ -120,7 +120,7 @@ namespace Xenko.Core
 
         private static string GetApplicationExecutablePath()
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
             return Assembly.GetEntryAssembly()?.Location;
 #else
             return null;
@@ -142,7 +142,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationBinaryDirectory()
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_UNIX
+#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var executableName = GetApplicationExecutablePath();
             if (!string.IsNullOrEmpty(executableName))
             {

@@ -4,6 +4,5 @@ namespace Xenko.ProjectGenerator
 {
     public enum ProjectType
     {
-        Linux
     }
 }

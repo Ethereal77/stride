@@ -3,7 +3,7 @@
 
 #include "Common.h"
 
-#if defined(PLATFORM_LINUX) || !defined(__clang__)
+#if !defined(__clang__)
 
 #include "../../../deps/NativePath/NativePath.h"
 #include "../../../deps/NativePath/NativeDynamicLinking.h"
@@ -132,9 +132,6 @@ extern "C" {
 				if (!OpenALLibrary) OpenALLibrary = LoadDynamicLibrary("x64\\OpenAL");
 				if (!OpenALLibrary) OpenALLibrary = LoadDynamicLibrary("x64/OpenAL");
 			}
-
-			//Linux
-			if (!OpenALLibrary) OpenALLibrary = LoadDynamicLibrary("libopenal.so.1");
 
 			if (!OpenALLibrary) return false;
 

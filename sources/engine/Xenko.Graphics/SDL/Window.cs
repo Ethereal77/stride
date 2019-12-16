@@ -66,9 +66,6 @@ namespace Xenko.Graphics.SDL
                 {
 #if XENKO_PLATFORM_WINDOWS_DESKTOP
                     Handle = info.info.win.window;
-#elif XENKO_PLATFORM_LINUX
-                    Handle = info.info.x11.window;
-                    Display = info.info.x11.display;
 #endif
                 }
                 Application.RegisterWindow(this);
@@ -545,42 +542,8 @@ namespace Xenko.Graphics.SDL
         /// <summary>
         /// Platform specific handle for Window:
         /// - On Windows: the HWND of the window
-        /// - On Unix: the Window ID (XID). Note that on Unix, the value is 32-bit (See X11/X.h for the typedef of XID).
         /// </summary>
         public IntPtr Handle { get; private set; }
-
-#if XENKO_PLATFORM_LINUX
-        /// <summary>
-        /// Display of current Window.
-        /// </summary>
-        public IntPtr Display { get; private set;}
-
-        /// <summary>
-        /// Given a Xlib display pointer, returns the corresponding Xcb connection.
-        /// </summary>
-        /// <param name="display">The Xlib display pointer.</param>
-        /// <returns>A Xcb connection pointer.</returns>
-        [System.Runtime.InteropServices.DllImport("libX11-xcb")]
-        private static extern IntPtr XGetXCBConnection(IntPtr display);
-
-        /// <summary>
-        /// Associated XcbConnection for <see cref="Display"/>. Null pointer if none available.
-        /// </summary>
-        public IntPtr XcbConnection
-        {
-            get
-            {
-                try
-                {
-                    return XGetXCBConnection(Display);
-                }
-                catch (Exception)
-                {
-                    return IntPtr.Zero;
-                }
-            }
-        }
-#endif
 
         /// <summary>
         /// The SDL window handle.

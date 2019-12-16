@@ -64,8 +64,8 @@
   *****************************************************************************************************************************
   -->
   <Target Name="_XenkoSetupNativeLibraries" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="'$(XenkoDependenciesCopy)' != 'false'">
-    <!-- Windows, Linux -->
-    <ItemGroup Condition=" '$(XenkoPlatform)' == '' Or '$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux' ">
+    <!-- Windows -->
+    <ItemGroup Condition=" '$(XenkoPlatform)' == '' Or '$(XenkoPlatform)' == 'Windows' ">
       <None Include="@(_XenkoDependencyNativeLib)">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

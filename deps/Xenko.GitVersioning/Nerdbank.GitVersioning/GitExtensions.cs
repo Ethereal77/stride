@@ -352,11 +352,6 @@ namespace Nerdbank.GitVersioning
                 return Path.Combine(basePath, "lib", "win32", IntPtr.Size == 4 ? "x86" : "x64");
             }
 #if !NET45
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return Path.Combine(basePath, "lib", "linux", IntPtr.Size == 4 ? "x86" : "x86_64");
-            }
-
             return null;
 #endif
         }

@@ -9,7 +9,6 @@ namespace Xenko.Data
     public enum ConfigPlatforms
     {
         None = 0,
-        Windows = 1 << PlatformType.Windows,
-        Linux = 1 << PlatformType.Linux,
+        Windows = 1 << PlatformType.Windows
     }
 }

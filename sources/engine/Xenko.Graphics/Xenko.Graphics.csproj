@@ -68,13 +68,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </XenkoNativeLib>
   </ItemGroup>
-  <ItemGroup Condition="'$(XenkoPlatform)' == 'Linux'">
-    <Reference Include="SharpFont">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(XenkoDependenciesDir)SharpFont\$(XenkoPlatform)\SharpFont.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="'$(XenkoPlatform)' != 'Linux'">
+  <ItemGroup>
     <Reference Include="SharpFont">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(XenkoDependenciesDir)SharpFont\Portable\SharpFont.dll</HintPath>
@@ -92,7 +86,7 @@
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" Condition="'$(XenkoPlatform)' == 'Windows'" />
     <PackageReference Include="SharpDX.Direct3D12" Version="4.2.0" Condition="'$(XenkoPlatform)' == 'Windows'" />
     <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" Condition="'$(XenkoPlatform)' == 'Windows'" />
-    <PackageReference Include="Xenko.OpenTK" Version="1.0.2" Condition="'$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux'" />
+    <PackageReference Include="Xenko.OpenTK" Version="1.0.2" Condition="'$(XenkoPlatform)' == 'Windows'" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="FrameworkResources.resx">

@@ -41,7 +41,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <XenkoContent Condition="'$(XenkoPlatform)' == 'Linux'" Include="Xenko.VirtualReality.dll.config" />
     <None Include="Xenko.Native.Libs.targets">
       <SubType>Designer</SubType>
     </None>

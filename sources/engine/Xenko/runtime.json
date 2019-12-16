@@ -264,34 +264,6 @@
         "win10-vulkan",
         "win10-x64"
       ]
-    },
-    "linux-opengl": {
-      "#import": [
-        "linux"
-      ]
-    },
-    "linux-opengl-x64": {
-      "#import": [
-        "linux-opengl",
-        "linux-x64"
-      ]
-    },
-    "linux-vulkan": {
-      "#import": [
-        "linux"
-      ]
-    },
-    "linux-vulkan-x64": {
-      "#import": [
-        "linux-vulkan",
-        "linux-x64"
-      ]
-    },
-    "osx": {
-      "#import": [
-        "osx-vulkan",
-        "unix"
-      ]
     }
   }
 }

@@ -1,7 +1,6 @@
 ﻿!ProjectTemplate
 Files:
   - {Source: $ProjectName$.Shared.targets.t4, Target: $ProjectName$.Shared.targets, IsTemplate: true}
-  - {Source: $ProjectName$.csproj.t4, Target: $ProjectName$.Linux.csproj, IsTemplate: true, CurrentPlatform: Linux}
   - {Source: $ProjectName$.csproj.t4, Target: $ProjectName$.Windows.csproj, IsTemplate: true, CurrentPlatform: Windows}
   - {Source: README.md.t4, Target: README.md, IsTemplate: true}
   - {Source: TestClass1.cs.t4, Target: TestClass1.cs, IsTemplate: true}

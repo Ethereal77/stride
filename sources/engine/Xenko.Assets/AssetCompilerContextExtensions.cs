@@ -61,8 +61,7 @@ namespace Xenko.Assets
             {
                 case PlatformType.Windows:
                     return GraphicsPlatform.Direct3D11;
-                case PlatformType.Linux:
-                    return GraphicsPlatform.OpenGL;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
