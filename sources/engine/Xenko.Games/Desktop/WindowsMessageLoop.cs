@@ -2,17 +2,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Forms;
-#if !XENKO_GRAPHICS_API_OPENGL && !XENKO_GRAPHICS_API_VULKAN && !XENKO_GRAPHICS_API_NULL
+#if !XENKO_GRAPHICS_API_VULKAN && !XENKO_GRAPHICS_API_NULL
 using SharpDX.Win32;
 #endif
 using System.Runtime.InteropServices;
@@ -32,10 +32,10 @@ using System.Runtime.InteropServices;
 namespace Xenko.Games
 {
     /// <summary>
-    /// RenderLoop provides a rendering loop infrastructure. See remarks for usage. 
+    /// RenderLoop provides a rendering loop infrastructure. See remarks for usage.
     /// </summary>
     /// <remarks>
-    /// Use static <see cref="Run(System.Windows.Forms.Control,SharpDX.Windows.RenderLoop.RenderCallback)"/>  
+    /// Use static <see cref="Run(System.Windows.Forms.Control,SharpDX.Windows.RenderLoop.RenderCallback)"/>
     /// method to directly use a renderloop with a render callback or use your own loop:
     /// <code>
     /// control.Show();
@@ -108,7 +108,7 @@ namespace Xenko.Games
         /// Gets or sets a value indicating whether the render loop should use the default <see cref="Application.DoEvents"/> instead of a custom window message loop lightweight for GC. Default is false.
         /// </summary>
         /// <value><c>true</c> if the render loop should use the default <see cref="Application.DoEvents"/> instead of a custom window message loop (default false); otherwise, <c>false</c>.</value>
-        /// <remarks>By default, RenderLoop is using a custom window message loop that is more lightweight than <see cref="Application.DoEvents" /> to process windows event message. 
+        /// <remarks>By default, RenderLoop is using a custom window message loop that is more lightweight than <see cref="Application.DoEvents" /> to process windows event message.
         /// Set this parameter to true to use the default <see cref="Application.DoEvents"/>.</remarks>
         public bool UseApplicationDoEvents { get; set; }
 

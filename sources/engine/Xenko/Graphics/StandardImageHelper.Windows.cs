@@ -32,7 +32,7 @@ namespace Xenko.Graphics
                 try
                 {
                     // TODO: Test if still necessary
-                    // Directly load image as RGBA instead of BGRA, because OpenGL ES devices don't support it out of the box (extension).
+                    // Directly load image as RGBA instead of BGRA.
                     //image.Description.Format = PixelFormat.R8G8B8A8_UNorm;
                     //CopyMemoryBGRA(image.PixelBuffer[0].DataPointer, bitmapData.Scan0, image.PixelBuffer[0].BufferStride);
                     Utilities.CopyMemory(image.PixelBuffer[0].DataPointer, bitmapData.Scan0, image.PixelBuffer[0].BufferStride);

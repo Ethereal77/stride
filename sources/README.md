@@ -37,7 +37,7 @@ and used by most projects.
 ### shader ###
 
 * __Irony__: Parsing library, used by Xenko.Core.Shaders. Should later be replaced by ANTLR4.
-* __Xenko.Core.Shaders__: Shader parsing, type analysis and conversion library (used by HLSL->GLSL and Xenko Shader Language)
+* __Xenko.Core.Shaders__: Shader parsing and type analysis library (used by HLSL and Xenko Shader Language).
 
 ### targets ###
 

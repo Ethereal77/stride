@@ -112,14 +112,6 @@ namespace Xenko.Shaders.Compiler
                     shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D", 1);
                     shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D12", 1);
                     break;
-                case GraphicsPlatform.OpenGL:
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_OPENGL", 1);
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_OPENGLCORE", 1);
-                    break;
-                case GraphicsPlatform.OpenGLES:
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_OPENGL", 1);
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_OPENGLES", 1);
-                    break;
                 case GraphicsPlatform.Vulkan:
                     shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_VULKAN", 1);
                     break;
@@ -194,7 +186,7 @@ namespace Xenko.Shaders.Compiler
             var bytecode = new EffectBytecode { Reflection = parsingResult.Reflection, HashSources = parsingResult.HashSources };
 
             // Select the correct backend compiler
-            IShaderCompiler compiler;
+            IShaderCompiler compiler = default;  //TODO: GLSL/Vulkan
             switch (effectParameters.Platform)
             {
 #if XENKO_PLATFORM_WINDOWS
@@ -203,8 +195,6 @@ namespace Xenko.Shaders.Compiler
                     compiler = new Direct3D.ShaderCompiler();
                     break;
 #endif
-                case GraphicsPlatform.OpenGL:
-                case GraphicsPlatform.OpenGLES:
                 case GraphicsPlatform.Vulkan:
                     // get the number of render target outputs
                     var rtOutputs = 0;
@@ -233,7 +223,7 @@ namespace Xenko.Shaders.Compiler
                             }
                         }
                     }
-                    compiler = new OpenGL.ShaderCompiler(rtOutputs);
+                    //TODO: compiler = new OpenGL.ShaderCompiler(rtOutputs);
                     break;
                 default:
                     throw new NotSupportedException();
@@ -244,12 +234,6 @@ namespace Xenko.Shaders.Compiler
 #if XENKO_PLATFORM_WINDOWS_DESKTOP
             var stageStringBuilder = new StringBuilder();
 #endif
-            // if the shader (non-compute) does not have a pixel shader, we should add it for OpenGL and OpenGL ES.
-            if ((effectParameters.Platform == GraphicsPlatform.OpenGL || effectParameters.Platform == GraphicsPlatform.OpenGLES) && !parsingResult.EntryPoints.ContainsKey(ShaderStage.Pixel) && !parsingResult.EntryPoints.ContainsKey(ShaderStage.Compute))
-            {
-                parsingResult.EntryPoints.Add(ShaderStage.Pixel, null);
-            }
-
             foreach (var stageBinding in parsingResult.EntryPoints)
             {
                 // Compile

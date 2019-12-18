@@ -29,11 +29,11 @@ using Babel.ParserGenerator;
 
 
 namespace NShader.Lexer
-{   
+{
     /// <summary>
     /// Summary Canonical example of MPLEX automaton
     /// </summary>
-    
+
 #if STANDALONE
     //
     // These are the dummy declarations for stand-alone MPLEX applications
@@ -42,8 +42,8 @@ namespace NShader.Lexer
     //
 
     public enum Tokens
-    { 
-      EOF = 0, maxParseToken = int.MaxValue 
+    {
+      EOF = 0, maxParseToken = int.MaxValue
       // must have at least these two, values are almost arbitrary
     }
 
@@ -57,14 +57,14 @@ namespace NShader.Lexer
         //
         public virtual int EolState { get { return CurrentSc; } set { CurrentSc = value; } }
     }
-    
+
     public interface IColorScan
     {
         void SetSource(string source, int offset);
         int GetNext(ref int state, out int start, out int end);
     }
-    
-    
+
+
 
 #endif // STANDALONE
 
@@ -77,24 +77,24 @@ namespace NShader.Lexer
         public abstract int ReadPos { get; }
         public abstract string GetString(int b, int e);
     }
-    
+
     // If the compiler can't find ScanBase maybe you need
     // to run mppg with /mplex, or run mplex with /noparser
     public sealed class Scanner : ScanBase, IColorScan
     {
-   
+
         public ScanBuff buffer;
         private IErrorHandler handler;
         int scState;
-        
+
         private static int GetMaxParseToken() {
             System.Reflection.FieldInfo f = typeof(Tokens).GetField("maxParseToken");
             return (f == null ? int.MaxValue : (int)f.GetValue(null));
         }
-        
-        static int parserMax = GetMaxParseToken();        
-        
-        protected override int CurrentSc 
+
+        static int parserMax = GetMaxParseToken();
+
+        protected override int CurrentSc
         {
              // The current start state is a property
              // to try to avoid the user error of setting
@@ -104,7 +104,7 @@ namespace NShader.Lexer
              get { return scState; }
              set { scState = value; currentStart = startState[value]; }
         }
-        
+
         enum Result {accept, noMatch, contextFound};
 
         const int maxAccept = 60;
@@ -118,19 +118,19 @@ namespace NShader.Lexer
 //  ShaderMPLexer.lex.
 //  Lexical description for MPLex. This file is inspired from http://svn.assembla.com/svn/ppjlab/trunk/scanner.lex
 //  ---------------------------------------------------------------------
-// 
-//  Copyright (c) 2009 Alexandre Mutel and Microsoft Corporation.  
+//
+//  Copyright (c) 2009 Alexandre Mutel and Microsoft Corporation.
 //  All rights reserved.
-// 
+//
 //  This code module is part of NShader, a plugin for visual studio
-//  to provide syntax highlighting for shader languages (hlsl, glsl, cg)
-// 
+//  to provide syntax highlighting for shader languages (HLSL, XKSL)
+//
 //  ------------------------------------------------------------------
-// 
-//  This code is licensed under the Microsoft Public License. 
+//
+//  This code is licensed under the Microsoft Public License.
 //  See the file License.txt for the license details.
 //  More info on: http://nshader.codeplex.com
-// 
+//
 //  ------------------------------------------------------------------
 */
 /**********************************************************************************/
@@ -165,7 +165,7 @@ public IShaderTokenProvider ShaderTokenProvider = null; // Token provider
         int tokECol;       // column number at end of token
         int tokELin;       // line number at end of token
         string tokTxt;     // lazily constructed text of token
-#if STACK          
+#if STACK
         private Stack<int> scStack = new Stack<int>();
 #endif // STACK
 
@@ -190,13 +190,13 @@ public IShaderTokenProvider ShaderTokenProvider = null; // Token provider
     // There are 1 runs, 0 singletons
     //
     static sbyte[] map0 = new sbyte[126] {
-/* \0     */ 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 0, 5, 5, 5, 2, 2, 
-/* \020   */ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
-/* \040   */ 5, 26, 17, 19, 2, 21, 22, 2, 31, 32, 3, 12, 30, 13, 14, 1, 
-/* 0      */ 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 27, 24, 20, 25, 2, 
-/* @      */ 2, 10, 10, 10, 10, 11, 16, 6, 15, 6, 6, 6, 6, 6, 6, 6, 
-/* P      */ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 33, 18, 34, 2, 6, 
-/* `      */ 2, 10, 10, 10, 10, 11, 16, 6, 15, 6, 6, 6, 6, 6, 6, 6, 
+/* \0     */ 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 0, 5, 5, 5, 2, 2,
+/* \020   */ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+/* \040   */ 5, 26, 17, 19, 2, 21, 22, 2, 31, 32, 3, 12, 30, 13, 14, 1,
+/* 0      */ 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 27, 24, 20, 25, 2,
+/* @      */ 2, 10, 10, 10, 10, 11, 16, 6, 15, 6, 6, 6, 6, 6, 6, 6,
+/* P      */ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 33, 18, 34, 2, 6,
+/* `      */ 2, 10, 10, 10, 10, 11, 16, 6, 15, 6, 6, 6, 6, 6, 6, 6,
 /* p      */ 6, 6, 6, 6, 6, 6, 6, 6, 9, 6, 6, 28, 23, 29 };
 
     sbyte Map(int chr)
@@ -212,26 +212,26 @@ public IShaderTokenProvider ShaderTokenProvider = null; // Token provider
     NxS[0] = // Shortest string ""
         new Table(0, 0, 0, null);
     NxS[1] = // Shortest string "^\t"
-        new Table(0, 20, -1, new sbyte[] {72, -1, -1, -1, -1, 72, 
+        new Table(0, 20, -1, new sbyte[] {72, -1, -1, -1, -1, 72,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 73});
     NxS[2] = // Shortest string "/"
-        new Table(20, 19, -1, new sbyte[] {52, -1, -1, -1, -1, -1, 
+        new Table(20, 19, -1, new sbyte[] {52, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 50, -1, 51});
     NxS[3] = // Shortest string "\0"
         new Table(0, 0, -1, null);
     NxS[4] = // Shortest string "*"
         new Table(20, 1, -1, new sbyte[] {49});
     NxS[5] = // Shortest string ":"
-        new Table(0, 17, -1, new sbyte[] {74, -1, -1, -1, -1, 74, 
+        new Table(0, 17, -1, new sbyte[] {74, -1, -1, -1, -1, 74,
         48, -1, -1, 48, 48, 48, -1, -1, -1, 48, 48});
     NxS[6] = // Shortest string "G"
-        new Table(6, 11, -1, new sbyte[] {6, 6, 6, 6, 6, 6, 
+        new Table(6, 11, -1, new sbyte[] {6, 6, 6, 6, 6, 6,
         -1, -1, -1, 6, 6});
     NxS[7] = // Shortest string "1"
-        new Table(7, 8, -1, new sbyte[] {7, 7, -1, -1, 68, -1, 
+        new Table(7, 8, -1, new sbyte[] {7, 7, -1, -1, 68, -1,
         -1, 43});
     NxS[8] = // Shortest string "0"
-        new Table(7, 8, -1, new sbyte[] {7, 7, 67, -1, 68, -1, 
+        new Table(7, 8, -1, new sbyte[] {7, 7, 67, -1, 68, -1,
         -1, 43});
     NxS[9] = // Shortest string "+"
         new Table(20, 1, -1, new sbyte[] {42});
@@ -242,7 +242,7 @@ public IShaderTokenProvider ShaderTokenProvider = null; // Token provider
     NxS[12] = // Shortest string """
         new Table(17, 2, 63, new sbyte[] {37, 64});
     NxS[13] = // Shortest string "^#"
-        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36, 
+        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
         -1, -1, -1, 36, 36});
     NxS[14] = // Shortest string "="
         new Table(20, 1, -1, new sbyte[] {35});
@@ -289,37 +289,37 @@ public IShaderTokenProvider ShaderTokenProvider = null; // Token provider
     NxS[35] = // Shortest string "=="
         new Table(0, 0, -1, null);
     NxS[36] = // Shortest string "^#G"
-        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36, 
+        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
         -1, -1, -1, 36, 36});
     NxS[37] = // Shortest string """"
         new Table(0, 0, -1, null);
     NxS[38] = // Shortest string ".1"
-        new Table(7, 10, -1, new sbyte[] {38, 38, -1, -1, 65, -1, 
+        new Table(7, 10, -1, new sbyte[] {38, 38, -1, -1, 65, -1,
         -1, -1, 39, 39});
     NxS[39] = // Shortest string ".1H"
         new Table(0, 0, -1, null);
     NxS[40] = // Shortest string ".1E1"
-        new Table(7, 10, -1, new sbyte[] {40, 40, -1, -1, -1, -1, 
+        new Table(7, 10, -1, new sbyte[] {40, 40, -1, -1, -1, -1,
         -1, -1, 39, 39});
     NxS[41] = // Shortest string "-="
         new Table(0, 0, -1, null);
     NxS[42] = // Shortest string "+="
         new Table(0, 0, -1, null);
     NxS[43] = // Shortest string "0."
-        new Table(7, 10, -1, new sbyte[] {38, 38, -1, -1, 69, -1, 
+        new Table(7, 10, -1, new sbyte[] {38, 38, -1, -1, 69, -1,
         -1, -1, 44, 44});
     NxS[44] = // Shortest string "0.H"
         new Table(0, 0, -1, null);
     NxS[45] = // Shortest string "0.E1"
-        new Table(7, 10, -1, new sbyte[] {45, 45, -1, -1, -1, -1, 
+        new Table(7, 10, -1, new sbyte[] {45, 45, -1, -1, -1, -1,
         -1, -1, 44, 44});
     NxS[46] = // Shortest string "0E1"
         new Table(7, 2, -1, new sbyte[] {46, 46});
     NxS[47] = // Shortest string "0x1"
-        new Table(7, 10, -1, new sbyte[] {47, 47, -1, 47, 47, -1, 
+        new Table(7, 10, -1, new sbyte[] {47, 47, -1, 47, 47, -1,
         -1, -1, -1, 47});
     NxS[48] = // Shortest string ":G"
-        new Table(6, 11, -1, new sbyte[] {48, 48, 48, 48, 48, 48, 
+        new Table(6, 11, -1, new sbyte[] {48, 48, 48, 48, 48, 48,
         -1, -1, -1, 48, 48});
     NxS[49] = // Shortest string "*="
         new Table(0, 0, -1, null);
@@ -346,43 +346,43 @@ public IShaderTokenProvider ShaderTokenProvider = null; // Token provider
     NxS[60] = // Shortest string "*/"
         new Table(0, 0, -1, null);
     NxS[61] = // Shortest string ""
-        new Table(12, 32, 6, new sbyte[] {9, 10, 11, 6, 6, 12, 
-        3, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 
+        new Table(12, 32, 6, new sbyte[] {9, 10, 11, 6, 6, 12,
+        3, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
         28, 55, 2, 3, 4, 5, 55, 6, 7, 8});
     NxS[62] = // Shortest string "^"
-        new Table(12, 32, 6, new sbyte[] {9, 10, 11, 6, 6, 12, 
-        3, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 
+        new Table(12, 32, 6, new sbyte[] {9, 10, 11, 6, 6, 12,
+        3, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
         28, 1, 2, 3, 4, 5, 1, 6, 7, 8});
     NxS[63] = // Shortest string ""/"
         new Table(17, 2, 63, new sbyte[] {37, 64});
     NxS[64] = // Shortest string ""\"
         new Table(0, 1, 63, new sbyte[] {-1});
     NxS[65] = // Shortest string ".1E"
-        new Table(7, 7, -1, new sbyte[] {40, 40, -1, -1, -1, 66, 
+        new Table(7, 7, -1, new sbyte[] {40, 40, -1, -1, -1, 66,
         66});
     NxS[66] = // Shortest string ".1E+"
         new Table(7, 2, -1, new sbyte[] {40, 40});
     NxS[67] = // Shortest string "0x"
-        new Table(7, 10, -1, new sbyte[] {47, 47, -1, 47, 47, -1, 
+        new Table(7, 10, -1, new sbyte[] {47, 47, -1, 47, 47, -1,
         -1, -1, -1, 47});
     NxS[68] = // Shortest string "0E"
-        new Table(7, 7, -1, new sbyte[] {46, 46, -1, -1, -1, 71, 
+        new Table(7, 7, -1, new sbyte[] {46, 46, -1, -1, -1, 71,
         71});
     NxS[69] = // Shortest string "0.E"
-        new Table(7, 7, -1, new sbyte[] {45, 45, -1, -1, -1, 70, 
+        new Table(7, 7, -1, new sbyte[] {45, 45, -1, -1, -1, 70,
         70});
     NxS[70] = // Shortest string "0.E+"
         new Table(7, 2, -1, new sbyte[] {45, 45});
     NxS[71] = // Shortest string "0E+"
         new Table(7, 2, -1, new sbyte[] {46, 46});
     NxS[72] = // Shortest string "^\t\t"
-        new Table(0, 20, -1, new sbyte[] {72, -1, -1, -1, -1, 72, 
+        new Table(0, 20, -1, new sbyte[] {72, -1, -1, -1, -1, 72,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 73});
     NxS[73] = // Shortest string "^\t#"
-        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36, 
+        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
         -1, -1, -1, 36, 36});
     NxS[74] = // Shortest string ":\t"
-        new Table(0, 17, -1, new sbyte[] {74, -1, -1, -1, -1, 74, 
+        new Table(0, 17, -1, new sbyte[] {74, -1, -1, -1, -1, 74,
         48, -1, -1, 48, 48, 48, -1, -1, -1, 48, 48});
     }
 
@@ -447,7 +447,7 @@ int NextState() {
                 else if (bPos == sLen) { bPos++; return '\n'; }   // one strike, see newline
                 else return EOF;                                  // two strikes and you're out!
             }
-            
+
             public override int ReadPos { get { return bPos - 1; } }
 
             public override int Peek()
@@ -461,11 +461,11 @@ int NextState() {
                 //  "end" can be greater than sLen with the BABEL
                 //  option set.  Read returns a "virtual" EOL if
                 //  an attempt is made to read past the end of the
-                //  string buffer.  Without the guard any attempt 
-                //  to fetch yytext for a token that includes the 
+                //  string buffer.  Without the guard any attempt
+                //  to fetch yytext for a token that includes the
                 //  EOL will throw an index exception.
                 if (end > sLen) end = sLen;
-                if (end <= beg) return ""; 
+                if (end <= beg) return "";
                 else return str.Substring(beg, end - beg);
             }
 
@@ -486,9 +486,9 @@ int NextState() {
             public StreamBuff(Stream str) { this.bStrm = new BufferedStream(str); }
 
             public override int Read() {
-                return bStrm.ReadByte(); 
+                return bStrm.ReadByte();
             }
-            
+
             public override int ReadPos {
                 get { return (int)bStrm.Position - delta; }
             }
@@ -524,15 +524,15 @@ int NextState() {
 
         /// <summary>
         /// This is the Buffer for UTF8 files.
-        /// It attempts to read the encoding preamble, which for 
-        /// this encoding should be unicode point \uFEFF which is 
+        /// It attempts to read the encoding preamble, which for
+        /// this encoding should be unicode point \uFEFF which is
         /// encoded as EF BB BF
         /// </summary>
         public class TextBuff : ScanBuff
         {
             protected BufferedStream bStrm;   // input buffer
             protected int delta = 1;
-            
+
             private Exception BadUTF8()
             { return new Exception(String.Format("BadUTF8 Character")); }
 
@@ -554,7 +554,7 @@ int NextState() {
                     return new BigEndTextBuff(strm);
                 if (b0 == 0xff && b1 == 0xfe)
                     return new LittleEndTextBuff(strm);
-                
+
                 int b2 = strm.ReadByte();
                 if (b0 == 0xef && b1 == 0xbb && b2 == 0xbf)
                     return new TextBuff(strm);
@@ -566,7 +566,7 @@ int NextState() {
                 return new TextBuff(strm);
             }
 
-            protected TextBuff(Stream str) { 
+            protected TextBuff(Stream str) {
                 this.bStrm = new BufferedStream(str);
             }
 
@@ -651,7 +651,7 @@ int NextState() {
         /// </summary>
         public sealed class BigEndTextBuff : TextBuff
         {
-            internal BigEndTextBuff(Stream str) : base(str) { } // 
+            internal BigEndTextBuff(Stream str) : base(str) { } //
 
             public override int Read()
             {
@@ -660,7 +660,7 @@ int NextState() {
                 return (ch0 << 8) + ch1;
             }
         }
-        
+
         // ====================== Nested class ==========================
         /// <summary>
         /// This is the Buffer for Little-endian UTF16 files.
@@ -676,7 +676,7 @@ int NextState() {
                 return (ch1 << 8) + ch0;
             }
         }
-        
+
         // =================== End Nested classes =======================
 
         public Scanner(Stream file) {
@@ -690,10 +690,10 @@ int NextState() {
 
         void GetChr()
         {
-            if (chr == '\n') 
-            { 
-                lineStartNum = cNum + 1; 
-                lNum++; 
+            if (chr == '\n')
+            {
+                lineStartNum = cNum + 1;
+                lNum++;
             }
             chr = buffer.Read();
             cNum++;
@@ -706,7 +706,7 @@ int NextState() {
             tokLin = lNum;
             tokCol = cNum - lineStartNum;
         }
-        
+
         void MarkEnd()
         {
             tokTxt = null;
@@ -715,7 +715,7 @@ int NextState() {
             tokELin = lNum;
             tokECol = cNum - lineStartNum;
         }
- 
+
         // ================ StringBuffer Initialization ===================
 
         public void SetSource(string source, int offset)
@@ -726,7 +726,7 @@ int NextState() {
             this.chr = '\n'; // to initialize yyline, yycol and lineStart
             GetChr();
         }
-        
+
         public int GetNext(ref int state, out int start, out int end)
         {
             Tokens next;
@@ -750,7 +750,7 @@ int NextState() {
             do { next = Scan(); } while (next >= parserMax);
             return next;
         }
-        
+
         int yyleng { get { return tokLen; } }
         int yypos { get { return tokPos; } }
         int yyline { get { return tokLin; } }
@@ -758,15 +758,15 @@ int NextState() {
 
         public string yytext
         {
-            get 
+            get
             {
-                if (tokTxt == null) 
+                if (tokTxt == null)
                     tokTxt = buffer.GetString(tokPos, tokEPos);
                 return tokTxt;
             }
         }
 
-        void yyless(int n) { 
+        void yyless(int n) {
             buffer.Pos = tokPos;
             cNum = tokNum;
             for (int i = 0; i <= n; i++) GetChr();
@@ -780,7 +780,7 @@ int NextState() {
 
         internal int YY_START {
             get { return CurrentSc; }
-            set { CurrentSc = value; } 
+            set { CurrentSc = value; }
         }
 
         // ============== The main tokenizer code =================
@@ -789,7 +789,7 @@ int NextState() {
         {
                 for (; ; )
                 {
-                    int next;              // next state to enter                   
+                    int next;              // next state to enter
 #if BACKUP
                     bool inAccept = false; // inAccept ==> current state is an accept state
                     Result rslt = Result.noMatch;
@@ -804,7 +804,7 @@ int NextState() {
                             if (lineStartNum == cNum) {
                                 int anchor = anchorState[CurrentSc];
                                 if (NextState(anchor) != state) {
-                                    state = anchor; 
+                                    state = anchor;
                                     break;
                                 }
                             }
@@ -812,11 +812,11 @@ int NextState() {
                     }
 #else // !LEFTANCHORS
                     state = currentStart;
-                    while (NextState() == state) 
+                    while (NextState() == state)
                         GetChr(); // skip "idle" transitions
 #endif // LEFTANCHORS
                     MarkToken();
-                    
+
                     while ((next = NextState()) != currentStart)
                         if (inAccept && next > maxAccept) // need to prepare backup data
                         {
@@ -854,7 +854,7 @@ int NextState() {
                     }
 #else // !LEFTANCHORS
                     state = currentStart;
-                    while (NextState() == state) 
+                    while (NextState() == state)
                         GetChr(); // skip "idle" transitions
 #endif // LEFTANCHORS
                     MarkToken();
@@ -865,7 +865,7 @@ int NextState() {
                         GetChr();
                     }
 #endif // BACKUP
-                    if (state > maxAccept) 
+                    if (state > maxAccept)
                         state = currentStart;
                     else
                     {
@@ -1057,7 +1057,7 @@ BEGIN(INITIAL); return (int)ShaderToken.COMMENT;
                     SaveStateAndPos(ctx);
                 state = next;
                 if (state == eofNum) return Result.accept;
-                GetChr(); 
+                GetChr();
                 inAccept = (state <= maxAccept);
             }
             if (inAccept) return Result.accept; else return Result.noMatch;
@@ -1087,16 +1087,16 @@ BEGIN(INITIAL); return (int)ShaderToken.COMMENT;
         internal void BEGIN(int next)
         { CurrentSc = next; }
 
-#if STACK        
+#if STACK
         internal void yy_clear_stack() { scStack.Clear(); }
         internal int yy_top_state() { return scStack.Peek(); }
-        
+
         internal void yy_push_state(int state)
         {
             scStack.Push(CurrentSc);
             CurrentSc = state;
         }
-        
+
         internal void yy_pop_state()
         {
             // Protect against input errors that pop too far ...
@@ -1108,6 +1108,6 @@ BEGIN(INITIAL); return (int)ShaderToken.COMMENT;
  #endif // STACK
 
         internal void ECHO() { Console.Out.Write(yytext); }
-        
+
     } // end class Scanner
 } // end namespace

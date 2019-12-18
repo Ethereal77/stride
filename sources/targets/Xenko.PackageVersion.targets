@@ -13,7 +13,7 @@
     <XenkoNuGetVersionSuffix>$([System.Text.RegularExpressions.Regex]::Match($(_XenkoSharedAssemblyInfoLines), `.*NuGetVersionSuffix = \"(.*)\";.*`).Groups[1].Value)</XenkoNuGetVersionSuffix>
     <XenkoBuildMetadata>$([System.Text.RegularExpressions.Regex]::Match($(_XenkoSharedAssemblyInfoLines), `.*BuildMetadata = \"(.*)\";.*`).Groups[1].Value)</XenkoBuildMetadata>
     <XenkoNuGetVersion>$(XenkoPublicVersion)$(XenkoNuGetVersionSuffix)$(XenkoBuildMetadata)</XenkoNuGetVersion>
-    
+
     <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(XenkoNuGetVersion)</PackageVersion>
     <PackageLicenseUrl>https://github.com/xenko3d/xenko/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://xenko.com</PackageProjectUrl>
@@ -21,7 +21,7 @@
     <RepositoryUrl>https://github.com/xenko3d/xenko</RepositoryUrl>
     <Copyright>Copyright © Xenko contributors and Silicon Studio Corp.</Copyright>
     <Authors>Xenko contributors;Silicon Studio Corp.</Authors>
-    <PackageTags>Xenko;3D;gamedev;Game Engine;engine;games;D3D;OpenGL;Vulkan</PackageTags>
+    <PackageTags>Xenko;3D;gamedev;Game Engine;engine;games;D3D;Vulkan</PackageTags>
   </PropertyGroup>
 
 </Project>

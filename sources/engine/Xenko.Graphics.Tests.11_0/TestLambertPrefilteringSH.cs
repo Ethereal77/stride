@@ -69,7 +69,7 @@ namespace Xenko.Graphics.Tests
                 return;
 
             if (useComputeShader)
-            { 
+            {
                 lamberFilter.HarmonicOrder = 5;
                 lamberFilter.RadianceMap = inputCubemap;
                 lamberFilter.Draw(context);
@@ -167,8 +167,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact]
         public void RunTestPass2()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             RunGameTest(new TestLambertPrefilteringSH());
         }
 

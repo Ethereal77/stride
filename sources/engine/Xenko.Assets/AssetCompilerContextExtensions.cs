@@ -42,11 +42,6 @@ namespace Xenko.Assets
                     return GraphicsPlatform.Direct3D11;
                 else if (runtimeIdentifier.Contains("-d3d12"))
                     return GraphicsPlatform.Direct3D12;
-                // Note: testing opengles before opengl since one string contains another
-                else if (runtimeIdentifier.Contains("-opengles"))
-                    return GraphicsPlatform.OpenGLES;
-                else if (runtimeIdentifier.Contains("-opengl"))
-                    return GraphicsPlatform.OpenGL;
                 else if (runtimeIdentifier.Contains("-vulkan"))
                     return GraphicsPlatform.Vulkan;
             }

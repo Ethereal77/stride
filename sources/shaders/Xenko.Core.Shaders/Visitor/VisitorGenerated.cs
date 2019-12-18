@@ -131,18 +131,6 @@ namespace Xenko.Core.Shaders.Visitor
         {
             return DefaultVisit(emptyExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutKeyValue layoutKeyValue)
-        {
-            return DefaultVisit(layoutKeyValue);
-        }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutQualifier layoutQualifier)
-        {
-            return DefaultVisit(layoutQualifier);
-        }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Glsl.InterfaceType interfaceType)
-        {
-            return DefaultVisit(interfaceType);
-        }
         public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
             return DefaultVisit(classType);
@@ -666,33 +654,6 @@ namespace Xenko.Core.Shaders.Visitor
         public override Node Visit(Xenko.Core.Shaders.Ast.EmptyExpression emptyExpression)
         {
             return base.Visit(emptyExpression);
-        }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutKeyValue layoutKeyValue)
-        {
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(layoutKeyValue.Name);
-            if (!ReferenceEquals(nameTemp, layoutKeyValue.Name))
-                layoutKeyValue.Name = nameTemp;
-            var valueTemp = (Xenko.Core.Shaders.Ast.LiteralExpression)VisitDynamic(layoutKeyValue.Value);
-            if (!ReferenceEquals(valueTemp, layoutKeyValue.Value))
-                layoutKeyValue.Value = valueTemp;
-            return base.Visit(layoutKeyValue);
-        }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutQualifier layoutQualifier)
-        {
-            VisitList(layoutQualifier.Layouts);
-            return base.Visit(layoutQualifier);
-        }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Glsl.InterfaceType interfaceType)
-        {
-            VisitList(interfaceType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(interfaceType.Name);
-            if (!ReferenceEquals(nameTemp, interfaceType.Name))
-                interfaceType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(interfaceType.Qualifiers);
-            if (!ReferenceEquals(qualifiersTemp, interfaceType.Qualifiers))
-                interfaceType.Qualifiers = qualifiersTemp;
-            VisitList(interfaceType.Fields);
-            return base.Visit(interfaceType);
         }
         public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
@@ -1641,45 +1602,6 @@ namespace Xenko.Core.Shaders.Visitor
                 TypeInference = emptyExpression.TypeInference,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutKeyValue layoutKeyValue)
-        {
-            layoutKeyValue = (Xenko.Core.Shaders.Ast.Glsl.LayoutKeyValue)base.Visit(layoutKeyValue);
-            return new Xenko.Core.Shaders.Ast.Glsl.LayoutKeyValue
-            {
-                Span = layoutKeyValue.Span,
-                Tags = layoutKeyValue.Tags,
-                Name = layoutKeyValue.Name,
-                Value = layoutKeyValue.Value,
-            };
-        }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutQualifier layoutQualifier)
-        {
-            layoutQualifier = (Xenko.Core.Shaders.Ast.Glsl.LayoutQualifier)base.Visit(layoutQualifier);
-            return new Xenko.Core.Shaders.Ast.Glsl.LayoutQualifier
-            {
-                Span = layoutQualifier.Span,
-                Tags = layoutQualifier.Tags,
-                IsFlag = layoutQualifier.IsFlag,
-                Key = layoutQualifier.Key,
-                IsPost = layoutQualifier.IsPost,
-                Layouts = layoutQualifier.Layouts,
-            };
-        }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Glsl.InterfaceType interfaceType)
-        {
-            interfaceType = (Xenko.Core.Shaders.Ast.Glsl.InterfaceType)base.Visit(interfaceType);
-            return new Xenko.Core.Shaders.Ast.Glsl.InterfaceType
-            {
-                Span = interfaceType.Span,
-                Tags = interfaceType.Tags,
-                Attributes = interfaceType.Attributes,
-                TypeInference = interfaceType.TypeInference,
-                Name = interfaceType.Name,
-                Qualifiers = interfaceType.Qualifiers,
-                IsBuiltIn = interfaceType.IsBuiltIn,
-                Fields = interfaceType.Fields,
-            };
-        }
         public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
             classType = (Xenko.Core.Shaders.Ast.Hlsl.ClassType)base.Visit(classType);
@@ -2549,18 +2471,6 @@ namespace Xenko.Core.Shaders.Visitor
         {
             DefaultVisit(emptyExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutKeyValue layoutKeyValue)
-        {
-            DefaultVisit(layoutKeyValue);
-        }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutQualifier layoutQualifier)
-        {
-            DefaultVisit(layoutQualifier);
-        }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Glsl.InterfaceType interfaceType)
-        {
-            DefaultVisit(interfaceType);
-        }
         public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
             DefaultVisit(classType);
@@ -2994,25 +2904,6 @@ namespace Xenko.Core.Shaders.Visitor
         public override void Visit(Xenko.Core.Shaders.Ast.EmptyExpression emptyExpression)
         {
             base.Visit(emptyExpression);
-        }
-        public override void Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutKeyValue layoutKeyValue)
-        {
-            VisitDynamic(layoutKeyValue.Name);
-            VisitDynamic(layoutKeyValue.Value);
-            base.Visit(layoutKeyValue);
-        }
-        public override void Visit(Xenko.Core.Shaders.Ast.Glsl.LayoutQualifier layoutQualifier)
-        {
-            VisitList(layoutQualifier.Layouts);
-            base.Visit(layoutQualifier);
-        }
-        public override void Visit(Xenko.Core.Shaders.Ast.Glsl.InterfaceType interfaceType)
-        {
-            VisitList(interfaceType.Attributes);
-            VisitDynamic(interfaceType.Name);
-            VisitDynamic(interfaceType.Qualifiers);
-            VisitList(interfaceType.Fields);
-            base.Visit(interfaceType);
         }
         public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
@@ -3801,48 +3692,6 @@ namespace Xenko.Core.Shaders.Ast
 namespace Xenko.Core.Shaders.Ast
 {
     public partial class EmptyExpression
-    {
-        public override void Accept(ShaderVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
-        public override TResult Accept<TResult>(ShaderVisitor<TResult> visitor)
-        {
-            return visitor.Visit(this);
-        }
-    }
-}
-namespace Xenko.Core.Shaders.Ast.Glsl
-{
-    public partial class LayoutKeyValue
-    {
-        public override void Accept(ShaderVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
-        public override TResult Accept<TResult>(ShaderVisitor<TResult> visitor)
-        {
-            return visitor.Visit(this);
-        }
-    }
-}
-namespace Xenko.Core.Shaders.Ast.Glsl
-{
-    public partial class LayoutQualifier
-    {
-        public override void Accept(ShaderVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
-        public override TResult Accept<TResult>(ShaderVisitor<TResult> visitor)
-        {
-            return visitor.Visit(this);
-        }
-    }
-}
-namespace Xenko.Core.Shaders.Ast.Glsl
-{
-    public partial class InterfaceType
     {
         public override void Accept(ShaderVisitor visitor)
         {

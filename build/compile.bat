@@ -98,14 +98,6 @@ set Project=Xenko.Vulkan.SDL.sln
 call :compile
 if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
 
-set Project=Xenko.OpenGL.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.OpenGL.CoreCLR.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
 goto exit
 
 rem Compile our solution. The following variables needs to be set:

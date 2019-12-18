@@ -166,16 +166,6 @@ Example of use:
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=Direct3D12;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
 
-  <Target Name="BuildWindowsOpenGL" DependsOnTargets="CopyXenkoKey">
-    <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime;XenkoGraphicsApi=OpenGL"/>
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=OpenGL;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target>
-
-  <Target Name="BuildWindowsOpenGLES" DependsOnTargets="CopyXenkoKey">
-    <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime;XenkoGraphicsApi=OpenGLES"/>
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=OpenGLES;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target>
-
   <Target Name="BuildWindowsVulkan" DependsOnTargets="CopyXenkoKey">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime;XenkoGraphicsApi=Vulkan"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=Vulkan;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
@@ -246,18 +236,6 @@ Example of use:
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameDirect3D12;'))">
       <UnitTestPrerequisites Include="@(UnitTestGame)"/>
       <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).Direct3D12.sln</Solution></UnitTest>
-    </ItemGroup>
-
-    <!-- OpenGL unit tests -->
-    <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameOpenGL;'))">
-      <UnitTestPrerequisites Include="@(UnitTestGame)"/>
-      <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).OpenGL.sln</Solution></UnitTest>
-    </ItemGroup>
-
-    <!-- OpenGLES unit tests -->
-    <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameOpenGLES;'))">
-      <UnitTestPrerequisites Include="@(UnitTestGame)"/>
-      <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).OpenGLES.sln</Solution></UnitTest>
     </ItemGroup>
 
     <!-- Vulkan unit tests -->

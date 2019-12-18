@@ -123,8 +123,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact]
         public void RunTestPass2()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             RunGameTest(new TestLambertPrefilteringSHPass2());
         }
 

@@ -8,10 +8,10 @@
   "runtimes": {
 <# foreach (var platform in new[] { "win", "win7", "win10" })
    {
-     foreach (var graphicsPlatform in platform.StartsWith("win") ? new[] { "d3d11", "d3d12", "opengl", "opengles", "vulkan" } : new[] { "opengl", "vulkan" })
+     foreach (var graphicsPlatform in new[] { "d3d11", "d3d12", "vulkan" })
      {
-       var platformForGraphicsPlatformVariant = platform.StartsWith("win") ? "win" : platform;
-       foreach (var cpuVariant in platform.StartsWith("win") ? new[] { string.Empty, "-x86", "-x64" } : new[] { string.Empty, "-x64" })
+       var platformForGraphicsPlatformVariant = "win";
+       foreach (var cpuVariant in new[] { string.Empty, "-x86", "-x64" })
        { #>
     "<#=platform#>-<#= graphicsPlatform #><#= cpuVariant #>": {
       "#import": [

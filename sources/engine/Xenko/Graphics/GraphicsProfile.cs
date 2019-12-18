@@ -13,7 +13,7 @@ namespace Xenko.Graphics
         /// <summary>
         /// DirectX9 support (HLSL 3.0)
         /// </summary>
-        [Display("Direct3D 9.1 / OpenGL ES 2.0")]
+        [Display("Direct3D 9.1")]
         Level_9_1 = 0x9100,
 
         /// <summary>
@@ -27,11 +27,11 @@ namespace Xenko.Graphics
         /// </summary>
         [Display("Direct3D 9.3")]
         Level_9_3 = 0x9300,
-        
+
         /// <summary>
         /// DirectX10 support (HLSL 4.0, Geometry Shader)
         /// </summary>
-        [Display("Direct3D 10.0 / OpenGL ES 3.0")]
+        [Display("Direct3D 10.0")]
         Level_10_0 = 0xA000,
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Xenko.Graphics
         /// <summary>
         /// DirectX11 support (HLSL 5.0, Compute Shaders, Domain/Hull Shaders)
         /// </summary>
-        [Display("Direct3D 11.0 / OpenGL ES 3.1")]
+        [Display("Direct3D 11.0")]
         Level_11_0 = 0xB000,
 
         /// <summary>

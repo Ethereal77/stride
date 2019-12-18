@@ -51,11 +51,6 @@ namespace Xenko.Games
         {
             switch (type)
             {
-#if XENKO_GRAPHICS_API_OPENGL && XENKO_UI_OPENTK
-                case AppContextType.DesktopOpenTK:
-                    return new GameWindowOpenTK();
-#endif
-
 #if XENKO_UI_SDL
                  case AppContextType.DesktopSDL:
                     return new GameWindowSDL();

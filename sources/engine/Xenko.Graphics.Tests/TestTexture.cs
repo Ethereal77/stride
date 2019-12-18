@@ -181,9 +181,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact]
         public void TestTexture2DUnorderedAccess()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGL);
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             PerformTest(
                 game =>
                 {
@@ -284,8 +281,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact]
         public void TestDepthStencilBuffer()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             PerformTest(
                 game =>
                 {
@@ -324,8 +319,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact(Skip = "Clear on a ReadOnly depth buffer should be undefined or throw exception; should rewrite this test to do actual rendering with ReadOnly depth stencil bound?")]
         public void TestDepthStencilBufferWithNativeReadonly()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             PerformTest(
                 game =>
                 {
@@ -466,8 +459,8 @@ namespace Xenko.Graphics.Tests
         [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Default)]
         public void TestGetData(GraphicsProfile profile, GraphicsResourceUsage usage)
         {
-            var testArray = profile >= GraphicsProfile.Level_10_0; // TODO modify this when when supported on openGL
-            var mipmaps = GraphicsDevice.Platform == GraphicsPlatform.OpenGLES && profile < GraphicsProfile.Level_10_0 ? 1 : 3; // TODO remove this limitation when GetData is fixed on OpenGl ES for mipmap levels other than 0
+            var testArray = profile >= GraphicsProfile.Level_10_0;
+            var mipmaps = 3;
 
             PerformTest(
                 game =>
@@ -498,8 +491,8 @@ namespace Xenko.Graphics.Tests
         [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Default)]
         public void TestCopy(GraphicsProfile profile, GraphicsResourceUsage usageSource)
         {
-            var testArray = profile >= GraphicsProfile.Level_10_0; // TODO modify this when when supported on openGL
-            var mipmaps = GraphicsDevice.Platform == GraphicsPlatform.OpenGLES && profile < GraphicsProfile.Level_10_0 ? 1 : 3; // TODO remove this limitation when GetData is fixed on OpenGl ES for mipmap levels other than 0
+            var testArray = profile >= GraphicsProfile.Level_10_0;
+            var mipmaps = 3;
 
             PerformTest(
                 game =>

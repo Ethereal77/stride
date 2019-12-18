@@ -12,10 +12,6 @@ namespace Xenko.Graphics.SDL
 #pragma warning restore SA1200 // Using directives must be placed correctly
     public class Window : IDisposable
     {
-#if XENKO_GRAPHICS_API_OPENGL
-        private IntPtr glContext;
-#endif
-
         #region Initialization
 
         /// <summary>
@@ -24,14 +20,6 @@ namespace Xenko.Graphics.SDL
         static Window()
         {
             SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING);
-#if XENKO_GRAPHICS_API_OPENGL
-            // Set our OpenGL version. It has to be done before any SDL window creation
-            // SDL_GL_CONTEXT_CORE gives us only the newer version, deprecated functions are disabled
-            int res = SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_PROFILE_MASK, (int)SDL.SDL_GLprofile.SDL_GL_CONTEXT_PROFILE_CORE);
-            // 4.2 is the lowest version we support.
-            res = SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-            res = SDL.SDL_GL_SetAttribute(SDL.SDL_GLattr.SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#endif
         }
 
         /// <summary>
@@ -40,9 +28,7 @@ namespace Xenko.Graphics.SDL
         /// <param name="title">Title of the window, see Text property.</param>
         public Window(string title)
         {
-#if XENKO_GRAPHICS_API_OPENGL
-            var flags = SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN | SDL.SDL_WindowFlags.SDL_WINDOW_OPENGL;
-#elif XENKO_GRAPHICS_API_VULKAN
+#if XENKO_GRAPHICS_API_VULKAN
             var flags = SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN | SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN;
 #else
             var flags = SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN;
@@ -70,21 +56,6 @@ namespace Xenko.Graphics.SDL
                 }
                 Application.RegisterWindow(this);
                 Application.ProcessEvents();
-
-#if XENKO_GRAPHICS_API_OPENGL
-                glContext = SDL.SDL_GL_CreateContext(SdlHandle);
-                if (glContext == IntPtr.Zero)
-                {
-                    throw new Exception("Cannot create OpenGL context: " + SDL.SDL_GetError());
-                }
-
-                // The external context must be made current to initialize OpenGL
-                SDL.SDL_GL_MakeCurrent(SdlHandle, glContext);
-
-                // Create a dummy OpenTK context, that will be used to call some OpenGL features
-                // we need to later create the various context in GraphicsDevice.OpenGL.
-                DummyGLContext = new OpenTK.Graphics.GraphicsContext(new OpenTK.ContextHandle(glContext), SDL.SDL_GL_GetProcAddress, () => new OpenTK.ContextHandle(SDL.SDL_GL_GetCurrentContext()));
-#endif
             }
         }
         #endregion
@@ -289,7 +260,7 @@ namespace Xenko.Graphics.SDL
         {
             get
             {
-#if XENKO_GRAPHICS_API_OPENGL || XENKO_GRAPHICS_API_VULKAN
+#if XENKO_GRAPHICS_API_VULKAN
                 int w, h;
                 SDL.SDL_GL_GetDrawableSize(SdlHandle, out w, out h);
                 return new Size2(w, h);
@@ -300,8 +271,8 @@ namespace Xenko.Graphics.SDL
             }
             set
             {
-                    // FIXME: We need to adapt the ClientSize to an actual Size to take into account borders.
-                    // FIXME: On Windows you do this by using AdjustWindowRect.
+                // FIXME: We need to adapt the ClientSize to an actual Size to take into account borders.
+                // FIXME: On Windows you do this by using AdjustWindowRect.
                 SDL.SDL_SetWindowSize(SdlHandle, value.Width, value.Height);
             }
         }
@@ -313,7 +284,7 @@ namespace Xenko.Graphics.SDL
         {
             get
             {
-#if XENKO_GRAPHICS_API_OPENGL || XENKO_GRAPHICS_API_VULKAN
+#if XENKO_GRAPHICS_API_VULKAN
                 int w, h;
                 SDL.SDL_GL_GetDrawableSize(SdlHandle, out w, out h);
                 return new Rectangle(0, 0, w, h);
@@ -557,24 +528,6 @@ namespace Xenko.Graphics.SDL
         {
             get { return SdlHandle != IntPtr.Zero; }
         }
-#if XENKO_GRAPHICS_API_OPENGL
-        /// <summary>
-        /// Current instance as seen as a IWindowInfo.
-        /// </summary>
-        public OpenTK.Platform.IWindowInfo WindowInfo
-        {
-            get
-            {
-                    // Create the proper Sdl2WindowInfo context.
-                return OpenTK.Platform.Utilities.CreateSdl2WindowInfo(SdlHandle);
-            }
-        }
-
-        /// <summary>
-        /// The OpenGL Context if any
-        /// </summary>
-        public OpenTK.Graphics.IGraphicsContext DummyGLContext;
-#endif
 
         #region Disposal
         ~Window()
@@ -609,17 +562,6 @@ namespace Xenko.Graphics.SDL
                     Disposed?.Invoke(this, EventArgs.Empty);
                     Application.UnregisterWindow(this);
                 }
-
-#if XENKO_GRAPHICS_API_OPENGL
-                // Dispose OpenGL context
-                DummyGLContext?.Dispose();
-                DummyGLContext = null;
-                if (glContext != IntPtr.Zero)
-                {
-                    SDL.SDL_GL_DeleteContext(glContext);
-                    glContext = IntPtr.Zero;
-                }
-#endif
 
                 // Free unmanaged resources (unmanaged objects) and override a finalizer below.
                 SDL.SDL_DestroyWindow(SdlHandle);

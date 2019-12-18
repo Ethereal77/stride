@@ -15,7 +15,7 @@ namespace Xenko.Rendering.Images
 
         override float4 Compute(float4 color)
         {
-			// Workaround for Huawei Mate 9 Pro (Mali) GLSL bug
+            // Workaround for Huawei Mate 9 Pro (Mali) GLSL bug
             float w = (1.425 * WhitePoint) + 0.05f;
             w = ((WhitePoint * w + 0.004f) / ((WhitePoint * (w + 0.55f) + 0.0491f))) - 0.0821f;
 

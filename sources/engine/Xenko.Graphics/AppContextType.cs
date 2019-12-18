@@ -41,11 +41,6 @@ namespace Xenko.Games
         /// <summary>
         /// Game running on desktop in a WPF window through a D3DImage.
         /// </summary>
-        DesktopWpf,
-
-        /// <summary>
-        /// Game running on desktop in an OpenTK form.
-        /// </summary>
-        DesktopOpenTK
+        DesktopWpf
     }
 }

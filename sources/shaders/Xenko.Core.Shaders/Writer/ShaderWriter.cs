@@ -19,7 +19,7 @@ namespace Xenko.Core.Shaders.Writer
         private bool isVisitingVariableInlines;
 
         private int lineCount;
-        
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Xenko.Core.Shaders.Writer
 
             OpenBrace();
 
-            foreach (var variableDeclaration in structType.Fields) 
+            foreach (var variableDeclaration in structType.Fields)
                 VisitDynamic(variableDeclaration);
 
             CloseBrace(false).Write(";").WriteLine();
@@ -392,7 +392,7 @@ namespace Xenko.Core.Shaders.Writer
                 VisitDynamic(expression);
             }
         }
-        
+
         /// <inheritdoc />
         public override void Visit(ReturnStatement returnStatement)
         {
@@ -475,9 +475,9 @@ namespace Xenko.Core.Shaders.Writer
         {
             WriteLinkLine(methodDefinition);
             WriteMethodDeclaration(methodDefinition);
-            
+
             OpenBrace();
-            foreach (var statement in methodDefinition.Body) 
+            foreach (var statement in methodDefinition.Body)
                 VisitDynamic(statement);
             CloseBrace();
         }
@@ -553,12 +553,6 @@ namespace Xenko.Core.Shaders.Writer
             Write(qualifier.Key.ToString());
         }
 
-        /// <inheritdoc/>
-        public override void Visit(Ast.Glsl.LayoutQualifier layoutQualifier)
-        {
-            Write(layoutQualifier.Key.ToString());
-        }
-
         /// <summary>
         /// Writes the specified qualifier.
         /// </summary>
@@ -579,15 +573,15 @@ namespace Xenko.Core.Shaders.Writer
             {
                 var qualifier = (Qualifier)genericQualifier;
 
-                if (qualifier == Qualifier.None || qualifier.IsPost == writePreQualifiers) 
+                if (qualifier == Qualifier.None || qualifier.IsPost == writePreQualifiers)
                     continue;
 
-                if (qualifier.IsPost) 
+                if (qualifier.IsPost)
                     Write(" ");
 
                 VisitDynamic(qualifier);
 
-                if (!qualifier.IsPost) 
+                if (!qualifier.IsPost)
                     Write(" ");
             }
 
@@ -612,7 +606,7 @@ namespace Xenko.Core.Shaders.Writer
 
             foreach (var attribute in attributes)
             {
-                if (attribute is PostAttributeBase == writePreQualifiers) 
+                if (attribute is PostAttributeBase == writePreQualifiers)
                     continue;
 
                 VisitDynamic(attribute);
@@ -807,15 +801,15 @@ namespace Xenko.Core.Shaders.Writer
         /// </returns>
         protected virtual ShaderWriter Write(Identifier identifier)
         {
-            if (identifier.IsSpecialReference) 
+            if (identifier.IsSpecialReference)
                 Write("<");
 
             Write(identifier.Text);
 
-            if (identifier.HasIndices) 
+            if (identifier.HasIndices)
                 WriteRankSpecifiers(identifier.Indices);
 
-            if (identifier.IsSpecialReference) 
+            if (identifier.IsSpecialReference)
                 Write(">");
 
             return this;
@@ -989,7 +983,7 @@ namespace Xenko.Core.Shaders.Writer
         {
             if (NewLine)
             {
-                for (int i = 0; i < IndentLevel; ++i) 
+                for (int i = 0; i < IndentLevel; ++i)
                     Append("    ");
 
                 NewLine = false;

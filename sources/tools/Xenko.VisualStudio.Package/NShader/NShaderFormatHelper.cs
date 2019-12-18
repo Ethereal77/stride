@@ -1,18 +1,18 @@
 #region Header Licence
 //  ---------------------------------------------------------------------
-// 
-//  Copyright (c) 2009 Alexandre Mutel and Microsoft Corporation.  
+//
+//  Copyright (c) 2009 Alexandre Mutel and Microsoft Corporation.
 //  All rights reserved.
-// 
+//
 //  This code module is part of NShader, a plugin for visual studio
-//  to provide syntax highlighting for shader languages (hlsl, glsl, cg)
-// 
+//  to provide syntax highlighting for shader languages (HLSL, XKSL)
+//
 //  ------------------------------------------------------------------
-// 
-//  This code is licensed under the Microsoft Public License. 
+//
+//  This code is licensed under the Microsoft Public License.
 //  See the file License.txt for the license details.
 //  More info on: http://nshader.codeplex.com
-// 
+//
 //  ------------------------------------------------------------------
 #endregion
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ using NShader.Lexer;
 namespace NShader
 {
     /// <summary>
-    /// Alpha version for reformatting. After some test (more particularly with prepropressor directives), 
+    /// Alpha version for reformatting. After some test (more particularly with prepropressor directives),
     /// we definitely need a fully implemented lexical-parser in order to perform a correct reformatting.
     /// </summary>
     public class NShaderFormatHelper
@@ -43,7 +43,7 @@ namespace NShader
             string filePath = FilePathUtilities.GetFilePath(pBuffer);
 
             // Return dynamic scanner based on file extension
-           
+
             List<EditSpan> changeList = new List<EditSpan>();
             int nbLines;
             pBuffer.GetLineCount(out nbLines);
@@ -92,11 +92,11 @@ namespace NShader
                         if (codeToFormat[start] == '{' && start >= spanStart && end <= spanEnd)
                         {
                             Match match = matchBraceStart.Match(codeToFormat, start);
-                            
+
 
                             StringBuilder codeFormatted = new StringBuilder();
                             codeFormatted.Append("{\r\n");
-                            int levelToIndentNext = level;                            
+                            int levelToIndentNext = level;
                             if (match.Groups.Count == 2)
                             {
                                 string matchStr = match.Groups[1].Value;

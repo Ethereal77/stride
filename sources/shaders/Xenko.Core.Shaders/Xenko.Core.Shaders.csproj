@@ -50,7 +50,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <CodeAnalysisDictionary Include="Convertor\Keywords.glsl" />
     <None Include="Grammar\Tokenizer.cgt" />
     <None Include="Grammar\Tokenizer.grm" />
   </ItemGroup>

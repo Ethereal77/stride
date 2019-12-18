@@ -8,8 +8,8 @@ namespace Xenko.Rendering.Images
 {
     /// <summary>
     /// This takes in entry several blurred levels, and depending on the pixel CoC,
-    /// the final color will be an interpolation between 2 of these levels. 
-    /// Level 0 is the original sharp image. The last level is the blurriest version. 
+    /// the final color will be an interpolation between 2 of these levels.
+    /// Level 0 is the original sharp image. The last level is the blurriest version.
     /// Expects as input:
     /// - Texture0: a [CoC, Linear Depth] buffer
     /// - Texture1 ~ TextureX: the different blur levels. (0 == no blur)
@@ -25,7 +25,7 @@ namespace Xenko.Rendering.Images
         stage override float4 Shading()
         {
             // Need to be able to access blur textures by index
-            //Texture2D dofTextureLevels[8] = 
+            //Texture2D dofTextureLevels[8] =
             //{
             //    Texture2,
             //    Texture3,
@@ -39,7 +39,7 @@ namespace Xenko.Rendering.Images
 
 #if DEBUG_COC_LEVEL_COLOR
             // Some debug colors to visualize each layer
-            float3 debugColors[8] = 
+            float3 debugColors[8] =
             {
                 float3(1.0, 1.0, 1.0),
                 float3(0.5, 0.5, 1.0),
@@ -56,7 +56,7 @@ namespace Xenko.Rendering.Images
             // Fetch all our levels
             float3 colorLevels[8];
 
-			// Note: Manually unrolled until better HLSL2GLSL support
+			// TODO: Manually unrolled until better HLSL2GLSL support
 			if (TLevelCount >= 1)
 	            colorLevels[0] = Texture2.Sample(LinearSampler, streams.TexCoord).rgb;
 			if (TLevelCount >= 2)
@@ -75,7 +75,7 @@ namespace Xenko.Rendering.Images
 				colorLevels[7] = Texture9.Sample(LinearSampler, streams.TexCoord).rgb;
 
             [unroll]
-            for (int k = 0; k < TLevelCount; k++) 
+            for (int k = 0; k < TLevelCount; k++)
             {
 				//colorLevels[k] = dofTextureLevels[k].Sample(LinearSampler, streams.TexCoord).rgb;
 #if DEBUG_COC_LEVEL_COLOR
@@ -94,11 +94,11 @@ namespace Xenko.Rendering.Images
             float3 result = float3(0.0, 0.0, 0.0);
 
             // We now find the 2 levels closest to the pixel CoC.
-            // We go down the levels, starting at the blurriest version. Once we find a level pair 
-            // whose range contains our CoC, we keep the lerp between these 2 levels. 
+            // We go down the levels, starting at the blurriest version. Once we find a level pair
+            // whose range contains our CoC, we keep the lerp between these 2 levels.
             // (This part also supports a branch-less version.)
             [unroll]
-            for (int i = TLevelCount - 2; i >= 0; i--) 
+            for (int i = TLevelCount - 2; i >= 0; i--)
             {
                 // Current range we consider
                 float rangeMin = CoCLevelValues[i];

@@ -49,7 +49,7 @@ namespace Xenko.Games
 
         public static GamePlatform Create(GameBase game)
         {
-            // Here we cover all Desktop variants: OpenTK, SDL, Winforms,...
+            // Here we cover all Desktop variants: SDL, Winforms,...
             return new GamePlatformWindows(game);
         }
 

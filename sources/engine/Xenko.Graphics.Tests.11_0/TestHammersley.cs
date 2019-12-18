@@ -89,8 +89,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact]
         public void RunImageLoad()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             RunGameTest(new TestHammersley());
         }
     }

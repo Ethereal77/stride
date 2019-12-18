@@ -45,10 +45,6 @@ namespace Xenko.Graphics.Regression
             result.DeviceName = "Direct3D12";
     #elif XENKO_GRAPHICS_API_DIRECT3D11
             result.DeviceName = "Direct3D";
-    #elif XENKO_GRAPHICS_API_OPENGLES
-            result.DeviceName = "OpenGLES";
-    #elif XENKO_GRAPHICS_API_OPENGL
-            result.DeviceName = "OpenGL";
     #elif XENKO_GRAPHICS_API_VULKAN
             result.DeviceName = "Vulkan";
     #endif
@@ -68,10 +64,6 @@ namespace Xenko.Graphics.Regression
             {
                 case TestPlatform.WindowsDx:
                     return "Windows_Direct3D11";
-                case TestPlatform.WindowsOgl:
-                    return "Windows_OpenGL";
-                case TestPlatform.WindowsOgles:
-                    return "Windows_OpenGLES";
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -84,10 +76,6 @@ namespace Xenko.Graphics.Regression
             return TestPlatform.None;
 #elif XENKO_GRAPHICS_API_DIRECT3D
             return TestPlatform.WindowsDx;
-#elif XENKO_GRAPHICS_API_OPENGLES
-            return TestPlatform.WindowsOgles;
-#elif XENKO_GRAPHICS_API_OPENGL
-            return TestPlatform.WindowsOgl;
 #elif XENKO_GRAPHICS_API_VULKAN
             return TestPlatform.WindowsVulkan;
 #endif

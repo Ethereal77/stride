@@ -40,7 +40,7 @@ namespace Xenko.Graphics.Tests
             await base.LoadContent();
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            
+
             inputTexture = Content.Load<Texture>("uv");
             var groupCounts = new Int3(inputTexture.Width / ReductionRatio, inputTexture.Height / ReductionRatio, 1);
             outputTexture = Texture.New2D(GraphicsDevice, groupCounts.X, groupCounts.Y, 1, PixelFormat.R8G8B8A8_UNorm, TextureFlags.UnorderedAccess | TextureFlags.ShaderResource);
@@ -88,8 +88,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact(Skip="This test is unmaintained and currently doesn't pass")]
         public void RunTest()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             RunGameTest(new TestComputeShader());
         }
 

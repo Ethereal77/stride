@@ -3,7 +3,7 @@
 namespace Xenko.Graphics
 {
     /// <summary>
-    /// The <see cref="Xenko.Graphics"/> namespace contains types that provides a unified Graphics API for Direct3D, OpenGL and OpenGLES.
+    /// The <see cref="Xenko.Graphics"/> namespace contains types that provides a unified Graphics API for Direct3D.
     /// </summary>
     [System.Runtime.CompilerServices.CompilerGenerated]
     internal class NamespaceDoc

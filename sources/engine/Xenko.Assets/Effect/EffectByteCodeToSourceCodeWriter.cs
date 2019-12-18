@@ -27,7 +27,7 @@ namespace Xenko.Assets.Effect
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace {1} 
+namespace {1}
 {{
     {2} class {3}
     {{
@@ -70,12 +70,6 @@ namespace {1}
                 case GraphicsPlatform.Direct3D12:
                     xenkoDefine = "XENKO_GRAPHICS_API_DIRECT3D";
                     break;
-                case GraphicsPlatform.OpenGL:
-                    xenkoDefine = "XENKO_GRAPHICS_API_OPENGLCORE";
-                    break;
-                case GraphicsPlatform.OpenGLES:
-                    xenkoDefine = "XENKO_GRAPHICS_API_OPENGLES";
-                    break;
                 case GraphicsPlatform.Vulkan:
                     xenkoDefine = "XENKO_GRAPHICS_API_VULKAN";
                     break;
@@ -83,12 +77,12 @@ namespace {1}
 
             writer.WriteLine("#if {0}", xenkoDefine);
             writer.Write(codeTemplate,
-                         effectToGenerateText, // {0} 
-                         nameSpace,            // {1} 
-                         classDeclaration,     // {2} 
-                         className,            // {3} 
-                         fieldDeclaration,     // {4} 
-                         fieldName,            // {5} 
+                         effectToGenerateText, // {0}
+                         nameSpace,            // {1}
+                         classDeclaration,     // {2}
+                         className,            // {3}
+                         fieldDeclaration,     // {4}
+                         fieldName,            // {5}
                          bufferAsText,         // {6}
                          commandLine);         // {7}
 

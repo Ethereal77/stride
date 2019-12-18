@@ -59,9 +59,9 @@ namespace Xenko.Graphics.Tests
                 var compiler = new EffectCompiler();
                 compiler.SourceDirectories.Add("assets/shaders");
                 var compilerCache = new EffectCompilerCache(compiler);
-                var compilerParameters = new CompilerParameters {Platform = GraphicsPlatform.OpenGLCore};
+                var compilerParameters = new CompilerParameters { Platform = GraphicsPlatform.Direct3D11 };
                 var compilerResults = compilerCache.Compile(new ShaderMixinSource("MultiTexturesSpriteEffect"), compilerParameters);
-                
+
                 Assert.That(compilerResults.HasErrors, Is.False);
 
                 var effectBytecode = compilerResults.Bytecodes[0];
@@ -73,7 +73,7 @@ namespace Xenko.Graphics.Tests
 
             // load geometry
             geometry = GeometricPrimitive.Plane.New(GraphicsDevice);
-            
+
             var view = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY);
             var projection = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 100.0f);
             MultiTexturesEffect.SharedParameters.Set(TransformationKeys.WorldViewProjection, Matrix.Multiply(view, projection));

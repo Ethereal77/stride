@@ -16,13 +16,7 @@ namespace Xenko.Games
             // Default context is Desktop
             AppContextType type = AppContextType.Desktop;
 #if XENKO_PLATFORM_WINDOWS_DESKTOP
-    #if XENKO_GRAPHICS_API_OPENGL
-        #if XENKO_UI_SDL
-            type = AppContextType.DesktopSDL;
-        #elif XENKO_UI_OPENTK
-            type = AppContextType.DesktopOpenTK;
-        #endif
-    #elif XENKO_GRAPHICS_API_VULKAN
+    #if XENKO_GRAPHICS_API_VULKAN
         #if XENKO_UI_SDL && !XENKO_UI_WINFORMS && !XENKO_UI_WPF
             type = AppContextType.DesktopSDL;
         #endif
@@ -45,9 +39,6 @@ namespace Xenko.Games
                 case AppContextType.Desktop:
                     res = NewGameContextDesktop();
                     break;
-                case AppContextType.DesktopOpenTK:
-                    res = NewGameContextOpenTK();
-                    break;
                 case AppContextType.DesktopSDL:
                     res = NewGameContextSDL();
                     break;
@@ -67,26 +58,13 @@ namespace Xenko.Games
         public static GameContext NewGameContextDesktop()
         {
 #if XENKO_PLATFORM_WINDOWS_DESKTOP
-    #if XENKO_UI_OPENTK
-            return new GameContextOpenTK(null);
+    #if XENKO_UI_SDL && !XENKO_UI_WINFORMS && !XENKO_UI_WPF
+        return new GameContextSDL(null);
+    #elif (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+        return new GameContextWinforms(null);
     #else
-        #if XENKO_UI_SDL && !XENKO_UI_WINFORMS && !XENKO_UI_WPF
-            return new GameContextSDL(null);
-        #elif (XENKO_UI_WINFORMS || XENKO_UI_WPF)
-            return new GameContextWinforms(null);
-        #else
-            return null;
-        #endif
+        return null;
     #endif
-#else
-            return null;
-#endif
-        }
-
-        public static GameContext NewGameContextOpenTK()
-        {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP && XENKO_GRAPHICS_API_OPENGL && XENKO_UI_OPENTK
-            return new GameContextOpenTK(null);
 #else
             return null;
 #endif

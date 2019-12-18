@@ -187,8 +187,8 @@ namespace Xenko.Core.Shaders.Grammar
             var caseStatement = Ast<CaseStatement>(node);
 
             //// switch_case_statement.Rule =
-            ////       [0]       [1]                   
-            ////      "case" + constant_expression + ":" 
+            ////       [0]       [1]
+            ////      "case" + constant_expression + ":"
             //// | _("default") + ":";
             if (node.ChildNodes.Count == 2)
             {
@@ -223,7 +223,7 @@ namespace Xenko.Core.Shaders.Grammar
         /// </param>
         protected static void CreateDeclarationSpecifier(ParsingContext context, ParseTreeNode node)
         {
-            // declaration_specifiers = 
+            // declaration_specifiers =
             // type
             // | storage_qualifier.Plus() + type;
             var storageQualifier = Qualifier.None;
@@ -265,7 +265,7 @@ namespace Xenko.Core.Shaders.Grammar
             var value = Ast<WhileStatement>(node);
 
             //// do_switch_statement.Rule =
-            ////    [0]     [1]          [2]     [3]     [4] 
+            ////    [0]     [1]          [2]     [3]     [4]
             //// _("do") + statement + "while" + "(" + expression + ")" + ";";
             value.Condition = (Expression)node.ChildNodes[4].AstNode;
             value.Statement = (Statement)node.ChildNodes[1].AstNode;
@@ -307,7 +307,7 @@ namespace Xenko.Core.Shaders.Grammar
         protected static void CreateExpressionStatementAst(ParsingContext context, ParseTreeNode node)
         {
 
-            //// expression_statement.Rule = 
+            //// expression_statement.Rule =
             //// empty_statement
             //// | expression + ";";
             if (node.ChildNodes[0].AstNode is EmptyStatement)
@@ -452,7 +452,7 @@ namespace Xenko.Core.Shaders.Grammar
         {
             var value = Ast<IndexerExpression>(node);
 
-            // [0]                 [1]     
+            // [0]                 [1]
             // postfix_expression + array_indexer
             value.Target = (Expression)node.ChildNodes[0].AstNode;
             value.Index = (Expression)node.ChildNodes[1].AstNode;
@@ -532,7 +532,7 @@ namespace Xenko.Core.Shaders.Grammar
         /// </param>
         protected static void CreateMethodDeclarationRawAst(ParsingContext context, ParseTreeNode node)
         {
-            //// method_declaration_raw.Rule = 
+            //// method_declaration_raw.Rule =
             ////        [0]                         [1]                 [2]               [3]
             //// attribute_qualifier_pre + declaration_specifiers + method_declarator + method_qualifier_post;
             var methodDeclaration = (MethodDeclaration)node.ChildNodes[2].AstNode;
@@ -559,7 +559,7 @@ namespace Xenko.Core.Shaders.Grammar
         {
             var methodDeclaration = Ast<MethodDeclaration>(node);
 
-            //// method_declarator.Rule = 
+            //// method_declarator.Rule =
             ////      [0]      [1]   [2]               [3]
             ////  identifier + "(" + parameter_list  + ")"
             ////| identifier + "(" + identifier_list + ")"
@@ -616,9 +616,9 @@ namespace Xenko.Core.Shaders.Grammar
         {
             var value = Ast<MethodInvocationExpression>(node);
 
-            //// method_invoke_expression.Rule 
+            //// method_invoke_expression.Rule
             // [0]       [1]                [2]
-            // = identifier + "(" + argument_expression_list.Q() + ")"; 
+            // = identifier + "(" + argument_expression_list.Q() + ")";
             value.Target = GetExpression(node.ChildNodes[0]);
 
             var arguments = GetOptional<List<Expression>>(node.ChildNodes[2]);
@@ -637,9 +637,9 @@ namespace Xenko.Core.Shaders.Grammar
         /// </param>
         protected virtual void CreateParameterAst(ParsingContext context, ParseTreeNode node)
         {
-            //// parameter_declaration.Rule = 
-            ////          [0]                            [1]               [2]                   [3]                      [4]             
-            //// attribute_qualifier_pre + parameter_qualifier_pre + parameter_type + indexable_identifier.Opt() + parameter_qualifier_post; 
+            //// parameter_declaration.Rule =
+            ////          [0]                            [1]               [2]                   [3]                      [4]
+            //// attribute_qualifier_pre + parameter_qualifier_pre + parameter_type + indexable_identifier.Opt() + parameter_qualifier_post;
             var parameter = Ast<Parameter>(node);
 
             parameter.Attributes.AddRange((List<AttributeBase>)node.ChildNodes[0].AstNode);
@@ -683,8 +683,8 @@ namespace Xenko.Core.Shaders.Grammar
         {
             var value = Ast<UnaryExpression>(node);
 
-            //// post_incr_decr_expression.Rule = 
-            ////        [0]              [1]      
+            //// post_incr_decr_expression.Rule =
+            ////        [0]              [1]
             //// postfix_expression + incr_or_decr;
             value.Expression = (Expression)node.ChildNodes[0].AstNode;
             var operatorText = node.ChildNodes[1].Token.Text;
@@ -789,7 +789,7 @@ namespace Xenko.Core.Shaders.Grammar
         {
             var value = Ast<StructType>(node);
 
-            //// struct_specifier.Rule = 
+            //// struct_specifier.Rule =
             ////     [0]         [1]          [2]          [3]
             ////  "struct" + identifier.Q() + "{" + variable_declaration.ListOpt() + "}"
             value.Name = GetOptional<Identifier>(node.ChildNodes[1]);
@@ -885,8 +885,8 @@ namespace Xenko.Core.Shaders.Grammar
         {
             var value = Ast<UnaryExpression>(node);
 
-            //// unary_expression_raw.Rule = 
-            ////        [0]              [1]         [0]              [1]       
+            //// unary_expression_raw.Rule =
+            ////        [0]              [1]         [0]              [1]
             //// incr_or_decr + unary_expression | unary_operator + cast_expression;
             value.Operator = UnaryOperatorHelper.FromString(node.ChildNodes[0].Token.Text);
             value.Expression = (Expression)node.ChildNodes[1].AstNode;
@@ -903,8 +903,8 @@ namespace Xenko.Core.Shaders.Grammar
         /// </param>
         protected static void CreateVariableGroupAst(ParsingContext parsingContext, ParseTreeNode node)
         {
-            // variable_group.Rule = 
-            // [0]                                 [1]     
+            // variable_group.Rule =
+            // [0]                                 [1]
             // attribute_qualifier_pre + variable_group_raw
 
             // This is a type declaration and not a variable
@@ -935,7 +935,7 @@ namespace Xenko.Core.Shaders.Grammar
         {
             var var = Ast<Variable>(node);
 
-            //// [0]                             [1]          
+            //// [0]                             [1]
             // declaration_specifiers + variable_declarator_list.Q()  + ";";
             var declarationSpecifiers = (Tuple<Qualifier, TypeBase>)node.ChildNodes[0].AstNode;
             var.Qualifiers = declarationSpecifiers.Item1;
@@ -967,8 +967,8 @@ namespace Xenko.Core.Shaders.Grammar
                     subVariable.MergeFrom(var);
                     node.AstNode = subVariable;
                 }
-            } 
-            else 
+            }
+            else
             {
                 // If variable declarators is 0, check if this is a named struct
                 var.Type.Qualifiers = var.Qualifiers;
@@ -1008,7 +1008,7 @@ namespace Xenko.Core.Shaders.Grammar
             var value = Ast<WhileStatement>(node);
 
             //// switch_statement.Rule =
-            ////      [0]     [1]     [2]        [3]     [4] 
+            ////      [0]     [1]     [2]        [3]     [4]
             //// _("while") + "(" + expression + ")" + statement;
             value.Condition = (Expression)node.ChildNodes[2].AstNode;
             value.Statement = (Statement)node.ChildNodes[4].AstNode;
@@ -1026,10 +1026,10 @@ namespace Xenko.Core.Shaders.Grammar
             var literalFloat = Ast<Literal>(node);
             float value;
             var floatStr = node.Token.Text;
-            bool isHalf = floatStr.EndsWith("h", StringComparison.CurrentCultureIgnoreCase); 
+            bool isHalf = floatStr.EndsWith("h", StringComparison.CurrentCultureIgnoreCase);
 
             // Remove postfix
-            if (floatStr.EndsWith("d", StringComparison.CurrentCultureIgnoreCase) 
+            if (floatStr.EndsWith("d", StringComparison.CurrentCultureIgnoreCase)
                 || floatStr.EndsWith("f", StringComparison.CurrentCultureIgnoreCase)
                 || isHalf)
             {
@@ -1037,9 +1037,9 @@ namespace Xenko.Core.Shaders.Grammar
             }
 
             if (!float.TryParse(
-                floatStr, 
-                NumberStyles.Float, 
-                CultureInfo.InvariantCulture, 
+                floatStr,
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
                 out value))
             {
                 context.AddParserError("Unable to parse float [{0}]", node.Token.Text);
@@ -1049,7 +1049,6 @@ namespace Xenko.Core.Shaders.Grammar
             literalFloat.Text = node.Token.Text;
 
             // Don't output half
-            // TODO MOVE THIS TO GLSL WRITER
             if (isHalf)
             {
                 literalFloat.Text = floatStr;
@@ -1099,9 +1098,9 @@ namespace Xenko.Core.Shaders.Grammar
 
             // If on octal, parse regular hexa
             if (!isOctal && !int.TryParse(
-                intStr, 
-                style, 
-                CultureInfo.InvariantCulture, 
+                intStr,
+                style,
+                CultureInfo.InvariantCulture,
                 out value))
             {
                 context.AddParserError("Unable to parse integer [{0}]", node.Token.Text);
@@ -1142,7 +1141,7 @@ namespace Xenko.Core.Shaders.Grammar
             var value = (Variable)node.ChildNodes[0].AstNode;
             node.AstNode = value;
 
-            //// variable_declarator.Rule = 
+            //// variable_declarator.Rule =
             ////          [0]               [1]       [2]
             ////  variable_declarator_raw
             ////| variable_declarator_raw + "=" + initializer;
@@ -1165,8 +1164,8 @@ namespace Xenko.Core.Shaders.Grammar
         {
             var value = Ast<Variable>(node);
 
-            //// variable_declarator_raw.Rule = 
-            ////          [0]                                       [1]               
+            //// variable_declarator_raw.Rule =
+            ////          [0]                                       [1]
             ////  indexable_identifier_declarator + variable_declarator_qualifier_post
             var identifier = (Identifier)node.ChildNodes[0].AstNode;
 
@@ -1186,8 +1185,8 @@ namespace Xenko.Core.Shaders.Grammar
 
         private static void CheckFieldDeclarationAst(ParsingContext context, ParseTreeNode node)
         {
-            //// field_declaration.Rule = 
-            ////         [0]            [1]                 [2]      
+            //// field_declaration.Rule =
+            ////         [0]            [1]                 [2]
             //// field_qualifier_pre + type + variable_declarator_list + ";";
             // Check that field has a declarator
 
@@ -1236,9 +1235,9 @@ namespace Xenko.Core.Shaders.Grammar
 
         private static void CreateExpressionListAst(ParsingContext context, ParseTreeNode node)
         {
-            //// expression.Rule = 
+            //// expression.Rule =
             ////      [0]                     [1]             [2]
-            ////   assignment_expression 
+            ////   assignment_expression
             //// | expression               + "," + assignment_expression;
 
             if (node.ChildNodes.Count == 1)

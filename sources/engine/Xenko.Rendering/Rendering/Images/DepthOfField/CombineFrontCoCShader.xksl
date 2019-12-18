@@ -17,7 +17,7 @@ namespace Xenko.Rendering.Images
             // Fetch all our levels
             float4 colorLevels[8];
 
-			// Note: Manually unrolled until better HLSL2GLSL support
+			// TODO: Manually unrolled until better HLSL2GLSL support
 			if (TLevelCount >= 1)
 	            colorLevels[0] = Texture2.Sample(LinearSampler, streams.TexCoord).rgba;
 			if (TLevelCount >= 2)
@@ -41,25 +41,25 @@ namespace Xenko.Rendering.Images
             // Gets the CoC of the current pixel
             float CoC = Texture0.Sample(LinearSampler, streams.TexCoord).x;
 
-            // A front object has by default its in-focus color. 
+            // A front object has by default its in-focus color.
             if (CoC < 0) result = colorLevels[0];
 
             // Alpha blend all the layers in the good order
             // TODO we should be more selective and only blend the layer closest to the pixel CoC
             [unroll]
-            for (int k = 1; k < TLevelCount; k++) 
+            for (int k = 1; k < TLevelCount; k++)
             {
                 float4 layerColor = colorLevels[k];
                 float newAlpha = layerColor.a + result.a * (1.0 - layerColor.a);
                 float3 newRGB = float4(0.0, 0.0, 0.0, 0.0);
-                if (newAlpha > 0) 
+                if (newAlpha > 0)
                 {
                     newRGB = (layerColor.rgb * layerColor.a + result.rgb * result.a * (1.0 - layerColor.a)) / newAlpha;
                 }
                 result = float4(newRGB, newAlpha);
             }
 
-            // Need pre-multiply alpha for the blending with the render target. 
+            // Need pre-multiply alpha for the blending with the render target.
             result.rgb *= result.a;
 
             return result;

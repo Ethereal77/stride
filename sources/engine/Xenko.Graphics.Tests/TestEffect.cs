@@ -18,9 +18,6 @@ namespace Xenko.Graphics
 {
     public class TestEffect : Game
     {
-        private bool isTestGlsl = false;
-        private bool isTestGlslES = false;
-        
         public TestEffect()
         {
             graphicsDeviceManager = new GraphicsDeviceManager(this)
@@ -34,22 +31,7 @@ namespace Xenko.Graphics
 
         protected override void Update(GameTime gameTime)
         {
-            if (isTestGlsl)
-            {
-                base.Update(gameTime);
-                isTestGlsl = false;
-                RuntimeToGlslEffect();
-            }
-            else if (isTestGlslES)
-            {
-                base.Update(gameTime);
-                isTestGlslES = false;
-                RuntimeToGlslESEffect();
-            }
-            else
-            {
-                Exit();
-            }
+            Exit();
         }
 
 
@@ -86,96 +68,6 @@ namespace Xenko.Graphics
             var graphicsDevice = GraphicsDevice.New();
 
             var effect = new Effect(graphicsDevice, effectBytecode);
-            effect.Apply();
-        }
-
-        [Fact]
-        public void TestToGlslEffect()
-        {
-            isTestGlsl = true;
-            this.Run();
-        }
-
-        private void RuntimeToGlslEffect()
-        {
-            EffectBytecode effectBytecode;
-
-            // Create and mount database file system
-            var objDatabase = new ObjectDatabase(VirtualFileSystem.ApplicationDatabasePath);
-            using (var contentIndexMap = new contentIndexMap("/assets"))
-            {
-                contentIndexMap.LoadNewValues();
-                var database = new DatabaseFileProvider(contentIndexMap, objDatabase);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\shaders", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\engine\Xenko.Graphics\Shaders", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                var compiler = new EffectCompiler();
-                compiler.SourceDirectories.Add("assets/shaders");
-                var compilerCache = new EffectCompilerCache(compiler);
-
-                var compilerParameters = new CompilerParameters { Platform = GraphicsPlatform.OpenGLCore };
-
-                var compilerResults = compilerCache.Compile(new ShaderMixinSource("ToGlslEffect"), compilerParameters);
-                Assert.That(compilerResults.HasErrors, Is.False);
-
-                effectBytecode = compilerResults.Bytecodes[0];
-            }
-
-            this.GraphicsDevice.Begin();
-
-            var effect = new Effect(this.GraphicsDevice, effectBytecode);
-            effect.Apply();
-        }
-
-        [Fact]
-        public void TestToGlslESEffect()
-        {
-            isTestGlslES = true;
-            this.Run();
-        }
-
-        private void RuntimeToGlslESEffect()
-        {
-            EffectBytecode effectBytecode;
-
-            // Create and mount database file system
-            var objDatabase = new ObjectDatabase(VirtualFileSystem.ApplicationDatabasePath);
-            using (var contentIndexMap = new contentIndexMap("/assets"))
-            {
-                contentIndexMap.LoadNewValues();
-                var database = new DatabaseFileProvider(contentIndexMap, objDatabase);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\shaders", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\engine\Xenko.Graphics\Shaders", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                var compiler = new EffectCompiler();
-                compiler.SourceDirectories.Add("assets/shaders");
-                var compilerCache = new EffectCompilerCache(compiler);
-
-                var compilerParameters = new CompilerParameters { Platform = GraphicsPlatform.OpenGLES };
-
-                var compilerResults = compilerCache.Compile(new ShaderMixinSource("ToGlslEffect"), compilerParameters);
-                Assert.That(compilerResults.HasErrors, Is.False);
-
-                effectBytecode = compilerResults.Bytecodes[0];
-            }
-
-            this.GraphicsDevice.Begin();
-
-            var effect = new Effect(this.GraphicsDevice, effectBytecode);
             effect.Apply();
         }
 

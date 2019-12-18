@@ -106,7 +106,7 @@ namespace Xenko.Core.Shaders.Visitor
                 AddReference((Node)container, variable);
             }
         }
-        
+
         public override void Visit(Shader shader)
         {
             indirectReferences = new Dictionary<Node, HashSet<Node>>();
@@ -143,7 +143,7 @@ namespace Xenko.Core.Shaders.Visitor
             {
                 var declaration = nodes[i];
 
-                // Strip constant buffer elements by elements only if "stripUniforms" is active (useful for API without constant buffers like OpenGL ES 2.0)
+                // Strip constant buffer elements by elements only if "stripUniforms" is active
                 if (stripUniforms && declaration is ConstantBuffer)
                 {
                     var constantBuffer = (ConstantBuffer)declaration;
@@ -251,4 +251,3 @@ namespace Xenko.Core.Shaders.Visitor
         }
     }
 }
-

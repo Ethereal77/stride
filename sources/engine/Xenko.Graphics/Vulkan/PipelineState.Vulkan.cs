@@ -328,7 +328,7 @@ namespace Xenko.Graphics
             ResourceGroupCount = resourceGroups.Count;
 
             var layouts = pipelineStateDescription.RootSignature.EffectDescriptorSetReflection.Layouts;
-            
+
             // Get binding indices used by the shader
             var destinationBindings = pipelineStateDescription.EffectBytecode.Stages
                 .SelectMany(x => BinarySerialization.Read<ShaderInputBytecode>(x.Data).ResourceBindings)

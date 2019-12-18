@@ -124,18 +124,9 @@ namespace Xenko.Rendering.Compositing
                 actualMultisampleCount = (MultisampleCount)Math.Min((int)MSAALevel, (int)GraphicsDevice.Features[PixelFormat.R16G16B16A16_Float].MultisampleCountMax);
                 actualMultisampleCount = (MultisampleCount)Math.Min((int)actualMultisampleCount, (int)GraphicsDevice.Features[DepthBufferFormat].MultisampleCountMax);
 
-                // Note: we cannot support MSAA on DX10 now
-                if (GraphicsDevice.Features.HasMultisampleDepthAsSRV == false && // TODO: Try enabling MSAA on DX9!
-                    GraphicsDevice.Platform != GraphicsPlatform.OpenGL &&
-                    GraphicsDevice.Platform != GraphicsPlatform.OpenGLES)
-                {
-                    // OpenGL has MSAA support on every version.
-                    // OpenGL ES has MSAA support starting from version 3.0.
-                    // Direct3D has MSAA support starting from version 11 because it requires multisample depth buffers as shader resource views.
-                    // Therefore we force-disable MSAA on any platform that doesn't support MSAA.
-
-                    actualMultisampleCount = MultisampleCount.None;
-                }
+                // TODO: we cannot support MSAA on DX10 now
+                // Direct3D has MSAA support starting from version 11 because it requires multisample depth buffers as shader resource views.
+                // Therefore we force-disable MSAA on any platform that doesn't support MSAA.
 
                 if (actualMultisampleCount != MSAALevel)
                 {

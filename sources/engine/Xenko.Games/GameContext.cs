@@ -117,19 +117,6 @@ namespace Xenko.Games
             return new GameContextWinforms(control);
         }
 #endif
-
-#if XENKO_PLATFORM_WINDOWS_DESKTOP && XENKO_GRAPHICS_API_OPENGL && XENKO_UI_OPENTK
-        /// <summary>
-        /// Performs an implicit conversion from <see cref="OpenTK.GameWindow"/> to <see cref="GameContextOpenTK"/>.
-        /// </summary>
-        /// <param name="gameWindow">OpenTK GameWindow</param>
-        /// <returns>The result of the conversion.</returns>
-        [Obsolete ("Use new GameContextOpenTK(gameWindow) instead.")]
-        public static implicit operator GameContext(OpenTK.GameWindow gameWindow)
-        {
-            return new GameContextOpenTK(gameWindow);
-        }
-#endif
     }
 
     /// <summary>

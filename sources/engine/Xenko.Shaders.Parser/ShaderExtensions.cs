@@ -8,7 +8,6 @@ using System.Linq;
 using Xenko.Core.Shaders.Ast.Xenko;
 using Xenko.Core.Shaders.Ast;
 using Xenko.Core.Shaders.Ast.Hlsl;
-using Xenko.Core.Shaders.Convertor;
 
 namespace Xenko.Shaders.Parser
 {

@@ -50,7 +50,7 @@ namespace Xenko.Graphics.Tests
 
         public TestRadiancePrefilteringGgx() : this(false)
         {
-            
+
         }
 
         protected TestRadiancePrefilteringGgx(bool filterAtEachFrame)
@@ -239,8 +239,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact]
         public void RunTest()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             RunGameTest(new TestRadiancePrefilteringGgx());
         }
 

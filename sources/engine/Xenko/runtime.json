@@ -34,40 +34,6 @@
         "win-x64"
       ]
     },
-    "win-opengl": {
-      "#import": [
-        "win"
-      ]
-    },
-    "win-opengl-x86": {
-      "#import": [
-        "win-opengl",
-        "win-x86"
-      ]
-    },
-    "win-opengl-x64": {
-      "#import": [
-        "win-opengl",
-        "win-x64"
-      ]
-    },
-    "win-opengles": {
-      "#import": [
-        "win"
-      ]
-    },
-    "win-opengles-x86": {
-      "#import": [
-        "win-opengles",
-        "win-x86"
-      ]
-    },
-    "win-opengles-x64": {
-      "#import": [
-        "win-opengles",
-        "win-x64"
-      ]
-    },
     "win-vulkan": {
       "#import": [
         "win"
@@ -118,42 +84,6 @@
     "win7-d3d12-x64": {
       "#import": [
         "win7-d3d12",
-        "win7-x64"
-      ]
-    },
-    "win7-opengl": {
-      "#import": [
-        "win-opengl",
-        "win7"
-      ]
-    },
-    "win7-opengl-x86": {
-      "#import": [
-        "win7-opengl",
-        "win7-x86"
-      ]
-    },
-    "win7-opengl-x64": {
-      "#import": [
-        "win7-opengl",
-        "win7-x64"
-      ]
-    },
-    "win7-opengles": {
-      "#import": [
-        "win-opengles",
-        "win7"
-      ]
-    },
-    "win7-opengles-x86": {
-      "#import": [
-        "win7-opengles",
-        "win7-x86"
-      ]
-    },
-    "win7-opengles-x64": {
-      "#import": [
-        "win7-opengles",
         "win7-x64"
       ]
     },
@@ -208,42 +138,6 @@
     "win10-d3d12-x64": {
       "#import": [
         "win10-d3d12",
-        "win10-x64"
-      ]
-    },
-    "win10-opengl": {
-      "#import": [
-        "win-opengl",
-        "win10"
-      ]
-    },
-    "win10-opengl-x86": {
-      "#import": [
-        "win10-opengl",
-        "win10-x86"
-      ]
-    },
-    "win10-opengl-x64": {
-      "#import": [
-        "win10-opengl",
-        "win10-x64"
-      ]
-    },
-    "win10-opengles": {
-      "#import": [
-        "win-opengles",
-        "win10"
-      ]
-    },
-    "win10-opengles-x86": {
-      "#import": [
-        "win10-opengles",
-        "win10-x86"
-      ]
-    },
-    "win10-opengles-x64": {
-      "#import": [
-        "win10-opengles",
         "win10-x64"
       ]
     },
