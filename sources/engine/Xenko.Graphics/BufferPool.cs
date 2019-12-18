@@ -9,8 +9,6 @@ namespace Xenko.Graphics
     {
 #if XENKO_GRAPHICS_API_DIRECT3D12
         private const bool UseBufferOffsets = true;
-#elif XENKO_GRAPHICS_API_VULKAN
-        private const bool UseBufferOffsets = true;
 #else
         private const bool UseBufferOffsets = false;
 #endif

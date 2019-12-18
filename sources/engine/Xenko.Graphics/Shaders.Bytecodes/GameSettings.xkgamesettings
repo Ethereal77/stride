@@ -25,7 +25,6 @@ Overrides:
             DefaultGraphicsProfile: Level_9_1
             ColorSpace: Linear
             DisplayOrientation: Default
-            PreferredGraphicsPlatform: Vulkan
+            PreferredGraphicsPlatform: Direct3D11
 PlatformFilters:
     - Intel(R) HD Graphics
-    - Windows-Vulkan

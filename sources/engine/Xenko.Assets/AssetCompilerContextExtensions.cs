@@ -42,8 +42,6 @@ namespace Xenko.Assets
                     return GraphicsPlatform.Direct3D11;
                 else if (runtimeIdentifier.Contains("-d3d12"))
                     return GraphicsPlatform.Direct3D12;
-                else if (runtimeIdentifier.Contains("-vulkan"))
-                    return GraphicsPlatform.Vulkan;
             }
 
             // Ohterwise, use default as fallback

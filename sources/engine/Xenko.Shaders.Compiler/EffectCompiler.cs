@@ -112,9 +112,7 @@ namespace Xenko.Shaders.Compiler
                     shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D", 1);
                     shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D12", 1);
                     break;
-                case GraphicsPlatform.Vulkan:
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_VULKAN", 1);
-                    break;
+
                 default:
                     throw new NotSupportedException();
             }
@@ -186,7 +184,7 @@ namespace Xenko.Shaders.Compiler
             var bytecode = new EffectBytecode { Reflection = parsingResult.Reflection, HashSources = parsingResult.HashSources };
 
             // Select the correct backend compiler
-            IShaderCompiler compiler = default;  //TODO: GLSL/Vulkan
+            IShaderCompiler compiler = default;
             switch (effectParameters.Platform)
             {
 #if XENKO_PLATFORM_WINDOWS
@@ -195,36 +193,6 @@ namespace Xenko.Shaders.Compiler
                     compiler = new Direct3D.ShaderCompiler();
                     break;
 #endif
-                case GraphicsPlatform.Vulkan:
-                    // get the number of render target outputs
-                    var rtOutputs = 0;
-                    var psOutput = parsingResult.Shader.Declarations.OfType<StructType>().FirstOrDefault(x => x.Name.Text == "PS_OUTPUT");
-                    if (psOutput != null)
-                    {
-                        foreach (var rto in psOutput.Fields)
-                        {
-                            var sem = rto.Qualifiers.OfType<Semantic>().FirstOrDefault();
-                            if (sem != null)
-                            {
-                                // special case SV_Target
-                                if (rtOutputs == 0 && sem.Name.Text == "SV_Target")
-                                {
-                                    rtOutputs = 1;
-                                    break;
-                                }
-                                for (var i = rtOutputs; i < 8; ++i)
-                                {
-                                    if (sem.Name.Text == ("SV_Target" + i))
-                                    {
-                                        rtOutputs = i + 1;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //TODO: compiler = new OpenGL.ShaderCompiler(rtOutputs);
-                    break;
                 default:
                     throw new NotSupportedException();
             }

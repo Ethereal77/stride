@@ -45,12 +45,7 @@ namespace Xenko.Graphics
         /// <summary>
         /// Direct3D12.
         /// </summary>
-        Direct3D12,
-
-        /// <summary>
-        /// Vulkan
-        /// </summary>
-        Vulkan
+        Direct3D12
     }
 
     [DataContract]

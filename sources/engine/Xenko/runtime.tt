@@ -8,7 +8,7 @@
   "runtimes": {
 <# foreach (var platform in new[] { "win", "win7", "win10" })
    {
-     foreach (var graphicsPlatform in new[] { "d3d11", "d3d12", "vulkan" })
+     foreach (var graphicsPlatform in new[] { "d3d11", "d3d12" })
      {
        var platformForGraphicsPlatformVariant = "win";
        foreach (var cpuVariant in new[] { string.Empty, "-x86", "-x64" })

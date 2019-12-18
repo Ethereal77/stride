@@ -11,23 +11,18 @@ namespace Xenko.Graphics
     public enum GraphicsPlatform
     {
         /// <summary>
-        /// The Null Shader.
+        /// The Null Renderer / Shader.
         /// </summary>
         Null,
 
         /// <summary>
-        /// HLSL Direct3D Shader.
+        /// Direct3D 11 Renderer / HLSL Shader.
         /// </summary>
         Direct3D11,
 
         /// <summary>
-        /// HLSL Direct3D Shader.
+        /// Direct3D 12 Renderer / HLSL Shader.
         /// </summary>
-        Direct3D12,
-
-        /// <summary>
-        /// GLSL/SPIR-V Shader.
-        /// </summary>
-        Vulkan
+        Direct3D12
     }
 }

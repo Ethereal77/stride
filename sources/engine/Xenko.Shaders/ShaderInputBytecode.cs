@@ -6,7 +6,7 @@ using Xenko.Core;
 namespace Xenko.Shaders
 {
     /// <summary>
-    /// Structure containing SPIR-V bytecode, as well as mappings from input attribute locations to semantics.
+    /// Structure containing shader bytecode, as well as mappings from input attribute locations to semantics.
     /// </summary>
     [DataContract]
     public struct ShaderInputBytecode

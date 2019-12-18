@@ -70,9 +70,6 @@ namespace {1}
                 case GraphicsPlatform.Direct3D12:
                     xenkoDefine = "XENKO_GRAPHICS_API_DIRECT3D";
                     break;
-                case GraphicsPlatform.Vulkan:
-                    xenkoDefine = "XENKO_GRAPHICS_API_VULKAN";
-                    break;
             }
 
             writer.WriteLine("#if {0}", xenkoDefine);

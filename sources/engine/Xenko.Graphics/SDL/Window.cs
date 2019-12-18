@@ -28,13 +28,8 @@ namespace Xenko.Graphics.SDL
         /// <param name="title">Title of the window, see Text property.</param>
         public Window(string title)
         {
-#if XENKO_GRAPHICS_API_VULKAN
-            var flags = SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN | SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN;
-#else
-            var flags = SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN;
-#endif
             // Create the SDL window and then extract the native handle.
-            SdlHandle = SDL.SDL_CreateWindow(title, SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 640, 480, flags);
+            SdlHandle = SDL.SDL_CreateWindow(title, SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN);
 
             if (SdlHandle == IntPtr.Zero)
             {
@@ -260,14 +255,8 @@ namespace Xenko.Graphics.SDL
         {
             get
             {
-#if XENKO_GRAPHICS_API_VULKAN
-                int w, h;
-                SDL.SDL_GL_GetDrawableSize(SdlHandle, out w, out h);
-                return new Size2(w, h);
-#else
                 SDL.SDL_Surface *surfPtr = (SDL.SDL_Surface*)SDL.SDL_GetWindowSurface(SdlHandle);
                 return new Size2(surfPtr->w, surfPtr->h);
-#endif
             }
             set
             {
@@ -284,14 +273,8 @@ namespace Xenko.Graphics.SDL
         {
             get
             {
-#if XENKO_GRAPHICS_API_VULKAN
-                int w, h;
-                SDL.SDL_GL_GetDrawableSize(SdlHandle, out w, out h);
-                return new Rectangle(0, 0, w, h);
-#else
                 SDL.SDL_Surface *surfPtr = (SDL.SDL_Surface*)SDL.SDL_GetWindowSurface(SdlHandle);
                 return new Rectangle(0, 0, surfPtr->w, surfPtr->h);
-#endif
             }
             set
             {

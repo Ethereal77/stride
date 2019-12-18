@@ -18,7 +18,6 @@ namespace Xenko.Graphics
             foreach (var effectDescriptorSetSlot in effectDescriptorSetSlots)
             {
                 // Find all resources related to this slot name
-                // NOTE: Ordering is mirrored by GLSL layout in Vulkan
                 var descriptorSetLayoutBuilder = new DescriptorSetLayoutBuilder();
                 bool hasBindings = false;
                 foreach (var resourceBinding in effectBytecode.Reflection.ResourceBindings

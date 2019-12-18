@@ -22,28 +22,6 @@
   </Choose>
   <Import Condition="$(XenkoUI.Contains('SDL'))" Project="..\..\targets\SDL.targets" />
   <Choose>
-    <When Condition=" '$(XenkoGraphicsApi)' == 'Vulkan' ">
-      <Choose>
-        <When Condition=" '$(XenkoPlatform)' == 'Windows' ">
-          <ItemGroup>
-            <Reference Include="SharpVulkan">
-              <SpecificVersion>False</SpecificVersion>
-              <HintPath>$(XenkoDependenciesDir)\SharpVulkan\$(XenkoPlatform)\SharpVulkan.dll</HintPath>
-            </Reference>
-          </ItemGroup>
-        </When>
-        <Otherwise>
-          <ItemGroup>
-            <Reference Include="SharpVulkan">
-              <SpecificVersion>False</SpecificVersion>
-              <HintPath>$(XenkoDependenciesDir)\SharpVulkan\Other\SharpVulkan.dll</HintPath>
-            </Reference>
-          </ItemGroup>
-        </Otherwise>
-      </Choose>
-    </When>
-  </Choose>
-  <Choose>
     <When Condition="$(XenkoUI.Contains('SDL'))">
       <ItemGroup>
         <XenkoNativeLib Include="$(XenkoDependenciesDir)\SDL2\$(XenkoPlatform)\**\*SDL2*">
@@ -54,13 +32,6 @@
       </ItemGroup>
     </When>
   </Choose>
-  <ItemGroup Condition=" '$(XenkoGraphicsApi)' == 'Vulkan' ">
-    <XenkoNativeLib Include="$(XenkoDependenciesDir)\MoltenVK\$(XenkoPlatform)\**\*.*">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <RelativePath>%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </XenkoNativeLib>
-  </ItemGroup>
   <ItemGroup>
     <XenkoNativeLib Include="$(XenkoDependenciesDir)\freetype\$(XenkoPlatform)\**\*.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
@@ -105,7 +76,6 @@
   <Target Name="IncludeExtraAssemblies">
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)SharpFont.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)SharpVulkan.dll" Condition=" '$(XenkoGraphicsApi)' == 'Vulkan' " />
       <BuildOutputInPackage Include="$(OutputPath)SDL2-CS.dll" Condition="$(XenkoUI.Contains('SDL'))" />
     </ItemGroup>
   </Target>

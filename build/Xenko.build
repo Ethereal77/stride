@@ -166,11 +166,6 @@ Example of use:
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=Direct3D12;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
 
-  <Target Name="BuildWindowsVulkan" DependsOnTargets="CopyXenkoKey">
-    <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime;XenkoGraphicsApi=Vulkan"/>
-    <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=Vulkan;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
-  </Target>
-
   <Target Name="DownloadXunitRunnerConsole">
     <MakeDir Directories="$(MSBuildThisFileDirectory)packages"/>
     <PropertyGroup>
@@ -236,12 +231,6 @@ Example of use:
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameDirect3D12;'))">
       <UnitTestPrerequisites Include="@(UnitTestGame)"/>
       <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).Direct3D12.sln</Solution></UnitTest>
-    </ItemGroup>
-
-    <!-- Vulkan unit tests -->
-    <ItemGroup Condition="$(XenkoTestCategories.Contains(';GameVulkan;'))">
-      <UnitTestPrerequisites Include="@(UnitTestGame)"/>
-      <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).Vulkan.sln</Solution></UnitTest>
     </ItemGroup>
 
 	<!-- Samples unit tests -->

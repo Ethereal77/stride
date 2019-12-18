@@ -22,24 +22,13 @@ namespace Xenko.Rendering.Lights
         /// </summary>
         override void PrepareDirectLightCore(int lightIndex)
         {
-            // TODO: Workaraound for SPIR-V compiler. Revert later
-            PointLightDataInternal data;
-            data.PositionWS = Lights[lightIndex].PositionWS;
-            data.InvSquareRadius = Lights[lightIndex].InvSquareRadius;
-            data.Color = Lights[lightIndex].Color;
-
-            ProcessLight(data);
+            ProcessLight(Lights[lightIndex]);
         }
 
         override float ComputeAttenuation(float3 position, int lightIndex)
         {
-            // TODO: Workaraound for SPIR-V compiler. Revert later
-            PointLightDataInternal data;
-            data.PositionWS = Lights[lightIndex].PositionWS;
-            data.InvSquareRadius = Lights[lightIndex].InvSquareRadius;
-
             float3 lightVectorNorm;
-            return ComputeAttenuation(data, position, lightVectorNorm);
+            return ComputeAttenuation(Lights[lightIndex], position, lightVectorNorm);
         }
     };
 }

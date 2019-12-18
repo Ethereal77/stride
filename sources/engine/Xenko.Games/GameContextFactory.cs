@@ -16,13 +16,7 @@ namespace Xenko.Games
             // Default context is Desktop
             AppContextType type = AppContextType.Desktop;
 #if XENKO_PLATFORM_WINDOWS_DESKTOP
-    #if XENKO_GRAPHICS_API_VULKAN
-        #if XENKO_UI_SDL && !XENKO_UI_WINFORMS && !XENKO_UI_WPF
-            type = AppContextType.DesktopSDL;
-        #endif
-    #else
             type = AppContextType.Desktop;
-    #endif
 #endif
             return NewGameContext(type);
         }

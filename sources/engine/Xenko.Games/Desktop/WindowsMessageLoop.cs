@@ -24,7 +24,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Forms;
-#if !XENKO_GRAPHICS_API_VULKAN && !XENKO_GRAPHICS_API_NULL
+#if !XENKO_GRAPHICS_API_NULL
 using SharpDX.Win32;
 #endif
 using System.Runtime.InteropServices;

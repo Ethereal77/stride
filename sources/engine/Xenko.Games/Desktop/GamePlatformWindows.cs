@@ -57,7 +57,7 @@ namespace Xenko.Games
 #endif
 
                  case AppContextType.Desktop:
-#if (XENKO_GRAPHICS_API_DIRECT3D || XENKO_GRAPHICS_API_VULKAN) && XENKO_UI_WINFORMS
+#if XENKO_GRAPHICS_API_DIRECT3D && XENKO_UI_WINFORMS
                     return new GameWindowWinforms();
 #elif XENKO_UI_SDL
                     return new GameWindowSDL();

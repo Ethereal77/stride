@@ -201,8 +201,6 @@ namespace Xenko.Engine.Tests
         [SkippableFact]
         public void RunTestGame()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.Vulkan);
-
             RunGameTest(new TesselationTest());
         }
 

@@ -6,7 +6,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' == 'true' And '$(XenkoPlatform)' == 'Windows'">
     <!-- Build list of Graphics API -->
-    <XenkoGraphicsApis Condition="'$(XenkoGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12;Vulkan</XenkoGraphicsApis>
+    <XenkoGraphicsApis Condition="'$(XenkoGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12</XenkoGraphicsApis>
     <XenkoGraphicsApis Condition="'$(XenkoGraphicsApis)' == '' And '$(XenkoGraphicsApiDependentBuildAll)' != 'true'">$(XenkoGraphicsApiOriginal)</XenkoGraphicsApis>
 
     <_XenkoGraphicsApis Condition="'$(XenkoGraphicsApis)' != ''">;$(XenkoGraphicsApis);</_XenkoGraphicsApis>
@@ -18,14 +18,12 @@
     <RuntimeIdentifiers></RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$(_XenkoGraphicsApis.Contains(';Direct3D11;')) Or '$(_XenkoGraphicsApis)' == ''">$(RuntimeIdentifiers);win-x64</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$(_XenkoGraphicsApis.Contains(';Direct3D12;'))">$(RuntimeIdentifiers);win-d3d12-x64</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$(_XenkoGraphicsApis.Contains(';Vulkan;'))">$(RuntimeIdentifiers);win-vulkan-x64</RuntimeIdentifiers>
 
     <RuntimeIdentifiers>$([MSBuild]::Unescape($(RuntimeIdentifiers.Trim(';'))))</RuntimeIdentifiers>
     <ExtrasBuildEachRuntimeIdentifier Condition="'$(RuntimeIdentifiers)' != ''">true</ExtrasBuildEachRuntimeIdentifier>
 
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-x64'">Direct3D11</XenkoGraphicsApi>
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-d3d12-x64'">Direct3D12</XenkoGraphicsApi>
-    <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-vulkan-x64'">Vulkan</XenkoGraphicsApi>
     <XenkoGraphicsApi Condition="'$(XenkoGraphicsApi)' == ''">Direct3D11</XenkoGraphicsApi>
   </PropertyGroup>
 

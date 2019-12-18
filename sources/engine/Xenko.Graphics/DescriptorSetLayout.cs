@@ -16,7 +16,7 @@ namespace Xenko.Graphics
             return new DescriptorSetLayout(device, builder);
         }
 
-#if XENKO_GRAPHICS_API_DIRECT3D11 || (XENKO_GRAPHICS_API_VULKAN && XENKO_GRAPHICS_NO_DESCRIPTOR_COPIES)
+#if XENKO_GRAPHICS_API_DIRECT3D11
         internal readonly int ElementCount;
         internal readonly DescriptorSetLayoutBuilder.Entry[] Entries;
 

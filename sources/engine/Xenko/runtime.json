@@ -34,23 +34,6 @@
         "win-x64"
       ]
     },
-    "win-vulkan": {
-      "#import": [
-        "win"
-      ]
-    },
-    "win-vulkan-x86": {
-      "#import": [
-        "win-vulkan",
-        "win-x86"
-      ]
-    },
-    "win-vulkan-x64": {
-      "#import": [
-        "win-vulkan",
-        "win-x64"
-      ]
-    },
     "win7-d3d11": {
       "#import": [
         "win-d3d11",
@@ -87,24 +70,6 @@
         "win7-x64"
       ]
     },
-    "win7-vulkan": {
-      "#import": [
-        "win-vulkan",
-        "win7"
-      ]
-    },
-    "win7-vulkan-x86": {
-      "#import": [
-        "win7-vulkan",
-        "win7-x86"
-      ]
-    },
-    "win7-vulkan-x64": {
-      "#import": [
-        "win7-vulkan",
-        "win7-x64"
-      ]
-    },
     "win10-d3d11": {
       "#import": [
         "win-d3d11",
@@ -138,24 +103,6 @@
     "win10-d3d12-x64": {
       "#import": [
         "win10-d3d12",
-        "win10-x64"
-      ]
-    },
-    "win10-vulkan": {
-      "#import": [
-        "win-vulkan",
-        "win10"
-      ]
-    },
-    "win10-vulkan-x86": {
-      "#import": [
-        "win10-vulkan",
-        "win10-x86"
-      ]
-    },
-    "win10-vulkan-x64": {
-      "#import": [
-        "win10-vulkan",
         "win10-x64"
       ]
     }

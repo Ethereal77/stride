@@ -45,8 +45,6 @@ namespace Xenko.Graphics.Regression
             result.DeviceName = "Direct3D12";
     #elif XENKO_GRAPHICS_API_DIRECT3D11
             result.DeviceName = "Direct3D";
-    #elif XENKO_GRAPHICS_API_VULKAN
-            result.DeviceName = "Vulkan";
     #endif
 #endif
 
@@ -76,8 +74,6 @@ namespace Xenko.Graphics.Regression
             return TestPlatform.None;
 #elif XENKO_GRAPHICS_API_DIRECT3D
             return TestPlatform.WindowsDx;
-#elif XENKO_GRAPHICS_API_VULKAN
-            return TestPlatform.WindowsVulkan;
 #endif
         }
     }
@@ -133,9 +129,6 @@ namespace Xenko.Graphics.Regression
     public enum TestPlatform
     {
         None,
-        WindowsDx,
-        WindowsOgl,
-        WindowsOgles,
-        WindowsVulkan
+        WindowsDx
     }
 }

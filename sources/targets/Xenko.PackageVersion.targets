@@ -21,7 +21,7 @@
     <RepositoryUrl>https://github.com/xenko3d/xenko</RepositoryUrl>
     <Copyright>Copyright © Xenko contributors and Silicon Studio Corp.</Copyright>
     <Authors>Xenko contributors;Silicon Studio Corp.</Authors>
-    <PackageTags>Xenko;3D;gamedev;Game Engine;engine;games;D3D;Vulkan</PackageTags>
+    <PackageTags>Xenko;3D;gamedev;Game Engine;engine;games;D3D</PackageTags>
   </PropertyGroup>
 
 </Project>
