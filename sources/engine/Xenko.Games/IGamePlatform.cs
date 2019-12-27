@@ -25,7 +25,7 @@ namespace Xenko.Games
         /// <param name="gameContext">The window context. See remarks.</param>
         /// <returns>A new game window.</returns>
         /// <remarks>
-        /// This is currently only supported on Windows Desktop. The window context supported on windows is a subclass of System.Windows.Forms.Control (or null and a default GameForm will be created).
+        /// This is currently only supported on Windows. The window context supported on Windows is a subclass of System.Windows.Forms.Control (or null and a default GameForm will be created).
         /// </remarks>
         GameWindow CreateWindow(GameContext gameContext = null);
     }

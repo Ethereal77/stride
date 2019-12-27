@@ -4,7 +4,7 @@
   <!-- Default values -->
   <PropertyGroup>
     <!-- Defaults for CPU and GraphicsApi based on platform-->
-    <XenkoDefaultGraphicsApi Condition="'$(XenkoPlatform)' == 'Windows'">Direct3D11</XenkoDefaultGraphicsApi>
+    <XenkoDefaultGraphicsApi>Direct3D11</XenkoDefaultGraphicsApi>
     <XenkoGraphicsApiOriginal>$(XenkoGraphicsApi)</XenkoGraphicsApiOriginal>
     <XenkoGraphicsApi Condition="'$(XenkoGraphicsApi)' == '' and '$(XenkoDefaultGraphicsApi)' != ''">$(XenkoDefaultGraphicsApi)</XenkoGraphicsApi>
     <XenkoAssemblyProcessorOptions Condition="'$(XenkoAssemblyProcessorOptions)' == ''">$(XenkoAssemblyProcessorDefaultOptions)</XenkoAssemblyProcessorOptions>
@@ -32,7 +32,7 @@
 
     <RuntimeIdentifiers>$([MSBuild]::Unescape($(RuntimeIdentifiers.Trim(';'))))</RuntimeIdentifiers>
     <!-- Default fallbacks -->
-    <RuntimeIdentifiers Condition="'$(TargetFramework)' == 'netstandard2.0' And '$(XenkoPlatform)' == 'Windows' And '$(RuntimeIdentifiers)' == ''">win</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="'$(TargetFramework)' == 'netstandard2.0' And '$(RuntimeIdentifiers)' == ''">win</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="'$(TargetFramework)' != 'netstandard2.0' And '$(RuntimeIdentifiers)' == ''">any</RuntimeIdentifiers>
     <RuntimeIdentifierDefault Condition="'$(RuntimeIdentifiers)' != ''">$(RuntimeIdentifiers.Split(';')[0])</RuntimeIdentifierDefault>
 
@@ -41,7 +41,7 @@
     <!-- Compute RuntimeIdentifier (it might be different if passed from a ProjectReference) -->
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' And '$(RuntimeIdentifierDefault)' != ''">$(RuntimeIdentifierDefault)</RuntimeIdentifier>
     <!-- Properly setup RuntimeIdentifier if it was not a Graphics-API-specific one -->
-    <RuntimeIdentifier Condition="'$(XenkoPlatform)' == 'Windows' And '$(RuntimeIdentifier)' != 'win' And '$(RuntimeIdentifier)' != 'win-d3d12'">$(RuntimeIdentifierDefault)</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' != 'win' And '$(RuntimeIdentifier)' != 'win-d3d12'">$(RuntimeIdentifierDefault)</RuntimeIdentifier>
 
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win'">Direct3D11</XenkoGraphicsApi>
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-d3d12'">Direct3D12</XenkoGraphicsApi>
@@ -75,7 +75,7 @@
   <!--
     Settings XenkoPlatform specific
   -->
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Windows' ">
+  <PropertyGroup>
     <XenkoGraphicsApiDefines>FRAMEWORK_SHADER_USE_SHARPDX;$(XenkoGraphicsApiDefines)</XenkoGraphicsApiDefines>
     <FrameworkShaderUseSharpDX>true</FrameworkShaderUseSharpDX>
   </PropertyGroup>
@@ -98,8 +98,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <XenkoUI Condition="'$(XenkoPlatform)' == 'Windows'">SDL</XenkoUI>
-    <XenkoUI Condition="'$(XenkoPlatform)' == 'Windows' AND $(TargetFramework.StartsWith('net4')) AND ('$(XenkoGraphicsApi)' == 'Direct3D11' Or '$(XenkoGraphicsApi)' == 'Direct3D12')">$(XenkoUI);WINFORMS;WPF</XenkoUI>
+    <XenkoUI>SDL</XenkoUI>
+    <XenkoUI Condition="$(TargetFramework.StartsWith('net4')) AND ('$(XenkoGraphicsApi)' == 'Direct3D11' Or '$(XenkoGraphicsApi)' == 'Direct3D12')">$(XenkoUI);WINFORMS;WPF</XenkoUI>
 
     <DefineConstants Condition="$(XenkoUI.Contains('SDL'))">$(DefineConstants);XENKO_UI_SDL</DefineConstants>
     <DefineConstants Condition="$(XenkoUI.Contains('WINFORMS'))">$(DefineConstants);XENKO_UI_WINFORMS</DefineConstants>

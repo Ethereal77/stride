@@ -5,9 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Xenko.Core.Annotations;
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
 using Microsoft.Win32.SafeHandles;
-#endif
 
 namespace Xenko.Core.Diagnostics
 {
@@ -16,9 +14,7 @@ namespace Xenko.Core.Diagnostics
     /// </summary>
     public class ConsoleLogListener : LogListener
     {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
         private bool isConsoleActive;
-#endif
 
         /// <summary>
         /// Gets or sets the minimum log level handled by this listener.
@@ -47,7 +43,6 @@ namespace Xenko.Core.Diagnostics
 
             var exceptionMsg = GetExceptionText(logMessage);
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             // save initial console color
             var initialColor = Console.ForegroundColor;
 
@@ -71,7 +66,6 @@ namespace Xenko.Core.Diagnostics
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
             }
-#endif
 
             if (Debugger.IsAttached)
             {
@@ -90,20 +84,15 @@ namespace Xenko.Core.Diagnostics
                 Console.WriteLine(exceptionMsg);
             }
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
-
             // revert console initial color
             Console.ForegroundColor = initialColor;
-#endif
         }
-
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
 
         // TODO: MOVE THIS CODE OUT IN A SEPARATE CLASS
 
         private void EnsureConsole()
         {
-            if (isConsoleActive || !Platform.IsWindowsDesktop)
+            if (isConsoleActive)
             {
                 return;
             }
@@ -254,11 +243,5 @@ namespace Xenko.Core.Diagnostics
             //int mode;
             //return !GetConsoleMode(ioHandle, out mode);
         }
-
-#else
-        private void EnsureConsole()
-        {
-        }
-#endif
     }
 }

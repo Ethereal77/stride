@@ -29,9 +29,8 @@ namespace Xenko.Rendering
         private EffectCompilerBase compiler;
         private readonly Dictionary<string, List<CompilerResults>> earlyCompilerCache = new Dictionary<string, List<CompilerResults>>();
         private Dictionary<EffectBytecode, Effect> cachedEffects = new Dictionary<EffectBytecode, Effect>();
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
         private DirectoryWatcher directoryWatcher;
-#endif
+
         private bool isInitialized;
 
         /// <summary>
@@ -69,12 +68,10 @@ namespace Xenko.Rendering
             // Get graphics device service
             graphicsDeviceService = Services.GetSafeServiceAs<IGraphicsDeviceService>();
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             Enabled = true;
             directoryWatcher = new DirectoryWatcher("*.xksl");
             directoryWatcher.Modified += FileModifiedEvent;
             // TODO: xkfx too
-#endif
         }
 
         public void SetCompilationMode(CompilationMode compilationMode)
@@ -98,14 +95,12 @@ namespace Xenko.Rendering
                 isInitialized = false;
             }
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             if (directoryWatcher != null)
             {
                 directoryWatcher.Modified -= FileModifiedEvent;
                 directoryWatcher.Dispose();
                 directoryWatcher = null;
             }
-#endif
 
             Compiler?.Dispose();
             Compiler = null;
@@ -213,7 +208,6 @@ namespace Xenko.Rendering
                     effect = new Effect(graphicsDeviceService.GraphicsDevice, bytecode) { Name = effectName };
                     cachedEffects.Add(bytecode, effect);
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
                     foreach (var type in bytecode.HashSources.Keys)
                     {
                         // TODO: the "/path" is hardcoded, used in ImportStreamCommand and ShaderSourceManager. Find a place to share this correctly.
@@ -224,7 +218,6 @@ namespace Xenko.Rendering
                             directoryWatcher.Track(path);
                         }
                     }
-#endif
                 }
             }
             return effect;

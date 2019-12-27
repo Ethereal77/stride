@@ -10,7 +10,6 @@ namespace Xenko.Core.IO
 {
     public static class NativeLockFile
     {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
         [DllImport("Kernel32.dll", SetLastError = true)]
         internal static extern bool LockFileEx(Microsoft.Win32.SafeHandles.SafeFileHandle handle, uint flags, uint reserved, uint countLow, uint countHigh, ref System.Threading.NativeOverlapped overlapped);
 
@@ -19,11 +18,9 @@ namespace Xenko.Core.IO
 
         internal const uint LOCKFILE_FAIL_IMMEDIATELY = 0x00000001;
         internal const uint LOCKFILE_EXCLUSIVE_LOCK = 0x00000002;
-#endif
 
         public static void LockFile(FileStream fileStream, long offset, long count, bool exclusive)
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var countLow = (uint)count;
             var countHigh = (uint)(count >> 32);
 
@@ -40,26 +37,10 @@ namespace Xenko.Core.IO
             {
                 throw new IOException("Couldn't lock file.");
             }
-#else
-            bool tryAgain;
-            do
-            {
-                tryAgain = false;
-                try
-                {
-                    fileStream.Lock(offset, count);
-                }
-                catch (IOException)
-                {
-                    tryAgain = true;
-                }
-            } while (tryAgain);
-#endif
         }
 
         public static void UnlockFile(FileStream fileStream, long offset, long count)
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var countLow = (uint)count;
             var countHigh = (uint)(count >> 32);
 
@@ -76,9 +57,6 @@ namespace Xenko.Core.IO
             {
                 throw new IOException("Couldn't unlock file.");
             }
-#else
-            fileStream.Unlock(offset, count);
-#endif
         }
     }
 }

@@ -13,18 +13,10 @@ namespace Xenko.Core
     /// </summary>
     public static class Platform
     {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
         /// <summary>
         /// The current running <see cref="PlatformType"/>.
         /// </summary>
         public static readonly PlatformType Type = PlatformType.Windows;
-#endif
-
-        /// <summary>
-        /// Gets a value indicating whether the running platform is windows desktop.
-        /// </summary>
-        /// <value><c>true</c> if this instance is windows desktop; otherwise, <c>false</c>.</value>
-        public static readonly bool IsWindowsDesktop = Type == PlatformType.Windows;
 
         /// <summary>
         /// Gets a value indicating whether the running assembly is a debug assembly.

@@ -32,9 +32,9 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Windows' ">
+  <PropertyGroup>
     <!-- Limited version used by tools but that doesn't require installation of .NET on most computers (4.5.1 is default of many OS, 4.5.2/4.6 isn't) -->
-    <XenkoPlatformDefines>XENKO_PLATFORM_WINDOWS;XENKO_PLATFORM_WINDOWS_DESKTOP;NET45</XenkoPlatformDefines>
+    <XenkoPlatformDefines>NET45</XenkoPlatformDefines>
     <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
   </PropertyGroup>
 

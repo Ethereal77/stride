@@ -336,12 +336,7 @@ namespace Xenko.Graphics.Regression
             //if (!ImageTester.ImageTestResultConnection.DeviceName.Contains("_"))
             //    ImageTester.ImageTestResultConnection.DeviceName += "_" + GraphicsDevice.Adapter.Description.Split('\0')[0].TrimEnd(' '); // Workaround for sharpDX bug: Description ends with an series trailing of '\0' characters
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var platformSpecific = $"Windows_{GraphicsDevice.Platform}_{GraphicsDevice.Adapter.Description.Split('\0')[0].TrimEnd(' ')}";
-#else
-            var platformSpecific = string.Empty;
-            throw new NotImplementedException();
-#endif
 
             var rootFolder = FindXenkoRootFolder();
 
@@ -401,7 +396,6 @@ namespace Xenko.Graphics.Regression
 
         protected void SaveTexture(Texture texture, string filename)
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             using (var image = texture.GetDataAsImage(GraphicsContext.CommandList))
             {
                 using (var resultFileStream = File.OpenWrite(filename))
@@ -409,7 +403,6 @@ namespace Xenko.Graphics.Regression
                     image.Save(resultFileStream, ImageFileType.Png);
                 }
             }
-#endif
         }
 
         /// <summary>

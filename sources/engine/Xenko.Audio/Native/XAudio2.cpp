@@ -3,7 +3,7 @@
 
 #include "Common.h"
 
-#if defined(WINDOWS_DESKTOP) || !defined(__clang__)
+#if !defined(__clang__)
 
 #include "../../../deps/NativePath/NativePath.h"
 #include "../../../deps/NativePath/NativeThreading.h"
@@ -389,18 +389,9 @@ extern "C" {
 		typedef HRESULT(__stdcall * CreateHrtfApoPtr)(const HrtfApoInit* init, IUnknown** xApo);
 		CreateHrtfApoPtr CreateHrtfApoFunc = NULL;
 
-#ifndef WINDOWS_DESKTOP
-		extern HRESULT __stdcall XAudio2Create(void** ppXAudio2, UINT32 flags, UINT32 processor);
-		XAudio2CreatePtr XAudio2CreateFunc = XAudio2Create;
-		extern HRESULT _cdecl X3DAudioInitialize(UINT32 SpeakerChannelMask, float SpeedOfSound, _Out_writes_bytes_(X3DAUDIO_HANDLE_BYTESIZE) X3DAUDIO_HANDLE Instance);
-		X3DAudioInitializePtr X3DAudioInitializeFunc = X3DAudioInitialize;
-		extern void _cdecl X3DAudioCalculate(_In_reads_bytes_(X3DAUDIO_HANDLE_BYTESIZE) const X3DAUDIO_HANDLE Instance, _In_ const X3DAUDIO_LISTENER* pListener, _In_ const X3DAUDIO_EMITTER* pEmitter, UINT32 Flags, _Inout_ X3DAUDIO_DSP_SETTINGS* pDSPSettings);
-		X3DAudioCalculatePtr X3DAudioCalculateFunc = X3DAudioCalculate;
-#else
 		XAudio2CreatePtr XAudio2CreateFunc = NULL;
 		X3DAudioInitializePtr X3DAudioInitializeFunc = NULL;
 		X3DAudioCalculatePtr X3DAudioCalculateFunc = NULL;
-#endif
 
 		struct IXAudio2Voice;
 
@@ -1321,7 +1312,6 @@ extern "C" {
 		typedef IID *LPIID;
 		IID xnHrtfParamsIID;
 
-#ifdef WINDOWS_DESKTOP
 		void* xnXAudioLib;
 		typedef /* [unique] */ IUnknown *LPUNKNOWN;
 		typedef void *LPVOID;
@@ -1335,7 +1325,6 @@ extern "C" {
 		typedef /* [string] */  const OLECHAR *LPCOLESTR;
 
 		extern HRESULT __stdcall IIDFromString(_In_ LPCOLESTR lpsz, _Out_ LPIID lpiid);
-#endif
 
 		DLL_EXPORT_API npBool xnAudioInit()
 		{
@@ -1344,7 +1333,6 @@ extern "C" {
 			//On Windows, not desktop platforms we are using XAudio2.lib
 			//On Windows Desktop it's more complicated specially because Windows 7, we try from 2.9 to 2.7 (COM loaded)
 
-#ifdef WINDOWS_DESKTOP
 			xnXAudioLib = LoadDynamicLibrary("XAudio2_9"); //win10+
 			xnHrtfApoLib = LoadDynamicLibrary("HrtfApo"); //win10+
 
@@ -1376,7 +1364,6 @@ extern "C" {
 			if (!X3DAudioInitializeFunc) return false;
 			X3DAudioCalculateFunc = (X3DAudioCalculatePtr)GetSymbolAddress(xnXAudioLib, "X3DAudioCalculate");
 			if (!X3DAudioCalculateFunc) return false;
-#endif
 
 			return true;
 		}
@@ -1419,7 +1406,6 @@ extern "C" {
 
 			HRESULT result;
 
-#ifdef WINDOWS_DESKTOP
 			if(xnAudioWindows7Hacks)
 			{
 #define CLSCTX_INPROC_SERVER 0x1
@@ -1459,7 +1445,6 @@ extern "C" {
 				}
 			}
 			else
-#endif
 			{
 				res->hrtf_ = xnHrtfApoLib && (flags & xnAudioDeviceFlagsHrtf);
 

@@ -21,7 +21,7 @@ namespace Xenko.Video.FFmpeg
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool CheckPlatformSupport()
         {
-#if XENKO_PLATFORM_WINDOWS && !XENKO_RUNTIME_CORECLR
+#if !XENKO_RUNTIME_CORECLR
             return true;
 #else
             return false;
@@ -76,7 +76,6 @@ namespace Xenko.Video.FFmpeg
             //   |---- avformat
             //   |---- avcodec
             //   |---- avutil
-#if XENKO_PLATFORM_WINDOWS
             var type = typeof(FFmpegUtils);
             Core.NativeLibrary.PreloadLibrary("avutil-55", type);
             Core.NativeLibrary.PreloadLibrary("swresample-2", type);
@@ -85,16 +84,6 @@ namespace Xenko.Video.FFmpeg
             Core.NativeLibrary.PreloadLibrary("swscale-4", type);
             Core.NativeLibrary.PreloadLibrary("avfilter-6", type);
             Core.NativeLibrary.PreloadLibrary("avdevice-57", type);
-#else
-            uint version;
-            version = ffmpeg.avutil_version();
-            version = ffmpeg.swresample_version();
-            version = ffmpeg.avcodec_version();
-            version = ffmpeg.avformat_version();
-            version = ffmpeg.swscale_version();
-            version = ffmpeg.avfilter_version();
-            version = ffmpeg.avdevice_version();
-#endif
         }
 
         /// <summary>

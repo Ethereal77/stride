@@ -1,7 +1,7 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+#if XENKO_UI_WINFORMS || XENKO_UI_WPF
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -37,7 +37,7 @@ namespace Xenko.Input
                 Location = new Point(-100, -100),
                 Size = new Size(80, 80),
             };
-            
+
             // Assign custom window procedure to this text box
             wndProcDelegate = WndProc;
             var windowProc = Marshal.GetFunctionPointerForDelegate(wndProcDelegate);
@@ -48,7 +48,7 @@ namespace Xenko.Input
         {
             richTextBox?.Dispose();
         }
-         
+
         public override string Name => "Windows Keyboard";
 
         public override Guid Id => new Guid("027cf994-681f-4ed5-b38f-ce34fc295b8f");
@@ -131,10 +131,10 @@ namespace Xenko.Input
                     if (richTextBox.TextLength == 0)
                     {
                         var virtualKey = (System.Windows.Forms.Keys)wParam.ToInt64();
-                        if (virtualKey == System.Windows.Forms.Keys.Back || 
+                        if (virtualKey == System.Windows.Forms.Keys.Back ||
                             virtualKey == System.Windows.Forms.Keys.Left ||
                             virtualKey == System.Windows.Forms.Keys.Right ||
-                            virtualKey == System.Windows.Forms.Keys.Delete || 
+                            virtualKey == System.Windows.Forms.Keys.Delete ||
                             virtualKey == System.Windows.Forms.Keys.Home ||
                             virtualKey == System.Windows.Forms.Keys.End ||
                             virtualKey == System.Windows.Forms.Keys.Up ||
@@ -161,7 +161,7 @@ namespace Xenko.Input
             }
             return Win32Native.CallWindowProc(oldWndProc, hWnd, msg, wParam, lParam);
         }
-        
+
         private unsafe string GetCompositionString(IntPtr context, int type)
         {
             int len = Win32Native.ImmGetCompositionString(context, type, IntPtr.Zero, 0);
@@ -220,5 +220,4 @@ namespace Xenko.Input
         }
     }
 }
-
 #endif

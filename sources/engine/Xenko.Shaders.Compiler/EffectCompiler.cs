@@ -87,7 +87,7 @@ namespace Xenko.Shaders.Compiler
 
             // Load D3D compiler dll
             // Note: No lock, it's probably fine if it gets called from multiple threads at the same time.
-            if (Platform.IsWindowsDesktop && !d3dCompilerLoaded)
+            if (!d3dCompilerLoaded)
             {
                 NativeLibrary.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
                 d3dCompilerLoaded = true;
@@ -159,7 +159,6 @@ namespace Xenko.Shaders.Compiler
             // -------------------------------------------------------
             // Save shader log
             // TODO: TEMP code to allow debugging generated shaders on Windows Desktop
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var shaderId = ObjectId.FromBytes(Encoding.UTF8.GetBytes(shaderSourceText));
 
             var logDir = Path.Combine(PlatformFolders.ApplicationBinaryDirectory, "log");
@@ -176,9 +175,6 @@ namespace Xenko.Shaders.Compiler
                     File.WriteAllText(shaderSourceFilename, shaderSourceText);
                 }
             }
-#else
-            string shaderSourceFilename = null;
-#endif
             // -------------------------------------------------------
 
             var bytecode = new EffectBytecode { Reflection = parsingResult.Reflection, HashSources = parsingResult.HashSources };
@@ -187,21 +183,19 @@ namespace Xenko.Shaders.Compiler
             IShaderCompiler compiler = default;
             switch (effectParameters.Platform)
             {
-#if XENKO_PLATFORM_WINDOWS
                 case GraphicsPlatform.Direct3D11:
                 case GraphicsPlatform.Direct3D12:
                     compiler = new Direct3D.ShaderCompiler();
                     break;
-#endif
+
                 default:
                     throw new NotSupportedException();
             }
 
             var shaderStageBytecodes = new List<ShaderBytecode>();
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var stageStringBuilder = new StringBuilder();
-#endif
+
             foreach (var stageBinding in parsingResult.EntryPoints)
             {
                 // Compile
@@ -216,13 +210,11 @@ namespace Xenko.Shaders.Compiler
 
                 // -------------------------------------------------------
                 // Append bytecode id to shader log
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
                 stageStringBuilder.AppendLine("@G    {0} => {1}".ToFormat(stageBinding.Key, result.Bytecode.Id));
                 if (result.DisassembleText != null)
                 {
                     stageStringBuilder.Append(result.DisassembleText);
                 }
-#endif
                 // -------------------------------------------------------
 
                 shaderStageBytecodes.Add(result.Bytecode);
@@ -236,7 +228,6 @@ namespace Xenko.Shaders.Compiler
             CleanupReflection(bytecode.Reflection);
             bytecode.Stages = shaderStageBytecodes.ToArray();
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             int shaderSourceLineOffset = 0;
             int shaderSourceCharacterOffset = 0;
             string outputShaderLog;
@@ -332,7 +323,6 @@ namespace Xenko.Shaders.Compiler
                         .Insert(match.Groups[1].Index, line.ToString());
                 }
             }
-#endif
 
             return new EffectBytecodeCompilerResult(bytecode, log);
         }

@@ -78,13 +78,6 @@ namespace Xenko.Scripts
             Component.UseCustomAspectRatio = true;
             Reset();
 
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-                Input.Gestures.Add(new GestureConfigDrag {RequiredNumberOfFingers = 2});
-                Input.Gestures.Add(new GestureConfigTap {RequiredNumberOfTaps = 2});
-            }
-
             while (true)
             {
                 UpdateCamera();

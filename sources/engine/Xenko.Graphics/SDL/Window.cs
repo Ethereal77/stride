@@ -45,9 +45,7 @@ namespace Xenko.Graphics.SDL
                 }
                 else
                 {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
                     Handle = info.info.win.window;
-#endif
                 }
                 Application.RegisterWindow(this);
                 Application.ProcessEvents();

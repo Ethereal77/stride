@@ -722,7 +722,7 @@ namespace Xenko.Rendering
 
                         if (viewLayout.Entries[view.Index].MarkAsUsed(RenderSystem))
                         {
-                            threadContext.ResourceGroupAllocator.PrepareResourceGroup(viewLayout, BufferPoolAllocationType.UsedMultipleTime, viewLayout.Entries[view.Index].Resources);
+                            threadContext.ResourceGroupAllocator.PrepareResourceGroup(viewLayout, BufferPoolAllocationType.UsedMultipleTimes, viewLayout.Entries[view.Index].Resources);
 
                             // Register it in list of view layouts to update for this frame
                             viewFeature.Layouts.Add(viewLayout);
@@ -733,7 +733,7 @@ namespace Xenko.Rendering
                     var frameLayout = renderEffect.Reflection.PerFrameLayout;
                     if (frameLayout != null && frameLayout.Entry.MarkAsUsed(RenderSystem))
                     {
-                        threadContext.ResourceGroupAllocator.PrepareResourceGroup(frameLayout, BufferPoolAllocationType.UsedMultipleTime, frameLayout.Entry.Resources);
+                        threadContext.ResourceGroupAllocator.PrepareResourceGroup(frameLayout, BufferPoolAllocationType.UsedMultipleTimes, frameLayout.Entry.Resources);
 
                         // Register it in list of view layouts to update for this frame
                         FrameLayouts.Add(frameLayout);
@@ -758,7 +758,7 @@ namespace Xenko.Rendering
                     renderNode.EffectObjectNode = new EffectObjectNodeReference(effectObjectNodeIndex);
 
                     renderNode.RenderEffect = renderEffect;
-                    
+
                     // Bind well-known descriptor sets
                     var descriptorSetPoolOffset = ComputeResourceGroupOffset(renderNodeReference);
                     ResourceGroupPool[descriptorSetPoolOffset + perFrameDescriptorSetSlot.Index] = frameLayout?.Entry.Resources;

@@ -68,11 +68,6 @@ namespace Xenko.Scripts
 
             Input.LockMousePosition(true);
 
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-            }
-
             while (true)
             {
                 UpdateCamera();

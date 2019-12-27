@@ -3,14 +3,13 @@
 
 using System.Collections.Generic;
 using Xenko.Core.Annotations;
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
 using System;
 using System.Runtime.InteropServices;
 
 namespace Xenko.Core.Diagnostics
 {
     /// <summary>
-    /// This static class gives access to the Pause/Resume API of VTune Amplifier. It is available on Windows Desktop platform only.
+    /// This static class gives access to the Pause/Resume API of VTune Amplifier.
     /// </summary>
     public static class VTuneProfiler
     {
@@ -177,5 +176,3 @@ namespace Xenko.Core.Diagnostics
 #pragma warning restore SA1300 // Element must begin with upper-case letter
     }
 }
-
-#endif

@@ -61,8 +61,6 @@
   </Target>
 
   <PropertyGroup>
-    <XenkoCompilerTargetsEnable Condition=" '$(XenkoPlatform)' != 'Windows' and $(XenkoWindowsOnly) == 'true'">false</XenkoCompilerTargetsEnable>
-
     <!-- Skip unit tests if requested -->
     <XenkoCompilerTargetsEnable Condition="'$(XenkoSkipUnitTests)' == 'true' And $(XenkoOutputFolder.StartsWith('Tests'))">false</XenkoCompilerTargetsEnable>
 

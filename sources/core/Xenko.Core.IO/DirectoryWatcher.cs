@@ -91,30 +91,5 @@ namespace Xenko.Core.IO
         {
             Modified?.Invoke(sender, e);
         }
-
-#if !XENKO_PLATFORM_WINDOWS_DESKTOP
-        // Doesn't throw any exceptions on other platforms
-
-        private void InitializeInternal()
-        {
-        }
-
-        private void DisposeInternal()
-        {
-        }
-
-        private void TrackInternal(string path)
-        {
-        }
-
-        private void UnTrackInternal(string path)
-        {
-        }
-
-        private List<string> GetTrackedDirectoriesInternal()
-        {
-            return new List<string>();
-        }
-#endif
     }
 }

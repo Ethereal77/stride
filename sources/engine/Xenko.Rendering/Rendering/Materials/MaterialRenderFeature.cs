@@ -364,7 +364,7 @@ namespace Xenko.Rendering.Materials
             materialInfo.ParameterCollectionCopier.Copy();
 
             // Allocate resource groups
-            context.ResourceGroupAllocator.PrepareResourceGroup(materialInfo.PerMaterialLayout, BufferPoolAllocationType.UsedMultipleTime, materialInfo.Resources);
+            context.ResourceGroupAllocator.PrepareResourceGroup(materialInfo.PerMaterialLayout, BufferPoolAllocationType.UsedMultipleTimes, materialInfo.Resources);
 
             // Set resource bindings in PerMaterial resource set
             for (int resourceSlot = 0; resourceSlot < materialInfo.ResourceCount; ++resourceSlot)

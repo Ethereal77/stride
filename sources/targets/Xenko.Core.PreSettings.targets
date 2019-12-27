@@ -20,7 +20,7 @@
     <XenkoRuntimeTargetFramework>net461</XenkoRuntimeTargetFramework>
     <TargetFrameworkTool>net472</TargetFrameworkTool>
     <TargetFrameworkVersionTool>v4.7.2</TargetFrameworkVersionTool>
-    <XenkoPlatformDefines>XENKO_PLATFORM_WINDOWS;XENKO_PLATFORM_WINDOWS_DESKTOP;NET45</XenkoPlatformDefines>
+    <XenkoPlatformDefines>NET45</XenkoPlatformDefines>
 
     <!-- Note: ideally we would split using ItemGroup but then PropertyGroup are not properly evaluated if they contain ItemGroup (unless using Targets) -->
     <XenkoPlatforms Condition="'$(XenkoPlatforms)' == ''">Windows</XenkoPlatforms>

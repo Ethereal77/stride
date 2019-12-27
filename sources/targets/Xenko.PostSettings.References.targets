@@ -51,7 +51,7 @@
   </ItemGroup>
 
   <!-- On Windows platform automatically add the following references -->
-  <ItemGroup Condition="$(XenkoPlatform) == 'Windows'">
+  <ItemGroup>
 
     <!--UI frameworks-->
     <Reference Include="System.Windows.Forms" />

@@ -38,14 +38,12 @@ namespace Xenko.Graphics.Regression
             // TODO: Check build number in environment variables
             result.BuildNumber = -1;
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             result.Platform = "Windows";
             result.Serial = Environment.MachineName;
-    #if XENKO_GRAPHICS_API_DIRECT3D12
+#if XENKO_GRAPHICS_API_DIRECT3D12
             result.DeviceName = "Direct3D12";
-    #elif XENKO_GRAPHICS_API_DIRECT3D11
+#elif XENKO_GRAPHICS_API_DIRECT3D11
             result.DeviceName = "Direct3D";
-    #endif
 #endif
 
             return result;

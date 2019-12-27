@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Runtime identifiers -->
-  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' != 'true' And '$(XenkoPlatform)' == 'Windows'">
+  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' != 'true'">
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' == 'true' And '$(XenkoPlatform)' == 'Windows'">
+  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' == 'true'">
     <!-- Build list of Graphics API -->
     <XenkoGraphicsApis Condition="'$(XenkoGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12</XenkoGraphicsApis>
     <XenkoGraphicsApis Condition="'$(XenkoGraphicsApis)' == '' And '$(XenkoGraphicsApiDependentBuildAll)' != 'true'">$(XenkoGraphicsApiOriginal)</XenkoGraphicsApis>
@@ -90,7 +90,7 @@
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(XenkoPlatform)-$(XenkoGraphicsApi)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(XenkoPlatform)' == 'Windows'">
+  <ItemGroup>
     <Compile Condition="'$(XenkoGraphicsApiDependent)' != 'true'" Include="$(MSBuildThisFileDirectory)..\shared\tests\xunit\LauncherSimple.Windows.cs">
       <Link>LauncherSimple.Windows.cs</Link>
     </Compile>

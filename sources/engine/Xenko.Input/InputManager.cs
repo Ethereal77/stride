@@ -53,7 +53,7 @@ namespace Xenko.Input
 
         private Dictionary<IInputSource, EventHandler<TrackingCollectionChangedEventArgs>> devicesCollectionChangedActions = new Dictionary<IInputSource, EventHandler<TrackingCollectionChangedEventArgs>>();
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+#if XENKO_UI_WINFORMS || XENKO_UI_WPF
         private bool rawInputEnabled = false;
 #endif
 
@@ -226,7 +226,7 @@ namespace Xenko.Input
         public IReadOnlyList<ISensorDevice> Sensors => sensors;
 
         /// <summary>
-        /// Should raw input be used on windows
+        /// Should raw input be used on Windows
         /// </summary>
         public bool UseRawInput
         {
@@ -589,7 +589,7 @@ namespace Xenko.Input
                     break;
 #endif
                 case AppContextType.Desktop:
-#if XENKO_PLATFORM_WINDOWS && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+#if XENKO_UI_WINFORMS || XENKO_UI_WPF
                     Sources.Add(new InputSourceWinforms());
                     Sources.Add(new InputSourceWindowsDirectInput());
                     if (InputSourceWindowsXInput.IsSupported())

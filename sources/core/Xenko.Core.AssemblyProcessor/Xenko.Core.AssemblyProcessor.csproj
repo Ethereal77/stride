@@ -9,7 +9,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>XENKO_ASSEMBLY_PROCESSOR;XENKO_PLATFORM_WINDOWS_DESKTOP;DEBUG;TRACE</DefineConstants>
+    <DefineConstants>XENKO_ASSEMBLY_PROCESSOR;DEBUG;TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -17,7 +17,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>XENKO_ASSEMBLY_PROCESSOR;XENKO_PLATFORM_WINDOWS_DESKTOP;TRACE</DefineConstants>
+    <DefineConstants>XENKO_ASSEMBLY_PROCESSOR;TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>

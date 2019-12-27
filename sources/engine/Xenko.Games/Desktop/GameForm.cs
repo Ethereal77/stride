@@ -45,7 +45,7 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 * THE SOFTWARE.
 */
-#if XENKO_PLATFORM_WINDOWS_DESKTOP && XENKO_GRAPHICS_API_DIRECT3D && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+#if XENKO_GRAPHICS_API_DIRECT3D && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -55,7 +55,7 @@ using System.Windows.Forms;
 namespace Xenko.Games
 {
     /// <summary>
-    /// Default Rendering Form on windows desktop.
+    /// Default Rendering Form on Windows desktop.
     /// </summary>
     [DesignerCategory("Code")]
     public class GameForm : Form

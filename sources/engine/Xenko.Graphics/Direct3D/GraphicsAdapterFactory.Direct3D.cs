@@ -8,11 +8,7 @@ namespace Xenko.Graphics
 {
     public static partial class GraphicsAdapterFactory
     {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
         internal static Factory1 NativeFactory;
-#else
-        internal static Factory2 NativeFactory;
-#endif
 
         /// <summary>
         /// Initializes all adapters with the specified factory.

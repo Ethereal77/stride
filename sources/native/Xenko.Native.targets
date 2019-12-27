@@ -29,21 +29,21 @@
 
   <!-- Define NEED_DLL_EXPORT for platforms that requires it. -->
   <PropertyGroup>
-    <XenkoNativeClang Condition=" '$(XenkoPlatform)' == 'Windows' ">$(XenkoNativeClang) -DNEED_DLL_EXPORT</XenkoNativeClang>
+    <XenkoNativeClang>$(XenkoNativeClang) -DNEED_DLL_EXPORT</XenkoNativeClang>
   </PropertyGroup>
 
   <!-- Define default CPU architectures -->
   <ItemGroup>
-    <XenkoNativeCPU Condition=" '$(XenkoPlatform)' == 'Windows' " Include="x86;x64"/>
+    <XenkoNativeCPU Include="x86;x64"/>
   </ItemGroup>
 
   <!-- Define default dynamic library extensions -->
   <PropertyGroup>
-    <XenkoNativeLibraryTargetExt Condition=" '$(XenkoPlatform)' == 'Windows' ">.dll</XenkoNativeLibraryTargetExt>
+    <XenkoNativeLibraryTargetExt>.dll</XenkoNativeLibraryTargetExt>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Sepcial case: no CPU-specific libraries, output at top level -->
+    <!-- Special case: no CPU-specific libraries, output at top level -->
     <_XenkoNativeOutput Condition="'@(XenkoNativeCPU)'==''" Include="$(XenkoNativeOutputName)$(XenkoNativeLibraryTargetExt)">
       <RelativePath>%(Identity)</RelativePath>
     </_XenkoNativeOutput>
@@ -103,18 +103,37 @@
     <Touch AlwaysCreate="true" Files="$(OutputPath)\$(XenkoNativeOutputName).ss_native"/>
   </Target>-->
 
-  <Target Name="CompileNativeClang_Windows" Inputs="@(XenkoNativeCFile);@(XenkoNativeHFile)" Outputs="@(XenkoNativeOutput)" Condition="'$(XenkoPlatform)' == 'Windows' And $(DesignTimeBuild) != true And $(BuildingProject) != false" BeforeTargets="CoreCompile" DependsOnTargets="_XenkoRegisterNativeOutputs">
+  <Target Name="CompileNativeClang_Windows"
+          Inputs="@(XenkoNativeCFile);@(XenkoNativeHFile)"
+          Outputs="@(XenkoNativeOutput)"
+          Condition="'$(XenkoPlatform)' == 'Windows' And $(DesignTimeBuild) != true And $(BuildingProject) != false"
+          BeforeTargets="CoreCompile"
+          DependsOnTargets="_XenkoRegisterNativeOutputs">
+    
     <MakeDir Directories="$(OutputObjectPath)\x86"/>
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' != '.cpp'" Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x86\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' == '.cpp'" Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClangCPP) $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x86\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\WindowsDesktop\WindowsDesktop.vcxproj" Targets="Build" Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)\x86;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x86;Configuration=$(Configuration);Platform=x86" StopOnFirstFailure="true" />
+    <Exec Condition="'%(XenkoNativeCFile.Extension)' != '.cpp'"
+          Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x86\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
+    <Exec Condition="'%(XenkoNativeCFile.Extension)' == '.cpp'" 
+          Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClangCPP) $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x86\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
+    <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\WindowsDesktop\WindowsDesktop.vcxproj"
+             Targets="Build" 
+             Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)\x86;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x86;Configuration=$(Configuration);Platform=x86" 
+             StopOnFirstFailure="true" />
 
     <MakeDir Directories="$(OutputObjectPath)\x64"/>
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' != '.cpp'" Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x64\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -fms-extensions -DWINDOWS_DESKTOP -target x86_64-pc-windows-msvc" />
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' == '.cpp'" Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClangCPP) $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x64\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target x86_64-pc-windows-msvc" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\WindowsDesktop\WindowsDesktop.vcxproj" Targets="Build" Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)x64;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x64;Configuration=$(Configuration);Platform=x64" StopOnFirstFailure="true" />
+    <Exec Condition="'%(XenkoNativeCFile.Extension)' != '.cpp'"
+          Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x64\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -fms-extensions -DWINDOWS_DESKTOP -target x86_64-pc-windows-msvc" />
+    <Exec Condition="'%(XenkoNativeCFile.Extension)' == '.cpp'" 
+          Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClangCPP) $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x64\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target x86_64-pc-windows-msvc" />
+    <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\WindowsDesktop\WindowsDesktop.vcxproj" 
+             Targets="Build" 
+             Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)x64;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x64;Configuration=$(Configuration);Platform=x64" 
+             StopOnFirstFailure="true" />
 
-    <SignFile Condition="'$(XenkoSignTool)' == 'true'" CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec" SigningTarget="%(XenkoNativeOutput.Identity)" TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
+    <SignFile Condition="'$(XenkoSignTool)' == 'true'"
+              CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec"
+              SigningTarget="%(XenkoNativeOutput.Identity)"
+              TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
 
     <!-- Workaround: forcing C# rebuild so that timestamp are up to date (ideally we should have separate input/output groups for C# and Native) -->
     <Delete Files="@(IntermediateAssembly)"/>
@@ -123,12 +142,8 @@
   <Target Name="CompileNativeClang_Clean" BeforeTargets="Clean" DependsOnTargets="_XenkoRegisterNativeOutputs">
     <ItemGroup Condition="'$(OutputObjectPath)' != ''">
       <ObjFiles Include="$(OutputObjectPath)\**\*.obj" />
-      <OFiles Include="$(OutputObjectPath)\**\*.o" />
-      <AFiles Include="$(OutputObjectPath)\**\*.a" />
     </ItemGroup>
     <Delete Files="@(XenkoNativeOutput)" />
     <Delete Files="@(ObjFiles)" />
-    <Delete Files="@(OFiles)" />
-    <Delete Files="@(AFiles)" />
   </Target>
 </Project>

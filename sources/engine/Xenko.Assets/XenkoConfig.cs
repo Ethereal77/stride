@@ -49,8 +49,6 @@ namespace Xenko.Assets
                 };
             windowsPlatform.PlatformsPart.Add(new SolutionPlatformPart("Any CPU"));
             windowsPlatform.PlatformsPart.Add(new SolutionPlatformPart("Mixed Platforms") { Alias = "Any CPU"});
-            windowsPlatform.DefineConstants.Add("XENKO_PLATFORM_WINDOWS");
-            windowsPlatform.DefineConstants.Add("XENKO_PLATFORM_WINDOWS_DESKTOP");
             windowsPlatform.Configurations.Add(new SolutionConfiguration("Testing"));
             windowsPlatform.Configurations.Add(new SolutionConfiguration("AppStore"));
 

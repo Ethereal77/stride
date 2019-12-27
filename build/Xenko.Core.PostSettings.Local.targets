@@ -11,7 +11,7 @@
     <XenkoCoreAssemblyPath>$(MSBuildThisFileDirectory)..\Bin\$(XenkoBuildDirectory)\Xenko.Core.dll</XenkoCoreAssemblyPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(XenkoPlatform)' == 'Windows' ">
+  <PropertyGroup>
     <XenkoShaderUseSharpDX>true</XenkoShaderUseSharpDX>
     <DefineConstants>FRAMEWORK_SHADER_USE_SHARPDX;$(DefineConstants)</DefineConstants>
   </PropertyGroup>

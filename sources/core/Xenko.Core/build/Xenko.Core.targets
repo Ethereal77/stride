@@ -107,7 +107,7 @@
   <!-- List dependency files from .ssdeps -->
   <PropertyGroup>
     <_XenkoListDepsFilesDependsOn>ResolveAssemblyReferences</_XenkoListDepsFilesDependsOn>
-    <_XenkoListDepsFilesDependsOn Condition="'$(XenkoPlatform)' == 'Windows'">$(_XenkoListDepsFilesDependsOn);ResolvePackageAssets</_XenkoListDepsFilesDependsOn>
+    <_XenkoListDepsFilesDependsOn>$(_XenkoListDepsFilesDependsOn);ResolvePackageAssets</_XenkoListDepsFilesDependsOn>
   </PropertyGroup>
   <Target Name="_XenkoListDepsFiles" DependsOnTargets="$(_XenkoListDepsFilesDependsOn)">
     <ItemGroup>

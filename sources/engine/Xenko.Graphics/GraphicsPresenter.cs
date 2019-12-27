@@ -123,7 +123,7 @@ namespace Xenko.Graphics
         /// Gets or sets fullscreen mode for this presenter.
         /// </summary>
         /// <value><c>true</c> if this instance is full screen; otherwise, <c>false</c>.</value>
-        /// <remarks>This method is only valid on Windows Desktop and has no effect on Windows Metro.</remarks>
+        /// <remarks>This method is only valid on Windows Desktop.</remarks>
         public abstract bool IsFullScreen { get; set; }
 
         /// <summary>

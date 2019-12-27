@@ -132,44 +132,41 @@ namespace Xenko.Shaders.Parser.Mixins
                         }
 
                         // On Windows, Always try to load first from the original URL in order to get the latest version
-                        if (Platform.IsWindowsDesktop)
+                        // TODO: the "/path" is hardcoded, used in ImportStreamCommand and EffectSystem. Find a place to share this correctly.
+                        var pathUrl = sourceUrl + "/path";
+                        if (FileExists(pathUrl))
                         {
-                            // TODO: the "/path" is hardcoded, used in ImportStreamCommand and EffectSystem. Find a place to share this correctly.
-                            var pathUrl = sourceUrl + "/path";
-                            if (FileExists(pathUrl))
+                            using (var fileStream = OpenStream(pathUrl))
                             {
-                                using (var fileStream = OpenStream(pathUrl))
+                                string shaderSourcePath;
+                                using (var sr = new StreamReader(fileStream, Encoding.UTF8))
+                                    shaderSourcePath = sr.ReadToEnd();
+
+                                if (File.Exists(shaderSourcePath))
                                 {
-                                    string shaderSourcePath;
-                                    using (var sr = new StreamReader(fileStream, Encoding.UTF8))
-                                        shaderSourcePath = sr.ReadToEnd();
-
-                                    if (File.Exists(shaderSourcePath))
+                                    byte[] fileData = null;
+                                    for (int tries = 10; tries >= 0; --tries)
                                     {
-                                        byte[] fileData = null;
-                                        for (int tries = 10; tries >= 0; --tries)
+                                        try
                                         {
-                                            try
-                                            {
-                                                fileData = File.ReadAllBytes(shaderSourcePath);
-                                                break;
-                                            }
-                                            catch (IOException)
-                                            {
-                                                // Try again
-                                            }
+                                            fileData = File.ReadAllBytes(shaderSourcePath);
+                                            break;
                                         }
-
-                                        if (fileData != null)
+                                        catch (IOException)
                                         {
-                                            // Replace path with a local path
-                                            shaderSource.Path = Path.Combine(PlatformFolders.ApplicationBinaryDirectory, shaderSourcePath);
-                                            shaderSource.Hash = ObjectId.FromBytes(fileData);
-
-                                            // Note: we can't use Encoding.UTF8.GetString directly because there might be the UTF8 BOM at the beginning of the file
-                                            using (StreamReader reader = new StreamReader(new MemoryStream(fileData), Encoding.UTF8))
-                                                shaderSource.Source = reader.ReadToEnd();
+                                            // Try again
                                         }
+                                    }
+
+                                    if (fileData != null)
+                                    {
+                                        // Replace path with a local path
+                                        shaderSource.Path = Path.Combine(PlatformFolders.ApplicationBinaryDirectory, shaderSourcePath);
+                                        shaderSource.Hash = ObjectId.FromBytes(fileData);
+
+                                        // Note: we can't use Encoding.UTF8.GetString directly because there might be the UTF8 BOM at the beginning of the file
+                                        using (StreamReader reader = new StreamReader(new MemoryStream(fileData), Encoding.UTF8))
+                                            shaderSource.Source = reader.ReadToEnd();
                                     }
                                 }
                             }
@@ -259,7 +256,6 @@ namespace Xenko.Shaders.Parser.Mixins
 
         private bool FileExists(string path)
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             if (UseFileSystem)
             {
                 var fileInfo = new FileInfo(path);
@@ -275,7 +271,6 @@ namespace Xenko.Shaders.Parser.Mixins
                 }
             }
             else
-#endif
             {
                 return fileProvider.FileExists(path);
             }
@@ -284,7 +279,6 @@ namespace Xenko.Shaders.Parser.Mixins
 
         private Stream OpenStream(string path)
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             if (UseFileSystem)
             {
                 // Try several times in case of IOException
@@ -301,12 +295,10 @@ namespace Xenko.Shaders.Parser.Mixins
                     }
                 }
             }
-#endif
 
             return fileProvider.OpenStream(path, VirtualFileMode.Open, VirtualFileAccess.Read, VirtualFileShare.Read);
         }
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
         [DllImport("kernel32.dll", EntryPoint = "GetLongPathNameW", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern uint GetLongPathName(string shortPath, StringBuilder sb, int buffer);
 
@@ -344,7 +336,6 @@ namespace Xenko.Shaders.Parser.Mixins
 
             return null;
         }
-#endif
 
         public struct ShaderSourceWithHash
         {

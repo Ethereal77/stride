@@ -414,7 +414,6 @@ namespace Xenko.Engine
 
         protected override void EndDraw(bool present)
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             // Allow to make a screenshot using CTRL+c+F12 (on release of F12)
             if (Input.HasKeyboard)
             {
@@ -436,7 +435,7 @@ namespace Xenko.Engine
                     }
                 }
             }
-#endif
+
             base.EndDraw(present);
         }
 

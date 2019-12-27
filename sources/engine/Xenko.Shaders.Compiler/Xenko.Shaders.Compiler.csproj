@@ -11,7 +11,7 @@
     <XenkoAssemblyProcessor>true</XenkoAssemblyProcessor>
     <XenkoAssemblyProcessorOptions>--auto-module-initializer</XenkoAssemblyProcessorOptions>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(DisableRegistryUse)' != 'true' And '$(XenkoPlatform)' == 'Windows'">
+  <PropertyGroup Condition="'$(DisableRegistryUse)' != 'true'">
     <WindowsSdkDir_10 Condition="'$(WindowsSdkDir_10)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0@InstallationFolder)</WindowsSdkDir_10>
     <WindowsSdkDir_10 Condition="'$(WindowsSdkDir_10)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@InstallationFolder)</WindowsSdkDir_10>
   </PropertyGroup>
@@ -22,9 +22,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xenko.Shaders.Parser\Xenko.Shaders.Parser.csproj" />
-    <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" Condition="'$(XenkoPlatform)' == 'Windows'" />
+    <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(XenkoPlatform)' == 'Windows'">
+  <ItemGroup>
     <XenkoNativeLib Include="$(WindowsSdkDir_10)\Redist\D3D\**\d3dcompiler_47.dll">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <RelativePath>%(RecursiveDir)%(Filename)%(Extension)</RelativePath>

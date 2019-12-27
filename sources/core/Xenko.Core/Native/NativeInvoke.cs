@@ -11,11 +11,7 @@ namespace Xenko.Core.Native
     public static class NativeInvoke
     {
         internal const string Library = "libcore";
-#if XENKO_PLATFORM_WINDOWS
         internal const string LibraryName = "libcore.dll";
-#else
-        internal const string LibraryName = "libcore.so";
-#endif
 
         static NativeInvoke()
         {

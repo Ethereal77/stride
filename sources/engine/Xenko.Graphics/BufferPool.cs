@@ -126,7 +126,7 @@ namespace Xenko.Graphics
             {
                 bufferPoolAllocationResult.Uploaded = false;
 
-                if (type == BufferPoolAllocationType.UsedMultipleTime)
+                if (type == BufferPoolAllocationType.UsedMultipleTimes)
                 {
                     if (bufferPoolAllocationResult.Buffer == null || bufferPoolAllocationResult.Buffer.SizeInBytes != size)
                     {
@@ -157,5 +157,6 @@ namespace Xenko.Graphics
         /// <summary>
         /// Notify the allocator that this buffer will be reused for many draw calls.
         /// </summary>
+        UsedMultipleTimes
     }
 }

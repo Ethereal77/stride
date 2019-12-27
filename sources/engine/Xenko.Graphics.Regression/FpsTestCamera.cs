@@ -76,12 +76,6 @@ namespace Xenko.Graphics.Regression
             // set the camera values
             Reset();
 
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-                Input.Gestures.Add(new GestureConfigTap { RequiredNumberOfTaps = 2 });
-            }
-
             while (true)
             {
                 UpdateCamera();

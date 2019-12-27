@@ -42,13 +42,6 @@ namespace ThirdPersonPlatformer
 
             // Default up-direction
             upVector = Vector3.UnitY;
-
-            // Configure touch input
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-                Input.Gestures.Add(new GestureConfigComposite());
-            }
         }
 
         public override void Update()

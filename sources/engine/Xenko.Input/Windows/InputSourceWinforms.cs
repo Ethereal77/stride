@@ -1,7 +1,7 @@
 // Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+#if XENKO_UI_WINFORMS || XENKO_UI_WPF
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace Xenko.Input
     {
         private readonly HashSet<WinFormsKeys> heldKeys = new HashSet<WinFormsKeys>();
         private readonly List<WinFormsKeys> keysToRelease = new List<WinFormsKeys>();
-        
+
         private KeyboardWinforms keyboard;
         private MouseWinforms mouse;
 
@@ -104,17 +104,17 @@ namespace Xenko.Input
                     if ((Win32Native.GetKeyState((int)key) & 0x8000) == 0)
                         keysToRelease.Add(key);
                 }
-            
+
                 foreach (var keyToRelease in keysToRelease)
                 {
                     keyboard?.HandleKeyUp(keyToRelease);
                     heldKeys.Remove(keyToRelease);
                 }
-            
+
                 keysToRelease.Clear();
             }
         }
-        
+
         private void UIControlOnLostFocus(object sender, EventArgs eventArgs)
         {
             // Release keys/buttons when control focus is lost (this prevents some keys getting stuck when a focus loss happens when moving the camera)
@@ -172,7 +172,7 @@ namespace Xenko.Input
             var result = Win32Native.CallWindowProc(defaultWndProc, hWnd, msg, wParam, lParam);
             return result;
         }
-        
+
         private static WinFormsKeys GetCorrectExtendedKey(WinFormsKeys virtualKey, long lParam)
         {
             if (virtualKey == WinFormsKeys.ControlKey)
@@ -212,5 +212,4 @@ namespace Xenko.Input
         }
     }
 }
-
 #endif

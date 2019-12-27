@@ -38,8 +38,7 @@ namespace Xenko.Graphics
         /// <remarks>
         ///   A window object is platform dependent:
         ///   <ul>
-        ///     <li>On Windows Desktop: This could a low level window/control handle (IntPtr), or directly a Winform Control object.</li>
-        ///     <li>On Windows Metro: This could be SwapChainBackgroundPanel or SwapChainPanel object.</li>
+        ///     <li>On Windows Desktop: This could be a low level Window/Control handle (IntPtr), or directly a WinForms Control object.</li>
         ///   </ul>
         /// </remarks>
         public WindowHandle DeviceWindowHandle;

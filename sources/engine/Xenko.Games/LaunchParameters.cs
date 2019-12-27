@@ -36,11 +36,10 @@ namespace Xenko.Games
         /// </summary>
         public LaunchParameters()
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
 #if !XENKO_RUNTIME_CORECLR
             var args = Environment.GetCommandLineArgs();
 #else
-                // FIXME: Manu: Currently we cannot get the command line arguments in CoreCLR.
+            // TODO: Manu: Currently we cannot get the command line arguments in CoreCLR.
             string[] args = new string [] { };
 #endif
 
@@ -71,7 +70,6 @@ namespace Xenko.Games
                     }
                 }
             }
-#endif
         }
     }
 }

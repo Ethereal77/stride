@@ -80,12 +80,6 @@ namespace ##Namespace##
                 Component.AspectRatio = backBuffer.Width / (float)backBuffer.Height;
             }
 
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-                Input.Gestures.Add(new GestureConfigTap { RequiredNumberOfTaps = 2 });
-            }
-
             Input.LockMousePosition(true);
             Game.IsMouseVisible = false;
 

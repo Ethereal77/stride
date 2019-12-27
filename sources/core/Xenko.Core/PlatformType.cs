@@ -29,7 +29,7 @@ namespace Xenko.Core
         Shared,
 
         /// <summary>
-        /// The windows desktop OS.
+        /// The Windows desktop OS.
         /// </summary>
         Windows
     }
