@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
     <XenkoAssemblySign>true</XenkoAssemblySign>
@@ -15,10 +15,6 @@
     <XenkoBuildTags>*</XenkoBuildTags>
     <XenkoCodeAnalysis>true</XenkoCodeAnalysis>
   </PropertyGroup>
-  <Choose>
-    <When Condition=" '$(AutoIncludeSystemAssembly)' != 'true'">
-    </When>
-  </Choose>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
@@ -36,9 +32,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Native\Common.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Native\OpenAL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Native\XAudio2.cpp" />

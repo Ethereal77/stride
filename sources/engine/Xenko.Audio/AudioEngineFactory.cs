@@ -11,8 +11,7 @@ namespace Xenko.Audio
         /// <returns>A platform specific instance of <see cref="AudioEngine"/></returns>
         public static AudioEngine NewAudioEngine(AudioDevice device = null, AudioLayer.DeviceFlags deviceFlags = AudioLayer.DeviceFlags.None)
         {
-            AudioEngine engine = null;
-            engine = new AudioEngine(device);
+            var engine = new AudioEngine(device);
             engine.InitializeAudioEngine(deviceFlags);
             return engine;
         }
