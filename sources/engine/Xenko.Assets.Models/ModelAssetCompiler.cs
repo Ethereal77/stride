@@ -39,8 +39,8 @@ namespace Xenko.Assets.Models
 
             var gameSettingsAsset = context.GetGameSettingsAsset();
             var renderingSettings = gameSettingsAsset.GetOrCreate<RenderingSettings>();
-            var allow32BitIndex = renderingSettings.DefaultGraphicsProfile >= GraphicsProfile.Level_9_2;
-            var maxInputSlots = renderingSettings.DefaultGraphicsProfile >= GraphicsProfile.Level_10_1 ? 32 : 16;
+            var allow32BitIndex = true;
+            var maxInputSlots = 32;
             var allowUnsignedBlendIndices = true;
             var extension = asset.Source.GetFileExtension();
 

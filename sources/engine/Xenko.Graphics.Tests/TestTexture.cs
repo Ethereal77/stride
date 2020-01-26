@@ -21,7 +21,7 @@ namespace Xenko.Graphics.Tests
 
         public TestTexture()
         {
-            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_10_0 };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 };
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace Xenko.Graphics.Tests
                     // Release the texture
                     texture.Dispose();
                 },
-                GraphicsProfile.Level_9_1);
+                GraphicsProfile.Level_11_0);
         }
 
         [Fact]
@@ -313,7 +313,7 @@ namespace Xenko.Graphics.Tests
                     // Dispose the depth stencil buffer
                     textureCopy.Dispose();
                 },
-                GraphicsProfile.Level_10_0);
+                GraphicsProfile.Level_11_0);
         }
 
         [SkippableFact(Skip = "Clear on a ReadOnly depth buffer should be undefined or throw exception; should rewrite this test to do actual rendering with ReadOnly depth stencil bound?")]
@@ -401,7 +401,7 @@ namespace Xenko.Graphics.Tests
                     var testMemoryAfter = GC.GetTotalMemory(true);
                     Log.Info($"Test loading {fileName} GPU texture / saving to {intermediateFormat} and compare with original Memory {testMemoryAfter - testMemoryBefore} delta bytes, in {time}ms");
                 },
-                GraphicsProfile.Level_9_1);
+                GraphicsProfile.Level_11_0);
         }
 
         [SkippableTheory, MemberData(nameof(ImageFileTypes))]
@@ -429,7 +429,7 @@ namespace Xenko.Graphics.Tests
 
                     game.GraphicsContext.DrawTexture(texture, BlendStates.AlphaBlend);
                 },
-                GraphicsProfile.Level_9_1);
+                GraphicsProfile.Level_11_0);
         }
 
         private void CheckTexture(GraphicsContext graphicsContext, Texture texture, byte[] data)
@@ -453,13 +453,11 @@ namespace Xenko.Graphics.Tests
         }
 
         [Theory]
-        [InlineData(GraphicsProfile.Level_9_1, GraphicsResourceUsage.Staging)]
-        [InlineData(GraphicsProfile.Level_9_1, GraphicsResourceUsage.Default)]
-        [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Staging)]
-        [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Default)]
+        [InlineData(GraphicsProfile.Level_11_0, GraphicsResourceUsage.Staging)]
+        [InlineData(GraphicsProfile.Level_11_0, GraphicsResourceUsage.Default)]
         public void TestGetData(GraphicsProfile profile, GraphicsResourceUsage usage)
         {
-            var testArray = profile >= GraphicsProfile.Level_10_0;
+            var testArray = true;
             var mipmaps = 3;
 
             PerformTest(
@@ -485,13 +483,11 @@ namespace Xenko.Graphics.Tests
         }
 
         [Theory]
-        [InlineData(GraphicsProfile.Level_9_1, GraphicsResourceUsage.Staging)]
-        [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Staging)]
-        [InlineData(GraphicsProfile.Level_9_1, GraphicsResourceUsage.Default)]
-        [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Default)]
+        [InlineData(GraphicsProfile.Level_11_0, GraphicsResourceUsage.Staging)]
+        [InlineData(GraphicsProfile.Level_11_0, GraphicsResourceUsage.Default)]
         public void TestCopy(GraphicsProfile profile, GraphicsResourceUsage usageSource)
         {
-            var testArray = profile >= GraphicsProfile.Level_10_0;
+            var testArray = true;
             var mipmaps = 3;
 
             PerformTest(

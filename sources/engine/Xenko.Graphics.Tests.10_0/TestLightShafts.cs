@@ -23,7 +23,7 @@ namespace Xenko.Graphics.Tests
             // 3 = Simplifiy density parameters
             // 4 = Change random jitter position hash
 
-            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_10_0 };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 };
             GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false;
         }
 

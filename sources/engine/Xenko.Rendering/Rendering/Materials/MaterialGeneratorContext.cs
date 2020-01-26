@@ -65,7 +65,7 @@ namespace Xenko.Rendering.Materials
         /// <summary>
         /// The graphics profile this material will be compatiable with.
         /// </summary>
-        public GraphicsProfile GraphicsProfile { get; set; } = GraphicsProfile.Level_10_0;
+        public GraphicsProfile GraphicsProfile { get; set; } = GraphicsProfile.Level_11_0;
 
         /// <summary>
         /// Gets the compiled <see cref="Material"/>.

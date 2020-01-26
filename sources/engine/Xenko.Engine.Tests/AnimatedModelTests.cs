@@ -31,7 +31,7 @@ namespace Xenko.Engine.Tests
         public AnimatedModelTests()
         {
             GraphicsDeviceManager.DeviceCreationFlags = DeviceCreationFlags.Debug;
-            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_9_3 };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 };
 
             // Use a fixed time step
             IsFixedTimeStep = true;

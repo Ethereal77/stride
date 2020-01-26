@@ -150,27 +150,12 @@ namespace Xenko.Assets.Textures
             // determine if the desired size if valid depending on the graphics profile
             switch (parameters.GraphicsProfile)
             {
-                case GraphicsProfile.Level_9_1:
-                case GraphicsProfile.Level_9_2:
-                case GraphicsProfile.Level_9_3:
-                    if (parameters.GenerateMipmaps && (!MathUtil.IsPow2(textureSize.Width) || !MathUtil.IsPow2(textureSize.Height)))
-                    {
-                        // TODO: TEMPORARY SETUP A MAX TEXTURE OF 1024. THIS SHOULD BE SPECIFIED DONE IN THE ASSET INSTEAD
-                        textureSize.Width = Math.Min(MathUtil.NextPowerOfTwo(textureSize.Width), 1024);
-                        textureSize.Height = Math.Min(MathUtil.NextPowerOfTwo(textureSize.Height), 1024);
-                        logger?.Warning("Graphic profiles 9.1/9.2/9.3 do not support mipmaps with textures that are not power of 2. Asset is automatically resized to " + textureSize);
-                    }
-                    maxTextureSize = parameters.GraphicsProfile >= GraphicsProfile.Level_9_3 ? 4096 : 2048;
-                    break;
-                case GraphicsProfile.Level_10_0:
-                case GraphicsProfile.Level_10_1:
-                    maxTextureSize = 8192;
-                    break;
                 case GraphicsProfile.Level_11_0:
                 case GraphicsProfile.Level_11_1:
                 case GraphicsProfile.Level_11_2:
                     maxTextureSize = 16384;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException("graphicsProfile");
             }
@@ -241,26 +226,23 @@ namespace Xenko.Assets.Textures
                                             throw new ArgumentOutOfRangeException();
                                     }
 
-                                    // Overrides the format when profile is >= 10.0
+                                    // Overrides the format when profile is >= 11.0
                                     // Support some specific optimized formats based on the hint or input type
-                                    if (parameters.GraphicsProfile >= GraphicsProfile.Level_10_0)
+                                    if (hint == TextureHint.NormalMap)
                                     {
-                                        if (hint == TextureHint.NormalMap)
-                                        {
-                                            outputFormat = PixelFormat.BC5_UNorm;
-                                        }
-                                        else if (hint == TextureHint.Grayscale)
-                                        {
-                                            outputFormat = PixelFormat.BC4_UNorm;
-                                        }
-                                        else if (inputImageFormat.IsHDR())
-                                        {
-                                            // BC6H is too slow to compile
-                                            //outputFormat = parameters.GraphicsProfile >= GraphicsProfile.Level_11_0 && alphaMode == AlphaFormat.None ? PixelFormat.BC6H_Uf16 : inputImageFormat;
-                                            outputFormat = inputImageFormat;
-                                        }
-                                        // TODO support the BC6/BC7 but they are so slow to compile that we can't use them right now
+                                        outputFormat = PixelFormat.BC5_UNorm;
                                     }
+                                    else if (hint == TextureHint.Grayscale)
+                                    {
+                                        outputFormat = PixelFormat.BC4_UNorm;
+                                    }
+                                    else if (inputImageFormat.IsHDR())
+                                    {
+                                        // BC6H is too slow to compile
+                                        //outputFormat = alphaMode == AlphaFormat.None ? PixelFormat.BC6H_Uf16 : inputImageFormat;
+                                        outputFormat = inputImageFormat;
+                                    }
+                                    // TODO support the BC6/BC7 but they are so slow to compile that we can't use them right now
                                     break;
 
                                 default:

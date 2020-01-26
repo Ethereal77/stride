@@ -33,7 +33,7 @@ namespace Xenko.Physics.Tests
 
         private readonly GraphicsProfile overrideGraphicsProfile;
 
-        public GameTest(string name, GraphicsProfile profile = GraphicsProfile.Level_9_3)
+        public GameTest(string name, GraphicsProfile profile = GraphicsProfile.Level_11_0)
         {
             screenShots = 0;
             testName = name;

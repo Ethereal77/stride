@@ -23,7 +23,6 @@ namespace Xenko.Graphics
             {
                 PreferredBackBufferWidth = 800,
                 PreferredBackBufferHeight = 480,
-                //PreferredGraphicsProfile = new[] { GraphicsProfile.Level_9_1 }
                 PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 }
             };
         }
@@ -56,7 +55,7 @@ namespace Xenko.Graphics
                 compiler.SourceDirectories.Add("assets/shaders");
                 var compilerCache = new EffectCompilerCache(compiler);
 
-                var compilerParmeters = new CompilerParameters { Platform = GraphicsPlatform.Direct3D };
+                var compilerParmeters = new CompilerParameters { Platform = GraphicsPlatform.Direct3D11 };
 
                 var compilerResults = compilerCache.Compile(new ShaderMixinSource("SimpleEffect"), compilerParmeters);
                 Assert.That(compilerResults.HasErrors, Is.False);

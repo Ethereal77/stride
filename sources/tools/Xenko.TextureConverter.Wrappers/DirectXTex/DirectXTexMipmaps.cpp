@@ -400,15 +400,6 @@ namespace
             return false;
         }
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
-        if (format == DXGI_FORMAT_R16G16B16A16_FLOAT
-            || format == DXGI_FORMAT_R16_FLOAT)
-        {
-            // Use non-WIC code paths as these conversions are not supported by Xbox One XDK
-            return false;
-        }
-#endif
-
         static_assert(TEX_FILTER_POINT == 0x100000, "TEX_FILTER_ flag values don't match TEX_FILTER_MASK");
 
         switch (filter & TEX_FILTER_MASK)

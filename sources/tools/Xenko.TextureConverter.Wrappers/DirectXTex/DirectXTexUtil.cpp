@@ -15,16 +15,6 @@
 
 #include "directxtexp.h"
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
-static_assert(XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT == DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT, "Xbox One XDK mismatch detected");
-static_assert(XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT == DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT, "Xbox One XDK mismatch detected");
-static_assert(XBOX_DXGI_FORMAT_D16_UNORM_S8_UINT == DXGI_FORMAT_D16_UNORM_S8_UINT, "Xbox One XDK mismatch detected");
-static_assert(XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS == DXGI_FORMAT_R16_UNORM_X8_TYPELESS, "Xbox One XDK mismatch detected");
-static_assert(XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT == DXGI_FORMAT_X16_TYPELESS_G8_UINT, "Xbox One XDK mismatch detected");
-static_assert(XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM == DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM, "Xbox One XDK mismatch detected");
-static_assert(XBOX_DXGI_FORMAT_R4G4_UNORM == DXGI_FORMAT_R4G4_UNORM, "Xbox One XDK mismatch detected");
-#endif
-
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN10)
 static_assert(WIN10_DXGI_FORMAT_P208 == DXGI_FORMAT_P208, "Windows SDK mismatch detected");
 static_assert(WIN10_DXGI_FORMAT_V208 == DXGI_FORMAT_V208, "Windows SDK mismatch detected");
@@ -394,12 +384,6 @@ bool DirectX::IsPlanar(DXGI_FORMAT fmt)
     case WIN10_DXGI_FORMAT_V408: // 4:4:4 8-bit
         // These are JPEG Hardware decode formats (DXGI 1.4)
 
-    case XBOX_DXGI_FORMAT_D16_UNORM_S8_UINT:
-    case XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
-    case XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT:
-        // These are Xbox One platform specific types
-        return true;
-
     default:
         return false;
     }
@@ -422,9 +406,6 @@ bool DirectX::IsDepthStencil(DXGI_FORMAT fmt)
     case DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
     case DXGI_FORMAT_X24_TYPELESS_G8_UINT:
     case DXGI_FORMAT_D16_UNORM:
-    case XBOX_DXGI_FORMAT_D16_UNORM_S8_UINT:
-    case XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
-    case XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT:
         return true;
 
     default:
@@ -467,8 +448,6 @@ bool DirectX::IsTypeless(DXGI_FORMAT fmt, bool partialTypeless)
     case DXGI_FORMAT_X32_TYPELESS_G8X24_UINT:
     case DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
     case DXGI_FORMAT_X24_TYPELESS_G8_UINT:
-    case XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
-    case XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT:
         return partialTypeless;
 
     default:
@@ -527,9 +506,6 @@ bool DirectX::HasAlpha(DXGI_FORMAT fmt)
     case DXGI_FORMAT_IA44:
     case DXGI_FORMAT_A8P8:
     case DXGI_FORMAT_B4G4R4A4_UNORM:
-    case XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT:
-    case XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT:
-    case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
         return true;
 
     default:
@@ -615,16 +591,10 @@ size_t DirectX::BitsPerPixel(DXGI_FORMAT fmt)
     case DXGI_FORMAT_AYUV:
     case DXGI_FORMAT_Y410:
     case DXGI_FORMAT_YUY2:
-    case XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT:
-    case XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT:
-    case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
         return 32;
 
     case DXGI_FORMAT_P010:
     case DXGI_FORMAT_P016:
-    case XBOX_DXGI_FORMAT_D16_UNORM_S8_UINT:
-    case XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
-    case XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT:
     case WIN10_DXGI_FORMAT_V408:
         return 24;
 
@@ -662,7 +632,6 @@ size_t DirectX::BitsPerPixel(DXGI_FORMAT fmt)
     case DXGI_FORMAT_AI44:
     case DXGI_FORMAT_IA44:
     case DXGI_FORMAT_P8:
-    case XBOX_DXGI_FORMAT_R4G4_UNORM:
         return 8;
 
     case DXGI_FORMAT_R1_UNORM:
@@ -762,9 +731,6 @@ size_t DirectX::BitsPerColor(DXGI_FORMAT fmt)
     case DXGI_FORMAT_Y416:
     case DXGI_FORMAT_P016:
     case DXGI_FORMAT_Y216:
-    case XBOX_DXGI_FORMAT_D16_UNORM_S8_UINT:
-    case XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
-    case XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT:
         return 16;
 
     case DXGI_FORMAT_R9G9B9E5_SHAREDEXP:
@@ -780,9 +746,6 @@ size_t DirectX::BitsPerColor(DXGI_FORMAT fmt)
     case DXGI_FORMAT_Y410:
     case DXGI_FORMAT_P010:
     case DXGI_FORMAT_Y210:
-    case XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT:
-    case XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT:
-    case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
         return 10;
 
     case DXGI_FORMAT_R8G8B8A8_TYPELESS:
@@ -847,7 +810,6 @@ size_t DirectX::BitsPerColor(DXGI_FORMAT fmt)
         return 5;
 
     case DXGI_FORMAT_B4G4R4A4_UNORM:
-    case XBOX_DXGI_FORMAT_R4G4_UNORM:
         return 4;
 
     case DXGI_FORMAT_R1_UNORM:
@@ -958,9 +920,6 @@ void DirectX::ComputePitch(DXGI_FORMAT fmt, size_t width, size_t height,
 
     case DXGI_FORMAT_P010:
     case DXGI_FORMAT_P016:
-    case XBOX_DXGI_FORMAT_D16_UNORM_S8_UINT:
-    case XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
-    case XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT:
         assert(IsPlanar(fmt));
         rowPitch = ((width + 1) >> 1) * 4;
         slicePitch = rowPitch * (height + ((height + 1) >> 1));
@@ -1095,9 +1054,6 @@ size_t DirectX::ComputeScanlines(DXGI_FORMAT fmt, size_t height)
     case DXGI_FORMAT_P010:
     case DXGI_FORMAT_P016:
     case DXGI_FORMAT_420_OPAQUE:
-    case XBOX_DXGI_FORMAT_D16_UNORM_S8_UINT:
-    case XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
-    case XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT:
         assert(IsPlanar(fmt));
         return height + ((height + 1) >> 1);
 
@@ -1176,9 +1132,6 @@ DXGI_FORMAT DirectX::MakeTypeless(DXGI_FORMAT fmt)
 
     case DXGI_FORMAT_R10G10B10A2_UNORM:
     case DXGI_FORMAT_R10G10B10A2_UINT:
-    case XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT:
-    case XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT:
-    case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
         return DXGI_FORMAT_R10G10B10A2_TYPELESS;
 
     case DXGI_FORMAT_R8G8B8A8_UNORM:
@@ -1219,7 +1172,6 @@ DXGI_FORMAT DirectX::MakeTypeless(DXGI_FORMAT fmt)
     case DXGI_FORMAT_R8_UINT:
     case DXGI_FORMAT_R8_SNORM:
     case DXGI_FORMAT_R8_SINT:
-    case XBOX_DXGI_FORMAT_R4G4_UNORM:
         return DXGI_FORMAT_R8_TYPELESS;
 
     case DXGI_FORMAT_BC1_UNORM:

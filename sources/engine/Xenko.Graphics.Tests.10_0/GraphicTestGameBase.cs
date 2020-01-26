@@ -15,7 +15,7 @@ namespace Xenko.Graphics.Tests
             GraphicsDeviceManager.PreferredBackBufferHeight = 480;
             GraphicsDeviceManager.DeviceCreationFlags = DeviceCreationFlags.None;
             GraphicsDeviceManager.PreferredDepthStencilFormat = PixelFormat.D24_UNorm_S8_UInt;
-            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_10_0 };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 };
         }
 
         protected override void Update(GameTime gameTime)

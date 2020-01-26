@@ -48,7 +48,7 @@ namespace Xenko.Particles.Tests
 
         private GraphicsProfile overrideGraphicsProfile;
 
-        public GameTest(string name, GraphicsProfile profile = GraphicsProfile.Level_9_3)
+        public GameTest(string name, GraphicsProfile profile = GraphicsProfile.Level_11_0)
         {
             testName = name;
 
@@ -154,10 +154,6 @@ namespace Xenko.Particles.Tests
             using (var game = new VisualTestRibbons()) { game.Run(); }
 
             using (var game = new VisualTestChildren()) { game.Run(); }
-
-            // using (var game = new VisualTestSoftEdge(GraphicsProfile.Level_9_3)) { game.Run(); } // This is not implemented yet and may not be
-
-            using (var game = new GameTest("VisualTestSoftEdge", GraphicsProfile.Level_10_0)) { game.Run(); }
 
             using (var game = new GameTest("VisualTestSoftEdge", GraphicsProfile.Level_11_0)) { game.Run(); }
         }

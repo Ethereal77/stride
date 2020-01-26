@@ -65,7 +65,7 @@ namespace Xenko.Input.Tests
         public SensorGameTest()
         {
             AutoLoadDefaultSettings = true;
-            GraphicsDeviceManager.PreferredGraphicsProfile = new [] { GraphicsProfile.Level_9_1, };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new [] { GraphicsProfile.Level_11_0, };
         }
 
         protected override async Task LoadContent()

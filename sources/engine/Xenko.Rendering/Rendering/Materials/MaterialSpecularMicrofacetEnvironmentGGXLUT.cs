@@ -23,7 +23,7 @@ namespace Xenko.Rendering.Materials
     {
         public ShaderSource Generate(MaterialGeneratorContext context)
         {
-            var texture = context.GraphicsProfile >= GraphicsProfile.Level_10_0
+            var texture = context.GraphicsProfile >= GraphicsProfile.Level_11_0
                 ? AttachedReferenceManager.CreateProxyObject<Texture>(new AssetId("a49995f8-2380-4baa-a03e-f8d1da35b79a"), "XenkoEnvironmentLightingDFGLUT16")
                 : AttachedReferenceManager.CreateProxyObject<Texture>(new AssetId("87540190-ab97-4b4e-b3c2-d57d2fbb1ff3"), "XenkoEnvironmentLightingDFGLUT8");
             context.Parameters.Set(MaterialSpecularMicrofacetEnvironmentGGXLUTKeys.EnvironmentLightingDFG_LUT, texture);

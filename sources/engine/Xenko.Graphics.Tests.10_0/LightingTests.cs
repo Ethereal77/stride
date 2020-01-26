@@ -47,7 +47,7 @@ namespace Xenko.Graphics.Tests
 
         public LightingTests()
         {
-            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_10_0 };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 };
         }
 
         protected override void PrepareContext()

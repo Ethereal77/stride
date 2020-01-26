@@ -120,13 +120,9 @@ namespace Xenko.Games
             PreferredMultisampleCount = MultisampleCount.None;
             PreferredGraphicsProfile = new[]
                 {
-                    GraphicsProfile.Level_11_1, 
-                    GraphicsProfile.Level_11_0, 
-                    GraphicsProfile.Level_10_1, 
-                    GraphicsProfile.Level_10_0, 
-                    GraphicsProfile.Level_9_3, 
-                    GraphicsProfile.Level_9_2, 
-                    GraphicsProfile.Level_9_1, 
+                    GraphicsProfile.Level_11_2,
+                    GraphicsProfile.Level_11_1,
+                    GraphicsProfile.Level_11_0
                 };
 
             graphicsDeviceFactory = game.Services.GetService<IGraphicsDeviceFactory>();
@@ -170,13 +166,9 @@ namespace Xenko.Games
         /// </summary>
         /// <value>The graphics profile.</value>
         /// <remarks>
-        /// By default, the PreferredGraphicsProfile is set to { <see cref="GraphicsProfile.Level_11_1"/>, 
-        /// <see cref="GraphicsProfile.Level_11_0"/>,
-        /// <see cref="GraphicsProfile.Level_10_1"/>,
-        /// <see cref="GraphicsProfile.Level_10_0"/>,
-        /// <see cref="GraphicsProfile.Level_9_3"/>,
-        /// <see cref="GraphicsProfile.Level_9_2"/>,
-        /// <see cref="GraphicsProfile.Level_9_1"/>}
+        /// By default, the PreferredGraphicsProfile is set to { <see cref="GraphicsProfile.Level_11_2"/>, 
+        /// <see cref="GraphicsProfile.Level_11_1"/>
+        /// <see cref="GraphicsProfile.Level_11_0"/>}
         /// </remarks>
         public GraphicsProfile[] PreferredGraphicsProfile { get; set; }
 
@@ -814,7 +806,7 @@ namespace Xenko.Games
 
         protected virtual bool IsPreferredProfileAvailable(GraphicsProfile[] preferredProfiles, out GraphicsProfile availableProfile)
         {
-            availableProfile = GraphicsProfile.Level_9_1;
+            availableProfile = GraphicsProfile.Level_11_0;
 
             var graphicsProfiles = Enum.GetValues(typeof(GraphicsProfile));
 

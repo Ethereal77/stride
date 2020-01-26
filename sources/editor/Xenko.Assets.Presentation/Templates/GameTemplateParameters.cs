@@ -24,7 +24,7 @@ namespace Xenko.Assets.Presentation.Templates
     {
         public GameTemplateParameters()
         {
-            GraphicsProfile = GraphicsProfile.Level_10_0;
+            GraphicsProfile = GraphicsProfile.Level_11_0;
         }
 
         public List<SolutionPlatform> Platforms { get; set; }

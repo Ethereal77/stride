@@ -5,7 +5,7 @@ BuildConfiguration:
     Profiles:
         Windows: !XenkoProjectBuildProfile
             Platform: Windows
-            GraphicsPlatform: Direct3D
+            GraphicsPlatform: Direct3D11
             GraphicsProfile: Level_11_0
             OutputDirectory: ../../../../Bin/Windows-AnyCPU-Direct3D/data/Xenko.Input.Tests
 ExplicitFolders: []

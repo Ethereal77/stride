@@ -317,7 +317,7 @@ namespace Xenko.Assets.Models
                 };
 
                 IList<Entity> allEntities = new List<Entity>();
-                
+
                 if (Parameters.Prefab != null)
                 {
                     var prefab = AssetFinder.FindAssetFromProxyObject(Parameters.Prefab)?.Asset as PrefabAsset;
@@ -381,7 +381,7 @@ namespace Xenko.Assets.Models
                 }
 
                 // split the meshes if necessary
-                prefabModel.Meshes = SplitExtensions.SplitMeshes(prefabModel.Meshes, renderingSettings.DefaultGraphicsProfile > GraphicsProfile.Level_9_3);
+                prefabModel.Meshes = SplitExtensions.SplitMeshes(prefabModel.Meshes, can32bitIndex: true);
 
                 //handle boundng box/sphere
                 var modelBoundingBox = prefabModel.BoundingBox;

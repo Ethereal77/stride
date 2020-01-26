@@ -5,41 +5,11 @@ using Xenko.Core;
 namespace Xenko.Graphics
 {
     /// <summary>
-    /// Identifies the set of supported devices for the demo based on device capabilities.
+    /// Identifies the set of supported devices for the graphics subsystem based on device capabilities.
     /// </summary>
     [DataContract("GraphicsProfile")]
     public enum GraphicsProfile
     {
-        /// <summary>
-        /// DirectX9 support (HLSL 3.0)
-        /// </summary>
-        [Display("Direct3D 9.1")]
-        Level_9_1 = 0x9100,
-
-        /// <summary>
-        /// DirectX9 support (HLSL 3.0)
-        /// </summary>
-        [Display("Direct3D 9.2")]
-        Level_9_2 = 0x9200,
-
-        /// <summary>
-        /// DirectX9 support (HLSL 3.0)
-        /// </summary>
-        [Display("Direct3D 9.3")]
-        Level_9_3 = 0x9300,
-
-        /// <summary>
-        /// DirectX10 support (HLSL 4.0, Geometry Shader)
-        /// </summary>
-        [Display("Direct3D 10.0")]
-        Level_10_0 = 0xA000,
-
-        /// <summary>
-        /// DirectX10.1 support (HLSL 4.1, Geometry Shader)
-        /// </summary>
-        [Display("Direct3D 10.1")]
-        Level_10_1 = 0xA100,
-
         /// <summary>
         /// DirectX11 support (HLSL 5.0, Compute Shaders, Domain/Hull Shaders)
         /// </summary>

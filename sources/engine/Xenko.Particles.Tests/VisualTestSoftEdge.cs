@@ -11,12 +11,6 @@ namespace Xenko.Particles.Tests
         public VisualTestSoftEdge() : base("VisualTestSoftEdge") { }
 
         [Fact]
-        public void RunVisualTests10()
-        {
-            RunGameTest(new GameTest("VisualTestSoftEdge", GraphicsProfile.Level_10_0));
-        }
-
-        [Fact]
         public void RunVisualTests11()
         {
             RunGameTest(new GameTest("VisualTestSoftEdge", GraphicsProfile.Level_11_0));

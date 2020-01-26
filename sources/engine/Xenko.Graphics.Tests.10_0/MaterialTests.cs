@@ -31,7 +31,7 @@ namespace Xenko.Graphics.Tests
         private MaterialTests(Func<MaterialTests, Material> createMaterial)
         {
             this.createMaterial = createMaterial;
-            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_10_0 };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 };
         }
 
         protected override void PrepareContext()

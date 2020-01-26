@@ -55,7 +55,7 @@ namespace Xenko.Graphics.Regression
                 PreferredBackBufferHeight = 480,
                 PreferredDepthStencilFormat = PixelFormat.D24_UNorm_S8_UInt,
                 DeviceCreationFlags = DeviceCreationFlags.Debug,
-                PreferredGraphicsProfile = new[] { GraphicsProfile.Level_9_1 }
+                PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 }
             };
             Services.AddService<IGraphicsDeviceManager>(GraphicsDeviceManager);
             Services.AddService<IGraphicsDeviceService>(GraphicsDeviceManager);
