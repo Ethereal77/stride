@@ -1,14 +1,16 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 #if DEBUG
-// Enables/disables Screen Space Local Reflections effect debugging
-#define SSLR_DEBUG
+    // Enables/disables Screen Space Local Reflections effect debugging
+    #define SSLR_DEBUG
 #endif
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+
 using Xenko.Core;
 using Xenko.Core.Annotations;
 using Xenko.Core.Extensions;

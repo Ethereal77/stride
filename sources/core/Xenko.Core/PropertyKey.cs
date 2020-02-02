@@ -1,10 +1,14 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #pragma warning disable SA1402 // File may only contain a single class
+
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+
 using Xenko.Core.Annotations;
 using Xenko.Core.Serialization;
 using Xenko.Core.Serialization.Serializers;

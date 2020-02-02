@@ -1,16 +1,18 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #if DEBUG
 
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
 using System.Windows.Markup;
+
 using Xenko.Core.Annotations;
 using Xenko.Core.Presentation.Internal;
 
 // Code from http://www.wpfmentor.com/2009/01/how-to-debug-triggers-using-trigger.html
-// No license specified - this code is trimmed out from Release build anyway so it should be ok using it this way
 
 // HOWTO: add the following attached property to any trigger and you will see when it is activated/deactivated in the output window
 //        TriggerTracing.TriggerName="your debug name"

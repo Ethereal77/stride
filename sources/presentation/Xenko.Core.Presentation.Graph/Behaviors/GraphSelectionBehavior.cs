@@ -1,6 +1,14 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -8,21 +16,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Xenko.Core.Presentation.Behaviors;
-using Xenko.Core.Presentation.Extensions;
-using System.Linq;
-using GraphX;
-using System.Diagnostics;
+
 using Microsoft.Xaml.Behaviors;
+
+using GraphX;
 using GraphX.Controls;
-using System.Collections.Generic;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
 using GraphX.Controls.Models;
 using GraphX.PCL.Common.Models;
+
 using QuickGraph;
+
 using Xenko.Core.Extensions;
+using Xenko.Core.Presentation.Behaviors;
+using Xenko.Core.Presentation.Extensions;
 using Xenko.Core.Presentation.Graph.ViewModel;
 
 namespace Xenko.Core.Presentation.Graph.Behaviors

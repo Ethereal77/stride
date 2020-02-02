@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,8 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Editor.Components.TemplateDescriptions;
 using Xenko.Core.Assets.Editor.ViewModel;
@@ -28,6 +32,7 @@ using Xenko.Core.Quantum.References;
 using Xenko.Assets.Presentation.ViewModel;
 using Xenko.Assets.Scripts;
 using Xenko.Assets.Rendering;
+
 using Accessibility = Xenko.Assets.Scripts.Accessibility;
 using RoslynAccessibility = Microsoft.CodeAnalysis.Accessibility;
 

@@ -1,9 +1,22 @@
-﻿The MIT License (MIT)
+﻿Xenko Game Engine
+=================
 
-Copyright (c) 2018-2019 Xenko contributors (https://xenko.com)  
+Xenko is an open source project under the MIT license.
+
+Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)  
 Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 
 All rights reserved.
+
+
+## Software from third parties included in Xenko
+
+Xenko contains third party software which may be under different license terms. You
+can find the list of third party projects and their license [here](THIRD%20PARTY.md).
+
+---------------------------------------------------------------------------------
+
+## The MIT License (MIT)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

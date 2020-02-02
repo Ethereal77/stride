@@ -1,15 +1,21 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #if XENKO_GRAPHICS_API_DIRECT3D // Need SharpDX
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using SharpDX;
 using SharpDX.D3DCompiler;
+
 using Xenko.Core.Diagnostics;
 using Xenko.Core.Storage;
 using Xenko.Rendering;
 using Xenko.Graphics;
+
 using ConstantBufferType = Xenko.Shaders.ConstantBufferType;
 using ShaderBytecode = Xenko.Shaders.ShaderBytecode;
 using ShaderVariableType = SharpDX.D3DCompiler.ShaderVariableType;

@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
+
 using Xenko.Core;
 using Xenko.Input;
 using Xenko.Engine;
-
 
 namespace ##Namespace##
 {
@@ -12,7 +12,6 @@ namespace ##Namespace##
     /// </summary>
     public class ##Scriptname## : AsyncScript
     {
-
         private float timeIntervalCountdown = 0f;
 
         /// <summary>

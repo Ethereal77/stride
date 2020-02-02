@@ -4,7 +4,7 @@
 //     Xenko Effect Compiler File Generated:
 //     Effect [SpriteSignedDistanceFieldFontShader]
 //
-//     Command Line: D:\LLEVARSE\Proyectos\Xenko\Xenko-SLIM\sources\assets\Xenko.Core.Assets.CompilerApp\bin\Debug\net472\Xenko.Core.Assets.CompilerApp.exe --platform=Windows --property:RuntimeIdentifier=win --output-path=%~dp0obj\app_data --build-path=%~dp0obj\build_app_data --package-file=Graphics.xkpkg
+//     Command Line: Xenko.Core.Assets.CompilerApp.exe --platform=Windows --property:RuntimeIdentifier=win --output-path=app_data --build-path=build_app_data --package-file=Graphics.xkpkg
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 // </auto-generated>

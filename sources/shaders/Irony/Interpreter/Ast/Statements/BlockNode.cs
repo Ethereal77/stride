@@ -1,19 +1,13 @@
-﻿#region License
-/* **********************************************************************************
- * Copyright (c) Roman Ivantsov
- * This source code is subject to terms and conditions of the MIT License
- * for Irony. A copy of the license can be found in the License.txt file
- * at the root of this distribution. 
- * By using this source code in any fashion, you are agreeing to be bound by the terms of the 
- * MIT License.
- * You must not remove this notice from this software.
- * **********************************************************************************/
-#endregion
+﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2011 Irony - Roman Ivantsov
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using Irony.Interpreter;
 using Irony.Parsing;
 

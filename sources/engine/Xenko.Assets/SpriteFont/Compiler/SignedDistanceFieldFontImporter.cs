@@ -1,21 +1,24 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
+
+using SharpDX.DirectWrite;
+
 using Xenko.Core.Assets;
 using Xenko.Core.IO;
 
+using Factory = SharpDX.DirectWrite.Factory;
+
 namespace Xenko.Assets.SpriteFont.Compiler
 {
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.Reflection;
-    using SharpDX.DirectWrite;
-    using Factory = SharpDX.DirectWrite.Factory;
-
     // This code was originally taken from DirectXTk but rewritten with DirectWrite
     // for more accuracy in font rendering
     internal class SignedDistanceFieldFontImporter : IFontImporter

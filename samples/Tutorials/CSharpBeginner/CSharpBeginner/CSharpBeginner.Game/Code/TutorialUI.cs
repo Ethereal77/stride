@@ -1,4 +1,8 @@
+// Copyright (c) Xenko contributors (https://xenko.com)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more in
+
 using System.Collections.Generic;
+
 using Xenko.Core.Diagnostics;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;

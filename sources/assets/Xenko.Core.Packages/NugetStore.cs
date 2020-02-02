@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -7,32 +8,34 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+
+using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.PackageManagement;
-using NuGet.Packaging;
-using NuGet.ProjectManagement;
-using NuGet.Protocol;
-using NuGet.Protocol.Core.Types;
 using Xenko.Core;
 using Xenko.Core.Extensions;
 using Xenko.Core.Windows;
+using NuGet.Frameworks;
+using NuGet.LibraryModel;
+using NuGet.PackageManagement;
+using NuGet.Packaging;
+using NuGet.Packaging.Core;
+using NuGet.ProjectManagement;
+using NuGet.ProjectModel;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
+using NuGet.Resolver;
+using NuGet.Versioning;
+
 using ISettings = NuGet.Configuration.ISettings;
 using PackageSource = NuGet.Configuration.PackageSource;
 using PackageSourceProvider = NuGet.Configuration.PackageSourceProvider;
 using Settings = NuGet.Configuration.Settings;
-using NuGet.Resolver;
-using System.Reflection;
-using NuGet.Frameworks;
-using NuGet.Packaging.Core;
-using NuGet.Versioning;
-using NuGet.ProjectModel;
-using NuGet.LibraryModel;
-using NuGet.Commands;
 
 namespace Xenko.Core.Packages
 {
@@ -647,7 +650,7 @@ namespace Xenko.Core.Packages
         }
 
         /// <summary>
-        /// Returns updates for packages from the repository 
+        /// Returns updates for packages from the repository
         /// </summary>
         /// <param name="packageName">Package to look for updates</param>
         /// <param name="includePrerelease">Indicates whether to consider prerelease updates.</param>

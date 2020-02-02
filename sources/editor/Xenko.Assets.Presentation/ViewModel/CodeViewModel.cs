@@ -1,30 +1,36 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.Windows.Documents;
 using System.Windows.Media;
+
 using Microsoft.CodeAnalysis;
+
 using RoslynPad.Roslyn;
+
 using Xenko.Core.Assets.Editor.Services;
 using Xenko.Core.Extensions;
 using Xenko.Core.Presentation.Services;
 using Xenko.Core.Presentation.ViewModel;
-using Xenko.Assets.Presentation.AssetEditors;
-using Xenko.Assets.Presentation.AssetEditors.ScriptEditor;
-using RoslynWorkspace = Xenko.Assets.Presentation.AssetEditors.ScriptEditor.RoslynWorkspace;
-using System.Collections.Generic;
-using System.IO;
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Editor.ViewModel;
 using Xenko.Core.IO;
 using Xenko.Core.Presentation.Dirtiables;
 using Xenko.Core.Translation;
+using Xenko.Assets.Presentation.AssetEditors;
+using Xenko.Assets.Presentation.AssetEditors.ScriptEditor;
 using Xenko.Assets.Scripts;
-using System.Collections.Specialized;
+
+using RoslynWorkspace = Xenko.Assets.Presentation.AssetEditors.ScriptEditor.RoslynWorkspace;
 
 namespace Xenko.Assets.Presentation.ViewModel
 {

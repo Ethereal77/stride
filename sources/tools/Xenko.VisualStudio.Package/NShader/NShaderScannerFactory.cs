@@ -1,22 +1,11 @@
-﻿#region Header Licence
-//  ---------------------------------------------------------------------
-//
-//  Copyright (c) 2009 Alexandre Mutel and Microsoft Corporation.
-//  All rights reserved.
-//
-//  This code module is part of NShader, a plugin for visual studio
-//  to provide syntax highlighting for shader languages (HLSL, XKSL)
-// 
-//  ------------------------------------------------------------------
-//
-//  This code is licensed under the Microsoft Public License.
-//  See the file License.txt for the license details.
-//  More info on: http://nshader.codeplex.com
-//
-//  ------------------------------------------------------------------
-#endregion
+﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2009 NShader - Alexandre Mutel, Microsoft Corporation
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System.Collections.Generic;
 using System.IO;
+
 using Microsoft.VisualStudio.Package;
 using Microsoft.VisualStudio.TextManager.Interop;
 

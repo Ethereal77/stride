@@ -7,11 +7,13 @@
 // </auto-generated>
 
 using System;
+
 using Xenko.Core;
+using Xenko.Core.Mathematics;
 using Xenko.Rendering;
 using Xenko.Graphics;
 using Xenko.Shaders;
-using Xenko.Core.Mathematics;
+
 using Buffer = Xenko.Graphics.Buffer;
 
 namespace Xenko.Rendering

@@ -1,17 +1,21 @@
-// Copyright (c) Xenko contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using NuGet.Commands;
 using NuGet.DependencyResolver;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
 using NuGet.RuntimeModel;
+
 using Xenko.Core.Diagnostics;
 using Xenko.Core.IO;
 using Xenko.Core.Packages;

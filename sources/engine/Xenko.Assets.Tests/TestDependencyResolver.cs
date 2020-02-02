@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 // TODO: Adapt to new API
 /*
 using System;
@@ -7,6 +9,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using Xunit;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Analysis;
 using Xenko.Assets.SpriteFont;
@@ -15,8 +18,8 @@ using Xenko.Rendering;
 using System.Linq;
 
 using Xenko.Graphics;
-namespace Xenko.Assets.Tests
 
+namespace Xenko.Assets.Tests
 {
     public class TestDependencyResolver
     {

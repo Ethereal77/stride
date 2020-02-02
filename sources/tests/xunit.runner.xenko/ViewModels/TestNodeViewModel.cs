@@ -1,6 +1,11 @@
-﻿using ReactiveUI;
+﻿// Copyright (c) Xenko contributors (https://xenko.com)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more in
+
 using System;
 using System.Collections.Generic;
+
+using ReactiveUI;
+
 using Xunit.Abstractions;
 
 namespace xunit.runner.xenko.ViewModels

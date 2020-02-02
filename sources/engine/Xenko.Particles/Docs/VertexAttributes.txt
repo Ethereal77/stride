@@ -1,7 +1,4 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-
-HOWTO add more attributes to the particle vertices
+﻿HOWTO add more attributes to the particle vertices
 
 1. Decide how the attribute will be generated. 
 	If you need, you can add a new ParticleField by creating a new Initializer or Updater.

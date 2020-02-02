@@ -1,9 +1,10 @@
+using System;
+using System.Threading.Tasks;
+
+using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Input;
-using System;
-using System.Threading.Tasks;
-using Xenko.Core;
 
 namespace ##Namespace##
 {

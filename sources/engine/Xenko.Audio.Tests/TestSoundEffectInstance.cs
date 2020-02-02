@@ -1,14 +1,16 @@
-//// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-//// This file is distributed under GPL v3. See LICENSE.md for details.
-//using System;
+//// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+//// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+//// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
-//using Xunit;
+//using System;
 //
 //using Xenko.Core;
 //using Xenko.Core.IO;
 //using Xenko.Core.Mathematics;
 //using Xenko.Core.Serialization.Assets;
 //using Xenko.Engine;
+//
+//using Xunit;
 //
 //namespace Xenko.Audio.Tests
 //{

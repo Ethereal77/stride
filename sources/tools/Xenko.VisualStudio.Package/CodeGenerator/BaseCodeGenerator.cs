@@ -1,19 +1,20 @@
-﻿/***************************************************************************
+﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-Copyright (c) Microsoft Corporation. All rights reserved.
+/***************************************************************************
 This code is licensed under the Visual Studio SDK license terms.
 THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
 ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
 IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
 PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
-
 ***************************************************************************/
 
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 

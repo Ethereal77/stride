@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -10,8 +12,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+
 using EnvDTE;
 using EnvDTE80;
+
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -19,10 +23,13 @@ using Microsoft.VisualStudio.Package;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+
 using NShader;
+
 using Xenko.VisualStudio.BuildEngine;
 using Xenko.VisualStudio.Commands;
 using Xenko.VisualStudio.Shaders;
+
 using Task = System.Threading.Tasks.Task;
 
 namespace Xenko.VisualStudio
