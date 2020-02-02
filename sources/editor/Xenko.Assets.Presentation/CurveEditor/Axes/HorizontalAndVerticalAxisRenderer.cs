@@ -11,7 +11,6 @@ using System.Windows;
 using Xenko.Core.Presentation.Drawing;
 using Xenko.Assets.Presentation.CurveEditor.ViewModels;
 
-using Color = Core.Mathematics.Color;
 
 namespace Xenko.Assets.Presentation.CurveEditor
 {
@@ -87,7 +86,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
         public void Render(AxisBase axis, int pass)
         {
             if (axis == null) throw new ArgumentNullException(nameof(axis));
-            
+
             axis.GetTickValues(out majorLabelValues, out majorTickValues, out minorTickValues);
             var totalShift = axis.AxisDistance + axis.PositionTierMinShift;
             var tierSize = axis.PositionTierSize - Editor.AxisTierDistance;
@@ -142,7 +141,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
                 RenderAxisTitle(axis, titlePosition);
             }
         }
-        
+
         /// <summary>
         /// Determines whether the specified value is within the specified range.
         /// </summary>
@@ -268,7 +267,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
                     {
                         majorTickSegments.Add(new Point(axisPosition + a0, transformedValue));
                         majorTickSegments.Add(new Point(axisPosition + a1, transformedValue));
-                    } 
+                    }
                 }
             }
 
@@ -347,7 +346,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                
+
                 var text = axis.FormatValue(value);
                 texts.Add(text);
                 textPositions.Add(point);
@@ -444,7 +443,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
                     {
                         minorTickSegments.Add(new Point(axisPosition + a0, transformedValue));
                         minorTickSegments.Add(new Point(axisPosition + a1, transformedValue));
-                    } 
+                    }
                 }
             }
 

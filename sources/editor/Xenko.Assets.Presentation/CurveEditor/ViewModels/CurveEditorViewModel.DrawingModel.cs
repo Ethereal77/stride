@@ -13,7 +13,7 @@ using Xenko.Core.Annotations;
 using Xenko.Core.Presentation.Drawing;
 using Xenko.Core.Presentation.Extensions;
 
-using Color = Core.Mathematics.Color;
+using Color = Xenko.Core.Mathematics.Color;
 
 namespace Xenko.Assets.Presentation.CurveEditor.ViewModels
 {
@@ -27,7 +27,7 @@ namespace Xenko.Assets.Presentation.CurveEditor.ViewModels
             new Color(63, 116, 209),
             new Color(188, 188, 188)
         };
-        
+
         private IDrawingView canvasView;
         private Rect curveArea;
 
@@ -140,7 +140,7 @@ namespace Xenko.Assets.Presentation.CurveEditor.ViewModels
         {
             UpdateOverride(updateData);
         }
-        
+
         /// <summary>
         /// Renders the canvas with the specified renderer.
         /// </summary>
@@ -355,7 +355,7 @@ namespace Xenko.Assets.Presentation.CurveEditor.ViewModels
                     throw new ArgumentOutOfRangeException(nameof(position), position, null);
             }
         }
-        
+
         /// <summary>
         /// Renders the axes.
         /// </summary>
@@ -470,7 +470,7 @@ namespace Xenko.Assets.Presentation.CurveEditor.ViewModels
                 // data has been updated, so we need to calculate the max/min of the curves again
                 SelectedCurve?.UpdateMaxMin();
             }
-            
+
             SelectedCurve?.UpdateAxisMaxMin();
 
             foreach (var axis in Axes)
