@@ -1,4 +1,14 @@
-<!-- Global settings used to configure the XenkoPlatform -->
+<!--
+***********************************************************************************************
+  Xenko.Core.GlobalSettings.targets
+
+  Build file pre-included before the building of the project to configure the assembly version,
+  output paths, assembly processor defaults, per-project global settings, defines, search
+  directories, and the key file used for signing the generated assemblies.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Import Project="$(MSBuildThisFileDirectory)Xenko.PackageVersion.targets"/>

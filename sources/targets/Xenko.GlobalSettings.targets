@@ -1,4 +1,15 @@
-<!-- Global settings used to configure the XenkoGraphicsApi -->
+<!--
+***********************************************************************************************
+  Xenko.GlobalSettings.targets
+
+  Build file pre-included before the building of the project to configure the default graphics
+  API, assembly processor options, dependency search directory. Also configures the Runtime
+  Identifiers, define constants, the Effect Compiler, UI framework, compilation settings and
+  final asset packing.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="RuntimeIdentifier">
 
   <!-- Default values -->

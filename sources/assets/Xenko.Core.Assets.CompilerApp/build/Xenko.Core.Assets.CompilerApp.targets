@@ -1,3 +1,14 @@
+<!--
+***********************************************************************************************
+  Xenko.Core.Assets.CompilerApp.targets
+
+  Build file post-included after the building of projects to configure the build and output
+  paths for the Asset Compiler, setup its parameters, and define the compilation targets to
+  build, clean, publish and pack assets.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project InitialTargets="_XenkoCheckVisualCRuntime2013" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Check if Visual C++ Runtime 2013 is properly installed -->
   <!-- Should be moved to Xenko.Assets as soon as transitive build dependencies are enabled by default in VS2019 (https://github.com/NuGet/Home/issues/6091#issuecomment-438073285) -->
@@ -52,7 +63,7 @@
   <!--Compile assets for all XenkoPackage items and only for an executable-->
   <Target Name="XenkoCompileAsset" Condition="'$(XenkoIsExecutable)' == 'true'">
     <PropertyGroup>
-      <XenkoCompileAssetCommandProxy>$(XenkoCompileAssetCommandProxy) $(XenkoCompileAssetOptions) --disable-auto-compile --project-configuration &quot;$(Configuration)&quot; --platform=$(XenkoPlatform) --project-configuration=$(Configuration) --property:RuntimeIdentifier=$(RuntimeIdentifier) --output-path=&quot;$(XenkoCompileAssetOutputPath)&quot; --build-path=&quot;$(XenkoCompileAssetBuildPath)&quot; --package-file=&quot;$(MSBuildProjectFullPath)&quot; --log-pipe=&quot;$(XenkoBuildEngineLogPipeUrl)&quot;</XenkoCompileAssetCommandProxy>
+      <XenkoCompileAssetCommandProxy>$(XenkoCompileAssetCommandProxy) $(XenkoCompileAssetOptions) --disable-auto-compile --platform=$(XenkoPlatform) --project-configuration=$(Configuration) --property:RuntimeIdentifier=$(RuntimeIdentifier) --output-path=&quot;$(XenkoCompileAssetOutputPath)&quot; --build-path=&quot;$(XenkoCompileAssetBuildPath)&quot; --package-file=&quot;$(MSBuildProjectFullPath)&quot; --log-pipe=&quot;$(XenkoBuildEngineLogPipeUrl)&quot;</XenkoCompileAssetCommandProxy>
       <XenkoCompileAssetCommandProxy Condition="'$(XenkoBuildEngineLogVerbose)' != ''">$(XenkoCompileAssetCommandProxy) --verbose</XenkoCompileAssetCommandProxy>
       <XenkoCompileAssetCommandProxy Condition="'$(XenkoBuildEngineLogDebug)' != ''">$(XenkoCompileAssetCommandProxy) --debug</XenkoCompileAssetCommandProxy>
     </PropertyGroup>

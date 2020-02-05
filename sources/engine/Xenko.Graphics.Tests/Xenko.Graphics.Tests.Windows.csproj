@@ -7,7 +7,7 @@
     <XenkoBuildTags>*</XenkoBuildTags>
     <XenkoCompileAssets>true</XenkoCompileAssets>
     <XenkoGraphicsApiDependent>true</XenkoGraphicsApiDependent>
-    <!-- Force msbuild to check to rebuild this assembly instead of letting VS IDE guess -->
+    <!-- Force MSBuild to check to rebuild this assembly instead of letting VS IDE guess -->
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
   <PropertyGroup>

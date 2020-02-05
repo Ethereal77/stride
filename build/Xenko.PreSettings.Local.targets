@@ -1,4 +1,13 @@
-<!-- Build file pre-included by all Xenko projects -->
+<!--
+***********************************************************************************************
+  Xenko.PreSettings.Local.targets
+
+  Build file pre-included before the building of the project to configure the default platform,
+  graphics API, names, etc.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <XenkoCommonPreSettingsName>Xenko</XenkoCommonPreSettingsName>
@@ -6,4 +15,3 @@
     <XenkoGraphicsApisWindows Condition="'$(XenkoGraphicsApisWindows)' == ''">Direct3D11</XenkoGraphicsApisWindows>
   </PropertyGroup>
 </Project>
-

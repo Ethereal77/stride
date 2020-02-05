@@ -1,3 +1,14 @@
+<!--
+***********************************************************************************************
+  Xenko.Native.targets
+
+  Build file post-included after the building of the project to configure the generation of the
+  needed native libraries for each runtime / architecture, and the linking between these
+  libraries and the dependent .NET assemblies.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Condition="Exists('$(MSBuildProjectDirectory)\Xenko.Native.Libs.targets')" Project="$(MSBuildProjectDirectory)\Xenko.Native.Libs.targets" />
 

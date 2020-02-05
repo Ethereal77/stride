@@ -1,3 +1,13 @@
+<!--
+***********************************************************************************************
+  Xenko.PackageVersion.targets
+
+  Build file pre-included before the building of the project to configure the version info of
+  the generated assemblies and generate the NuGet packages version and metadata.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- Sdk settings -->

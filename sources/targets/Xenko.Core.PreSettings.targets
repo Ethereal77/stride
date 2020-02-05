@@ -1,4 +1,14 @@
-<!-- Build file pre-included by all Xenko projects -->
+<!--
+***********************************************************************************************
+  Xenko.Core.PreSettings.targets
+
+  Build file pre-included before the building of the project to configure solution-wide
+  defaults, platforms, Target Frameworks (TFMs), language, runtime identifiers (RIDs), and
+  prepare the steps for building the project and package the output.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="RuntimeIdentifier">
   <!-- Setup this part according to your project if you want your .csproj to compile individually without going through the .sln file -->
   <PropertyGroup>

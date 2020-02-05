@@ -1,3 +1,12 @@
+<!--
+***********************************************************************************************
+  SDL.targets
+
+  Build file for including SDL as a dependency.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Reference Include="SDL2-CS">

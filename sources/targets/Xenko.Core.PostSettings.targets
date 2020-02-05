@@ -1,7 +1,17 @@
-<!-- Build file post-included by all Xenko projects -->
+<!--
+***********************************************************************************************
+  Xenko.Core.PostSettings.targets
+
+  Build file post-included after the building of the project to configure the code analysis,
+  documentation generation, testing, native code compilation, assembly post-processing,
+  dependency tracking and localization.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- Add Default targets used by Msbuild for undefined Platforms / or when skipping compilation under a platform -->
+  <!-- Add Default targets used by MSBuild for undefined Platforms / or when skipping compilation under a platform -->
   <Target Name="Build"/>
   <Target Name="Clean"/>
   <Target Name="ReBuild"/>

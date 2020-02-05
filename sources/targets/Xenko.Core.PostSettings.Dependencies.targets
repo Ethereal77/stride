@@ -1,14 +1,25 @@
-<!-- Build file post-included by all Xenko projects -->
+<!--
+***********************************************************************************************
+  Xenko.Core.PostSettings.Dependencies.targets
+
+  Build file post-included after the building of the project to configure the analysis and
+  collection of dependencies (native libs and content) and the inclusion and copying of those
+  to the final destination (NuGet, output).
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.ssdeps; $(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);_XenkoRegisterDependenciesOutputs</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
+  
   <!--
-  *****************************************************************************************************************************
-  Dependencies reading (from .ssdeps)
-  *****************************************************************************************************************************
+  **********************************************************
+   Reading of Dependencies (from .ssdeps)
+  **********************************************************
   -->
 
   <!-- List dependency files from .ssdeps -->
@@ -59,9 +70,9 @@
   </Target>
 
   <!--
-  *****************************************************************************************************************************
-  Native libraries setup (from .ssdeps)
-  *****************************************************************************************************************************
+  **********************************************************
+   Setup of Native Libraries (from .ssdeps)
+  **********************************************************
   -->
   <Target Name="_XenkoSetupNativeLibraries" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="'$(XenkoDependenciesCopy)' != 'false'">
     <!-- Windows -->
@@ -73,9 +84,9 @@
   </Target>
 
   <!--
-  *****************************************************************************************************************************
-  Dependencies generation (to .ssdeps)
-  *****************************************************************************************************************************
+  **********************************************************
+   Generation of Dependencies Lists (to .ssdeps)
+  **********************************************************
   -->
   <Target Name="_XenkoGenerateDependencies">
     <!-- Set TargetPath on XenkoContent and XenkoNativeLib -->

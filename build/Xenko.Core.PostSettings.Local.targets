@@ -1,4 +1,13 @@
-﻿<!-- Build file pre-included by all Xenko projects -->
+﻿<!--
+***********************************************************************************************
+  Xenko.Core.PostSettings.Local.targets
+
+  Build file post-included after the building of the project to configure the steps to
+  post-process the generated assemblies with the Assembly Processor.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- Override XenkoBuildDirectory only now so that Xenko common projects still get build in obj without XenkoGraphicsApi -->

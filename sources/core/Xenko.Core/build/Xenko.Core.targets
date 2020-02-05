@@ -1,3 +1,14 @@
+<!--
+***********************************************************************************************
+  Xenko.Core.targets
+
+  Build file pre-included before the building of test projects to configure the default
+  Platform, setup the Assembly Processor location, parameters and processing steps, and to
+  configure the compilation and copying of dependencies, both content and native libraries.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project InitialTargets="_XenkoCheckVisualCRuntime2015" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Check if Visual C++ Runtime 2015 is properly installed -->
   <Target Name="_XenkoCheckVisualCRuntime2015" Condition="'$(MSBuildRuntimeType)' == 'Full'">
@@ -58,7 +69,6 @@
       <!-- Physics, Particles and SpriteStudio assembly is actually hard coded/referenced here, remove once a better system is in place! -->
       <!-- Please keep in sync with AssemblyRecompiler.cs -->
       <XenkoAssemblyProcessorOptions>$(XenkoAssemblyProcessorOptions) @(XenkoAddReference->'--add-reference=%22%(Identity)%22',' ')</XenkoAssemblyProcessorOptions>
-      <XenkoAssemblyProcessorOptions Condition="'$(DocumentationFile)' != ''">$(XenkoAssemblyProcessorOptions) --docfile="$(DocumentationFile)"</XenkoAssemblyProcessorOptions>
       <XenkoAssemblyProcessorOptions>$(XenkoAssemblyProcessorOptions) --references-file="$(IntermediateOutputPath)XenkoReferences.cache"</XenkoAssemblyProcessorOptions>
       <XenkoAssemblyProcessorOptions>$(XenkoAssemblyProcessorOptions) --platform=$(XenkoPlatform) --targetFramework=$(XenkoNETFrameworkVersion) "$(IntermediateOutputPath)$(TargetName)$(TargetExt)"</XenkoAssemblyProcessorOptions>
       <XenkoAssemblyProcessorOptions Condition="'$(AssemblyOriginatorKeyFile)' != ''">$(XenkoAssemblyProcessorOptions) --signkeyfile="$(AssemblyOriginatorKeyFile)" --delete-on-error</XenkoAssemblyProcessorOptions>

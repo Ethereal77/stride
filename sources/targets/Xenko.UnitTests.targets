@@ -1,3 +1,16 @@
+<!--
+***********************************************************************************************
+  Xenko.UnitTests.targets
+
+  Build file pre-included before the building of test projects to configure the Graphics APIs
+  and the Runtime Identifiers based on them, disable the generation of packages for the test
+  projects, enable the compilation of assets and the inclusion of native dependencies, and the
+  signing of assemblies.
+  Also, for unit tests, disable custom Xenko compilation steps, and setup the output paths.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Runtime identifiers -->
@@ -66,7 +79,7 @@
     <AssemblyOriginatorKeyFile Condition="'$(XenkoOpenSourceSign)' == 'true'">$(SolutionDir)xenko.public.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
-  <!-- Add Default targets used by Msbuild for undefined Platforms / or when skipping compilation under a platform -->
+  <!-- Add Default targets used by MSBuild for undefined Platforms / or when skipping compilation under a platform -->
   <Import Condition="'$(XenkoCompilerTargetsEnable)' == 'false'" Project="$(MSBuildThisFileDirectory)Xenko.UnitTests.DisableBuild.targets"/>
 
   <PropertyGroup>
