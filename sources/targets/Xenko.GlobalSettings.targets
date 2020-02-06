@@ -84,14 +84,6 @@
   </PropertyGroup>
 
   <!--
-    Settings XenkoPlatform specific
-  -->
-  <PropertyGroup>
-    <XenkoGraphicsApiDefines>FRAMEWORK_SHADER_USE_SHARPDX;$(XenkoGraphicsApiDefines)</XenkoGraphicsApiDefines>
-    <FrameworkShaderUseSharpDX>true</FrameworkShaderUseSharpDX>
-  </PropertyGroup>
-
-  <!--
     Global Defines
   -->
   <PropertyGroup>

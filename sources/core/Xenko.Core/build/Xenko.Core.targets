@@ -60,7 +60,7 @@
         <NuGetPackageReference>%(PackageReference.Identity)</NuGetPackageReference>
       </XenkoAddReference>
       <XenkoAddReference Remove="@(XenkoAddReference)" Condition="'%(XenkoAddReference.NuGetPackageId)' != '%(XenkoAddReference.NuGetPackageReference)' Or ('%(XenkoAddReference.ExternallyResolved)' != 'true' And '%(XenkoAddReference.BuildReference)' != 'true')"/>
-      <!-- Also include non-nuget references (Reference and ProjectReference) -->
+      <!-- Also include non-NuGet references (Reference and ProjectReference) -->
       <XenkoAddReference Include="@(ReferencePath)" Condition="'%(ReferencePath.NuGetPackageId)' == ''"/>
     </ItemGroup>
     <PropertyGroup>

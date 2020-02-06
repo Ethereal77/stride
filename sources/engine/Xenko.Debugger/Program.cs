@@ -42,7 +42,7 @@ namespace Xenko
                 string.Empty,
                 { "h|help", "Show this message and exit", v => showHelp = v != null },
                 { "host=", "Host pipe", v => hostPipe = v },
-                { "wait-debugger-attach", "Process will wait for a debuggger to attach, for 5 seconds", v => waitDebuggerAttach = true },
+                { "wait-debugger-attach", "Process will wait for a debugger to attach, for 5 seconds", v => waitDebuggerAttach = true },
             };
 
             try

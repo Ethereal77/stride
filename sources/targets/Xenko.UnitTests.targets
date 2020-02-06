@@ -11,7 +11,6 @@
   Copyright (C) 2020 Xenko and its contributors
 ***********************************************************************************************
 -->
-<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Runtime identifiers -->
   <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' != 'true'">

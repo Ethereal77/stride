@@ -1,8 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
-Build file used to build Xenko and package it from the command line.
-Example of use:
-"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild" Xenko.build /t:Package
+***********************************************************************************************
+  Xenko.build
+
+  Build file used to build Xenko and package it from the command line.
+
+  Example of use:
+    MSBuild Xenko.build /t:Package
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
 -->
 <Project ToolsVersion="15.0" DefaultTarget="Help" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
@@ -10,12 +16,15 @@ Example of use:
     <XenkoSolution>$(XenkoRoot)build\Xenko</XenkoSolution>
     <XenkoSolutionLauncher>$(XenkoRoot)build\Xenko.Launcher</XenkoSolutionLauncher>
     <XenkoPlatforms Condition="'$(XenkoPlatforms)' == ''">Windows</XenkoPlatforms>
+    <XenkoStoreUrl Condition="'$(XenkoStoreUrl)' == ''">https://api.nuget.org/v3/index.json</XenkoStoreUrl>
+
     <BuildProperties>Configuration=Release;NoWarn=1591;DeployExtension=false;XenkoPlatforms=$([MSBuild]::Escape('$(XenkoPlatforms)'));XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)</BuildProperties>
     <BuildProperties Condition="'$(XenkoSign)' != ''">$(BuildProperties);XenkoSign=$(XenkoSign)</BuildProperties>
     <BuildProperties Condition="'$(XenkoOfficialBuild)' != ''">$(BuildProperties);XenkoOfficialBuild=$(XenkoOfficialBuild)</BuildProperties>
+
     <NuGetPath>$(MSBuildThisFileDirectory).nuget\NuGet.exe</NuGetPath>
+
     <XunitRunnerConsoleVersion>2.4.1</XunitRunnerConsoleVersion>
-    <XenkoStoreUrl Condition="'$(XenkoStoreUrl)' == ''">https://api.nuget.org/v3/index.json</XenkoStoreUrl>
     <AdvancedInstallerPath Condition="'$(AdvancedInstallerPath)' == '' And Exists('$(MSBuildProgramFiles32)\Caphyon\Advanced Installer 15.5.1\bin\x86\advinst.exe')">$(MSBuildProgramFiles32)\Caphyon\Advanced Installer 15.5.1\bin\x86\advinst.exe</AdvancedInstallerPath>
   </PropertyGroup>
 
@@ -26,15 +35,14 @@ Example of use:
   </Target>
 
   <!--
-  VSIX Xenko plugin
-  Don't forget to build for VS2013 by using MSBuild 12.0,
-  or if you're using a newer version of MSBuild, pass the flag /p:VisualStudioVersion=12.0 when calling MSBuild in the command line.
+    VSIX Xenko plugin
+      Don't forget to build for VS2013 by using MSBuild 12.0,
+      or if you're using a newer version of MSBuild, pass the flag /p:VisualStudioVersion=12.0 when calling MSBuild in the command line.
   -->
   <Target Name="VSIXPlugin" DependsOnTargets="Restore">
     <ItemGroup>
       <FilesToDeleteVSIX Include="$(XenkoRoot)bin\vsix\*.nupkg"/>
     </ItemGroup>
-
     <Delete Files="@(FilesToDeleteVSIX)"/>
 
     <MSBuild Targets="91-VisualStudio\Xenko_VisualStudio_Package;91-VisualStudio\Xenko_VisualStudio_PackageInstall" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);Platform=Mixed Platforms"/>
@@ -42,7 +50,7 @@ Example of use:
   </Target>
 
   <!--
-  Package Installer: install-prerequisites.exe
+    Package Installer: Install Prerequisites
   -->
   <Target Name="PrerequisitesInstaller">
     <Delete Files="$(XenkoRoot)Bin\Prerequisites\install-prerequisites.exe"/>
@@ -50,7 +58,7 @@ Example of use:
   </Target>
 
   <!--
-  Perform a full build: Build, Package
+    Perform a full build: Build, Package
   -->
   <Target Name="FullBuild">
     <CallTarget Targets="Build"/>
@@ -59,16 +67,16 @@ Example of use:
   </Target>
 
   <!--
-  Publish Xenko nupkg from this folder to the store
+    Publish Xenko nupkg from this folder to the store
   -->
   <Target Name="Publish">
-    <Error Condition="'$(XenkoStoreApiKey)' == ''" Text="Missing env variable XenkoStoreApiKey"/>
+    <Error Condition="'$(XenkoStoreApiKey)' == ''" Text="Missing environment variable XenkoStoreApiKey"/>
     <!-- Waiting 30min in case NuGet.Gallery/Server takes time to process -->
     <ItemGroup>
       <NuGetPackage Include="..\bin\packages\*.nupkg"/>
       <!-- Remove GameStudio (pushed in a second stage) -->
       <NuGetPackage Remove="@(NuGetPackage)" Condition="$([System.String]::Copy('%(Filename)').Contains('Xenko.GameStudio'))"/>
-      <!-- Remove Samples.Templates (pushed only when requested since versionned separately -->
+      <!-- Remove Samples.Templates (pushed only when requested since versioned separately -->
       <NuGetPackage Remove="@(NuGetPackage)" Condition="'$(XenkoPublishSkipSamplesTemplates)' == 'true' And $([System.String]::Copy('%(Filename)').Contains('Xenko.Samples.Templates'))"/>
     </ItemGroup>
     <Exec Command='"$(NuGetPath)" push %(NuGetPackage.Identity) -ApiKey $(XenkoStoreApiKey) -Source $(XenkoStoreUrl) -Timeout 1800 -NoSymbols'/>
@@ -77,15 +85,15 @@ Example of use:
   </Target>
 
   <!--
-  Publish VSIX nupkg from this folder to the store
+    Publish VSIX nupkg from this folder to the store
   -->
   <Target Name="PublishVSIX">
-    <Error Condition="'$(XenkoStoreApiKey)' == ''" Text="Missing env variable XenkoStoreApiKey"/>
+    <Error Condition="'$(XenkoStoreApiKey)' == ''" Text="Missing environment variable XenkoStoreApiKey"/>
     <Exec Command='"$(NuGetPath)" push ..\bin\vsix\*.nupkg -ApiKey $(XenkoStoreApiKey) -Source $(XenkoStoreUrl) -NoSymbols'/>
   </Target>
 
   <!--
-  Build Xenko: Windows
+    Build Xenko: Windows
   -->
   <Target Name="Clean">
     <Exec Command="RMDIR /Q /S $(XenkoRoot)\Bin"/>
@@ -106,7 +114,7 @@ Example of use:
     <!-- Make sure Xenko.GitVersioning is built to run the task to update package version.
          It might be better to move it to a prebuilt assembly if that becomes a problem.
     -->
-	<MSBuild Targets="Restore" Projects="$(XenkoRoot)deps\Xenko.GitVersioning\Xenko.GitVersioning.csproj"/>
+	  <MSBuild Targets="Restore" Projects="$(XenkoRoot)deps\Xenko.GitVersioning\Xenko.GitVersioning.csproj"/>
     <MSBuild Targets="Build" Projects="$(XenkoRoot)deps\Xenko.GitVersioning\Xenko.GitVersioning.csproj"/>
 
     <!-- Create SharedAssemblyInfo.NuGet.cs with Git information (different between official build and internal builds) -->
@@ -117,9 +125,10 @@ Example of use:
       <Output TaskParameter="NuGetVersion" PropertyName="XenkoPackageVersion"/>
     </GenerateVersionFile>
 
-	<Message Text="Done preparing build for version $(XenkoPackageVersion)"/>
-	<TeamCitySetBuildNumber BuildNumber="$(XenkoPackageVersion)" Condition="'$(TEAMCITY_BUILD_PROPERTIES_FILE)' != '' " />
+	  <Message Text="Done preparing build for version $(XenkoPackageVersion)"/>
+	  <TeamCitySetBuildNumber BuildNumber="$(XenkoPackageVersion)" Condition="'$(TEAMCITY_BUILD_PROPERTIES_FILE)' != '' " />
   </Target>
+
   <Target Name="Package" DependsOnTargets="PreparePackageBuild;PrerequisitesInstaller;Build;VSIXPlugin"/>
 
   <Target Name="CopyXenkoKey">
@@ -140,7 +149,7 @@ Example of use:
 
   <Target Name="Build" DependsOnTargets="CopyXenkoKey">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution);XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
-	<MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);Platform=Mixed Platforms"/>
+	  <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);Platform=Mixed Platforms"/>
   </Target>
 
   <Target Name="BuildRuntime" DependsOnTargets="CopyXenkoKey">
@@ -148,7 +157,7 @@ Example of use:
       <XenkoSolution>$(XenkoSolution).Runtime</XenkoSolution>
     </PropertyGroup>
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution)"/>
-	<MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties)"/>
+	  <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties)"/>
   </Target>
 
   <Target Name="BuildWindows" DependsOnTargets="CopyXenkoKey">
@@ -233,7 +242,7 @@ Example of use:
       <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).Direct3D12.sln</Solution></UnitTest>
     </ItemGroup>
 
-	<!-- Samples unit tests -->
+	  <!-- Samples unit tests -->
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';Samples;'))">
       <UnitTest Include="72-XenkoSamples\Xenko.Samples.Tests"/>
     </ItemGroup>
@@ -280,7 +289,7 @@ Example of use:
   </Target>
 
   <!--
-  Package Launcher
+    Package Launcher
   -->
   <Target Name="PackageLauncher" DependsOnTargets="LauncherPrerequisitesInstaller">
     <ItemGroup>
@@ -290,12 +299,12 @@ Example of use:
     <!-- Note: we avoid building again if BuildWindows was already ran just before -->
     <Delete Files="@(FilesToDeleteLauncher)"/>
 
-    <!-- Generate the nuget package for the launcher application -->
+    <!-- Generate the NuGet package for the Launcher application -->
     <Exec Command='"$(NuGetPath)" pack "$(XenkoRoot)sources\launcher\Xenko.LauncherApp\Xenko.LauncherApp.nuspec" -BasePath "$(XenkoRoot)sources\launcher\Xenko.LauncherApp\bin\Release" -OutputDirectory "$(XenkoRoot)bin\launcher"' />
   </Target>
 
   <!--
-  Package Installer: XenkoSetup.exe
+    Package Installer: XenkoSetup.exe
   -->
   <Target Name="PackageInstallerSimple" DependsOnTargets="PackageLauncher">
     <Delete Files="$(XenkoRoot)bin\launcher\XenkoSetup.exe"/>
@@ -342,14 +351,14 @@ Example of use:
   <Target Name="PackageInstaller" DependsOnTargets="$(PackageInstallerTarget)"/>
 
   <!--
-  Package Installer: launcher-prerequisites.exe
+    Package Installer: launcher-prerequisites.exe
   -->
   <Target Name="LauncherPrerequisitesInstaller">
     <Exec Command='"$(AdvancedInstallerPath)" /rebuild "$(XenkoRoot)sources\launcher\Prerequisites\launcher-prerequisites.aip"'/>
   </Target>
 
   <!--
-  Perform a full build: Build, Package and PackageInstaller
+    Perform a full build: Build, Package and PackageInstaller
   -->
   <Target Name="FullBuildLauncher">
     <CallTarget Targets="BuildLauncher"/>
@@ -357,16 +366,15 @@ Example of use:
   </Target>
 
   <!--
-  Publish Launcher nupkg from this folder to the store
+    Publish Launcher nupkg from this folder to the store
   -->
   <Target Name="PublishLauncher">
-    <Error Condition="'$(XenkoStoreApiKey)' == ''" Text="Missing env variable XenkoStoreApiKey"/>
+    <Error Condition="'$(XenkoStoreApiKey)' == ''" Text="Missing environment variable XenkoStoreApiKey"/>
     <Exec Command='"$(NuGetPath)" push ..\bin\launcher\*.nupkg -ApiKey $(XenkoStoreApiKey) -Source $(XenkoStoreUrl) -NoSymbols'/>
   </Target>
 
   <Target Name="BuildLauncher" DependsOnTargets="CopyXenkoKey">
     <Exec Command='"$(NuGetPath)" restore "$(XenkoSolutionLauncher).sln"' />
-	<MSBuild Targets="Build" Projects="$(XenkoSolutionLauncher).sln" Properties="$(BuildProperties);XenkoSignTool=true;Platform=Any CPU"/>
+	  <MSBuild Targets="Build" Projects="$(XenkoSolutionLauncher).sln" Properties="$(BuildProperties);XenkoSignTool=true;Platform=Any CPU"/>
   </Target>
-
 </Project>

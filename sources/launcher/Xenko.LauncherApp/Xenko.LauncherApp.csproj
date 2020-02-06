@@ -27,7 +27,7 @@
     <!-- Workaround for solution dependencies with incompatible frameworks: https://github.com/Microsoft/msbuild/issues/2661#issuecomment-338808156 -->
     <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
 	
-	<!-- Assembly version for the launcher, used to generate the appropriate nuget package -->
+	<!-- Assembly version for the launcher, used to generate the appropriate NuGet package -->
     <InformationalVersion>3.0.9</InformationalVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

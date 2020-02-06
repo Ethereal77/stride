@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <!--
-   Nuget Package metadata
+   NuGet Package metadata
    -->
   <PropertyGroup>
     <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(XenkoNuGetVersion)</PackageVersion>

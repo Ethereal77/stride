@@ -19,9 +19,4 @@
 
     <XenkoCoreAssemblyPath>$(MSBuildThisFileDirectory)..\Bin\$(XenkoBuildDirectory)\Xenko.Core.dll</XenkoCoreAssemblyPath>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <XenkoShaderUseSharpDX>true</XenkoShaderUseSharpDX>
-    <DefineConstants>FRAMEWORK_SHADER_USE_SHARPDX;$(DefineConstants)</DefineConstants>
-  </PropertyGroup>
 </Project>
