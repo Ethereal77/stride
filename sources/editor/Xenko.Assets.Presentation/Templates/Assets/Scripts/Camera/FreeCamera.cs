@@ -1,10 +1,11 @@
+using System;
+using System.Threading.Tasks;
+
+using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Engine.Processors;
 using Xenko.Input;
-using System;
-using System.Threading.Tasks;
-using Xenko.Core;
 
 namespace Xenko.Scripts
 {
@@ -77,13 +78,6 @@ namespace Xenko.Scripts
             Component.UseCustomViewMatrix = true;
             Component.UseCustomAspectRatio = true;
             Reset();
-
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-                Input.Gestures.Add(new GestureConfigDrag {RequiredNumberOfFingers = 2});
-                Input.Gestures.Add(new GestureConfigTap {RequiredNumberOfTaps = 2});
-            }
 
             while (true)
             {

@@ -1,7 +1,10 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Threading.Tasks;
+
 using Xenko.Core.Diagnostics;
 using Xenko.Engine.Network;
 
@@ -92,7 +95,7 @@ namespace Xenko.ConnectionRouter
                     catch (Exception e)
                     {
                         // TODO: Ideally, separate socket-related error messages (disconnection) from real errors
-                        // Unfortunately, it seems WinRT returns Exception, so it seems we can't filter with SocketException/IOException only?
+                        // Unfortunately, it seems we can't filter with SocketException/IOException only?
                         Log.Info($"Client {clientSocketContext.RemoteAddress}:{clientSocketContext.RemotePort} disconnected with exception.", e);
                         clientSocketContext.Dispose();
                     }

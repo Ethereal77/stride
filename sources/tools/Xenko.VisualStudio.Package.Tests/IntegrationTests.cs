@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,11 +11,15 @@ using System.Management;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+
 using EnvDTE;
 using EnvDTE80;
+
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Xunit;
+
+using VSLangProj;
+
 using Xenko.Core;
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Templates;
@@ -24,7 +30,9 @@ using Xenko.Core.VisualStudio;
 using Xenko.Assets.Templates;
 using Xenko.Assets.Presentation.Templates;
 using Xenko.Rendering;
-using VSLangProj;
+
+using Xunit;
+
 using Debugger = System.Diagnostics.Debugger;
 using Process = System.Diagnostics.Process;
 using Thread = System.Threading.Thread;

@@ -1,8 +1,10 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Analysis;
 using Xenko.Core.Assets.Compiler;
@@ -39,9 +41,9 @@ namespace Xenko.Assets.Models
 
             var gameSettingsAsset = context.GetGameSettingsAsset();
             var renderingSettings = gameSettingsAsset.GetOrCreate<RenderingSettings>();
-            var allow32BitIndex = renderingSettings.DefaultGraphicsProfile >= GraphicsProfile.Level_9_2;
-            var maxInputSlots = renderingSettings.DefaultGraphicsProfile >= GraphicsProfile.Level_10_1 ? 32 : 16;
-            var allowUnsignedBlendIndices = context.GetGraphicsPlatform(assetItem.Package) != GraphicsPlatform.OpenGLES;
+            var allow32BitIndex = true;
+            var maxInputSlots = 32;
+            var allowUnsignedBlendIndices = true;
             var extension = asset.Source.GetFileExtension();
 
             // Find skeleton asset, if any

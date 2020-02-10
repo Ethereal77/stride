@@ -1,9 +1,12 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Analysis;
 using Xenko.Core.Assets.Compiler;
@@ -317,7 +320,7 @@ namespace Xenko.Assets.Models
                 };
 
                 IList<Entity> allEntities = new List<Entity>();
-                
+
                 if (Parameters.Prefab != null)
                 {
                     var prefab = AssetFinder.FindAssetFromProxyObject(Parameters.Prefab)?.Asset as PrefabAsset;
@@ -381,7 +384,7 @@ namespace Xenko.Assets.Models
                 }
 
                 // split the meshes if necessary
-                prefabModel.Meshes = SplitExtensions.SplitMeshes(prefabModel.Meshes, renderingSettings.DefaultGraphicsProfile > GraphicsProfile.Level_9_3);
+                prefabModel.Meshes = SplitExtensions.SplitMeshes(prefabModel.Meshes, can32bitIndex: true);
 
                 //handle boundng box/sphere
                 var modelBoundingBox = prefabModel.BoundingBox;

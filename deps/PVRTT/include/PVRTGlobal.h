@@ -55,45 +55,6 @@
 #if defined(_WIN32) && !defined(__QT__)
 
 #else
-#if defined(__linux__) || defined(__APPLE__)
-#ifdef _DEBUG
-#include <signal.h>
-#ifndef _RPT0
-#define _RPT0(a,b) printf(b)
-#endif
-#ifndef _RPT1
-#define _RPT1(a,b,c) printf(b,c)
-#endif
-#ifndef _ASSERT
-#define _ASSERT(a) if (!(a)) ::raise(SIGTRAP)
-#endif
-#ifndef _ASSERTE
-#define _ASSERTE(a) if (!(a)) ::raise(SIGTRAP)
-#endif
-#else
-#ifndef _RPT0
-#define _RPT0(a,b)((void)0)
-#endif
-#ifndef _RPT1
-#define _RPT1(a,b,c)((void)0)
-#endif
-#ifndef _ASSERT
-#define _ASSERT(a)((void)0)
-#endif
-#ifndef _ASSERTE
-#define _ASSERTE(a)((void)0)
-#endif
-#endif
-#ifndef _RPT2
-#define _RPT2(a,b,c,d)((void)0)
-#endif
-#ifndef _RPT3
-#define _RPT3(a,b,c,d,e)((void)0)
-#endif
-#ifndef _RPT4
-#define _RPT4(a,b,c,d,e,f)((void)0)
-#endif
-#else
 #define _CRT_WARN 0
 #define _RPT0(a,b)
 #define _RPT1(a,b,c)
@@ -102,7 +63,6 @@
 #define _RPT4(a,b,c,d,e,f)
 #define _ASSERT(X)
 #define _ASSERTE(X)
-#endif
 #endif
 #endif
 
@@ -302,4 +262,3 @@ inline const T& PVRTMax(const T& a, const T& b)
 /*****************************************************************************
  End of file (Tools.h)
 *****************************************************************************/
-

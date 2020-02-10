@@ -1,8 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Xenko.Core;
 using Xenko.Core.Diagnostics;
 
@@ -137,19 +140,7 @@ namespace Xenko.Engine.Network
         /// </summary>
         private static RouterConnectionMode ConnectionMode
         {
-            get
-            {
-                switch (Platform.Type)
-                {
-                    case PlatformType.UWP:
-                        return RouterConnectionMode.ConnectThenListen;
-                    case PlatformType.Android:
-                    case PlatformType.iOS:
-                        return RouterConnectionMode.Listen;
-                    default:
-                        return RouterConnectionMode.Connect;
-                }
-            }
+            get => RouterConnectionMode.Connect;
         }
 
         private enum RouterConnectionMode
@@ -166,7 +157,7 @@ namespace Xenko.Engine.Network
 
             /// <summary>
             /// First, tries to connect, and if not possible, listen for a router connection.
-            /// This is useful for platform where we can't be sure (no way to determine if emulator and/or run in desktop or remotely, such as UWP).
+            /// This is useful for platform where we can't be sure (no way to determine if emulator and/or run in desktop or remotely).
             /// </summary>
             ConnectThenListen = 3,
         }

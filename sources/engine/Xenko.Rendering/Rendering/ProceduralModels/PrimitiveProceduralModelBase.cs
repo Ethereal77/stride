@@ -1,9 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+
 using Xenko.Core;
 using Xenko.Core.Annotations;
 using Xenko.Core.Mathematics;
@@ -145,11 +147,6 @@ namespace Xenko.Rendering.ProceduralModels
             }
             else
             {
-                if (graphicsDevice.Features.CurrentProfile <= GraphicsProfile.Level_9_3)
-                {
-                    throw new InvalidOperationException("Cannot generate more than 65535 indices on feature level HW <= 9.3");
-                }
-
                 meshDraw.IndexBuffer = new IndexBufferBinding(Buffer.Index.New(graphicsDevice, indices).RecreateWith(indices), true, indices.Length);
                 if (needsTempDevice)
                 {

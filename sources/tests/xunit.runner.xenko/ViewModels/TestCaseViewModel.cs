@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Xenko contributors (https://xenko.com)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more in
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using ReactiveUI;
+
 using Xunit;
 using Xunit.Abstractions;
 

@@ -1,20 +1,8 @@
-﻿#region Header Licence
-//  ---------------------------------------------------------------------
-// 
-//  Copyright (c) 2009 Alexandre Mutel and Microsoft Corporation.  
-//  All rights reserved.
-// 
-//  This code module is part of NShader, a plugin for visual studio
-//  to provide syntax highlighting for shader languages (hlsl, glsl, cg)
-// 
-//  ------------------------------------------------------------------
-// 
-//  This code is licensed under the Microsoft Public License. 
-//  See the file License.txt for the license details.
-//  More info on: http://nshader.codeplex.com
-// 
-//  ------------------------------------------------------------------
-#endregion
+﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2009 NShader - Alexandre Mutel, Microsoft Corporation
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -22,7 +10,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Drawing;
+
+using EnvDTE;
 using EnvDTE80;
+
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Package;
@@ -31,14 +22,14 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Formatting;
 using Microsoft.VisualStudio.TextManager.Interop;
+
+using Xenko.VisualStudio;
 using Xenko.VisualStudio.Classifiers;
 using Xenko.VisualStudio.Commands;
 
 using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 using VsShell = Microsoft.VisualStudio.Shell.VsShellUtilities;
 using Task = System.Threading.Tasks.Task;
-using EnvDTE;
-using Xenko.VisualStudio;
 
 namespace NShader
 {
@@ -393,7 +384,7 @@ namespace NShader
                                 // HierarchyItem = hierarchyItem // TODO Add hierarchy the file is associated to
                             };
 
-                            // Install our navigate to source 
+                            // Install our navigate to source
                             newError.Navigate += NavigateToSourceError;
                             errorListProvider.Tasks.Add(newError); // add item
                         }
@@ -401,7 +392,7 @@ namespace NShader
 
                     if (result.Messages.Count > 0)
                     {
-                        errorListProvider.Show(); // make sure it is visible 
+                        errorListProvider.Show(); // make sure it is visible
                     }
                     else
                     {

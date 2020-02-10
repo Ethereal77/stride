@@ -1,10 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+
 using Xenko.Core.Annotations;
 using Xenko.Core.Collections;
 
@@ -12,11 +15,7 @@ namespace Xenko.Core.Threading
 {
     public class Dispatcher
     {
-#if XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID
-        public static int MaxDegreeOfParallelism = 1;
-#else
         public static int MaxDegreeOfParallelism = Environment.ProcessorCount;
-#endif
 
         public delegate void ValueAction<T>(ref T obj);
 
@@ -109,7 +108,7 @@ namespace Xenko.Core.Threading
                 }
             }
         }
-        
+
         public static void ForEach<TItem, TLocal>([NotNull] IReadOnlyList<TItem> collection, [Pooled] Func<TLocal> initializeLocal, [Pooled] Action<TItem, TLocal> action, [Pooled] Action<TLocal> finalizeLocal = null)
         {
             For(0, collection.Count, initializeLocal, (i, local) => action(collection[i], local), finalizeLocal);
@@ -713,7 +712,7 @@ namespace Xenko.Core.Threading
                         caller = new StackFrame(skipFrames++, true).GetMethod();
                     }
                     while (caller.DeclaringType == typeof(Dispatcher));
-                    
+
                     node = nodes.GetOrAdd(Action.Method, key => new DispatcherNode());
                     node.Caller = caller;
                 }

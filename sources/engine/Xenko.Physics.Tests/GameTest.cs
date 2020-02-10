@@ -1,9 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.IO;
 using System.Threading.Tasks;
+
 using Xenko.Core;
 using Xenko.Core.Serialization.Contents;
 using Xenko.Engine;
@@ -33,17 +35,15 @@ namespace Xenko.Physics.Tests
 
         private readonly GraphicsProfile overrideGraphicsProfile;
 
-        public GameTest(string name, GraphicsProfile profile = GraphicsProfile.Level_9_3)
+        public GameTest(string name, GraphicsProfile profile = GraphicsProfile.Level_11_0)
         {
             screenShots = 0;
             testName = name;
             assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             //  SaveScreenshot is only defined for windows
             platformName = "Windows";
             Directory.CreateDirectory("screenshots\\");
-#endif
 
             AutoLoadDefaultSettings = true; // Note! This will override the preferred graphics profile so save it for later
             overrideGraphicsProfile = profile;

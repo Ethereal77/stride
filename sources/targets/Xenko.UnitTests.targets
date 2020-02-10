@@ -1,12 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--
+***********************************************************************************************
+  Xenko.UnitTests.targets
+
+  Build file pre-included before the building of test projects to configure the Graphics APIs
+  and the Runtime Identifiers based on them, disable the generation of packages for the test
+  projects, enable the compilation of assets and the inclusion of native dependencies, and the
+  signing of assemblies.
+  Also, for unit tests, disable custom Xenko compilation steps, and setup the output paths.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Runtime identifiers -->
-  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' != 'true' And '$(XenkoPlatform)' == 'Windows'">
+  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' != 'true'">
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' == 'true' And '$(XenkoPlatform)' == 'Windows'">
+  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' == 'true'">
     <!-- Build list of Graphics API -->
-    <XenkoGraphicsApis Condition="'$(XenkoGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12;OpenGL;OpenGLES;Vulkan</XenkoGraphicsApis>
+    <XenkoGraphicsApis Condition="'$(XenkoGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12</XenkoGraphicsApis>
     <XenkoGraphicsApis Condition="'$(XenkoGraphicsApis)' == '' And '$(XenkoGraphicsApiDependentBuildAll)' != 'true'">$(XenkoGraphicsApiOriginal)</XenkoGraphicsApis>
 
     <_XenkoGraphicsApis Condition="'$(XenkoGraphicsApis)' != ''">;$(XenkoGraphicsApis);</_XenkoGraphicsApis>
@@ -18,18 +30,12 @@
     <RuntimeIdentifiers></RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$(_XenkoGraphicsApis.Contains(';Direct3D11;')) Or '$(_XenkoGraphicsApis)' == ''">$(RuntimeIdentifiers);win-x64</RuntimeIdentifiers>
     <RuntimeIdentifiers Condition="$(_XenkoGraphicsApis.Contains(';Direct3D12;'))">$(RuntimeIdentifiers);win-d3d12-x64</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$(_XenkoGraphicsApis.Contains(';OpenGL;'))">$(RuntimeIdentifiers);win-opengl-x64</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$(_XenkoGraphicsApis.Contains(';OpenGLES;'))">$(RuntimeIdentifiers);win-opengles-x64</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$(_XenkoGraphicsApis.Contains(';Vulkan;'))">$(RuntimeIdentifiers);win-vulkan-x64</RuntimeIdentifiers>
 
     <RuntimeIdentifiers>$([MSBuild]::Unescape($(RuntimeIdentifiers.Trim(';'))))</RuntimeIdentifiers>
     <ExtrasBuildEachRuntimeIdentifier Condition="'$(RuntimeIdentifiers)' != ''">true</ExtrasBuildEachRuntimeIdentifier>
 
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-x64'">Direct3D11</XenkoGraphicsApi>
     <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-d3d12-x64'">Direct3D12</XenkoGraphicsApi>
-    <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-opengl-x64'">OpenGL</XenkoGraphicsApi>
-    <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-opengles-x64'">OpenGLES</XenkoGraphicsApi>
-    <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-vulkan-x64'">Vulkan</XenkoGraphicsApi>
     <XenkoGraphicsApi Condition="'$(XenkoGraphicsApi)' == ''">Direct3D11</XenkoGraphicsApi>
   </PropertyGroup>
 
@@ -56,7 +62,7 @@
     <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
 
   </PropertyGroup>
-  
+
   <!-- On Windows, let's sign the assemblies with fake strong signing (OpenSource Signing, OSS),
        so that people can compile Xenko themself and still use the editor which expect strongly signed assemblies.
     -->
@@ -93,7 +99,7 @@
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(XenkoPlatform)-$(XenkoGraphicsApi)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(XenkoPlatform)' == 'Windows'">
+  <ItemGroup>
     <Compile Condition="'$(XenkoGraphicsApiDependent)' != 'true'" Include="$(MSBuildThisFileDirectory)..\shared\tests\xunit\LauncherSimple.Windows.cs">
       <Link>LauncherSimple.Windows.cs</Link>
     </Compile>
@@ -124,7 +130,7 @@
 
   <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
 
-  <!-- Add Default targets used by Msbuild for undefined Platforms / or when skipping compilation under a platform -->
+  <!-- Add Default targets used by MSBuild for undefined Platforms / or when skipping compilation under a platform -->
   <Import Condition="'$(XenkoCompilerTargetsEnable)' == 'false'" Project="$(MSBuildThisFileDirectory)Xenko.UnitTests.DisableBuild.targets"/>
 
   <!-- This needs to be after Sdk.targets -->

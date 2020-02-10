@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,14 +10,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using Microsoft.Xaml.Behaviors;
 using System.Windows.Markup;
+
+using Microsoft.Xaml.Behaviors;
 
 using GraphX;
 using GraphX.Controls;
 using GraphX.PCL.Common.Enums;
 using GraphX.PCL.Logic.Algorithms.LayoutAlgorithms;
 using GraphX.PCL.Logic.Algorithms.OverlapRemoval;
+
 using QuickGraph;
 
 using Xenko.Core.Presentation.Graph.ViewModel;

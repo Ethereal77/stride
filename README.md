@@ -1,9 +1,9 @@
 ![Xenko](https://xenko.com/images/external/xenko-logo-side.png)
-=======
+===============================================================
 
 Welcome to the Xenko source code repository!
 
-Xenko is an open-source C# game engine for realistic rendering and VR. 
+Xenko is an open-source **C# game engine** for realistic rendering.
 The engine is highly modular and aims at giving game makers more flexibility in their development.
 Xenko comes with an editor that allows you create and manage the content of your games or applications in a visual and intuitive way.
 
@@ -48,11 +48,6 @@ Ask for help or report issues:
     * `MSVC v142 - VS2019 C++ x64/x86 build tools (v14.23)` or later version (should be enabled by default)
     * `MSVC v142 - VS2019 C++ x64/x86 Spectre-mitigated libs (v14.23)` or later version (should be enabled by default)
   * `.NET Core cross-platform development`
-  * Optional (to target UWP): `Universal Windows Platform development` with
-    * `Windows 10 SDK (10.0.17763.0)` or later version
-    * `MSVC v142 - VS2019 C++ ARM build tools (v14.23)` or later version (should be enabled by default)
-    * `MSVC v142 - VS2019 C++ ARM Spectre-mitigated libs (v14.23)` or later version (should be enabled by default)
-  * Optional (to target iOS/Android): `Mobile development with .NET` and `Android SDK setup (API level 27)` individual component, then in Visual Studio go to `Tools > Android > Android SDK Manager` and install `NDK` (version 19+) from `Tools` tab.
 3. [FBX SDK 2019.0 VS2015](https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-2019-0)
 
 ### Build Xenko
@@ -60,7 +55,6 @@ Ask for help or report issues:
 1. Clone Xenko: `git clone https://github.com/xenko3d/xenko.git`
 2. Open `<XenkoDir>\build\Xenko.sln` with Visual Studio 2019, and build.
 3. Open `<XenkoDir>\samples\XenkoSamples.sln` and play with the samples.
-4. Optionally, open and build `Xenko.Android.sln`, `Xenko.iOS.sln`, etc...
 
 ### Contribution Guidelines
 
@@ -72,13 +66,5 @@ Please check our [Contributing Guidelines](docs/CONTRIBUTING.md).
 |:--:|:--:|
 |Windows D3D11|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildWindowsD3d11&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildWindowsD3d11),branch:master/statusIcon"/></a>
 |Windows D3D12|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildWindowsD3d12&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildWindowsD3d12),branch:master/statusIcon"/></a>
-|Windows Vulkan|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildWindowsVulkan&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildWindowsVulkan),branch:master/statusIcon"/></a>
-|Windows OpenGL|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildWindowsOpenGL&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildWindowsOpenGL),branch:master/statusIcon"/></a>
-|Windows OpenGL ES|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildWindowsOpenGLES&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildWindowsOpenGLES),branch:master/statusIcon"/></a>
-|UWP|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildWindowsUWP&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildWindowsUWP),branch:master/statusIcon"/></a>
-|iOS|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildiOS&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildiOS),branch:master/statusIcon"/></a>
-|Android|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildAndroid&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildAndroid),branch:master/statusIcon"/></a>
-|Linux Vulkan|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildLinuxVulkan&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildLinuxVulkan),branch:master/statusIcon"/></a>
-|Linux OpenGL|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_BuildLinuxOpenGL&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_BuildLinuxOpenGL),branch:master/statusIcon"/></a>
 |Tests Windows Simple| <a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_Tests_WindowsSimple&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_Tests_WindowsSimple),branch:master/statusIcon"/></a>
-|Tests Windows D3D11|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_Tests_WindowsD3D11&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_Tests_WindowsD3D11),branch:master/statusIcon"/></a> 
+|Tests Windows D3D11|<a href="https://teamcity.xenko.com/viewType.html?buildTypeId=Engine_Tests_WindowsD3D11&branch=master&guest=1"><img src="https://teamcity.xenko.com/app/rest/builds/buildType:(id:Engine_Tests_WindowsD3D11),branch:master/statusIcon"/></a>

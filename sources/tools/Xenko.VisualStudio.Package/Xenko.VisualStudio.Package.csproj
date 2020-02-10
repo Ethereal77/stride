@@ -20,7 +20,6 @@
     <VSSDKTargetPlatformRegRootSuffix>Xenko</VSSDKTargetPlatformRegRootSuffix>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="NShader\Common\GLSLKeywords.map" />
     <None Remove="NShader\Common\HLSLKeywords.map" />
     <None Remove="NShader\Common\XenkoShaderKeywords.map" />
   </ItemGroup>
@@ -82,7 +81,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>OutputClassifier.Partial.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Update="NShader\Common\GLSLKeywords.map" />
     <EmbeddedResource Update="NShader\Common\HLSLKeywords.map" />
     <EmbeddedResource Update="NShader\Common\XenkoShaderKeywords.map" />
     <None Include="NShader\Common\ShaderMPLexer.lex" />
@@ -111,7 +109,6 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="NShader\Common\GLSLKeywords.map" />
     <EmbeddedResource Include="NShader\Common\HLSLKeywords.map" />
     <EmbeddedResource Include="NShader\Common\XenkoShaderKeywords.map" />
   </ItemGroup>

@@ -1,19 +1,16 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 #if DEBUG
-// Enables/disables Screen Space Local Reflections effect debugging
-#define SSLR_DEBUG
-#endif
-
-#if XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_IOS
-// Use different render targets formats on mobile
-#define SSLR_MOBILE
+    // Enables/disables Screen Space Local Reflections effect debugging
+    #define SSLR_DEBUG
 #endif
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+
 using Xenko.Core;
 using Xenko.Core.Annotations;
 using Xenko.Core.Extensions;
@@ -41,13 +38,8 @@ namespace Xenko.Rendering.Images
         // 4) Temporal blur [optional]
         // 5) Combine final image
 
-#if SSLR_MOBILE
-        private const PixelFormat RayTraceTargetFormat = PixelFormat.R8G8B8A8_UNorm;
-        private const PixelFormat ReflectionsFormat = PixelFormat.R16G16B16A16_Float;
-#else
         private const PixelFormat RayTraceTargetFormat = PixelFormat.R11G11B10_Float;
         private const PixelFormat ReflectionsFormat = PixelFormat.R11G11B10_Float;
-#endif
 
         private ImageEffectShader depthPassShader;
         private ImageEffectShader blurPassShaderH;
@@ -478,7 +470,7 @@ namespace Xenko.Rendering.Images
             if (DepthResolution != ResolutionMode.Full)
             {
                 // Smaller depth buffer improves ray tracing performance.
-                
+
                 var depthBuffersSize = GetBufferResolution(depthBuffer, DepthResolution);
                 smallerDepthBuffer = NewScopedRenderTarget2D(depthBuffersSize.Width, depthBuffersSize.Height, PixelFormat.R32_Float, 1);
 

@@ -1,12 +1,15 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+
 using Xenko.Core.AssemblyProcessor.Serializers;
 
 namespace Xenko.Core.AssemblyProcessor
@@ -35,7 +38,7 @@ namespace Xenko.Core.AssemblyProcessor
             objectToPtr.Emit(OpCodes.Ret);
 
             // UpdateEngineHelper.PtrToObject
-            // Simpler "ldarg.0 + ret" doesn't work with Xamarin: https://bugzilla.xamarin.com/show_bug.cgi?id=40608
+            // TODO: Simpler "ldarg.0 + ret" doesn't work with Xamarin: https://bugzilla.xamarin.com/show_bug.cgi?id=40608
             var ptrToObject = RewriteBody(updateEngineHelperType.Methods.First(x => x.Name == "PtrToObject"));
             ptrToObject.Body.Variables.Add(new VariableDefinition(assembly.MainModule.TypeSystem.Object));
             ptrToObject.Emit(OpCodes.Ldloca_S, (byte)0);

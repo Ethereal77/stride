@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Xenko.Core;
@@ -75,12 +76,6 @@ namespace Xenko.Graphics.Regression
         {
             // set the camera values
             Reset();
-
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-                Input.Gestures.Add(new GestureConfigTap { RequiredNumberOfTaps = 2 });
-            }
 
             while (true)
             {

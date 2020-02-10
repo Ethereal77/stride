@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+
 using Xenko.Core.Annotations;
 
 namespace Xenko.Core.IO
@@ -17,7 +19,7 @@ namespace Xenko.Core.IO
     /// <remarks>
     /// <para>A uniform path contains only characters '/' to separate directories and doesn't contain any successive
     /// '/' or './'. This class is used to represent a path, relative or absolute to a directory or filename.</para>
-    /// <para>This class can be used to represent uniforms paths both on windows or unix platforms</para>
+    /// <para>This class can be used to represent uniforms paths on Windows.</para>
     /// TODO Provide more documentation on how to use this class
     /// </remarks>
     public abstract class UPath : IEquatable<UPath>, IComparable

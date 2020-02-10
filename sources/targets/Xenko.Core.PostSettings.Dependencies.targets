@@ -1,14 +1,25 @@
-<!-- Build file post-included by all Xenko projects -->
+<!--
+***********************************************************************************************
+  Xenko.Core.PostSettings.Dependencies.targets
+
+  Build file post-included after the building of the project to configure the analysis and
+  collection of dependencies (native libs and content) and the inclusion and copying of those
+  to the final destination (NuGet, output).
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.ssdeps; $(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);_XenkoRegisterDependenciesOutputs</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
-  <!-- 
-  *****************************************************************************************************************************
-  Dependencies reading (from .ssdeps)
-  *****************************************************************************************************************************
+  
+  <!--
+  **********************************************************
+   Reading of Dependencies (from .ssdeps)
+  **********************************************************
   -->
 
   <!-- List dependency files from .ssdeps -->
@@ -58,46 +69,24 @@
     </ItemGroup>
   </Target>
 
-  <!-- 
-  *****************************************************************************************************************************
-  Native libraries setup (from .ssdeps)
-  *****************************************************************************************************************************
+  <!--
+  **********************************************************
+   Setup of Native Libraries (from .ssdeps)
+  **********************************************************
   -->
   <Target Name="_XenkoSetupNativeLibraries" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="'$(XenkoDependenciesCopy)' != 'false'">
-    <!-- Windows, UWP, Linux & macOS -->
-    <ItemGroup Condition=" '$(XenkoPlatform)' == '' Or '$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux' Or '$(XenkoPlatform)' == 'macOS' Or '$(XenkoPlatform)' == 'UWP' ">
+    <!-- Windows -->
+    <ItemGroup Condition=" '$(XenkoPlatform)' == '' Or '$(XenkoPlatform)' == 'Windows' ">
       <None Include="@(_XenkoDependencyNativeLib)">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
-
-    <!-- Android -->
-    <ItemGroup Condition=" '$(XenkoPlatform)' == 'Android' ">
-      <AndroidNativeLibrary Include="@(_XenkoDependencyNativeLib)"/>
-    </ItemGroup>
-
-    <!--iOS -->
-    <ItemGroup Condition=" '$(XenkoPlatform)' == 'iOS' ">
-      <!-- strip any "lib" prefix and populate the LibraryName value -->
-      <_XenkoDependencyNativeLib>
-        <LibraryName>$([System.Text.RegularExpressions.Regex]::Match('%(Filename)', `(lib)*(.+)`).get_Groups().get_Item(2).ToString())</LibraryName>
-      </_XenkoDependencyNativeLib>
-
-      <None Include="@(_XenkoDependencyNativeLib)">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-  
-    <PropertyGroup Condition=" '$(XenkoPlatform)' == 'iOS' ">
-      <MtouchExtraArgsLibs>$(XenkoMTouchExtras) -L"%24{ProjectDir}" @(_XenkoDependencyNativeLib->'-l%(LibraryName) "%24{ProjectDir}/%(Filename)%(Extension)"',' ')</MtouchExtraArgsLibs>
-      <MtouchExtraArgs>$(MtouchExtraArgs) --compiler=clang -cxx -gcc_flags '-lstdc++ $(MtouchExtraArgsLibs)'</MtouchExtraArgs>
-    </PropertyGroup>
   </Target>
 
-  <!-- 
-  *****************************************************************************************************************************
-  Dependencies generation (to .ssdeps)
-  *****************************************************************************************************************************
+  <!--
+  **********************************************************
+   Generation of Dependencies Lists (to .ssdeps)
+  **********************************************************
   -->
   <Target Name="_XenkoGenerateDependencies">
     <!-- Set TargetPath on XenkoContent and XenkoNativeLib -->
@@ -125,7 +114,7 @@
         <Type>NativeLib</Type>
         <Destination>$(OutDir)%(TargetPath)</Destination>
       </_XenkoDependencyToCopy>
-      
+
       <_XenkoDependencyToCopy Remove="@(_XenkoNativeLibAssigned)" Condition=" '$(XenkoPackageBuild)' == 'true' And '%(_XenkoNativeLibAssigned.Extension)' == '.pdb' "/>
 
       <_XenkoDependencyToCopy>

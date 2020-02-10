@@ -1,8 +1,10 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
+
 using Xenko.Core;
 using Xenko.Core.Collections;
 using Xenko.Core.Mathematics;
@@ -406,7 +408,7 @@ namespace Xenko.Rendering.Lights
                         //if (z != centerZ)
                         //{
                         //    var plane = z < centerZ ? zPlanes[z + 1] : -zPlanes[z];
-                        //    
+                        //
                         //    positionScreen = Plane.DotCoordinate(ref plane, ref positionScreen, out )
                         //}
 
@@ -528,15 +530,6 @@ namespace Xenko.Rendering.Lights
                     fixed (PointLightData* pointLightsPtr = renderViewInfo.PointLights.Items)
                         context.CommandList.UpdateSubresource(clusteredGroupRenderer.pointLightsBuffer, 0, new DataBox((IntPtr)pointLightsPtr, 0, 0), new ResourceRegion(0, 0, 0, renderViewInfo.PointLights.Count * sizeof(PointLightData), 1, 1));
                 }
-#if XENKO_PLATFORM_MACOS
-                // macOS doesn't like when we provide a null Buffer or if it is not sufficiently allocated.
-                // It would cause an inifite loop. So for now we just create one with one element but not initializing it.
-                else if (clusteredGroupRenderer.pointLightsBuffer == null || clusteredGroupRenderer.pointLightsBuffer.SizeInBytes < sizeof(PointLightData))
-                {
-                    clusteredGroupRenderer.pointLightsBuffer?.Dispose();
-                    clusteredGroupRenderer.pointLightsBuffer = Buffer.New(context.GraphicsDevice, MathUtil.NextPowerOfTwo(sizeof(PointLightData)), 0, BufferFlags.ShaderResource, PixelFormat.R32G32B32A32_Float);
-                }
-#endif
 
                 // SpotLights: Ensure size and update
                 if (renderViewInfo.SpotLights.Count > 0)
@@ -544,28 +537,13 @@ namespace Xenko.Rendering.Lights
                     fixed (SpotLightData* spotLightsPtr = renderViewInfo.SpotLights.Items)
                         context.CommandList.UpdateSubresource(clusteredGroupRenderer.spotLightsBuffer, 0, new DataBox((IntPtr)spotLightsPtr, 0, 0), new ResourceRegion(0, 0, 0, renderViewInfo.SpotLights.Count * sizeof(SpotLightData), 1, 1));
                 }
-#if XENKO_PLATFORM_MACOS
-                // See previous macOS comment.
-                else if (clusteredGroupRenderer.spotLightsBuffer == null || clusteredGroupRenderer.spotLightsBuffer.SizeInBytes < sizeof(SpotLightData))
-                {
-                    clusteredGroupRenderer.spotLightsBuffer?.Dispose();
-                    clusteredGroupRenderer.spotLightsBuffer = Buffer.New(context.GraphicsDevice, MathUtil.NextPowerOfTwo(sizeof(SpotLightData)), 0, BufferFlags.ShaderResource, PixelFormat.R32G32B32A32_Float);
-                }
-#endif
+
                 // LightIndices: Ensure size and update
                 if (renderViewInfo.LightIndices.Count > 0)
                 {
                     fixed (int* lightIndicesPtr = renderViewInfo.LightIndices.Items)
                         context.CommandList.UpdateSubresource(clusteredGroupRenderer.lightIndicesBuffer, 0, new DataBox((IntPtr)lightIndicesPtr, 0, 0), new ResourceRegion(0, 0, 0, renderViewInfo.LightIndices.Count * sizeof(int), 1, 1));
                 }
-#if XENKO_PLATFORM_MACOS
-                // See previous macOS comment.
-                else if (clusteredGroupRenderer.lightIndicesBuffer == null || clusteredGroupRenderer.lightIndicesBuffer.SizeInBytes < sizeof(int))
-                {
-                    clusteredGroupRenderer.lightIndicesBuffer?.Dispose();
-                    clusteredGroupRenderer.lightIndicesBuffer = Buffer.New(context.GraphicsDevice, MathUtil.NextPowerOfTwo(sizeof(int)), 0, BufferFlags.ShaderResource, PixelFormat.R32_UInt);
-                }
-#endif
             }
 
             private void FinishCluster(Dictionary<LightClusterLinkedNode, int> movedClusters, ref FastListStruct<int> lightIndices, int clusterIndex)
@@ -624,7 +602,7 @@ namespace Xenko.Rendering.Lights
                 if (lightNodes.Items[clusterIndex].LightIndex != -1)
                 {
                     var movedCluster = lightNodes.Items[clusterIndex];
-                    
+
                     // Try to check if same linked-list doesn't already exist
                     if (!movedClusters.TryGetValue(movedCluster, out nextNode))
                     {
@@ -755,7 +733,7 @@ namespace Xenko.Rendering.Lights
                 public Int2 ClusterCount;
             }
         }
-        
+
         private class PointSpotShaderGroupData : LightShaderGroupDynamic
         {
             public PointSpotShaderGroupData(RenderContext renderContext)

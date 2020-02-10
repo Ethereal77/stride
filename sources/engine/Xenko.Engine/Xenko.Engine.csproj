@@ -25,24 +25,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Resources\Resource.Designer.cs" />
-  </ItemGroup>
-  <Choose>
-    <When Condition=" '$(XenkoPlatform)' == 'Android'">
-      <PropertyGroup>
-        <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
-      </PropertyGroup>
-      <ItemGroup>
-        <Compile Include="Resources\Resource.Designer.cs" />
-        <AndroidResource Include="Resources\Layout\Game.axml">
-          <SubType>AndroidResource</SubType>
-        </AndroidResource>
-        <Reference Include="System.Xml" />
-      </ItemGroup>
-    </When>
-  </Choose>
-
-  <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
@@ -52,7 +34,10 @@
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.10.0" />
     <ProjectReference Include="..\Xenko.Audio\Xenko.Audio.csproj" />
     <ProjectReference Include="..\Xenko.Rendering\Xenko.Rendering.csproj" />
-    <ProjectReference Include="..\Xenko.VirtualReality\Xenko.VirtualReality.csproj" />
+    <ProjectReference Include="..\Xenko.Input\Xenko.Input.csproj">
+      <Project>{84deb606-77ed-49cd-9aed-d2b13c1f5a1e}</Project>
+      <Name>Xenko.Input</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Xenko.Shared\Refactor\Xenko.Refactor.projitems" Label="Shared" />
   <Choose>
@@ -68,7 +53,7 @@
   </Choose>
   <Import Project="$(XenkoPostSettingsTargets)" />
   <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

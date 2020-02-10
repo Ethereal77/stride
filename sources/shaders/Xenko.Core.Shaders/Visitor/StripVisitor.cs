@@ -1,8 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Xenko.Core.Shaders.Ast;
 using Xenko.Core.Shaders.Ast.Hlsl;
 
@@ -106,7 +109,7 @@ namespace Xenko.Core.Shaders.Visitor
                 AddReference((Node)container, variable);
             }
         }
-        
+
         public override void Visit(Shader shader)
         {
             indirectReferences = new Dictionary<Node, HashSet<Node>>();
@@ -143,7 +146,7 @@ namespace Xenko.Core.Shaders.Visitor
             {
                 var declaration = nodes[i];
 
-                // Strip constant buffer elements by elements only if "stripUniforms" is active (useful for API without constant buffers like OpenGL ES 2.0)
+                // Strip constant buffer elements by elements only if "stripUniforms" is active
                 if (stripUniforms && declaration is ConstantBuffer)
                 {
                     var constantBuffer = (ConstantBuffer)declaration;
@@ -251,4 +254,3 @@ namespace Xenko.Core.Shaders.Visitor
         }
     }
 }
-

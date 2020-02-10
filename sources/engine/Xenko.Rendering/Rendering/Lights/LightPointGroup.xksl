@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 namespace Xenko.Rendering.Lights
 {
     /// <summary>
@@ -22,24 +24,13 @@ namespace Xenko.Rendering.Lights
         /// </summary>
         override void PrepareDirectLightCore(int lightIndex)
         {
-            // TODO: Workaraound for SPIR-V compiler. Revert later
-            PointLightDataInternal data;
-            data.PositionWS = Lights[lightIndex].PositionWS;
-            data.InvSquareRadius = Lights[lightIndex].InvSquareRadius;
-            data.Color = Lights[lightIndex].Color;
-
-            ProcessLight(data);
+            ProcessLight(Lights[lightIndex]);
         }
 
         override float ComputeAttenuation(float3 position, int lightIndex)
         {
-            // TODO: Workaraound for SPIR-V compiler. Revert later
-            PointLightDataInternal data;
-            data.PositionWS = Lights[lightIndex].PositionWS;
-            data.InvSquareRadius = Lights[lightIndex].InvSquareRadius;
-
             float3 lightVectorNorm;
-            return ComputeAttenuation(data, position, lightVectorNorm);
+            return ComputeAttenuation(Lights[lightIndex], position, lightVectorNorm);
         }
     };
 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -6,13 +9,18 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Optimization;
+
 using Microsoft.Owin.Builder;
+
 using Newtonsoft.Json.Serialization;
+
 using Owin;
+
+using Thinktecture.IdentityServer.AccessTokenValidation;
+
 using Xenko.Metrics.ServerApp.Content;
 using Xenko.Metrics.ServerApp.Controllers;
 using Xenko.Metrics.ServerApp.Models;
-using Thinktecture.IdentityServer.AccessTokenValidation;
 
 namespace Xenko.Metrics.ServerApp
 {

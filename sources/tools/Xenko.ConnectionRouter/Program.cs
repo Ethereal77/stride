@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -7,7 +8,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Mono.Options;
+
 using Xenko.Core.Diagnostics;
 using Xenko.Core.Windows;
 using Xenko.Engine.Network;
@@ -22,7 +25,6 @@ namespace Xenko.ConnectionRouter
         {
             var exeName = Path.GetFileName(Assembly.GetExecutingAssembly().Location);
             var showHelp = false;
-            var windowsPhonePortMapping = false;
             int exitCode = 0;
             string logFileName = "routerlog.txt";
 
@@ -41,8 +43,7 @@ namespace Xenko.ConnectionRouter
                     "=== Options ===",
                     string.Empty,
                     { "h|help", "Show this message and exit", v => showHelp = v != null },
-                    { "log-file=", "Log build in a custom file (default: routerlog.txt).", v => logFileName = v },
-                    { "register-windowsphone-portmapping", "Register Windows Phone IpOverUsb port mapping", v => windowsPhonePortMapping = true },
+                    { "log-file=", "Log build in a custom file (default: routerlog.txt).", v => logFileName = v }
                 };
 
             try
@@ -57,12 +58,6 @@ namespace Xenko.ConnectionRouter
                 // Make sure path exists
                 if (commandArgs.Count > 0)
                     throw new OptionException("This command expect no additional arguments", "");
-
-                if (windowsPhonePortMapping)
-                {
-                    WindowsPhoneTracker.RegisterWindowsPhonePortMapping();
-                    return 0;
-                }
 
                 SetupTrayIcon(logFileName);
 
@@ -86,23 +81,6 @@ namespace Xenko.ConnectionRouter
 
                     // Start router (in listen server mode)
                     router.Listen(RouterClient.DefaultPort).Wait();
-
-                    // Start Android management thread
-                    new Thread(() => AndroidTracker.TrackDevices(router)) { IsBackground = true }.Start();
-
-                    // Start Windows Phone management thread
-                    new Thread(() => WindowsPhoneTracker.TrackDevices(router)) { IsBackground = true }.Start();
-
-                    //Start iOS device discovery and proxy launcher
-                    //Currently this is used only internally for QA testing... as we cannot attach the debugger from windows for normal usages..
-                    if (IosTracker.CanProxy())
-                    {
-                        new Thread(async () =>
-                        {
-                            var iosTracker = new IosTracker(router);
-                            await iosTracker.TrackDevices();
-                        }) { IsBackground = true }.Start();
-                    }
 
                     // Start WinForms loop
                     System.Windows.Forms.Application.Run();

@@ -1,33 +1,19 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-//
-// Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 #if XENKO_GRAPHICS_API_DIRECT3D
+
 using System;
 using System.Reflection;
+
 using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+
 using Xenko.Core.Collections;
+
 #if XENKO_GRAPHICS_API_DIRECT3D11
 using BackBufferResourceType = SharpDX.Direct3D11.Texture2D;
 #elif XENKO_GRAPHICS_API_DIRECT3D12
@@ -71,25 +57,19 @@ namespace Xenko.Graphics
 
         public override bool IsFullScreen
         {
-            get
-            {
-#if XENKO_PLATFORM_UWP
-                return false;
-#else
-                return swapChain.IsFullScreen;
-#endif
-            }
+            get => swapChain.IsFullScreen;
 
             set
             {
-#if !XENKO_PLATFORM_UWP
                 if (swapChain == null)
                     return;
 
                 var outputIndex = Description.PreferredFullScreenOutputIndex;
 
                 // no outputs connected to the current graphics adapter
-                var output = GraphicsDevice.Adapter != null && outputIndex < GraphicsDevice.Adapter.Outputs.Length ? GraphicsDevice.Adapter.Outputs[outputIndex] : null;
+                var output = GraphicsDevice.Adapter != null &&
+                             outputIndex < GraphicsDevice.Adapter.Outputs.Length
+                                ? GraphicsDevice.Adapter.Outputs[outputIndex] : null;
 
                 Output currentOutput = null;
 
@@ -128,14 +108,13 @@ namespace Xenko.Graphics
                     Resize(backBuffer.ViewWidth, backBuffer.ViewHeight, backBuffer.ViewFormat);
                 }
 
-                // If going to window mode: 
+                // If going to window mode:
                 if (!switchToFullScreen)
                 {
                     // call 1) SwapChain.IsFullScreen 2) SwapChain.Resize
                     description.RefreshRate = new SharpDX.DXGI.Rational(0, 0);
                     swapChain.ResizeTarget(ref description);
                 }
-#endif
             }
         }
 
@@ -210,19 +189,6 @@ namespace Xenko.Graphics
             // Manually update all children textures
             var fastList = DestroyChildrenTextures(backBuffer);
 
-#if XENKO_PLATFORM_UWP
-            var swapChainPanel = Description.DeviceWindowHandle.NativeWindow as Windows.UI.Xaml.Controls.SwapChainPanel;
-            if (swapChainPanel != null)
-            {
-                var swapChain2 = swapChain.QueryInterface<SwapChain2>();
-                if (swapChain2 != null)
-                {
-                    swapChain2.MatrixTransform = new RawMatrix3x2 { M11 = 1f / swapChainPanel.CompositionScaleX, M22 = 1f / swapChainPanel.CompositionScaleY };
-                    swapChain2.Dispose();
-                }
-            }
-#endif
-
             // If format is same as before, using Unknown (None) will keep the current
             // We do that because on Win10/RT, actual format might be the non-srgb one and we don't want to switch to srgb one by mistake (or need #ifdef)
             if (format == backBuffer.Format)
@@ -292,77 +258,9 @@ namespace Xenko.Graphics
                 throw new ArgumentException("DeviceWindowHandle cannot be null");
             }
 
-#if XENKO_PLATFORM_UWP
-            return CreateSwapChainForUWP();
-#else
             return CreateSwapChainForWindows();
-#endif
         }
 
-#if XENKO_PLATFORM_UWP
-        private SwapChain CreateSwapChainForUWP()
-        {
-            bufferCount = 2;
-            var description = new SwapChainDescription1
-            {
-                // Automatic sizing
-                Width = Description.BackBufferWidth,
-                Height = Description.BackBufferHeight,
-                Format = (SharpDX.DXGI.Format)Description.BackBufferFormat.ToNonSRgb(),
-                Stereo = false,
-                SampleDescription = new SharpDX.DXGI.SampleDescription((int)Description.MultisampleCount, 0),
-                Usage = Usage.BackBuffer | Usage.RenderTargetOutput,
-                // Use two buffers to enable flip effect.
-                BufferCount = bufferCount,
-                Scaling = SharpDX.DXGI.Scaling.Stretch,
-                SwapEffect = SharpDX.DXGI.SwapEffect.FlipSequential,
-            };
-
-            SwapChain swapChain = null;
-            switch (Description.DeviceWindowHandle.Context)
-            {
-                case Games.AppContextType.UWPXaml:
-                {
-                    var nativePanel = ComObject.As<ISwapChainPanelNative>(Description.DeviceWindowHandle.NativeWindow);
-
-                    // Creates the swap chain for XAML composition
-                    swapChain = new SwapChain1(GraphicsAdapterFactory.NativeFactory, GraphicsDevice.NativeDevice, ref description);
-
-                    // Associate the SwapChainPanel with the swap chain
-                    nativePanel.SwapChain = swapChain;
-
-                    break;
-                }
-
-                case Games.AppContextType.UWPCoreWindow:
-                {
-                    using (var dxgiDevice = GraphicsDevice.NativeDevice.QueryInterface<SharpDX.DXGI.Device2>())
-                    {
-                        // Ensure that DXGI does not queue more than one frame at a time. This both reduces
-                        // latency and ensures that the application will only render after each VSync, minimizing
-                        // power consumption.
-                        dxgiDevice.MaximumFrameLatency = 1;
-
-                        // Next, get the parent factory from the DXGI Device.
-                        using (var dxgiAdapter = dxgiDevice.Adapter)
-                        using (var dxgiFactory = dxgiAdapter.GetParent<SharpDX.DXGI.Factory2>())
-                            // Finally, create the swap chain.
-                        using (var coreWindow = new SharpDX.ComObject(Description.DeviceWindowHandle.NativeWindow))
-                        {
-                            swapChain = new SharpDX.DXGI.SwapChain1(dxgiFactory
-                                , GraphicsDevice.NativeDevice, coreWindow, ref description);
-                        }
-                    }
-
-                    break;
-                }
-                default:
-                    throw new NotSupportedException(string.Format("Window context [{0}] not supported while creating SwapChain", Description.DeviceWindowHandle.Context));
-            }
-
-            return swapChain;
-        }
-#else
         /// <summary>
         /// Create the SwapChain on Windows. To avoid any hard dependency on a actual windowing system
         /// we assume that the <c>Description.DeviceWindowHandle.NativeHandle</c> holds
@@ -396,7 +294,7 @@ namespace Xenko.Graphics
 #endif
             var description = new SwapChainDescription
                 {
-                    ModeDescription = new ModeDescription(Description.BackBufferWidth, Description.BackBufferHeight, Description.RefreshRate.ToSharpDX(), (SharpDX.DXGI.Format)backbufferFormat), 
+                    ModeDescription = new ModeDescription(Description.BackBufferWidth, Description.BackBufferHeight, Description.RefreshRate.ToSharpDX(), (SharpDX.DXGI.Format)backbufferFormat),
                     BufferCount = bufferCount, // TODO: Do we really need this to be configurable by the user?
                     OutputHandle = handle,
                     SampleDescription = new SampleDescription((int)Description.MultisampleCount, 0),
@@ -407,7 +305,7 @@ namespace Xenko.Graphics
 #endif
                     Usage = SharpDX.DXGI.Usage.BackBuffer | SharpDX.DXGI.Usage.RenderTargetOutput,
                     IsWindowed = true,
-                    Flags = Description.IsFullScreen ? SwapChainFlags.AllowModeSwitch : SwapChainFlags.None, 
+                    Flags = Description.IsFullScreen ? SwapChainFlags.AllowModeSwitch : SwapChainFlags.None,
                 };
 
 #if XENKO_GRAPHICS_API_DIRECT3D11
@@ -427,13 +325,12 @@ namespace Xenko.Graphics
                 // Switch to full screen
                 newSwapChain.IsFullScreen = true;
 
-                // This is really important to call ResizeBuffers AFTER switching to IsFullScreen 
+                // This is really important to call ResizeBuffers AFTER switching to IsFullScreen
                 newSwapChain.ResizeBuffers(bufferCount, Description.BackBufferWidth, Description.BackBufferHeight, (SharpDX.DXGI.Format)Description.BackBufferFormat, SwapChainFlags.AllowModeSwitch);
             }
 
             return newSwapChain;
         }
-#endif
     }
 }
 #endif

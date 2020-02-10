@@ -1,15 +1,21 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_GRAPHICS_API_DIRECT3D // Need SharpDX
+
+#if XENKO_GRAPHICS_API_DIRECT3D // Need SharpDX
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using SharpDX;
 using SharpDX.D3DCompiler;
+
 using Xenko.Core.Diagnostics;
 using Xenko.Core.Storage;
 using Xenko.Rendering;
 using Xenko.Graphics;
+
 using ConstantBufferType = Xenko.Shaders.ConstantBufferType;
 using ShaderBytecode = Xenko.Shaders.ShaderBytecode;
 using ShaderVariableType = SharpDX.D3DCompiler.ShaderVariableType;
@@ -495,31 +501,24 @@ namespace Xenko.Shaders.Compiler.Direct3D
         {
             switch (graphicsProfile)
             {
-                case GraphicsProfile.Level_9_1:
-                    return "4_0_level_9_1";
-                case GraphicsProfile.Level_9_2:
-                    return "4_0_level_9_2";
-                case GraphicsProfile.Level_9_3:
-                    return "4_0_level_9_3";
-                case GraphicsProfile.Level_10_0:
-                    return "4_0";
-                case GraphicsProfile.Level_10_1:
-                    return "4_1";
-                case GraphicsProfile.Level_11_0:
+                case GraphicsProfile.Level_11_2:
                 case GraphicsProfile.Level_11_1:
+                case GraphicsProfile.Level_11_0:
                     return "5_0";
             }
+
             throw new ArgumentException("graphicsProfile");
         }
+        
         private static readonly Dictionary<ShaderVariableType, EffectParameterType> MapTypes = new Dictionary<ShaderVariableType,EffectParameterType>()
             {
-                {ShaderVariableType.Void                                 , EffectParameterType.Void                          },
-                {ShaderVariableType.Bool                                 , EffectParameterType.Bool                          },
-                {ShaderVariableType.Int                                  , EffectParameterType.Int                           },
-                {ShaderVariableType.Float                                , EffectParameterType.Float                         },
-                {ShaderVariableType.UInt                                 , EffectParameterType.UInt                          },
-                {ShaderVariableType.UInt8                                , EffectParameterType.UInt8                         },
-                {ShaderVariableType.Double                               , EffectParameterType.Double                        },
+                {ShaderVariableType.Void   , EffectParameterType.Void   },
+                {ShaderVariableType.Bool   , EffectParameterType.Bool   },
+                {ShaderVariableType.Int    , EffectParameterType.Int    },
+                {ShaderVariableType.Float  , EffectParameterType.Float  },
+                {ShaderVariableType.UInt   , EffectParameterType.UInt   },
+                {ShaderVariableType.UInt8  , EffectParameterType.UInt8  },
+                {ShaderVariableType.Double , EffectParameterType.Double },
             };
 
         private EffectParameterType ConvertVariableValueType(ShaderVariableType type, LoggerResult log)

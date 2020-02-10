@@ -1,12 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Xenko.Core;
 using Xenko.Core.Extensions;
 using Xenko.Core.Mathematics;
@@ -41,15 +42,6 @@ namespace Xenko.Games.Testing
             {
                 case PlatformType.Windows:
                     platformName = "Windows";
-                    break;
-                case PlatformType.Android:
-                    platformName = "Android";
-                    break;
-                case PlatformType.iOS:
-                    platformName = "iOS";
-                    break;
-                case PlatformType.UWP:
-                    platformName = "UWP";
                     break;
                 default:
                     platformName = "";
@@ -91,15 +83,6 @@ namespace Xenko.Games.Testing
 
             // Wait up to one minute
             var waitMs = 60 * 1000;
-            switch (platform)
-            {
-                case PlatformType.Android:
-                    waitMs *= 2;
-                    break;
-                case PlatformType.iOS:
-                    waitMs *= 2;
-                    break;
-            }
 
             if (!ev.WaitOne(waitMs))
             {
@@ -198,5 +181,3 @@ namespace Xenko.Games.Testing
         }
     }
 }
-
-#endif

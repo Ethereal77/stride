@@ -18,7 +18,7 @@ Folders and projects layout
    Micro-threading library based on C# 5.0 async (a.k.a. stackless programming)
 * __Xenko.Core.AssemblyProcessor__:
    Internal tool used to patch assemblies to add various features, such as Serialization auto-generation, various memory/pinning operations, module initializers, etc...
-   
+
 ### presentation ###
 
 * __Xenko.Core.Presentation__: WPF UI library (themes, controls such as propertygrid, behaviors, etc...)
@@ -37,11 +37,11 @@ and used by most projects.
 ### shader ###
 
 * __Irony__: Parsing library, used by Xenko.Core.Shaders. Should later be replaced by ANTLR4.
-* __Xenko.Core.Shaders__: Shader parsing, type analysis and conversion library (used by HLSL->GLSL and Xenko Shader Language)
+* __Xenko.Core.Shaders__: Shader parsing and type analysis library (used by HLSL and Xenko Shader Language).
 
 ### targets ###
 
-* MSBuild target files to create easily cross-platform solutions (Android, iOS, WinRT, WinPhone, etc...), and define behaviors and targets globally. Extensible.
+* MSBuild target files to create easily cross-platform solutions and define behaviors and targets globally. Extensible.
 
 ----------
 

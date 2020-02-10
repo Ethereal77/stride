@@ -1,7 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #pragma warning disable SA1402 // File may only contain a single class
+
 using System;
+
 using Xenko.Core;
 using Xenko.Core.Collections;
 using Xenko.Core.Mathematics;
@@ -21,7 +25,6 @@ namespace Xenko.Animations
             if (typeof(T) == typeof(float))
                 return new AnimationCurveEvaluatorOptimizedFloatGroup();
 
-            // TODO: Reintroduces explicit int path for now, since generic path does not work on iOS
             if (typeof(T) == typeof(int))
                 return new AnimationCurveEvaluatorOptimizedIntGroup();
 

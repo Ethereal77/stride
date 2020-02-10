@@ -1,6 +1,9 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #if XENKO_GRAPHICS_API_DIRECT3D11
+
 using System;
 using SharpDX;
 
@@ -48,21 +51,6 @@ namespace Xenko.Graphics
             nativeDescription.MaximumLod = Description.MaxMipLevel;
             nativeDescription.MinimumLod = Description.MinMipLevel;
             nativeDescription.MipLodBias = Description.MipMapLevelOfDetailBias;
-
-            // For 9.1, anisotropy cannot be larger then 2
-            // mirror once is not supported either
-            if (GraphicsDevice.Features.CurrentProfile == GraphicsProfile.Level_9_1)
-            {
-                // TODO: Min with user-value instead?
-                nativeDescription.MaximumAnisotropy = 2;
-
-                if (nativeDescription.AddressU == SharpDX.Direct3D11.TextureAddressMode.MirrorOnce)
-                    nativeDescription.AddressU = SharpDX.Direct3D11.TextureAddressMode.Mirror;
-                if (nativeDescription.AddressV == SharpDX.Direct3D11.TextureAddressMode.MirrorOnce)
-                    nativeDescription.AddressV = SharpDX.Direct3D11.TextureAddressMode.Mirror;
-                if (nativeDescription.AddressW == SharpDX.Direct3D11.TextureAddressMode.MirrorOnce)
-                    nativeDescription.AddressW = SharpDX.Direct3D11.TextureAddressMode.Mirror;
-            }
 
             NativeDeviceChild = new SharpDX.Direct3D11.SamplerState(NativeDevice, nativeDescription);
         }

@@ -1,10 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Xunit;
+
 using Xenko.Core.Mathematics;
 using Xenko.Games;
 using Xenko.Graphics;
@@ -64,20 +67,17 @@ namespace Xenko.Input.Tests
                 LogEvent(evt.ToString(), GetLogColor(evt));
             }
 
-#if XENKO_PLATFORM_WINDOWS
             WriteLine($"Raw input: {Input.UseRawInput} (Ctrl+R to toggle)");
-#endif
             WriteLine($"Locked mouse position: {Input.IsMousePositionLocked} (Ctrl+E to toggle)");
 
             if ((Input.IsKeyDown(Keys.LeftCtrl) || Input.IsKeyDown(Keys.RightCtrl)))
             {
-#if XENKO_PLATFORM_WINDOWS
                 // Toggle raw input
                 if (Input.IsKeyPressed(Keys.R))
                 {
                     Input.UseRawInput = !Input.UseRawInput;
                 }
-#endif
+
                 // Toggle mouse lock
                 if (Input.IsKeyPressed(Keys.E))
                 {

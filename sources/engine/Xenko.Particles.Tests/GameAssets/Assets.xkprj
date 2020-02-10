@@ -5,24 +5,9 @@ BuildConfiguration:
     Profiles:
         Windows: !XenkoProjectBuildProfile
             Platform: Windows
-            GraphicsPlatform: Direct3D
+            GraphicsPlatform: Direct3D11
             GraphicsProfile: Level_11_0
             OutputDirectory: ../../../../Bin/Windows-AnyCPU-Direct3D/data/Xenko.Input.Tests
-        Windows_OGL: !XenkoProjectBuildProfile
-            Platform: Windows
-            GraphicsPlatform: OpenGLCore
-            GraphicsProfile: Level_9_1
-            OutputDirectory: ../../../../Bin/Windows-AnyCPU-OpenGL/data/Xenko.Input.Tests
-        Android: !XenkoProjectBuildProfile
-            Platform: Android
-            GraphicsPlatform: OpenGLES20
-            GraphicsProfile: Level_9_1
-            OutputDirectory: ../obj/Android-AnyCPU-OpenGLES/assets/data
-        iOS: !XenkoProjectBuildProfile
-            Platform: iOS
-            GraphicsPlatform: OpenGLES20
-            GraphicsProfile: Level_9_1
-            OutputDirectory: ../../../../Bin/iOS-AnyCPU-OpenGLES/data/Xenko.Input.Tests
 ExplicitFolders: []
 PluginReferences: []
 PackageReferences: []

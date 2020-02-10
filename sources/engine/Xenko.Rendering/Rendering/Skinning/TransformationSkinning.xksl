@@ -1,19 +1,15 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 /// <summary>
 /// Performs skinning on the position.
 /// </summary>
 /// <remarks>
 /// SkinningMaxBones: Macro - number of threads on the X axis.
-/// XENKO_GRAPHICS_API_OPENGLES: Macro - flag to activate on for opengl es 2.0 platforms (int4 attributes like blend indices are not supported).
 /// </remarks>
 #ifndef SkinningMaxBones
 # define SkinningMaxBones 4
-#endif
-
-// TODO: use XENKO_GRAPHICS_API_OPENGLES20 because opengl es 3.0 supports int4 atributes.
-#ifndef XENKO_GRAPHICS_API_OPENGLES
-# define XENKO_GRAPHICS_API_OPENGLES false
 #endif
 
 shader TransformationSkinning : TransformationBase, PositionStream4, Transformation
@@ -25,12 +21,7 @@ shader TransformationSkinning : TransformationBase, PositionStream4, Transformat
     }
 
     stage stream float4 BlendWeights : BLENDWEIGHT;
-#if XENKO_GRAPHICS_API_OPENGLES
-    stage stream float4 BlendIndices : BLENDINDICES;
-    //stage stream int4 BlendIndices : BLENDINDICES;
-#else
     stage stream uint4 BlendIndices : BLENDINDICES;
-#endif
 
     stage stream float4x4 skinningBlendMatrix;
 

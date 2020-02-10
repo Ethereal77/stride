@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -7,7 +8,9 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
+
 using Mono.Options;
+
 using Xenko.Core;
 using Xenko.Debugger.Target;
 
@@ -39,7 +42,7 @@ namespace Xenko
                 string.Empty,
                 { "h|help", "Show this message and exit", v => showHelp = v != null },
                 { "host=", "Host pipe", v => hostPipe = v },
-                { "wait-debugger-attach", "Process will wait for a debuggger to attach, for 5 seconds", v => waitDebuggerAttach = true },
+                { "wait-debugger-attach", "Process will wait for a debugger to attach, for 5 seconds", v => waitDebuggerAttach = true },
             };
 
             try

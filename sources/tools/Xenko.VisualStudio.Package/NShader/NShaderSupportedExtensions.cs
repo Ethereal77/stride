@@ -1,20 +1,8 @@
-#region Header Licence
-//  ---------------------------------------------------------------------
-// 
-//  Copyright (c) 2009 Alexandre Mutel and Microsoft Corporation.  
-//  All rights reserved.
-// 
-//  This code module is part of NShader, a plugin for visual studio
-//  to provide syntax highlighting for shader languages (hlsl, glsl, cg)
-// 
-//  ------------------------------------------------------------------
-// 
-//  This code is licensed under the Microsoft Public License. 
-//  See the file License.txt for the license details.
-//  More info on: http://nshader.codeplex.com
-// 
-//  ------------------------------------------------------------------
-#endregion
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2009 NShader - Alexandre Mutel, Microsoft Corporation
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 namespace NShader
 {
     /// <summary>
@@ -30,18 +18,6 @@ namespace NShader
         public const string HLSL_VSH = ".vsh";
         public const string HLSL_PSH = ".psh";
         public const string SL_FX = ".slfx";
-
-        // GLSL file extensions
-        public const string GLSL_FRAG = ".frag";
-        public const string GLSL_VERT = ".vert";
-        public const string GLSL_FP = ".fp";
-        public const string GLSL_VP = ".vp";
-        public const string GLSL_GEOM = ".geom";
-        public const string GLSL_GLSL = ".glsl";
-
-        // CG file extensions
-        public const string CG_CG = ".cg";
-        public const string CG_CGFX = ".cgfx";
 
         // Xenko file extensions
         public const string Xenko_Shader = ".xksl";

@@ -1,9 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Xunit;
+
 using Xenko.Core.Mathematics;
 using Xenko.Rendering;
 using Xenko.Games;
@@ -94,7 +98,7 @@ namespace Xenko.Graphics.Tests
 
             projection = Matrix.PerspectiveFovRH((float)Math.PI / 4.0f, (float)GraphicsDevice.Presenter.BackBuffer.ViewWidth / GraphicsDevice.Presenter.BackBuffer.ViewHeight, 0.1f, 100.0f);
 
-            if (GraphicsDevice.Presenter.BackBuffer.ViewWidth < GraphicsDevice.Presenter.BackBuffer.ViewHeight) // the screen is standing up on Android{
+            if (GraphicsDevice.Presenter.BackBuffer.ViewWidth < GraphicsDevice.Presenter.BackBuffer.ViewHeight)
                 view = Matrix.LookAtRH(new Vector3(0, 0, 10), new Vector3(0, 0, 0), Vector3.UnitX);
         }
 

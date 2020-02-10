@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -84,16 +86,9 @@ namespace Xenko.Core.IO
         {
             PlatformFolders.IsVirtualFileSystemInitialized = true;
             // TODO: find a better solution to customize the ApplicationDataDirectory, now we're very limited due to the initialization from a static constructor
-#if XENKO_PLATFORM_ANDROID
-            ApplicationData = new ZipFileSystemProvider("/data", PlatformAndroid.Context.ApplicationInfo.SourceDir);
-#else
             ApplicationData = new FileSystemProvider("/data", Path.Combine(PlatformFolders.ApplicationDataDirectory, PlatformFolders.ApplicationDataSubDirectory));
-#endif
             ApplicationCache = new FileSystemProvider("/cache", PlatformFolders.ApplicationCacheDirectory);
-#if XENKO_PLATFORM_IOS
-            // On iOS, we don't want cache folder to be cleared by the OS.
-            ((FileSystemProvider)ApplicationCache).AutoSetSkipBackupAttribute = true;
-#endif
+
             ApplicationRoaming = new FileSystemProvider("/roaming", PlatformFolders.ApplicationRoamingDirectory);
             ApplicationLocal = new FileSystemProvider("/local", PlatformFolders.ApplicationLocalDirectory);
             ApplicationTemporary = new FileSystemProvider("/tmp", PlatformFolders.ApplicationTemporaryDirectory);
@@ -122,7 +117,7 @@ namespace Xenko.Core.IO
             if (provider.RootPath != null)
             {
                if (providers.ContainsKey(provider.RootPath))
-                   throw new InvalidOperationException(string.Format("A Virtual File Provider with the root path \"{0}\" already exists.", provider.RootPath)); 
+                   throw new InvalidOperationException(string.Format("A Virtual File Provider with the root path \"{0}\" already exists.", provider.RootPath));
 
                providers.Add(provider.RootPath, provider);
             }
@@ -202,7 +197,7 @@ namespace Xenko.Core.IO
 
             return result.Provider.DirectoryExists(result.Path);
         }
-        
+
         public static void FileDelete(string path)
         {
             var result = ResolveProvider(path, true);
@@ -229,7 +224,7 @@ namespace Xenko.Core.IO
             var result = ResolveProvider(path, true);
             return result.Provider.FileSize(result.Path);
         }
-        
+
         public static DateTime GetLastWriteTime(string path)
         {
             var result = ResolveProvider(path, true);

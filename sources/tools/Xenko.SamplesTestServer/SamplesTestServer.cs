@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Xenko.Core;
@@ -13,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Xenko.Core.Extensions;
 using Xenko.Graphics.Regression;
 
@@ -37,104 +39,10 @@ namespace Xenko.SamplesTestServer
         private SocketMessageLayer currentTester;
         private readonly object loggerLock = new object();
 
-        public SamplesTestServer() : base($"/service/Xenko.SamplesTestServer/{XenkoVersion.NuGetVersion}/Xenko.SamplesTestServer.exe")
+        public SamplesTestServer()
+            : base($"/service/Xenko.SamplesTestServer/{XenkoVersion.NuGetVersion}/Xenko.SamplesTestServer.exe")
         {
             GameTestingSystem.Initialized = true;
-
-            //start logging the iOS device if we have the proper tools avail
-            if (IosTracker.CanProxy())
-            {
-                var loggerProcess = Process.Start(new ProcessStartInfo($"idevicesyslog.exe", "-d")
-                {
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                });
-
-                if (loggerProcess != null)
-                {
-                    loggerProcess.OutputDataReceived += (sender, args) =>
-                    {
-                        try
-                        {
-                            lock (loggerLock)
-                            {
-                                currentTester?.Send(new LogRequest { Message = $"STDIO: {args.Data}" }).Wait();
-                            }
-                        }
-                        catch
-                        {
-                        }
-                    };
-
-                    loggerProcess.ErrorDataReceived += (sender, args) =>
-                    {
-                        try
-                        {
-                            lock (loggerLock)
-                            {
-                                currentTester?.Send(new LogRequest { Message = $"STDERR: {args.Data}" }).Wait();
-                            }
-                        }
-                        catch
-                        {
-                        }
-                    };
-
-                    loggerProcess.BeginOutputReadLine();
-                    loggerProcess.BeginErrorReadLine();
-
-                    new AttachedChildProcessJob(loggerProcess);
-                }
-            }
-
-            //Start also adb in case of android device
-            var adbPath = AndroidDeviceEnumerator.GetAdbPath();
-            if (!string.IsNullOrEmpty(adbPath) && AndroidDeviceEnumerator.ListAndroidDevices().Length > 0)
-            {
-                //clear the log first
-                ShellHelper.RunProcessAndGetOutput("cmd.exe", $"/C {adbPath} logcat -c");
-
-                //start logger
-                var loggerProcess = Process.Start(new ProcessStartInfo("cmd.exe", $"/C {adbPath} logcat")
-                {
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                });
-
-                if (loggerProcess != null)
-                {
-                    loggerProcess.OutputDataReceived += (sender, args) =>
-                    {
-                        try
-                        {
-                            currentTester?.Send(new LogRequest { Message = $"STDIO: {args.Data}" }).Wait();
-                        }
-                        catch
-                        {
-                        }
-                    };
-
-                    loggerProcess.ErrorDataReceived += (sender, args) =>
-                    {
-                        try
-                        {
-                            currentTester?.Send(new LogRequest { Message = $"STDERR: {args.Data}" }).Wait();
-                        }
-                        catch
-                        {
-                        }
-                    };
-
-                    loggerProcess.BeginOutputReadLine();
-                    loggerProcess.BeginErrorReadLine();
-
-                    new AttachedChildProcessJob(loggerProcess);
-                }
-            }
         }
 
         protected override async void HandleClient(SimpleSocket clientSocket, string url)
@@ -209,91 +117,6 @@ namespace Xenko.SamplesTestServer
 
                                     process.BeginOutputReadLine();
                                     process.BeginErrorReadLine();
-
-                                    var currenTestPair = new TestPair { TesterSocket = socketMessageLayer, GameName = request.GameAssembly, Process = process };
-                                    lock (processes)
-                                    {
-                                        processes[request.GameAssembly] = currenTestPair;
-                                        testerToGame[socketMessageLayer] = currenTestPair;
-                                    }
-                                    await socketMessageLayer.Send(new LogRequest { Message = "Process created, id: " + process.Id.ToString() });
-                                }
-                                break;
-                            }
-                        case (int)PlatformType.Android:
-                            {
-                                Process process = null;
-                                try
-                                {
-                                    process = Process.Start("cmd.exe", $"/C adb shell monkey -p {request.GameAssembly}.{request.GameAssembly} -c android.intent.category.LAUNCHER 1");
-                                }
-                                catch (Exception ex)
-                                {
-                                    await socketMessageLayer.Send(new StatusMessageRequest { Error = true, Message = "Launch exception: " + ex.Message });
-                                }
-
-                                if (process == null)
-                                {
-                                    await socketMessageLayer.Send(new StatusMessageRequest { Error = true, Message = "Failed to start game process." });
-                                }
-                                else
-                                {
-                                    lock (loggerLock)
-                                    {
-                                        currentTester = socketMessageLayer;
-                                    }
-
-                                    var currenTestPair = new TestPair
-                                    {
-                                        TesterSocket = socketMessageLayer,
-                                        GameName = request.GameAssembly,
-                                        Process = process,
-                                        TestEndAction = () =>
-{
-                                            // force stop - only works for Android 3.0 and above.
-                                            Process.Start("cmd.exe", $"/C adb shell am force-stop {request.GameAssembly}.{request.GameAssembly}");
-}
-                                    };
-                                    lock (processes)
-                                    {
-                                        processes[request.GameAssembly] = currenTestPair;
-                                        testerToGame[socketMessageLayer] = currenTestPair;
-                                    }
-                                    await socketMessageLayer.Send(new LogRequest { Message = "Process created, id: " + process.Id.ToString() });
-                                }
-                                break;
-                            }
-                        case (int)PlatformType.iOS:
-                            {
-                                Process process = null;
-                                var debugInfo = "";
-                                try
-                                {
-                                    Thread.Sleep(5000); //ios processes might be slow to close, we must make sure that we start clean
-                                    var start = new ProcessStartInfo
-                                    {
-                                        FileName = $"idevicedebug.exe",
-                                        Arguments = $"run com.your-company.{request.GameAssembly}",
-                                        UseShellExecute = false
-                                    };
-                                    debugInfo = "Starting process " + start.FileName + " with path " + start.WorkingDirectory;
-                                    process = Process.Start(start);
-                                }
-                                catch (Exception ex)
-                                {
-                                    await socketMessageLayer.Send(new StatusMessageRequest { Error = true, Message = $"Launch exception: {ex.Message} info: {debugInfo}" });
-                                }
-
-                                if (process == null)
-                                {
-                                    await socketMessageLayer.Send(new StatusMessageRequest { Error = true, Message = "Failed to start game process. " + debugInfo });
-                                }
-                                else
-                                {
-                                    lock (loggerLock)
-                                    {
-                                        currentTester = socketMessageLayer;
-                                    }
 
                                     var currenTestPair = new TestPair { TesterSocket = socketMessageLayer, GameName = request.GameAssembly, Process = process };
                                     lock (processes)

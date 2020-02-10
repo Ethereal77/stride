@@ -1,9 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.IO;
 using System.Reflection;
+
 using Xenko.Core.Annotations;
 
 namespace Xenko.Core
@@ -56,9 +58,9 @@ namespace Xenko.Core
 
             set
             {
-                if (virtualFileSystemInitialized) 
-                    throw new InvalidOperationException("ApplicationDataSubDirectory cannot be modified after the VirtualFileSystem has been initialized."); 
-                
+                if (virtualFileSystemInitialized)
+                    throw new InvalidOperationException("ApplicationDataSubDirectory cannot be modified after the VirtualFileSystem has been initialized.");
+
                 applicationDataSubDirectory = value;
             }
         }
@@ -94,69 +96,33 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationLocalDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            var directory = Path.Combine(PlatformAndroid.Context.FilesDir.AbsolutePath, "local");
-            Directory.CreateDirectory(directory);
-            return directory;
-#elif XENKO_PLATFORM_UWP
-            return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
-#elif XENKO_PLATFORM_IOS
-            var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "Library", "Local");
-            Directory.CreateDirectory(directory);
-            return directory;
-#else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "local");
             Directory.CreateDirectory(directory);
             return directory;
-#endif
         }
 
         [NotNull]
         private static string GetApplicationRoamingDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            var directory = Path.Combine(PlatformAndroid.Context.FilesDir.AbsolutePath, "roaming");
-            Directory.CreateDirectory(directory);
-            return directory;
-#elif XENKO_PLATFORM_UWP
-            return Windows.Storage.ApplicationData.Current.RoamingFolder.Path;
-#elif XENKO_PLATFORM_IOS
-            var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "Library", "Roaming");
-            Directory.CreateDirectory(directory);
-            return directory;
-#else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "roaming");
             Directory.CreateDirectory(directory);
             return directory;
-#endif
         }
 
         [NotNull]
         private static string GetApplicationCacheDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            var directory = Path.Combine(PlatformAndroid.Context.FilesDir.AbsolutePath, "cache");
-#elif XENKO_PLATFORM_UWP
-            var directory = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "cache");
-#elif XENKO_PLATFORM_IOS
-            var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "Library", "Caches");
-#else
             // TODO: Should we add "local" ?
             var directory = Path.Combine(GetApplicationBinaryDirectory(), "cache");
-#endif
             Directory.CreateDirectory(directory);
             return directory;
         }
 
         private static string GetApplicationExecutablePath()
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_MONO_MOBILE || XENKO_PLATFORM_UNIX
             return Assembly.GetEntryAssembly()?.Location;
-#else
-            return null;
-#endif
         }
 
         [NotNull]
@@ -168,15 +134,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationTemporaryDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            return PlatformAndroid.Context.CacheDir.AbsolutePath;
-#elif XENKO_PLATFORM_UWP
-            return Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
-#elif XENKO_PLATFORM_IOS
-            return Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "..", "tmp");
-#else
             return Path.GetTempPath();
-#endif
         }
 
         [NotNull]
@@ -187,7 +145,6 @@ namespace Xenko.Core
 
         private static string GetApplicationExecutableDiretory()
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP || XENKO_PLATFORM_MONO_MOBILE || XENKO_PLATFORM_UNIX
             var executableName = GetApplicationExecutablePath();
             if (!string.IsNullOrEmpty(executableName))
             {
@@ -198,11 +155,6 @@ namespace Xenko.Core
     #else
             return AppDomain.CurrentDomain.BaseDirectory;
     #endif
-#elif XENKO_PLATFORM_UWP
-            return Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
-#else
-            throw new NotImplementedException();
-#endif
         }
 
         static string FindCoreAssemblyDirectory(string entryDirectory)
@@ -232,15 +184,7 @@ namespace Xenko.Core
         [NotNull]
         private static string GetApplicationDataDirectory()
         {
-#if XENKO_PLATFORM_ANDROID
-            return Android.OS.Environment.ExternalStorageDirectory.AbsolutePath + "/Android/data/" + PlatformAndroid.Context.PackageName + "/data";
-#elif XENKO_PLATFORM_IOS
-            return Foundation.NSBundle.MainBundle.BundlePath + "/data";
-#elif XENKO_PLATFORM_UWP
-            return Windows.ApplicationModel.Package.Current.InstalledLocation.Path + @"\data";
-#else
             return Path.Combine(GetApplicationBinaryDirectory(), "data");
-#endif
         }
     }
 }

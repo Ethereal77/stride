@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -6,11 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+
 using Xenko.Core.AssemblyProcessor.Serializers;
 using Xenko.Core.Serialization;
+
 using FieldAttributes = Mono.Cecil.FieldAttributes;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using TypeAttributes = Mono.Cecil.TypeAttributes;
@@ -187,7 +191,7 @@ namespace Xenko.Core.AssemblyProcessor
                 if (!serializableType.Value.Local && xenkoEngineAssembly != context.Assembly)
                     continue;
 
-                // Try to find if original method definition was generated  
+                // Try to find if original method definition was generated
                 var typeDefinition = serializableType.Key.Resolve();
 
                 // If using List<T>, register this type in UpdateEngine
@@ -214,13 +218,6 @@ namespace Xenko.Core.AssemblyProcessor
                     var elementType = ResolveGenericsVisitor.Process(serializableType.Key, arrayType.ElementType);
                     il.Emit(OpCodes.Newobj, context.Assembly.MainModule.ImportReference(updatableArrayUpdateResolverGenericCtor).MakeGeneric(context.Assembly.MainModule.ImportReference(elementType)));
                     il.Emit(OpCodes.Call, updateEngineRegisterMemberResolverMethod);
-                }
-
-                // Generic instantiation for AOT platforms
-                if (context.Platform == Core.PlatformType.iOS && serializableType.Key.Name == "ValueParameterKey`1")
-                {
-                    var keyType = ((GenericInstanceType)serializableType.Key).GenericArguments[0];
-                    il.Emit(OpCodes.Call, context.Assembly.MainModule.ImportReference(parameterCollectionResolverInstantiateValueAccessor).MakeGenericMethod(context.Assembly.MainModule.ImportReference(keyType)));
                 }
 
                 var genericInstanceType = serializableType.Key as GenericInstanceType;
@@ -272,7 +269,8 @@ namespace Xenko.Core.AssemblyProcessor
                         Attributes = genericParameter.Attributes,
                     };
                     foreach (var constraint in genericParameter.Constraints)
-                        genericParameterCopy.Constraints.Add(context.Assembly.MainModule.ImportReference(constraint));
+                        genericParameterCopy.Constraints.Add(
+                            new GenericParameterConstraint(context.Assembly.MainModule.ImportReference(constraint.ConstraintType)));
                     updateCurrentMethod.GenericParameters.Add(genericParameterCopy);
 
                     genericsMapping[genericParameter] = genericParameterCopy;

@@ -1,16 +1,17 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
+
 using Xenko.Core.Annotations;
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
 using System;
 using System.Runtime.InteropServices;
 
 namespace Xenko.Core.Diagnostics
 {
     /// <summary>
-    /// This static class gives access to the Pause/Resume API of VTune Amplifier. It is available on Windows Desktop platform only.
+    /// This static class gives access to the Pause/Resume API of VTune Amplifier.
     /// </summary>
     public static class VTuneProfiler
     {
@@ -177,5 +178,3 @@ namespace Xenko.Core.Diagnostics
 #pragma warning restore SA1300 // Element must begin with upper-case letter
     }
 }
-
-#endif

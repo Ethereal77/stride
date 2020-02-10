@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Threading.Tasks;
@@ -40,7 +41,7 @@ namespace Xenko.Graphics.Tests
             await base.LoadContent();
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            
+
             inputTexture = Content.Load<Texture>("uv");
             var groupCounts = new Int3(inputTexture.Width / ReductionRatio, inputTexture.Height / ReductionRatio, 1);
             outputTexture = Texture.New2D(GraphicsDevice, groupCounts.X, groupCounts.Y, 1, PixelFormat.R8G8B8A8_UNorm, TextureFlags.UnorderedAccess | TextureFlags.ShaderResource);
@@ -88,8 +89,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact(Skip="This test is unmaintained and currently doesn't pass")]
         public void RunTest()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             RunGameTest(new TestComputeShader());
         }
 

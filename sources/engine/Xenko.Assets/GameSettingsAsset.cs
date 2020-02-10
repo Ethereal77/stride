@@ -1,10 +1,12 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+
 using Xenko.Core.Assets;
 using Xenko.Core;
 using Xenko.Core.Annotations;
@@ -69,14 +71,6 @@ namespace Xenko.Assets
         [DataMember(5050)]
         public Color SplashScreenColor { get; set; } = Color.Black;
 
-        /// <userdoc>
-        /// If checked, the splash screen is display in VR double view.
-        /// </userdoc>
-        [DefaultValue(false)]
-        [Display("Double screen", "Splash screen")]
-        [DataMember(5100)]
-        public bool DoubleViewSplashScreen { get; set; } = false;
-
         [DataMember(2000)]
         [MemberCollection(ReadOnly = true, NotNullItems = true)]
         public List<Configuration> Defaults { get; } = new List<Configuration>();
@@ -132,21 +126,7 @@ namespace Xenko.Assets
                 case PlatformType.Windows:
                     configPlatform = ConfigPlatforms.Windows;
                     break;
-                case PlatformType.Android:
-                    configPlatform = ConfigPlatforms.Android;
-                    break;
-                case PlatformType.iOS:
-                    configPlatform = ConfigPlatforms.iOS;
-                    break;
-                case PlatformType.UWP:
-                    configPlatform = ConfigPlatforms.UWP;
-                    break;
-                case PlatformType.Linux:
-                    configPlatform = ConfigPlatforms.Linux;
-                    break;
-                case PlatformType.macOS:
-                    configPlatform = ConfigPlatforms.macOS;
-                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(platform), platform, null);
             }

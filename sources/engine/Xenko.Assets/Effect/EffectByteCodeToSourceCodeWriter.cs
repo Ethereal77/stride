@@ -1,8 +1,11 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.IO;
 using System.Text;
+
 using Xenko.Core.Serialization;
 using Xenko.Graphics;
 using Xenko.Shaders;
@@ -27,7 +30,7 @@ namespace Xenko.Assets.Effect
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace {1} 
+namespace {1}
 {{
     {2} class {3}
     {{
@@ -70,25 +73,16 @@ namespace {1}
                 case GraphicsPlatform.Direct3D12:
                     xenkoDefine = "XENKO_GRAPHICS_API_DIRECT3D";
                     break;
-                case GraphicsPlatform.OpenGL:
-                    xenkoDefine = "XENKO_GRAPHICS_API_OPENGLCORE";
-                    break;
-                case GraphicsPlatform.OpenGLES:
-                    xenkoDefine = "XENKO_GRAPHICS_API_OPENGLES";
-                    break;
-                case GraphicsPlatform.Vulkan:
-                    xenkoDefine = "XENKO_GRAPHICS_API_VULKAN";
-                    break;
             }
 
             writer.WriteLine("#if {0}", xenkoDefine);
             writer.Write(codeTemplate,
-                         effectToGenerateText, // {0} 
-                         nameSpace,            // {1} 
-                         classDeclaration,     // {2} 
-                         className,            // {3} 
-                         fieldDeclaration,     // {4} 
-                         fieldName,            // {5} 
+                         effectToGenerateText, // {0}
+                         nameSpace,            // {1}
+                         classDeclaration,     // {2}
+                         className,            // {3}
+                         fieldDeclaration,     // {4}
+                         fieldName,            // {5}
                          bufferAsText,         // {6}
                          commandLine);         // {7}
 

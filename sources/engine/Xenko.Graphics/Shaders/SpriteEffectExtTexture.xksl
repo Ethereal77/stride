@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 shader SpriteEffectExtTexture : ShaderBase
 {
     // Color used to tint the sprite
@@ -93,7 +95,7 @@ shader SpriteEffectExtTexture : ShaderBase
         //float4 debugColor = GetMipmapLevelDebugMask();
 
         //float4 debugColor = 1.0f;
-        //float4 textureColor = XenkoInternal_TextureExt0.SampleLevel(Sampler, streams.TexCoord, MipLevel);  //Failed to compile on GLSL
+        //float4 textureColor = XenkoInternal_TextureExt0.SampleLevel(Sampler, streams.TexCoord, MipLevel);
         //return float4(ConvertToLinearSpace(textureColor.rgb), 1.0f) * debugColor;
 
         float4 textureColor = XenkoInternal_TextureExt0.Sample(Sampler, streams.TexCoord);

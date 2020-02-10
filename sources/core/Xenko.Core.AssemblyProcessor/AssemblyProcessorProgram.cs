@@ -1,10 +1,14 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
+
 using Mono.Cecil;
 using Mono.Options;
+
 using Xenko.Core;
 
 namespace Xenko.Core.AssemblyProcessor
@@ -107,7 +111,7 @@ namespace Xenko.Core.AssemblyProcessor
                 string.Empty,
                 { "h|help", "Show this message and exit", v => localShowHelp = v != null },
                 { "o|output=", "Output file name", v => localOutputFilePath = v },
-                { "p|platform=", "The platform (Windows, Android, iOS)", v => app.Platform = (PlatformType)Enum.Parse(typeof(PlatformType), v) },
+                { "p|platform=", "The platform (Windows)", v => app.Platform = (PlatformType)Enum.Parse(typeof(PlatformType), v) },
                 { "t|targetFramework=", "The .NET target platform (platform specific)", v => app.TargetFramework = v },
                 { "auto-notify-property", "Automatically implements INotifyPropertyChanged", v => app.AutoNotifyProperty = true },
                 { "parameter-key", "Automatically initialize parameter keys in module static constructor", v => app.ParameterKey = true },

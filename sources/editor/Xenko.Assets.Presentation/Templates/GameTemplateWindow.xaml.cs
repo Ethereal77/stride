@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,7 +31,7 @@ namespace Xenko.Assets.Presentation.Templates
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value != null && (GraphicsProfile)value >= GraphicsProfile.Level_10_0;
+            return value != null && (GraphicsProfile)value >= GraphicsProfile.Level_11_0;
         }
     }
 
@@ -61,7 +63,7 @@ namespace Xenko.Assets.Presentation.Templates
             Orientation = DisplayOrientation.LandscapeRight;
             InitializeComponent();
             DataContext = this;
-            SelectedGraphicsProfile = GraphicsProfile.Level_10_0;
+            SelectedGraphicsProfile = GraphicsProfile.Level_11_0;
             IsHDR = true;
         }
 
@@ -77,7 +79,7 @@ namespace Xenko.Assets.Presentation.Templates
 
         public IEnumerable<UDirectory> SelectedPackages { get { return AssetPackages.Where(x => x.IsSelected).Select(x => x.PackageLocation); } }
 
-        public GraphicsProfile SelectedGraphicsProfile { get { return selectedGraphicsProfile; } set { selectedGraphicsProfile = value; if (value < GraphicsProfile.Level_10_0) IsHDR = false; OnPropertyChanged(); } }
+        public GraphicsProfile SelectedGraphicsProfile { get { return selectedGraphicsProfile; } set { selectedGraphicsProfile = value;  OnPropertyChanged(); } }
 
         public bool IsHDR { get { return isHDR; } set { isHDR = value; OnPropertyChanged(); } }
 

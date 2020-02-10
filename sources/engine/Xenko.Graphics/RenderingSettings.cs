@@ -1,7 +1,9 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+
 using Xenko.Core;
 using Xenko.Data;
 
@@ -45,23 +47,7 @@ namespace Xenko.Graphics
         /// <summary>
         /// Direct3D12.
         /// </summary>
-        Direct3D12,
-
-        /// <summary>
-        /// OpenGL.
-        /// </summary>
-        OpenGL,
-
-        /// <summary>
-        /// OpenGL ES.
-        /// </summary>
-        [Display("OpenGL ES")]
-        OpenGLES,
-
-        /// <summary>
-        /// Vulkan
-        /// </summary>
-        Vulkan,
+        Direct3D12
     }
 
     [DataContract]
@@ -74,7 +60,7 @@ namespace Xenko.Graphics
         /// <userdoc>
         /// The desired back buffer width.
         /// Might be overriden depending on actual device resolution and/or ratio.
-        /// On Windows, it will be the window size. On Android/iOS, it will be the off-screen target resolution.
+        /// On Windows, it will be the window size.
         /// </userdoc>
         [DataMember(0)]
         public int DefaultBackBufferWidth = 1280;
@@ -85,7 +71,7 @@ namespace Xenko.Graphics
         /// <userdoc>
         /// The desired back buffer height.
         /// Might be overriden depending on actual device resolution and/or ratio.
-        /// On Windows, it will be the window size. On Android/iOS, it will be the off-screen target resolution.
+        /// On Windows, it will be the window size.
         /// </userdoc>
         [DataMember(10)]
         public int DefaultBackBufferHeight = 720;
@@ -104,7 +90,7 @@ namespace Xenko.Graphics
         /// </summary>
         /// <userdoc>The graphics feature level this game require.</userdoc>
         [DataMember(20)]
-        public GraphicsProfile DefaultGraphicsProfile = GraphicsProfile.Level_10_0;
+        public GraphicsProfile DefaultGraphicsProfile = GraphicsProfile.Level_11_0;
 
         /// <summary>
         /// Gets or sets the colorspace.

@@ -2,7 +2,7 @@
 Id: 37c9d129-9559-439d-9181-6e804ff718cf
 SerializedVersion: {Xenko: 3.1.0.1}
 Tags: []
-Archetype: 9af53371-51ba-49fc-b420-ee7874892e75:DefaultGraphicsCompositorLevel9
+Archetype: 9af53371-51ba-49fc-b420-ee7874892e75:DefaultGraphicsCompositorLevel10
 Cameras:
     de2e75c3b2b23e54162686363f3f138e:
         Id: a91d7a59-6307-413b-ae6f-14517310c685
@@ -87,10 +87,6 @@ SharedRenderers:
         GBufferRenderStage: null
         PostEffects: null
         LightShafts: null
-        VRSettings:
-            Enabled: false
-            RequiredApis: {}
-            Overlays: {}
         SubsurfaceScatteringBlurEffect: null
         MSAALevel: None
         MSAAResolver: {}

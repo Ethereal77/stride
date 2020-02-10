@@ -7,9 +7,9 @@ This is a technical description what happens in our build and how it is organize
 * [Targets](../Targets) contains the MSBuild target files used by Games
 * [sources/common/targets](../sources/common/targets) (generic) and [sources/targets](../sources/targets) (Xenko-specific) contains the MSBuild target files used to build Xenko itself.
 
-Since 3.1, we switched from our custom build system to the new csproj system with one nuget package per assembly.
+Since 3.1, we switched from our custom build system to the new csproj system with one NuGet package per assembly.
 
-We use `TargetFrameworks` to properly compile the different platforms using a single project (Android, iOS, etc...).
+We use `TargetFrameworks` to properly compile the different platforms using a single project.
 
 Also, we use `RuntimeIdentifiers` to select graphics platform. [MSBuild.Sdk.Extras](https://github.com/onovotny/MSBuildSdkExtras) is used to properly build NuGet packages with multiple `RuntimeIdentifiers` (not supported out of the box).
 

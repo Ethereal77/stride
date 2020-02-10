@@ -1,3 +1,13 @@
+<!--
+***********************************************************************************************
+  Xenko.PackageVersion.targets
+
+  Build file pre-included before the building of the project to configure the version info of
+  the generated assemblies and generate the NuGet packages version and metadata.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- Sdk settings -->
@@ -13,15 +23,34 @@
     <XenkoNuGetVersionSuffix>$([System.Text.RegularExpressions.Regex]::Match($(_XenkoSharedAssemblyInfoLines), `.*NuGetVersionSuffix = \"(.*)\";.*`).Groups[1].Value)</XenkoNuGetVersionSuffix>
     <XenkoBuildMetadata>$([System.Text.RegularExpressions.Regex]::Match($(_XenkoSharedAssemblyInfoLines), `.*BuildMetadata = \"(.*)\";.*`).Groups[1].Value)</XenkoBuildMetadata>
     <XenkoNuGetVersion>$(XenkoPublicVersion)$(XenkoNuGetVersionSuffix)$(XenkoBuildMetadata)</XenkoNuGetVersion>
-    
-    <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(XenkoNuGetVersion)</PackageVersion>
-    <PackageLicenseUrl>https://github.com/xenko3d/xenko/blob/master/LICENSE.md</PackageLicenseUrl>
-    <PackageProjectUrl>https://xenko.com</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/xenko3d/media/master/images/mainlogo/nuget/logo.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/xenko3d/xenko</RepositoryUrl>
-    <Copyright>Copyright © Xenko contributors and Silicon Studio Corp.</Copyright>
-    <Authors>Xenko contributors;Silicon Studio Corp.</Authors>
-    <PackageTags>Xenko;3D;gamedev;Game Engine;engine;games;D3D;OpenGL;Vulkan</PackageTags>
   </PropertyGroup>
+
+  <!--
+   NuGet Package metadata
+   -->
+  <PropertyGroup>
+    <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(XenkoNuGetVersion)</PackageVersion>
+    <RepositoryUrl>https://github.com/xenko3d/xenko</RepositoryUrl>
+    <PackageProjectUrl>https://xenko.com</PackageProjectUrl>
+    <PackageTags>Xenko;3D;gamedev;Game Engine;engine;games;D3D</PackageTags>
+    <Authors>Xenko contributors;Silicon Studio Corp.</Authors>
+    <Copyright>Copyright © Xenko contributors and Silicon Studio Corp.</Copyright>
+  </PropertyGroup>
+
+  <!-- License -->
+  <PropertyGroup>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(SolutionDir)..\LICENSE.md" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+  </ItemGroup>
+
+  <!-- Icon -->
+  <PropertyGroup>
+    <PackageIcon>Logo.png</PackageIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(SolutionDir)..\Logo.png" Pack="true" PackagePath="$(PackageIcon)"/>
+  </ItemGroup>
 
 </Project>

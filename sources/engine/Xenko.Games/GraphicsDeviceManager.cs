@@ -1,28 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-//
-// Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+
 using Xenko.Core;
 using Xenko.Core.Diagnostics;
 using Xenko.Graphics;
@@ -120,13 +103,9 @@ namespace Xenko.Games
             PreferredMultisampleCount = MultisampleCount.None;
             PreferredGraphicsProfile = new[]
                 {
-                    GraphicsProfile.Level_11_1, 
-                    GraphicsProfile.Level_11_0, 
-                    GraphicsProfile.Level_10_1, 
-                    GraphicsProfile.Level_10_0, 
-                    GraphicsProfile.Level_9_3, 
-                    GraphicsProfile.Level_9_2, 
-                    GraphicsProfile.Level_9_1, 
+                    GraphicsProfile.Level_11_2,
+                    GraphicsProfile.Level_11_1,
+                    GraphicsProfile.Level_11_0
                 };
 
             graphicsDeviceFactory = game.Services.GetService<IGraphicsDeviceFactory>();
@@ -170,13 +149,9 @@ namespace Xenko.Games
         /// </summary>
         /// <value>The graphics profile.</value>
         /// <remarks>
-        /// By default, the PreferredGraphicsProfile is set to { <see cref="GraphicsProfile.Level_11_1"/>, 
-        /// <see cref="GraphicsProfile.Level_11_0"/>,
-        /// <see cref="GraphicsProfile.Level_10_1"/>,
-        /// <see cref="GraphicsProfile.Level_10_0"/>,
-        /// <see cref="GraphicsProfile.Level_9_3"/>,
-        /// <see cref="GraphicsProfile.Level_9_2"/>,
-        /// <see cref="GraphicsProfile.Level_9_1"/>}
+        /// By default, the PreferredGraphicsProfile is set to { <see cref="GraphicsProfile.Level_11_2"/>, 
+        /// <see cref="GraphicsProfile.Level_11_1"/>
+        /// <see cref="GraphicsProfile.Level_11_0"/>}
         /// </remarks>
         public GraphicsProfile[] PreferredGraphicsProfile { get; set; }
 
@@ -814,7 +789,7 @@ namespace Xenko.Games
 
         protected virtual bool IsPreferredProfileAvailable(GraphicsProfile[] preferredProfiles, out GraphicsProfile availableProfile)
         {
-            availableProfile = GraphicsProfile.Level_9_1;
+            availableProfile = GraphicsProfile.Level_11_0;
 
             var graphicsProfiles = Enum.GetValues(typeof(GraphicsProfile));
 

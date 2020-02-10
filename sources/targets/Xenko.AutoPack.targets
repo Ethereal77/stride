@@ -1,3 +1,13 @@
+<!--
+***********************************************************************************************
+  Xenko.AutoPack.targets
+
+  Build file post-included after the building of the project to configure the automatic
+  generation every build of NuGet packages and the deployment of those packages.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- Auto NuGet build packages and deploy them -->

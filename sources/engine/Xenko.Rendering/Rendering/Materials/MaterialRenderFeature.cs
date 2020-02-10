@@ -1,14 +1,17 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Threading;
+
 using Xenko.Core;
 using Xenko.Core.Threading;
 using Xenko.Extensions;
 using Xenko.Graphics;
 using Xenko.Shaders;
+
 using Buffer = Xenko.Graphics.Buffer;
 
 namespace Xenko.Rendering.Materials
@@ -364,7 +367,7 @@ namespace Xenko.Rendering.Materials
             materialInfo.ParameterCollectionCopier.Copy();
 
             // Allocate resource groups
-            context.ResourceGroupAllocator.PrepareResourceGroup(materialInfo.PerMaterialLayout, BufferPoolAllocationType.UsedMultipleTime, materialInfo.Resources);
+            context.ResourceGroupAllocator.PrepareResourceGroup(materialInfo.PerMaterialLayout, BufferPoolAllocationType.UsedMultipleTimes, materialInfo.Resources);
 
             // Set resource bindings in PerMaterial resource set
             for (int resourceSlot = 0; resourceSlot < materialInfo.ResourceCount; ++resourceSlot)

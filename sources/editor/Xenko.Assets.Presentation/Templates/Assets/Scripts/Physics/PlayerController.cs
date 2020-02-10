@@ -1,10 +1,11 @@
+using System;
+using System.Linq;
+
 using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Input;
 using Xenko.Physics;
-using System;
-using System.Linq;
 
 namespace ##Namespace##
 {

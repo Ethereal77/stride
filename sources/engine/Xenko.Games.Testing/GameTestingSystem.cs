@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Xenko.Core;
@@ -13,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+
 using Xenko.Graphics.Regression;
 
 namespace Xenko.Games.Testing
@@ -103,9 +105,7 @@ namespace Xenko.Games.Testing
 
             Initialized = true;
 
-#if XENKO_PLATFORM_IOS || XENKO_PLATFORM_ANDROID || XENKO_PLATFORM_WINDOWS_DESKTOP
             Console.WriteLine(@"Test initialized, waiting to start...");
-#endif
         }
 
         public override void Draw(GameTime gameTime)
@@ -138,18 +138,8 @@ namespace Xenko.Games.Testing
             }
         }
 
-#if XENKO_PLATFORM_IOS
-        [DllImport("__Internal", EntryPoint = "exit")]
-        public static extern void exit(int status);
-#endif
-
         public static void Quit()
         {
-#if XENKO_PLATFORM_ANDROID
-            global::Android.OS.Process.KillProcess(global::Android.OS.Process.MyPid());
-#elif XENKO_PLATFORM_IOS
-            exit(0);
-#endif
         }
     }
 }

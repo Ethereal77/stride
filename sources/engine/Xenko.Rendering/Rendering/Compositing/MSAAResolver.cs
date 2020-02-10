@@ -1,8 +1,10 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.ComponentModel;
+
 using Xenko.Core;
 using Xenko.Core.Annotations;
 using Xenko.Core.Mathematics;
@@ -162,11 +164,8 @@ namespace Xenko.Rendering.Compositing
             var svPosUnpack = new Vector4(0.5f * inputSize.Width, -0.5f * inputSize.Height, 0.5f * inputSize.Width, 0.5f * inputSize.Height);
             var textureSizeLess1 = new Vector2(inputSize.Width - 1.0f, inputSize.Height - 1.0f);
 
-            if (GraphicsDevice.Platform == GraphicsPlatform.OpenGL ||
-                GraphicsDevice.Platform == GraphicsPlatform.OpenGLES ||
-                FilterType == FilterTypes.Default)
+            if (FilterType == FilterTypes.Default)
             {
-                // We currently only support the default hardware MSAA resolve on OpenGL and OpenGL ES.
                 drawContext.CommandList.CopyMultisample(input, 0, output, 0);
             }
             else if (input.IsDepthStencil)

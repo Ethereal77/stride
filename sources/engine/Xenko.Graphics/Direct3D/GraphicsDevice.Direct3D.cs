@@ -1,9 +1,12 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 #if XENKO_GRAPHICS_API_DIRECT3D11
+
 using System;
 using System.Collections.Generic;
+
 using SharpDX;
 using SharpDX.Direct3D11;
 
@@ -208,7 +211,7 @@ namespace Xenko.Graphics
 
             // Default fallback
             if (graphicsProfiles.Length == 0)
-                graphicsProfiles = new[] { GraphicsProfile.Level_11_0, GraphicsProfile.Level_10_1, GraphicsProfile.Level_10_0, GraphicsProfile.Level_9_3, GraphicsProfile.Level_9_2, GraphicsProfile.Level_9_1 };
+                graphicsProfiles = new[] { GraphicsProfile.Level_11_2, GraphicsProfile.Level_11_1, GraphicsProfile.Level_11_0 };
 
             // Create Device D3D11 with feature Level based on profile
             for (int index = 0; index < graphicsProfiles.Length; index++)
@@ -219,21 +222,7 @@ namespace Xenko.Graphics
                     // D3D12 supports only feature level 11+
                     var level = graphicsProfile.ToFeatureLevel();
 
-                    // INTEL workaround: it seems Intel driver doesn't support properly feature level 9.x. Fallback to 10.
-                    if (Adapter.VendorId == 0x8086)
-                    {
-                        if (level < SharpDX.Direct3D.FeatureLevel.Level_10_0)
-                            level = SharpDX.Direct3D.FeatureLevel.Level_10_0;
-                    }
-
                     nativeDevice = new SharpDX.Direct3D11.Device(Adapter.NativeAdapter, creationFlags, level);
-
-                    // INTEL workaround: force ShaderProfile to be 10+ as well
-                    if (Adapter.VendorId == 0x8086)
-                    {
-                        if (graphicsProfile < GraphicsProfile.Level_10_0 && (!ShaderProfile.HasValue || ShaderProfile.Value < GraphicsProfile.Level_10_0))
-                            ShaderProfile = GraphicsProfile.Level_10_0;
-                    }
 
                     RequestedProfile = graphicsProfile;
                     break;

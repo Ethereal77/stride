@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -10,8 +12,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+
 using EnvDTE;
 using EnvDTE80;
+
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -19,10 +23,13 @@ using Microsoft.VisualStudio.Package;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+
 using NShader;
+
 using Xenko.VisualStudio.BuildEngine;
 using Xenko.VisualStudio.Commands;
 using Xenko.VisualStudio.Shaders;
+
 using Task = System.Threading.Tasks.Task;
 
 namespace Xenko.VisualStudio
@@ -31,7 +38,7 @@ namespace Xenko.VisualStudio
     ///  Quick and temporary VS package to allow platform switch for Xenko.
     ///  This code needs to be largely refactored and correctly designed.
     ///  - alex
-    /// 
+    ///
     ///     This is the class that implements the package exposed by this assembly.
     ///     The minimum requirement for a class to be considered a valid package for Visual Studio
     ///     is to implement the IVsPackage interface and register itself with the shell.
@@ -103,7 +110,7 @@ namespace Xenko.VisualStudio
         {
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", ToString()));
         }
-        
+
         #region Package Members
 
         /// <summary>
@@ -206,18 +213,6 @@ namespace Xenko.VisualStudio
             if (configurationLock || newConfiguration == null)
                 return;
 
-            // TODO: Intercept Xamarin more gracefully. It tries to to set platform to "Any Cpu" for android and "iPhone"/"iPhoneSimulator" for iOS.
-            foreach (System.Diagnostics.StackFrame stackFrame in new StackTrace().GetFrames())
-            {
-                var method = stackFrame.GetMethod();
-                if (method.DeclaringType.FullName == "Xamarin.VisualStudio.TastyFlavoredProject" && method.Name == "OnAfterSetStartupProjectCommandExecuted" ||
-                    method.DeclaringType.FullName == "Xamarin.VisualStudio.SolutionConfigurationManager" && method.Name == "ChangePlatform")
-                {
-                    UpdateConfigurationFromStartupProject();
-                    return;
-                }
-            }
-
             UpdateStartupProjectFromConfiguration();
         }
 
@@ -286,7 +281,7 @@ namespace Xenko.VisualStudio
         }
 
         private void UpdateStartupProjectFromConfiguration()
-        { 
+        {
             var solution = (IVsSolution)GetGlobalService(typeof(IVsSolution));
             var buildManager = (IVsSolutionBuildManager)GetGlobalService(typeof(IVsSolutionBuildManager));
             var dte = (DTE)GetService(typeof(DTE));

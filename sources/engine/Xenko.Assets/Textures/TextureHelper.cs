@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -38,7 +39,7 @@ namespace Xenko.Assets.Textures
             public bool IsSizeInPercentage;
 
             public bool ShouldCompress;
-            
+
             public AlphaFormat DesiredAlpha;
 
             public TextureHint TextureHint;
@@ -66,7 +67,7 @@ namespace Xenko.Assets.Textures
                 var asset = textureParameters.Texture;
 
                 // Compute SRgb usage
-                // If Texture is in auto mode, use the global settings, else use the settings overridden by the texture asset. 
+                // If Texture is in auto mode, use the global settings, else use the settings overridden by the texture asset.
                 IsSRgb = textureParameters.Texture.Type.IsSRgb(textureParameters.ColorSpace);
                 DesiredSize = new Size2((int)asset.Width, (int)asset.Height);
                 IsSizeInPercentage = asset.IsSizeInPercentage;
@@ -90,7 +91,7 @@ namespace Xenko.Assets.Textures
                 var asset = spriteSheetParameters.SheetAsset;
 
                 // Compute SRgb usage
-                // If Texture is in auto mode, use the global settings, else use the settings overridden by the texture asset. 
+                // If Texture is in auto mode, use the global settings, else use the settings overridden by the texture asset.
                 IsSRgb = asset.IsSRGBTexture(spriteSheetParameters.ColorSpace);
 
                 DesiredSize = new Size2(100, 100);
@@ -150,27 +151,12 @@ namespace Xenko.Assets.Textures
             // determine if the desired size if valid depending on the graphics profile
             switch (parameters.GraphicsProfile)
             {
-                case GraphicsProfile.Level_9_1:
-                case GraphicsProfile.Level_9_2:
-                case GraphicsProfile.Level_9_3:
-                    if (parameters.GenerateMipmaps && (!MathUtil.IsPow2(textureSize.Width) || !MathUtil.IsPow2(textureSize.Height)))
-                    {
-                        // TODO: TEMPORARY SETUP A MAX TEXTURE OF 1024. THIS SHOULD BE SPECIFIED DONE IN THE ASSET INSTEAD
-                        textureSize.Width = Math.Min(MathUtil.NextPowerOfTwo(textureSize.Width), 1024);
-                        textureSize.Height = Math.Min(MathUtil.NextPowerOfTwo(textureSize.Height), 1024);
-                        logger?.Warning("Graphic profiles 9.1/9.2/9.3 do not support mipmaps with textures that are not power of 2. Asset is automatically resized to " + textureSize);
-                    }
-                    maxTextureSize = parameters.GraphicsProfile >= GraphicsProfile.Level_9_3 ? 4096 : 2048;
-                    break;
-                case GraphicsProfile.Level_10_0:
-                case GraphicsProfile.Level_10_1:
-                    maxTextureSize = 8192;
-                    break;
                 case GraphicsProfile.Level_11_0:
                 case GraphicsProfile.Level_11_1:
                 case GraphicsProfile.Level_11_2:
                     maxTextureSize = 16384;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException("graphicsProfile");
             }
@@ -203,62 +189,11 @@ namespace Xenko.Assets.Textures
                 case true:
                     switch (parameters.Platform)
                     {
-                        case PlatformType.Android:
-                        case PlatformType.iOS:
-                            if (inputImageFormat.IsHDR())
-                            {
-                                outputFormat = inputImageFormat;
-                            }
-                            else
-                            {
-                                switch (parameters.GraphicsProfile)
-                                {
-                                    case GraphicsProfile.Level_9_1:
-                                    case GraphicsProfile.Level_9_2:
-                                    case GraphicsProfile.Level_9_3:
-                                        outputFormat = alphaMode == AlphaFormat.None && !parameters.IsSRgb ? PixelFormat.ETC1 : parameters.IsSRgb ? PixelFormat.R8G8B8A8_UNorm_SRgb : PixelFormat.R8G8B8A8_UNorm;
-                                        break;
-                                    case GraphicsProfile.Level_10_0:
-                                    case GraphicsProfile.Level_10_1:
-                                    case GraphicsProfile.Level_11_0:
-                                    case GraphicsProfile.Level_11_1:
-                                    case GraphicsProfile.Level_11_2:
-                                        // GLES3.0 starting from Level_10_0, this profile enables ETC2 compression on Android
-                                        switch (alphaMode)
-                                        {
-                                            case AlphaFormat.None:
-                                                outputFormat = parameters.IsSRgb ? PixelFormat.ETC2_RGB_SRgb : PixelFormat.ETC2_RGB;
-                                                break;
-                                            case AlphaFormat.Mask:
-                                                // DXT1 handles 1-bit alpha channel
-                                                // TODO: Not sure about the equivalent here?
-                                                outputFormat = parameters.IsSRgb ? PixelFormat.ETC2_RGBA_SRgb : PixelFormat.ETC2_RGB_A1;
-                                                break;
-                                            case AlphaFormat.Explicit:
-                                            case AlphaFormat.Interpolated:
-                                                // DXT3 is good at sharp alpha transitions
-                                                // TODO: Not sure about the equivalent here?
-                                                outputFormat = parameters.IsSRgb ? PixelFormat.ETC2_RGBA_SRgb : PixelFormat.ETC2_RGBA;
-                                                break;
-                                            default:
-                                                throw new ArgumentOutOfRangeException();
-                                        }
-                                        break;
-                                    default:
-                                        throw new ArgumentOutOfRangeException("GraphicsProfile");
-                                }
-                            }
-                            break;
                         case PlatformType.Windows:
-                        case PlatformType.UWP:
-                        case PlatformType.Linux:
-                        case PlatformType.macOS:
                             switch (parameters.GraphicsPlatform)
                             {
                                 case GraphicsPlatform.Direct3D11:
                                 case GraphicsPlatform.Direct3D12:
-                                case GraphicsPlatform.OpenGL:
-                                case GraphicsPlatform.Vulkan:
 
                                     // https://msdn.microsoft.com/en-us/library/windows/desktop/hh308955%28v=vs.85%29.aspx
                                     // http://www.reedbeta.com/blog/2012/02/12/understanding-bcn-texture-compression-formats/
@@ -292,61 +227,26 @@ namespace Xenko.Assets.Textures
                                             throw new ArgumentOutOfRangeException();
                                     }
 
-                                    // Overrides the format when profile is >= 10.0
+                                    // Overrides the format when profile is >= 11.0
                                     // Support some specific optimized formats based on the hint or input type
-                                    if (parameters.GraphicsProfile >= GraphicsProfile.Level_10_0)
+                                    if (hint == TextureHint.NormalMap)
                                     {
-                                        if (parameters.GraphicsPlatform != GraphicsPlatform.OpenGL && hint == TextureHint.NormalMap)
-                                        {
-                                            outputFormat = PixelFormat.BC5_UNorm;
-                                        }
-                                        else if (parameters.GraphicsPlatform != GraphicsPlatform.OpenGL && hint == TextureHint.Grayscale)
-                                        {
-                                            outputFormat = PixelFormat.BC4_UNorm;
-                                        }
-                                        else if (inputImageFormat.IsHDR())
-                                        {
-                                            // BC6H is too slow to compile
-                                            //outputFormat = parameters.GraphicsProfile >= GraphicsProfile.Level_11_0 && alphaMode == AlphaFormat.None ? PixelFormat.BC6H_Uf16 : inputImageFormat;
-                                            outputFormat = inputImageFormat;
-                                        }
-                                        // TODO support the BC6/BC7 but they are so slow to compile that we can't use them right now
+                                        outputFormat = PixelFormat.BC5_UNorm;
                                     }
-                                    break;
-                                case GraphicsPlatform.OpenGLES: // OpenGLES on Windows
-                                    if (inputImageFormat.IsHDR())
+                                    else if (hint == TextureHint.Grayscale)
                                     {
+                                        outputFormat = PixelFormat.BC4_UNorm;
+                                    }
+                                    else if (inputImageFormat.IsHDR())
+                                    {
+                                        // BC6H is too slow to compile
+                                        //outputFormat = alphaMode == AlphaFormat.None ? PixelFormat.BC6H_Uf16 : inputImageFormat;
                                         outputFormat = inputImageFormat;
                                     }
-                                    else if (parameters.IsSRgb)
-                                    {
-                                        outputFormat = PixelFormat.R8G8B8A8_UNorm_SRgb;
-                                    }
-                                    else
-                                    {
-                                        switch (parameters.GraphicsProfile)
-                                        {
-                                            case GraphicsProfile.Level_9_1:
-                                            case GraphicsProfile.Level_9_2:
-                                            case GraphicsProfile.Level_9_3:
-                                                outputFormat = alphaMode == AlphaFormat.None ? PixelFormat.ETC1 : PixelFormat.R8G8B8A8_UNorm;
-                                                break;
-                                            case GraphicsProfile.Level_10_0:
-                                            case GraphicsProfile.Level_10_1:
-                                            case GraphicsProfile.Level_11_0:
-                                            case GraphicsProfile.Level_11_1:
-                                            case GraphicsProfile.Level_11_2:
-                                                // GLES3.0 starting from Level_10_0, this profile enables ETC2 compression on Android
-                                                outputFormat = alphaMode == AlphaFormat.None ? PixelFormat.ETC1 : PixelFormat.ETC2_RGBA;
-                                                break;
-                                            default:
-                                                throw new ArgumentOutOfRangeException("GraphicsProfile");
-                                        }
-                                    }
+                                    // TODO support the BC6/BC7 but they are so slow to compile that we can't use them right now
                                     break;
+
                                 default:
-                                    // OpenGL on Windows
-                                    // TODO: Need to handle OpenGL Desktop compression
                                     outputFormat = parameters.IsSRgb ? PixelFormat.R8G8B8A8_UNorm_SRgb : PixelFormat.R8G8B8A8_UNorm;
                                     break;
                             }
@@ -361,32 +261,6 @@ namespace Xenko.Assets.Textures
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
-
-            // OpenGLES: avoid BGRA (optional extension)
-            if (parameters.GraphicsPlatform == GraphicsPlatform.OpenGLES)
-            {
-                switch (outputFormat)
-                {
-                    case PixelFormat.B8G8R8A8_UNorm:
-                        outputFormat = PixelFormat.R8G8B8A8_UNorm;
-                        break;
-                    case PixelFormat.B8G8R8A8_UNorm_SRgb:
-                        outputFormat = PixelFormat.R8G8B8A8_UNorm_SRgb;
-                        break;
-                }
-            }
-
-            // OpenGL and OpenGLES: avoid R5G6B5 (not implemented)
-            if (parameters.GraphicsPlatform == GraphicsPlatform.OpenGLES || parameters.GraphicsPlatform == GraphicsPlatform.OpenGL)
-            {
-                switch (outputFormat)
-                {
-                    case PixelFormat.B5G5R5A1_UNorm:
-                    case PixelFormat.B5G6R5_UNorm:
-                        outputFormat = PixelFormat.R8G8B8A8_UNorm;
-                        break;
-                }
             }
 
             return outputFormat;
@@ -451,7 +325,7 @@ namespace Xenko.Assets.Textures
             if (cancellationToken.IsCancellationRequested) // abort the process if cancellation is demanded
                 return ResultStatus.Cancelled;
 
-            // Pre-multiply alpha only for relevant formats 
+            // Pre-multiply alpha only for relevant formats
             if (parameters.PremultiplyAlpha && texImage.Format.HasAlpha32Bits())
                 textureTool.PreMultiplyAlpha(texImage);
 
@@ -465,7 +339,7 @@ namespace Xenko.Assets.Textures
                 var boxFilteringIsSupported = !texImage.Format.IsSRgb() || (MathUtil.IsPow2(targetSize.Width) && MathUtil.IsPow2(targetSize.Height));
                 textureTool.GenerateMipMaps(texImage, boxFilteringIsSupported? Filter.MipMapGeneration.Box: Filter.MipMapGeneration.Linear);
             }
-                
+
             if (cancellationToken.IsCancellationRequested) // abort the process if cancellation is demanded
                 return ResultStatus.Cancelled;
 
@@ -501,7 +375,7 @@ namespace Xenko.Assets.Textures
 
             return ResultStatus.Successful;
         }
-        
+
         public static ResultStatus ImportStreamableTextureImage(ContentManager assetManager, TextureTool textureTool, TexImage texImage, TextureHelper.ImportParameters convertParameters, CancellationToken cancellationToken, ICommandContext commandContext)
         {
             // Perform normal texture importing (but don't save it to file now)

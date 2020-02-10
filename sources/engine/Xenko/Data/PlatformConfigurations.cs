@@ -1,9 +1,12 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 using Xenko.Core;
 
 namespace Xenko.Data
@@ -19,7 +22,7 @@ namespace Xenko.Data
         public List<ConfigurationOverride> Configurations = new List<ConfigurationOverride>();
 
         [DataMember]
-        public List<string> PlatformFilters = new List<string>(); 
+        public List<string> PlatformFilters = new List<string>();
 
         public T Get<T>() where T : Configuration, new()
         {
@@ -33,24 +36,11 @@ namespace Xenko.Data
             {
                 case PlatformType.Shared:
                     break;
+
                 case PlatformType.Windows:
                     platform = ConfigPlatforms.Windows;
                     break;
-                case PlatformType.Android:
-                    platform = ConfigPlatforms.Android;
-                    break;
-                case PlatformType.iOS:
-                    platform = ConfigPlatforms.iOS;
-                    break;
-                case PlatformType.UWP:
-                    platform = ConfigPlatforms.UWP;
-                    break;
-                case PlatformType.Linux:
-                    platform = ConfigPlatforms.Linux;
-                    break;
-                case PlatformType.macOS:
-                    platform = ConfigPlatforms.macOS;
-                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -1,5 +1,10 @@
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
+
 using Xenko.Core;
 using Xenko.Graphics;
 using Xenko.Rendering;
@@ -81,7 +86,7 @@ namespace Xenko.Video
             if (originalTargetTexture == newTargetTexture) // the target content is already set to the video stream
                 return;  // -> nothing to do
 
-            if (originalTargetTexture != null) // the target Texture changed, we need to revert the previous one 
+            if (originalTargetTexture != null) // the target Texture changed, we need to revert the previous one
                 SetTargetContentToOriginalPlaceholder();
 
             if (newTargetTexture == null)
@@ -120,7 +125,6 @@ namespace Xenko.Video
             var previousDepthStencilBuffer = context.CommandList.DepthStencilBuffer;
             var previousRenderTarget = context.CommandList.RenderTarget;
 
-            // Use the OES texture copy effect on Android:
             CopyTexture(context,
                         effectDecoderTextureCopy,
                         decoderOutputTexture, // Use the inputTexture as the input texture.
@@ -182,7 +186,7 @@ namespace Xenko.Video
                                  ObjectParameterKey<Texture> inputTextureKey, ValueParameterKey<float> mipLevelKey)
         {
             // Set the "input" texture as the texture that we will copy to "output":
-            effectInstance.Parameters.Set(inputTextureKey, input); // TODO: STABILITY: Supply the parent texture instead? I mean here we're using SampleLOD in the shader because texture views are basically being ignored during sampling on OpenGL/ES.
+            effectInstance.Parameters.Set(inputTextureKey, input); // TODO: STABILITY: Supply the parent texture instead? I mean here we're using SampleLOD in the shader.
 
             // Set the mipmap level of the input texture we want to sample:
             effectInstance.Parameters.Set(mipLevelKey, input.MipLevel);  // TODO: STABILITY: Manually pass the mip level?

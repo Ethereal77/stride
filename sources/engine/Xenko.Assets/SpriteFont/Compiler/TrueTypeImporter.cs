@@ -1,39 +1,23 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-//
-// Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 using SharpDX.Direct2D1;
+using SharpDX.Mathematics.Interop;
+
 using Xenko.Graphics.Font;
 
 namespace Xenko.Assets.SpriteFont.Compiler
 {
     using System.Drawing;
     using System.Drawing.Imaging;
+
     using SharpDX.DirectWrite;
-    using SharpDX.Mathematics.Interop;
+
     using Factory = SharpDX.DirectWrite.Factory;
 
     // This code was originally taken from DirectXTk but rewritten with DirectWrite
@@ -52,7 +36,7 @@ namespace Xenko.Assets.SpriteFont.Compiler
             var factory = new Factory();
 
             var fontFace = options.FontSource.GetFontFace();
-            
+
             var fontMetrics = fontFace.Metrics;
 
             // Create a bunch of GDI+ objects.
@@ -62,7 +46,7 @@ namespace Xenko.Assets.SpriteFont.Compiler
 
             // Remap the LineMap coming from the font with a user defined remapping
             // Note:
-            // We are remapping the lineMap to allow to shrink the LineGap and to reposition it at the top and/or bottom of the 
+            // We are remapping the lineMap to allow to shrink the LineGap and to reposition it at the top and/or bottom of the
             // font instead of using only the top
             // According to http://stackoverflow.com/questions/13939264/how-to-determine-baseline-position-using-directwrite#comment27947684_14061348
             // (The response is from a MSFT employee), the BaseLine should be = LineGap + Ascent but this is not what
@@ -75,7 +59,7 @@ namespace Xenko.Assets.SpriteFont.Compiler
             // Store the font height.
             LineSpacing = (float)(lineGap + fontMetrics.Ascent + fontMetrics.Descent) / fontMetrics.DesignUnitsPerEm * fontSize;
 
-            // And then the baseline is also changed in order to allow the linegap to be distributed between the top and the 
+            // And then the baseline is also changed in order to allow the linegap to be distributed between the top and the
             // bottom of the font:
             //     BaseLine = NewLineGap * LineGapBaseLineFactor
             BaseLine = (float)(lineGap * options.LineGapBaseLineFactor + fontMetrics.Ascent) / fontMetrics.DesignUnitsPerEm * fontSize;
@@ -88,7 +72,7 @@ namespace Xenko.Assets.SpriteFont.Compiler
 
             factory.Dispose();
         }
-        
+
         private Glyph ImportGlyph(Factory factory, FontFace fontFace, char character, FontMetrics fontMetrics, float fontSize, FontAntiAliasMode antiAliasMode)
         {
             var indices = fontFace.GetGlyphIndices(new int[] { character });

@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -8,8 +10,6 @@ namespace Xenko.Graphics
     public class BufferPool : IDisposable
     {
 #if XENKO_GRAPHICS_API_DIRECT3D12
-        private const bool UseBufferOffsets = true;
-#elif XENKO_GRAPHICS_API_VULKAN
         private const bool UseBufferOffsets = true;
 #else
         private const bool UseBufferOffsets = false;
@@ -128,7 +128,7 @@ namespace Xenko.Graphics
             {
                 bufferPoolAllocationResult.Uploaded = false;
 
-                if (type == BufferPoolAllocationType.UsedMultipleTime)
+                if (type == BufferPoolAllocationType.UsedMultipleTimes)
                 {
                     if (bufferPoolAllocationResult.Buffer == null || bufferPoolAllocationResult.Buffer.SizeInBytes != size)
                     {
@@ -144,20 +144,21 @@ namespace Xenko.Graphics
         }
     }
 
+    /// <summary>
+    /// Determines how a buffer should be allocated based on whether it  will be reused.
+    /// In practice, on older D3D11 (not 11.1), we will use a dedicated cbuffer.
+    /// This has no effect on new API where we can bind cbuffer offsets.
+    /// </summary>
     public enum BufferPoolAllocationType
     {
         /// <summary>
         /// Notify the allocator that this buffer won't be reused for much more than 1 (or few) draw calls.
-        /// In practice, on older D3D11 (not 11.1) and OpenGL ES 2.0 hardware, we won't use a dedicated cbuffer.
-        /// This has no effect on new API where we can bind cbuffer offsets.
         /// </summary>
         UsedOnce,
 
         /// <summary>
         /// Notify the allocator that this buffer will be reused for many draw calls.
-        /// In practice, on older D3D11 (not 11.1) and OpenGL ES 2.0 hardware, we will use a dedicated cbuffer.
-        /// This has no effect on new API where we can bind cbuffer offsets.
         /// </summary>
-        UsedMultipleTime,
+        UsedMultipleTimes
     }
 }

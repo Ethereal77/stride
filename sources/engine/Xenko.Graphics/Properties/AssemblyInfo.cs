@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -13,12 +15,9 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Xenko.Games" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.UI" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Graphics.Tests" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("XenkoGraphicsTests" + Xenko.PublicKeys.Default)] // iOS removes dot
 [assembly: InternalsVisibleTo("Xenko.Engine.Tests" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("XenkoEngineTests" + Xenko.PublicKeys.Default)] // iOS removes dot
 [assembly: InternalsVisibleTo("Xenko.Graphics.Regression" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Assets" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("Xenko.VirtualReality" + Xenko.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Xenko.Video" + Xenko.PublicKeys.Default)]
 
 #if !XENKO_SIGNED

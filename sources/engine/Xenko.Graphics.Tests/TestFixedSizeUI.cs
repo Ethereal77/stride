@@ -1,6 +1,9 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System.Threading.Tasks;
+
 using Xunit;
 
 using Xenko.Core.Mathematics;
@@ -125,7 +128,7 @@ namespace Xenko.Graphics.Tests
             scene.Entities.Add(GetUIEntity(arial16, false, new Vector3(2, 1, -2)));
 
             // Use this graphics compositor
-            SceneSystem.GraphicsCompositor = GraphicsCompositorHelper.CreateDefault(false, graphicsProfile: GraphicsProfile.Level_9_1);
+            SceneSystem.GraphicsCompositor = GraphicsCompositorHelper.CreateDefault(false, graphicsProfile: GraphicsProfile.Level_11_0);
 
             // Create a camera entity and add it to the scene
             var cameraEntity = new Entity { new CameraComponent { Slot = SceneSystem.GraphicsCompositor.Cameras[0].ToSlotId() } };

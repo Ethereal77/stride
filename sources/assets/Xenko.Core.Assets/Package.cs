@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +10,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+
 using Microsoft.Build.Evaluation;
+
+using NuGet.ProjectModel;
+
 using Xenko.Core.Assets.Analysis;
 using Xenko.Core.Assets.Diagnostics;
 using Xenko.Core.Assets.Templates;
@@ -21,7 +27,6 @@ using Xenko.Core.IO;
 using Xenko.Core.Reflection;
 using Xenko.Core.Serialization;
 using Xenko.Core.Yaml;
-using NuGet.ProjectModel;
 
 namespace Xenko.Core.Assets
 {

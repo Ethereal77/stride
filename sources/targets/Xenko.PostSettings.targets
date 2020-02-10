@@ -1,4 +1,14 @@
-<!-- Build file post-included by all Xenko projects -->
+<!--
+***********************************************************************************************
+  Xenko.PostSettings.targets
+
+  Build file post-included after building to configure the Assembly Processor for Scripts,
+  include the proper generated version information, call the Assets Compiler, and process and
+  update the shaders.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Setup compiler targets per platform / language -->
   <PropertyGroup>

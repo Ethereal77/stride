@@ -1,3 +1,14 @@
+<!--
+***********************************************************************************************
+  Xenko.Core.targets
+
+  Build file pre-included before the building of test projects to configure the default
+  Platform, setup the Assembly Processor location, parameters and processing steps, and to
+  configure the compilation and copying of dependencies, both content and native libraries.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project InitialTargets="_XenkoCheckVisualCRuntime2015" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Check if Visual C++ Runtime 2015 is properly installed -->
   <Target Name="_XenkoCheckVisualCRuntime2015" Condition="'$(MSBuildRuntimeType)' == 'Full'">
@@ -18,31 +29,18 @@
 
     <Error Condition="'@(_XenkoVisualCRuntime2015NotInstalled)' != ''" Text="@(_XenkoVisualCRuntime2015NotInstalled->'%(Identity) is not installed. Please download from %(DownloadUrl)', '%0a')"/>
   </Target>
-  
-  <!-- 
+
+  <!--
   *****************************************************************************************************************************
   Platform Detection
   *****************************************************************************************************************************
   -->
   <PropertyGroup>
-    <!-- Windows10 was renammed into UWP -->
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == 'Windows10'">UWP</XenkoPlatform>
     <!-- Default mappings -->
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == '' And '$(TargetPlatformIdentifier)' == 'UAP'">UWP</XenkoPlatform>
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == '' And '$(TargetFrameworkIdentifier)' == 'MonoAndroid'">Android</XenkoPlatform>
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == '' And '$(TargetFrameworkIdentifier)' == 'Xamarin.iOS'">iOS</XenkoPlatform>
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == '' And $(RuntimeIdentifier.StartsWith('linux'))">Linux</XenkoPlatform>
-    <XenkoPlatform Condition="'$(XenkoPlatform)' == '' And $(RuntimeIdentifier.StartsWith('osx'))">macOS</XenkoPlatform>
     <XenkoPlatform Condition="'$(XenkoPlatform)' == ''">Windows</XenkoPlatform>
   </PropertyGroup>
 
-  <!-- If not set, Android executable doesn't work properly because ResolveNuGetPackageAssets has no NuGetRuntimeIdentifier and use only the ref assemblies -->
-  <PropertyGroup Condition="'$(XenkoPlatform)' == 'Android' And '$(AndroidApplication)' == 'true'">
-    <RuntimeIdentifier>win</RuntimeIdentifier>
-    <NuGetRuntimeIdentifier>win</NuGetRuntimeIdentifier>
-  </PropertyGroup>
-
-  <!-- 
+  <!--
   *****************************************************************************************************************************
   Assembly Processor
   *****************************************************************************************************************************
@@ -62,7 +60,7 @@
         <NuGetPackageReference>%(PackageReference.Identity)</NuGetPackageReference>
       </XenkoAddReference>
       <XenkoAddReference Remove="@(XenkoAddReference)" Condition="'%(XenkoAddReference.NuGetPackageId)' != '%(XenkoAddReference.NuGetPackageReference)' Or ('%(XenkoAddReference.ExternallyResolved)' != 'true' And '%(XenkoAddReference.BuildReference)' != 'true')"/>
-      <!-- Also include non-nuget references (Reference and ProjectReference) -->
+      <!-- Also include non-NuGet references (Reference and ProjectReference) -->
       <XenkoAddReference Include="@(ReferencePath)" Condition="'%(ReferencePath.NuGetPackageId)' == ''"/>
     </ItemGroup>
     <PropertyGroup>
@@ -71,12 +69,11 @@
       <!-- Physics, Particles and SpriteStudio assembly is actually hard coded/referenced here, remove once a better system is in place! -->
       <!-- Please keep in sync with AssemblyRecompiler.cs -->
       <XenkoAssemblyProcessorOptions>$(XenkoAssemblyProcessorOptions) @(XenkoAddReference->'--add-reference=%22%(Identity)%22',' ')</XenkoAssemblyProcessorOptions>
-      <XenkoAssemblyProcessorOptions Condition="'$(DocumentationFile)' != ''">$(XenkoAssemblyProcessorOptions) --docfile="$(DocumentationFile)"</XenkoAssemblyProcessorOptions>
       <XenkoAssemblyProcessorOptions>$(XenkoAssemblyProcessorOptions) --references-file="$(IntermediateOutputPath)XenkoReferences.cache"</XenkoAssemblyProcessorOptions>
       <XenkoAssemblyProcessorOptions>$(XenkoAssemblyProcessorOptions) --platform=$(XenkoPlatform) --targetFramework=$(XenkoNETFrameworkVersion) "$(IntermediateOutputPath)$(TargetName)$(TargetExt)"</XenkoAssemblyProcessorOptions>
       <XenkoAssemblyProcessorOptions Condition="'$(AssemblyOriginatorKeyFile)' != ''">$(XenkoAssemblyProcessorOptions) --signkeyfile="$(AssemblyOriginatorKeyFile)" --delete-on-error</XenkoAssemblyProcessorOptions>
     </PropertyGroup>
-    
+
     <!-- Run assembly processor -->
     <Message Condition=" '$(XenkoAssemblyProcessorDev)' != 'true' " Importance="low" Text="&quot;$(XenkoAssemblyProcessorPath)&quot; $(XenkoAssemblyProcessorOptions)"/>
     <AssemblyProcessorTask Condition=" '$(XenkoAssemblyProcessorDev)' != 'true' " Arguments="$(XenkoAssemblyProcessorOptions)"/>
@@ -90,7 +87,7 @@
     </PrepareForRunDependsOn>
   </PropertyGroup>
 
-  <!-- 
+  <!--
   *****************************************************************************************************************************
   NuGet tweaks
   *****************************************************************************************************************************
@@ -110,8 +107,8 @@
                     and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
     </ItemGroup>
   </Target>
-  
-  <!-- 
+
+  <!--
   *****************************************************************************************************************************
   Dependencies reading (from .ssdeps)
   Important: Please keep in sync with Xenko.Core.PostSettings.Dependencies.Targets
@@ -120,7 +117,7 @@
   <!-- List dependency files from .ssdeps -->
   <PropertyGroup>
     <_XenkoListDepsFilesDependsOn>ResolveAssemblyReferences</_XenkoListDepsFilesDependsOn>
-    <_XenkoListDepsFilesDependsOn Condition="'$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux' Or '$(XenkoPlatform)' == 'macOS'">$(_XenkoListDepsFilesDependsOn);ResolvePackageAssets</_XenkoListDepsFilesDependsOn>
+    <_XenkoListDepsFilesDependsOn>$(_XenkoListDepsFilesDependsOn);ResolvePackageAssets</_XenkoListDepsFilesDependsOn>
   </PropertyGroup>
   <Target Name="_XenkoListDepsFiles" DependsOnTargets="$(_XenkoListDepsFilesDependsOn)">
     <ItemGroup>
@@ -128,7 +125,6 @@
       <_XenkoDepsFile Include="@(ReferenceDependencyPaths->'%(RootDir)%(Directory)%(Filename).ssdeps')" Condition="'%(CopyLocal)' != 'false' And Exists('%(RootDir)%(Directory)%(Filename).ssdeps')"/>
       <_XenkoDepsFile Include="@(RuntimeCopyLocalItems->'%(RootDir)%(Directory)%(Filename).ssdeps')" Condition="Exists('%(RootDir)%(Directory)%(Filename).ssdeps')"/>
       <_XenkoDepsFile Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).ssdeps')" Condition="Exists('%(RootDir)%(Directory)%(Filename).ssdeps')"/>
-      <!-- Android -->
       <_XenkoDepsFile Include="@(_ReferencesFromNuGetPackages->'%(RootDir)%(Directory)%(Filename).ssdeps')" Condition="Exists('%(RootDir)%(Directory)%(Filename).ssdeps')"/>
       <None Include="@(_XenkoDepsFile)" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
@@ -173,7 +169,7 @@
   </Target>
 
   <!-- Copy native libraries to output -->
-  <Target Name="_XenkoSetupNativeLibrariesWindows" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="('$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'macOS' Or '$(XenkoPlatform)' == 'Linux') And '$(CopyLocalLockFileAssemblies)' != 'false'">
+  <Target Name="_XenkoSetupNativeLibrariesWindows" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="('$(XenkoPlatform)' == 'Windows') And '$(CopyLocalLockFileAssemblies)' != 'false'">
     <ItemGroup>
       <None Include="@(_XenkoDependencyNativeLib)">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -187,33 +183,5 @@
         <RelativePath>%(_XenkoDependencyNativeLib.Link)</RelativePath>
       </ResolvedFileToPublish>
     </ItemGroup>
-  </Target>
-  <Target Name="_XenkoSetupNativeLibrariesUWP" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="'$(XenkoPlatform)' == 'UWP'">
-    <PropertyGroup>
-      <XenkoCPU Condition="'$(Platform)' == 'x86'">x86</XenkoCPU>
-      <XenkoCPU Condition="'$(Platform)' == 'x64'">x64</XenkoCPU>
-      <XenkoCPU Condition="'$(Platform)' == 'ARM'">ARM</XenkoCPU>
-    </PropertyGroup>
-    <ItemGroup>
-      <Content Include="@(_XenkoDependencyNativeLib)" Condition="$([System.String]::Copy('%(_XenkoDependencyNativeLib.Link)').StartsWith('$(XenkoCPU)'))">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <Link Condition="'$(XenkoCPU)' != ''">$([System.String]::Copy('%(_XenkoDependencyNativeLib.Link)').Replace('$(XenkoCPU)\', ''))</Link>
-      </Content>
-    </ItemGroup>
-  </Target>
-  <Target Name="_XenkoSetupNativeLibrariesAndroid" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="'$(XenkoPlatform)' == 'Android'">
-    <ItemGroup>
-      <AndroidNativeLibrary Include="@(_XenkoDependencyNativeLib)"/>
-    </ItemGroup>
-  </Target>
-  <Target Name="_XenkoSetupNativeLibrariesiOS" DependsOnTargets="_XenkoBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition=" '$(OutputType)' == 'Exe' And '$(XenkoPlatform)' == 'iOS'">
-    <ItemGroup>
-      <NativeReference Include="@(_XenkoDependencyNativeLib)">
-        <Kind>Static</Kind>
-      </NativeReference>
-    </ItemGroup>
-    <PropertyGroup>
-      <MtouchExtraArgs>$(MtouchExtraArgs) --compiler=clang -cxx -gcc_flags '-lstdc++ $(MtouchExtraArgsLibs)'</MtouchExtraArgs>
-    </PropertyGroup>
   </Target>
 </Project>

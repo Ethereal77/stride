@@ -1,11 +1,14 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+using System;
+
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Rendering;
 using Xenko.Rendering.Compositing;
 using Xenko.Graphics;
-using System;
 
 namespace CustomEffect
 {
@@ -40,7 +43,6 @@ namespace CustomEffect
             customEffectInstance.Parameters.Set(EffectKeys.Amplitude, 0.015f);
             customEffectInstance.Parameters.Set(EffectKeys.InvAspectRatio, GraphicsDevice.Presenter.BackBuffer.Height / (float)GraphicsDevice.Presenter.BackBuffer.Width);
 
-            // NOTE: Linear-Wrap sampling is not available for non-square non-power-of-two textures on opengl es 2.0
             samplerState = SamplerState.New(GraphicsDevice, new SamplerStateDescription(TextureFilter.Linear, TextureAddressMode.Clamp));
         }
 

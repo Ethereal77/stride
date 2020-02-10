@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -29,43 +30,8 @@ namespace Xenko.Core
         Shared,
 
         /// <summary>
-        /// The windows desktop OS.
+        /// The Windows desktop OS.
         /// </summary>
-        Windows,
-
-        /// <summary>
-        /// The android OS.
-        /// </summary>
-        Android,
-
-#pragma warning disable SA1300 // Element must begin with upper-case letter
-        /// <summary>
-        /// The iOS.
-        /// </summary>
-        iOS,
-#pragma warning restore SA1300 // Element must begin with upper-case letter
-
-        /// <summary>
-        /// The Universal Windows Platform (UWP).
-        /// </summary>
-        UWP,
-
-        /// <summary>
-        /// The Linux OS.
-        /// </summary>
-        Linux,
-
-#pragma warning disable SA1300 // Element must begin with upper-case letter
-        /// <summary>
-        /// macOS
-        /// </summary>
-        macOS,
-#pragma warning restore SA1300 // Element must begin with upper-case letter
-
-        /// <summary>
-        /// The Universal Windows Platform (UWP). Please use <see cref="UWP"/> intead.
-        /// </summary>
-        [Obsolete("Please use UWP instead")]
-        Windows10 = UWP,
+        Windows
     }
 }

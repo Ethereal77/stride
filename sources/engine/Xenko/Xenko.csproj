@@ -39,8 +39,8 @@
     <ProjectReference Include="..\..\core\Xenko.Core.Serialization\Xenko.Core.Serialization.csproj" />
     <ProjectReference Include="..\..\core\Xenko.Core.Mathematics\Xenko.Core.Mathematics.csproj" />
     <!-- SharpDX is needed for WIC -->
-    <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" Condition="'$(XenkoPlatform)' == 'UWP'" />
-    <PackageReference Include="System.Drawing.Common" Version="4.6.0" Condition="'$(XenkoPlatform)' == 'Windows' Or '$(XenkoPlatform)' == 'Linux'" />
+    <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>

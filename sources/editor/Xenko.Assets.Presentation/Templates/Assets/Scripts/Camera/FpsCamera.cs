@@ -1,10 +1,11 @@
+using System;
+using System.Threading.Tasks;
+
 using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Engine.Processors;
 using Xenko.Input;
-using System;
-using System.Threading.Tasks;
 
 namespace ##Namespace##
 {
@@ -78,12 +79,6 @@ namespace ##Namespace##
             if (backBuffer != null)
             {
                 Component.AspectRatio = backBuffer.Width / (float)backBuffer.Height;
-            }
-
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-                Input.Gestures.Add(new GestureConfigTap { RequiredNumberOfTaps = 2 });
             }
 
             Input.LockMousePosition(true);

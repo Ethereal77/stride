@@ -1,12 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Threading.Tasks;
+
+using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Core.Diagnostics;
 using Xenko.Input;
 using Xenko.Engine;
 using Xenko.Profiling;
-using Xenko.Core;
 
 namespace ##Namespace##
 {

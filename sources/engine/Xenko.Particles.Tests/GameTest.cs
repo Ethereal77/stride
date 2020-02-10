@@ -1,9 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.IO;
 using System.Threading.Tasks;
+
 using Xenko.Core;
 using Xenko.Core.Serialization.Contents;
 using Xenko.Engine;
@@ -48,7 +50,7 @@ namespace Xenko.Particles.Tests
 
         private GraphicsProfile overrideGraphicsProfile;
 
-        public GameTest(string name, GraphicsProfile profile = GraphicsProfile.Level_9_3)
+        public GameTest(string name, GraphicsProfile profile = GraphicsProfile.Level_11_0)
         {
             testName = name;
 
@@ -154,10 +156,6 @@ namespace Xenko.Particles.Tests
             using (var game = new VisualTestRibbons()) { game.Run(); }
 
             using (var game = new VisualTestChildren()) { game.Run(); }
-
-            // using (var game = new VisualTestSoftEdge(GraphicsProfile.Level_9_3)) { game.Run(); } // This is not implemented yet and may not be
-
-            using (var game = new GameTest("VisualTestSoftEdge", GraphicsProfile.Level_10_0)) { game.Run(); }
 
             using (var game = new GameTest("VisualTestSoftEdge", GraphicsProfile.Level_11_0)) { game.Run(); }
         }

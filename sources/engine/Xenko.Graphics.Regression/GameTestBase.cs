@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -55,7 +56,7 @@ namespace Xenko.Graphics.Regression
                 PreferredBackBufferHeight = 480,
                 PreferredDepthStencilFormat = PixelFormat.D24_UNorm_S8_UInt,
                 DeviceCreationFlags = DeviceCreationFlags.Debug,
-                PreferredGraphicsProfile = new[] { GraphicsProfile.Level_9_1 }
+                PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 }
             };
             Services.AddService<IGraphicsDeviceManager>(GraphicsDeviceManager);
             Services.AddService<IGraphicsDeviceService>(GraphicsDeviceManager);
@@ -137,26 +138,7 @@ namespace Xenko.Graphics.Regression
         public BackBufferSizeMode BackBufferSizeMode
         {
             get { return backBufferSizeMode; }
-            set
-            {
-                backBufferSizeMode = value;
-#if XENKO_PLATFORM_ANDROID
-                switch (backBufferSizeMode)
-                {
-                    case BackBufferSizeMode.FitToDesiredValues:
-                        SwapChainGraphicsPresenter.ProcessPresentationParametersOverride = FitPresentationParametersToDesiredValues;
-                        break;
-                    case BackBufferSizeMode.FitToWindowSize:
-                        SwapChainGraphicsPresenter.ProcessPresentationParametersOverride = FitPresentationParametersToWindowSize;
-                        break;
-                    case BackBufferSizeMode.FitToWindowRatio:
-                        SwapChainGraphicsPresenter.ProcessPresentationParametersOverride = FitPresentationParametersToWindowRatio;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-#endif // TODO implement it other mobile platforms
-            }
+            set { backBufferSizeMode = value; }
         }
 
         protected internal void EnableSimulatedInputSource()
@@ -355,12 +337,7 @@ namespace Xenko.Graphics.Regression
             //if (!ImageTester.ImageTestResultConnection.DeviceName.Contains("_"))
             //    ImageTester.ImageTestResultConnection.DeviceName += "_" + GraphicsDevice.Adapter.Description.Split('\0')[0].TrimEnd(' '); // Workaround for sharpDX bug: Description ends with an series trailing of '\0' characters
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var platformSpecific = $"Windows_{GraphicsDevice.Platform}_{GraphicsDevice.Adapter.Description.Split('\0')[0].TrimEnd(' ')}";
-#else
-            var platformSpecific = string.Empty;
-            throw new NotImplementedException();
-#endif
 
             var rootFolder = FindXenkoRootFolder();
 
@@ -370,7 +347,7 @@ namespace Xenko.Graphics.Regression
             var testFilenameUser = GenerateName(Path.Combine(rootFolder, @"tests\local"), frame, platformSpecific);
 
             var testFilenames = new[] { testFilename };
-            
+
             // First, if exact match doesn't exist, test any other pattern
             // TODO: We might want to sort/filter partially (platform, etc...)?
             if (!File.Exists(testFilename))
@@ -379,7 +356,7 @@ namespace Xenko.Graphics.Regression
                     ? Directory.GetFiles(Path.GetDirectoryName(testFilenamePattern), Path.GetFileName(testFilenamePattern))
                     : new string[0];
             }
-            
+
             if (testFilenames.Length == 0)
             {
                 // No source image, save this one so that user can later copy it to validated folder
@@ -420,7 +397,6 @@ namespace Xenko.Graphics.Regression
 
         protected void SaveTexture(Texture texture, string filename)
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             using (var image = texture.GetDataAsImage(GraphicsContext.CommandList))
             {
                 using (var resultFileStream = File.OpenWrite(filename))
@@ -428,7 +404,6 @@ namespace Xenko.Graphics.Regression
                     image.Save(resultFileStream, ImageFileType.Png);
                 }
             }
-#endif
         }
 
         /// <summary>

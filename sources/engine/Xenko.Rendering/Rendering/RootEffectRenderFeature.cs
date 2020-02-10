@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -7,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+
 using Xenko.Core;
 using Xenko.Core.Annotations;
 using Xenko.Core.Storage;
@@ -722,7 +724,7 @@ namespace Xenko.Rendering
 
                         if (viewLayout.Entries[view.Index].MarkAsUsed(RenderSystem))
                         {
-                            threadContext.ResourceGroupAllocator.PrepareResourceGroup(viewLayout, BufferPoolAllocationType.UsedMultipleTime, viewLayout.Entries[view.Index].Resources);
+                            threadContext.ResourceGroupAllocator.PrepareResourceGroup(viewLayout, BufferPoolAllocationType.UsedMultipleTimes, viewLayout.Entries[view.Index].Resources);
 
                             // Register it in list of view layouts to update for this frame
                             viewFeature.Layouts.Add(viewLayout);
@@ -733,7 +735,7 @@ namespace Xenko.Rendering
                     var frameLayout = renderEffect.Reflection.PerFrameLayout;
                     if (frameLayout != null && frameLayout.Entry.MarkAsUsed(RenderSystem))
                     {
-                        threadContext.ResourceGroupAllocator.PrepareResourceGroup(frameLayout, BufferPoolAllocationType.UsedMultipleTime, frameLayout.Entry.Resources);
+                        threadContext.ResourceGroupAllocator.PrepareResourceGroup(frameLayout, BufferPoolAllocationType.UsedMultipleTimes, frameLayout.Entry.Resources);
 
                         // Register it in list of view layouts to update for this frame
                         FrameLayouts.Add(frameLayout);
@@ -758,7 +760,7 @@ namespace Xenko.Rendering
                     renderNode.EffectObjectNode = new EffectObjectNodeReference(effectObjectNodeIndex);
 
                     renderNode.RenderEffect = renderEffect;
-                    
+
                     // Bind well-known descriptor sets
                     var descriptorSetPoolOffset = ComputeResourceGroupOffset(renderNodeReference);
                     ResourceGroupPool[descriptorSetPoolOffset + perFrameDescriptorSetSlot.Index] = frameLayout?.Entry.Resources;

@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,8 +11,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+
 using Microsoft.Build.Execution;
 using Microsoft.CodeAnalysis;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Editor.Components.Status;
 using Xenko.Core.Assets.Editor.Settings;
@@ -388,7 +392,6 @@ namespace Xenko.GameStudio
                 var platformName = "AnyCPU";
                 var configuration = "Debug";
                 var target = "Build";
-                var cpu = string.Empty; // Used only for Windows Phone so far, default to ARM (need to provide a selector or detection)
                 var extraProperties = new Dictionary<string, string>
                 {
                     ["XenkoBuildEngineLogPipeUrl"] = BuildLog.PipeName,
@@ -414,46 +417,6 @@ namespace Xenko.GameStudio
                     {
                         case PlatformType.Windows:
                             extraProperties.Add("SolutionPlatform", "Any CPU");
-                            break;
-                        case PlatformType.Android:
-                            var androidDevices = AndroidDeviceEnumerator.ListAndroidDevices();
-                            if (androidDevices.Length == 0)
-                            {
-                                logger.Error(Tr._p("Message", "No Android device found for execution."));
-                                return false;
-                            }
-
-                            // On Android, directly install on device
-                            platformName = "Android";
-                            target = "GetAndroidPackage;Install";
-
-                            // For now, use first android device
-                            // TODO: Android device selector (together with platform selector)
-                            extraProperties.Add("AdbTarget", "-s " + androidDevices[0].Serial);
-
-                            extraProperties.Add("SolutionPlatform", "Android");
-                            break;
-                        case PlatformType.iOS:
-                            platformName = "iPhone";
-                            extraProperties.Add("SolutionPlatform", "iPhone");
-                            break;
-
-                        case PlatformType.Linux:
-                            platformName = "Linux";
-                            extraProperties.Add("SolutionPlatform", "Linux");
-                            if (XenkoEditorSettings.UseCoreCLR.GetValue())
-                            {
-                                configuration = "CoreCLR_" + configuration;
-                            }
-                            break;
-
-                        case PlatformType.macOS:
-                            platformName = "macOS";
-                            extraProperties.Add("SolutionPlatform", "macOS");
-                            if (XenkoEditorSettings.UseCoreCLR.GetValue())
-                            {
-                                configuration = "CoreCLR_" + configuration;
-                            }
                             break;
 
                         default:
@@ -502,67 +465,6 @@ namespace Xenko.GameStudio
                                 process.Start();
                             }
                             break;
-                        case PlatformType.Android:
-                            // Extract GetAndroidPackage result
-                            if (!buildTask.ResultsByTarget.TryGetValue("GetAndroidPackage", out TargetResult targetResult))
-                            {
-                                logger.Error(string.Format(Tr._p("Message", "Couldn't find Android package name for {0}."), Session.CurrentProject.Name));
-                                return false;
-                            }
-
-                            var packageName = targetResult.Items[0].ItemSpec;
-
-                            // Locate ADB
-                            var adbPath = await Task.Run(() => AndroidDeviceEnumerator.GetAdbPath());
-                            if (adbPath == null)
-                            {
-                                logger.Error(Tr._p("Message", @"Android tool ""adb"" couldn't found (no running process, in registry or on the PATH). Please add it to your PATH."));
-                                return false;
-                            }
-                            // Run
-                            var adbResult = await Task.Run(() => ShellHelper.RunProcessAndGetOutput(adbPath, $@"shell monkey -p {packageName} -c android.intent.category.LAUNCHER 1"));
-                            if (adbResult.ExitCode != 0)
-                            {
-                                logger.Error(string.Format(Tr._p("Message", "Can't run Android app with adb: {0}"), string.Join(Environment.NewLine, adbResult.OutputErrors)));
-                                return false;
-                            }
-
-                            break;
-                        case PlatformType.Linux:
-                        case PlatformType.macOS:
-                            {
-                                // Sanity check to verify executable was compiled properly
-                                if (string.Equals(Path.GetExtension(assemblyPath), ".exe", StringComparison.InvariantCultureIgnoreCase))
-                                {
-                                    if (!File.Exists(assemblyPath))
-                                    {
-                                        logger.Error(Tr._p("Message", "Unable to reach to output executable: {0}"));
-                                        return false;
-                                    }
-                                }
-
-                                // Ask for credentials if requested, otherwise we use what we have stored.
-                                if (XenkoEditorSettings.AskForCredentials.GetValue())
-                                {
-                                    var prompt = ServiceProvider.Get<IXenkoDialogService>().CreateCredentialsDialog();
-                                    await prompt.ShowModal();
-                                    if (!prompt.AreCredentialsValid)
-                                    {
-                                        logger.Error(string.Format(Tr._p("Message", "No credentials provided. To allow deployment, add your credentials.")));
-                                        return false;
-                                    }
-                                }
-
-                                // Launch game on remote host
-                                var launchApp = await Task.Run(() => RemoteFacilities.Launch(logger, new UFile(assemblyPath), XenkoEditorSettings.UseCoreCLR.GetValue()));
-                                if (!launchApp)
-                                {
-                                    logger.Error(string.Format(Tr._p("Message", "Unable to launch project {0}"), new UFile(assemblyPath).GetFileName()));
-                                    return false;
-                                }
-
-                                break;
-                            }
                     }
 
                     logger.Info(string.Format(Tr._p("Message", "Deployment of {0} successful."), projectViewModel.Name));

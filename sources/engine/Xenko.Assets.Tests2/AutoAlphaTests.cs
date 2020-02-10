@@ -1,10 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Xunit;
+
 using Xenko.Core;
 using Xenko.Assets.Textures;
 using Xenko.Engine;
@@ -23,22 +26,7 @@ namespace Xenko.Assets.Tests2
             { Tuple.Create(PlatformType.Windows, AlphaFormat.None), PixelFormat.BC1_UNorm },
             { Tuple.Create(PlatformType.Windows, AlphaFormat.Mask), PixelFormat.BC1_UNorm },
             { Tuple.Create(PlatformType.Windows, AlphaFormat.Explicit), PixelFormat.BC2_UNorm },
-            { Tuple.Create(PlatformType.Windows, AlphaFormat.Interpolated), PixelFormat.BC3_UNorm },
-
-            { Tuple.Create(PlatformType.UWP, AlphaFormat.None), PixelFormat.BC1_UNorm },
-            { Tuple.Create(PlatformType.UWP, AlphaFormat.Mask), PixelFormat.BC1_UNorm },
-            { Tuple.Create(PlatformType.UWP, AlphaFormat.Explicit), PixelFormat.BC2_UNorm },
-            { Tuple.Create(PlatformType.UWP, AlphaFormat.Interpolated), PixelFormat.BC3_UNorm },
-
-            { Tuple.Create(PlatformType.Android, AlphaFormat.None), PixelFormat.ETC1 },
-            { Tuple.Create(PlatformType.Android, AlphaFormat.Mask), PixelFormat.ETC2_RGB_A1 },
-            { Tuple.Create(PlatformType.Android, AlphaFormat.Explicit), PixelFormat.ETC2_RGBA },
-            { Tuple.Create(PlatformType.Android, AlphaFormat.Interpolated), PixelFormat.ETC2_RGBA },
-
-            { Tuple.Create(PlatformType.iOS, AlphaFormat.None), PixelFormat.ETC1 },
-            { Tuple.Create(PlatformType.iOS, AlphaFormat.Mask), PixelFormat.ETC2_RGB_A1 },
-            { Tuple.Create(PlatformType.iOS, AlphaFormat.Explicit), PixelFormat.ETC2_RGBA },
-            { Tuple.Create(PlatformType.iOS, AlphaFormat.Interpolated), PixelFormat.ETC2_RGBA },
+            { Tuple.Create(PlatformType.Windows, AlphaFormat.Interpolated), PixelFormat.BC3_UNorm }
         };
 
         private static void CheckTextureFormat(Game game, string textureUrl, AlphaFormat expectedFormat)

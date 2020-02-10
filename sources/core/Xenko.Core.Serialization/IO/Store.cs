@@ -1,9 +1,12 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+
 using Xenko.Core.Serialization;
 
 namespace Xenko.Core.IO
@@ -15,8 +18,7 @@ namespace Xenko.Core.IO
     /// <typeparam name="T">The type of elements in the store.</typeparam>
     public abstract class Store<T> : IDisposable where T : new()
     {
-        // macOS doesn't support Lock/Unlock (https://github.com/dotnet/corefx/issues/5964)
-        private static readonly bool LockEnabled = Platform.Type != PlatformType.macOS;
+        private static readonly bool LockEnabled = true;
 
         protected Stream stream;
 

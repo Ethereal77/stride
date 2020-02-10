@@ -1,10 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Xenko.Core.IO;
 
 namespace Xenko.Core.Storage
@@ -106,7 +109,7 @@ namespace Xenko.Core.Storage
             if (objectIds.Length == 0)
                 return;
 
-            var packUrl = bundleBackend.BundleDirectory + bundleName + BundleOdbBackend.BundleExtension; // we don't want the pack to be compressed in the APK on android
+            var packUrl = bundleBackend.BundleDirectory + bundleName + BundleOdbBackend.BundleExtension;
 
             // Create pack
             BundleOdbBackend.CreateBundle(packUrl, backendRead1, objectIds, disableCompressionIds, indexMap, dependencies, useIncrementalBundle);
@@ -346,7 +349,7 @@ namespace Xenko.Core.Storage
             lock (LoadedBlobs)
             {
                 var blob = Lookup(objectId);
-                
+
                 // Blob doesn't exist yet, so let's create it and save it to ODB.
                 if (blob == null)
                 {

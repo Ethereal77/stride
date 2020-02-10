@@ -1,9 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Analysis;
 using Xenko.Core.Assets.Compiler;
@@ -68,7 +70,7 @@ namespace Xenko.Assets.Skyboxes
                     var renderingSettings = gameSettingsAsset.GetOrCreate<RenderingSettings>(context.Platform);
 
                     // Select the best graphics profile
-                    var graphicsProfile = renderingSettings.DefaultGraphicsProfile >= GraphicsProfile.Level_10_0 ? renderingSettings.DefaultGraphicsProfile : GraphicsProfile.Level_10_0;
+                    var graphicsProfile = renderingSettings.DefaultGraphicsProfile;
 
                     var textureAssetItem = new AssetItem(textureUrl, textureAsset);
 

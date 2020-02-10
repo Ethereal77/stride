@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System.Threading.Tasks;
 
 using Xunit;
@@ -160,21 +162,19 @@ namespace Xenko.UI.Tests.Regression
             FrameGameSystem.Draw(DrawTest8).TakeScreenshot();
             FrameGameSystem.Draw(DrawTest9).TakeScreenshot();
             FrameGameSystem.Draw(DrawTest10).TakeScreenshot();
-            if (Platform.IsWindowsDesktop)
-            {
-                FrameGameSystem.Draw(12, SelectionTest1);
-                FrameGameSystem.Draw(13, SelectionTest2);
-                FrameGameSystem.Draw(14, SelectionTest3);
-                FrameGameSystem.Draw(15, SelectionTest4);
-                FrameGameSystem.Draw(16, SelectionTest5);
-                FrameGameSystem.Draw(17, SelectionTest6);
-                FrameGameSystem.Draw(18, SelectionTest7);
-                FrameGameSystem.Draw(19, SelectionTest8);
-                FrameGameSystem.Draw(21, SelectionTest9);
-                FrameGameSystem.Draw(22, SelectionGraphicTest1).TakeScreenshot(22);
-                FrameGameSystem.Draw(23, SelectionGraphicTest2).TakeScreenshot(23);
-                FrameGameSystem.Draw(24, SelectionGraphicTest3).TakeScreenshot(24);
-            }
+
+            FrameGameSystem.Draw(12, SelectionTest1);
+            FrameGameSystem.Draw(13, SelectionTest2);
+            FrameGameSystem.Draw(14, SelectionTest3);
+            FrameGameSystem.Draw(15, SelectionTest4);
+            FrameGameSystem.Draw(16, SelectionTest5);
+            FrameGameSystem.Draw(17, SelectionTest6);
+            FrameGameSystem.Draw(18, SelectionTest7);
+            FrameGameSystem.Draw(19, SelectionTest8);
+            FrameGameSystem.Draw(21, SelectionTest9);
+            FrameGameSystem.Draw(22, SelectionGraphicTest1).TakeScreenshot(22);
+            FrameGameSystem.Draw(23, SelectionGraphicTest2).TakeScreenshot(23);
+            FrameGameSystem.Draw(24, SelectionGraphicTest3).TakeScreenshot(24);
         }
 
         private void DrawTest1()

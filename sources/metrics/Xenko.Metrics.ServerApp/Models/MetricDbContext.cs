@@ -1,10 +1,15 @@
-﻿using System;
+﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+
 using Newtonsoft.Json;
+
 using Xenko.Metrics.ServerApp.Controllers;
 using Xenko.Metrics.ServerApp.Migrations;
 

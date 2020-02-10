@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using Xenko.Core;
 
 namespace Xenko.Graphics
@@ -11,33 +13,18 @@ namespace Xenko.Graphics
     public enum GraphicsPlatform
     {
         /// <summary>
-        /// The Null Shader.
+        /// The Null Renderer / Shader.
         /// </summary>
         Null,
 
         /// <summary>
-        /// HLSL Direct3D Shader.
+        /// Direct3D 11 Renderer / HLSL Shader.
         /// </summary>
         Direct3D11,
 
         /// <summary>
-        /// HLSL Direct3D Shader.
+        /// Direct3D 12 Renderer / HLSL Shader.
         /// </summary>
-        Direct3D12,
-
-        /// <summary>
-        /// GLSL OpenGL Shader.
-        /// </summary>
-        OpenGL,
-
-        /// <summary>
-        /// GLSL OpenGL ES Shader.
-        /// </summary>
-        OpenGLES,
-
-        /// <summary>
-        /// GLSL/SPIR-V Shader.
-        /// </summary>
-        Vulkan,
+        Direct3D12
     }
 }

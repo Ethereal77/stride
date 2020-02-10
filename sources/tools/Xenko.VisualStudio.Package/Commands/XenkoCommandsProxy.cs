@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,11 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+
 using NShader;
+
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Versioning;
+
 using Xenko.Core;
 using Xenko.Core.Assets;
 using Xenko.Core.Packages;
@@ -339,8 +343,8 @@ namespace Xenko.VisualStudio.Commands
                     }
                     else
                     {
-                        MessageBox.Show( $"Could not restore {packageName} {packageInfo.ExpectedVersion}, this visual studio extension may fail to work properly without it."
-                                         + $"To fix this you can either build {packageName} or pull the right version from nugget manually" );
+                        MessageBox.Show( $"Could not restore {packageName} {packageInfo.ExpectedVersion}, this Visual Studio extension may fail to work properly without it. " +
+                                         $"To fix this you can either build {packageName} or pull the right version from NuGet manually." );
                         throw new InvalidOperationException( $"Could not restore {packageName} {packageInfo.ExpectedVersion}." );
                     }
                 }

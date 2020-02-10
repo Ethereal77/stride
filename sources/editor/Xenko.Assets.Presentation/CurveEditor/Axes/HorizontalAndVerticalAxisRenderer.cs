@@ -1,45 +1,20 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2014 OxyPlot contributors
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-
-#region Copyright and license
-// Some parts of this file were inspired by OxyPlot (https://github.com/oxyplot/oxyplot)
-/*
-The MIT license (MTI)
-https://opensource.org/licenses/MIT
-
-Copyright (c) 2014 OxyPlot contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal 
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is 
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-#endregion
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Windows;
+
 using Xenko.Core.Presentation.Drawing;
 using Xenko.Assets.Presentation.CurveEditor.ViewModels;
 
+using Color = Xenko.Core.Mathematics.Color;
+
 namespace Xenko.Assets.Presentation.CurveEditor
 {
-    using Color = Core.Mathematics.Color;
-
     /// <summary>
     /// Provides functionality to render horizontal and vertical axes.
     /// </summary>
@@ -112,7 +87,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
         public void Render(AxisBase axis, int pass)
         {
             if (axis == null) throw new ArgumentNullException(nameof(axis));
-            
+
             axis.GetTickValues(out majorLabelValues, out majorTickValues, out minorTickValues);
             var totalShift = axis.AxisDistance + axis.PositionTierMinShift;
             var tierSize = axis.PositionTierSize - Editor.AxisTierDistance;
@@ -167,7 +142,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
                 RenderAxisTitle(axis, titlePosition);
             }
         }
-        
+
         /// <summary>
         /// Determines whether the specified value is within the specified range.
         /// </summary>
@@ -293,7 +268,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
                     {
                         majorTickSegments.Add(new Point(axisPosition + a0, transformedValue));
                         majorTickSegments.Add(new Point(axisPosition + a1, transformedValue));
-                    } 
+                    }
                 }
             }
 
@@ -372,7 +347,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                
+
                 var text = axis.FormatValue(value);
                 texts.Add(text);
                 textPositions.Add(point);
@@ -469,7 +444,7 @@ namespace Xenko.Assets.Presentation.CurveEditor
                     {
                         minorTickSegments.Add(new Point(axisPosition + a0, transformedValue));
                         minorTickSegments.Add(new Point(axisPosition + a1, transformedValue));
-                    } 
+                    }
                 }
             }
 

@@ -1,16 +1,19 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.IO;
-using System.Runtime.Versioning;
-using Xenko.Core.AssemblyProcessor.Serializers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 using System.Text;
+
 using Mono.Cecil;
+
 using Xenko.Core;
+using Xenko.Core.AssemblyProcessor.Serializers;
 
 namespace Xenko.Core.AssemblyProcessor
 {
@@ -223,14 +226,14 @@ namespace Xenko.Core.AssemblyProcessor
                 foreach (var genericParameterConstraint in genericParameter.Constraints)
                 {
                     // Skip value type constraint
-                    if (genericParameterConstraint.FullName != typeof(ValueType).FullName)
+                    if (genericParameterConstraint.ConstraintType.FullName != typeof(ValueType).FullName)
                     {
                         if (hasFirstContraint)
                         {
                             result.Append(", ");
                         }
 
-                        result.AppendFormat("{0}", genericParameterConstraint.ConvertCSharp());
+                        result.AppendFormat("{0}", genericParameterConstraint.ConstraintType.ConvertCSharp());
                         result.AppendLine();
 
                         hasFirstContraint = true;

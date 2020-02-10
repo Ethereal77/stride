@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using Xenko.Core;
 using Xenko.Core.Diagnostics;
 using Xenko.Core.IO;
@@ -87,7 +90,7 @@ namespace Xenko.Shaders.Compiler
 
             // Load D3D compiler dll
             // Note: No lock, it's probably fine if it gets called from multiple threads at the same time.
-            if (Platform.IsWindowsDesktop && !d3dCompilerLoaded)
+            if (!d3dCompilerLoaded)
             {
                 NativeLibrary.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
                 d3dCompilerLoaded = true;
@@ -112,31 +115,16 @@ namespace Xenko.Shaders.Compiler
                     shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D", 1);
                     shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D12", 1);
                     break;
-                case GraphicsPlatform.OpenGL:
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_OPENGL", 1);
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_OPENGLCORE", 1);
-                    break;
-                case GraphicsPlatform.OpenGLES:
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_OPENGL", 1);
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_OPENGLES", 1);
-                    break;
-                case GraphicsPlatform.Vulkan:
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_VULKAN", 1);
-                    break;
+
                 default:
                     throw new NotSupportedException();
             }
 
             // Generate profile-specific macros
-            shaderMixinSource.AddMacro("XENKO_GRAPHICS_PROFILE", (int)effectParameters.Profile);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_1", (int)GraphicsProfile.Level_9_1);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_2", (int)GraphicsProfile.Level_9_2);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_9_3", (int)GraphicsProfile.Level_9_3);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_10_0", (int)GraphicsProfile.Level_10_0);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_10_1", (int)GraphicsProfile.Level_10_1);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_0", (int)GraphicsProfile.Level_11_0);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_1", (int)GraphicsProfile.Level_11_1);
-            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_2", (int)GraphicsProfile.Level_11_2);
+            shaderMixinSource.AddMacro("XENKO_GRAPHICS_PROFILE", (int) effectParameters.Profile);
+            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_0", (int) GraphicsProfile.Level_11_0);
+            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_1", (int) GraphicsProfile.Level_11_1);
+            shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_2", (int) GraphicsProfile.Level_11_2);
 
             // In .xksl, class has been renamed to shader to avoid ambiguities with HLSL
             shaderMixinSource.AddMacro("class", "shader");
@@ -169,7 +157,6 @@ namespace Xenko.Shaders.Compiler
             // -------------------------------------------------------
             // Save shader log
             // TODO: TEMP code to allow debugging generated shaders on Windows Desktop
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var shaderId = ObjectId.FromBytes(Encoding.UTF8.GetBytes(shaderSourceText));
 
             var logDir = Path.Combine(PlatformFolders.ApplicationBinaryDirectory, "log");
@@ -186,69 +173,26 @@ namespace Xenko.Shaders.Compiler
                     File.WriteAllText(shaderSourceFilename, shaderSourceText);
                 }
             }
-#else
-            string shaderSourceFilename = null;
-#endif
             // -------------------------------------------------------
 
             var bytecode = new EffectBytecode { Reflection = parsingResult.Reflection, HashSources = parsingResult.HashSources };
 
             // Select the correct backend compiler
-            IShaderCompiler compiler;
+            IShaderCompiler compiler = default;
             switch (effectParameters.Platform)
             {
-#if XENKO_PLATFORM_WINDOWS
                 case GraphicsPlatform.Direct3D11:
                 case GraphicsPlatform.Direct3D12:
                     compiler = new Direct3D.ShaderCompiler();
                     break;
-#endif
-                case GraphicsPlatform.OpenGL:
-                case GraphicsPlatform.OpenGLES:
-                case GraphicsPlatform.Vulkan:
-                    // get the number of render target outputs
-                    var rtOutputs = 0;
-                    var psOutput = parsingResult.Shader.Declarations.OfType<StructType>().FirstOrDefault(x => x.Name.Text == "PS_OUTPUT");
-                    if (psOutput != null)
-                    {
-                        foreach (var rto in psOutput.Fields)
-                        {
-                            var sem = rto.Qualifiers.OfType<Semantic>().FirstOrDefault();
-                            if (sem != null)
-                            {
-                                // special case SV_Target
-                                if (rtOutputs == 0 && sem.Name.Text == "SV_Target")
-                                {
-                                    rtOutputs = 1;
-                                    break;
-                                }
-                                for (var i = rtOutputs; i < 8; ++i)
-                                {
-                                    if (sem.Name.Text == ("SV_Target" + i))
-                                    {
-                                        rtOutputs = i + 1;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    compiler = new OpenGL.ShaderCompiler(rtOutputs);
-                    break;
+
                 default:
                     throw new NotSupportedException();
             }
 
             var shaderStageBytecodes = new List<ShaderBytecode>();
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             var stageStringBuilder = new StringBuilder();
-#endif
-            // if the shader (non-compute) does not have a pixel shader, we should add it for OpenGL and OpenGL ES.
-            if ((effectParameters.Platform == GraphicsPlatform.OpenGL || effectParameters.Platform == GraphicsPlatform.OpenGLES) && !parsingResult.EntryPoints.ContainsKey(ShaderStage.Pixel) && !parsingResult.EntryPoints.ContainsKey(ShaderStage.Compute))
-            {
-                parsingResult.EntryPoints.Add(ShaderStage.Pixel, null);
-            }
 
             foreach (var stageBinding in parsingResult.EntryPoints)
             {
@@ -264,13 +208,11 @@ namespace Xenko.Shaders.Compiler
 
                 // -------------------------------------------------------
                 // Append bytecode id to shader log
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
                 stageStringBuilder.AppendLine("@G    {0} => {1}".ToFormat(stageBinding.Key, result.Bytecode.Id));
                 if (result.DisassembleText != null)
                 {
                     stageStringBuilder.Append(result.DisassembleText);
                 }
-#endif
                 // -------------------------------------------------------
 
                 shaderStageBytecodes.Add(result.Bytecode);
@@ -284,7 +226,6 @@ namespace Xenko.Shaders.Compiler
             CleanupReflection(bytecode.Reflection);
             bytecode.Stages = shaderStageBytecodes.ToArray();
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             int shaderSourceLineOffset = 0;
             int shaderSourceCharacterOffset = 0;
             string outputShaderLog;
@@ -380,7 +321,6 @@ namespace Xenko.Shaders.Compiler
                         .Insert(match.Groups[1].Index, line.ToString());
                 }
             }
-#endif
 
             return new EffectBytecodeCompilerResult(bytecode, log);
         }

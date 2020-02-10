@@ -15,13 +15,6 @@
     <XenkoBuildTags>*</XenkoBuildTags>
   </PropertyGroup>
   <Choose>
-    <When Condition="('$(XenkoPlatform)' == 'UWP')">
-      <ItemGroup>
-        <Reference Include="CppNet">
-          <HintPath>..\..\..\deps\CppNet\Store\CppNet.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </When>
     <When Condition="'$(XenkoNETRuntime)' != ''">
       <ItemGroup>
         <Reference Include="CppNet">
@@ -57,7 +50,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <CodeAnalysisDictionary Include="Convertor\Keywords.glsl" />
     <None Include="Grammar\Tokenizer.cgt" />
     <None Include="Grammar\Tokenizer.grm" />
   </ItemGroup>

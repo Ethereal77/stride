@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 namespace Xenko.Rendering.Skyboxes
@@ -14,11 +15,8 @@ namespace Xenko.Rendering.Skyboxes
 			var u = atan2(-samplingDir.z, -samplingDir.x)/(2*Math.PI) + 0.5;
 			var v = atan2(-samplingDir.y, length(samplingDir.xz))/Math.PI + 0.5;
 
-#if XENKO_GRAPHICS_PROFILE >= GRAPHICS_PROFILE_LEVEL_10_0
             var color = Texture.SampleLevel(LinearSampler, float2(u, v), 0).rgb;
-#else
-            var color = Texture.Sample(LinearSampler, float2(u, v)).rgb;
-#endif
+
             return float4(color * Intensity, 1.0);
         }
     };

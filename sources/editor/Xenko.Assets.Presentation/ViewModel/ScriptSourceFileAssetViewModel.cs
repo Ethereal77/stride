@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -7,22 +9,27 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Utils;
+
+using RoslynPad.Editor;
+
+using Xenko.Core.Assets;
 using Xenko.Core.Assets.Editor.ViewModel;
 using Xenko.Core.Diagnostics;
 using Xenko.Core.Presentation.Services;
 using Xenko.Core.Presentation.Windows;
 using Xenko.Assets.Presentation.AssetEditors.ScriptEditor;
 using Xenko.Assets.Scripts;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Utils;
-using RoslynPad.Editor;
 using Xenko.Core.Assets.TextAccessors;
 using Xenko.Core.Annotations;
 using Xenko.Core.Translation;
+
 using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
-using Xenko.Core.Assets;
 
 namespace Xenko.Assets.Presentation.ViewModel
 {

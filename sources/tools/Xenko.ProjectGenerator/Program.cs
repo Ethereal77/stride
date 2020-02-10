@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +13,9 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+
 using Mono.Options;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Templates;
 using Xenko.Core.Assets.Yaml;
@@ -25,6 +29,7 @@ using Xenko.Core.Yaml;
 using Xenko.Assets;
 using Xenko.Graphics;
 using Xenko.Core.ProjectTemplating;
+
 using Project = Xenko.Core.VisualStudio.Project;
 
 namespace Xenko.ProjectGenerator
@@ -563,24 +568,7 @@ namespace Xenko.ProjectGenerator
             switch (requestedPlatform)
             {
                 case PlatformType.Windows:
-                        // Nothing to do here.
-                    break;
-                case PlatformType.Android:
-                    configurations.Add(platform, platform);
-                    needDeploy = true;
-                    break;
-
-                case PlatformType.Linux:
-                case PlatformType.macOS:
-                case PlatformType.UWP:
-                    configurations.Add("Any CPU", "Any CPU");
-                    needDeploy = true;
-                    break;
-
-                case PlatformType.iOS:
-                    configurations.Add("iPhone", "iPhone");
-                    configurations.Add("iPhoneSimulator", "iPhoneSimulator");
-                    needDeploy = true;
+                    // Nothing to do here.
                     break;
 
                 default:

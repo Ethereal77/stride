@@ -131,10 +131,6 @@ SharedRenderers:
         LightShafts*:
             LightBufferDownsampleLevel: 2
             BoundingVolumeBufferDownsampleLevel: 8
-        VRSettings:
-            Enabled: false
-            RequiredApis: {}
-            Overlays: {}
         MSAALevel: None
         MSAAResolver: {}
     487b4e14d437f49beed5474c5a2ed0b1*: !PostProcessingEffects

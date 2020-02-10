@@ -20,11 +20,7 @@
 
 #pragma once
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
-#include <d3d11_x.h>
-#else
 #include <dxgiformat.h>
-#endif
 
 #include <stdint.h>
 

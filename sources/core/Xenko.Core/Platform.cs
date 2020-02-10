@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -13,43 +14,10 @@ namespace Xenko.Core
     /// </summary>
     public static class Platform
     {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
         /// <summary>
         /// The current running <see cref="PlatformType"/>.
         /// </summary>
         public static readonly PlatformType Type = PlatformType.Windows;
-#elif XENKO_PLATFORM_UWP
-        /// <summary>
-        /// The current running <see cref="PlatformType"/>.
-        /// </summary>
-        public static readonly PlatformType Type = PlatformType.UWP;
-#elif XENKO_PLATFORM_ANDROID
-        /// <summary>
-        /// The current running <see cref="PlatformType"/>.
-        /// </summary>
-        public static readonly PlatformType Type = PlatformType.Android;
-#elif XENKO_PLATFORM_IOS
-        /// <summary>
-        /// The current running <see cref="PlatformType"/>.
-        /// </summary>
-        public static readonly PlatformType Type = PlatformType.iOS;
-#elif XENKO_PLATFORM_MACOS
-        /// <summary>
-        /// The current running <see cref="PlatformType"/>.
-        /// </summary>
-        public static readonly PlatformType Type = PlatformType.macOS;
-#elif XENKO_PLATFORM_LINUX
-        /// <summary>
-        /// The current running <see cref="PlatformType"/>.
-        /// </summary>
-        public static readonly PlatformType Type = PlatformType.Linux;
-#endif
-
-        /// <summary>
-        /// Gets a value indicating whether the running platform is windows desktop.
-        /// </summary>
-        /// <value><c>true</c> if this instance is windows desktop; otherwise, <c>false</c>.</value>
-        public static readonly bool IsWindowsDesktop = Type == PlatformType.Windows;
 
         /// <summary>
         /// Gets a value indicating whether the running assembly is a debug assembly.

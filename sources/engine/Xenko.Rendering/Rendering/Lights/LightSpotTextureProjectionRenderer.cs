@@ -1,9 +1,12 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #pragma warning disable SA1402 // File may only contain a single class
 #pragma warning disable SA1649 // File name must match first type name
 
 using System;
+
 using Xenko.Core.Collections;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
@@ -157,7 +160,7 @@ namespace Xenko.Rendering.Lights
             viewMatrix.M21 *= -height;
             viewMatrix.M22 *= -height;   // Invert the matrix so we don't have to do it in the shader.
             viewMatrix.M23 *= -height;
-            
+
             return viewMatrix; // Model matrix of the projector plane.
         }
 
@@ -179,8 +182,8 @@ namespace Xenko.Rendering.Lights
         // TODO: Find a way to use this class!
         private class LightSpotTextureProjectionShaderData : ILightShadowMapShaderData
         {
-            public float ProjectiveTextureMipMapLevel; 
-            public Matrix WorldToTextureUV; 
+            public float ProjectiveTextureMipMapLevel;
+            public Matrix WorldToTextureUV;
         }
 
         public class LightSpotTextureProjectionGroupShaderData : ITextureProjectionShaderGroupData // TODO: Make private
@@ -264,7 +267,7 @@ namespace Xenko.Rendering.Lights
                         /*
                         // TODO: Just save the shaderdata struct directly within "LightDynamicEntry"?
                         var singleLightData = (LightSpotTextureProjectionShaderData)lightEntry.ShadowMapTexture.ShaderData;   // TODO: This must not depend on the shadow map texture!
-                        
+
                         worldToTextureUV[lightIndex] = singleLightData.WorldToTextureUV;
                         projectionTextureMipMapLevels[lightIndex] = singleLightData.ProjectiveTextureMipMapLevel;
                         projectiveTexture = singleLightData.ProjectiveTexture;
@@ -279,18 +282,18 @@ namespace Xenko.Rendering.Lights
                         int maxMipMapCount = Texture.CountMips(lightParameters.ProjectionTexture.Width, lightParameters.ProjectionTexture.Height);
                         float projectiveTextureMipMapLevel = (float)(maxMipMapCount - 1) * spotLight.MipMapScale; // "- 1" because the lowest mip level is 0, not 1.
                         projectionTextureMipMapLevels[lightIndex] = projectiveTextureMipMapLevel;
-                        transitionAreas[lightIndex] = Math.Max(spotLight.TransitionArea, 0.001f);   // Keep the value just above zero. This is to prevent some issues with the "smoothstep()" function on OpenGL and OpenGL ES.
+                        transitionAreas[lightIndex] = Math.Max(spotLight.TransitionArea, 0.001f);   // Keep the value just above zero. This is to prevent some issues with the "smoothstep()" function.
 
                         ++lightIndex;
                     }
                 }
 
                 // TODO: Why is this set if it's already in the collection?
-                // TODO: Does this get set once per group or something? 
+                // TODO: Does this get set once per group or something?
                 parameters.Set(projectiveTextureKey, lightParameters.ProjectionTexture);
                 parameters.Set(uvScale, lightParameters.UVScale);
                 parameters.Set(uvOffset, lightParameters.UVOffset);
-                parameters.Set(worldToProjectiveTextureUVsKey, worldToTextureUV); 
+                parameters.Set(worldToProjectiveTextureUVsKey, worldToTextureUV);
                 parameters.Set(projectorPlaneMatricesKey, projectorPlaneMatrices);
                 parameters.Set(projectionTextureMipMapLevelsKey, projectionTextureMipMapLevels);
                 parameters.Set(transitionAreasKey, transitionAreas);

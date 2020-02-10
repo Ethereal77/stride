@@ -1,6 +1,9 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+
 using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
@@ -42,13 +45,6 @@ namespace ThirdPersonPlatformer
 
             // Default up-direction
             upVector = Vector3.UnitY;
-
-            // Configure touch input
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-                Input.Gestures.Add(new GestureConfigComposite());
-            }
         }
 
         public override void Update()

@@ -1,10 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Editor.Components.TemplateDescriptions;
 using Xenko.Core.Assets.Templates;
@@ -55,7 +58,7 @@ namespace Xenko.Assets.Presentation.Templates
         /// <summary>
         /// Sets the parameters required by this template when running in <see cref="TemplateGeneratorParameters.Unattended"/> mode.
         /// </summary>
-        public static void SetParameters([NotNull] SessionTemplateGeneratorParameters parameters, [NotNull] IEnumerable<SelectedSolutionPlatform> platforms, GraphicsProfile graphicsProfile = GraphicsProfile.Level_10_0, bool isHDR = true, DisplayOrientation orientation = DisplayOrientation.Default, IEnumerable<UDirectory> assets = null)
+        public static void SetParameters([NotNull] SessionTemplateGeneratorParameters parameters, [NotNull] IEnumerable<SelectedSolutionPlatform> platforms, GraphicsProfile graphicsProfile = GraphicsProfile.Level_11_0, bool isHDR = true, DisplayOrientation orientation = DisplayOrientation.Default, IEnumerable<UDirectory> assets = null)
         {
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
             if (platforms == null) throw new ArgumentNullException(nameof(platforms));
@@ -106,8 +109,6 @@ namespace Xenko.Assets.Presentation.Templates
             //     Assets\
             //     $Name$.Game\
             //     $Name$.Windows\
-            //     $Name$.Android\
-            //     $Name$.iOS\
 
             var logger = parameters.Logger;
             var platforms = parameters.GetTag(PlatformsKey);
@@ -193,7 +194,7 @@ namespace Xenko.Assets.Presentation.Templates
 
             // Setup GraphicsCompositor using DefaultGraphicsCompositor
             var graphicsProfile = parameters.GetTag(GraphicsProfileKey);
-            var defaultCompositorUrl = graphicsProfile >= GraphicsProfile.Level_10_0 ? XenkoPackageUpgrader.DefaultGraphicsCompositorLevel10Url : XenkoPackageUpgrader.DefaultGraphicsCompositorLevel9Url;
+            var defaultCompositorUrl = XenkoPackageUpgrader.DefaultGraphicsCompositorLevel10Url;
             var defaultCompositor = session.FindAsset(defaultCompositorUrl);
 
             var graphicsCompositor = new AssetItem("GraphicsCompositor", defaultCompositor.CreateDerivedAsset());
@@ -234,7 +235,7 @@ namespace Xenko.Assets.Presentation.Templates
 
         /// <summary>
         /// Creates default scene, with a ground plane, sphere, directional light and camera.
-        /// If graphicsProfile is 10+, add cubemap light, otherwise ambient light.
+        /// If graphicsProfile is 11+, add cubemap light, otherwise ambient light.
         /// Also properly setup graphics pipeline depending on if HDR is set or not
         /// </summary>
         /// <param name="parameters">The parameters.</param>
@@ -245,9 +246,6 @@ namespace Xenko.Assets.Presentation.Templates
 
             var graphicsProfile = parameters.GetTag(GraphicsProfileKey);
             var isHDR = parameters.GetTag(IsHDRKey);
-
-            if (graphicsProfile < GraphicsProfile.Level_10_0)
-                isHDR = false;
 
             // Create the material for the sphere
             var sphereMaterial = new MaterialAsset

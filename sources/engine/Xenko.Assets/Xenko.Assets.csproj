@@ -10,7 +10,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\build\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
-  <PropertyGroup Condition="('$(XenkoPlatform)' == 'Windows') and ('$(XenkoNETRuntime)' != 'CoreCLR')">
+  <PropertyGroup Condition="'$(XenkoNETRuntime)' != 'CoreCLR'">
     <DefineConstants>XENKO_VIDEO_FFMPEG;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AssetPackage\Assets\Shared\DefaultGraphicsCompositorLevel10.xkgfxcomp" />
-    <None Include="AssetPackage\Assets\Shared\DefaultGraphicsCompositorLevel9.xkgfxcomp" />
     <None Include="AssetPackage\Assets\Shared\XenkoClearCoatMetalFlakesNM.xktex" />
     <None Include="AssetPackage\Assets\Shared\XenkoClearCoatOrangePeelNM.xktex" />
     <None Include="AssetPackage\Assets\Shared\XenkoDebugSpriteFont.xktex" />

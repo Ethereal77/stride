@@ -1,4 +1,13 @@
-<!-- Build file pre-included by all Xenko projects -->
+<!--
+***********************************************************************************************
+  Xenko.Core.GlobalSettings.Local.targets
+
+  Build file pre-included before the building of the project to configure the output paths
+  based on the selected platforms.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- Define the location where to build assemblies. -->

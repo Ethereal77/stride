@@ -44,9 +44,6 @@
     <Compile Include="..\..\shared\AttachedChildProcessJob.cs">
       <Link>AttachedChildProcessJob.cs</Link>
     </Compile>
-    <Compile Include="..\..\shared\Process\AndroidDeviceEnumerator.cs">
-      <Link>AndroidDeviceEnumerator.cs</Link>
-    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -65,14 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Logo.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ios-tcprelay\xenko-ios-relay.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="ios-tcprelay\usbmux.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <Import Project="..\..\shared\Xenko.Core.ShellHelper\Xenko.Core.ShellHelper.projitems" Label="Shared" />
   <Import Project="..\..\shared\Xenko.NuGetResolver\Xenko.NuGetResolver.projitems" Label="Shared" />

@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -6,7 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+
 using Xunit;
+
 using Xenko.Core;
 using Xenko.Core.Diagnostics;
 using Xenko.Core.IO;
@@ -21,7 +24,7 @@ namespace Xenko.Graphics.Tests
 
         public TestTexture()
         {
-            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_10_0 };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 };
         }
 
         [Fact]
@@ -125,7 +128,7 @@ namespace Xenko.Graphics.Tests
                     // Release the texture
                     texture.Dispose();
                 },
-                GraphicsProfile.Level_9_1);
+                GraphicsProfile.Level_11_0);
         }
 
         [Fact]
@@ -181,9 +184,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact]
         public void TestTexture2DUnorderedAccess()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGL);
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             PerformTest(
                 game =>
                 {
@@ -266,7 +266,7 @@ namespace Xenko.Graphics.Tests
                     // Get a render target on the 2nd mipmap of this texture 3D
                     var renderTarget1 = texture.ToTextureView(ViewType.Single, 0, 1);
 
-                    // Check that width/height is correctly calculated 
+                    // Check that width/height is correctly calculated
                     Assert.Equal(32 >> 1, renderTarget1.ViewWidth);
                     Assert.Equal(32 >> 1, renderTarget1.ViewHeight);
 
@@ -284,8 +284,6 @@ namespace Xenko.Graphics.Tests
         [SkippableFact]
         public void TestDepthStencilBuffer()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             PerformTest(
                 game =>
                 {
@@ -317,15 +315,13 @@ namespace Xenko.Graphics.Tests
 
                     // Dispose the depth stencil buffer
                     textureCopy.Dispose();
-                }, 
-                GraphicsProfile.Level_10_0);
+                },
+                GraphicsProfile.Level_11_0);
         }
 
         [SkippableFact(Skip = "Clear on a ReadOnly depth buffer should be undefined or throw exception; should rewrite this test to do actual rendering with ReadOnly depth stencil bound?")]
         public void TestDepthStencilBufferWithNativeReadonly()
         {
-            IgnoreGraphicPlatform(GraphicsPlatform.OpenGLES);
-
             PerformTest(
                 game =>
                 {
@@ -364,10 +360,6 @@ namespace Xenko.Graphics.Tests
         [SkippableTheory, MemberData(nameof(ImageFileTypes))]
         public void TestLoadSave(ImageFileType sourceFormat)
         {
-            Skip.If(Platform.Type == PlatformType.Android && (
-                        sourceFormat == ImageFileType.Xenko || sourceFormat == ImageFileType.Dds || // TODO remove this when mipmap copy is supported on OpenGL by the engine.
-                        sourceFormat == ImageFileType.Tiff), "Unsupported case"); // TODO remove when the tiff format is supported on android.
-
             PerformTest(
                 game =>
                 {
@@ -390,7 +382,7 @@ namespace Xenko.Graphics.Tests
                     Texture texture;
                     using (var inStream = game.Content.OpenAsStream(filePath, StreamFlags.None))
                         texture = Texture.Load(device, inStream);
-                            
+
                     var tempStream = new MemoryStream();
                     texture.Save(game.GraphicsContext.CommandList, tempStream, intermediateFormat);
                     tempStream.Position = 0;
@@ -411,8 +403,8 @@ namespace Xenko.Graphics.Tests
                     GC.WaitForPendingFinalizers();
                     var testMemoryAfter = GC.GetTotalMemory(true);
                     Log.Info($"Test loading {fileName} GPU texture / saving to {intermediateFormat} and compare with original Memory {testMemoryAfter - testMemoryBefore} delta bytes, in {time}ms");
-                }, 
-                GraphicsProfile.Level_9_1);
+                },
+                GraphicsProfile.Level_11_0);
         }
 
         [SkippableTheory, MemberData(nameof(ImageFileTypes))]
@@ -420,7 +412,6 @@ namespace Xenko.Graphics.Tests
         {
             Skip.If(sourceFormat == ImageFileType.Wmp, "no input image of this format.");
             Skip.If(sourceFormat == ImageFileType.Wmp || sourceFormat == ImageFileType.Tga, "TODO remove this when Load/Save methods are implemented for those types.");
-            Skip.If(Platform.Type == PlatformType.Android && sourceFormat == ImageFileType.Tiff, "TODO remove this when Load/Save methods are implemented for this type.");
 
             TestName = nameof(TestLoadDraw);
 
@@ -433,15 +424,15 @@ namespace Xenko.Graphics.Tests
                     var device = game.GraphicsDevice;
                     var fileName = sourceFormat.ToFileExtension().Substring(1) + "Image";
                     var filePath = "ImageTypes/" + fileName;
-                        
+
                     // Load an image from a file and dispose it.
                     Texture texture;
                     using (var inStream = game.Content.OpenAsStream(filePath, StreamFlags.None))
                         texture = Texture.Load(device, inStream, loadAsSRGB: true);
-                        
+
                     game.GraphicsContext.DrawTexture(texture, BlendStates.AlphaBlend);
                 },
-                GraphicsProfile.Level_9_1);
+                GraphicsProfile.Level_11_0);
         }
 
         private void CheckTexture(GraphicsContext graphicsContext, Texture texture, byte[] data)
@@ -465,14 +456,12 @@ namespace Xenko.Graphics.Tests
         }
 
         [Theory]
-        [InlineData(GraphicsProfile.Level_9_1, GraphicsResourceUsage.Staging)]
-        [InlineData(GraphicsProfile.Level_9_1, GraphicsResourceUsage.Default)]
-        [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Staging)]
-        [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Default)]
+        [InlineData(GraphicsProfile.Level_11_0, GraphicsResourceUsage.Staging)]
+        [InlineData(GraphicsProfile.Level_11_0, GraphicsResourceUsage.Default)]
         public void TestGetData(GraphicsProfile profile, GraphicsResourceUsage usage)
         {
-            var testArray = profile >= GraphicsProfile.Level_10_0; // TODO modify this when when supported on openGL
-            var mipmaps = GraphicsDevice.Platform == GraphicsPlatform.OpenGLES && profile < GraphicsProfile.Level_10_0 ? 1 : 3; // TODO remove this limitation when GetData is fixed on OpenGl ES for mipmap levels other than 0
+            var testArray = true;
+            var mipmaps = 3;
 
             PerformTest(
                 game =>
@@ -497,14 +486,12 @@ namespace Xenko.Graphics.Tests
         }
 
         [Theory]
-        [InlineData(GraphicsProfile.Level_9_1, GraphicsResourceUsage.Staging)]
-        [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Staging)]
-        [InlineData(GraphicsProfile.Level_9_1, GraphicsResourceUsage.Default)]
-        [InlineData(GraphicsProfile.Level_10_0, GraphicsResourceUsage.Default)]
+        [InlineData(GraphicsProfile.Level_11_0, GraphicsResourceUsage.Staging)]
+        [InlineData(GraphicsProfile.Level_11_0, GraphicsResourceUsage.Default)]
         public void TestCopy(GraphicsProfile profile, GraphicsResourceUsage usageSource)
         {
-            var testArray = profile >= GraphicsProfile.Level_10_0; // TODO modify this when when supported on openGL
-            var mipmaps = GraphicsDevice.Platform == GraphicsPlatform.OpenGLES && profile < GraphicsProfile.Level_10_0 ? 1 : 3; // TODO remove this limitation when GetData is fixed on OpenGl ES for mipmap levels other than 0
+            var testArray = true;
+            var mipmaps = 3;
 
             PerformTest(
                 game =>

@@ -1,11 +1,15 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Xenko.Core.Assets.Compiler;
 using Xenko.Core.Assets.Diagnostics;
@@ -14,8 +18,6 @@ using Xenko.Core;
 using Xenko.Core.Diagnostics;
 using Xenko.Core.IO;
 using Xenko.Core.MicroThreading;
-using System.Threading;
-using System.Threading.Tasks;
 using Xenko.Core.Assets.Analysis;
 using Xenko.Core.Reflection;
 using Xenko.Core.Serialization.Contents;

@@ -90,63 +90,6 @@ set Project=Xenko.Null.sln
 call :compile
 if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
 
-set Project=Xenko.Vulkan.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.Vulkan.SDL.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.OpenGL.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.OpenGL.CoreCLR.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.Linux.sln
-set _platform_target=Linux
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.Linux.Vulkan.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.Linux.CoreCLR.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.Linux.Vulkan.CoreCLR.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.macOS.sln
-set _platform_target=macOS
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.macOS.CoreCLR.sln
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.Android.sln
-set _platform_target=Android
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.iOS.sln
-set _platform_target=iPhone
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
-set Project=Xenko.UWP.sln
-set _platform_target=UWP
-call :compile
-if %ERRORLEVEL% NEQ 0 if "%__ContinueOnError%" == "false" goto exit
-
 goto exit
 
 rem Compile our solution. The following variables needs to be set:

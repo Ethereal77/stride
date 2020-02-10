@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 namespace Xenko.Rendering.Materials
 {
     /// <summary>
@@ -16,12 +18,8 @@ namespace Xenko.Rendering.Materials
             UpdateNormalFromTangentSpace(streams.matNormal);
             
             // Flip the normal so it is facing the right direction for back faces
-#if XENKO_GRAPHICS_API_DIRECT3D && XENKO_GRAPHICS_PROFILE < GRAPHICS_PROFILE_LEVEL_10_0
-            //streams.normalWS = streams.normalWS * sign(streams.IsFrontFace);// FIXME: VFACE seems to not work in a proper way
-#else
             if(!streams.IsFrontFace)
                 streams.normalWS = -streams.normalWS;
-#endif
 
             // Make sure that light stream is reset
             ResetLightStream();

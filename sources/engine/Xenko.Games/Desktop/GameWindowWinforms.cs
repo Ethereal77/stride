@@ -1,13 +1,18 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-#if XENKO_PLATFORM_WINDOWS_DESKTOP && (XENKO_GRAPHICS_API_DIRECT3D || XENKO_GRAPHICS_API_VULKAN) && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+
+#if XENKO_GRAPHICS_API_DIRECT3D && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+
 using Xenko.Core.Mathematics;
 using Xenko.Graphics;
+
 using Form = System.Windows.Forms.Form;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;

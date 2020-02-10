@@ -1,9 +1,10 @@
+using System;
+using System.Threading.Tasks;
+
+using Xenko.Core;
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Input;
-using System;
-using System.Threading.Tasks;
-using Xenko.Core;
 
 namespace Xenko.Scripts
 {
@@ -67,11 +68,6 @@ namespace Xenko.Scripts
             Reset();
 
             Input.LockMousePosition(true);
-
-            if (!Platform.IsWindowsDesktop)
-            {
-                Input.Gestures.Add(new GestureConfigDrag());
-            }
 
             while (true)
             {

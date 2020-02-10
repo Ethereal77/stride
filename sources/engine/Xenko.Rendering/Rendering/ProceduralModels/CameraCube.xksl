@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 /// <summary>
 /// Renders the geometry in the correct view for a cube map.
 /// </summary>
@@ -18,15 +20,14 @@ shader CameraCube : PositionStream4, ShaderBase
         for (int i = 0; i < 6; ++i)
         {
             streams.RTAIndex = i;
-            
-            // TODO: verify that for OpenGL. This is likely to be wrong. Perhaps we don't have to change face winding.
+
             for (int j = 0; j < 3; ++j)
             {
                 streams = input[j];
                 streams.ShadingPosition = mul(streams.PositionWS, CameraViewProjectionMatrices[i]);
                 triangleStream.Append(streams);
             }
-            
+
             triangleStream.RestartStrip();
         }
     }

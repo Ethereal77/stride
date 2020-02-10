@@ -1,29 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-#if XENKO_GRAPHICS_API_DIRECT3D11
-
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+#if XENKO_GRAPHICS_API_DIRECT3D11
 
 using System;
 using System.Collections.Generic;
+
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -77,7 +61,24 @@ namespace Xenko.Graphics
         /// <param name="mode">The mode.</param>
         /// <returns>Returns the closes display mode.</returns>
         /// <unmanaged>HRESULT IDXGIOutput::FindClosestMatchingMode([In] const DXGI_MODE_DESC* pModeToMatch,[Out] DXGI_MODE_DESC* pClosestMatch,[In, Optional] IUnknown* pConcernedDevice)</unmanaged>
-        /// <remarks>Direct3D devices require UNORM formats. This method finds the closest matching available display mode to the mode specified in pModeToMatch. Similarly ranked fields (i.e. all specified, or all unspecified, etc) are resolved in the following order.  ScanlineOrdering Scaling Format Resolution RefreshRate  When determining the closest value for a particular field, previously matched fields are used to filter the display mode list choices, and  other fields are ignored. For example, when matching Resolution, the display mode list will have already been filtered by a certain ScanlineOrdering,  Scaling, and Format, while RefreshRate is ignored. This ordering doesn't define the absolute ordering for every usage scenario of FindClosestMatchingMode, because  the application can choose some values initially, effectively changing the order that fields are chosen. Fields of the display mode are matched one at a time, generally in a specified order. If a field is unspecified, FindClosestMatchingMode gravitates toward the values for the desktop related to this output.  If this output is not part of the desktop, then the default desktop output is used to find values. If an application uses a fully unspecified  display mode, FindClosestMatchingMode will typically return a display mode that matches the desktop settings for this output.   Unspecified fields are lower priority than specified fields and will be resolved later than specified fields.</remarks>
+        /// <remarks>
+        ///   Direct3D devices require UNORM formats. This method finds the closest matching available display mode
+        ///   to the mode specified in pModeToMatch. Similarly ranked fields (i.e. all specified, or all unspecified,
+        ///   etc) are resolved in the following order.  ScanlineOrdering Scaling Format Resolution RefreshRate
+        ///   When determining the closest value for a particular field, previously matched fields are used to filter
+        ///   the display mode list choices, and  other fields are ignored. For example, when matching Resolution,
+        ///   the display mode list will have already been filtered by a certain ScanlineOrdering,  Scaling, and
+        ///   Format, while RefreshRate is ignored. This ordering doesn't define the absolute ordering for every
+        ///   usage scenario of FindClosestMatchingMode, because  the application can choose some values initially,
+        ///   effectively changing the order that fields are chosen. Fields of the display mode are matched one at a
+        ///   time, generally in a specified order. If a field is unspecified, FindClosestMatchingMode gravitates
+        ///   toward the values for the desktop related to this output.  If this output is not part of the desktop,
+        ///   then the default desktop output is used to find values. If an application uses a fully unspecified
+        ///   display mode, FindClosestMatchingMode will typically return a display mode that matches the desktop
+        ///   settings for this output.
+        ///   Unspecified fields are lower priority than specified fields and will be resolved later than specified
+        ///   fields.
+        /// </remarks>
         public DisplayMode FindClosestMatchingDisplayMode(GraphicsProfile[] targetProfiles, DisplayMode mode)
         {
             if (targetProfiles == null) throw new ArgumentNullException("targetProfiles");

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,13 +13,13 @@ namespace Irony.Parsing {
   public class Symbol {
     public readonly string Text;
     //used for symbol comparison in case-insensitive environments
-    public readonly Symbol LowerSymbol; 
+    public readonly Symbol LowerSymbol;
     private int _hashCode;
 
     internal Symbol(string text, Symbol lowerSymbol) {
-      Text = text; 
-      LowerSymbol = lowerSymbol?? this; //lowerSymbol == null means "text is all lowercase, so use 'this' as LowerSymbol" 
-      _hashCode = Text.GetHashCode(); 
+      Text = text;
+      LowerSymbol = lowerSymbol?? this; //lowerSymbol == null means "text is all lowercase, so use 'this' as LowerSymbol"
+      _hashCode = Text.GetHashCode();
     }
 
     public override int GetHashCode() {
@@ -34,15 +38,15 @@ namespace Irony.Parsing {
   public class SymbolSet : HashSet<Symbol> { }
   public class SymbolList : List<Symbol> { }
 
-  internal class SymbolDictionary : Dictionary<string, Symbol> { 
+  internal class SymbolDictionary : Dictionary<string, Symbol> {
     internal SymbolDictionary() : base(1000) { }
   }
 
   public class SymbolTable {
     SymbolDictionary _dictionary = new SymbolDictionary();
-    object _lockObject = new object(); 
+    object _lockObject = new object();
 
-    public static SymbolTable Symbols = new SymbolTable(); 
+    public static SymbolTable Symbols = new SymbolTable();
 
     private SymbolTable() { }
 
@@ -72,7 +76,7 @@ namespace Irony.Parsing {
         if(_dictionary.TryGetValue(text, out symbol))
           return symbol;
         //Create symbol; first find/create lower symbol
-        var lowerText = text.ToLower(CultureInfo.InvariantCulture); //ToLowerInvariant looks better but it's not in Silverlight, so using ToLower 
+        var lowerText = text.ToLowerInvariant(CultureInfo.InvariantCulture); //TODO: ToLowerInvariant looks better but it's not in Silverlight, so using ToLower 
         if(!_dictionary.TryGetValue(lowerText, out lowerSymbol))
           lowerSymbol = NewSymbol(lowerText, null);
         //if the text is all lower, return lowerSymbol as result
@@ -86,14 +90,14 @@ namespace Irony.Parsing {
     private Symbol NewSymbol(string text, Symbol lowerSymbol) {
       var result = new Symbol(text, lowerSymbol);
       _dictionary.Add(text, result);
-      return result; 
+      return result;
     }
 
   }//class
 
   public class CaseSensitiveSymbolComparer : IComparer<Symbol> {
     public int Compare(Symbol x, Symbol y) {
-      return x == y ? 0 : 1;  
+      return x == y ? 0 : 1;
     }
   }
 

@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 namespace Xenko.Rendering.Images
@@ -15,7 +16,7 @@ namespace Xenko.Rendering.Images
 
         override float4 Compute(float4 color)
         {
-			// Workaround for Huawei Mate 9 Pro (Mali) GLSL bug
+            // Workaround for Huawei Mate 9 Pro (Mali) GLSL bug
             float w = (1.425 * WhitePoint) + 0.05f;
             w = ((WhitePoint * w + 0.004f) / ((WhitePoint * (w + 0.55f) + 0.0491f))) - 0.0821f;
 

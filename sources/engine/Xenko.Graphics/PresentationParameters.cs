@@ -1,6 +1,9 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+
 using Xenko.Core.Mathematics;
 
 namespace Xenko.Graphics
@@ -38,8 +41,7 @@ namespace Xenko.Graphics
         /// <remarks>
         ///   A window object is platform dependent:
         ///   <ul>
-        ///     <li>On Windows Desktop: This could a low level window/control handle (IntPtr), or directly a Winform Control object.</li>
-        ///     <li>On Windows Metro: This could be SwapChainBackgroundPanel or SwapChainPanel object.</li>
+        ///     <li>On Windows Desktop: This could be a low level Window/Control handle (IntPtr), or directly a WinForms Control object.</li>
         ///   </ul>
         /// </remarks>
         public WindowHandle DeviceWindowHandle;

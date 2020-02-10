@@ -1,8 +1,10 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Reflection;
+
 using Xenko.Core.Reflection;
 
 namespace Xenko.Core.Annotations
@@ -26,10 +28,9 @@ namespace Xenko.Core.Annotations
         public ObjectFactoryAttribute([NotNull] Type factoryType)
         {
             if (factoryType == null) throw new ArgumentNullException(nameof(factoryType));
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             if (!typeof(IObjectFactory).GetTypeInfo().IsAssignableFrom(factoryType.GetTypeInfo())) throw new ArgumentException($@"The given type does not implement {nameof(IObjectFactory)}/", nameof(factoryType));
             if (factoryType.GetTypeInfo().GetConstructor(Type.EmptyTypes) == null) throw new ArgumentException(@"The given type does have a public parameterless constructor.", nameof(factoryType));
-#endif
+
             FactoryType = factoryType;
         }
     }

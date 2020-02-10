@@ -1,17 +1,21 @@
-// Copyright (c) Xenko contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using NuGet.Commands;
 using NuGet.DependencyResolver;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
 using NuGet.RuntimeModel;
+
 using Xenko.Core.Diagnostics;
 using Xenko.Core.IO;
 using Xenko.Core.Packages;
@@ -106,8 +110,6 @@ namespace Xenko.Core.Assets
 
                     var outputType = msProject.GetPropertyValue("OutputType");
                     project.Type = outputType.ToLowerInvariant() == "winexe" || outputType.ToLowerInvariant() == "exe"
-                        || outputType.ToLowerInvariant() == "appcontainerexe" // UWP
-                        || msProject.GetPropertyValue("AndroidApplication").ToLowerInvariant() == "true" // Android
                         ? ProjectType.Executable
                         : ProjectType.Library;
 
@@ -442,7 +444,7 @@ namespace Xenko.Core.Assets
             else
             {
                 // External references were passed, but the top level project wasn't found.
-                // This is always due to an internal issue and typically caused by errors 
+                // This is always due to an internal issue and typically caused by errors
                 // building the project closure.
                 throw new InvalidOperationException($"Missing external reference metadata for {_request.Project.Name}");
             }

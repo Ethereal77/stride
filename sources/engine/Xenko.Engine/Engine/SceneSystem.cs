@@ -1,8 +1,10 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
+
 using Xenko.Core;
 using Xenko.Core.Diagnostics;
 using Xenko.Core.Mathematics;
@@ -66,11 +68,6 @@ namespace Xenko.Engine
         /// Splash screen background color.
         /// </summary>
         public Color4 SplashScreenColor { get; set; }
-
-        /// <summary>
-        /// Is the splash screen displayed in VR double view.
-        /// </summary>
-        public bool DoubleViewSplashScreen { get; set; }
 
         /// <summary>
         /// If splash screen rendering is enabled, true if a splash screen texture is present, and only in release builds
@@ -161,8 +158,8 @@ namespace Xenko.Engine
         {
             var renderTarget = Game.GraphicsContext.CommandList.RenderTarget;
             Game.GraphicsContext.CommandList.Clear(renderTarget, SplashScreenColor);
-            
-            var viewWidth = renderTarget.Width / (DoubleViewSplashScreen ? 2 : 1);
+
+            var viewWidth = renderTarget.Width;
             var viewHeight = renderTarget.Height;
             var viewportSize = Math.Min(viewWidth, viewHeight);
 
@@ -171,18 +168,9 @@ namespace Xenko.Engine
             var x = (viewWidth - viewportSize) / 2;
             var y = (viewHeight - viewportSize) / 2;
             var newViewport = new Viewport(x, y, viewportSize, viewportSize);
-            
+
             Game.GraphicsContext.CommandList.SetViewport(newViewport);
             Game.GraphicsContext.DrawTexture(splashScreenTexture, color, blendState);
-
-            if (DoubleViewSplashScreen)
-            {
-                x += viewWidth;
-                newViewport = new Viewport(x, y, viewportSize, viewportSize);
-
-                Game.GraphicsContext.CommandList.SetViewport(newViewport);
-                Game.GraphicsContext.DrawTexture(splashScreenTexture, color, blendState);
-            }
 
             Game.GraphicsContext.CommandList.SetViewport(initialViewport);
         }

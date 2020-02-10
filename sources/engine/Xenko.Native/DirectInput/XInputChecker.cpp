@@ -1,8 +1,10 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #include "../XenkoNative.h"
 
-#if defined(WINDOWS_DESKTOP) || !defined(__clang__)
+#if !defined(__clang__)
 
 //Borrowed from: https://msdn.microsoft.com/en-us/library/windows/desktop/ee417014(v=vs.85).aspx#XInput_and_DirectInput_Side_by_Side
 

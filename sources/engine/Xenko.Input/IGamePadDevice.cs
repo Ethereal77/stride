@@ -1,7 +1,9 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+
 using Xenko.Core.Collections;
 
 namespace Xenko.Input
@@ -20,7 +22,7 @@ namespace Xenko.Input
         /// The state of the gamepad
         /// </summary>
         GamePadState State { get; }
-        
+
         /// <summary>
         /// The index of the gamepad assigned by the input manager
         /// </summary>
@@ -62,7 +64,7 @@ namespace Xenko.Input
         /// <param name="largeLeft">The large left side motor</param>
         /// <param name="largeRight">The large right side motor</param>
         /// <remarks>Values range from 0 to 1, where 0 is off and 1 is maximum vibration</remarks>
-        /// <remarks>Currently vibration is only supported on windows for XInput devices and UWP supported gamepads</remarks>
+        /// <remarks>Currently vibration is only supported on windows for XInput devices and supported gamepads.</remarks>
         void SetVibration(float smallLeft, float smallRight, float largeLeft, float largeRight);
     }
 }

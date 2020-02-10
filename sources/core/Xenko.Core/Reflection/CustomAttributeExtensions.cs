@@ -1,9 +1,12 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using Xenko.Core.Annotations;
 
 namespace Xenko.Core.Reflection
@@ -17,20 +20,12 @@ namespace Xenko.Core.Reflection
 
         public static Attribute GetCustomAttributeEx([NotNull] this Assembly assembly, [NotNull] Type attributeType)
         {
-#if XENKO_PLATFORM_MONO_MOBILE
-            return Attribute.GetCustomAttribute(assembly, attributeType);
-#else
             return assembly.GetCustomAttribute(attributeType);
-#endif
         }
 
         public static IEnumerable<Attribute> GetCustomAttributesEx([NotNull] this Assembly assembly, [NotNull] Type attributeType)
         {
-#if XENKO_PLATFORM_MONO_MOBILE
-            return Attribute.GetCustomAttributes(assembly, attributeType);
-#else
             return assembly.GetCustomAttributes(attributeType);
-#endif
         }
 
         [NotNull]

@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,14 +9,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Text;
-using Xenko.Core.LZ4;
 
-#if XENKO_PLATFORM_UWP
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.System.Profile;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-#endif
+using Xenko.Core.LZ4;
 
 namespace Xenko.Graphics.Regression
 {
@@ -35,7 +31,7 @@ namespace Xenko.Graphics.Regression
         SendImage = 1,
         RequestImageComparisonStatus = 2,
     }
-    
+
     public class PlatformPermutator
     {
         public static ImageTestResultConnection GetDefaultImageTestResultConnection()
@@ -45,40 +41,12 @@ namespace Xenko.Graphics.Regression
             // TODO: Check build number in environment variables
             result.BuildNumber = -1;
 
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             result.Platform = "Windows";
             result.Serial = Environment.MachineName;
-    #if XENKO_GRAPHICS_API_DIRECT3D12
+#if XENKO_GRAPHICS_API_DIRECT3D12
             result.DeviceName = "Direct3D12";
-    #elif XENKO_GRAPHICS_API_DIRECT3D11
+#elif XENKO_GRAPHICS_API_DIRECT3D11
             result.DeviceName = "Direct3D";
-    #elif XENKO_GRAPHICS_API_OPENGLES
-            result.DeviceName = "OpenGLES";
-    #elif XENKO_GRAPHICS_API_OPENGL
-            result.DeviceName = "OpenGL";
-    #elif XENKO_GRAPHICS_API_VULKAN
-            result.DeviceName = "Vulkan";
-    #endif
-#elif XENKO_PLATFORM_ANDROID
-            result.Platform = "Android";
-            result.DeviceName = Android.OS.Build.Manufacturer + " " + Android.OS.Build.Model;
-            result.Serial = Android.OS.Build.Serial ?? "Unknown";
-#elif XENKO_PLATFORM_IOS
-            result.Platform = "iOS";
-            result.DeviceName = iOSDeviceType.Version.ToString();
-            result.Serial = UIKit.UIDevice.CurrentDevice.Name;
-#elif XENKO_PLATFORM_UWP
-            result.Platform = "UWP";
-            var deviceInfo = new EasClientDeviceInformation();
-            result.DeviceName = deviceInfo.SystemManufacturer + " " + deviceInfo.SystemProductName;
-            try
-            {
-                result.Serial = deviceInfo.Id.ToString();
-            }
-            catch (Exception)
-            {
-                // Ignored on UWP
-            }
 #endif
 
             return result;
@@ -95,14 +63,7 @@ namespace Xenko.Graphics.Regression
             {
                 case TestPlatform.WindowsDx:
                     return "Windows_Direct3D11";
-                case TestPlatform.WindowsOgl:
-                    return "Windows_OpenGL";
-                case TestPlatform.WindowsOgles:
-                    return "Windows_OpenGLES";
-                case TestPlatform.Android:
-                    return "Android";
-                case TestPlatform.Ios:
-                    return "IOS";
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -110,22 +71,11 @@ namespace Xenko.Graphics.Regression
 
         public static TestPlatform GetPlatform()
         {
-#if XENKO_PLATFORM_ANDROID
-            return TestPlatform.Android;
-#elif XENKO_PLATFORM_IOS
-            return TestPlatform.Ios;
-#elif XENKO_GRAPHICS_API_NULL
+#if XENKO_GRAPHICS_API_NULL
             return TestPlatform.None;
 #elif XENKO_GRAPHICS_API_DIRECT3D
             return TestPlatform.WindowsDx;
-#elif XENKO_GRAPHICS_API_OPENGLES
-            return TestPlatform.WindowsOgles;
-#elif XENKO_GRAPHICS_API_OPENGL
-            return TestPlatform.WindowsOgl;
-#elif XENKO_GRAPHICS_API_VULKAN
-            return TestPlatform.WindowsVulkan;
 #endif
-
         }
     }
 
@@ -180,11 +130,6 @@ namespace Xenko.Graphics.Regression
     public enum TestPlatform
     {
         None,
-        WindowsDx,
-        WindowsOgl,
-        WindowsOgles,
-        WindowsVulkan,
-        Android,
-        Ios
+        WindowsDx
     }
 }

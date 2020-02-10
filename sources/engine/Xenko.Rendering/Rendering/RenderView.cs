@@ -1,8 +1,10 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 using System.Linq;
+
 using Xenko.Core.Mathematics;
 using Xenko.Core.Threading;
 using Xenko.Engine;
@@ -90,7 +92,7 @@ namespace Xenko.Rendering
         public RenderViewFlags Flags { get; set; }
 
         /// <summary>
-        /// The view used for lighting (useful to share lighting results for two very close views such as VR)
+        /// The view used for lighting (useful to share lighting results for two very close views).
         /// </summary>
         /// <remarks>This is a temporary workaround until shadow maps have a real scope: global or view-dependent (single view or multiple views).</remarks>
         public RenderView LightingView { get; set; }

@@ -7,6 +7,7 @@
 // </auto-generated>
 
 using System;
+
 using Xenko.Core;
 using Xenko.Rendering;
 using Xenko.Graphics;

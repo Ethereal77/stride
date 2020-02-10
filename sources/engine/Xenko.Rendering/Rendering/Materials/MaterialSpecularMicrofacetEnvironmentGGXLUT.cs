@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Xenko.Core;
@@ -23,7 +24,7 @@ namespace Xenko.Rendering.Materials
     {
         public ShaderSource Generate(MaterialGeneratorContext context)
         {
-            var texture = context.GraphicsProfile >= GraphicsProfile.Level_10_0
+            var texture = context.GraphicsProfile >= GraphicsProfile.Level_11_0
                 ? AttachedReferenceManager.CreateProxyObject<Texture>(new AssetId("a49995f8-2380-4baa-a03e-f8d1da35b79a"), "XenkoEnvironmentLightingDFGLUT16")
                 : AttachedReferenceManager.CreateProxyObject<Texture>(new AssetId("87540190-ab97-4b4e-b3c2-d57d2fbb1ff3"), "XenkoEnvironmentLightingDFGLUT8");
             context.Parameters.Set(MaterialSpecularMicrofacetEnvironmentGGXLUTKeys.EnvironmentLightingDFG_LUT, texture);

@@ -1,5 +1,14 @@
+<!--
+***********************************************************************************************
+  Xenko.UnitTests.DisableBuild.targets
+
+  Build file included to override the Targets with the default ones when compiling under an
+  undefined platform or skipping compilation.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Add Default targets used by Msbuild for undefined Platforms / or when skipping compilation under a platform -->
   <Target Name="Build"/>
   <Target Name="Clean"/>
   <Target Name="ReBuild"/>

@@ -1,18 +1,18 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #if XENKO_GRAPHICS_API_DIRECT3D
+
 using System.Collections.Generic;
+
 using SharpDX.DXGI;
 
 namespace Xenko.Graphics
 {
     public static partial class GraphicsAdapterFactory
     {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
         internal static Factory1 NativeFactory;
-#else
-        internal static Factory2 NativeFactory;
-#endif
 
         /// <summary>
         /// Initializes all adapters with the specified factory.
@@ -24,9 +24,6 @@ namespace Xenko.Graphics
 #if DIRECTX11_1
             using (var factory = new Factory1())
             NativeFactory = factory.QueryInterface<Factory2>();
-#elif XENKO_PLATFORM_UWP
-            // Maybe this will become default code for everybody if we switch to DX 11.1/11.2 SharpDX dll?
-            NativeFactory = new Factory2();
 #else
             NativeFactory = new Factory1();
 #endif
@@ -62,4 +59,4 @@ namespace Xenko.Graphics
         }
     }
 }
-#endif 
+#endif

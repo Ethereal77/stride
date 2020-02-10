@@ -1,10 +1,12 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 /*
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
 using System.IO;
 
 using Xunit;
+
 using Xenko.Core.IO;
 using Xenko.Core.Serialization.Assets;
 using Xenko.Core.Storage;
@@ -18,38 +20,19 @@ namespace Xenko.Graphics
 {
     public class TestEffect : Game
     {
-        private bool isTestGlsl = false;
-        private bool isTestGlslES = false;
-        
         public TestEffect()
         {
             graphicsDeviceManager = new GraphicsDeviceManager(this)
             {
                 PreferredBackBufferWidth = 800,
                 PreferredBackBufferHeight = 480,
-                //PreferredGraphicsProfile = new[] { GraphicsProfile.Level_9_1 }
                 PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 }
             };
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (isTestGlsl)
-            {
-                base.Update(gameTime);
-                isTestGlsl = false;
-                RuntimeToGlslEffect();
-            }
-            else if (isTestGlslES)
-            {
-                base.Update(gameTime);
-                isTestGlslES = false;
-                RuntimeToGlslESEffect();
-            }
-            else
-            {
-                Exit();
-            }
+            Exit();
         }
 
 
@@ -75,7 +58,7 @@ namespace Xenko.Graphics
                 compiler.SourceDirectories.Add("assets/shaders");
                 var compilerCache = new EffectCompilerCache(compiler);
 
-                var compilerParmeters = new CompilerParameters { Platform = GraphicsPlatform.Direct3D };
+                var compilerParmeters = new CompilerParameters { Platform = GraphicsPlatform.Direct3D11 };
 
                 var compilerResults = compilerCache.Compile(new ShaderMixinSource("SimpleEffect"), compilerParmeters);
                 Assert.That(compilerResults.HasErrors, Is.False);
@@ -86,96 +69,6 @@ namespace Xenko.Graphics
             var graphicsDevice = GraphicsDevice.New();
 
             var effect = new Effect(graphicsDevice, effectBytecode);
-            effect.Apply();
-        }
-
-        [Fact]
-        public void TestToGlslEffect()
-        {
-            isTestGlsl = true;
-            this.Run();
-        }
-
-        private void RuntimeToGlslEffect()
-        {
-            EffectBytecode effectBytecode;
-
-            // Create and mount database file system
-            var objDatabase = new ObjectDatabase(VirtualFileSystem.ApplicationDatabasePath);
-            using (var contentIndexMap = new contentIndexMap("/assets"))
-            {
-                contentIndexMap.LoadNewValues();
-                var database = new DatabaseFileProvider(contentIndexMap, objDatabase);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\shaders", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\engine\Xenko.Graphics\Shaders", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                var compiler = new EffectCompiler();
-                compiler.SourceDirectories.Add("assets/shaders");
-                var compilerCache = new EffectCompilerCache(compiler);
-
-                var compilerParameters = new CompilerParameters { Platform = GraphicsPlatform.OpenGLCore };
-
-                var compilerResults = compilerCache.Compile(new ShaderMixinSource("ToGlslEffect"), compilerParameters);
-                Assert.That(compilerResults.HasErrors, Is.False);
-
-                effectBytecode = compilerResults.Bytecodes[0];
-            }
-
-            this.GraphicsDevice.Begin();
-
-            var effect = new Effect(this.GraphicsDevice, effectBytecode);
-            effect.Apply();
-        }
-
-        [Fact]
-        public void TestToGlslESEffect()
-        {
-            isTestGlslES = true;
-            this.Run();
-        }
-
-        private void RuntimeToGlslESEffect()
-        {
-            EffectBytecode effectBytecode;
-
-            // Create and mount database file system
-            var objDatabase = new ObjectDatabase(VirtualFileSystem.ApplicationDatabasePath);
-            using (var contentIndexMap = new contentIndexMap("/assets"))
-            {
-                contentIndexMap.LoadNewValues();
-                var database = new DatabaseFileProvider(contentIndexMap, objDatabase);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\shaders", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\engine\Xenko.Graphics\Shaders", "*.xksl"))
-                    CopyStream(database, shaderName);
-
-                var compiler = new EffectCompiler();
-                compiler.SourceDirectories.Add("assets/shaders");
-                var compilerCache = new EffectCompilerCache(compiler);
-
-                var compilerParameters = new CompilerParameters { Platform = GraphicsPlatform.OpenGLES };
-
-                var compilerResults = compilerCache.Compile(new ShaderMixinSource("ToGlslEffect"), compilerParameters);
-                Assert.That(compilerResults.HasErrors, Is.False);
-
-                effectBytecode = compilerResults.Bytecodes[0];
-            }
-
-            this.GraphicsDevice.Begin();
-
-            var effect = new Effect(this.GraphicsDevice, effectBytecode);
             effect.Apply();
         }
 
@@ -195,5 +88,4 @@ namespace Xenko.Graphics
         }
     }
 }
-#endif
 */

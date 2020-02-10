@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 namespace Xenko.Rendering.Skyboxes
@@ -16,12 +17,6 @@ namespace Xenko.Rendering.Skyboxes
 
         override float4 Compute(float3 direction)
         {
-            // Workaround for type mismatch during SPIR-V validation
-            //float3 test[TOrder * TOrder];
-            //for (int i = 0; i < TOrder * TOrder; i++)
-            //    test[i] = SphericalColors[i];
-            //return EvaluateSphericalHarmonics(test, direction);
-
             return EvaluateSphericalHarmonics(SphericalColors, direction);
         }
     };

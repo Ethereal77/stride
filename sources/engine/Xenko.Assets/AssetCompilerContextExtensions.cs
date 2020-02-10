@@ -1,7 +1,9 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Compiler;
 using Xenko.Core;
@@ -42,13 +44,6 @@ namespace Xenko.Assets
                     return GraphicsPlatform.Direct3D11;
                 else if (runtimeIdentifier.Contains("-d3d12"))
                     return GraphicsPlatform.Direct3D12;
-                // Note: testing opengles before opengl since one string contains another
-                else if (runtimeIdentifier.Contains("-opengles"))
-                    return GraphicsPlatform.OpenGLES;
-                else if (runtimeIdentifier.Contains("-opengl"))
-                    return GraphicsPlatform.OpenGL;
-                else if (runtimeIdentifier.Contains("-vulkan"))
-                    return GraphicsPlatform.Vulkan;
             }
 
             // Ohterwise, use default as fallback
@@ -60,15 +55,8 @@ namespace Xenko.Assets
             switch (platformType)
             {
                 case PlatformType.Windows:
-                case PlatformType.UWP:
                     return GraphicsPlatform.Direct3D11;
-                case PlatformType.Android:
-                case PlatformType.iOS:
-                    return GraphicsPlatform.OpenGLES;
-                case PlatformType.Linux:
-                    return GraphicsPlatform.OpenGL;
-                case PlatformType.macOS:
-                    return GraphicsPlatform.Vulkan;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -1,7 +1,9 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 /* THIS CODE IS DISABLED, WE WILL HAVE TO CLEANUP ASSEMBLY DEPENDENCIES
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
+
 using System;
 using System.IO;
 
@@ -12,7 +14,7 @@ using Xenko.PublicApiCheck;
 namespace Xenko.Graphics
 {
     // CANNOT WORK INSIDE THE SAME SOLUTION. NEED TO RUN THIS OUTSIDE THE SOLUTION
-    [Description("Check public Graphics API consistency between Reference, Direct3D, OpenGL42, OpenGLES")]
+    [Description("Check public Graphics API consistency between Reference and Direct3D")]
     public class TestGraphicsApi
     {
         public const string Platform = "Windows";
@@ -24,8 +26,6 @@ namespace Xenko.Graphics
 
         private static readonly string ReferencePath = Path.Combine(RootPath, GraphicsPath("Null"));
         private static readonly string GraphicsDirect3DPath = Path.Combine(RootPath, GraphicsPath("Direct3D"));
-        private static readonly string OpenGL4Path = Path.Combine(RootPath, GraphicsPath("OpenGL"));
-        private static readonly string OpenGLESPath = Path.Combine(RootPath, GraphicsPath("OpenGLES"));
 
         private static string GraphicsPath(string api)
         {
@@ -38,19 +38,6 @@ namespace Xenko.Graphics
         {
             Assert.That(ApiCheck.DiffAssemblyToString(ReferencePath, GraphicsDirect3DPath), Is.Null);
         }
-
-        [Fact]
-        public void TestOpenGL42()
-        {
-            Assert.That(ApiCheck.DiffAssemblyToString(ReferencePath, OpenGL4Path), Is.Null);
-        }
-
-        [Fact]
-        public void TestOpenGLES()
-        {
-            Assert.That(ApiCheck.DiffAssemblyToString(ReferencePath, OpenGLESPath), Is.Null);
-        }
     }
 }
-#endif
 */

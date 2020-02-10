@@ -1,10 +1,13 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Xunit;
+
 using Xenko.Core.Mathematics;
 using Xenko.Engine;
 using Xenko.Engine.NextGen;
@@ -23,7 +26,7 @@ namespace Xenko.Graphics.Tests
             // 3 = Simplifiy density parameters
             // 4 = Change random jitter position hash
 
-            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_10_0 };
+            GraphicsDeviceManager.PreferredGraphicsProfile = new[] { GraphicsProfile.Level_11_0 };
             GraphicsDeviceManager.SynchronizeWithVerticalRetrace = false;
         }
 

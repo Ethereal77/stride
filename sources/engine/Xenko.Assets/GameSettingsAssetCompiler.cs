@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+
 using Xenko.Core.Assets;
 using Xenko.Core.Assets.Compiler;
 using Xenko.Core.BuildEngine;
@@ -78,9 +81,8 @@ namespace Xenko.Assets
                     DefaultGraphicsCompositorUrl = Parameters.GraphicsCompositor != null ? AttachedReferenceManager.GetUrl(Parameters.GraphicsCompositor) : null,
                     SplashScreenUrl = Parameters.SplashScreenTexture != null && (compilationMode == CompilationMode.Release || compilationMode == CompilationMode.AppStore) ? AttachedReferenceManager.GetUrl(Parameters.SplashScreenTexture) : null,
                     SplashScreenColor = Parameters.SplashScreenColor,
-                    DoubleViewSplashScreen = Parameters.DoubleViewSplashScreen,
-                    EffectCompilation = entryPackage.UserSettings.GetValue(GameUserSettings.Effect.EffectCompilation),
-                    RecordUsedEffects = entryPackage.UserSettings.GetValue(GameUserSettings.Effect.RecordUsedEffects),
+                    EffectCompilation = package.UserSettings.GetValue(GameUserSettings.Effect.EffectCompilation),
+                    RecordUsedEffects = package.UserSettings.GetValue(GameUserSettings.Effect.RecordUsedEffects),
                     Configurations = new PlatformConfigurations(),
                     CompilationMode = compilationMode
                 };
@@ -117,78 +119,6 @@ namespace Xenko.Assets
 
         public static void SetPlatformOrientation(SolutionProject project, RequiredDisplayOrientation orientation)
         {
-            switch (project.Platform)
-            {
-                case PlatformType.Android:
-                    {
-                        if (project.FullPath == null) return;
-
-                        var activityFileName = project.Name + "Activity.cs";
-                        var activityFile = UPath.Combine(project.FullPath.GetFullDirectory(), new UFile(activityFileName));
-                        if (!File.Exists(activityFile)) return;
-
-                        var activitySource = File.ReadAllText(activityFile);
-
-                        string orientationString;
-                        switch (orientation)
-                        {
-                            case RequiredDisplayOrientation.Default:
-                                orientationString = "Android.Content.PM.ScreenOrientation.Landscape";
-                                break;
-                            case RequiredDisplayOrientation.LandscapeLeft:
-                                orientationString = "Android.Content.PM.ScreenOrientation.Landscape";
-                                break;
-                            case RequiredDisplayOrientation.LandscapeRight:
-                                orientationString = "Android.Content.PM.ScreenOrientation.ReverseLandscape";
-                                break;
-                            case RequiredDisplayOrientation.Portrait:
-                                orientationString = "Android.Content.PM.ScreenOrientation.Portrait";
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-
-                        activitySource = Regex.Replace(activitySource, @"(\[Activity(?:.*[\n,\r]*)+?[\n,\r,\s]*ScreenOrientation\s*=\s*)([\w,\d,\.]+)(\s*,)", $"$1{orientationString}$3");
-
-                        File.WriteAllText(activityFile, activitySource);
-                    }
-                    break;
-                case PlatformType.iOS:
-                    {
-                        var exeProjectLocation = project.FullPath;
-                        if (exeProjectLocation == null) return;
-
-                        var plistFile = UPath.Combine(exeProjectLocation.GetFullDirectory(), new UFile("Info.plist"));
-                        if (!File.Exists(plistFile)) return;
-
-                        var xmlDoc = XDocument.Load(plistFile);
-                        var orientationKey = xmlDoc.Descendants("key").FirstOrDefault(x => x.Value == "UISupportedInterfaceOrientations");
-                        var orientationElement = ((XElement)orientationKey?.NextNode)?.Descendants("string").FirstOrDefault();
-                        if (orientationElement != null)
-                        {
-                            switch (orientation)
-                            {
-                                case RequiredDisplayOrientation.Default:
-                                    orientationElement.Value = "UIInterfaceOrientationLandscapeRight";
-                                    break;
-                                case RequiredDisplayOrientation.LandscapeLeft:
-                                    orientationElement.Value = "UIInterfaceOrientationLandscapeLeft";
-                                    break;
-                                case RequiredDisplayOrientation.LandscapeRight:
-                                    orientationElement.Value = "UIInterfaceOrientationLandscapeRight";
-                                    break;
-                                case RequiredDisplayOrientation.Portrait:
-                                    orientationElement.Value = "UIInterfaceOrientationPortrait";
-                                    break;
-                                default:
-                                    throw new ArgumentOutOfRangeException();
-                            }
-                        }
-
-                        xmlDoc.Save(plistFile);
-                    }
-                    break;
-            }
         }
     }
 }

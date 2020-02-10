@@ -1,20 +1,24 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-// Source: http://stackoverflow.com/questions/4968755/mono-cecil-call-generic-base-class-method-from-other-assembly
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+
 using Xenko.Core.Serialization;
 using Xenko.Core.Storage;
 
 namespace Xenko.Core.AssemblyProcessor
 {
+    // Source: http://stackoverflow.com/questions/4968755/mono-cecil-call-generic-base-class-method-from-other-assembly
     public static class CecilExtensions
     {
         // Not sure why Cecil made ContainsGenericParameter internal, but let's work around it by reflection.
@@ -603,13 +607,6 @@ namespace Xenko.Core.AssemblyProcessor
             start = result.Length;
             result.Append(type.Module.Assembly.FullName);
             end = result.Length;
-
-#if XENKO_PLATFORM_MONO_MOBILE
-            // Xamarin iOS and Android remap some assemblies
-            const string oldTypeEnding = "2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
-            const string newTypeEnding = "4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-            result = result.Replace(oldTypeEnding, newTypeEnding, start, end);
-#endif
         }
 
         public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)

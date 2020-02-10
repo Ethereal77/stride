@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -53,7 +54,7 @@ namespace Xenko.Shaders.Tests
             compiler.SourceDirectories.Add(Path.Combine(currentPath, @"..\..\sources\engine\Xenko.Engine\Rendering\Shading"));
             compiler.SourceDirectories.Add(Path.Combine(currentPath, @"..\..\sources\engine\Xenko.Engine\Rendering\Transformation"));
             compiler.SourceDirectories.Add(Path.Combine(currentPath, @"..\..\sources\engine\Xenko.Engine\Rendering\Utils"));
-            var compilerParameters = new CompilerParameters { EffectParameters = { Platform = GraphicsPlatform.OpenGL } };
+            var compilerParameters = new CompilerParameters { EffectParameters = { Platform = GraphicsPlatform.Direct3D11 } };
 
             var layers = new MaterialBlendLayers();
             layers.Add(new MaterialBlendLayer
@@ -235,43 +236,6 @@ namespace Xenko.Shaders.Tests
                 left = compilerCache.Compile(new ShaderMixinGeneratorSource("SimpleEffect"), compilerParameters);
                 right = compilerCache.Compile(new ShaderMixinGeneratorSource("SimpleEffect"), compilerParameters);
             }
-        }
-
-        [Fact(Skip = "This test fixture is unmaintained and currently doesn't pass")]
-        public void TestGlslCompiler()
-        {
-            VirtualFileSystem.RemountFileSystem("/shaders", "../../../../shaders");
-            VirtualFileSystem.RemountFileSystem("/baseShaders", "../../../../engine/Xenko.Graphics/Shaders");
-            VirtualFileSystem.RemountFileSystem("/compiler", "Compiler");
-
-
-            var compiler = new EffectCompiler(TestHelper.CreateDatabaseProvider().FileProvider);
-
-            compiler.SourceDirectories.Add("shaders");
-            compiler.SourceDirectories.Add("compiler");
-            compiler.SourceDirectories.Add("baseShaders");
-
-            var compilerParameters = new CompilerParameters { EffectParameters = { Platform = GraphicsPlatform.OpenGL } };
-
-            var results = compiler.Compile(new ShaderMixinGeneratorSource("ToGlslEffect"), compilerParameters);
-        }
-
-        [Fact(Skip = "This test fixture is unmaintained and currently doesn't pass")]
-        public void TestGlslESCompiler()
-        {
-            VirtualFileSystem.RemountFileSystem("/shaders", "../../../../shaders");
-            VirtualFileSystem.RemountFileSystem("/baseShaders", "../../../../engine/Xenko.Graphics/Shaders");
-            VirtualFileSystem.RemountFileSystem("/compiler", "Compiler");
-
-            var compiler = new EffectCompiler(TestHelper.CreateDatabaseProvider().FileProvider);
-
-            compiler.SourceDirectories.Add("shaders");
-            compiler.SourceDirectories.Add("compiler");
-            compiler.SourceDirectories.Add("baseShaders");
-
-            var compilerParameters = new CompilerParameters { EffectParameters = { Platform = GraphicsPlatform.OpenGLES } };
-
-            var results = compiler.Compile(new ShaderMixinGeneratorSource("ToGlslEffect"), compilerParameters);
         }
     }
 }

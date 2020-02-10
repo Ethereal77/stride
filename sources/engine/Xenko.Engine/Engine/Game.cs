@@ -1,4 +1,5 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -6,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+
 using Xenko.Audio;
 using Xenko.Core.Diagnostics;
 using Xenko.Core.IO;
@@ -23,7 +25,6 @@ using Xenko.Rendering.Fonts;
 using Xenko.Rendering.Sprites;
 using Xenko.Shaders.Compiler;
 using Xenko.Streaming;
-using Xenko.VirtualReality;
 
 namespace Xenko.Engine
 {
@@ -112,11 +113,6 @@ namespace Xenko.Engine
         /// Gets the game profiler system.
         /// </summary>
         public GameProfilingSystem ProfilingSystem { get; }
-
-        /// <summary>
-        /// Gets the VR Device System.
-        /// </summary>
-        public VRDeviceSystem VRDeviceSystem { get; }
 
         /// <summary>
         /// Gets the font system.
@@ -223,9 +219,6 @@ namespace Xenko.Engine
             ProfilingSystem = new GameProfilingSystem(Services);
             Services.AddService(ProfilingSystem);
 
-            VRDeviceSystem = new VRDeviceSystem(Services);
-            Services.AddService(VRDeviceSystem);
-
             // Creates the graphics device manager
             GraphicsDeviceManager = new GraphicsDeviceManager(this);
             Services.AddService<IGraphicsDeviceManager>(GraphicsDeviceManager);
@@ -293,7 +286,6 @@ namespace Xenko.Engine
                     SceneSystem.InitialGraphicsCompositorUrl = Settings?.DefaultGraphicsCompositorUrl;
                     SceneSystem.SplashScreenUrl = Settings?.SplashScreenUrl;
                     SceneSystem.SplashScreenColor = Settings?.SplashScreenColor ?? Color4.Black;
-                    SceneSystem.DoubleViewSplashScreen = Settings?.DoubleViewSplashScreen ?? false;
                 }
             }
         }
@@ -375,7 +367,7 @@ namespace Xenko.Engine
             // If requested in game settings, compile effects remotely and/or notify new shader requests
             EffectSystem.Compiler = EffectCompilerFactory.CreateEffectCompiler(Content.FileProvider, EffectSystem, Settings?.PackageName, Settings?.EffectCompilation ?? EffectCompilationMode.Local, Settings?.RecordUsedEffects ?? false);
 
-            // Setup shader compiler settings from a compilation mode. 
+            // Setup shader compiler settings from a compilation mode.
             // TODO: We might want to provide overrides on the GameSettings to specify debug and/or optim level specifically.
             if (Settings != null)
                 EffectSystem.SetCompilationMode(Settings.CompilationMode);
@@ -389,9 +381,6 @@ namespace Xenko.Engine
 
             // Add the Audio System
             GameSystems.Add(Audio);
-
-            // Add the VR System
-            GameSystems.Add(VRDeviceSystem);
 
             // TODO: data-driven?
             Content.Serializer.RegisterSerializer(new ImageSerializer());
@@ -427,7 +416,6 @@ namespace Xenko.Engine
 
         protected override void EndDraw(bool present)
         {
-#if XENKO_PLATFORM_WINDOWS_DESKTOP
             // Allow to make a screenshot using CTRL+c+F12 (on release of F12)
             if (Input.HasKeyboard)
             {
@@ -449,7 +437,7 @@ namespace Xenko.Engine
                     }
                 }
             }
-#endif
+
             base.EndDraw(present);
         }
 

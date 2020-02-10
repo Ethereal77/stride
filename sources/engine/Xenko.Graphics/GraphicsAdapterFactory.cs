@@ -1,5 +1,7 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using Xenko.Core;
 
 namespace Xenko.Graphics
@@ -16,7 +18,7 @@ namespace Xenko.Graphics
         private static GraphicsAdapter defaultAdapter;
 
         /// <summary>
-        /// Initializes the GraphicsAdapter. On Desktop and WinRT, this is done statically.
+        /// Initializes the GraphicsAdapter. On Desktop, this is done statically.
         /// </summary>
         public static void Initialize()
         {

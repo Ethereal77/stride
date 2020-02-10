@@ -1,16 +1,20 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
+
 using NShader;
+
+using Xenko.Core;
 using Xenko.Core.Assets;
+using Xenko.Core.Shaders.Ast;
+using Xenko.Core.Shaders.Utility;
 using Xenko.Shaders.Parser;
 using Xenko.VisualStudio.BuildEngine;
 using Xenko.VisualStudio.Commands.Shaders;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Utility;
-using Xenko.Core;
 
 namespace Xenko.VisualStudio.Commands
 {

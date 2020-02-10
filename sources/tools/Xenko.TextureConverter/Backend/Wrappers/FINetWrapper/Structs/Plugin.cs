@@ -1,3 +1,7 @@
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 // ==========================================================
 // FreeImage 3 .NET wrapper
 // Original FreeImage 3 functions and .NET compatible derived functions
@@ -75,7 +79,7 @@ namespace FreeImageAPI.Plugins
 		public OpenProc openProc;
 
 		/// <summary>
-		/// Delegate to a function that closes a previosly opened file.
+		/// Delegate to a function that closes a previously opened file.
 		/// </summary>
 		public CloseProc closeProc;
 

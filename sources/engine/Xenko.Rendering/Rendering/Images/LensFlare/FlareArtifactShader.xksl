@@ -1,10 +1,11 @@
-// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 namespace Xenko.Rendering.Images
 {
     /// <summary>
-    /// Lens flare artifact shader. 
+    /// Lens flare artifact shader.
     /// </summary>
     internal shader FlareArtifactShader<int TapCount> : ImageEffectShader
     {
@@ -33,14 +34,14 @@ namespace Xenko.Rendering.Images
             float3 result = float3(0.0, 0.0, 0.0);
 
             [unroll]
-            for (int i = 0; i < TapCount; i++) 
+            for (int i = 0; i < TapCount; i++)
             {
                 // Zoom effect
                 float2 zoomOffsetsDistortions = ZoomOffsetsDistortions[i];
                 uv = ( originalUV - 0.5) * zoomOffsetsDistortions.x + 0.5;
 
                 // Distort UV around the center
-                float distortion = sin(pow(distanceToCenter, zoomOffsetsDistortions.y)); // NOTE: Introducing the zoomOffsetsDistortions local variable prevents glLinkProgram from freezing on some android devices
+                float distortion = sin(pow(distanceToCenter, zoomOffsetsDistortions.y)); // NOTE: Introducing the zoomOffsetsDistortions local variable prevents glLinkProgram from freezing
                 float2 distortedUV = distortion * (uv - 0.5) + 0.5;
                 float3 tapColor = Texture0.Sample(LinearSampler, distortedUV).rgb;
 

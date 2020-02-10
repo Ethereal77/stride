@@ -1,7 +1,17 @@
-<!-- Build file post-included by all Xenko projects -->
+<!--
+***********************************************************************************************
+  Xenko.Core.PostSettings.targets
+
+  Build file post-included after the building of the project to configure the code analysis,
+  documentation generation, testing, native code compilation, assembly post-processing,
+  dependency tracking and localization.
+
+  Copyright (C) 2020 Xenko and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- Add Default targets used by Msbuild for undefined Platforms / or when skipping compilation under a platform -->
+  <!-- Add Default targets used by MSBuild for undefined Platforms / or when skipping compilation under a platform -->
   <Target Name="Build"/>
   <Target Name="Clean"/>
   <Target Name="ReBuild"/>
@@ -13,24 +23,6 @@
   <!--Import Local Post Settings for the solution being loaded -->
   <Import Project="$(SolutionDir)$(SolutionName).PostSettings.Local.targets" Condition="Exists('$(SolutionDir)$(SolutionName).PostSettings.Local.targets')" />
   <Import Project="$(SolutionDir)Xenko.Core.PostSettings.Local.targets" Condition="Exists('$(SolutionDir)Xenko.Core.PostSettings.Local.targets')" />
-  
-  <!-- Include platform dependent assembly when specified -->
-  <Choose>
-    <When Condition="'$(XenkoPlatformDependent)' == 'true'">
-      <Choose>
-        <When Condition=" '$(XenkoPlatform)' == 'Android'">
-          <ItemGroup>
-            <Reference Include="Mono.Android" />
-          </ItemGroup>
-        </When>
-        <When Condition=" '$(XenkoPlatform)' == 'iOS'">
-          <ItemGroup>
-            <Reference Include="Xamarin.iOS" />
-          </ItemGroup>
-        </When>
-      </Choose>
-    </When>
-  </Choose>
 
   <!-- Setup VisualStudioVersion -->
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
@@ -53,23 +45,13 @@
       <Analyzer Remove="@(Analyzer)"/>
     </ItemGroup>
   </Target>
-  
+
 
   <!-- Setup compiler targets per platform / language -->
   <PropertyGroup>
-    <!-- On Android, everything is library (even Exe) -->
-    <OutputType Condition=" '$(XenkoPlatform)' == 'Android' ">Library</OutputType>
-
     <OutputPath Condition="'$(XenkoProjectType)' == 'Cpp'">$(OutDir)</OutputPath>
     <IntermediateOutputPath Condition="'$(XenkoProjectType)' == 'Cpp'">$(IntDir)</IntermediateOutputPath>
   </PropertyGroup>
-
-  <!-- Workaround for https://github.com/onovotny/MSBuildSdkExtras/issues/174 -->
-  <Target Name="_XenkoRemoveNonExistingResgenFile" BeforeTargets="CoreCompile" Condition="'$(_SdkSetAndroidResgenFile)' == 'true' And '$(AndroidResgenFile)' != '' And !Exists('$(AndroidResgenFile)')">
-    <ItemGroup>
-      <Compile Remove="$(AndroidResgenFile)"/>
-    </ItemGroup>
-  </Target>
 
   <!-- User Documentation (.usrdoc) -->
   <PropertyGroup Condition="'$(XenkoPublicApi)' == 'true'">
@@ -89,20 +71,18 @@
   </Target>
 
   <PropertyGroup>
-    <XenkoCompilerTargetsEnable Condition=" '$(XenkoPlatform)' != 'Windows' and $(XenkoWindowsOnly) == 'true'">false</XenkoCompilerTargetsEnable>
-
     <!-- Skip unit tests if requested -->
     <XenkoCompilerTargetsEnable Condition="'$(XenkoSkipUnitTests)' == 'true' And $(XenkoOutputFolder.StartsWith('Tests'))">false</XenkoCompilerTargetsEnable>
 
     <!-- If XenkoCompilerTargetsEnable is set to false, override LanguageTargets to an empty one -->
     <LanguageTargets Condition="'$(XenkoCompilerTargetsEnable)' == 'false'">$(MSBuildThisFileDirectory)Xenko.Core.DisableBuild.targets</LanguageTargets>
   </PropertyGroup>
-  
+
   <!-- C++ doesn't auto-import language targets -->
   <Import Condition="'$(XenkoProjectType)' == 'Cpp' And '$(XenkoCompilerTargetsEnable)' != 'false'" Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 
   <UsingTask TaskName="AssemblyProcessorTask" AssemblyFile="$(XenkoAssemblyProcessorPath)" Condition=" '$(XenkoAssemblyProcessorPath)' != '' And '$(XenkoAssemblyProcessorDev)' != 'true' "/>
-  
+
   <Target Name="RunXenkoAssemblyProcessor" BeforeTargets="CopyFilesToOutputDirectory" Condition=" '$(XenkoAssemblyProcessor)' == 'true' and '$(XenkoAssemblyProcessorPath)' != '' and '$(XenkoAssemblyProcessorGlobal)' == 'true' and '$(XenkoAssemblyProcessorOptions)' != '' ">
     <PropertyGroup Condition="'$(XenkoUserBuild)' != 'true'">
       <!-- Add Xenko.Core path to assembly search directory -->
@@ -144,7 +124,7 @@
   </Target>
 
   <Import Project="$(MSBuildThisFileDirectory)Xenko.Core.Sign.targets" />
-  
+
   <Target Name="SetPrivateOnProjectReferences" BeforeTargets="BeforeCompile" AfterTargets="IncludeTransitiveProjectReferences">
     <!-- Automatically add Private on project references if they are already built in same folder as output folder -->
 	<!-- Also add PrivateAssets All to all Private projects -->
@@ -158,7 +138,7 @@
   </Target>
 
   <Import Project="$(MSBuildThisFileDirectory)Xenko.Core.PostSettings.Dependencies.targets"/>
-  
+
   <Import Condition="'$(XenkoNativeOutputName)' != ''" Project="$(MSBuildThisFileDirectory)..\native\Xenko.Native.targets" />
 
   <!-- Auto NuGet build packages and deploy them -->
