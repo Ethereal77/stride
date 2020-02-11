@@ -22,6 +22,7 @@ using Xenko.Core.IO;
 using Xenko.Core.Packages;
 using Xenko.Core.Reflection;
 using Xenko.Core.Serialization;
+
 using ILogger = Xenko.Core.Diagnostics.ILogger;
 
 namespace Xenko.Core.Assets
@@ -410,7 +411,7 @@ namespace Xenko.Core.Assets
     public sealed partial class PackageSession : IDisposable, IAssetFinder
     {
         /// <summary>
-        /// The visual studio version property used for newly created project solution files
+        /// The Visual Studio version property used for newly created project solution files.
         /// </summary>
         public static readonly Version DefaultVisualStudioVersion = new Version("16.0.0.0");
 
@@ -496,7 +497,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         public AssemblyContainer AssemblyContainer { get; }
 
         /// <summary>
-        /// The targeted visual studio version (if specified by the loaded package)
+        /// The targeted Visual Studio version (if specified by the loaded package).
         /// </summary>
         public Version VisualStudioVersion { get; set; }
 

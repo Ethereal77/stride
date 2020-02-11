@@ -22,7 +22,7 @@ using IPackageMetadata = NuGet.Packaging.IPackageMetadata;
 namespace Xenko.Core.Packages
 {
     /// <summary>
-    /// Nuget abstraction of a package.
+    /// NuGet abstraction of a package.
     /// </summary>
     public abstract class NugetPackage : IEquatable<NugetPackage>
     {
@@ -36,7 +36,7 @@ namespace Xenko.Core.Packages
         }
 
         /// <summary>
-        /// Storage for the NuGet metatadata.
+        /// Storage for the NuGet metadata.
         /// </summary>
         private readonly IPackageSearchMetadata packageMetadata;
 

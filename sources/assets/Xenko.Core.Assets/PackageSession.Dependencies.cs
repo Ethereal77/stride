@@ -246,12 +246,12 @@ namespace Xenko.Core.Assets
                 }
             }
 
-            // Now that our references are upgraded, let's do a real nuget restore (download files)
+            // Now that our references are upgraded, let's do a real NuGet restore (download files)
             log.Verbose($"Restore NuGet packages for {project.Name}...");
             if (loadParameters.AutoCompileProjects)
                 await VSProjectHelper.RestoreNugetPackages(log, project.FullPath);
 
-            // If platform was unknown (due to missing nuget packages during first pass), check it again
+            // If platform was unknown (due to missing NuGet packages during first pass), check it again
             if (project.Type == ProjectType.Executable && project.Platform == PlatformType.Shared)
             {
                 try

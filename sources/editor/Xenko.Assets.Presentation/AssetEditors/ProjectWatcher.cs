@@ -372,7 +372,7 @@ namespace Xenko.Assets.Presentation.AssetEditors
                 {
                     var project = await msbuildWorkspace.OpenProjectAsync(projectPath.ToWindowsPath());
 
-                    // Change the default CSharp language version to match the supported version for a specific visual studio version or MSBuild version
+                    // Change the default CSharp language version to match the supported version for a specific Visual Studio version or MSBuild version
                     //  this is because roslyn  will always resolve Default to Latest which might not match the 
                     //  latest version supported by the build tools installed on the machine
                     var csharpParseOptions = project.ParseOptions as CSharpParseOptions;
@@ -382,7 +382,7 @@ namespace Xenko.Assets.Presentation.AssetEditors
                         {
                             LanguageVersion targetLanguageVersion = csharpParseOptions.SpecifiedLanguageVersion;
 
-                            // Check the visual studio version inside the solution first, which is what visual studio uses to decide which version to open
+                            // Check the Visual Studio version inside the solution first, which is what Visual Studio uses to decide which version to open
                             //  this should not be confused with the toolsVersion below, since this is the MSBuild version (they might be different)
                             Version visualStudioVersion = session.CurrentProject?.Package.Session.VisualStudioVersion;
                             if (visualStudioVersion != null)

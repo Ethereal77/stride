@@ -14,13 +14,14 @@ using Xenko.Core.Assets.Editor;
 using Xenko.Core.Annotations;
 using Xenko.Core.Extensions;
 using Xenko.Core.IO;
+using Xenko.Core.Packages;
 using Xenko.Core.Windows;
-using Xenko.PrivacyPolicy;
 using Xenko.LauncherApp.CrashReport;
 using Xenko.LauncherApp.Services;
 using Xenko.Metrics;
+using Xenko.PrivacyPolicy;
+
 using Dispatcher = System.Windows.Threading.Dispatcher;
-using Xenko.Core.Packages;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Xenko.LauncherApp
@@ -157,7 +158,7 @@ namespace Xenko.LauncherApp
         {
             try
             {
-                // Only needed for Xenko up to 2.x (and possibly 3.0): setup the XenkoDir to make sure that it is passed to the underlying process (msbuild...etc.)
+                // Only needed for Xenko up to 2.x (and possibly 3.0): setup the XenkoDir to make sure that it is passed to the underlying process (MSBuild...etc.)
                 Environment.SetEnvironmentVariable("SiliconStudioXenkoDir", AppDomain.CurrentDomain.BaseDirectory);
                 Environment.SetEnvironmentVariable("XenkoDir", AppDomain.CurrentDomain.BaseDirectory);
 

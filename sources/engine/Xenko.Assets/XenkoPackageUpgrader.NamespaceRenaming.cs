@@ -83,7 +83,7 @@ namespace Xenko.Assets
             /// <summary>
             /// Upgrades the specified project file
             /// </summary>
-            /// <param name="workspace">The msbuild workspace</param>
+            /// <param name="workspace">The MSBuild workspace</param>
             /// <param name="projectPath">A path to a csproj file</param>
             void UpgradeProject(MSBuildWorkspace workspace, UFile projectPath);
 

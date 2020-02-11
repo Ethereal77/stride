@@ -142,7 +142,7 @@ namespace Xenko.Core.Assets
         /// <summary>
         /// Gets a boolean telling if MSBuild files should be evaluated when listing assets.
         /// </summary>
-        public bool TemporaryAssetsInMsbuild { get; set; } = true;
+        public bool TemporaryAssetsInMsBuild { get; set; } = true;
 
         /// <summary>
         /// Clones this instance.

@@ -19,7 +19,7 @@ namespace Xenko.Core.Packages
         private readonly IPackagesLogger logger;
 
         /// <summary>
-        /// Initialize new instance of NugetLogger.
+        /// Initialize new instance of <see cref="NugetLogger"/>.
         /// </summary>
         /// <param name="logger">The <see cref="IPackagesLogger"/> instance to use to implement <see cref="ILogger"/></param>
         public NugetLogger(IPackagesLogger logger)

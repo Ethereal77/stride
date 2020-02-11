@@ -13,7 +13,7 @@ using Xenko.Engine.Network;
 
 namespace Xenko.Samples.Tests
 {
-    //This is how we inject the assembly to run automatically at game start, paired with Xenko.targets and the msbuild property XenkoAutoTesting
+    //This is how we inject the assembly to run automatically at game start, paired with Xenko.targets and the MSBuild property XenkoAutoTesting
     internal class LocalConnectionRouterInitializer
     {
         [ModuleInitializer]

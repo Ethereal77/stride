@@ -327,7 +327,7 @@ namespace Xenko.Core.Assets
                 if (logger == null) throw new ArgumentNullException("logger");
 
                 // Make sure that we are using the project collection from the loaded project, otherwise we are getting
-                // weird cache behavior with the msbuild system
+                // weird cache behavior with the MSBuild system
                 var projectInstance = new ProjectInstance(project.Xml, project.ProjectCollection.GlobalProperties, project.ToolsVersion, project.ProjectCollection);
 
                 BuildTask = Task.Run(() =>

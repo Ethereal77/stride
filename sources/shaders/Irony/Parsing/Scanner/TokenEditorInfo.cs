@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Irony.Parsing {
   // Helper classes for information used by syntax highlighters and editors
-  // TokenColor, TokenTriggers and TokenType are copied from the Visual studio integration assemblies. 
+  // TokenColor, TokenTriggers and TokenType are copied from the Visual Studio integration assemblies. 
   //  Each terminal/token would have its TokenEditorInfo that can be used either by VS integration package 
   //   or any editor for syntax highligting.
 
@@ -37,7 +37,7 @@ namespace Irony.Parsing {
     Number = 5,
   }
 
-  // (Comments are coming from visual studio integration package)
+  // (Comments are coming from Visual Studio integration package)
   //     Specifies a set of triggers that can be fired from an Microsoft.VisualStudio.Package.IScanner
   //     language parser.
   [Flags]

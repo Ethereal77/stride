@@ -21,7 +21,7 @@ namespace Xenko.VisualStudio
         }
         public static IVsHierarchy ToHierarchy(EnvDTE.Project project)
         {
-            if (project == null) throw new ArgumentNullException("project"); string projectGuid = null;        // DTE does not expose the project GUID that exists at in the msbuild project file.        // Cannot use MSBuild object model because it uses a static instance of the Engine,         // and using the Project will cause it to be unloaded from the engine when the         // GC collects the variable that we declare.       
+            if (project == null) throw new ArgumentNullException("project"); string projectGuid = null;        // DTE does not expose the project GUID that exists at in the MSBuild project file.        // Cannot use MSBuild object model because it uses a static instance of the Engine,         // and using the Project will cause it to be unloaded from the engine when the         // GC collects the variable that we declare.       
             using (XmlReader projectReader = XmlReader.Create(project.FileName))
             {
                 projectReader.MoveToContent();

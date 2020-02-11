@@ -2,12 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core;
-using Xenko.Engine;
-using Xenko.Engine.Network;
-using Xenko.Games.Testing.Requests;
-using Xenko.Graphics;
-using Xenko.Input;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -15,12 +9,18 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
+using Xenko.Core;
+using Xenko.Engine;
+using Xenko.Engine.Network;
+using Xenko.Games.Testing.Requests;
+using Xenko.Graphics;
 using Xenko.Graphics.Regression;
+using Xenko.Input;
 
 namespace Xenko.Games.Testing
 {
     /// <summary>
-    /// This game system will be automatically injected by the Module initialized when included in the build processing via msbuild
+    /// This game system will be automatically injected by the Module initialized when included in the build processing via MSBuild
     /// The purpose is to simulate events within the game process and report errors and such to the GameTestingClient
     /// </summary>
     internal class GameTestingSystem : GameSystemBase

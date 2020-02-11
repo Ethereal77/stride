@@ -17,7 +17,7 @@ using Xenko.Core.Presentation.ViewModel;
 namespace Xenko.LauncherApp.ViewModels
 {
     /// <summary>
-    /// A view model class that represents a Nuget package, as it exists both locally and on a remote server.
+    /// A view model class that represents a NuGet package, as it exists both locally and on a remote server.
     /// </summary>
     internal abstract class PackageVersionViewModel : DispatcherViewModel
     {

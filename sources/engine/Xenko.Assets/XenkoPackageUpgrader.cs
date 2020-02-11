@@ -96,7 +96,7 @@ namespace Xenko.Assets
 
                     var packageReferences = project.GetItems("PackageReference").ToList();
 
-                    // Upgrade from 3.0 to 3.1 (Xenko split in several nuget packages)
+                    // Upgrade from 3.0 to 3.1 (Xenko split in several NuGet packages)
                     if (dependency.Version.MinVersion < new PackageVersion("3.1.0.0"))
                     {
                         var xenkoReference = packageReferences.FirstOrDefault(packageReference => packageReference.EvaluatedInclude == "Xenko");

@@ -38,7 +38,7 @@ namespace Xenko.LauncherApp.ViewModels
         /// <summary>
         /// Gets whether the latest version of the VSIX package is installed.
         /// </summary>
-        /// <remarks>This property is updated by <see cref="UpdateFromStore"/> and requires the latest Nuget package to be in the local store.</remarks>
+        /// <remarks>This property is updated by <see cref="UpdateFromStore"/> and requires the latest NuGet package to be in the local store.</remarks>
         public bool IsLatestVersionInstalled { get { return isLatestVersionInstalled; } private set { SetValue(ref isLatestVersionInstalled, value); } }
 
         /// <summary>

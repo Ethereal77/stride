@@ -314,11 +314,11 @@ namespace Xenko.Core.Presentation.Controls
         protected sealed override void OnValidated()
         {
             double? value;
-            try
+            if (double.TryParse(Text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var parsedValue))
             {
-                value = double.Parse(Text, CultureInfo.InvariantCulture);
+                value = parsedValue;
             }
-            catch (Exception)
+            else
             {
                 value = Value;
             }
@@ -328,15 +328,20 @@ namespace Xenko.Core.Presentation.Controls
             expression?.UpdateSource();
         }
 
+        protected override bool IsTextCompatibleWithValueBinding(string text)
+        {
+            return double.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out _);
+        }
+
         /// <inheritdoc/>
         [NotNull]
         protected override string CoerceTextForValidation(string baseValue)
         {
             baseValue = base.CoerceTextForValidation(baseValue);
             double? value;
-            try
+            if (double.TryParse(baseValue, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var parsedValue))
             {
-                value = double.Parse(baseValue, CultureInfo.InvariantCulture);
+                value = parsedValue;
 
                 if (value > Maximum)
                 {
@@ -347,7 +352,7 @@ namespace Xenko.Core.Presentation.Controls
                     value = Minimum;
                 }
             }
-            catch (Exception)
+            else
             {
                 value = Value;
             }

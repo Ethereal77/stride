@@ -98,7 +98,7 @@ namespace Xenko.LauncherApp
         /// </summary>
         private bool Initialize()
         {
-            // Setup the Nuget store
+            // Setup the NuGet store
             store = Launcher.InitializeNugetStore();
 
             return true;

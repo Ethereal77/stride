@@ -14,7 +14,7 @@ using NuGet.Protocol.Core.Types;
 namespace Xenko.Core.Packages
 {
     /// <summary>
-    /// Copy of <see cref="CachingSourceProvider"/> from Nuget with the only change being adding V2 in the list
+    /// Copy of <see cref="CachingSourceProvider"/> from NuGet with the only change being adding V2 in the list
     /// of resource providers.
     /// </summary>
     internal class NugetSourceRepositoryProvider : ISourceRepositoryProvider

@@ -295,9 +295,9 @@ namespace Xenko.Core.Assets
         public bool IsDebug { get; set; }
 
         /// <summary>
-        /// Gets the additional msbuild properties for a specific configuration (Debug or Release)
+        /// Gets the additional MSBuild properties for a specific configuration (Debug or Release)
         /// </summary>
-        /// <value>The msbuild configuration properties.</value>
+        /// <value>The MSBuild configuration properties.</value>
         public List<string> Properties { get; private set; }
     }
 }

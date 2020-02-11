@@ -20,7 +20,7 @@ namespace Xenko.Core.Assets
     /// Manage packages locally installed and accessible on the store.
     /// </summary>
     /// <remarks>
-    /// This class is the frontend to the packaging/distribution system. It is currently using nuget for its packaging but may
+    /// This class is the frontend to the packaging/distribution system. It is currently using NuGet for its packaging but may
     /// change in the future.
     /// </remarks>
     public class PackageStore
@@ -28,7 +28,7 @@ namespace Xenko.Core.Assets
         private static readonly Lazy<PackageStore> DefaultPackageStore = new Lazy<PackageStore>(() => new PackageStore());
 
         /// <summary>
-        /// Associated NugetStore for our packages. Cannot be null.
+        /// Associated <see cref="NugetStore"/> for our packages. Cannot be null.
         /// </summary>
         private readonly NugetStore store;
 
@@ -133,9 +133,9 @@ namespace Xenko.Core.Assets
         }
 
         /// <summary>
-        /// New instance of <see cref="PackageMeta"/> from a nuget package <paramref name="metadata"/>.
+        /// New instance of <see cref="PackageMeta"/> from a NuGet package <paramref name="metadata"/>.
         /// </summary>
-        /// <param name="metadata">The nuget metadata used to initialized an instance of <see cref="PackageMeta"/>.</param>
+        /// <param name="metadata">The NuGet metadata used to initialized an instance of <see cref="PackageMeta"/>.</param>
         public static PackageMeta PackageMetaFromNugetPackage(NugetPackage metadata)
         {
             var meta = new PackageMeta
