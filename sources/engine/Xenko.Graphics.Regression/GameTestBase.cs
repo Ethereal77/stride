@@ -192,11 +192,8 @@ namespace Xenko.Graphics.Regression
             if (!ForceInteractiveMode)
                 InitializeSimulatedInputSource();
 
-#if !XENKO_UI_SDL
-            // Disabled for SDL as a position of (0,0) actually means that the client area of the
-            // window will be at (0,0) not the top left corner of the non-client area of the window.
-            Window.Position = Int2.Zero; // avoid possible side effects due to position of the window in the screen.
-#endif
+            // Avoid possible side effects due to position of the window in the screen
+            Window.Position = Int2.Zero;
 
             Script.AddTask(RegisterTestsInternal);
         }

@@ -20,18 +20,6 @@
     <When Condition=" '$(AutoIncludeSystemAssembly)' != 'true'">
     </When>
   </Choose>
-  <Import Condition="$(XenkoUI.Contains('SDL'))" Project="..\..\targets\SDL.targets" />
-  <Choose>
-    <When Condition="$(XenkoUI.Contains('SDL'))">
-      <ItemGroup>
-        <XenkoNativeLib Include="$(XenkoDependenciesDir)\SDL2\$(XenkoPlatform)\**\*SDL2*">
-          <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-          <RelativePath>%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </XenkoNativeLib>
-      </ItemGroup>
-    </When>
-  </Choose>
   <ItemGroup>
     <XenkoNativeLib Include="$(XenkoDependenciesDir)\freetype\$(XenkoPlatform)\**\*.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
@@ -76,7 +64,6 @@
   <Target Name="IncludeExtraAssemblies">
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)SharpFont.dll" />
-      <BuildOutputInPackage Include="$(OutputPath)SDL2-CS.dll" Condition="$(XenkoUI.Contains('SDL'))" />
     </ItemGroup>
   </Target>
 </Project>

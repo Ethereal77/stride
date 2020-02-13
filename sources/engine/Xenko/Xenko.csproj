@@ -22,8 +22,6 @@
     <XenkoCodeAnalysis>true</XenkoCodeAnalysis>
   </PropertyGroup>
 
-  <Import Condition="$(XenkoUI.Contains('SDL'))" Project="..\..\targets\SDL.targets" />
-
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

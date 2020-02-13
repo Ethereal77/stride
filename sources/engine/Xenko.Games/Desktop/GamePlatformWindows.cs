@@ -15,7 +15,7 @@ namespace Xenko.Games
         {
             IsBlockingRun = true;
 #if XENKO_RUNTIME_CORECLR
-                // This is required by the Audio subsystem of SharpDX.
+            // This is required by the Audio subsystem of SharpDX.
             Win32Native.CoInitialize(IntPtr.Zero);
 #endif
         }
@@ -33,16 +33,9 @@ namespace Xenko.Games
         {
             switch (type)
             {
-#if XENKO_UI_SDL
-                 case AppContextType.DesktopSDL:
-                    return new GameWindowSDL();
-#endif
-
                  case AppContextType.Desktop:
 #if XENKO_GRAPHICS_API_DIRECT3D && XENKO_UI_WINFORMS
                     return new GameWindowWinforms();
-#elif XENKO_UI_SDL
-                    return new GameWindowSDL();
 #else
                     return null;
 #endif

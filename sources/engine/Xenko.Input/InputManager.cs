@@ -585,11 +585,6 @@ namespace Xenko.Input
             // Create input sources
             switch (Game.Context.ContextType)
             {
-#if XENKO_UI_SDL
-                case AppContextType.DesktopSDL:
-                    Sources.Add(new InputSourceSDL());
-                    break;
-#endif
                 case AppContextType.Desktop:
 #if XENKO_UI_WINFORMS || XENKO_UI_WPF
                     Sources.Add(new InputSourceWinforms());

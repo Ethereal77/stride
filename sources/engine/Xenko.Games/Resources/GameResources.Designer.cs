@@ -71,8 +71,6 @@ namespace Xenko.Games.Resources {
                 return ((System.Drawing.Icon)(obj));
             }
         }
-#else
-        // FIXME: We should load a SDL Surface and call SDL_SetWindowIcon.
 #endif
     }
 }

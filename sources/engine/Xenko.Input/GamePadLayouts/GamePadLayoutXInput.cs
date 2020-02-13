@@ -7,7 +7,7 @@ using System;
 namespace Xenko.Input
 {
     /// <summary>
-    /// Layout for XInput devices so that they can be used by SDL or other systems that do not have the XInput API but do support joysticks in some other way
+    /// Layout for XInput devices so that they can be used other systems that do not have the XInput API but do support joysticks in some other way.
     /// </summary>
     public class GamePadLayoutXInput : GamePadLayout
     {

@@ -30,9 +30,6 @@ namespace Xenko.Games
                 case AppContextType.Desktop:
                     res = NewGameContextDesktop();
                     break;
-                case AppContextType.DesktopSDL:
-                    res = NewGameContextSDL();
-                    break;
                 case AppContextType.DesktopWpf:
                     res = NewGameContextWpf();
                     break;
@@ -48,27 +45,16 @@ namespace Xenko.Games
 
         public static GameContext NewGameContextDesktop()
         {
-#if XENKO_UI_SDL && !XENKO_UI_WINFORMS && !XENKO_UI_WPF
-        return new GameContextSDL(null);
-#elif (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+#if XENKO_UI_WINFORMS || XENKO_UI_WPF
         return new GameContextWinforms(null);
 #else
         return null;
 #endif
         }
 
-        public static GameContext NewGameContextSDL()
-        {
-#if XENKO_UI_SDL
-            return new GameContextSDL(null);
-#else
-            return null;
-#endif
-        }
-
         public static GameContext NewGameContextWpf()
         {
-            // Not supported for now.
+            // Not supported for now
             return null;
         }
     }

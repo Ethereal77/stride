@@ -279,7 +279,7 @@ namespace Xenko.Graphics
                     return CreateSwapChainForDesktop(hwndPtr);
                 }
             }
-            throw new NotSupportedException($"Form of type [{Description.DeviceWindowHandle?.GetType().Name ?? "null"}] is not supported. Only System.Windows.Control or SDL2.Window are supported");
+            throw new NotSupportedException($"Form of type [{Description.DeviceWindowHandle?.GetType().Name ?? "null"}] is not supported. Only System.Windows.Control is supported.");
         }
 
         private SwapChain CreateSwapChainForDesktop(IntPtr handle)
