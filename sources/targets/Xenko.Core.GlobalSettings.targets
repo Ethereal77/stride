@@ -74,7 +74,7 @@
 
   <!-- SourceLink -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Condition="'$(XenkoProjectType)' == 'CSharp'" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Condition="'$(StrideProjectType)' == 'CSharp'" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
 
   <!-- Used by Xenko.build to detect if unit tests prefer to run in 32 or 64 bits (note: it's a copy of Xenko.UnitTests.targets one because some unit tests import Xenko.Core.PreSettings.targets rather than Xenko.UnitTests.targets) -->

@@ -440,9 +440,9 @@ namespace Xenko.Streaming
                 return;
 
             // Update resources
-            lock (resources)
+            if (Enabled)
             {
-                if (Enabled)
+                lock (resources)
                 {
                     // Perform synchronization
                     FlushSync();
@@ -560,7 +560,7 @@ namespace Xenko.Streaming
 
         private void FlushSync()
         {
-            for (int i = 0; i < activeStreaming.Count; i++)
+            for (int i = activeStreaming.Count - 1; i >= 0; i--)
             {
                 var resource = activeStreaming[i];
                 if (resource.IsTaskActive)
@@ -568,7 +568,6 @@ namespace Xenko.Streaming
 
                 resource.FlushSync();
                 activeStreaming.RemoveAt(i);
-                i--;
             }
         }
 

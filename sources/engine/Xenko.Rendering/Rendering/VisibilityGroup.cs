@@ -95,7 +95,7 @@ namespace Xenko.Rendering
         public void TryCollect(RenderView view)
         {
             // Already colleted this frame?
-            if (view.LastFrameCollected >= RenderSystem.FrameCounter)
+            if (view.LastFrameCollected == RenderSystem.FrameCounter)
                 return;
 
             view.LastFrameCollected = RenderSystem.FrameCounter;
@@ -110,8 +110,7 @@ namespace Xenko.Rendering
             view.MinimumDistance = float.PositiveInfinity;
             view.MaximumDistance = float.NegativeInfinity;
 
-            Matrix viewInverse = view.View;
-            viewInverse.Invert();
+            Matrix.Invert(ref view.View, out var viewInverse);
             var planeNormal = viewInverse.Forward;
             var pointOnPlane = viewInverse.TranslationVector + viewInverse.Forward * view.NearClipPlane;
             var plane = new Plane(planeNormal, Vector3.Dot(pointOnPlane, planeNormal)); // TODO: Point-normal-constructor seems wrong. Check.
@@ -240,7 +239,7 @@ namespace Xenko.Rendering
         {
             var nearCorner = boundingBox.Minimum;
             var farCorner = boundingBox.Maximum;
-            
+
             if (plane.Normal.X < 0)
                 Utilities.Swap(ref nearCorner.X, ref farCorner.X);
 
@@ -260,7 +259,7 @@ namespace Xenko.Rendering
             distance = CollisionHelper.DistancePlanePoint(ref plane, ref farCorner);
             while ((oldDistance = maxDistance) < distance && Interlocked.CompareExchange(ref maxDistance, distance, oldDistance) != oldDistance) { }
         }
-        
+
         internal void AddRenderObject(List<RenderObject> renderObjects, RenderObject renderObject)
         {
             if (renderObject.VisibilityObjectNode != StaticObjectNodeReference.Invalid)

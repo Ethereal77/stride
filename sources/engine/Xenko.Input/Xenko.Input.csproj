@@ -19,13 +19,9 @@
     <When Condition=" '$(AutoIncludeSystemAssembly)' != 'true'">
     </When>
   </Choose>
-  <Choose>
-    <When Condition="$(XenkoUI.Contains('WINFORMS')) OR $(XenkoUI.Contains('WPF'))">
-      <ItemGroup>
-        <Reference Include="System.Windows.Forms" />
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup Condition="$(XenkoPlatform) == 'Windows' And $(TargetFramework.StartsWith('net4'))">
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

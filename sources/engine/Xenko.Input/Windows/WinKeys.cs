@@ -2,8 +2,7 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
-
+#if XENKO_INPUT_RAWINPUT
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using WinFormsKeys = System.Windows.Forms.Keys;

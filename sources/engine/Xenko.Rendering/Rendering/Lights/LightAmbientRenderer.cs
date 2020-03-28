@@ -95,7 +95,7 @@ namespace Xenko.Rendering.Lights
             {
                 base.ApplyViewParameters(context, viewIndex, parameters);
 
-                parameters.Set(ambientLightKey, AmbientColor[viewIndex]);
+                parameters.Set(ambientLightKey, ref AmbientColor[viewIndex]);
             }
         }
     }

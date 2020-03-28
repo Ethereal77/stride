@@ -55,7 +55,7 @@ namespace Xenko.Input
 
         private Dictionary<IInputSource, EventHandler<TrackingCollectionChangedEventArgs>> devicesCollectionChangedActions = new Dictionary<IInputSource, EventHandler<TrackingCollectionChangedEventArgs>>();
 
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
+#if XENKO_INPUT_RAWINPUT
         private bool rawInputEnabled = false;
 #endif
 

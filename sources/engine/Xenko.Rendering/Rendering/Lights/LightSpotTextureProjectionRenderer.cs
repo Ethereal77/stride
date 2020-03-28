@@ -115,8 +115,7 @@ namespace Xenko.Rendering.Lights
         {
             var spotLight = (LightSpot)light.Type;
 
-            Matrix viewMatrix = light.WorldMatrix;
-            viewMatrix.Invert();
+            Matrix.Invert(ref light.WorldMatrix, out var viewMatrix);
 
             // TODO: PERFORMANCE: This does redundant work. The view projection matrix is already calculated within "LightSpotShadowMapRenderer".
 
