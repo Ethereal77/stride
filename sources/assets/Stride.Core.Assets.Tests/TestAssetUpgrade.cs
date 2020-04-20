@@ -19,7 +19,7 @@ namespace Stride.Core.Assets.Tests
     public class TestAssetUpgrade : TestBase
     {
         [DataContract("MyUpgradedAsset")]
-        [AssetDescription(".xkobj")]
+        [AssetDescription(".sdobj")]
         [AssetFormatVersion("TestPackage", 5, 1)]
         [AssetUpgrader("TestPackage", 1, 2, typeof(AssetUpgrader1))]
         [AssetUpgrader("TestPackage", 2, 4, typeof(AssetUpgrader2))]
@@ -133,7 +133,7 @@ namespace Stride.Core.Assets.Tests
 
         private void TestUpgrade(MyUpgradedAsset asset, bool needMigration)
         {
-            var loadingFilePath = new PackageLoadingAssetFile(Path.Combine(DirectoryTestBase, "TestUpgrade\\Asset1.xkobj"), DirectoryTestBase);
+            var loadingFilePath = new PackageLoadingAssetFile(Path.Combine(DirectoryTestBase, "TestUpgrade\\Asset1.sdobj"), DirectoryTestBase);
             var outputFilePath = loadingFilePath.FilePath.FullPath;
             AssetFileSerializer.Save(outputFilePath, asset, null);
 

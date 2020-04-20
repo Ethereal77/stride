@@ -159,11 +159,11 @@ namespace Stride.Assets
                         }
                     }
 
-                    // Change shader generated file from .cs to .xksl.cs or .xkfx.cs
+                    // Change shader generated file from .cs to .sdsl.cs or .sdfx.cs
                     if (dependency.Version.MinVersion < new PackageVersion("3.2.0.1-beta02"))
                     {
-                        // Find xksl files
-                        var shaderFiles = project.Items.Where(x => x.ItemType == "None" && (x.EvaluatedInclude.EndsWith(".xksl", StringComparison.InvariantCultureIgnoreCase) || x.EvaluatedInclude.EndsWith(".xkfx", StringComparison.InvariantCultureIgnoreCase)) && x.HasMetadata("Generator"));
+                        // Find sdsl files
+                        var shaderFiles = project.Items.Where(x => x.ItemType == "None" && (x.EvaluatedInclude.EndsWith(".sdsl", StringComparison.InvariantCultureIgnoreCase) || x.EvaluatedInclude.EndsWith(".sdfx", StringComparison.InvariantCultureIgnoreCase)) && x.HasMetadata("Generator"));
 
                         foreach (var shaderFile in shaderFiles)
                         {
@@ -187,7 +187,7 @@ namespace Stride.Assets
                                     isProjectDirty = true;
                                 }
 
-                                if (shaderFile.EvaluatedInclude.EndsWith(".xkfx", StringComparison.InvariantCultureIgnoreCase))
+                                if (shaderFile.EvaluatedInclude.EndsWith(".sdfx", StringComparison.InvariantCultureIgnoreCase))
                                 {
                                     shaderFile.GetMetadata("Generator").UnevaluatedValue = "StrideEffectCodeGenerator";
                                     isProjectDirty = true;

@@ -19,7 +19,7 @@ namespace Stride.Graphics
             switch (fileType)
             {
                 case ImageFileType.Stride:
-                    return ".xkimg";
+                    return ".sdimg";
                 default:
                     return "." + fileType.ToString().ToLowerInvariant();
             }

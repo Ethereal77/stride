@@ -12,7 +12,7 @@ namespace Stride.Core.Assets.Tests
     public partial class TestSerializing
     {
         [DataContract("MyAsset")]
-        [AssetDescription(".xkobj")]
+        [AssetDescription(".sdobj")]
         public class MyAsset : Asset
         {
             public MyAsset()

@@ -18,7 +18,7 @@ namespace Stride.SpriteStudio.Offline
     [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.0.0.0")]
     public class SpriteStudioAnimationAsset : AssetWithSource
     {
-        public const string FileExtension = ".xkss4a";
+        public const string FileExtension = ".sdss4a";
 
         private const string CurrentVersion = "2.0.0.0";
 

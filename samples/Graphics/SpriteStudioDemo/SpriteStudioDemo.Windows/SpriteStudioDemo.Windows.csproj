@@ -10,7 +10,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\SpriteStudioDemo.xkpkg</StrideCurrentPackagePath>
+    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\SpriteStudioDemo.sdpkg</StrideCurrentPackagePath>
     <StrideProjectType>Executable</StrideProjectType>
     <StridePlatform>Windows</StridePlatform>
     <StrideBuildProfile>Windows</StrideBuildProfile>

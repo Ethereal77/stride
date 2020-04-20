@@ -41,7 +41,7 @@ namespace Stride.Assets
         /// <summary>
         /// The default file extension used by the <see cref="GameSettingsAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkgamesettings";
+        public const string FileExtension = ".sdgamesettings";
 
         public const string GameSettingsLocation = GameSettings.AssetUrl;
 

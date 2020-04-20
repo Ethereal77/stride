@@ -25,7 +25,7 @@ namespace Stride.TextureConverter.TexLibraries
         /// <summary>
         /// The <see cref="Image"/> image
         /// </summary>
-        public Image XkImage;
+        public Image SdImage;
     }
 
 
@@ -35,7 +35,7 @@ namespace Stride.TextureConverter.TexLibraries
     internal class StrideTexLibrary : ITexLibrary
     {
         private static Logger Log = GlobalLogger.GetLogger("StrideTexLibrary");
-        public static readonly string Extension = ".xk";
+        public static readonly string Extension = ".sd";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StrideTexLibrary"/> class.
@@ -51,7 +51,7 @@ namespace Stride.TextureConverter.TexLibraries
         public void Dispose(TexImage image)
         {
             StrideTextureLibraryData libraryData = (StrideTextureLibraryData)image.LibraryData[this];
-            if (libraryData.XkImage != null) libraryData.XkImage.Dispose();
+            if (libraryData.SdImage != null) libraryData.SdImage.Dispose();
         }
 
         public bool SupportBGRAOrder()
@@ -88,7 +88,7 @@ namespace Stride.TextureConverter.TexLibraries
 
                 case RequestType.Loading: // Stride can load dds file or his own format or a Stride <see cref="Image"/> instance.
                     LoadingRequest load = (LoadingRequest)request;
-                    if (load.Mode == LoadingRequest.LoadingMode.XkImage) return true;
+                    if (load.Mode == LoadingRequest.LoadingMode.SdImage) return true;
                     else if (load.Mode == LoadingRequest.LoadingMode.FilePath)
                     {
                         string extension = Path.GetExtension(load.FilePath);
@@ -176,7 +176,7 @@ namespace Stride.TextureConverter.TexLibraries
         {
             Log.Verbose("Exporting to " + request.FilePath + " ...");
 
-            Image xkImage = null;
+            Image sdImage = null;
 
             if (request.MinimumMipMapSize > 1) // Check whether a minimum mipmap size was requested
             {
@@ -203,7 +203,7 @@ namespace Stride.TextureConverter.TexLibraries
                     int SubImagePerArrayElement = image.SubImageArray.Length / image.ArraySize; // number of SubImage in each texture array element.
 
                     // Initializing library native data according to the new mipmap level
-                    xkImage = Image.New3D(image.Width, image.Height, image.Depth, newMipMapCount, image.Format);
+                    sdImage = Image.New3D(image.Width, image.Height, image.Depth, newMipMapCount, image.Format);
 
                     try
                     {
@@ -212,14 +212,14 @@ namespace Stride.TextureConverter.TexLibraries
                         {
                             for (int j = 0; j < ct; ++j)
                             {
-                                Utilities.CopyMemory(xkImage.PixelBuffer[ct2].DataPointer, xkImage.PixelBuffer[j + i * SubImagePerArrayElement].DataPointer, xkImage.PixelBuffer[j + i * SubImagePerArrayElement].BufferStride);
+                                Utilities.CopyMemory(sdImage.PixelBuffer[ct2].DataPointer, sdImage.PixelBuffer[j + i * SubImagePerArrayElement].DataPointer, sdImage.PixelBuffer[j + i * SubImagePerArrayElement].BufferStride);
                                 ++ct2;
                             }
                         }
                     }
                     catch (AccessViolationException e)
                     {
-                        xkImage.Dispose();
+                        sdImage.Dispose();
                         Log.Error("Failed to export texture with the mipmap minimum size request. ", e);
                         throw new TextureToolsException("Failed to export texture with the mipmap minimum size request. ", e);
                     }
@@ -242,19 +242,19 @@ namespace Stride.TextureConverter.TexLibraries
                     switch (image.Dimension)
                     {
                         case TexImage.TextureDimension.Texture1D:
-                            xkImage = Image.New1D(image.Width, image.MipmapCount, image.Format, image.ArraySize); break;
+                            sdImage = Image.New1D(image.Width, image.MipmapCount, image.Format, image.ArraySize); break;
                         case TexImage.TextureDimension.Texture2D:
-                            xkImage = Image.New2D(image.Width, image.Height, newMipMapCount, image.Format, image.ArraySize); break;
+                            sdImage = Image.New2D(image.Width, image.Height, newMipMapCount, image.Format, image.ArraySize); break;
                         case TexImage.TextureDimension.TextureCube:
-                            xkImage = Image.NewCube(image.Width, newMipMapCount, image.Format); break;
+                            sdImage = Image.NewCube(image.Width, newMipMapCount, image.Format); break;
                     }
-                    if (xkImage == null)
+                    if (sdImage == null)
                     {
                         Log.Error("Image could not be created.");
                         throw new InvalidOperationException("Image could not be created.");
                     }
 
-                    if (xkImage.TotalSizeInBytes != dataSize)
+                    if (sdImage.TotalSizeInBytes != dataSize)
                     {
                         Log.Error("Image size different than expected.");
                         throw new InvalidOperationException("Image size different than expected.");
@@ -267,13 +267,13 @@ namespace Stride.TextureConverter.TexLibraries
                         for (int i = 0; i < image.ArraySize * newMipMapCount; ++i)
                         {
                             if (i == newMipMapCount || (i > newMipMapCount && (i % newMipMapCount == 0))) j += gap;
-                            Utilities.CopyMemory(xkImage.PixelBuffer[i].DataPointer, image.SubImageArray[j].Data, image.SubImageArray[j].DataSize);
+                            Utilities.CopyMemory(sdImage.PixelBuffer[i].DataPointer, image.SubImageArray[j].Data, image.SubImageArray[j].DataSize);
                             ++j;
                         }
                     }
                     catch (AccessViolationException e)
                     {
-                        xkImage.Dispose();
+                        sdImage.Dispose();
                         Log.Error("Failed to export texture with the mipmap minimum size request. ", e);
                         throw new TextureToolsException("Failed to export texture with the mipmap minimum size request. ", e);
                     }
@@ -284,36 +284,36 @@ namespace Stride.TextureConverter.TexLibraries
                 switch (image.Dimension)
                 {
                     case TexImage.TextureDimension.Texture1D:
-                        xkImage = Image.New1D(image.Width, image.MipmapCount, image.Format, image.ArraySize); break;
+                        sdImage = Image.New1D(image.Width, image.MipmapCount, image.Format, image.ArraySize); break;
                     case TexImage.TextureDimension.Texture2D:
-                        xkImage = Image.New2D(image.Width, image.Height, image.MipmapCount, image.Format, image.ArraySize); break;
+                        sdImage = Image.New2D(image.Width, image.Height, image.MipmapCount, image.Format, image.ArraySize); break;
                     case TexImage.TextureDimension.Texture3D:
-                        xkImage = Image.New3D(image.Width, image.Height, image.Depth, image.MipmapCount, image.Format); break;
+                        sdImage = Image.New3D(image.Width, image.Height, image.Depth, image.MipmapCount, image.Format); break;
                     case TexImage.TextureDimension.TextureCube:
-                        xkImage = Image.NewCube(image.Width, image.MipmapCount, image.Format); break;
+                        sdImage = Image.NewCube(image.Width, image.MipmapCount, image.Format); break;
                 }
-                if (xkImage == null)
+                if (sdImage == null)
                 {
                     Log.Error("Image could not be created.");
                     throw new InvalidOperationException("Image could not be created.");
                 }
 
-                if (xkImage.TotalSizeInBytes != image.DataSize)
+                if (sdImage.TotalSizeInBytes != image.DataSize)
                 {
                     Log.Error("Image size different than expected.");
                     throw new InvalidOperationException("Image size different than expected.");
                 }
 
-                Utilities.CopyMemory(xkImage.DataPointer, image.Data, image.DataSize);
+                Utilities.CopyMemory(sdImage.DataPointer, image.Data, image.DataSize);
             }
 
             using (var fileStream = new FileStream(request.FilePath, FileMode.Create, FileAccess.Write))
             {
                 String extension = Path.GetExtension(request.FilePath);
                 if (extension.Equals(Extension))
-                    xkImage.Save(fileStream, ImageFileType.Stride);
+                    sdImage.Save(fileStream, ImageFileType.Stride);
                 else if (extension.Equals(".dds"))
-                    xkImage.Save(fileStream, ImageFileType.Dds);
+                    sdImage.Save(fileStream, ImageFileType.Dds);
                 else
                 {
                     Log.Error("Unsupported file extension.");
@@ -321,7 +321,7 @@ namespace Stride.TextureConverter.TexLibraries
                 }
             }
 
-            xkImage.Dispose();
+            sdImage.Dispose();
             image.Save(request.FilePath);
         }
 
@@ -342,33 +342,33 @@ namespace Stride.TextureConverter.TexLibraries
         {
             Log.Verbose("Exporting to Stride Image ...");
 
-            Image xkImage = null;
+            Image sdImage = null;
             switch (image.Dimension)
             {
                 case TexImage.TextureDimension.Texture1D:
-                    xkImage = Image.New1D(image.Width, image.MipmapCount, image.Format, image.ArraySize); break;
+                    sdImage = Image.New1D(image.Width, image.MipmapCount, image.Format, image.ArraySize); break;
                 case TexImage.TextureDimension.Texture2D:
-                    xkImage = Image.New2D(image.Width, image.Height, image.MipmapCount, image.Format, image.ArraySize); break;
+                    sdImage = Image.New2D(image.Width, image.Height, image.MipmapCount, image.Format, image.ArraySize); break;
                 case TexImage.TextureDimension.Texture3D:
-                    xkImage = Image.New3D(image.Width, image.Height, image.Depth, image.MipmapCount, image.Format); break;
+                    sdImage = Image.New3D(image.Width, image.Height, image.Depth, image.MipmapCount, image.Format); break;
                 case TexImage.TextureDimension.TextureCube:
-                    xkImage = Image.NewCube(image.Width, image.MipmapCount, image.Format); break;
+                    sdImage = Image.NewCube(image.Width, image.MipmapCount, image.Format); break;
             }
-            if (xkImage == null)
+            if (sdImage == null)
             {
                 Log.Error("Image could not be created.");
                 throw new InvalidOperationException("Image could not be created.");
             }
 
-            if (xkImage.TotalSizeInBytes != image.DataSize)
+            if (sdImage.TotalSizeInBytes != image.DataSize)
             {
                 Log.Error("Image size different than expected.");
                 throw new InvalidOperationException("Image size different than expected.");
             }
 
-            Utilities.CopyMemory(xkImage.DataPointer, image.Data, image.DataSize);
+            Utilities.CopyMemory(sdImage.DataPointer, image.Data, image.DataSize);
 
-            request.XkImage = xkImage;
+            request.SdImage = sdImage;
         }
 
 
@@ -385,16 +385,16 @@ namespace Stride.TextureConverter.TexLibraries
             image.LibraryData[this] = libraryData;
 
             Image inputImage;
-            if (request.Mode == LoadingRequest.LoadingMode.XkImage)
+            if (request.Mode == LoadingRequest.LoadingMode.SdImage)
             {
-                inputImage = request.XkImage;
+                inputImage = request.SdImage;
             }
             else if (request.Mode == LoadingRequest.LoadingMode.FilePath)
             {
                 using (var fileStream = new FileStream(request.FilePath, FileMode.Open, FileAccess.Read))
                     inputImage = Image.Load(fileStream);
 
-                libraryData.XkImage = inputImage; // the image need to be disposed by the stride text library
+                libraryData.SdImage = inputImage; // the image need to be disposed by the stride text library
             }
             else
             {

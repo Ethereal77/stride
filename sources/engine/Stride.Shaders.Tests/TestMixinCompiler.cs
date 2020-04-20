@@ -221,10 +221,10 @@ namespace Stride.Shaders.Tests
             {
                 var database = new DatabaseFileProvider(assetIndexMap, objDatabase);
 
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\sources\shaders", "*.xksl"))
+                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\sources\shaders", "*.sdsl"))
                     CopyStream(database, shaderName);
 
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\sources\engine\Stride.Shaders.Tests\GameAssets\Compiler", "*.xksl"))
+                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\sources\engine\Stride.Shaders.Tests\GameAssets\Compiler", "*.sdsl"))
                     CopyStream(database, shaderName);
 
                 var compiler = new EffectCompiler(database);

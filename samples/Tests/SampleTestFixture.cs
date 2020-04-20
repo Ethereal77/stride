@@ -94,7 +94,7 @@ namespace Stride.Samples.Tests
             if (!generator.Run(parameters))
                 logger.Error("Run returned false for the TemplateSampleGenerator");
 
-            var updaterTemplate = strideTemplates.First(x => x.FullPath.ToString().EndsWith("UpdatePlatforms.xktpl"));
+            var updaterTemplate = strideTemplates.First(x => x.FullPath.ToString().EndsWith("UpdatePlatforms.sdtpl"));
             parameters.Description = updaterTemplate;
 
             if (logger.HasErrors)

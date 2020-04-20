@@ -32,7 +32,7 @@ namespace Stride.Assets.Models
         /// <summary>
         /// The default file extension used by the <see cref="ProceduralModelAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkpromodel";
+        public const string FileExtension = ".sdpromodel";
 
         /// <summary>
         /// Gets or sets the type.

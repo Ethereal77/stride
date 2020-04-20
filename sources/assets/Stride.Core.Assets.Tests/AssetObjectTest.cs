@@ -17,7 +17,7 @@ namespace Stride.Core.Assets.Tests
     [AssetDescription(FileExtension)]
     public class AssetObjectTest : TestAssetWithParts, IEquatable<AssetObjectTest>
     {
-        private const string FileExtension = ".xktest";
+        private const string FileExtension = ".sdtest";
 
         [DefaultValue(null)]
         public AssetReference Reference { get; set; }
@@ -66,7 +66,7 @@ namespace Stride.Core.Assets.Tests
     [AssetDescription(FileExtension)]
     public class TestAssetWithParts : AssetComposite
     {
-        private const string FileExtension = ".xkpart";
+        private const string FileExtension = ".sdpart";
 
         public TestAssetWithParts()
         {
@@ -145,7 +145,7 @@ namespace Stride.Core.Assets.Tests
     }
 
     [DataContract("!AssetImportObjectTest")]
-    [AssetDescription(".xkimptest")]
+    [AssetDescription(".sdimptest")]
     public class AssetImportObjectTest : AssetWithSource
     {
         public AssetImportObjectTest()
@@ -160,7 +160,7 @@ namespace Stride.Core.Assets.Tests
     }
 
     [DataContract("!AssetObjectTestSub")]
-    [AssetDescription(".xktestsub")]
+    [AssetDescription(".sdtestsub")]
     public class AssetObjectTestSub : Asset
     {
         public int Value { get; set; }

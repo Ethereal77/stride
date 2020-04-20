@@ -34,7 +34,7 @@ namespace Stride.Assets.Sprite
         /// <summary>
         /// The default file extension used by the <see cref="SpriteSheetAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xksheet";
+        public const string FileExtension = ".sdsheet";
 
         /// <summary>
         /// Gets or sets the type of the current sheet

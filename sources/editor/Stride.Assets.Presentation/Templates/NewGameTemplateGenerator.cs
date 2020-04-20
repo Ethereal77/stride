@@ -42,7 +42,7 @@ namespace Stride.Assets.Presentation.Templates
     /// </summary>
     public class NewGameTemplateGenerator : SessionTemplateGenerator
     {
-        // Used to find BasicCameraController script (it has to match .xktpl)
+        // Used to find BasicCameraController script (it has to match .sdtpl)
         private const string CameraScriptDefaultOutputName = "BasicCameraController";
 
         private static readonly PropertyKey<List<SelectedSolutionPlatform>> PlatformsKey = new PropertyKey<List<SelectedSolutionPlatform>>("Platforms", typeof(NewGameTemplateGenerator));
@@ -104,7 +104,7 @@ namespace Stride.Assets.Presentation.Templates
         {
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
             // Structure of files to generate:
-            //     $Name$.xkpkg
+            //     $Name$.sdpkg
             //     $Name$.targets
             //     Assets\
             //     $Name$.Game\
@@ -147,7 +147,7 @@ namespace Stride.Assets.Presentation.Templates
             // Load dependency assets (needed for camera script template)
             session.LoadMissingAssets(parameters.Logger, project.FlattenedDependencies.Select(x => x.Package).NotNull());
 
-            // Add Effects as an asset folder in order to load xksl
+            // Add Effects as an asset folder in order to load sdsl
             package.AssetFolders.Add(new AssetFolder("Effects"));
 
             var packageParameters = new PackageTemplateGeneratorParameters

@@ -102,12 +102,12 @@
     </ItemGroup>
   </Target>
 
-  <!-- Make sure xksl/xkfx are properly setup with code generator; also mark generated code file as dependent -->
+  <!-- Make sure SDSL / SDFX are properly setup with code generator; also mark generated code file as dependent -->
   <ItemGroup>
-    <Compile Update="**\*.xksl.cs" DependentUpon="%(Filename)" />
-    <None Update="**\*.xksl" Generator="StrideShaderKeyGenerator" />
-    <Compile Update="**\*.xkfx.cs" DependentUpon="%(Filename)" />
-    <None Update="**\*.xkfx" Generator="StrideEffectCodeGenerator" />
+    <Compile Update="**\*.sdsl.cs" DependentUpon="%(Filename)" />
+    <None Update="**\*.sdsl" Generator="StrideShaderKeyGenerator" />
+    <Compile Update="**\*.sdfx.cs" DependentUpon="%(Filename)" />
+    <None Update="**\*.sdfx" Generator="StrideEffectCodeGenerator" />
   </ItemGroup>
 
   <!-- Auto NuGet build packages and deploy them -->

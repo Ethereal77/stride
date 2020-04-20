@@ -28,7 +28,7 @@ namespace Stride.Assets.Tests
             var logger = new LoggerResult();
 
             var samplesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\samples");
-            var files = Directory.EnumerateFiles(samplesPath, "*.xkscene", SearchOption.AllDirectories);
+            var files = Directory.EnumerateFiles(samplesPath, "*.sdscene", SearchOption.AllDirectories);
 
             foreach (var sceneFile in files)
             {

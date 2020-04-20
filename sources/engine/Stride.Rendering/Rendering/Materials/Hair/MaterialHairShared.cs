@@ -21,7 +21,7 @@ namespace Stride.Rendering.Materials
 
     public class HairShared
     {
-        public enum HairShadingModel // These values must correspond to the ones defined in "MaterialHairShared.xksl".
+        public enum HairShadingModel // These values must correspond to the ones defined in "MaterialHairShared.sdsl".
         {
             [Display("Scheuermann approximation")]
             ScheuermannApproximation = 0,

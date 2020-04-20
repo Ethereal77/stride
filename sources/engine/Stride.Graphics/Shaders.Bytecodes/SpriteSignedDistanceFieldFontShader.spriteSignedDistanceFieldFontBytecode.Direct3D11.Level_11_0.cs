@@ -4,7 +4,7 @@
 //     Stride Effect Compiler File Generated:
 //     Effect [SpriteSignedDistanceFieldFontShader]
 //
-//     Command Line: Stride.Core.Assets.CompilerApp.exe --platform=Windows --property:RuntimeIdentifier=win --output-path=app_data --build-path=build_app_data --package-file=Graphics.xkpkg
+//     Command Line: Stride.Core.Assets.CompilerApp.exe --platform=Windows --property:RuntimeIdentifier=win --output-path=app_data --build-path=build_app_data --package-file=Graphics.sdpkg
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 // </auto-generated>

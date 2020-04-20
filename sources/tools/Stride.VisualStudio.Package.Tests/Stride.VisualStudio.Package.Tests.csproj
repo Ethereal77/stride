@@ -55,7 +55,7 @@
     <ProjectReference Include="..\..\editor\Stride.Assets.Presentation\Stride.Assets.Presentation.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="TestGenerator.xksl">
+    <None Update="TestGenerator.sdsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">

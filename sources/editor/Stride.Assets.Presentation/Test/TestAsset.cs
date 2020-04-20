@@ -122,7 +122,7 @@ namespace Stride.Assets.Presentation.Test
     [CategoryOrder(6, "Categories")]
     public sealed class TestAsset : Asset
     {
-        public const string FileExtension = ".xktest";
+        public const string FileExtension = ".sdtest";
 
         [DataMember(10)]
         [Display("String", "Primitive types")]

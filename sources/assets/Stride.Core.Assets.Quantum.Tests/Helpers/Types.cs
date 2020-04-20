@@ -17,7 +17,7 @@ namespace Stride.Core.Assets.Quantum.Tests.Helpers
 {
     public static class Types
     {
-        public const string FileExtension = ".xktest";
+        public const string FileExtension = ".sdtest";
 
         [DataContract]
         public abstract class MyAssetBase : Asset

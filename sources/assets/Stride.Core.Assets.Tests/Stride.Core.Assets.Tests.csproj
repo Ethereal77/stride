@@ -23,30 +23,30 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="data\TestPackage\SubPackage\SubPackage.xkpkg">
+    <None Include="data\TestPackage\SubPackage\SubPackage.sdpkg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="data\TestPackage\SubFolder\TestAsset.xktest">
+    <Content Include="data\TestPackage\SubFolder\TestAsset.sdtest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\TestPackage\TestAsset.xktest">
+    <Content Include="data\TestPackage\TestAsset.sdtest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="data\TestPackage\TestPackageLoadingWithAssets.xkpkg">
+    <None Include="data\TestPackage\TestPackageLoadingWithAssets.sdpkg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="data\TestSerializing\TestSerializing_TestMyAssetObject_Reference.xkobj">
+    <None Include="data\TestSerializing\TestSerializing_TestMyAssetObject_Reference.sdobj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="data\TestFileVersionManager\test.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="data\TestPackage\TestRaw.xkraw">
+    <None Include="data\TestPackage\TestRaw.sdraw">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\TestBasicPackageCreateSaveLoad\TestPackage_TestBasicPackageCreateSaveLoad_Reference.xkpkg">
+    <None Include="data\TestBasicPackageCreateSaveLoad\TestPackage_TestBasicPackageCreateSaveLoad_Reference.sdpkg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

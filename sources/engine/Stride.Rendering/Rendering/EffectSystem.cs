@@ -72,9 +72,9 @@ namespace Stride.Rendering
             graphicsDeviceService = Services.GetSafeServiceAs<IGraphicsDeviceService>();
 
             Enabled = true;
-            directoryWatcher = new DirectoryWatcher("*.xksl");
+            directoryWatcher = new DirectoryWatcher("*.sdsl");
             directoryWatcher.Modified += FileModifiedEvent;
-            // TODO: xkfx too
+            // TODO: sdfx too
         }
 
         public void SetCompilationMode(CompilationMode compilationMode)

@@ -191,10 +191,10 @@ namespace Stride.Assets.Templates
             List<string> generatedFiles;
             var project = GenerateTemplate(parameters, templateRelativePath, projectName, platformType, graphicsPlatform, projectType, out generatedFiles, projectGuid);
 
-            // Special case for xkfx files
+            // Special case for sdfx files
             foreach (var file in generatedFiles)
             {
-                if (file.EndsWith(".xkfx"))
+                if (file.EndsWith(".sdfx"))
                 {
                     ConvertXkfxToCSharp(file);
                 }
@@ -286,11 +286,11 @@ namespace Stride.Assets.Templates
             progress?.OnProgressChanged(new ProgressStatusEventArgs(message, stepIndex, stepCount));
         }
 
-        private static void ConvertXkfxToCSharp(string xkfxfile)
+        private static void ConvertXkfxToCSharp(string sdfxfile)
         {
-            var xkfileContent = File.ReadAllText(xkfxfile);
-            var result = ShaderMixinCodeGen.GenerateCsharp(xkfileContent, xkfxfile);
-            File.WriteAllText(Path.ChangeExtension(xkfxfile, ".cs"), result, Encoding.UTF8);
+            var xkfileContent = File.ReadAllText(sdfxfile);
+            var result = ShaderMixinCodeGen.GenerateCsharp(xkfileContent, sdfxfile);
+            File.WriteAllText(Path.ChangeExtension(sdfxfile, ".cs"), result, Encoding.UTF8);
         }
 
         private static void RemoveProject(ProjectReference projectReference, ILogger logger)

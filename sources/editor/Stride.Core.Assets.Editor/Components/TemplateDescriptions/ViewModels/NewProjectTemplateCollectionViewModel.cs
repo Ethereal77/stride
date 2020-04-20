@@ -51,8 +51,8 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
         private bool IsAssetsOnlyTemplate(TemplateDescription template)
         {
             // TODO We only have two such template for now, so check directly, maybe improve later
-            return template.FullPath.FullPath.EndsWith("ProjectLibrary.xktpl")
-                || template.FullPath.FullPath.EndsWith("ProjectExecutable.xktpl");
+            return template.FullPath.FullPath.EndsWith("ProjectLibrary.sdtpl")
+                || template.FullPath.FullPath.EndsWith("ProjectExecutable.sdtpl");
         }
 
         public SessionViewModel Session { get; }

@@ -22,7 +22,7 @@ namespace Stride.Assets.Media
         /// <summary>
         /// The default file extension used by the <see cref="SoundAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xksnd";
+        public const string FileExtension = ".sdsnd";
 
         /// <summary>
         /// The track index in the file (i.e. a video files with several tracks).

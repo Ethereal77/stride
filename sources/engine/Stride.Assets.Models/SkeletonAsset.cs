@@ -28,7 +28,7 @@ namespace Stride.Assets.Models
         /// <summary>
         /// The default file extension used by the <see cref="SkeletonAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkskel";
+        public const string FileExtension = ".sdskel";
 
         /// <summary>
         /// Gets or sets the source file of this asset.

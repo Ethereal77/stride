@@ -140,7 +140,7 @@ namespace Stride.ProjectGenerator
             // for better incrementality
             Guid projectGuid, assetId;
             GetExistingGuid(outputDirectory, name + ".Windows.csproj", out projectGuid);
-            GetExistingAssetId(outputDirectory, name + ".xkpkg", out assetId);
+            GetExistingAssetId(outputDirectory, name + ".sdpkg", out assetId);
 
             var session = new PackageSession();
             var result = new LoggerResult();

@@ -10,7 +10,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\UIParticles.xkpkg</StrideCurrentPackagePath>
+    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\UIParticles.sdpkg</StrideCurrentPackagePath>
     <StrideProjectType>Executable</StrideProjectType>
     <StridePlatform>Windows</StridePlatform>
     <StrideBuildProfile>Windows</StrideBuildProfile>

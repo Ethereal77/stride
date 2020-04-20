@@ -43,7 +43,7 @@ namespace Stride.Assets.Rendering
         /// <summary>
         /// The default file extension used by the <see cref="GraphicsCompositorAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkgfxcomp";
+        public const string FileExtension = ".sdgfxcomp";
 
         /// <summary>
         /// Gets the cameras used by this composition.

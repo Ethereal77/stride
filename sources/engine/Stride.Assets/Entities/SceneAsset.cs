@@ -25,7 +25,7 @@ namespace Stride.Assets.Entities
     {
         private const string CurrentVersion = "3.1.0.1";
 
-        public const string FileSceneExtension = ".xkscene";
+        public const string FileSceneExtension = ".sdscene";
 
         /// <summary>
         /// A collection of identifier of all the children of this scene..

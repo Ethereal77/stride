@@ -20,7 +20,7 @@ namespace Stride.Rendering.Lights
     [Display("Spot")]
     public class LightSpot : DirectLightBase
     {
-        // These values have to match the ones defined in "TextureProjectionReceiverBase.xksl".
+        // These values have to match the ones defined in "TextureProjectionReceiverBase.sdsl".
         public enum FlipModeEnum
         {
             None = 0,

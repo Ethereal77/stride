@@ -29,7 +29,7 @@ namespace Stride.Assets.SpriteFont
         /// <summary>
         /// The default file extension used by the <see cref="PrecompiledSpriteFontAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkpcfnt";
+        public const string FileExtension = ".sdpcfnt";
 
         [Display(Browsable = false)]
         public string FontName; // Note: this field is used only for thumbnail.

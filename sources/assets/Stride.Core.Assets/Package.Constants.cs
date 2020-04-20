@@ -9,6 +9,6 @@ namespace Stride.Core.Assets
         /// <summary>
         /// The file extension used for <see cref="Package"/>.
         /// </summary>
-        public const string PackageFileExtension = ".xkpkg";
+        public const string PackageFileExtension = ".sdpkg";
     }
 }

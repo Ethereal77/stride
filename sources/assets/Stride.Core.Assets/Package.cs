@@ -625,7 +625,7 @@ namespace Stride.Core.Assets
             {
                 var package = LoadRaw(log, filePath);
 
-                // Find the .csproj next to .xkpkg (if any)
+                // Find the .csproj next to .sdpkg (if any)
                 // Note that we use package.FullPath since we must first perform package upgrade from 3.0 to 3.1+ (might move package in .csproj folder)
                 var projectPath = Path.ChangeExtension(package.FullPath.ToWindowsPath(), ".csproj");
                 if (File.Exists(projectPath))
@@ -1220,7 +1220,7 @@ namespace Stride.Core.Assets
 
                         //project source code assets follow the csproj pipeline
                         var isAsset = listUnregisteredAssets
-                            ? ext.StartsWith(".xk", StringComparison.InvariantCultureIgnoreCase)
+                            ? ext.StartsWith(".sd", StringComparison.InvariantCultureIgnoreCase)
                             : AssetRegistry.IsAssetFileExtension(ext);
                         if (!isAsset || AssetRegistry.IsProjectAssetFileExtension(ext))
                         {
@@ -1255,7 +1255,7 @@ namespace Stride.Core.Assets
                 .Select(x => new UFile(x.EvaluatedInclude)).Where(x => AssetRegistry.IsProjectAssetFileExtension(x.GetFileExtension()))
                 .Select(projectItem => UPath.Combine(dir, projectItem))
                 // avoid duplicates otherwise it might save a single file as separte file with renaming
-                // had issues with case such as Effect.xksl being registered twice (with glob pattern) and being saved as Effect.xksl and Effect (2).xksl
+                // had issues with case such as Effect.sdsl being registered twice (with glob pattern) and being saved as Effect.sdsl and Effect (2).sdsl
                 .Distinct()
                 .ToList();
 

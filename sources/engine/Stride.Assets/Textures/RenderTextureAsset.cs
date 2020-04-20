@@ -23,7 +23,7 @@ namespace Stride.Assets.Textures
         /// <summary>
         /// The default file extension used by the <see cref="RenderTextureAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkrendertex";
+        public const string FileExtension = ".sdrendertex";
 
         /// <summary>
         /// The width in pixel.

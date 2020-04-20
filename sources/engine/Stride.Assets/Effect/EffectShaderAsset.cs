@@ -15,7 +15,7 @@ using Stride.Shaders.Parser.Mixins;
 namespace Stride.Assets.Effect
 {
     /// <summary>
-    /// Describes a shader effect asset (xksl).
+    /// Describes a shader effect asset (sdsl).
     /// </summary>
     [DataContract("EffectShader")]
     [AssetDescription(FileExtension, AlwaysMarkAsRoot = true, AllowArchetype = false)]
@@ -24,7 +24,7 @@ namespace Stride.Assets.Effect
         /// <summary>
         /// The default file extension used by the <see cref="EffectShaderAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xksl";
+        public const string FileExtension = ".sdsl";
 
         public static Regex Regex = new Regex(@"(^|\s)(class)($|\s)");
 

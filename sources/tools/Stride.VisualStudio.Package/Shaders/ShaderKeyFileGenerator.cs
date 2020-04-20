@@ -36,7 +36,7 @@ namespace Stride.VisualStudio.Shaders
                 return ".cs";
             }
 
-            return ".xksl.cs";
+            return ".sdsl.cs";
         }
 
         protected override byte[] GenerateCode(string inputFileName, string inputFileContent)

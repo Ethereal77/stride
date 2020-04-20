@@ -17,7 +17,7 @@ namespace Stride.TextureConverter.Requests
         public enum LoadingMode
         {
             TexImage,
-            XkImage,
+            SdImage,
             FilePath,
         }
 
@@ -41,7 +41,7 @@ namespace Stride.TextureConverter.Requests
         /// <summary>
         /// The Stride Image to be loaded
         /// </summary>
-        public Stride.Graphics.Image XkImage;
+        public Stride.Graphics.Image SdImage;
 
         /// <summary>
         /// Indicate if we should keep the original mip-maps during the load
@@ -84,8 +84,8 @@ namespace Stride.TextureConverter.Requests
         /// <param name="loadAsSRgb">Indicate if the input file should be loaded as in sRGB file</param>
         public LoadingRequest(Stride.Graphics.Image image, bool loadAsSRgb)
         {
-            XkImage = image;
-            Mode = LoadingMode.XkImage;
+            SdImage = image;
+            Mode = LoadingMode.SdImage;
             LoadAsSRgb = loadAsSRgb;
         }
     }

@@ -10,7 +10,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\ParticlesSample.xkpkg</StrideCurrentPackagePath>
+    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\ParticlesSample.sdpkg</StrideCurrentPackagePath>
     <StrideProjectType>Executable</StrideProjectType>
     <StridePlatform>Windows</StridePlatform>
     <StrideBuildProfile>Windows</StrideBuildProfile>

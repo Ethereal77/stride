@@ -108,14 +108,14 @@ namespace Stride.Core.Assets.Tests.Compilers
         [AssetContentType(typeof(MyContentType))]
         public class MyAssetContentType : Asset
         {
-            public const string FileExtension = ".xkmact";
+            public const string FileExtension = ".sdmact";
             public int Var;
             public MyAssetContentType(int i) { Var = i; }
             public MyAssetContentType() { }
         }
 
         [DataContract]
-        [AssetDescription(".xkmytest")]
+        [AssetDescription(".sdmytest")]
         public class MyAsset1 : Asset
         {
             public MyContentType Before;

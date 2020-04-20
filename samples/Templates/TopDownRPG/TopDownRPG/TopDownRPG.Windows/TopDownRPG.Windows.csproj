@@ -10,7 +10,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\TopDownRPG.xkpkg</StrideCurrentPackagePath>
+    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\TopDownRPG.sdpkg</StrideCurrentPackagePath>
     <StrideProjectType>Executable</StrideProjectType>
     <StridePlatform>Windows</StridePlatform>
     <StrideBuildProfile>Windows</StrideBuildProfile>

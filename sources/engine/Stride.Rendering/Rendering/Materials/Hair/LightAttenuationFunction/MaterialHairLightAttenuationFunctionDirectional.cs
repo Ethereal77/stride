@@ -37,7 +37,7 @@ namespace Stride.Rendering.Materials
         [Display("Shadow boundary shift")]
         public float BoundaryShift { get; set; } = 0.0f;
 
-        // These must match with the values defined in "MaterialHairLightAttenuationFunctionDirectional.xksl"!
+        // These must match with the values defined in "MaterialHairLightAttenuationFunctionDirectional.sdsl"!
         public enum NormalMode
         {
             [Display("Mesh normals")]

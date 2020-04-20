@@ -22,7 +22,7 @@ namespace Stride.Assets.Scripts
         /// <summary>
         /// The default file extension used by the <see cref="VisualScriptAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkvs";
+        public const string FileExtension = ".sdvs";
 
         [DataMember(0)]
         [DefaultValue(Accessibility.Public)]

@@ -71,7 +71,7 @@ namespace Stride.Rendering.Images
 
         public static (int, int) GetQualityRange(DitherType dither)
         {
-            // Returns valid ranges for FXAA_QUALITY__PRESET (as in FXAAShader.xksl)
+            // Returns valid ranges for FXAA_QUALITY__PRESET (as in FXAAShader.sdsl)
             switch (dither)
             {
                 case DitherType.Medium:

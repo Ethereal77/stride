@@ -8,7 +8,7 @@ using Stride.Core;
 namespace Stride.Assets.Effect
 {
     /// <summary>
-    /// Describes a shader effect asset (xksl).
+    /// Describes a shader effect asset (sdsl).
     /// </summary>
     [DataContract("EffectCompositorAsset")]
     [AssetDescription(FileExtension, AlwaysMarkAsRoot = true, AllowArchetype = false)]
@@ -17,7 +17,7 @@ namespace Stride.Assets.Effect
         /// <summary>
         /// The default file extension used by the <see cref="EffectCompositorAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkfx";
+        public const string FileExtension = ".sdfx";
 
         public override string Generator => "StrideEffectCodeGenerator";
 

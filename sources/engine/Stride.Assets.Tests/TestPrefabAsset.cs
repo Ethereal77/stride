@@ -40,7 +40,7 @@ namespace Stride.Assets.Tests
             //    Console.WriteLine(serializedVersion);
 
             //    stream.Position = 0;
-            //    var newAsset = AssetFileSerializer.Load<PrefabAsset>(stream, "Prefab.xkprefab").Asset;
+            //    var newAsset = AssetFileSerializer.Load<PrefabAsset>(stream, "Prefab.sdprefab").Asset;
 
             //    CheckAsset(originAsset, newAsset);
             //}

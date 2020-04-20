@@ -54,7 +54,7 @@ namespace Stride.Rendering.ComputeEffect
         public Int3 ThreadNumbers { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the input compute shader file (.xksl)
+        /// Gets or sets the name of the input compute shader file (.sdsl)
         /// </summary>
         public string ShaderSourceName { get; set; }
 

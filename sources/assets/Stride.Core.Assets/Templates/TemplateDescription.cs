@@ -25,7 +25,7 @@ namespace Stride.Core.Assets.Templates
         /// <summary>
         /// The file extension used when loading/saving this template description.
         /// </summary>
-        public const string FileExtension = ".xktpl";
+        public const string FileExtension = ".sdtpl";
 
         /// <summary>
         /// Gets or sets the unique identifier.

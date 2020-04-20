@@ -43,7 +43,7 @@ namespace Stride.Assets.Tests
         public void TestTextureItemAsset()
         {
             // load the project
-            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\TextureDeps\Assets.xkpkg");
+            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\TextureDeps\Assets.sdpkg");
             var projectSession = projectSessionResult.Session;
             var textureItem = projectSession.RootPackage.Assets.First();
 
@@ -57,7 +57,7 @@ namespace Stride.Assets.Tests
         public void TestMaterialItemAsset()
         {
             // load the project
-            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\MaterialDeps\Assets.xkpkg");
+            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\MaterialDeps\Assets.sdpkg");
             var projectSession = projectSessionResult.Session;
             var materialItem = projectSession.RootPackage.Assets.First();
 
@@ -73,7 +73,7 @@ namespace Stride.Assets.Tests
         public void TestCircularDependencies()
         {
             // load the project
-            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\CircularDeps\Assets.xkpkg");
+            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\CircularDeps\Assets.sdpkg");
             var projectSession = projectSessionResult.Session;
             var materialItem = projectSession.RootPackage.Assets.First();
 
@@ -89,7 +89,7 @@ namespace Stride.Assets.Tests
         public void TestEntityItemAsset()
         {
             // load the project
-            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\EntityDeps\Assets.xkpkg");
+            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\EntityDeps\Assets.sdpkg");
             var projectSession = projectSessionResult.Session;
             var entityItem = projectSession.RootPackage.Assets.First();
 
@@ -106,7 +106,7 @@ namespace Stride.Assets.Tests
         public void TestComplexDependencies()
         {
             // load the project
-            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\ComplexDeps\Assets.xkpkg");
+            var projectSessionResult = PackageSession.Load(@"Stride.Assets.Tests\Projects\ComplexDeps\Assets.sdpkg");
             var projectSession = projectSessionResult.Session;
             var entityItem = projectSession.RootPackage.Assets.First();
 

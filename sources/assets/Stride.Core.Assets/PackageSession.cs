@@ -838,7 +838,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                     }
                     else
                     {
-                        sessionResult.Error($"Unsupported file extension (only .sln, .csproj and .xkpkg are supported)");
+                        sessionResult.Error($"Unsupported file extension (only .sln, .csproj and .sdpkg are supported)");
                         return;
                     }
 

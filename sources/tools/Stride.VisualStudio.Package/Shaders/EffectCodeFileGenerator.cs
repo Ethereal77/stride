@@ -28,7 +28,7 @@ namespace Stride.VisualStudio.Shaders
 
         protected override string GetDefaultExtension()
         {
-            return ".xkfx.cs";
+            return ".sdfx.cs";
         }
 
         protected override byte[] GenerateCode(string inputFileName, string inputFileContent)

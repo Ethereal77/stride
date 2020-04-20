@@ -23,7 +23,7 @@ namespace Stride.VisualStudio.Commands.Shaders
                 Stride.Core.Shaders.Parser.ShaderMacro[] macros;
 
                 // Changed some keywords to avoid ambiguities with HLSL and improve consistency
-                if (inputFileName != null && Path.GetExtension(inputFileName).ToLowerInvariant() == ".xkfx")
+                if (inputFileName != null && Path.GetExtension(inputFileName).ToLowerInvariant() == ".sdfx")
                 {
                     // XKFX
                     macros = new[]

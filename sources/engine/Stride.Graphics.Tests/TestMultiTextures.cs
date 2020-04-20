@@ -49,13 +49,13 @@ namespace Stride.Graphics.Tests
                 if (database == null)
                     database = new DatabaseFileProvider(contentIndexMap, objDatabase);
 
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\shaders", "*.xksl"))
+                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\shaders", "*.sdsl"))
                     CopyStream(database, shaderName);
 
-                foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.xksl"))
+                foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.sdsl"))
                     CopyStream(database, shaderName);
 
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\engine\Stride.Graphics\Shaders", "*.xksl"))
+                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\engine\Stride.Graphics\Shaders", "*.sdsl"))
                     CopyStream(database, shaderName);
 
                 var compiler = new EffectCompiler();

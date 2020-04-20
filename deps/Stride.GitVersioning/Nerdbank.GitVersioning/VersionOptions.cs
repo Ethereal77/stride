@@ -5,7 +5,7 @@ using System;
 namespace Nerdbank.GitVersioning
 {
     /// <summary>
-    /// Store package version read from .xkpkg, implemented for <see cref="GitExtensions"/>.
+    /// Store package version read from .sdpkg, implemented for <see cref="GitExtensions"/>.
     /// </summary>
     class VersionOptions
     {

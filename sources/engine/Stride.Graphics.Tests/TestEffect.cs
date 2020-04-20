@@ -48,10 +48,10 @@ namespace Stride.Graphics
                 contentIndexMap.LoadNewValues();
                 var database = new DatabaseFileProvider(contentIndexMap, objDatabase);
 
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\shaders", "*.xksl"))
+                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\shaders", "*.sdsl"))
                     CopyStream(database, shaderName);
 
-                foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.xksl"))
+                foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.sdsl"))
                     CopyStream(database, shaderName);
 
                 var compiler = new EffectCompiler();

@@ -267,7 +267,7 @@ namespace Stride.Rendering
     }
 
     /// <summary>
-    /// A blittable value effect key, usually for use by shaders (.xksl).
+    /// A blittable value effect key, usually for use by shaders (.sdsl).
     /// </summary>
     /// <typeparam name="T">Type of the parameter key.</typeparam>
     [DataSerializer(typeof(ValueParameterKeySerializer<>), Mode = DataSerializerGenericMode.GenericArguments)]
@@ -288,7 +288,7 @@ namespace Stride.Rendering
     }
 
     /// <summary>
-    /// An object (or boxed value) effect key, usually for use by shaders (.xksl).
+    /// An object (or boxed value) effect key, usually for use by shaders (.sdsl).
     /// </summary>
     /// <typeparam name="T">Type of the parameter key.</typeparam>
     [DataSerializer(typeof(ObjectParameterKeySerializer<>), Mode = DataSerializerGenericMode.GenericArguments)]
@@ -304,7 +304,7 @@ namespace Stride.Rendering
     }
 
     /// <summary>
-    /// An effect permutation key, usually for use by effects (.xkfx).
+    /// An effect permutation key, usually for use by effects (.sdfx).
     /// </summary>
     /// <typeparam name="T">Type of the parameter key.</typeparam>
     [DataSerializer(typeof(PermutationParameterKeySerializer<>), Mode = DataSerializerGenericMode.GenericArguments)]

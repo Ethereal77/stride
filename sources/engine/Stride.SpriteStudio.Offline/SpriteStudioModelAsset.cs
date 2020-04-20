@@ -21,7 +21,7 @@ namespace Stride.SpriteStudio.Offline
     [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.0.0.0")]
     public class SpriteStudioModelAsset : Asset
     {
-        public const string FileExtension = ".xkss4s";
+        public const string FileExtension = ".sdss4s";
 
         private const string CurrentVersion = "2.0.0.0";
 

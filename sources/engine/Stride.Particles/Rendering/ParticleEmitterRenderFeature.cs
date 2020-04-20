@@ -17,7 +17,7 @@ using Buffer = Stride.Graphics.Buffer;
 namespace Stride.Particles.Rendering
 {
     /// <summary>
-    /// Should be identical to the cbuffer PerView in ParticleUtilities.xksl
+    /// Should be identical to the cbuffer PerView in ParticleUtilities.sdsl
     /// </summary>
     internal struct ParticleUtilitiesPerView
     {

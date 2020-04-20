@@ -43,7 +43,7 @@ namespace Stride.VisualStudio.Package.Tests
     /// Test class that runs experimental instance of Visual Studio to check our plugin works well.
     /// </summary>
     /// <remarks>
-    /// Right now it only has a test for .xksl C# code generator, but it also tests a lot of things along the way: VSPackage properly have all dependencies (no missing .dll), IStrideCommands can be properly found, etc...
+    /// Right now it only has a test for .sdsl C# code generator, but it also tests a lot of things along the way: VSPackage properly have all dependencies (no missing .dll), IStrideCommands can be properly found, etc...
     /// Also, it works against a dev version of Stride, but it could eventually be improved to test against package version as well.
     /// </remarks>
     public class IntegrationTests : IDisposable
@@ -158,24 +158,24 @@ namespace Stride.VisualStudio.Package.Tests
                 var newGameFolder = solution.Projects.OfType<EnvDTE.Project>().First();
                 var newGameProject = newGameFolder.ProjectItems.OfType<ProjectItem>().Select(x => x.SubProject).First(x => x.Name == $"{session.Packages.First().Meta.Name}.Game");
 
-                // Add xksl file
-                var xkslItem = newGameProject.ProjectItems.AddFromFileCopy(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestGenerator.xksl"));
+                // Add sdsl file
+                var sdslItem = newGameProject.ProjectItems.AddFromFileCopy(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestGenerator.sdsl"));
 
                 // Make sure custom tool is properly set
-                Assert.Equal("StrideShaderKeyGenerator", xkslItem.Properties.Item("CustomTool").Value);
+                Assert.Equal("StrideShaderKeyGenerator", sdslItem.Properties.Item("CustomTool").Value);
 
                 // Wait for cs file to be generated (up to 5 seconds)
                 // TODO: Is there a better way to wait for it?
                 for (int i = 0; i < 50; ++i)
                 {
-                    if (xkslItem.ProjectItems.Count > 0)
+                    if (sdslItem.ProjectItems.Count > 0)
                         break;
                     Thread.Sleep(100);
                 }
 
                 // Get generated cs file
-                Assert.Equal(1, xkslItem.ProjectItems.Count);
-                var shaderGeneratedCsharpItem = xkslItem.ProjectItems.OfType<ProjectItem>().First();
+                Assert.Equal(1, sdslItem.ProjectItems.Count);
+                var shaderGeneratedCsharpItem = sdslItem.ProjectItems.OfType<ProjectItem>().First();
                 var shaderGeneratedCsharpFile = shaderGeneratedCsharpItem.FileNames[0];
 
                 // Check content

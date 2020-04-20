@@ -791,7 +791,7 @@
 //        //    var dirPath = Path.Combine(Environment.CurrentDirectory, DirectoryTestBase + @"TestTracking");
 //        //    TestHelper.TryDeleteDirectory(dirPath);
 
-//        //    string testGenerated1 = Path.Combine(dirPath, "TestTracking.xkpkg");
+//        //    string testGenerated1 = Path.Combine(dirPath, "TestTracking.sdpkg");
 
 //        //    var project = new Package { FullPath = testGenerated1 };
 //        //    project.AssetFolders.Add(new AssetFolder("."));
@@ -838,7 +838,7 @@
 //        //        {
 //        //            var dirPath2 = Path.Combine(Environment.CurrentDirectory, DirectoryTestBase + @"TestTracking2");
 //        //            TestHelper.TryDeleteDirectory(dirPath2);
-//        //            string testGenerated2 = Path.Combine(dirPath2, "TestTracking.xkpkg");
+//        //            string testGenerated2 = Path.Combine(dirPath2, "TestTracking.sdpkg");
 
 //        //            project.FullPath = testGenerated2;
 //        //            var result = session.Save();

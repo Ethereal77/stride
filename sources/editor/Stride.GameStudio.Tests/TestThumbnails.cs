@@ -47,9 +47,9 @@ namespace Stride.GameStudio.Tests
             }
 
             // load the project
-            var projectSessionResult = PackageSession.Load("..\\..\\sources\\tools\\Stride.Previewer.Tests\\Assets\\Assets.xkpkg");
+            var projectSessionResult = PackageSession.Load("..\\..\\sources\\tools\\Stride.Previewer.Tests\\Assets\\Assets.sdpkg");
             projectSession = projectSessionResult.Session;
-            //projectSession = PackageSession.Load(@"C:\Dev\sengokurun\SengokuRun\SengokuRun\GameAssets\SengokuRun.xkpkg");
+            //projectSession = PackageSession.Load(@"C:\Dev\sengokurun\SengokuRun\SengokuRun\GameAssets\SengokuRun.sdpkg");
 
             // find an entity in the project
             //previewAsset = projectSession.FindAsset("mc00_entity");

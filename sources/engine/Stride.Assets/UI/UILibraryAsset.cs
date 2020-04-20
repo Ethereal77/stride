@@ -26,7 +26,7 @@ namespace Stride.Assets.UI
         /// <summary>
         /// The default file extension used by the <see cref="UILibraryAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkuilib";
+        public const string FileExtension = ".sduilib";
 
         /// <summary>
         /// Gets the dictionary of publicly exposed controls.

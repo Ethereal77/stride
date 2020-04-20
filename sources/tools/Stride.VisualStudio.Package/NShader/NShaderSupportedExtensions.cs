@@ -20,7 +20,7 @@ namespace NShader
         public const string SL_FX = ".slfx";
 
         // Stride file extensions
-        public const string Stride_Shader = ".xksl";
-        public const string Stride_Effect = ".xkfx";
+        public const string Stride_Shader = ".sdsl";
+        public const string Stride_Effect = ".sdfx";
     }
 }

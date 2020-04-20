@@ -30,17 +30,17 @@
     <Compile Include="TestInputEvents.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GameAssets\Arial.xkfnt" />
-    <None Include="GameAssets\Font.xkfnt" />
-    <None Include="GameAssets\GameSettings.xkgamesettings" />
-    <None Include="GameAssets\MainScene.xkscene" />
-    <None Include="GameAssets\Material.xkmat" />
-    <None Include="GameAssets\ProceduralModel.xkpromodel" />
-    <None Include="GameAssets\round.xktex" />
-    <None Include="GameAssets\small_uv.xktex" />
-    <None Include="GameAssets\SpriteSheet.xksheet" />
-    <None Include="GameAssets\Teapot.xkpromodel" />
-    <None Include="Stride.Input.Tests.xkpkg" />
+    <None Include="GameAssets\Arial.sdfnt" />
+    <None Include="GameAssets\Font.sdfnt" />
+    <None Include="GameAssets\GameSettings.sdgamesettings" />
+    <None Include="GameAssets\MainScene.sdscene" />
+    <None Include="GameAssets\Material.sdmat" />
+    <None Include="GameAssets\ProceduralModel.sdpromodel" />
+    <None Include="GameAssets\round.sdtex" />
+    <None Include="GameAssets\small_uv.sdtex" />
+    <None Include="GameAssets\SpriteSheet.sdsheet" />
+    <None Include="GameAssets\Teapot.sdpromodel" />
+    <None Include="Stride.Input.Tests.sdpkg" />
   </ItemGroup>
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
 </Project>

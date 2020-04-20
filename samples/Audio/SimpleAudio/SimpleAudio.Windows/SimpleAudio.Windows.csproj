@@ -10,7 +10,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\SimpleAudio.xkpkg</StrideCurrentPackagePath>
+    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)..\SimpleAudio.sdpkg</StrideCurrentPackagePath>
     <StrideProjectType>Executable</StrideProjectType>
     <StridePlatform>Windows</StridePlatform>
     <StrideBuildProfile>Windows</StrideBuildProfile>

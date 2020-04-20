@@ -23,7 +23,7 @@ namespace Stride.TextureConverter.Requests
         /// <summary>
         /// The stride <see cref="Image"/> which will contains the exported texture.
         /// </summary>
-        public Image XkImage { get; set; }
+        public Image SdImage { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExportToStrideRequest"/> class.

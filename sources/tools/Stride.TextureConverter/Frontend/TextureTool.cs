@@ -977,22 +977,22 @@ namespace Stride.TextureConverter
             region.Height = Math.Max(0, Math.Min(region.Height, texImage.Height - region.Y));
 
             // create the stride image
-            var xkImage = Image.New2D(region.Width, region.Height, 1, texImage.Format);
-            if (xkImage == null)
+            var sdImage = Image.New2D(region.Width, region.Height, 1, texImage.Format);
+            if (sdImage == null)
             {
                 Log.Error("Image could not be created.");
                 throw new InvalidOperationException("Image could not be created.");
             }
 
             // get the row pitch of the stride image
-            var pixelBuffer = xkImage.GetPixelBuffer(0, 0);
+            var pixelBuffer = sdImage.GetPixelBuffer(0, 0);
             var dstRowPitch = pixelBuffer.RowStride;
 
             // copy the data
             if (texImage.ArraySize > 0)
             {
                 var rowSrcPtr = texImage.SubImageArray[0].Data;
-                var rowDstPtr = xkImage.DataPointer;
+                var rowDstPtr = sdImage.DataPointer;
                 rowSrcPtr = IntPtr.Add(rowSrcPtr, region.Y * texImage.RowPitch);
                 for (int i = 0; i < region.Height; i++)
                 {
@@ -1007,7 +1007,7 @@ namespace Stride.TextureConverter
                 }
             }
 
-            return xkImage;
+            return sdImage;
         }
 
 
@@ -1023,7 +1023,7 @@ namespace Stride.TextureConverter
 
             ExecuteRequest(image, request);
 
-            return request.XkImage;
+            return request.SdImage;
         }
 
 

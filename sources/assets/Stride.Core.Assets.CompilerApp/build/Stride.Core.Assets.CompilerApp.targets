@@ -118,13 +118,13 @@
 
   <!--
   *****************************************************************************************************************************
-  Default items for xksl/xkfx (mark generated files as dependent)
+  Default items for SDSL / SDFX (mark generated files as dependent)
   *****************************************************************************************************************************
   -->
   <ItemGroup>
-    <Compile Update="**\*.xksl.cs" DependentUpon="%(Filename)" />
-    <None Update="**\*.xksl" Generator="StrideShaderKeyGenerator" />
-    <Compile Update="**\*.xkfx.cs" DependentUpon="%(Filename)" />
-    <None Update="**\*.xkfx" Generator="StrideEffectCodeGenerator" />
+    <Compile Update="**\*.sdsl.cs" DependentUpon="%(Filename)" />
+    <None Update="**\*.sdsl" Generator="StrideShaderKeyGenerator" />
+    <Compile Update="**\*.sdfx.cs" DependentUpon="%(Filename)" />
+    <None Update="**\*.sdfx" Generator="StrideEffectCodeGenerator" />
   </ItemGroup>
 </Project>

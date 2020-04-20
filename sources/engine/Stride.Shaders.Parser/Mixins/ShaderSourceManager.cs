@@ -29,7 +29,7 @@ namespace Stride.Shaders.Parser.Mixins
         /// </summary>
         private readonly IVirtualFileProvider fileProvider;
 
-        private const string DefaultEffectFileExtension = ".xksl";
+        private const string DefaultEffectFileExtension = ".sdsl";
 
         /// <summary>
         /// Gets the directory list.
@@ -207,7 +207,7 @@ namespace Stride.Shaders.Parser.Mixins
                     }
                     else
                     {
-                        throw new FileNotFoundException($"Unable to find shader [{type}]", $"{type}.xksl");
+                        throw new FileNotFoundException($"Unable to find shader [{type}]", $"{type}.sdsl");
                     }
                 }
                 return shaderSource;

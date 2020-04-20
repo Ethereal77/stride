@@ -17,7 +17,7 @@ namespace Stride.Assets.Presentation.Test
     [Display("Unit Test Asset")]
     public sealed class UnitTestAsset : Asset
     {
-        public const string FileExtension = ".xkunittest";
+        public const string FileExtension = ".sdunittest";
 
         //[DataMember(270)]
         //[Display("List of Class Lists", "Collections")]

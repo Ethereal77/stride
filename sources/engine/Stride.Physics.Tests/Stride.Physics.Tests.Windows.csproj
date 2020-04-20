@@ -32,7 +32,7 @@
     <Compile Include="SkinnedTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Stride.Physics.Tests.xkpkg" />
+    <None Include="Stride.Physics.Tests.sdpkg" />
   </ItemGroup>
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
 </Project>

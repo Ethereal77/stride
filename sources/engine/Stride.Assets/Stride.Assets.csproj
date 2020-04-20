@@ -73,22 +73,22 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="AssetPackage\Assets\Shared\DefaultGraphicsCompositorLevel10.xkgfxcomp" />
-    <None Include="AssetPackage\Assets\Shared\StrideClearCoatMetalFlakesNM.xktex" />
-    <None Include="AssetPackage\Assets\Shared\StrideClearCoatOrangePeelNM.xktex" />
-    <None Include="AssetPackage\Assets\Shared\StrideDebugSpriteFont.xktex" />
-    <None Include="AssetPackage\Assets\Shared\StrideDefaultFont.xkfnt" />
-    <None Include="AssetPackage\Assets\Shared\StrideDefaultSplashScreen.xktex" />
-    <None Include="AssetPackage\Assets\Shared\StrideEnvironmentLightingDFGLUT16.xktex" />
-    <None Include="AssetPackage\Assets\Shared\StrideEnvironmentLightingDFGLUT8.xktex" />
-    <None Include="AssetPackage\Assets\Shared\StrideUIDesigns.xksheet" />
-    <None Include="AssetPackage\Assets\Shared\StrideUILibrary.xkuilib" />
+    <None Include="AssetPackage\Assets\Shared\DefaultGraphicsCompositorLevel10.sdgfxcomp" />
+    <None Include="AssetPackage\Assets\Shared\StrideClearCoatMetalFlakesNM.sdtex" />
+    <None Include="AssetPackage\Assets\Shared\StrideClearCoatOrangePeelNM.sdtex" />
+    <None Include="AssetPackage\Assets\Shared\StrideDebugSpriteFont.sdtex" />
+    <None Include="AssetPackage\Assets\Shared\StrideDefaultFont.sdfnt" />
+    <None Include="AssetPackage\Assets\Shared\StrideDefaultSplashScreen.sdtex" />
+    <None Include="AssetPackage\Assets\Shared\StrideEnvironmentLightingDFGLUT16.sdtex" />
+    <None Include="AssetPackage\Assets\Shared\StrideEnvironmentLightingDFGLUT8.sdtex" />
+    <None Include="AssetPackage\Assets\Shared\StrideUIDesigns.sdsheet" />
+    <None Include="AssetPackage\Assets\Shared\StrideUILibrary.sduilib" />
     <None Include="AssetPackage\Workfiles\UIDesigns.pdn" />
-    <None Include="AssetPackage\StrideAssetPackage.xkpkg" />
+    <None Include="AssetPackage\StrideAssetPackage.sdpkg" />
     <None Include="UI\Resources\UIDesigns.dds" />
     <None Include="UI\Resources\UIDesigns.pdn" />
-    <None Include="UI\StrideUIDesigns.xksheet" />
-    <None Include="UI\StrideUILibrary.xkuilib" />
+    <None Include="UI\StrideUIDesigns.sdsheet" />
+    <None Include="UI\StrideUILibrary.sduilib" />
   </ItemGroup>
   <!--ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="1.1.0" />

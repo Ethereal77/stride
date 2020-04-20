@@ -15,7 +15,7 @@ namespace Stride.Shaders.Parser
 {
     /// <summary>
     /// This class helps to navigate from a text location and try to find the associated definition location 
-    /// (local variables, stage variables, class xksl, shaders xkfx...etc.)
+    /// (local variables, stage variables, class sdsl, shaders sdfx...etc.)
     /// </summary>
     public class ShaderNavigation
     {
@@ -41,7 +41,7 @@ namespace Stride.Shaders.Parser
 
             try
             {
-                if (location.FileSource.EndsWith(".xksl", StringComparison.CurrentCultureIgnoreCase))
+                if (location.FileSource.EndsWith(".sdsl", StringComparison.CurrentCultureIgnoreCase))
                 {
                     AnalyzeAndGoToDefinition(shaderSource, location, shaderDirectories, navigationResult);
                 }

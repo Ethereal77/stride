@@ -101,9 +101,9 @@ namespace Stride.Core.Assets.Tests
             ids["key3"] = IdentifierGenerator.Get(18);
             ids["key4"] = IdentifierGenerator.Get(19);
 
-            string testGenerated1 = DirectoryTestBase + @"TestSerializing\TestSerializing_TestMyAssetObject_Generated1.xkobj";
-            string testGenerated2 = DirectoryTestBase + @"TestSerializing\TestSerializing_TestMyAssetObject_Generated2.xkobj";
-            string referenceFilePath = DirectoryTestBase + @"TestSerializing\TestSerializing_TestMyAssetObject_Reference.xkobj";
+            string testGenerated1 = DirectoryTestBase + @"TestSerializing\TestSerializing_TestMyAssetObject_Generated1.sdobj";
+            string testGenerated2 = DirectoryTestBase + @"TestSerializing\TestSerializing_TestMyAssetObject_Generated2.sdobj";
+            string referenceFilePath = DirectoryTestBase + @"TestSerializing\TestSerializing_TestMyAssetObject_Reference.sdobj";
 
             // First store the file on the disk and compare it to the reference
             GenerateAndCompare("Test Serialization 1", testGenerated1, referenceFilePath, assetObject);

@@ -32,7 +32,7 @@ namespace Stride.Assets.Media
         /// <summary>
         /// The default file extension used by the <see cref="VideoAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkvid";
+        public const string FileExtension = ".sdvid";
 
         /// <summary>
         /// The source file of this asset.

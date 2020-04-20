@@ -23,6 +23,6 @@ namespace Stride.Assets.UI
         /// <summary>
         /// The default file extension used by the <see cref="UIPageAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkuipage";
+        public const string FileExtension = ".sduipage";
     }
 }

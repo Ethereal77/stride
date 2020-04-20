@@ -19,7 +19,7 @@ namespace Stride.Core.Assets.Tests
         [Fact(Skip = "Need check")]
         public void TestTemplateDescriptions()
         {
-            // Preload templates defined in Stride.xkpkg
+            // Preload templates defined in Stride.sdpkg
             var descriptions = TemplateManager.FindTemplates().ToList();
 
             // Expect currently 4 templates

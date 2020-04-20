@@ -29,7 +29,7 @@ namespace Stride.Assets.Textures
         /// <summary>
         /// The default file extension used by the <see cref="TextureAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xktex";
+        public const string FileExtension = ".sdtex";
 
         /// <summary>
         /// Gets or sets the width.

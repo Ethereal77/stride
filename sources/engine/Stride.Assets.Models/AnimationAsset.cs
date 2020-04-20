@@ -31,7 +31,7 @@ namespace Stride.Assets.Models
         /// <summary>
         /// The default file extension used by the <see cref="AnimationAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkanim";
+        public const string FileExtension = ".sdanim";
 
         public static readonly TimeSpan LongestTimeSpan = TimeSpan.FromMinutes(30);  // Avoid TimeSpan.MaxValue because it results in overflow exception when used in some calculations
 

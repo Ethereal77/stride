@@ -21,7 +21,7 @@ namespace Stride.Assets.Navigation
     {
         private const string CurrentVersion = "2.0.0.0";
 
-        public const string FileExtension = ".xknavmesh";
+        public const string FileExtension = ".sdnavmesh";
 
         /// <summary>
         /// Scene that is used for building the navigation mesh

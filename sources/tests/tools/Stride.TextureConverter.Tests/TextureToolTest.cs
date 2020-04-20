@@ -164,11 +164,11 @@ namespace Stride.TextureConverter.Tests
         public void ConvertToStrideImageTest(string file)
         {
             TexImage image = texTool.Load(Module.PathToInputImages + file);
-            var xk = texTool.ConvertToStrideImage(image);
-            Assert.True(xk.TotalSizeInBytes == image.DataSize);
-            Assert.True(xk.Description.MipLevels == image.MipmapCount);
+            var sdImage = texTool.ConvertToStrideImage(image);
+            Assert.True(sdImage.TotalSizeInBytes == image.DataSize);
+            Assert.True(sdImage.Description.MipLevels == image.MipmapCount);
             image.Dispose();
-            xk.Dispose();
+            sdImage.Dispose();
         }
 
         [Theory(Skip = "Need check")]
@@ -177,15 +177,15 @@ namespace Stride.TextureConverter.Tests
         {
             TexImage image = texTool.Load(Module.PathToInputImages + file);
 
-            var xk = texTool.ConvertToStrideImage(image);
+            var sd = texTool.ConvertToStrideImage(image);
 
-            TexImage xkImage = texTool.Load(xk, false);
+            TexImage sdImage = texTool.Load(sd, false);
 
-            Assert.True(image.Equals(xkImage));
+            Assert.True(image.Equals(sdImage));
 
-            xk.Dispose();
+            sd.Dispose();
             image.Dispose();
-            xkImage.Dispose();
+            sdImage.Dispose();
         }
 
         [Theory(Skip = "Need check")]
@@ -295,7 +295,7 @@ namespace Stride.TextureConverter.Tests
         [Theory(Skip = "Need check")]
         [InlineData("TextureCube_WMipMaps_BC3.dds", ".pvr", Filter.Rescaling.CatmullRom, PixelFormat.ETC2_RGBA)]
         [InlineData("TextureArray_WMipMaps_PVRTC2_4bpp.pvr", ".dds", Filter.Rescaling.Nearest, PixelFormat.BC3_UNorm)]
-        [InlineData("TextureCube_WMipMaps_ATC_RGBA_Explicit.xk", ".dds", Filter.Rescaling.Lanczos3, PixelFormat.BC3_UNorm)]
+        [InlineData("TextureCube_WMipMaps_ATC_RGBA_Explicit.sd", ".dds", Filter.Rescaling.Lanczos3, PixelFormat.BC3_UNorm)]
         [InlineData("duck.jpg", ".dds", Filter.Rescaling.Box, PixelFormat.BC3_UNorm)]
         public void ProcessingTest(string source, string extension, Filter.Rescaling rescaleFiler, PixelFormat format)
         {

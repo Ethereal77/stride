@@ -62,7 +62,7 @@ namespace Stride.Core.Assets.Tests.Compilers
         public class MyContent3 { }
 
         [DataContract]
-        [AssetDescription(".xkmytest")]
+        [AssetDescription(".sdmytest")]
         [AssetContentType(typeof(MyContent1))]
         public class MyAsset1 : Asset
         {
@@ -71,7 +71,7 @@ namespace Stride.Core.Assets.Tests.Compilers
         }
 
         [DataContract]
-        [AssetDescription(".xkmytest")]
+        [AssetDescription(".sdmytest")]
         [AssetContentType(typeof(MyContent2))]
         public class MyAsset2 : Asset
         {
@@ -79,7 +79,7 @@ namespace Stride.Core.Assets.Tests.Compilers
         }
 
         [DataContract]
-        [AssetDescription(".xkmytest")]
+        [AssetDescription(".sdmytest")]
         [AssetContentType(typeof(MyContent3))]
         public class MyAsset3 : Asset { }
 

@@ -39,19 +39,19 @@
       <Link>app_data\Stride.Assets.Tests\TX-Factory_Ground.dds</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="materials\testConstantValueKey.xkmat">
+    <None Include="materials\testConstantValueKey.sdmat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="materials\testEffect.xkmat">
+    <None Include="materials\testEffect.sdmat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="materials\testMaterial.xkmat">
+    <None Include="materials\testMaterial.sdmat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="materials\testReduction.xkmat">
+    <None Include="materials\testReduction.sdmat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="materials\testTextureGeneric.xkmat">
+    <None Include="materials\testTextureGeneric.sdmat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="readme.md" />

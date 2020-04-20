@@ -26,7 +26,7 @@ namespace Stride.Assets.Models
         /// <summary>
         /// The default file extension used by the <see cref="ProceduralModelAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkprefabmodel";
+        public const string FileExtension = ".sdprefabmodel";
 
         /// <inheritdoc/>
         [DataMemberIgnore] // materials are not exposed in prefab models

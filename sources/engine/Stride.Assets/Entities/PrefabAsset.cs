@@ -25,7 +25,7 @@ namespace Stride.Assets.Entities
         /// <summary>
         /// The default file extension used by the <see cref="PrefabAsset"/>.
         /// </summary>
-        public const string FileExtension = ".xkprefab";
+        public const string FileExtension = ".sdprefab";
 
         /// <summary>
         /// Creates a instance of this prefab that can be added to another <see cref="EntityHierarchyAssetBase"/>.
