@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2007-2011 SlimDX Group
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Xenko.Core.Mathematics
+namespace Stride.Core.Mathematics
 {
     /// <summary>
     /// Represents a four dimensional mathematical vector.
@@ -19,37 +19,37 @@ namespace Xenko.Core.Mathematics
     public struct Vector4 : IEquatable<Vector4>, IFormattable
     {
         /// <summary>
-        /// The size of the <see cref="Xenko.Core.Mathematics.Vector4"/> type, in bytes.
+        /// The size of the <see cref="Stride.Core.Mathematics.Vector4"/> type, in bytes.
         /// </summary>
         public static readonly int SizeInBytes = Utilities.SizeOf<Vector4>();
 
         /// <summary>
-        /// A <see cref="Xenko.Core.Mathematics.Vector4"/> with all of its components set to zero.
+        /// A <see cref="Stride.Core.Mathematics.Vector4"/> with all of its components set to zero.
         /// </summary>
         public static readonly Vector4 Zero = new Vector4();
 
         /// <summary>
-        /// The X unit <see cref="Xenko.Core.Mathematics.Vector4"/> (1, 0, 0, 0).
+        /// The X unit <see cref="Stride.Core.Mathematics.Vector4"/> (1, 0, 0, 0).
         /// </summary>
         public static readonly Vector4 UnitX = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 
         /// <summary>
-        /// The Y unit <see cref="Xenko.Core.Mathematics.Vector4"/> (0, 1, 0, 0).
+        /// The Y unit <see cref="Stride.Core.Mathematics.Vector4"/> (0, 1, 0, 0).
         /// </summary>
         public static readonly Vector4 UnitY = new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 
         /// <summary>
-        /// The Z unit <see cref="Xenko.Core.Mathematics.Vector4"/> (0, 0, 1, 0).
+        /// The Z unit <see cref="Stride.Core.Mathematics.Vector4"/> (0, 0, 1, 0).
         /// </summary>
         public static readonly Vector4 UnitZ = new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 
         /// <summary>
-        /// The W unit <see cref="Xenko.Core.Mathematics.Vector4"/> (0, 0, 0, 1).
+        /// The W unit <see cref="Stride.Core.Mathematics.Vector4"/> (0, 0, 0, 1).
         /// </summary>
         public static readonly Vector4 UnitW = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 
         /// <summary>
-        /// A <see cref="Xenko.Core.Mathematics.Vector4"/> with all of its components set to one.
+        /// A <see cref="Stride.Core.Mathematics.Vector4"/> with all of its components set to one.
         /// </summary>
         public static readonly Vector4 One = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -78,7 +78,7 @@ namespace Xenko.Core.Mathematics
         public float W;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Vector4"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Vector4"/> struct.
         /// </summary>
         /// <param name="value">The value that will be assigned to all components.</param>
         public Vector4(float value)
@@ -90,7 +90,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Vector4"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Vector4"/> struct.
         /// </summary>
         /// <param name="x">Initial value for the X component of the vector.</param>
         /// <param name="y">Initial value for the Y component of the vector.</param>
@@ -105,7 +105,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Vector4"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Vector4"/> struct.
         /// </summary>
         /// <param name="value">A vector containing the values with which to initialize the X, Y, and Z components.</param>
         /// <param name="w">Initial value for the W component of the vector.</param>
@@ -118,7 +118,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Vector4"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Vector4"/> struct.
         /// </summary>
         /// <param name="value">A vector containing the values with which to initialize the X and Y components.</param>
         /// <param name="z">Initial value for the Z component of the vector.</param>
@@ -132,7 +132,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Vector4"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Vector4"/> struct.
         /// </summary>
         /// <param name="values">The values to assign to the X, Y, Z, and W components of the vector. This must be an array with four elements.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
@@ -198,7 +198,7 @@ namespace Xenko.Core.Mathematics
         /// </summary>
         /// <returns>The length of the vector.</returns>
         /// <remarks>
-        /// <see cref="Xenko.Core.Mathematics.Vector4.LengthSquared"/> may be preferred when only the relative length is needed
+        /// <see cref="Stride.Core.Mathematics.Vector4.LengthSquared"/> may be preferred when only the relative length is needed
         /// and speed is of the essence.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -212,7 +212,7 @@ namespace Xenko.Core.Mathematics
         /// </summary>
         /// <returns>The squared length of the vector.</returns>
         /// <remarks>
-        /// This method may be preferred to <see cref="Xenko.Core.Mathematics.Vector4.Length"/> when only a relative length is needed
+        /// This method may be preferred to <see cref="Stride.Core.Mathematics.Vector4.Length"/> when only a relative length is needed
         /// and speed is of the essence.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -426,11 +426,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Returns a <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 4D triangle.
+        /// Returns a <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 4D triangle.
         /// </summary>
-        /// <param name="value1">A <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
+        /// <param name="value1">A <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
+        /// <param name="value2">A <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
+        /// <param name="value3">A <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
         /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
         /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
         /// <param name="result">When the method completes, contains the 4D Cartesian coordinates of the specified point.</param>
@@ -444,14 +444,14 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Returns a <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 4D triangle.
+        /// Returns a <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 4D triangle.
         /// </summary>
-        /// <param name="value1">A <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
+        /// <param name="value1">A <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 1 of the triangle.</param>
+        /// <param name="value2">A <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 2 of the triangle.</param>
+        /// <param name="value3">A <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of vertex 3 of the triangle.</param>
         /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
         /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
-        /// <returns>A new <see cref="Xenko.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of the specified point.</returns>
+        /// <returns>A new <see cref="Stride.Core.Mathematics.Vector4"/> containing the 4D Cartesian coordinates of the specified point.</returns>
         public static Vector4 Barycentric(Vector4 value1, Vector4 value2, Vector4 value3, float amount1, float amount2)
         {
             Vector4 result;
@@ -508,7 +508,7 @@ namespace Xenko.Core.Mathematics
         /// <param name="value2">The second vector.</param>
         /// <param name="result">When the method completes, contains the distance between the two vectors.</param>
         /// <remarks>
-        /// <see cref="Xenko.Core.Mathematics.Vector4.DistanceSquared(ref Vector4, ref Vector4, out float)"/> may be preferred when only the relative distance is needed
+        /// <see cref="Stride.Core.Mathematics.Vector4.DistanceSquared(ref Vector4, ref Vector4, out float)"/> may be preferred when only the relative distance is needed
         /// and speed is of the essence.
         /// </remarks>
         public static void Distance(ref Vector4 value1, ref Vector4 value2, out float result)
@@ -528,7 +528,7 @@ namespace Xenko.Core.Mathematics
         /// <param name="value2">The second vector.</param>
         /// <returns>The distance between the two vectors.</returns>
         /// <remarks>
-        /// <see cref="Xenko.Core.Mathematics.Vector4.DistanceSquared(Vector4, Vector4)"/> may be preferred when only the relative distance is needed
+        /// <see cref="Stride.Core.Mathematics.Vector4.DistanceSquared(Vector4, Vector4)"/> may be preferred when only the relative distance is needed
         /// and speed is of the essence.
         /// </remarks>
         public static float Distance(Vector4 value1, Vector4 value2)
@@ -936,11 +936,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms a 4D vector by the given <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation.
+        /// Transforms a 4D vector by the given <see cref="Stride.Core.Mathematics.Quaternion"/> rotation.
         /// </summary>
         /// <param name="vector">The vector to rotate.</param>
-        /// <param name="rotation">The <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation to apply.</param>
-        /// <param name="result">When the method completes, contains the transformed <see cref="Xenko.Core.Mathematics.Vector4"/>.</param>
+        /// <param name="rotation">The <see cref="Stride.Core.Mathematics.Quaternion"/> rotation to apply.</param>
+        /// <param name="result">When the method completes, contains the transformed <see cref="Stride.Core.Mathematics.Vector4"/>.</param>
         public static void Transform(ref Vector4 vector, ref Quaternion rotation, out Vector4 result)
         {
             float x = rotation.X + rotation.X;
@@ -964,11 +964,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms a 4D vector by the given <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation.
+        /// Transforms a 4D vector by the given <see cref="Stride.Core.Mathematics.Quaternion"/> rotation.
         /// </summary>
         /// <param name="vector">The vector to rotate.</param>
-        /// <param name="rotation">The <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation to apply.</param>
-        /// <returns>The transformed <see cref="Xenko.Core.Mathematics.Vector4"/>.</returns>
+        /// <param name="rotation">The <see cref="Stride.Core.Mathematics.Quaternion"/> rotation to apply.</param>
+        /// <returns>The transformed <see cref="Stride.Core.Mathematics.Vector4"/>.</returns>
         public static Vector4 Transform(Vector4 vector, Quaternion rotation)
         {
             Vector4 result;
@@ -977,10 +977,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms an array of vectors by the given <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation.
+        /// Transforms an array of vectors by the given <see cref="Stride.Core.Mathematics.Quaternion"/> rotation.
         /// </summary>
         /// <param name="source">The array of vectors to transform.</param>
-        /// <param name="rotation">The <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation to apply.</param>
+        /// <param name="rotation">The <see cref="Stride.Core.Mathematics.Quaternion"/> rotation to apply.</param>
         /// <param name="destination">The array for which the transformed vectors are stored.
         /// This array may be the same array as <paramref name="source"/>.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
@@ -1028,11 +1028,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms a 4D vector by the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Transforms a 4D vector by the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="vector">The source vector.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
-        /// <param name="result">When the method completes, contains the transformed <see cref="Xenko.Core.Mathematics.Vector4"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="result">When the method completes, contains the transformed <see cref="Stride.Core.Mathematics.Vector4"/>.</param>
         public static void Transform(ref Vector4 vector, ref Matrix transform, out Vector4 result)
         {
             result = new Vector4(
@@ -1043,11 +1043,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms a 4D vector by the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Transforms a 4D vector by the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="vector">The source vector.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
-        /// <returns>The transformed <see cref="Xenko.Core.Mathematics.Vector4"/>.</returns>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
+        /// <returns>The transformed <see cref="Stride.Core.Mathematics.Vector4"/>.</returns>
         public static Vector4 Transform(Vector4 vector, Matrix transform)
         {
             Vector4 result;
@@ -1056,10 +1056,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms an array of 4D vectors by the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Transforms an array of 4D vectors by the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="source">The array of vectors to transform.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
         /// <param name="destination">The array for which the transformed vectors are stored.
         /// This array may be the same array as <paramref name="source"/>.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
@@ -1220,7 +1220,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="Xenko.Core.Mathematics.Vector4"/> to <see cref="Xenko.Core.Mathematics.Vector2"/>.
+        /// Performs an explicit conversion from <see cref="Stride.Core.Mathematics.Vector4"/> to <see cref="Stride.Core.Mathematics.Vector2"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1230,7 +1230,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="Xenko.Core.Mathematics.Vector4"/> to <see cref="Xenko.Core.Mathematics.Vector3"/>.
+        /// Performs an explicit conversion from <see cref="Stride.Core.Mathematics.Vector4"/> to <see cref="Stride.Core.Mathematics.Vector3"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1307,11 +1307,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="Xenko.Core.Mathematics.Vector4"/> is equal to this instance.
+        /// Determines whether the specified <see cref="Stride.Core.Mathematics.Vector4"/> is equal to this instance.
         /// </summary>
-        /// <param name="other">The <see cref="Xenko.Core.Mathematics.Vector4"/> to compare with this instance.</param>
+        /// <param name="other">The <see cref="Stride.Core.Mathematics.Vector4"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Xenko.Core.Mathematics.Vector4"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Stride.Core.Mathematics.Vector4"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public bool Equals(Vector4 other)
         {
@@ -1341,7 +1341,7 @@ namespace Xenko.Core.Mathematics
 
 #if WPFInterop
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Vector4"/> to <see cref="System.Windows.Media.Media3D.Point4D"/>.
+        /// Performs an implicit conversion from <see cref="Stride.Core.Mathematics.Vector4"/> to <see cref="System.Windows.Media.Media3D.Point4D"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1351,7 +1351,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="System.Windows.Media.Media3D.Point4D"/> to <see cref="Xenko.Core.Mathematics.Vector4"/>.
+        /// Performs an explicit conversion from <see cref="System.Windows.Media.Media3D.Point4D"/> to <see cref="Stride.Core.Mathematics.Vector4"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1363,7 +1363,7 @@ namespace Xenko.Core.Mathematics
 
 #if XnaInterop
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Vector4"/> to <see cref="Microsoft.Xna.Framework.Vector4"/>.
+        /// Performs an implicit conversion from <see cref="Stride.Core.Mathematics.Vector4"/> to <see cref="Microsoft.Xna.Framework.Vector4"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1373,7 +1373,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Microsoft.Xna.Framework.Vector4"/> to <see cref="Xenko.Core.Mathematics.Vector4"/>.
+        /// Performs an implicit conversion from <see cref="Microsoft.Xna.Framework.Vector4"/> to <see cref="Stride.Core.Mathematics.Vector4"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>

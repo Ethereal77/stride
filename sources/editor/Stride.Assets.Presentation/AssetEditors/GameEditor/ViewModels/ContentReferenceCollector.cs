@@ -1,18 +1,18 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core.Assets.Quantum.Visitors;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Serialization;
-using Xenko.Core.Quantum;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Assets.Quantum.Visitors;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Serialization;
+using Stride.Core.Quantum;
 
-namespace Xenko.Assets.Presentation.AssetEditors.GameEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.GameEditor.ViewModels
 {
     public class ContentReferenceCollector : AssetGraphVisitorBase
     {

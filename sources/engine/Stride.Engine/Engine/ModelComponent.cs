@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,16 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.Engine.Design;
-using Xenko.Engine.Processors;
-using Xenko.Rendering;
-using Xenko.Updater;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.Engine.Design;
+using Stride.Engine.Processors;
+using Stride.Rendering;
+using Stride.Updater;
 
-namespace Xenko.Engine
+namespace Stride.Engine
 {
     /// <summary>
     /// Add a <see cref="Model"/> to an <see cref="Entity"/>, that will be used during rendering.
@@ -96,10 +96,10 @@ namespace Xenko.Engine
         }
 
         /// <summary>
-        /// Gets the materials; non-null ones will override materials from <see cref="Xenko.Rendering.Model.Materials"/> (same slots should be used).
+        /// Gets the materials; non-null ones will override materials from <see cref="Stride.Rendering.Model.Materials"/> (same slots should be used).
         /// </summary>
         /// <value>
-        /// The materials overriding <see cref="Xenko.Rendering.Model.Materials"/> ones.
+        /// The materials overriding <see cref="Stride.Rendering.Model.Materials"/> ones.
         /// </value>
         /// <userdoc>The list of materials to use with the model. This list overrides the default materials of the model.</userdoc>
         [DataMember(40)]
@@ -166,7 +166,7 @@ namespace Xenko.Engine
         public BoundingSphere BoundingSphere;
 
         /// <summary>
-        /// Gets the material at the specified index. If the material is not overriden by this component, it will try to get it from <see cref="Xenko.Rendering.Model.Materials"/>
+        /// Gets the material at the specified index. If the material is not overriden by this component, it will try to get it from <see cref="Stride.Rendering.Model.Materials"/>
         /// </summary>
         /// <param name="index">The index of the material</param>
         /// <returns>The material at the specified index or null if not found</returns>
@@ -188,7 +188,7 @@ namespace Xenko.Engine
         }
 
         /// <summary>
-        /// Gets the number of materials (computed from <see cref="Xenko.Rendering.Model.Materials"/>)
+        /// Gets the number of materials (computed from <see cref="Stride.Rendering.Model.Materials"/>)
         /// </summary>
         /// <returns></returns>
         public int GetMaterialCount()

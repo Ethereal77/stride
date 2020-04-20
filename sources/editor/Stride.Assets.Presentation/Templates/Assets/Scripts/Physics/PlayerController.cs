@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Input;
-using Xenko.Physics;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Input;
+using Stride.Physics;
 
 namespace ##Namespace##
 {

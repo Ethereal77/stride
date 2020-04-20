@@ -1,13 +1,13 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
 
-namespace Xenko.Core.Shaders.Writer.Hlsl
+namespace Stride.Core.Shaders.Writer.Hlsl
 {
     /// <summary>
     /// A writer for a shader.

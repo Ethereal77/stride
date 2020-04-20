@@ -1,8 +1,8 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_VIDEO_FFMPEG
+#if STRIDE_VIDEO_FFMPEG
 
 using System;
 using System.Collections.Generic;
@@ -10,9 +10,9 @@ using System.Runtime.InteropServices;
 
 using FFmpeg.AutoGen;
 
-using Xenko.Core.Annotations;
+using Stride.Core.Annotations;
 
-namespace Xenko.Video.FFmpeg
+namespace Stride.Video.FFmpeg
 {
     /// <summary>
     /// Represents a single stream from a FFmpeg media.

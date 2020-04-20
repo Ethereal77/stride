@@ -1,11 +1,11 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Assets.Presentation.SceneEditor;
-using Xenko.Editor.EditorGame.ViewModels;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Editor.EditorGame.ViewModels;
 
-namespace Xenko.Assets.Presentation.AssetEditors.GameEditor.Services
+namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Services
 {
     /// <summary>
     /// Interface allowing a <see cref="ViewModels.GameEditorViewModel"/> to safely access the camera of the game instance in which the editor is running.

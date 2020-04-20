@@ -1,19 +1,19 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 using System.IO;
 
-using Xenko.Core.Assets;
-using Xenko.Core.IO;
-using Xenko.Assets.SpriteFont.Compiler;
-using Xenko.Graphics;
-using Xenko.Graphics.Data;
-using Xenko.Graphics.Font;
-using Glyph = Xenko.Graphics.Font.Glyph;
+using Stride.Core.Assets;
+using Stride.Core.IO;
+using Stride.Assets.SpriteFont.Compiler;
+using Stride.Graphics;
+using Stride.Graphics.Data;
+using Stride.Graphics.Font;
+using Glyph = Stride.Graphics.Font.Glyph;
 
-namespace Xenko.Assets.SpriteFont
+namespace Stride.Assets.SpriteFont
 {
     public static class SpriteFontAssetExtensions
     {

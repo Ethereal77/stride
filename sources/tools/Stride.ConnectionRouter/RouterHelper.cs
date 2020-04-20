@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,13 +10,13 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Packages;
-using Xenko.Engine.Network;
-using Xenko.Core.Diagnostics;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Packages;
+using Stride.Engine.Network;
+using Stride.Core.Diagnostics;
 
-namespace Xenko.ConnectionRouter
+namespace Stride.ConnectionRouter
 {
     public static class RouterHelper
     {
@@ -36,7 +36,7 @@ namespace Xenko.ConnectionRouter
                 // Try to connect to router
                 FileVersionInfo runningRouterVersion = null;
                 Process runningRouterProcess = null;
-                foreach (var process in Process.GetProcessesByName("Xenko.ConnectionRouter"))
+                foreach (var process in Process.GetProcessesByName("Stride.ConnectionRouter"))
                 {
                     try
                     {
@@ -59,9 +59,9 @@ namespace Xenko.ConnectionRouter
                 var routerAssemblyLocation = defaultRouterAssemblyLocation;
                 var routerAssemblyExe = Path.GetFileName(routerAssemblyLocation);
 
-                // Try to locate using Xenko.ConnectionRouter package
+                // Try to locate using Stride.ConnectionRouter package
                 var logger = new LoggerResult();
-                var package = PackageStore.Instance.FindLocalPackage("Xenko.ConnectionRouter", new PackageVersionRange(new PackageVersion(XenkoVersion.NuGetVersion)));
+                var package = PackageStore.Instance.FindLocalPackage("Stride.ConnectionRouter", new PackageVersionRange(new PackageVersion(StrideVersion.NuGetVersion)));
                 if (package != null)
                 {
                     routerAssemblyLocation = package.GetFiles().FirstOrDefault(x => string.Compare(Path.GetFileName(x.Path), routerAssemblyExe, true) == 0)?.FullPath ?? routerAssemblyLocation;
@@ -72,7 +72,7 @@ namespace Xenko.ConnectionRouter
                 {
                     var routerAssemblyFileVersionInfo = FileVersionInfo.GetVersionInfo(routerAssemblyLocation);
 
-                    // Check that current router is at least as good as the one of latest found Xenko
+                    // Check that current router is at least as good as the one of latest found Stride
                     if (new PackageVersion(routerAssemblyFileVersionInfo.FileVersion) <= new PackageVersion(runningRouterVersion.FileVersion))
                         return true;
                 }

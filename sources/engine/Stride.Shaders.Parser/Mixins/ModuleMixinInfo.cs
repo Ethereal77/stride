@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Xenko.Core.Storage;
-using Xenko.Core.Shaders.Ast.Xenko;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Utility;
+using Stride.Core.Storage;
+using Stride.Core.Shaders.Ast.Stride;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Utility;
 
-namespace Xenko.Shaders.Parser.Mixins
+namespace Stride.Shaders.Parser.Mixins
 {
     [DebuggerDisplay("Mixin: {mixinName}")]
     internal class ModuleMixinInfo
@@ -111,7 +111,7 @@ namespace Xenko.Shaders.Parser.Mixins
         /// <summary>
         /// The macros used for this mixin
         /// </summary>
-        public Xenko.Core.Shaders.Parser.ShaderMacro[] Macros = new Xenko.Core.Shaders.Parser.ShaderMacro[0];
+        public Stride.Core.Shaders.Parser.ShaderMacro[] Macros = new Stride.Core.Shaders.Parser.ShaderMacro[0];
 
         /// <summary>
         /// the list of all the necessary MixinInfos to compile the shader
@@ -128,7 +128,7 @@ namespace Xenko.Shaders.Parser.Mixins
 
         #region Public methods
 
-        public ModuleMixinInfo Copy(Xenko.Core.Shaders.Parser.ShaderMacro[] macros)
+        public ModuleMixinInfo Copy(Stride.Core.Shaders.Parser.ShaderMacro[] macros)
         {
             var mixinInfo = new ModuleMixinInfo();
             mixinInfo.ShaderSource = ShaderSource;
@@ -142,7 +142,7 @@ namespace Xenko.Shaders.Parser.Mixins
             return mixinInfo;
         }
 
-        public bool AreEqual(ShaderSource shaderSource, Xenko.Core.Shaders.Parser.ShaderMacro[] macros)
+        public bool AreEqual(ShaderSource shaderSource, Stride.Core.Shaders.Parser.ShaderMacro[] macros)
         {
             return ShaderSource.Equals(shaderSource) && macros.All(macro => Macros.Any(x => x.Name == macro.Name && x.Definition == macro.Definition)) && Macros.All(macro => macros.Any(x => x.Name == macro.Name && x.Definition == macro.Definition));
         }

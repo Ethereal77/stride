@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,20 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.BuildEngine;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.MicroThreading;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Assets;
-using Xenko.Editor.Preview;
-using Xenko.Graphics;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.BuildEngine;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.MicroThreading;
+using Stride.Core.Serialization.Contents;
+using Stride.Assets;
+using Stride.Editor.Preview;
+using Stride.Graphics;
 
-namespace Xenko.Editor.Build
+namespace Stride.Editor.Build
 {
     public class GameStudioDatabase : IDisposable
     {

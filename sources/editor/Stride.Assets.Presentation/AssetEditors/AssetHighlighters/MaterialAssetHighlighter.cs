@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,18 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Materials;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Xenko.Assets.Presentation.SceneEditor;
-using Xenko.Editor.EditorGame.Game;
-using Xenko.Engine;
-using Xenko.Rendering;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Assets.Materials;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Editor.EditorGame.Game;
+using Stride.Engine;
+using Stride.Rendering;
 
-namespace Xenko.Assets.Presentation.AssetEditors.AssetHighlighters
+namespace Stride.Assets.Presentation.AssetEditors.AssetHighlighters
 {
     /// <summary>
     /// The <see cref="AssetHighlighter"/> for <see cref="MaterialAsset"/>.

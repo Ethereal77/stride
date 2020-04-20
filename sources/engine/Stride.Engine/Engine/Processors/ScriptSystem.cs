@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,14 +8,14 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.MicroThreading;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Games;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Core.Diagnostics;
+using Stride.Core.MicroThreading;
+using Stride.Core.Serialization.Contents;
+using Stride.Games;
 
-namespace Xenko.Engine.Processors
+namespace Stride.Engine.Processors
 {
     /// <summary>
     /// The script system handles scripts scheduling in a game.

@@ -1,12 +1,12 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Xunit;
 
-using Xenko.Engine;
+using Stride.Engine;
 
-namespace Xenko.Audio.Tests.Engine
+namespace Stride.Audio.Tests.Engine
 {
     /// <summary>
     /// Test the class <see cref="Game"/> augmented with the audio system.

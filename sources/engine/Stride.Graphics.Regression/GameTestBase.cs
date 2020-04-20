@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Games;
-using Xenko.Input;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Games;
+using Stride.Input;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
 
-namespace Xenko.Graphics.Regression
+namespace Stride.Graphics.Regression
 {
     public abstract class GameTestBase : Game
     {
@@ -304,18 +304,18 @@ namespace Xenko.Graphics.Regression
             Assert.True(failedTests.Count == 0, $"Some image comparison tests failed: {string.Join(", ", failedTests.Select(x => x))}");
         }
 
-        private static string FindXenkoRootFolder()
+        private static string FindStrideRootFolder()
         {
             // Make sure our nuget local store is added to nuget config
             var folder = PlatformFolders.ApplicationBinaryDirectory;
             while (folder != null)
             {
-                if (File.Exists(Path.Combine(folder, @"build\Xenko.sln")))
+                if (File.Exists(Path.Combine(folder, @"build\Stride.sln")))
                     return folder;
                 folder = Path.GetDirectoryName(folder);
             }
 
-            throw new InvalidOperationException("Could not locate Xenko folder");
+            throw new InvalidOperationException("Could not locate Stride folder");
         }
 
         /// <summary>
@@ -336,7 +336,7 @@ namespace Xenko.Graphics.Regression
 
             var platformSpecific = $"Windows_{GraphicsDevice.Platform}_{GraphicsDevice.Adapter.Description.Split('\0')[0].TrimEnd(' ')}";
 
-            var rootFolder = FindXenkoRootFolder();
+            var rootFolder = FindStrideRootFolder();
 
             var testFilename = GenerateName(Path.Combine(rootFolder, "tests"), frame, platformSpecific);
             var testFilenamePattern = GenerateName(Path.Combine(rootFolder, "tests"), frame, null);

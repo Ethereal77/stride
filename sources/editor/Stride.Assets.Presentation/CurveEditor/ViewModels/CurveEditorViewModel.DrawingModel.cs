@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2014 OxyPlot contributors
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -9,13 +9,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Drawing;
-using Xenko.Core.Presentation.Extensions;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Drawing;
+using Stride.Core.Presentation.Extensions;
 
-using Color = Xenko.Core.Mathematics.Color;
+using Color = Stride.Core.Mathematics.Color;
 
-namespace Xenko.Assets.Presentation.CurveEditor.ViewModels
+namespace Stride.Assets.Presentation.CurveEditor.ViewModels
 {
     // FIXME: should we move this into a dedicated class?
     partial class CurveEditorViewModel : IDrawingModel

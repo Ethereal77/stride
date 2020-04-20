@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Xenko.Updater
+namespace Stride.Updater
 {
     /// <summary>
     /// Defines how to set and get values from a property of a given value type for the <see cref="UpdateEngine"/>.
@@ -31,11 +31,11 @@ namespace Xenko.Updater
             ldarg data
             // TEMP XAMARIN AOT FIX -- not sure why we can't use inline directly here
             // unbox !T
-            call native int Xenko.Updater.UpdateEngineHelper::Unbox<!T>(object)
+            call native int Stride.Updater.UpdateEngineHelper::Unbox<!T>(object)
             dup
             ldarg obj
             ldarg.0
-            ldfld native int class Xenko.Updater.UpdatableProperty::Getter
+            ldfld native int class Stride.Updater.UpdatableProperty::Getter
             calli instance !T()
             stobj !T
             ret
@@ -50,7 +50,7 @@ namespace Xenko.Updater
             ldarg data
             ldarg obj
             ldarg.0
-            ldfld native int class Xenko.Updater.UpdatableProperty::Getter
+            ldfld native int class Stride.Updater.UpdatableProperty::Getter
             calli instance !T()
             stobj !T
             ret
@@ -66,7 +66,7 @@ namespace Xenko.Updater
             ldarg data
             unbox.any !T
             ldarg.0
-            ldfld native int class Xenko.Updater.UpdatableProperty::Setter
+            ldfld native int class Stride.Updater.UpdatableProperty::Setter
             calli instance void(!T)
             ret
 #endif
@@ -81,7 +81,7 @@ namespace Xenko.Updater
             ldarg data
             ldobj !T
             ldarg.0
-            ldfld native int class Xenko.Updater.UpdatableProperty::Setter
+            ldfld native int class Stride.Updater.UpdatableProperty::Setter
             calli instance void(!T)
             ret
 #endif

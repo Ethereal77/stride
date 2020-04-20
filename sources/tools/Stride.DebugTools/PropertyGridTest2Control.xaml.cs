@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -16,21 +16,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Xenko.Framework.ViewModel;
+using Stride.Framework.ViewModel;
 using System.Reflection;
 using System.Globalization;
 using System.Diagnostics;
 
-using Xenko.Framework.Diagnostics;
-using Xenko.EntityModel;
+using Stride.Framework.Diagnostics;
+using Stride.EntityModel;
 using System.ComponentModel;
 
-using Xenko.DebugTools.ViewModels;
+using Stride.DebugTools.ViewModels;
 using System.Collections;
 
-using Xenko.Core.Presentation.Extensions;
+using Stride.Core.Presentation.Extensions;
 
-namespace Xenko.DebugTools
+namespace Stride.DebugTools
 {
     /// <summary>
     /// Interaction logic for PropertyGridTest2Control.xaml

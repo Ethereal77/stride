@@ -1,10 +1,10 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.SpriteStudio.Runtime;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.SpriteStudio.Runtime;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace Xenko.SpriteStudio.Offline
+namespace Stride.SpriteStudio.Offline
 {
     internal class SpriteStudioXmlImport
     {

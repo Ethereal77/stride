@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,16 +10,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Storage;
-using Xenko.Core.Threading;
-using Xenko.Graphics;
-using Xenko.Rendering.Shadows;
-using Xenko.Shaders;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Storage;
+using Stride.Core.Threading;
+using Stride.Graphics;
+using Stride.Rendering.Shadows;
+using Stride.Shaders;
 
-namespace Xenko.Rendering.Lights
+namespace Stride.Rendering.Lights
 {
     /// <summary>
     /// Compute lighting shaders and data.

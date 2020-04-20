@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,9 +9,9 @@ using System.IO;
 
 using Xunit;
 
-using Xenko.PublicApiCheck;
+using Stride.PublicApiCheck;
 
-namespace Xenko.Graphics
+namespace Stride.Graphics
 {
     // CANNOT WORK INSIDE THE SAME SOLUTION. NEED TO RUN THIS OUTSIDE THE SOLUTION
     [Description("Check public Graphics API consistency between Reference and Direct3D")]
@@ -29,7 +29,7 @@ namespace Xenko.Graphics
 
         private static string GraphicsPath(string api)
         {
-            return string.Format(PathPattern, Platform, api, Target, "Xenko.Graphics.dll");
+            return string.Format(PathPattern, Platform, api, Target, "Stride.Graphics.dll");
         }
 
 

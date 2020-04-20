@@ -1,11 +1,11 @@
 <!--
 ***********************************************************************************************
-  Xenko.Core.DisableBuild.targets
+  Stride.Core.DisableBuild.targets
 
   Build file included to override the LanguageTargets to empty ones when it is specified to
-  disable the Xenko compiler targets.
+  disable the Stride compiler targets.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

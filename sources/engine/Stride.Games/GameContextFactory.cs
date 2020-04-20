@@ -1,10 +1,10 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-namespace Xenko.Games
+namespace Stride.Games
 {
     /// <summary>
     /// Given a <see cref="AppContextType"/> creates the corresponding GameContext instance based on the current executing platform.
@@ -45,7 +45,7 @@ namespace Xenko.Games
 
         public static GameContext NewGameContextDesktop()
         {
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
         return new GameContextWinforms(null);
 #else
         return null;

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,10 +8,10 @@ using System.Linq;
 
 using Xunit;
 
-using Xenko.Core.Mathematics;
-using Xenko.UI.Panels;
+using Stride.Core.Mathematics;
+using Stride.UI.Panels;
 
-namespace Xenko.UI.Tests.Layering
+namespace Stride.UI.Tests.Layering
 {
     /// <summary>
     /// Class for unit tests on <see cref="StackPanel"/>
@@ -752,7 +752,7 @@ namespace Xenko.UI.Tests.Layering
         }
 
         /// <summary>
-        /// Test for the <see cref="StackPanel.ScrollOf(Xenko.Core.Mathematics.Vector3)"/>
+        /// Test for the <see cref="StackPanel.ScrollOf(Stride.Core.Mathematics.Vector3)"/>
         /// </summary>
         [Theory, InlineData(false), InlineData(true)]
         public void TestScrollOf(bool virtualizeItems)

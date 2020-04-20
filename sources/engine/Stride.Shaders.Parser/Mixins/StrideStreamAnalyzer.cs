@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,17 +6,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Shaders.Parser.Analysis;
-using Xenko.Core.Shaders.Ast.Xenko;
-using Xenko.Shaders.Parser.Utility;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
-using Xenko.Core.Shaders.Utility;
-using Xenko.Core.Shaders.Visitor;
+using Stride.Shaders.Parser.Analysis;
+using Stride.Core.Shaders.Ast.Stride;
+using Stride.Shaders.Parser.Utility;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Utility;
+using Stride.Core.Shaders.Visitor;
 
-namespace Xenko.Shaders.Parser.Mixins
+namespace Stride.Shaders.Parser.Mixins
 {
-    internal class XenkoStreamAnalyzer : ShaderWalker
+    internal class StrideStreamAnalyzer : ShaderWalker
     {
         #region Private members
 
@@ -83,7 +83,7 @@ namespace Xenko.Shaders.Parser.Mixins
 
         #region Constructor
 
-        public XenkoStreamAnalyzer(LoggerResult errorLog)
+        public StrideStreamAnalyzer(LoggerResult errorLog)
             : base(false, true)
         {
             errorWarningLog = errorLog ?? new LoggerResult();
@@ -127,7 +127,7 @@ namespace Xenko.Shaders.Parser.Mixins
             if (methodDecl != null)
             {
                 // Stream analysis
-                if (methodDecl.ContainsTag(XenkoTags.ShaderScope)) // this will prevent built-in function to appear in the list
+                if (methodDecl.ContainsTag(StrideTags.ShaderScope)) // this will prevent built-in function to appear in the list
                 {
                     // test if the method was previously added
                     if (!alreadyAddedMethodsList.Contains(methodDecl))
@@ -142,12 +142,12 @@ namespace Xenko.Shaders.Parser.Mixins
 
                     if (arg != null && IsStreamMember(arg))
                     {
-                        var isOut = methodDecl.Parameters[i].Qualifiers.Contains(Xenko.Core.Shaders.Ast.ParameterQualifier.Out);
+                        var isOut = methodDecl.Parameters[i].Qualifiers.Contains(Stride.Core.Shaders.Ast.ParameterQualifier.Out);
 
                         //if (methodDecl.Parameters[i].Qualifiers.Contains(Ast.ParameterQualifier.InOut))
                         //    Error(MessageCode.ErrorInOutStream, expression.Span, arg, methodDecl, contextModuleMixin.MixinName);
 
-                        var usage = methodDecl.Parameters[i].Qualifiers.Contains(Xenko.Core.Shaders.Ast.ParameterQualifier.Out) ? StreamUsage.Write : StreamUsage.Read;
+                        var usage = methodDecl.Parameters[i].Qualifiers.Contains(Stride.Core.Shaders.Ast.ParameterQualifier.Out) ? StreamUsage.Write : StreamUsage.Read;
                         AddStreamUsage(arg.TypeInference.Declaration as Variable, arg, usage);
                     }
                 }
@@ -162,7 +162,7 @@ namespace Xenko.Shaders.Parser.Mixins
         {
             if (expression.TypeInference.Declaration is Variable)
             {
-                return (expression.TypeInference.Declaration as Variable).Qualifiers.Contains(XenkoStorageQualifier.Stream);
+                return (expression.TypeInference.Declaration as Variable).Qualifiers.Contains(StrideStorageQualifier.Stream);
             }
             return false;
         }
@@ -217,7 +217,7 @@ namespace Xenko.Shaders.Parser.Mixins
         public override void Visit(AssignmentExpression assignmentExpression)
         {
             if (currentAssignmentOperatorStatus != AssignmentOperatorStatus.Read)
-                errorWarningLog.Error(XenkoMessageCode.ErrorNestedAssignment, assignmentExpression.Span, assignmentExpression, shaderName);
+                errorWarningLog.Error(StrideMessageCode.ErrorNestedAssignment, assignmentExpression.Span, assignmentExpression, shaderName);
 
             var prevStreamUsage = currentStreamUsage;
             currentStreamUsage = StreamUsage.Read;
@@ -258,7 +258,7 @@ namespace Xenko.Shaders.Parser.Mixins
         /// <param name="variable">the stream Variable</param>
         /// <param name="expression">the calling expression</param>
         /// <param name="usage">the encountered usage</param>
-        private void AddStreamUsage(Variable variable, Xenko.Core.Shaders.Ast.Expression expression, StreamUsage usage)
+        private void AddStreamUsage(Variable variable, Stride.Core.Shaders.Ast.Expression expression, StreamUsage usage)
         {
             currentStreamUsageList.Add(new StreamUsageInfo { CallType = StreamCallType.Member, Variable = variable, Expression = expression, Usage = usage });
         }

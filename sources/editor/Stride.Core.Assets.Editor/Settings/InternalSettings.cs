@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.IO;
-using Xenko.Core.Settings;
-using Xenko.Core.Yaml;
-using Xenko.Core.MostRecentlyUsedFiles;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.IO;
+using Stride.Core.Settings;
+using Stride.Core.Yaml;
+using Stride.Core.MostRecentlyUsedFiles;
 
-namespace Xenko.Core.Assets.Editor.Settings
+namespace Stride.Core.Assets.Editor.Settings
 {
     public static class InternalSettings
     {

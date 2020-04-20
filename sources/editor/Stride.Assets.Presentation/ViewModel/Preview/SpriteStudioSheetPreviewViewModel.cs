@@ -1,14 +1,14 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Assets.Presentation.Preview;
-using Xenko.Editor.Preview;
-using Xenko.Editor.Preview.ViewModel;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Presentation.Commands;
+using Stride.Assets.Presentation.Preview;
+using Stride.Editor.Preview;
+using Stride.Editor.Preview.ViewModel;
 
-namespace Xenko.Assets.Presentation.ViewModel.Preview
+namespace Stride.Assets.Presentation.ViewModel.Preview
 {
     // FIXME: this view model should be in the SpriteStudio offline assembly! Can't be done now, because of a circular reference in CompilerApp referencing SpriteStudio, and Editor referencing CompilerApp
     [AssetPreviewViewModel(typeof(SpriteStudioSheetPreview))]

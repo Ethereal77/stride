@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,12 +9,12 @@ using System.Linq;
 
 using Xunit;
 
-using Xenko.Core.Assets.Tests.Helpers;
-using Xenko.Core.Annotations;
-using Xenko.Core.Reflection;
-using Xenko.Core.Yaml;
+using Stride.Core.Assets.Tests.Helpers;
+using Stride.Core.Annotations;
+using Stride.Core.Reflection;
+using Stride.Core.Yaml;
 
-namespace Xenko.Core.Assets.Tests.Yaml
+namespace Stride.Core.Assets.Tests.Yaml
 {
     public class TestCollectionIdsSerialization
     {
@@ -71,7 +71,7 @@ namespace Xenko.Core.Assets.Tests.Yaml
         }
 
 
-        private const string YamlCollection = @"!Xenko.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerCollection,Xenko.Core.Assets.Tests
+        private const string YamlCollection = @"!Stride.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerCollection,Stride.Core.Assets.Tests
 Name: Root
 Strings:
     02000000020000000200000002000000: aaa
@@ -87,7 +87,7 @@ Objects:
         Objects: {}
 ";
 
-        private const string YamlCollectionNotIdentifiable = @"!Xenko.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerNonIdentifiableCollection,Xenko.Core.Assets.Tests
+        private const string YamlCollectionNotIdentifiable = @"!Stride.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerNonIdentifiableCollection,Stride.Core.Assets.Tests
 Name: Root
 Objects:
     02000000020000000200000002000000:
@@ -115,7 +115,7 @@ NonIdentifiableObjects:
         Objects: {}
 ";
 
-        private const string YamlDictionary = @"!Xenko.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerDictionary,Xenko.Core.Assets.Tests
+        private const string YamlDictionary = @"!Stride.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerDictionary,Stride.Core.Assets.Tests
 Name: Root
 Strings:
     02000000020000000200000002000000~000000c8-00c8-0000-c800-0000c8000000: aaa
@@ -131,7 +131,7 @@ Objects:
         Objects: {}
 ";
 
-        private const string YamlDictionaryNonIdentifiable = @"!Xenko.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerNonIdentifiableDictionary,Xenko.Core.Assets.Tests
+        private const string YamlDictionaryNonIdentifiable = @"!Stride.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerNonIdentifiableDictionary,Stride.Core.Assets.Tests
 Name: Root
 Objects:
     02000000020000000200000002000000~AAA:
@@ -161,7 +161,7 @@ NonIdentifiableObjects:
         Objects: {}
 ";
 
-        private const string YamlCollectionWithDeleted = @"!Xenko.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerCollection,Xenko.Core.Assets.Tests
+        private const string YamlCollectionWithDeleted = @"!Stride.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerCollection,Stride.Core.Assets.Tests
 Name: Root
 Strings:
     08000000080000000800000008000000: aaa
@@ -181,7 +181,7 @@ Objects:
     06000000060000000600000006000000: ~(Deleted)
 ";
 
-        private const string YamlDictionaryWithDeleted = @"!Xenko.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerDictionary,Xenko.Core.Assets.Tests
+        private const string YamlDictionaryWithDeleted = @"!Stride.Core.Assets.Tests.Yaml.TestCollectionIdsSerialization+ContainerDictionary,Stride.Core.Assets.Tests
 Name: Root
 Strings:
     08000000080000000800000008000000~000000c8-00c8-0000-c800-0000c8000000: aaa

@@ -1,19 +1,19 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 
-using Xenko.Core;
-using Xenko.Shaders.Parser.Mixins;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
-using Xenko.Core.Shaders.Parser;
+using Stride.Core;
+using Stride.Shaders.Parser.Mixins;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Parser;
 
-namespace Xenko.Shaders.Parser.Analysis
+namespace Stride.Shaders.Parser.Analysis
 {
     [DataContract]
-    internal class XenkoParsingInfo
+    internal class StrideParsingInfo
     {
         #region Public properties
 
@@ -96,7 +96,7 @@ namespace Xenko.Shaders.Parser.Analysis
 
         #region Constructor
 
-        public XenkoParsingInfo()
+        public StrideParsingInfo()
         {
             StageInitializedVariables = new HashSet<Variable>();
             Typedefs = new List<Typedef>();

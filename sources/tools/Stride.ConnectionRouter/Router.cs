@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,12 +11,12 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Assets;
-using Xenko.Core.Diagnostics;
-using Xenko.Engine.Network;
+using Stride.Core;
+using Stride.Core.Assets;
+using Stride.Core.Diagnostics;
+using Stride.Engine.Network;
 
-namespace Xenko.ConnectionRouter
+namespace Stride.ConnectionRouter
 {
     public class Router
     {
@@ -147,7 +147,7 @@ namespace Xenko.ConnectionRouter
                         var port = int.Parse(urlSegments[2]);
 
                         // Note: for security reasons, we currently use a whitelist
-                        //if (host == "xenkobuild.xenko.com" && port == 1832)
+                        //if (host == "stridebuild.stride3d.net" && port == 1832)
                         //    await serverSocket.StartClient(host, port, false);
                         //else
                             throw new InvalidOperationException("Trying to redirect to a non-whitelisted host/port");

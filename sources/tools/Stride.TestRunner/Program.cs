@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,13 +11,13 @@ using System.Threading;
 
 using Mono.Options;
 
-using Xenko.ConnectionRouter;
-using Xenko.Engine.Network;
-using Xenko.Graphics.Regression;
+using Stride.ConnectionRouter;
+using Stride.Engine.Network;
+using Stride.Graphics.Regression;
 
 using static System.String;
 
-namespace Xenko.TestRunner
+namespace Stride.TestRunner
 {
     class TestServerHost : RouterServiceServer
     {
@@ -38,7 +38,7 @@ namespace Xenko.TestRunner
 
         private readonly AutoResetEvent clientResultsEvent = new AutoResetEvent(false);
 
-        public TestServerHost(int bn, string branch) : base("/task/Xenko.TestRunner.exe")
+        public TestServerHost(int bn, string branch) : base("/task/Stride.TestRunner.exe")
         {
             buildNumber = bn;
             branchName = branch;
@@ -146,7 +146,7 @@ namespace Xenko.TestRunner
 
             var p = new OptionSet
             {
-                "Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved", "Xenko Test Suite Tool - Version: " + Format("{0}.{1}.{2}", typeof(Program).Assembly.GetName().Version.Major, typeof(Program).Assembly.GetName().Version.Minor, typeof(Program).Assembly.GetName().Version.Build) + Empty, Format("Usage: {0} [assemblies|apk] -option1 -option2:a", exeName), Empty, "=== Options ===", Empty, { "h|help", "Show this message and exit", v => showHelp = v != null }, { "result-path:", "Result .XML output path", v => resultPath = v }, { "no-reinstall-apk", "Do not reinstall APK", v => reinstall = false },
+                "Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved", "Stride Test Suite Tool - Version: " + Format("{0}.{1}.{2}", typeof(Program).Assembly.GetName().Version.Major, typeof(Program).Assembly.GetName().Version.Minor, typeof(Program).Assembly.GetName().Version.Build) + Empty, Format("Usage: {0} [assemblies|apk] -option1 -option2:a", exeName), Empty, "=== Options ===", Empty, { "h|help", "Show this message and exit", v => showHelp = v != null }, { "result-path:", "Result .XML output path", v => resultPath = v }, { "no-reinstall-apk", "Do not reinstall APK", v => reinstall = false },
             };
 
             try

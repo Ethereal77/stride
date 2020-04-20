@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,18 +6,18 @@ using System;
 
 using Xunit;
 
-using Xenko.TextureConverter.Requests;
-using Xenko.TextureConverter.TexLibraries;
+using Stride.TextureConverter.Requests;
+using Stride.TextureConverter.TexLibraries;
 
-namespace Xenko.TextureConverter.Tests
+namespace Stride.TextureConverter.Tests
 {
-    public class XenkoTexLibraryTest : IDisposable
+    public class StrideTexLibraryTest : IDisposable
     {
-        XenkoTexLibrary library;
+        StrideTexLibrary library;
 
-        public XenkoTexLibraryTest()
+        public StrideTexLibraryTest()
         {
-            library = new XenkoTexLibrary();
+            library = new StrideTexLibrary();
             Assert.True(library.SupportBGRAOrder());
         }
 
@@ -49,7 +49,7 @@ namespace Xenko.TextureConverter.Tests
             Assert.False(library.CanHandleRequest(image, new LoadingRequest(new TexImage(), false)));
             Assert.True(library.CanHandleRequest(image, new LoadingRequest("TextureArray_WMipMaps_BC3.dds", false)));
             Assert.True(library.CanHandleRequest(image, new ExportRequest("TextureArray_WMipMaps_BC3.xk", 0)));
-            Assert.True(library.CanHandleRequest(image, new ExportToXenkoRequest()));
+            Assert.True(library.CanHandleRequest(image, new ExportToStrideRequest()));
             image.Dispose();
         }
 
@@ -84,11 +84,11 @@ namespace Xenko.TextureConverter.Tests
         [InlineData("Texture3D_WMipMaps_ATC_RGBA_Explicit.xk")]
         [InlineData("TextureArray_WMipMaps_ATC_RGBA_Explicit.xk")]
         [InlineData("TextureCube_WMipMaps_RGBA8888.xk")]
-        public void ExportToXenkoTest(string file)
+        public void ExportToStrideTest(string file)
         {
             TexImage image = TestTools.Load(library, file);
 
-            ExportToXenkoRequest request = new ExportToXenkoRequest();
+            ExportToStrideRequest request = new ExportToStrideRequest();
             library.Execute(image, request);
 
             var xk = request.XkImage;

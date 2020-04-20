@@ -1,12 +1,12 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Assets.Entities;
-using Xenko.Editor.Preview;
-using Xenko.Engine;
+using Stride.Assets.Entities;
+using Stride.Editor.Preview;
+using Stride.Engine;
 
-namespace Xenko.Assets.Presentation.Preview
+namespace Stride.Assets.Presentation.Preview
 {
     /// <summary>
     /// An implementation of the <see cref="AssetPreview"/> that can preview entities.

@@ -1,12 +1,12 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Collections;
-using Xenko.Core.Storage;
-using Xenko.Graphics;
+using Stride.Core.Collections;
+using Stride.Core.Storage;
+using Stride.Graphics;
 
-namespace Xenko.Rendering
+namespace Stride.Rendering
 {
     /// <summary>
     /// Implementation of <see cref="ResourceGroupLayout"/> specifically for <see cref="RenderSystem"/> use (contains some extra information).

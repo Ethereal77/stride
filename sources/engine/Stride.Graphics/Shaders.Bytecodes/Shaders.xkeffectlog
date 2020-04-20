@@ -3,28 +3,28 @@
 EffectName: SpriteEffect
 UsedParameters:
     EffectSourceCode.Enable: true
-    EffectSourceCode.Namespace: Xenko.Graphics
+    EffectSourceCode.Namespace: Stride.Graphics
 ---
 !EffectCompileRequest
 EffectName: SpriteBatch
 UsedParameters:
     SpriteBase.ColorIsSRgb: false
     EffectSourceCode.Enable: true
-    EffectSourceCode.Namespace: Xenko.Graphics
+    EffectSourceCode.Namespace: Stride.Graphics
 ---
 !EffectCompileRequest
 EffectName: SpriteBatch
 UsedParameters:
     SpriteBase.ColorIsSRgb: true
     EffectSourceCode.Enable: true
-    EffectSourceCode.Namespace: Xenko.Graphics
+    EffectSourceCode.Namespace: Stride.Graphics
     EffectSourceCode.FieldName: binaryBytecodeSRgb
 ---
 !EffectCompileRequest
 EffectName: UIEffect
 UsedParameters:
     EffectSourceCode.Enable: true
-    EffectSourceCode.Namespace: Xenko.Graphics
+    EffectSourceCode.Namespace: Stride.Graphics
     EffectSourceCode.ClassDeclaration: internal partial
 ---
 !EffectCompileRequest
@@ -32,7 +32,7 @@ EffectName: UIEffect
 UsedParameters:
     SpriteBase.ColorIsSRgb: true
     EffectSourceCode.Enable: true
-    EffectSourceCode.Namespace: Xenko.Graphics
+    EffectSourceCode.Namespace: Stride.Graphics
     EffectSourceCode.ClassDeclaration: internal partial
     EffectSourceCode.FieldName: binaryBytecodeSRgb
 ---
@@ -40,7 +40,7 @@ UsedParameters:
 EffectName: SpriteSignedDistanceFieldFontShader
 UsedParameters:
     EffectSourceCode.Enable: true
-    EffectSourceCode.Namespace: Xenko.Graphics
+    EffectSourceCode.Namespace: Stride.Graphics
     EffectSourceCode.ClassDeclaration: internal partial
     EffectSourceCode.FieldName: spriteSignedDistanceFieldFontBytecode
 ---
@@ -48,6 +48,6 @@ UsedParameters:
 EffectName: SignedDistanceFieldFontShader
 UsedParameters:
     EffectSourceCode.Enable: true
-    EffectSourceCode.Namespace: Xenko.Graphics
+    EffectSourceCode.Namespace: Stride.Graphics
     EffectSourceCode.ClassDeclaration: internal partial
     EffectSourceCode.FieldName: signedDistanceFieldFontBytecode

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Interop;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Annotations;
-using Xenko.Assets.Presentation.AssetEditors.UIEditor.ViewModels;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Annotations;
+using Stride.Assets.Presentation.AssetEditors.UIEditor.ViewModels;
 
-namespace Xenko.Assets.Presentation.AssetEditors.UIEditor.Views
+namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Views
 {
     /// <summary>
     /// Interaction logic for UIEditorView.xaml

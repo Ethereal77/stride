@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -7,7 +7,7 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Xenko.Core.Mathematics
+namespace Stride.Core.Mathematics
 {
     /// <summary>
     ///   Represents a four dimensional mathematical vector.
@@ -660,7 +660,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="int"/> array to <see cref="Xenko.Core.Mathematics.Int4"/>.
+        /// Performs an implicit conversion from <see cref="int"/> array to <see cref="Stride.Core.Mathematics.Int4"/>.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>The result of the conversion.</returns>
@@ -670,7 +670,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Int4"/> to <see cref="int"/> array.
+        /// Performs an implicit conversion from <see cref="Stride.Core.Mathematics.Int4"/> to <see cref="int"/> array.
         /// </summary>
         /// <param name="input">The input.</param>
         /// <returns>The result of the conversion.</returns>

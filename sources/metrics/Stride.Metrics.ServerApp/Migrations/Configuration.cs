@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -9,16 +9,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Xenko.Metrics.ServerApp.Migrations
+namespace Stride.Metrics.ServerApp.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<Xenko.Metrics.ServerApp.Models.MetricDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Stride.Metrics.ServerApp.Models.MetricDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(Xenko.Metrics.ServerApp.Models.MetricDbContext context)
+        protected override void Seed(Stride.Metrics.ServerApp.Models.MetricDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -17,9 +17,9 @@ using System.Threading.Tasks;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
-using Xenko.Core;
-using Xenko.Core.Extensions;
-using Xenko.Core.Windows;
+using Stride.Core;
+using Stride.Core.Extensions;
+using Stride.Core.Windows;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.PackageManagement;
@@ -37,17 +37,17 @@ using PackageSource = NuGet.Configuration.PackageSource;
 using PackageSourceProvider = NuGet.Configuration.PackageSourceProvider;
 using Settings = NuGet.Configuration.Settings;
 
-namespace Xenko.Core.Packages
+namespace Stride.Core.Packages
 {
     /// <summary>
     /// Abstraction to interact with a store backed by the NuGet infrastructure.
     /// </summary>
     public class NugetStore : INugetDownloadProgress
     {
-        public const string MainExecutables = @"lib\net472\Xenko.GameStudio.exe,Bin\Windows\Xenko.GameStudio.exe,Bin\Windows-Direct3D11\Xenko.GameStudio.exe";
+        public const string MainExecutables = @"lib\net472\Stride.GameStudio.exe,Bin\Windows\Stride.GameStudio.exe,Bin\Windows-Direct3D11\Stride.GameStudio.exe";
         public const string PrerequisitesInstaller = @"Bin\Prerequisites\install-prerequisites.exe";
 
-        public const string DefaultPackageSource = "https://packages.xenko.com/nuget";
+        public const string DefaultPackageSource = "https://packages.stride3d.net/nuget";
 
         private IPackagesLogger logger;
         private readonly ISettings settings, localSettings;
@@ -77,8 +77,8 @@ namespace Xenko.Core.Packages
             settings = NuGet.Configuration.Settings.LoadDefaultSettings(null);
 
             // Add dev source
-            RemoveDeletedSources(settings, "Xenko");
-            CheckPackageSource("Xenko", DefaultPackageSource);
+            RemoveDeletedSources(settings, "Stride");
+            CheckPackageSource("Stride", DefaultPackageSource);
             settings.SaveToDisk();
 
             InstallPath = SettingsUtility.GetGlobalPackagesFolder(settings);
@@ -133,12 +133,12 @@ namespace Xenko.Core.Packages
         /// List of package Ids under which the main package is known. Usually just one entry, but
         /// we could have several in case there is a product name change.
         /// </summary>
-        public IReadOnlyCollection<string> MainPackageIds { get; } = new[] { "Xenko.GameStudio", "Xenko" };
+        public IReadOnlyCollection<string> MainPackageIds { get; } = new[] { "Stride.GameStudio", "Stride" };
 
         /// <summary>
         /// Package Id of the Visual Studio Integration plugin.
         /// </summary>
-        public string VsixPluginId { get; } = "Xenko.VisualStudio.Package";
+        public string VsixPluginId { get; } = "Stride.VisualStudio.Package";
 
         /// <summary>
         /// Logger for all operations of the package manager.
@@ -244,7 +244,7 @@ namespace Xenko.Core.Packages
         /// </summary>
         /// <param name="packageId">The package Id.</param>
         /// <returns>The name of the variable holding the version of <paramref name="packageId"/>.</returns>
-        public static string GetPackageVersionVariable(string packageId, string packageVariablePrefix = "XenkoPackage")
+        public static string GetPackageVersionVariable(string packageId, string packageVariablePrefix = "StridePackage")
         {
             if (packageId == null) throw new ArgumentNullException(nameof(packageId));
             var newPackageId = packageId.Replace(".", string.Empty);
@@ -330,12 +330,12 @@ namespace Xenko.Core.Packages
                         var installPath = SettingsUtility.GetGlobalPackagesFolder(settings);
 
                         // Old version expects to be installed in GamePackages
-                        if (packageId == "Xenko" && version < new PackageVersion(3, 0, 0, 0) && oldRootDirectory != null)
+                        if (packageId == "Stride" && version < new PackageVersion(3, 0, 0, 0) && oldRootDirectory != null)
                         {
                             installPath = oldRootDirectory;
                         }
 
-                        var projectPath = Path.Combine("XenkoLauncher.json");
+                        var projectPath = Path.Combine("StrideLauncher.json");
                         var spec = new PackageSpec()
                         {
                             Name = Path.GetFileNameWithoutExtension(projectPath), // make sure this package never collides with a dependency
@@ -360,7 +360,7 @@ namespace Xenko.Core.Packages
                                 ProjectName = Path.GetFileNameWithoutExtension(projectPath),
                                 ProjectStyle = ProjectStyle.PackageReference,
                                 ProjectUniqueName = projectPath,
-                                OutputPath = Path.Combine(Path.GetTempPath(), $"XenkoLauncher-{packageId}-{version.ToString()}"),
+                                OutputPath = Path.Combine(Path.GetTempPath(), $"StrideLauncher-{packageId}-{version.ToString()}"),
                                 OriginalTargetFrameworks = new[] { "net472" },
                                 ConfigFilePaths = settings.GetConfigFilePaths(),
                                 PackagesPath = installPath,
@@ -418,7 +418,7 @@ namespace Xenko.Core.Packages
                             }
                         }
 
-                        if (packageId == "Xenko" && version < new PackageVersion(3, 0, 0, 0))
+                        if (packageId == "Stride" && version < new PackageVersion(3, 0, 0, 0))
                         {
                             UpdateTargetsHelper();
                         }
@@ -480,7 +480,7 @@ namespace Xenko.Core.Packages
                     //    currentProgressReport = null;
                     //}
 
-                    if (package.Id == "Xenko" && package.Version < new PackageVersion(3, 0, 0, 0))
+                    if (package.Id == "Stride" && package.Version < new PackageVersion(3, 0, 0, 0))
                     {
                         UpdateTargetsHelper();
                     }
@@ -833,17 +833,17 @@ namespace Xenko.Core.Packages
             }
         }
 
-        // Used only for Xenko 1.x and 2.x
+        // Used only for Stride 1.x and 2.x
         private void UpdateTargetsHelper()
         {
             if (oldRootDirectory == null)
                 return;
 
             // Get latest package only for each MainPackageIds (up to 2.x)
-            var xenkoOldPackages = GetLocalPackages("Xenko").Where(package => !((package.Tags != null) && package.Tags.Contains("internal"))).Where(x => x.Version.Version.Major < 3).ToList();
+            var strideOldPackages = GetLocalPackages("Stride").Where(package => !((package.Tags != null) && package.Tags.Contains("internal"))).Where(x => x.Version.Version.Major < 3).ToList();
 
             // Generate target file
-            var targetGenerator = new TargetGenerator(this, xenkoOldPackages, "SiliconStudioPackage");
+            var targetGenerator = new TargetGenerator(this, strideOldPackages, "SiliconStudioPackage");
             var targetFileContent = targetGenerator.TransformText();
             var targetFile = Path.Combine(oldRootDirectory, @"Targets\SiliconStudio.Common.targets");
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,19 +9,19 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core.Assets.Quantum.Visitors;
-using Xenko.Core.Assets.Serializers;
-using Xenko.Core.Assets.Yaml;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Reflection;
-using Xenko.Core.TypeConverters;
-using Xenko.Core.Quantum;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Assets.Quantum.Visitors;
+using Stride.Core.Assets.Serializers;
+using Stride.Core.Assets.Yaml;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Reflection;
+using Stride.Core.TypeConverters;
+using Stride.Core.Quantum;
 
-namespace Xenko.Core.Assets.Editor.ViewModel.CopyPasteProcessors
+namespace Stride.Core.Assets.Editor.ViewModel.CopyPasteProcessors
 {
     /// <summary>
     /// Default paste processor for asset. Handles simple properties and collections.

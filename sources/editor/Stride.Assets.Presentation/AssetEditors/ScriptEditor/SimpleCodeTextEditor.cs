@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -15,7 +15,7 @@ using RoslynPad.Roslyn.BraceMatching;
 using RoslynPad.Roslyn.Diagnostics;
 using RoslynPad.Roslyn.QuickInfo;
 
-namespace Xenko.Assets.Presentation.AssetEditors.ScriptEditor
+namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 {
     /// <summary>
     /// A <see cref="CodeTextEditor"/> with intellisense connected to our <see cref="RoslynWorkspace"/>.

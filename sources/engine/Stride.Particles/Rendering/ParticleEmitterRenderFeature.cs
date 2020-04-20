@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-using Xenko.Core.Mathematics;
-using Xenko.Core.Threading;
-using Xenko.Graphics;
-using Xenko.Particles.Materials;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using Buffer = Xenko.Graphics.Buffer;
+using Stride.Core.Mathematics;
+using Stride.Core.Threading;
+using Stride.Graphics;
+using Stride.Particles.Materials;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Buffer = Stride.Graphics.Buffer;
 
-namespace Xenko.Particles.Rendering
+namespace Stride.Particles.Rendering
 {
     /// <summary>
     /// Should be identical to the cbuffer PerView in ParticleUtilities.xksl

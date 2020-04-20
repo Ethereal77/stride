@@ -1,13 +1,13 @@
 <!--
 ***********************************************************************************************
-  Xenko.GlobalSettings.targets
+  Stride.GlobalSettings.targets
 
   Build file pre-included before the building of the project to configure the default graphics
   API, assembly processor options, dependency search directory. Also configures the Runtime
   Identifiers, define constants, the Effect Compiler, UI framework, compilation settings and
   final asset packing.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="RuntimeIdentifier">
@@ -15,31 +15,31 @@
   <!-- Default values -->
   <PropertyGroup>
     <!-- Defaults for CPU and GraphicsApi based on platform-->
-    <XenkoDefaultGraphicsApi>Direct3D11</XenkoDefaultGraphicsApi>
-    <XenkoGraphicsApiOriginal>$(XenkoGraphicsApi)</XenkoGraphicsApiOriginal>
-    <XenkoGraphicsApi Condition="'$(XenkoGraphicsApi)' == '' and '$(XenkoDefaultGraphicsApi)' != ''">$(XenkoDefaultGraphicsApi)</XenkoGraphicsApi>
-    <XenkoAssemblyProcessorOptions Condition="'$(XenkoAssemblyProcessorOptions)' == ''">$(XenkoAssemblyProcessorDefaultOptions)</XenkoAssemblyProcessorOptions>
+    <StrideDefaultGraphicsApi>Direct3D11</StrideDefaultGraphicsApi>
+    <StrideGraphicsApiOriginal>$(StrideGraphicsApi)</StrideGraphicsApiOriginal>
+    <StrideGraphicsApi Condition="'$(StrideGraphicsApi)' == '' and '$(StrideDefaultGraphicsApi)' != ''">$(StrideDefaultGraphicsApi)</StrideGraphicsApi>
+    <StrideAssemblyProcessorOptions Condition="'$(StrideAssemblyProcessorOptions)' == ''">$(StrideAssemblyProcessorDefaultOptions)</StrideAssemblyProcessorOptions>
   </PropertyGroup>
 
   <PropertyGroup>
-    <XenkoDependenciesDir Condition="'$(XenkoDependenciesDir)' != '' and !HasTrailingSlash('$(XenkoDependenciesDir)')">$(XenkoDependenciesDir)\</XenkoDependenciesDir>
-    <XenkoDependenciesDir Condition="'$(XenkoDependenciesDir)' == ''">$(XenkoPackageXenko)\deps\</XenkoDependenciesDir>
+    <StrideDependenciesDir Condition="'$(StrideDependenciesDir)' != '' and !HasTrailingSlash('$(StrideDependenciesDir)')">$(StrideDependenciesDir)\</StrideDependenciesDir>
+    <StrideDependenciesDir Condition="'$(StrideDependenciesDir)' == ''">$(StridePackageStride)\deps\</StrideDependenciesDir>
   </PropertyGroup>
 
-  <!--Import global Xenko settings-->
-  <Import Project="$(MSBuildThisFileDirectory)..\targets\Xenko.Core.GlobalSettings.targets"/>
+  <!--Import global Stride settings-->
+  <Import Project="$(MSBuildThisFileDirectory)..\targets\Stride.Core.GlobalSettings.targets"/>
 
   <!-- Include platform dependent assembly when specified -->
-  <PropertyGroup Condition="'$(XenkoGraphicsApiDependent)' == 'true'">
+  <PropertyGroup Condition="'$(StrideGraphicsApiDependent)' == 'true'">
     <!-- Build list of Graphics API for platform that supports multiple -->
-    <XenkoGraphicsApisWindows Condition="'$(XenkoGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12</XenkoGraphicsApisWindows>
-    <XenkoGraphicsApisWindows Condition="'$(XenkoGraphicsApisWindows)' == ''">Direct3D11</XenkoGraphicsApisWindows>
-    <_XenkoGraphicsApisWindows>;$(XenkoGraphicsApisWindows);</_XenkoGraphicsApisWindows>
+    <StrideGraphicsApisWindows Condition="'$(StrideGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12</StrideGraphicsApisWindows>
+    <StrideGraphicsApisWindows Condition="'$(StrideGraphicsApisWindows)' == ''">Direct3D11</StrideGraphicsApisWindows>
+    <_StrideGraphicsApisWindows>;$(StrideGraphicsApisWindows);</_StrideGraphicsApisWindows>
 
     <!-- Compute list of runtime identifiers based on platforms and graphics platforms -->
     <RuntimeIdentifiers></RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$(_XenkoPlatforms.Contains(';Windows;')) And ($(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0') And $(_XenkoGraphicsApisWindows.Contains(';Direct3D11;'))">$(RuntimeIdentifiers);win</RuntimeIdentifiers>
-    <RuntimeIdentifiers Condition="$(_XenkoPlatforms.Contains(';Windows;')) And ($(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0') And $(_XenkoGraphicsApisWindows.Contains(';Direct3D12;'))">$(RuntimeIdentifiers);win-d3d12</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="$(_StridePlatforms.Contains(';Windows;')) And ($(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0') And $(_StrideGraphicsApisWindows.Contains(';Direct3D11;'))">$(RuntimeIdentifiers);win</RuntimeIdentifiers>
+    <RuntimeIdentifiers Condition="$(_StridePlatforms.Contains(';Windows;')) And ($(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0') And $(_StrideGraphicsApisWindows.Contains(';Direct3D12;'))">$(RuntimeIdentifiers);win-d3d12</RuntimeIdentifiers>
 
     <RuntimeIdentifiers>$([MSBuild]::Unescape($(RuntimeIdentifiers.Trim(';'))))</RuntimeIdentifiers>
     <!-- Default fallbacks -->
@@ -54,13 +54,13 @@
     <!-- Properly setup RuntimeIdentifier if it was not a Graphics-API-specific one -->
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' != 'win' And '$(RuntimeIdentifier)' != 'win-d3d12'">$(RuntimeIdentifierDefault)</RuntimeIdentifier>
 
-    <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win'">Direct3D11</XenkoGraphicsApi>
-    <XenkoGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-d3d12'">Direct3D12</XenkoGraphicsApi>
+    <StrideGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win'">Direct3D11</StrideGraphicsApi>
+    <StrideGraphicsApi Condition="'$(RuntimeIdentifier)' == 'win-d3d12'">Direct3D12</StrideGraphicsApi>
   </PropertyGroup>
 
   <!-- Workaround: Remove RuntimeIdentifier from Solution references (https://github.com/onovotny/MSBuildSdkExtras/issues/139)
                    additionally, also remove it from all references to avoid issues -->
-  <Target Name="_XenkoRemoveRuntimeIdentifier" AfterTargets="AssignProjectConfiguration">
+  <Target Name="_StrideRemoveRuntimeIdentifier" AfterTargets="AssignProjectConfiguration">
     <ItemGroup>
       <ProjectReferenceWithConfiguration>
         <GlobalPropertiesToRemove>%(ProjectReferenceWithConfiguration.GlobalPropertiesToRemove);RuntimeIdentifier</GlobalPropertiesToRemove>
@@ -69,53 +69,53 @@
   </Target>
 
   <!--
-    Settings XenkoGraphicsApi specific
+    Settings StrideGraphicsApi specific
   -->
-  <PropertyGroup Condition=" '$(XenkoGraphicsApi)' == 'Direct3D11' ">
-    <XenkoGraphicsApiDefines>XENKO_GRAPHICS_API_DIRECT3D;XENKO_GRAPHICS_API_DIRECT3D11</XenkoGraphicsApiDefines>
+  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Direct3D11' ">
+    <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_DIRECT3D;STRIDE_GRAPHICS_API_DIRECT3D11</StrideGraphicsApiDefines>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(XenkoGraphicsApi)' == 'Direct3D12' ">
-    <XenkoGraphicsApiDefines>XENKO_GRAPHICS_API_DIRECT3D;XENKO_GRAPHICS_API_DIRECT3D12</XenkoGraphicsApiDefines>
+  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Direct3D12' ">
+    <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_DIRECT3D;STRIDE_GRAPHICS_API_DIRECT3D12</StrideGraphicsApiDefines>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(XenkoGraphicsApi)' == 'Null' ">
-    <XenkoGraphicsApiDefines>XENKO_GRAPHICS_API_NULL</XenkoGraphicsApiDefines>
+  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Null' ">
+    <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_NULL</StrideGraphicsApiDefines>
   </PropertyGroup>
 
   <!--
     Global Defines
   -->
   <PropertyGroup>
-    <XenkoGraphicsApiDefines>$(XenkoGraphicsApiDefines);XENKO_EFFECT_COMPILER</XenkoGraphicsApiDefines>
-    <XenkoEffectCompiler>true</XenkoEffectCompiler>
+    <StrideGraphicsApiDefines>$(StrideGraphicsApiDefines);STRIDE_EFFECT_COMPILER</StrideGraphicsApiDefines>
+    <StrideEffectCompiler>true</StrideEffectCompiler>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(XenkoNETRuntime)' == 'CoreCLR' ">
-    <XenkoNETRuntimeDefines>XENKO_RUNTIME_CORECLR</XenkoNETRuntimeDefines>
+  <PropertyGroup Condition=" '$(StrideNETRuntime)' == 'CoreCLR' ">
+    <StrideNETRuntimeDefines>STRIDE_RUNTIME_CORECLR</StrideNETRuntimeDefines>
     <AutoIncludeSystemAssembly>true</AutoIncludeSystemAssembly>
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);$(XenkoGraphicsApiDefines)</DefineConstants>
+    <DefineConstants>$(DefineConstants);$(StrideGraphicsApiDefines)</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
-    <XenkoUI></XenkoUI>
-    <XenkoUI Condition="$(TargetFramework.StartsWith('net4')) AND ('$(XenkoGraphicsApi)' == 'Direct3D11' Or '$(XenkoGraphicsApi)' == 'Direct3D12')">$(XenkoUI);WINFORMS;WPF</XenkoUI>
+    <StrideUI></StrideUI>
+    <StrideUI Condition="$(TargetFramework.StartsWith('net4')) AND ('$(StrideGraphicsApi)' == 'Direct3D11' Or '$(StrideGraphicsApi)' == 'Direct3D12')">$(StrideUI);WINFORMS;WPF</StrideUI>
 
-    <DefineConstants Condition="$(XenkoUI.Contains('WINFORMS'))">$(DefineConstants);XENKO_UI_WINFORMS</DefineConstants>
-    <DefineConstants Condition="$(XenkoUI.Contains('WPF'))">$(DefineConstants);XENKO_UI_WPF</DefineConstants>
+    <DefineConstants Condition="$(StrideUI.Contains('WINFORMS'))">$(DefineConstants);STRIDE_UI_WINFORMS</DefineConstants>
+    <DefineConstants Condition="$(StrideUI.Contains('WPF'))">$(DefineConstants);STRIDE_UI_WPF</DefineConstants>
   </PropertyGroup>
-  <!-- Build the XenkoUIList using the value of XenkoUI -->
-  <ItemGroup Condition="'$(XenkoUIList)' == ''">
-    <XenkoUIList Condition="'$(XenkoUI)' != ''" Include="$(XenkoUI)" />
-    <XenkoUIList Condition="'$(XenkoUI)' == ''" Include="None" />
+  <!-- Build the StrideUIList using the value of StrideUI -->
+  <ItemGroup Condition="'$(StrideUIList)' == ''">
+    <StrideUIList Condition="'$(StrideUI)' != ''" Include="$(StrideUI)" />
+    <StrideUIList Condition="'$(StrideUI)' == ''" Include="None" />
   </ItemGroup>
 
 
-  <!--Building Xenko SDK itself?-->
-  <PropertyGroup Condition=" '$(XenkoUserBuild)' != 'true' ">
+  <!--Building Stride SDK itself?-->
+  <PropertyGroup Condition=" '$(StrideUserBuild)' != 'true' ">
     <!--Output All files in solution\Bin directory-->
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -123,13 +123,13 @@
   </PropertyGroup>
 
   <!-- Pack target -->
-  <!--<UsingTask TaskName="Xenko.Core.Tasks.PackAssets" AssemblyFile="$(MSBuildThisFileDirectory)..\core\Xenko.Core.Tasks\bin\$(Configuration)\net472\Xenko.Core.Tasks.exe" />-->
-  <Target Name="PrepareXenkoAssetsForPack" BeforeTargets="_GetPackageFiles" Condition="'$(XenkoPackAssets)' == 'true'">
+  <!--<UsingTask TaskName="Stride.Core.Tasks.PackAssets" AssemblyFile="$(MSBuildThisFileDirectory)..\core\Stride.Core.Tasks\bin\$(Configuration)\net472\Stride.Core.Tasks.exe" />-->
+  <Target Name="PrepareStrideAssetsForPack" BeforeTargets="_GetPackageFiles" Condition="'$(StridePackAssets)' == 'true'">
     <!-- We use exec version rather than task version, otherwise file will be locked during rebuild -->
-    <!--<PackAssets ProjectFile="$(MSBuildProjectFile)" IntermediatePackagePath="$(IntermediateOutputPath)\xenko">
+    <!--<PackAssets ProjectFile="$(MSBuildProjectFile)" IntermediatePackagePath="$(IntermediateOutputPath)\stride">
       <Output TaskParameter="GeneratedItems" ItemName="None"/>
     </PackAssets>-->
-    <Exec Command="&quot;$(MSBuildThisFileDirectory)..\core\Xenko.Core.Tasks\bin\$(Configuration)\net472\Xenko.Core.Tasks.exe&quot; pack-assets &quot;$(MSBuildProjectFile)&quot; &quot;$(IntermediateOutputPath)\xenko&quot;" ConsoleToMsBuild="true">
+    <Exec Command="&quot;$(MSBuildThisFileDirectory)..\core\Stride.Core.Tasks\bin\$(Configuration)\net472\Stride.Core.Tasks.exe&quot; pack-assets &quot;$(MSBuildProjectFile)&quot; &quot;$(IntermediateOutputPath)\stride&quot;" ConsoleToMsBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="PackAssetsLine" />
     </Exec>
     <ItemGroup>

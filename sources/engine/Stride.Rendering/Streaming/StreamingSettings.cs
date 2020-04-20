@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Data;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Data;
 
-namespace Xenko.Streaming
+namespace Stride.Streaming
 {
     [DataContract]
     [Display("Streaming")]
@@ -30,7 +30,7 @@ namespace Xenko.Streaming
 
         /// <inheritdoc cref="StreamingManager.ManagerUpdatesInterval"/>
         /// <userdoc>
-        /// How frequently Xenko updates the streaming. Smaller intervals mean the streaming system reacts faster, but use more CPU and cause more memory fluctuations.
+        /// How frequently Stride updates the streaming. Smaller intervals mean the streaming system reacts faster, but use more CPU and cause more memory fluctuations.
         /// </userdoc>
         /// <seealso cref="StreamingManager.ManagerUpdatesInterval"/>
         [DataMember]
@@ -61,7 +61,7 @@ namespace Xenko.Streaming
 
         /// <inheritdoc cref="StreamingManager.TargetedMemoryBudget"/>
         /// <userdoc>
-        /// When the memory used by streaming exceeds this budget, Xenko unloads unused textures. You can increase this to keep more textures loaded when you have memory to spare, and vice versa.
+        /// When the memory used by streaming exceeds this budget, Stride unloads unused textures. You can increase this to keep more textures loaded when you have memory to spare, and vice versa.
         /// </userdoc>
         /// <seealso cref="StreamingManager.TargetedMemoryBudget"/>
         [DataMember]

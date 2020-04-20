@@ -1,23 +1,23 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:tp="clr-namespace:Xenko.Assets.Presentation.TemplateProviders"
+                    xmlns:tp="clr-namespace:Stride.Assets.Presentation.TemplateProviders"
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:view="clr-namespace:Xenko.Core.Presentation.Quantum.View;assembly=Xenko.Core.Presentation.Quantum"
+                    xmlns:view="clr-namespace:Stride.Core.Presentation.Quantum.View;assembly=Stride.Core.Presentation.Quantum"
                     xmlns:system="clr-namespace:System;assembly=mscorlib"
-                    xmlns:behaviors="clr-namespace:Xenko.Core.Assets.Editor.View.Behaviors;assembly=Xenko.Core.Assets.Editor"
-                    xmlns:valueConverters="clr-namespace:Xenko.Core.Assets.Editor.View.ValueConverters;assembly=Xenko.Core.Assets.Editor"
-                    xmlns:composers="clr-namespace:Xenko.Rendering.Compositing;assembly=Xenko.Engine"
-                    xmlns:pvc="clr-namespace:Xenko.Assets.Presentation.ValueConverters"
-                    xmlns:engine="clr-namespace:Xenko.Engine;assembly=Xenko.Engine"
-                    xmlns:data="clr-namespace:Xenko.Data;assembly=Xenko"
-                    xmlns:xk="http://schemas.xenko.com/xaml/presentation"
-                    xmlns:assetCommands="clr-namespace:Xenko.Core.Assets.Editor.Quantum.NodePresenters.Commands;assembly=Xenko.Core.Assets.Editor"
-                    xmlns:qvm="clr-namespace:Xenko.Core.Presentation.Quantum.ViewModels;assembly=Xenko.Core.Presentation.Quantum"
-                    xmlns:localView="clr-namespace:Xenko.Assets.Presentation.View">
+                    xmlns:behaviors="clr-namespace:Stride.Core.Assets.Editor.View.Behaviors;assembly=Stride.Core.Assets.Editor"
+                    xmlns:valueConverters="clr-namespace:Stride.Core.Assets.Editor.View.ValueConverters;assembly=Stride.Core.Assets.Editor"
+                    xmlns:composers="clr-namespace:Stride.Rendering.Compositing;assembly=Stride.Engine"
+                    xmlns:pvc="clr-namespace:Stride.Assets.Presentation.ValueConverters"
+                    xmlns:engine="clr-namespace:Stride.Engine;assembly=Stride.Engine"
+                    xmlns:data="clr-namespace:Stride.Data;assembly=Stride"
+                    xmlns:xk="http://schemas.stride3d.net/xaml/presentation"
+                    xmlns:assetCommands="clr-namespace:Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands;assembly=Stride.Core.Assets.Editor"
+                    xmlns:qvm="clr-namespace:Stride.Core.Presentation.Quantum.ViewModels;assembly=Stride.Core.Presentation.Quantum"
+                    xmlns:localView="clr-namespace:Stride.Assets.Presentation.View">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="/Xenko.Core.Assets.Editor;component/View/DefaultPropertyTemplateProviders.xaml"/>
-    <ResourceDictionary Source="/Xenko.Assets.Presentation;component/View/ImageDictionary.xaml"/>
+    <ResourceDictionary Source="/Stride.Core.Assets.Editor;component/View/DefaultPropertyTemplateProviders.xaml"/>
+    <ResourceDictionary Source="/Stride.Assets.Presentation;component/View/ImageDictionary.xaml"/>
   </ResourceDictionary.MergedDictionaries>
 
   <view:TypeMatchTemplateProvider x:Key="EntityComponentTemplateProvider" Type="engine:EntityComponent"

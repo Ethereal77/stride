@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,9 +9,9 @@ using System.Windows.Media;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-using Xenko.VisualStudio.BuildEngine;
+using Stride.VisualStudio.BuildEngine;
 
-namespace Xenko.VisualStudio
+namespace Stride.VisualStudio
 {
     public partial class OutputClassifier
     {
@@ -27,12 +27,12 @@ namespace Xenko.VisualStudio
             classificationTypes.Add("Fatal", AssetCompilerFatal);
         }
 
-        public const string AssetCompilerDebug = "Xenko.AssetCompiler.Debug";
-        public const string AssetCompilerVerbose = "Xenko.AssetCompiler.Verbose";
-        public const string AssetCompilerInfo = "Xenko.AssetCompiler.Info";
-        public const string AssetCompilerWarning = "Xenko.AssetCompiler.Warning";
-        public const string AssetCompilerError = "Xenko.AssetCompiler.Error";
-        public const string AssetCompilerFatal = "Xenko.AssetCompiler.Fatal";
+        public const string AssetCompilerDebug = "Stride.AssetCompiler.Debug";
+        public const string AssetCompilerVerbose = "Stride.AssetCompiler.Verbose";
+        public const string AssetCompilerInfo = "Stride.AssetCompiler.Info";
+        public const string AssetCompilerWarning = "Stride.AssetCompiler.Warning";
+        public const string AssetCompilerError = "Stride.AssetCompiler.Error";
+        public const string AssetCompilerFatal = "Stride.AssetCompiler.Fatal";
 
         [Export]
         [Name(AssetCompilerDebug)]
@@ -68,7 +68,7 @@ namespace Xenko.VisualStudio
             [ImportingConstructor]
             public AssetCompilerDebugFormat(OutputClassificationColorManager colorManager)
             {
-                DisplayName = "Xenko AssetCompiler Debug";
+                DisplayName = "Stride AssetCompiler Debug";
                 this.IsBold = false;
                 var classificationColor = colorManager.GetClassificationColor(AssetCompilerDebug);
                 ForegroundColor = classificationColor.ForegroundColor;
@@ -86,7 +86,7 @@ namespace Xenko.VisualStudio
             [ImportingConstructor]
             public AssetCompilerVerboseFormat(OutputClassificationColorManager colorManager)
             {
-                DisplayName = "Xenko AssetCompiler Verbose";
+                DisplayName = "Stride AssetCompiler Verbose";
                 this.IsBold = false;
                 var classificationColor = colorManager.GetClassificationColor(AssetCompilerVerbose);
                 ForegroundColor = classificationColor.ForegroundColor;
@@ -104,7 +104,7 @@ namespace Xenko.VisualStudio
             [ImportingConstructor]
             public AssetCompilerInfoFormat(OutputClassificationColorManager colorManager)
             {
-                DisplayName = "Xenko AssetCompiler Info";
+                DisplayName = "Stride AssetCompiler Info";
                 this.IsBold = false;
                 var classificationColor = colorManager.GetClassificationColor(AssetCompilerInfo);
                 ForegroundColor = classificationColor.ForegroundColor;
@@ -122,7 +122,7 @@ namespace Xenko.VisualStudio
             [ImportingConstructor]
             public AssetCompilerWarningFormat(OutputClassificationColorManager colorManager)
             {
-                DisplayName = "Xenko AssetCompiler Warning";
+                DisplayName = "Stride AssetCompiler Warning";
                 this.IsBold = false;
                 var classificationColor = colorManager.GetClassificationColor(AssetCompilerWarning);
                 ForegroundColor = classificationColor.ForegroundColor;
@@ -140,7 +140,7 @@ namespace Xenko.VisualStudio
             [ImportingConstructor]
             public AssetCompilerErrorFormat(OutputClassificationColorManager colorManager)
             {
-                DisplayName = "Xenko AssetCompiler Error";
+                DisplayName = "Stride AssetCompiler Error";
                 this.IsBold = true;
                 var classificationColor = colorManager.GetClassificationColor(AssetCompilerError);
                 ForegroundColor = classificationColor.ForegroundColor;
@@ -158,7 +158,7 @@ namespace Xenko.VisualStudio
             [ImportingConstructor]
             public AssetCompilerFatalFormat(OutputClassificationColorManager colorManager)
             {
-                DisplayName = "Xenko AssetCompiler Fatal";
+                DisplayName = "Stride AssetCompiler Fatal";
                 this.IsBold = true;
                 var classificationColor = colorManager.GetClassificationColor(AssetCompilerFatal);
                 ForegroundColor = classificationColor.ForegroundColor;

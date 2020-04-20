@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,14 +6,14 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Engine;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Graphics.Regression;
+using Stride.Core;
+using Stride.Core.Serialization.Contents;
+using Stride.Engine;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Graphics.Regression;
 
-namespace Xenko.Physics.Tests
+namespace Stride.Physics.Tests
 {
     /// <summary>
     /// Game class for test on the Input sensors.
@@ -73,10 +73,10 @@ namespace Xenko.Physics.Tests
 
             var assetManager = Services.GetSafeServiceAs<ContentManager>();
 
-            // Make sure you have created a Scene with the same name (testName) in your XenkoGameStudio project.
+            // Make sure you have created a Scene with the same name (testName) in your StrideGameStudio project.
             // The scene should be included in the build as Root and copied together with the other 
             //  assets to the /GameAssets directory contained in this assembly's directory
-            // Finally, make sure the scene is also added to the Xenko.Physics.Tests.xkpkg
+            // Finally, make sure the scene is also added to the Stride.Physics.Tests.xkpkg
             //  and it has a proper uid. Example (for the VisualTestSpawners scene):
             //     - a9ba28ad-d83b-4957-8ed6-42863c1d903c:VisualTestSpawners
             SceneSystem.SceneInstance = new SceneInstance(Services, assetManager.Load<Scene>(testName));

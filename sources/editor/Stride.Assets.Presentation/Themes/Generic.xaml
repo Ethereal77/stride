@@ -1,20 +1,20 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:xk="http://schemas.xenko.com/xaml/presentation"
-    xmlns:views="clr-namespace:Xenko.Assets.Presentation.Preview.Views"
-    xmlns:valueConverters="clr-namespace:Xenko.Core.Assets.Editor.View.ValueConverters;assembly=Xenko.Core.Assets.Editor"
+    xmlns:xk="http://schemas.stride3d.net/xaml/presentation"
+    xmlns:views="clr-namespace:Stride.Assets.Presentation.Preview.Views"
+    xmlns:valueConverters="clr-namespace:Stride.Core.Assets.Editor.View.ValueConverters;assembly=Stride.Core.Assets.Editor"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:behaviors="clr-namespace:Xenko.Assets.Presentation.View.Behaviors"
+    xmlns:behaviors="clr-namespace:Stride.Assets.Presentation.View.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModel="clr-namespace:Xenko.Assets.Presentation.ViewModel.Preview"
-    xmlns:preview="clr-namespace:Xenko.Assets.Presentation.Preview"
+    xmlns:viewModel="clr-namespace:Stride.Assets.Presentation.ViewModel.Preview"
+    xmlns:preview="clr-namespace:Stride.Assets.Presentation.Preview"
     mc:Ignorable="d">
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="/Xenko.Core.Assets.Editor;component/View/CommonResources.xaml"/>
-    <ResourceDictionary Source="/Xenko.Assets.Presentation;component/View/ImageDictionary.xaml"/>
-    <ResourceDictionary Source="/Xenko.Assets.Presentation;component/AssetEditors/VisualScriptEditor/Views/GraphTemplates.xaml"/>
+    <ResourceDictionary Source="/Stride.Core.Assets.Editor;component/View/CommonResources.xaml"/>
+    <ResourceDictionary Source="/Stride.Assets.Presentation;component/View/ImageDictionary.xaml"/>
+    <ResourceDictionary Source="/Stride.Assets.Presentation;component/AssetEditors/VisualScriptEditor/Views/GraphTemplates.xaml"/>
   </ResourceDictionary.MergedDictionaries>
 
   <Style TargetType="{x:Type views:AnimationPreviewView}">
@@ -64,7 +64,7 @@
                 </Slider>
               </StackPanel>
             </Border>
-            <ContentPresenter x:Name="PART_XenkoView"/>
+            <ContentPresenter x:Name="PART_StrideView"/>
           </DockPanel>
         </ControlTemplate>
       </Setter.Value>
@@ -100,7 +100,7 @@
                 </ItemsControl.ItemsPanel>
               </ListBox>
             </Border>
-            <ContentPresenter x:Name="PART_XenkoView"/>
+            <ContentPresenter x:Name="PART_StrideView"/>
           </DockPanel>
         </ControlTemplate>
       </Setter.Value>
@@ -119,7 +119,7 @@
                 </Button>
               </StackPanel>
             </Border>
-            <ContentPresenter x:Name="PART_XenkoView"/>
+            <ContentPresenter x:Name="PART_StrideView"/>
           </DockPanel>
         </ControlTemplate>
       </Setter.Value>
@@ -156,7 +156,7 @@
                 </Grid>
               </StackPanel>
             </Border>
-            <ContentPresenter x:Name="PART_XenkoView"/>
+            <ContentPresenter x:Name="PART_StrideView"/>
           </DockPanel>
         </ControlTemplate>
       </Setter.Value>
@@ -172,7 +172,7 @@
               <StackPanel Orientation="Horizontal"  Margin="6">
               </StackPanel>
             </Border>
-            <ContentPresenter x:Name="PART_XenkoView"/>
+            <ContentPresenter x:Name="PART_StrideView"/>
           </DockPanel>
         </ControlTemplate>
       </Setter.Value>
@@ -290,7 +290,7 @@
                 </i:Interaction.Behaviors>
               </Slider>
             </Border>
-            <ContentPresenter x:Name="PART_XenkoView"/>
+            <ContentPresenter x:Name="PART_StrideView"/>
           </DockPanel>
         </ControlTemplate>
       </Setter.Value>
@@ -314,7 +314,7 @@
                 </Button>
               </Grid>
             </Border>
-            <ContentPresenter x:Name="PART_XenkoView"/>
+            <ContentPresenter x:Name="PART_StrideView"/>
           </DockPanel>
         </ControlTemplate>
       </Setter.Value>
@@ -383,7 +383,7 @@
               </StatusBarItem>
             </StatusBar>
 
-            <ContentPresenter x:Name="PART_XenkoView"/>
+            <ContentPresenter x:Name="PART_StrideView"/>
           </DockPanel>
           <ControlTemplate.Triggers>
             <DataTrigger Binding="{Binding PreviewDimension}" Value="TextureCube">

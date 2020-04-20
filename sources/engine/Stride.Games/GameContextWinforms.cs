@@ -1,14 +1,14 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
 
 using System;
 using System.Windows.Forms;
 
-namespace Xenko.Games
+namespace Stride.Games
 {
     /// <summary>
     /// A <see cref="GameContext"/> to use for rendering to an existing WinForm <see cref="Control"/>.
@@ -38,7 +38,7 @@ namespace Xenko.Games
 
         private static Form CreateForm()
         {
-#if !XENKO_GRAPHICS_API_NULL
+#if !STRIDE_GRAPHICS_API_NULL
             return new GameForm();
 #else
             // Not Reachable.

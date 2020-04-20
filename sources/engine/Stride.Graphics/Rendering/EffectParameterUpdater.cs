@@ -1,14 +1,14 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core;
-using Xenko.Graphics;
-using Xenko.Shaders;
+using Stride.Core;
+using Stride.Graphics;
+using Stride.Shaders;
 
-namespace Xenko.Rendering
+namespace Stride.Rendering
 {
     /// <summary>
     /// Helper class to update several <see cref="ResourceGroup"/> from a <see cref="ParameterCollection"/>.

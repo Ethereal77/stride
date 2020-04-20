@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,14 +9,14 @@ using System.Windows;
 
 using Microsoft.Xaml.Behaviors;
 
-using Xenko.Core;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters.Keys;
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Controls;
-using Xenko.Core.Presentation.Quantum;
-using Xenko.Core.Presentation.Quantum.ViewModels;
+using Stride.Core;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters.Keys;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Controls;
+using Stride.Core.Presentation.Quantum;
+using Stride.Core.Presentation.Quantum.ViewModels;
 
-namespace Xenko.Core.Assets.Editor.View.Behaviors
+namespace Stride.Core.Assets.Editor.View.Behaviors
 {
     /// <summary>
     /// This behavior manages auto-expanding of property items of a <see cref="PropertyView"/> that is bound to an <see cref="GraphViewModel"/>.

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
-using Xenko.Engine;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
+using Stride.Engine;
 
-namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFactories
+namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFactories
 {
     public abstract class EntityFactory : IEntityFactory
     {
@@ -41,7 +41,7 @@ namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFac
             assetPicker.Message = "Select the asset to use for this entity";
             assetPicker.AcceptedTypes.AddRange(assetTypes);
             var result = await assetPicker.ShowModal();
-            return result == Xenko.Core.Presentation.Services.DialogResult.Ok ? assetPicker.SelectedAssets.FirstOrDefault() : null;
+            return result == Stride.Core.Presentation.Services.DialogResult.Ok ? assetPicker.SelectedAssets.FirstOrDefault() : null;
         }
 
         protected static Task<Entity> CreateEntityWithComponent(string name, EntityComponent component, params EntityComponent[] additionalComponents)

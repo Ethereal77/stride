@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,22 +9,22 @@ using System.Linq;
 
 using Xunit;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.Rendering.Materials;
-using Xenko.Assets.Models;
-using Xenko.Assets.Textures;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.Rendering.Materials;
+using Stride.Assets.Models;
+using Stride.Assets.Textures;
 
-namespace Xenko.Assets.Tests
+namespace Stride.Assets.Tests
 {
     /*
         TODO: TO REWRITE WITH new AssetImportSession
 
         public class AssetImportTest
         {
-            public const string DirectoryTestBase = @"data\Xenko.Assets.Tests\";
+            public const string DirectoryTestBase = @"data\Stride.Assets.Tests\";
 
             [TestFixtureSetUp]
             public void Initialize()

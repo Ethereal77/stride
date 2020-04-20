@@ -1,16 +1,16 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Animations;
-using Xenko.Particles.Sorters;
-using Xenko.Particles.VertexLayouts;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Animations;
+using Stride.Particles.Sorters;
+using Stride.Particles.VertexLayouts;
 
-namespace Xenko.Particles.ShapeBuilders
+namespace Stride.Particles.ShapeBuilders
 {
     /// <summary>
     /// Shape builder which builds each particle as a up-facing quad, further rotated by the particle's rotation in 3d space

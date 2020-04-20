@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Xenko.Shaders.Parser.Mixins;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Utility;
+using Stride.Shaders.Parser.Mixins;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Utility;
 
-namespace Xenko.Shaders.Parser
+namespace Stride.Shaders.Parser
 {
     /// <summary>
     /// This class helps to navigate from a text location and try to find the associated definition location 
@@ -30,7 +30,7 @@ namespace Xenko.Shaders.Parser
         /// <returns>ShaderNavigationResult.</returns>
         /// <exception cref="System.ArgumentNullException">shaderSource</exception>
         /// <exception cref="System.ArgumentException">Expecting a FileSource location;location</exception>
-        public ShaderNavigationResult AnalyzeAndGoToDefinition(string shaderSource, Xenko.Core.Shaders.Ast.SourceLocation location, List<string> shaderDirectories)
+        public ShaderNavigationResult AnalyzeAndGoToDefinition(string shaderSource, Stride.Core.Shaders.Ast.SourceLocation location, List<string> shaderDirectories)
         {
             if (shaderSource == null) throw new ArgumentNullException("shaderSource");
             var navigationResult = new ShaderNavigationResult();
@@ -68,7 +68,7 @@ namespace Xenko.Shaders.Parser
             return new SourceSpan(new SourceLocation(location.FileSource, 0, 1, 1), 1);
         }
 
-        private void AnalyzeAndGoToDefinition(string shaderSource, Xenko.Core.Shaders.Ast.SourceLocation location, List<string> shaderDirectories, ShaderNavigationResult result)
+        private void AnalyzeAndGoToDefinition(string shaderSource, Stride.Core.Shaders.Ast.SourceLocation location, List<string> shaderDirectories, ShaderNavigationResult result)
         {
             // We are not using the storage when loading shaders from VS but directly the filesystem
             var mixer = new ShaderMixinParser(null);
@@ -146,7 +146,7 @@ namespace Xenko.Shaders.Parser
             }
         }
 
-        private SourceSpan? Find(ReferencesPool pool, Xenko.Core.Shaders.Ast.SourceLocation location)
+        private SourceSpan? Find(ReferencesPool pool, Stride.Core.Shaders.Ast.SourceLocation location)
         {
             foreach (var methodRef in pool.MethodsReferences)
             {
@@ -172,7 +172,7 @@ namespace Xenko.Shaders.Parser
             return null;
         }
 
-        private bool IsExpressionMatching(Node astNode, Xenko.Core.Shaders.Ast.SourceLocation location)
+        private bool IsExpressionMatching(Node astNode, Stride.Core.Shaders.Ast.SourceLocation location)
         {
             var span = astNode.Span;
             var startColumn = span.Location.Column;

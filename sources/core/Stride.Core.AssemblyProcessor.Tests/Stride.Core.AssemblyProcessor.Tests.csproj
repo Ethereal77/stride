@@ -23,7 +23,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Xenko.Core.AssemblyProcessor\Xenko.Core.AssemblyProcessor.csproj" />
+    <ProjectReference Include="..\Stride.Core.AssemblyProcessor\Stride.Core.AssemblyProcessor.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

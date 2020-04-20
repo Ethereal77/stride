@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,36 +9,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Xenko.Core.BuildEngine;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Yaml;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Xenko.Assets.Presentation.AssetEditors.Gizmos;
-using Xenko.Assets.Presentation.SceneEditor;
-using Xenko.Editor.EditorGame.Game;
-using Xenko.Editor.Extensions;
-using Xenko.Engine;
-using Xenko.Engine.Design;
-using Xenko.Games;
-using Xenko.Physics;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
-using Xenko.Rendering.Lights;
-using Xenko.Rendering.Materials;
-using Xenko.Rendering.Materials.ComputeColors;
-using Xenko.Rendering.UI;
-using Xenko.Shaders;
-using Xenko.Shaders.Compiler;
-using XenkoEffects;
+using Stride.Core.BuildEngine;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Core.Yaml;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.Gizmos;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Editor.EditorGame.Game;
+using Stride.Editor.Extensions;
+using Stride.Engine;
+using Stride.Engine.Design;
+using Stride.Games;
+using Stride.Physics;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
+using Stride.Rendering.Lights;
+using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
+using Stride.Rendering.UI;
+using Stride.Shaders;
+using Stride.Shaders.Compiler;
+using StrideEffects;
 
-namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
+namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
     public static class EditorGraphicsCompositorHelper
     {
-        public const string EditorForwardShadingEffect = "XenkoEditorForwardShadingEffect";
-        public const string EditorHighlightingEffect = "XenkoEditorHighlightingEffect";
+        public const string EditorForwardShadingEffect = "StrideEditorForwardShadingEffect";
+        public const string EditorHighlightingEffect = "StrideEditorHighlightingEffect";
     }
 
     public abstract class EntityHierarchyEditorGame : EditorServiceGame

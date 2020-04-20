@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,12 +8,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Services;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Services;
 
-namespace Xenko.Core.Assets.Editor.View
+namespace Stride.Core.Assets.Editor.View
 {
     /// <summary>
     /// Interaction logic for PackagePickerWindow.xaml

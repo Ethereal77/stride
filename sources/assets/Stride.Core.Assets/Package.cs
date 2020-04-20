@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -15,20 +15,20 @@ using Microsoft.Build.Evaluation;
 
 using NuGet.ProjectModel;
 
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Diagnostics;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core.Assets.Yaml;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.Core.Reflection;
-using Xenko.Core.Serialization;
-using Xenko.Core.Yaml;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Diagnostics;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Assets.Yaml;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.Core.Reflection;
+using Stride.Core.Serialization;
+using Stride.Core.Yaml;
 
-namespace Xenko.Core.Assets
+namespace Stride.Core.Assets
 {
     public enum PackageState
     {
@@ -637,7 +637,7 @@ namespace Xenko.Core.Assets
                     // Try to get version from NuGet folder
                     var path = new UFile(filePath);
                     var nuspecPath = UPath.Combine(path.GetFullDirectory().GetParent(), new UFile(path.GetFileNameWithoutExtension() + ".nuspec"));
-                    if (path.GetFullDirectory().GetDirectoryName() == "xenko" && File.Exists(nuspecPath)
+                    if (path.GetFullDirectory().GetDirectoryName() == "stride" && File.Exists(nuspecPath)
                         && PackageVersion.TryParse(path.GetFullDirectory().GetParent().GetDirectoryName(), out var packageVersion))
                     {
                         package.Meta.Version = packageVersion;
@@ -924,7 +924,7 @@ namespace Xenko.Core.Assets
             // the loop
             try
             {
-                AssetMigration.MigrateAssetIfNeeded(context, assetFile, "Xenko");
+                AssetMigration.MigrateAssetIfNeeded(context, assetFile, "Stride");
 
                 // Try to load only if asset is not already in the package or assetRef.Asset is null
                 var assetPath = assetFile.AssetLocation;
@@ -1053,7 +1053,7 @@ namespace Xenko.Core.Assets
                     return;
                 }
 
-                // Check if assembly is already loaded in appdomain (for Xenko core assemblies that are not plugins)
+                // Check if assembly is already loaded in appdomain (for Stride core assemblies that are not plugins)
                 var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => string.Compare(x.GetName().Name, Path.GetFileNameWithoutExtension(assemblyPath), StringComparison.InvariantCultureIgnoreCase) == 0);
 
                 // Otherwise, load assembly from its file
@@ -1066,7 +1066,7 @@ namespace Xenko.Core.Assets
                         log.Error($"Unable to load assembly reference [{assemblyPath}]");
                     }
 
-                    // Note: we should investigate so that this can also be done for Xenko core assemblies (right now they use module initializers)
+                    // Note: we should investigate so that this can also be done for Stride core assemblies (right now they use module initializers)
                     if (assembly != null)
                     {
                         // Register assembly in the registry

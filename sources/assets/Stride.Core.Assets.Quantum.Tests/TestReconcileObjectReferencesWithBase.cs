@@ -1,28 +1,28 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets.Quantum.Tests.Helpers;
-using Xenko.Core.Assets.Tests.Helpers;
-using Xenko.Core.Quantum;
+using Stride.Core.Assets.Quantum.Tests.Helpers;
+using Stride.Core.Assets.Tests.Helpers;
+using Stride.Core.Quantum;
 
 using Xunit;
 
-namespace Xenko.Core.Assets.Quantum.Tests
+namespace Stride.Core.Assets.Quantum.Tests
 {
     public class TestReconcileObjectReferencesWithBase
     {
         [Fact]
         public void TestWithCorrectObjectReferences()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
     Id: 00000002-0002-0000-0200-000002000000
 MyObject2: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 MyObject1:
@@ -44,14 +44,14 @@ MyObject2: ref!! 00000003-0003-0000-0300-000003000000
         [Fact]
         public void TestWithIncorrectObjectReferences()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
     Id: 00000002-0002-0000-0200-000002000000
 MyObject2: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 MyObject1:
@@ -77,7 +77,7 @@ MyObject3:
         [Fact]
         public void TestWithOverriddenObjectReferences()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
@@ -87,7 +87,7 @@ MyObject3:
     Value: MyInstance
     Id: 00000003-0003-0003-0300-000003000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 MyObject1:
@@ -115,14 +115,14 @@ MyObject3:
         [Fact]
         public void TestWithInvalidObjectReferencesAndMissingTarget()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
     Id: 00000002-0002-0000-0200-000002000000
 MyObject2: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 MyObject1: null
@@ -142,7 +142,7 @@ MyObject2: ref!! 00000004-0004-0004-0400-000004000000
         [Fact]
         public void TestWithCorrectObjectReferencesInList()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
@@ -150,7 +150,7 @@ MyObject1:
 MyObjects:
     0a0000000a0000000a0000000a000000: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 MyObject1:
@@ -173,7 +173,7 @@ MyObjects:
         [Fact]
         public void TestWithIncorrectObjectReferencesInList()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
@@ -181,7 +181,7 @@ MyObject1:
 MyObjects:
     0a0000000a0000000a0000000a000000: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 MyObject1:
@@ -208,7 +208,7 @@ MyObjects:
         [Fact]
         public void TestWithOverriddenObjectReferencesInList()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
@@ -219,7 +219,7 @@ MyObject2:
 MyObjects:
     0a0000000a0000000a0000000a000000: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 MyObject1:
@@ -248,7 +248,7 @@ MyObjects:
         [Fact]
         public void TestWithInvalidObjectReferencesAndMissingTargetInList()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
@@ -256,7 +256,7 @@ MyObject1:
 MyObjects:
     0a0000000a0000000a0000000a000000: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 MyObject1: null
@@ -277,14 +277,14 @@ MyObjects:
         [Fact]
         public void TestAllMissing()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1:
     Value: MyInstance
     Id: 00000002-0002-0000-0200-000002000000
 MyObject2: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 ";
@@ -300,14 +300,14 @@ Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
         [Fact]
         public void TestAllMissingInvertOrder()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObject1: ref!! 00000002-0002-0000-0200-000002000000
 MyObject2:
     Value: MyInstance
     Id: 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 ";
@@ -323,7 +323,7 @@ Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
         [Fact]
         public void TestAllMissingInList()
         {
-            const string baseYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string baseYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 00000001-0001-0000-0100-000001000000
 MyObjects:
     0a0000000a0000000a0000000a000000:
@@ -331,7 +331,7 @@ MyObjects:
         Id: 00000002-0002-0000-0200-000002000000
     0a0000000b0000000b0000000b000000: ref!! 00000002-0002-0000-0200-000002000000
 ";
-            const string derivedYaml = @"!Xenko.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Xenko.Core.Assets.Quantum.Tests
+            const string derivedYaml = @"!Stride.Core.Assets.Quantum.Tests.Helpers.Types+MyAssetWithRef,Stride.Core.Assets.Quantum.Tests
 Id: 20000000-0000-0000-0000-000000000000
 Archetype: 00000001-0001-0000-0100-000001000000:MyAsset
 ";

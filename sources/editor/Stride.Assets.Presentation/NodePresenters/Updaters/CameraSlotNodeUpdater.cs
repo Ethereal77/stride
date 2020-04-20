@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,20 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters.Commands;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters.Keys;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Extensions;
-using Xenko.Core.Serialization;
-using Xenko.Core.Presentation.Quantum.Presenters;
-using Xenko.Assets.Presentation.NodePresenters.Keys;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.Assets.Rendering;
-using Xenko.Editor.Build;
-using Xenko.Rendering.Compositing;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters.Keys;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Extensions;
+using Stride.Core.Serialization;
+using Stride.Core.Presentation.Quantum.Presenters;
+using Stride.Assets.Presentation.NodePresenters.Keys;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Assets.Rendering;
+using Stride.Editor.Build;
+using Stride.Rendering.Compositing;
 
-namespace Xenko.Assets.Presentation.NodePresenters.Updaters
+namespace Stride.Assets.Presentation.NodePresenters.Updaters
 {
     internal sealed class CameraSlotNodeUpdater : AssetNodePresenterUpdaterBase
     {
@@ -48,7 +48,7 @@ namespace Xenko.Assets.Presentation.NodePresenters.Updaters
             else if (node.Value is SceneCameraSlotId)
             {
                 // Grab all graphics compositor of the same package as the asset.
-                // TODO: we do not take all package dependencies for now because we don't want to include Xenko package compositors.
+                // TODO: we do not take all package dependencies for now because we don't want to include Stride package compositors.
                 var graphicsCompositors = node.Asset.Directory.Package.Assets.Where(x => x.AssetType == typeof(GraphicsCompositorAsset));
 
                 var entries = new List<AbstractNodeEntry>();

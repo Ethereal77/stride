@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -14,11 +14,11 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Input;
 using GraphX.Controls;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
 using Point = System.Windows.Point;
 
-namespace Xenko.Core.Presentation.Graph.Controls
+namespace Stride.Core.Presentation.Graph.Controls
 {
     /// <summary>
     /// 

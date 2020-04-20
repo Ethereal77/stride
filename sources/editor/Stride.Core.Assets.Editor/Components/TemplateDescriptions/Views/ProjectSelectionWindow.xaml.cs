@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,17 +6,17 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 
-using Xenko.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
-using Xenko.Core.Assets.Editor.Settings;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.IO;
-using Xenko.Core.Presentation.View;
-using Xenko.Core.Presentation.Windows;
-using Xenko.Core.Translation;
-using MessageBoxButton = Xenko.Core.Presentation.Services.MessageBoxButton;
-using MessageBoxImage = Xenko.Core.Presentation.Services.MessageBoxImage;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
+using Stride.Core.Assets.Editor.Settings;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.IO;
+using Stride.Core.Presentation.View;
+using Stride.Core.Presentation.Windows;
+using Stride.Core.Translation;
+using MessageBoxButton = Stride.Core.Presentation.Services.MessageBoxButton;
+using MessageBoxImage = Stride.Core.Presentation.Services.MessageBoxImage;
 
-namespace Xenko.Core.Assets.Editor.Components.TemplateDescriptions.Views
+namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.Views
 {
     /// <summary>
     /// Interaction logic for ProjectSelectionWindow.xaml

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -18,12 +18,12 @@ using Mono.Cecil.Mdb;
 using Mono.Cecil.Pdb;
 using Mono.Cecil.Rocks;
 
-using Xenko.Core;
+using Stride.Core;
 
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using TypeAttributes = Mono.Cecil.TypeAttributes;
 
-namespace Xenko.Core.AssemblyProcessor
+namespace Stride.Core.AssemblyProcessor
 {
     public class AssemblyProcessorApp
     {
@@ -234,7 +234,7 @@ namespace Xenko.Core.AssemblyProcessor
                 // Note that we should probably also match the command line as well so that we throw an error if processing is different (need to rebuild).
                 if (
                     assemblyDefinition.CustomAttributes.Any(
-                        x => x.AttributeType.FullName == "Xenko.Core.AssemblyProcessedAttribute"))
+                        x => x.AttributeType.FullName == "Stride.Core.AssemblyProcessedAttribute"))
                 {
                     OnInfoAction($"Assembly [{assemblyDefinition.Name}] has already been processed, skip it.");
                     return true;
@@ -274,7 +274,7 @@ namespace Xenko.Core.AssemblyProcessor
                     var voidType = assemblyDefinition.MainModule.TypeSystem.Void;
 
                     // Create custom attribute
-                    var assemblyProcessedAttributeType = new TypeDefinition("Xenko.Core",
+                    var assemblyProcessedAttributeType = new TypeDefinition("Stride.Core",
                         "AssemblyProcessedAttribute",
                         TypeAttributes.BeforeFieldInit | TypeAttributes.AnsiClass | TypeAttributes.AutoClass |
                         TypeAttributes.Public, attributeTypeRef);

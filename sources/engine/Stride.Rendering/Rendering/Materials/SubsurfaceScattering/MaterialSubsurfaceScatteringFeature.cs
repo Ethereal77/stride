@@ -1,17 +1,17 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Rendering.Materials.ComputeColors;
-using Xenko.Shaders;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Rendering.Materials.ComputeColors;
+using Stride.Shaders;
 
-namespace Xenko.Rendering.Materials
+namespace Stride.Rendering.Materials
 {
     [DataContract("MaterialSubsurfaceScatteringFeature")]
     [Display("Subsurface Scattering")]
@@ -98,15 +98,15 @@ namespace Xenko.Rendering.Materials
             // TODO: Generate a hash with the scattering kernel and scattering width!
 
             var parameters = context.MaterialPass.Parameters;
-            parameters.Set(Xenko.Rendering.Materials.MaterialSurfaceSubsurfaceScatteringShadingKeys.Translucency, Translucency);
-            parameters.Set(Xenko.Rendering.Materials.MaterialSurfaceSubsurfaceScatteringShadingKeys.ScatteringWidth, ScatteringWidth);
+            parameters.Set(Stride.Rendering.Materials.MaterialSurfaceSubsurfaceScatteringShadingKeys.Translucency, Translucency);
+            parameters.Set(Stride.Rendering.Materials.MaterialSurfaceSubsurfaceScatteringShadingKeys.ScatteringWidth, ScatteringWidth);
 
             // Generate and set the scattering profile:
             shaderSource.AddComposition("scatteringProfileFunction", ProfileFunction.Generate(context));
 
             // Generate and set the scattering kernel:
             Vector4[] scatteringKernel = KernelFunction.Generate();
-            parameters.Set(Xenko.Rendering.Materials.MaterialSurfaceSubsurfaceScatteringShadingKeys.ScatteringKernel, scatteringKernel);
+            parameters.Set(Stride.Rendering.Materials.MaterialSurfaceSubsurfaceScatteringShadingKeys.ScatteringKernel, scatteringKernel);
 
             /*
             {

@@ -1,17 +1,17 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Rendering.Data;
-using Xenko.Shaders.Compiler;
+using Stride.Rendering.Data;
+using Stride.Shaders.Compiler;
 
-namespace XenkoEffects
+namespace StrideEffects
 {
-    effect XenkoEditorForwardShadingEffect
+    effect StrideEditorForwardShadingEffect
     {
         using params SceneEditorParameters;
 
-        // TODO: This file is similar to XenkoEditorWireframeShadingEffect. We should try to look if we can merge them into a single one.
+        // TODO: This file is similar to StrideEditorWireframeShadingEffect. We should try to look if we can merge them into a single one.
 
         // Early failover in case there was an effect compilation error
         // We later could do a two level error detection:
@@ -28,7 +28,7 @@ namespace XenkoEffects
         }
 
         // Include the standard forward shading effect
-        mixin XenkoForwardShadingEffect;
+        mixin StrideForwardShadingEffect;
 
         mixin child Picking;
         mixin child Wireframe;

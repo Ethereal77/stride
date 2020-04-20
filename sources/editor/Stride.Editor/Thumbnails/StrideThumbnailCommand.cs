@@ -1,33 +1,33 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.BuildEngine;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Assets;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering.Compositing;
-using EditorSettings = Xenko.Assets.EditorSettings;
+using Stride.Core.Assets;
+using Stride.Core.BuildEngine;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Assets;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering.Compositing;
+using EditorSettings = Stride.Assets.EditorSettings;
 
-namespace Xenko.Editor.Thumbnails
+namespace Stride.Editor.Thumbnails
 {
     /// <summary>
-    /// The base command to build xenko thumbnails.
+    /// The base command to build stride thumbnails.
     /// - It uses the underlying <see cref="ThumbnailGenerator"/> to build thumbnail via scenes.
     /// - It extracts and exposes the thumbnail services from the <see cref="ThumbnailCompilerContext"/>,
     /// - It defines the <see cref="CreateScene"/>, <see cref="DestroyScene"/> base functions to be overridden.
     /// </summary>
-    public abstract class XenkoThumbnailCommand<TRuntimeAsset> : ThumbnailCommand, IThumbnailCommand where TRuntimeAsset : class
+    public abstract class StrideThumbnailCommand<TRuntimeAsset> : ThumbnailCommand, IThumbnailCommand where TRuntimeAsset : class
     {
         private readonly AssetItem assetItem;
         
@@ -48,7 +48,7 @@ namespace Xenko.Editor.Thumbnails
 
         protected readonly Color ThumbnailBackgroundColor = Color.FromBgra(0xFF434343);
 
-        protected XenkoThumbnailCommand(ThumbnailCompilerContext context, AssetItem assetItem, IAssetFinder assetFinder, string url, ThumbnailCommandParameters parameters)
+        protected StrideThumbnailCommand(ThumbnailCompilerContext context, AssetItem assetItem, IAssetFinder assetFinder, string url, ThumbnailCommandParameters parameters)
             : base(url, assetItem, parameters, assetFinder)
         {
             CompilerContext = context ?? throw new ArgumentNullException(nameof(context));
@@ -61,7 +61,7 @@ namespace Xenko.Editor.Thumbnails
             parameters.ColorSpace = renderingSettings.ColorSpace;
             parameters.RenderingMode = gameSettings.GetOrCreate<EditorSettings>().RenderingMode;
 
-            Generator = context.Properties.Get(ThumbnailGenerator.Key) ?? throw new ArgumentException("The provided context does not contain required xenko information needed to build the thumbnails.");
+            Generator = context.Properties.Get(ThumbnailGenerator.Key) ?? throw new ArgumentException("The provided context does not contain required stride information needed to build the thumbnails.");
         }
 
         /// <inheritdoc />

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -17,17 +17,17 @@ using System.Threading.Tasks;
 
 using Microsoft.Win32;
 
-namespace Xenko.Metrics
+namespace Stride.Metrics
 {
     /// <summary>
     /// Client for publishing metrics.
     /// </summary>
     public class MetricsClient : IDisposable
     {
-        private const string RegistryRootKey = @"Software\Xenko";
+        private const string RegistryRootKey = @"Software\Stride";
         private const string RegistryInstallKey = @"InstallGuid";
         private const string RegistryLastCommonMetricsKey = @"LastCommonMetrics";
-        private const string EnvSpecial = "XenkoMetricsSpecial";
+        private const string EnvSpecial = "StrideMetricsSpecial";
         private readonly HttpClient httpClient;
         private readonly Guid installGuid;
         private readonly MetricAppId appId;
@@ -99,7 +99,7 @@ namespace Xenko.Metrics
 
             if (endpointUrl == null)
             {
-                endpointUrl = "https://metrics.xenko.com";
+                endpointUrl = "https://metrics.stride3d.net";
             }
             if (appId == null) throw new ArgumentNullException(nameof(appId));
 
@@ -232,7 +232,7 @@ namespace Xenko.Metrics
         }
 
         /// <summary>
-        /// Opens a new xenko project session
+        /// Opens a new stride project session
         /// </summary>
         /// <param name="platformsData">platforms used by this project</param>
         public void OpenProjectSession(string platformsData)
@@ -241,7 +241,7 @@ namespace Xenko.Metrics
         }
 
         /// <summary>
-        /// Closes a xenko project session
+        /// Closes a stride project session
         /// </summary>
         public void CloseProjectSession()
         {
@@ -249,7 +249,7 @@ namespace Xenko.Metrics
         }
 
         /// <summary>
-        /// Reports that a xenko project session crashed
+        /// Reports that a stride project session crashed
         /// </summary>
         /// <param name="reportSent">if the user sent a report</param>
         public void CrashedSession(bool reportSent)
@@ -402,7 +402,7 @@ namespace Xenko.Metrics
         private bool NeedUpdateCommonMetrics()
         {
             // Log only common metrics for editor
-            if (appId.Guid != CommonApps.XenkoEditorAppId.Guid)
+            if (appId.Guid != CommonApps.StrideEditorAppId.Guid)
             {
                 return false;
             }
@@ -443,7 +443,7 @@ namespace Xenko.Metrics
             rootRegistryKey = Registry.CurrentUser.OpenSubKey(RegistryRootKey, RegistryKeyPermissionCheck.ReadWriteSubTree) ??
                               Registry.CurrentUser.CreateSubKey(RegistryRootKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
 
-            var shortName = appId.Name.Replace("Xenko", string.Empty);
+            var shortName = appId.Name.Replace("Stride", string.Empty);
 
             // Get the appKey
             if (rootRegistryKey != null)

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System;
 using System.Reflection;
 using System.Text;
 
-using Xenko.Core;
-using Xenko.Core.Yaml;
-using Xenko.Core.Yaml.Events;
-using Xenko.Core.Yaml.Serialization;
+using Stride.Core;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Events;
+using Stride.Core.Yaml.Serialization;
 
-namespace Xenko.Core.Assets.Serializers
+namespace Stride.Core.Assets.Serializers
 {
     [YamlSerializerFactory(YamlSerializerFactoryAttribute.Default)]
     internal class PropertyKeyYamlSerializer : AssetScalarSerializerBase
@@ -20,7 +20,7 @@ namespace Xenko.Core.Assets.Serializers
         {
             // Because a PropertyKey<> inherits directly from PropertyKey, we can directly check the base only
             // ParameterKey<> inherits from ParameterKey, so it won't conflict with the custom ParameterKeyYamlSerializer
-            // defined in the Xenko.Assets assembly
+            // defined in the Stride.Assets assembly
 
             if (type == typeof(PropertyKey))
             {

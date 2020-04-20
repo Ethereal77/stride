@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2009 NShader - Alexandre Mutel, Microsoft Corporation
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.TextManager.Interop;
 namespace NShader
 {
     public class NShaderScannerFactory {
-        private static NShaderScanner xenkoShaderScanner;
+        private static NShaderScanner strideShaderScanner;
         private static Dictionary<string, NShaderScanner> mapExtensionToScanner;
 
         static void Init() {
@@ -20,13 +20,13 @@ namespace NShader
             {
                 mapExtensionToScanner = new Dictionary<string, NShaderScanner>();
 
-                // Xenko Scanner
-                xenkoShaderScanner = new NShaderScanner(new XenkoShaderTokenProvider());
+                // Stride Scanner
+                strideShaderScanner = new NShaderScanner(new StrideShaderTokenProvider());
 
                 foreach (var field in typeof (NShaderSupportedExtensions).GetFields())
                 {
-                    if (field.Name.StartsWith("Xenko_"))
-                        mapExtensionToScanner.Add(field.GetValue(null).ToString(), xenkoShaderScanner);
+                    if (field.Name.StartsWith("Stride_"))
+                        mapExtensionToScanner.Add(field.GetValue(null).ToString(), strideShaderScanner);
                 }
             }
         }
@@ -39,7 +39,7 @@ namespace NShader
             NShaderScanner scanner;
             if (!mapExtensionToScanner.TryGetValue(ext, out scanner))
             {
-                scanner = xenkoShaderScanner;
+                scanner = strideShaderScanner;
             }
             return scanner;
         }

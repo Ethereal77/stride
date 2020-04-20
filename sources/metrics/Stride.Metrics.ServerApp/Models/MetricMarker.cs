@@ -1,11 +1,11 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Xenko.Metrics.ServerApp.Models
+namespace Stride.Metrics.ServerApp.Models
 {
     /// <summary>
     /// A marker that defines an important event on a specific date that could have an impact on metric events.

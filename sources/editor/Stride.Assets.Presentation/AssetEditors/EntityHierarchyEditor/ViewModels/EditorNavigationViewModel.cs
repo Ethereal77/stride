@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,21 +7,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Collections;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.ViewModel;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Xenko.Assets.Presentation.SceneEditor;
-using Xenko.Navigation;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Collections;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.ViewModel;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Navigation;
 
-namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
 {
     public class EditorNavigationViewModel : DispatcherViewModel
     {

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,9 +10,9 @@
 #pragma make_public(aiMaterial)
 #pragma make_public(aiTextureType)
 
-using namespace Xenko::Core::Mathematics;
-using namespace Xenko::AssimpNet;
-namespace Xenko {
+using namespace Stride::Core::Mathematics;
+using namespace Stride::AssimpNet;
+namespace Stride {
 	namespace AssimpNet {
 		namespace NetTranslation {
 /// <summary>

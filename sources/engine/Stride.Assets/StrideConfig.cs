@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,18 +7,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.VisualStudio;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.VisualStudio;
 
-namespace Xenko.Assets
+namespace Stride.Assets
 {
-    [DataContract("Xenko")]
-    public sealed class XenkoConfig
+    [DataContract("Stride")]
+    public sealed class StrideConfig
     {
-        public const string PackageName = "Xenko";
+        public const string PackageName = "Stride";
 
-        public static readonly PackageVersion LatestPackageVersion = new PackageVersion(XenkoVersion.NuGetVersion);
+        public static readonly PackageVersion LatestPackageVersion = new PackageVersion(StrideVersion.NuGetVersion);
 
         private static readonly string ProgramFilesX86 = Environment.GetEnvironmentVariable(Environment.Is64BitOperatingSystem ? "ProgramFiles(x86)" : "ProgramFiles");
 
@@ -35,7 +35,7 @@ namespace Xenko.Assets
         }
 
         /// <summary>
-        /// Registers the solution platforms supported by Xenko.
+        /// Registers the solution platforms supported by Stride.
         /// </summary>
         internal static void RegisterSolutionPlatforms()
         {

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System;
 
 using Xunit;
 
-using Xenko.Core.Mathematics;
-using Xenko.Particles.Initializers;
-using Xenko.Particles.Modules;
-using Xenko.Particles.Sorters;
+using Stride.Core.Mathematics;
+using Stride.Particles.Initializers;
+using Stride.Particles.Modules;
+using Stride.Particles.Sorters;
 
-namespace Xenko.Particles.Tests
+namespace Stride.Particles.Tests
 {
     public class ParticlePoolTest
     {       

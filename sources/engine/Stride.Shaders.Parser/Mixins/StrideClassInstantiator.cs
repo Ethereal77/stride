@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,18 +7,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Xenko.Core.Shaders.Ast.Xenko;
-using Xenko.Shaders.Parser.Utility;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
-using Xenko.Core.Shaders.Utility;
-using Xenko.Core.Shaders.Visitor;
+using Stride.Core.Shaders.Ast.Stride;
+using Stride.Shaders.Parser.Utility;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Utility;
+using Stride.Core.Shaders.Visitor;
 
-using StorageQualifier = Xenko.Core.Shaders.Ast.StorageQualifier;
+using StorageQualifier = Stride.Core.Shaders.Ast.StorageQualifier;
 
-namespace Xenko.Shaders.Parser.Mixins
+namespace Stride.Shaders.Parser.Mixins
 {
-    internal class XenkoClassInstantiator : ShaderWalker
+    internal class StrideClassInstantiator : ShaderWalker
     {
         private ShaderClassType shaderClassType;
 
@@ -34,7 +34,7 @@ namespace Xenko.Shaders.Parser.Mixins
 
         private Dictionary<string, string> stringGenerics;
 
-        private XenkoClassInstantiator(ShaderClassType classType, Dictionary<string, Expression> expressions, Dictionary<string, Identifier> identifiers, bool autoGenericInstances, LoggerResult log)
+        private StrideClassInstantiator(ShaderClassType classType, Dictionary<string, Expression> expressions, Dictionary<string, Identifier> identifiers, bool autoGenericInstances, LoggerResult log)
             : base(false, false)
         {
             shaderClassType = classType;
@@ -47,7 +47,7 @@ namespace Xenko.Shaders.Parser.Mixins
 
         public static void Instantiate(ShaderClassType classType, Dictionary<string, Expression> expressions, Dictionary<string, Identifier> identifiers, bool autoGenericInstances, LoggerResult log)
         {
-            var instantiator = new XenkoClassInstantiator(classType, expressions, identifiers, autoGenericInstances, log);
+            var instantiator = new StrideClassInstantiator(classType, expressions, identifiers, autoGenericInstances, log);
             instantiator.Run();
         }
 
@@ -62,7 +62,7 @@ namespace Xenko.Shaders.Parser.Mixins
                 VisitDynamic(member); // look for IdentifierGeneric and Variable
 
             // Process each constant buffer encoded as tag
-            foreach (var constantBuffer in shaderClassType.Members.OfType<Variable>().Select(x => (ConstantBuffer)x.GetTag(XenkoTags.ConstantBuffer)).Where(x => x != null).Distinct())
+            foreach (var constantBuffer in shaderClassType.Members.OfType<Variable>().Select(x => (ConstantBuffer)x.GetTag(StrideTags.ConstantBuffer)).Where(x => x != null).Distinct())
                 VisitDynamic(constantBuffer);
 
             int insertIndex = 0;
@@ -79,7 +79,7 @@ namespace Xenko.Shaders.Parser.Mixins
                 if (!(variable.InitialValue is VariableReferenceExpression || variable.InitialValue is MemberReferenceExpression))
                 {
                     variable.Qualifiers |= StorageQualifier.Const;
-                    variable.Qualifiers |= Xenko.Core.Shaders.Ast.Hlsl.StorageQualifier.Static;
+                    variable.Qualifiers |= Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Static;
                 }
                 // Because FindDeclaration is broken for variable declared at the scope of the class, make sure  to
                 // put const at the beginning of the class to allow further usage of the variable to work
@@ -136,7 +136,7 @@ namespace Xenko.Shaders.Parser.Mixins
                 if (stringGenerics.TryGetValue(sem.Name, out replacementSemantic))
                 {
                     if (logger != null && !(variableGenerics[sem.Name].Type is SemanticType))
-                        logger.Warning(XenkoMessageCode.WarningUseSemanticType, variable.Span, variableGenerics[sem.Name]);
+                        logger.Warning(StrideMessageCode.WarningUseSemanticType, variable.Span, variableGenerics[sem.Name]);
                     sem.Name = replacementSemantic;
                 }
             }

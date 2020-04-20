@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization;
-using Xenko.Native;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization;
+using Stride.Native;
 
-namespace Xenko.Rendering.LightProbes
+namespace Stride.Rendering.LightProbes
 {
     /// <summary>
     /// Bowyer-Watson tetrahedralization algorithm. More details at http://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm.
@@ -121,7 +121,7 @@ namespace Xenko.Rendering.LightProbes
 
         static BowyerWatsonTetrahedralization()
         {
-            // TODO: Add native to Xenko.Engine?
+            // TODO: Add native to Stride.Engine?
             NativeLibrary.PreloadLibrary(NativeInvoke.Library + ".dll", typeof(BowyerWatsonTetrahedralization));
             exactinit();
         }

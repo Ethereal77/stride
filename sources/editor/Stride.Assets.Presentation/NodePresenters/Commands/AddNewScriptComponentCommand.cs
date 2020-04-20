@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,25 +6,25 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Reflection;
-using Xenko.Core.Presentation.Quantum;
-using Xenko.Core.Presentation.Quantum.Presenters;
-using Xenko.Core.Quantum;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters;
-using Xenko.Core.Assets;
-using Xenko.Assets.Presentation.Templates;
-using Xenko.Core;
-using Xenko.Engine;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.Core.Assets.Editor.Components.Properties;
-using Xenko.Assets.Presentation.AssetEditors;
-using Xenko.Core.Presentation.Dirtiables;
+using Stride.Core.Annotations;
+using Stride.Core.Reflection;
+using Stride.Core.Presentation.Quantum;
+using Stride.Core.Presentation.Quantum.Presenters;
+using Stride.Core.Quantum;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters;
+using Stride.Core.Assets;
+using Stride.Assets.Presentation.Templates;
+using Stride.Core;
+using Stride.Engine;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Core.Assets.Editor.Components.Properties;
+using Stride.Assets.Presentation.AssetEditors;
+using Stride.Core.Presentation.Dirtiables;
 
-namespace Xenko.Assets.Presentation.NodePresenters.Commands
+namespace Stride.Assets.Presentation.NodePresenters.Commands
 {
     public class AddNewScriptComponentCommand : SyncNodePresenterCommandBase
     {

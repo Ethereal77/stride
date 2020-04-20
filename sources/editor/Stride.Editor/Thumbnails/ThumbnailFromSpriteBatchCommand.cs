@@ -1,20 +1,20 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Linq;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Assets;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Assets;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
 
-namespace Xenko.Editor.Thumbnails
+namespace Stride.Editor.Thumbnails
 {
     internal interface IThumbnailFromSpriteBatchCommand
     {
@@ -30,7 +30,7 @@ namespace Xenko.Editor.Thumbnails
     /// A command that creates the thumbnail using the sprite batch
     /// </summary>
     /// <typeparam name="TRuntimeAsset">The type of the runtime object asset to load</typeparam>
-    public abstract class ThumbnailFromSpriteBatchCommand<TRuntimeAsset> : XenkoThumbnailCommand<TRuntimeAsset>, IThumbnailFromSpriteBatchCommand where TRuntimeAsset : class
+    public abstract class ThumbnailFromSpriteBatchCommand<TRuntimeAsset> : StrideThumbnailCommand<TRuntimeAsset>, IThumbnailFromSpriteBatchCommand where TRuntimeAsset : class
     {
         private static readonly string ThumbnailSpriteBatchGraphicsCompositorKey = nameof(ThumbnailSpriteBatchGraphicsCompositorKey);
         private readonly Scene spriteScene;

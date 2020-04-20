@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,22 +7,22 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.Components.Properties;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core.Extensions;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Transactions;
-using Xenko.Core.Presentation.Quantum;
-using Xenko.Core.Presentation.Quantum.Presenters;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.ViewModel;
-using Xenko.Core.Quantum;
-using Xenko.Core.Quantum.References;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.Assets.Scripts;
+using Stride.Core.Assets.Editor.Components.Properties;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Extensions;
+using Stride.Core.Mathematics;
+using Stride.Core.Transactions;
+using Stride.Core.Presentation.Quantum;
+using Stride.Core.Presentation.Quantum.Presenters;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.ViewModel;
+using Stride.Core.Quantum;
+using Stride.Core.Quantum.References;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Assets.Scripts;
 
-namespace Xenko.Assets.Presentation.AssetEditors.VisualScriptEditor
+namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
 {
     public class VisualScriptBlockViewModel : DispatcherViewModel, IAssetPropertyProviderViewModel, IAddChildViewModel
     {

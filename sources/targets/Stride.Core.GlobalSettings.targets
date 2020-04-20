@@ -1,17 +1,17 @@
 <!--
 ***********************************************************************************************
-  Xenko.Core.GlobalSettings.targets
+  Stride.Core.GlobalSettings.targets
 
   Build file pre-included before the building of the project to configure the assembly version,
   output paths, assembly processor defaults, per-project global settings, defines, search
   directories, and the key file used for signing the generated assemblies.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Import Project="$(MSBuildThisFileDirectory)Xenko.PackageVersion.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Stride.PackageVersion.targets"/>
 
   <!-- Sdk settings -->
   <PropertyGroup>
@@ -24,40 +24,40 @@
 
   <!--Import Local Pre Settings for the solution being loaded -->
   <Import Project="$(SolutionDir)$(SolutionName).GlobalSettings.Local.targets" Condition="Exists('$(SolutionDir)$(SolutionName).GlobalSettings.Local.targets')" />
-  <Import Project="$(SolutionDir)Xenko.Core.GlobalSettings.Local.targets" Condition="Exists('$(SolutionDir)Xenko.Core.GlobalSettings.Local.targets')" />
+  <Import Project="$(SolutionDir)Stride.Core.GlobalSettings.Local.targets" Condition="Exists('$(SolutionDir)Stride.Core.GlobalSettings.Local.targets')" />
 
   <!-- Default values -->
   <PropertyGroup>
-    <XenkoAssemblyProcessor Condition="'$(XenkoAssemblyProcessor)' == ''">false</XenkoAssemblyProcessor>
-    <XenkoAssemblyProcessorOptions Condition="'$(XenkoAssemblyProcessorOptions)' == ''">--auto-notify-property --auto-module-initializer --serialization</XenkoAssemblyProcessorOptions>
+    <StrideAssemblyProcessor Condition="'$(StrideAssemblyProcessor)' == ''">false</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions Condition="'$(StrideAssemblyProcessorOptions)' == ''">--auto-notify-property --auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
   </PropertyGroup>
 
   <!--
     Global Settings per project
   -->
   <PropertyGroup>
-    <XenkoCommonDependenciesDir Condition="'$(XenkoCommonDependenciesDir)' == ''">$(MSBuildThisFileDirectory)..\..\deps\</XenkoCommonDependenciesDir>
-    <XenkoCommonDependenciesDir Condition="'$(XenkoCommonDependenciesDir)' != '' and !HasTrailingSlash('$(XenkoCommonDependenciesDir)')">$(XenkoCommonDependenciesDir)\</XenkoCommonDependenciesDir>
+    <StrideCommonDependenciesDir Condition="'$(StrideCommonDependenciesDir)' == ''">$(MSBuildThisFileDirectory)..\..\deps\</StrideCommonDependenciesDir>
+    <StrideCommonDependenciesDir Condition="'$(StrideCommonDependenciesDir)' != '' and !HasTrailingSlash('$(StrideCommonDependenciesDir)')">$(StrideCommonDependenciesDir)\</StrideCommonDependenciesDir>
     <ErrorReport>prompt</ErrorReport>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- Limited version used by tools but that doesn't require installation of .NET on most computers (4.5.1 is default of many OS, 4.5.2/4.6 isn't) -->
-    <XenkoPlatformDefines>NET45</XenkoPlatformDefines>
-    <NUnitLiteBinDir>$(XenkoCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
+    <StridePlatformDefines>NET45</StridePlatformDefines>
+    <NUnitLiteBinDir>$(StrideCommonDependenciesDir)NUnitLite\net-4.0\</NUnitLiteBinDir>
   </PropertyGroup>
 
   <!--
-    Settings XenkoNETRuntime specific
+    Settings StrideNETRuntime specific
   -->
-  <PropertyGroup Condition=" '$(XenkoNETRuntime)' == 'CoreCLR' ">
+  <PropertyGroup Condition=" '$(StrideNETRuntime)' == 'CoreCLR' ">
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(XenkoPlatformDefines);$(DefineConstants)</DefineConstants>
-    <DefineConstants Condition="'$(XenkoNETRuntimeDefines)' != ''">$(DefineConstants);$(XenkoNETRuntimeDefines)</DefineConstants>
+    <DefineConstants>$(StridePlatformDefines);$(DefineConstants)</DefineConstants>
+    <DefineConstants Condition="'$(StrideNETRuntimeDefines)' != ''">$(DefineConstants);$(StrideNETRuntimeDefines)</DefineConstants>
   </PropertyGroup>
 
   <!-- SourceLink -->
@@ -65,8 +65,8 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Condition="'$(StrideProjectType)' == 'CSharp'" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
 
-  <!-- Used by Xenko.build to detect if unit tests prefer to run in 32 or 64 bits (note: it's a copy of Xenko.UnitTests.targets one because some unit tests import Xenko.Core.PreSettings.targets rather than Xenko.UnitTests.targets) -->
-  <Target Name="_XenkoAfterGetTargetPathWithTargetPlatformMoniker" AfterTargets="GetTargetPathWithTargetPlatformMoniker">
+  <!-- Used by Stride.build to detect if unit tests prefer to run in 32 or 64 bits (note: it's a copy of Stride.UnitTests.targets one because some unit tests import Stride.Core.PreSettings.targets rather than Stride.UnitTests.targets) -->
+  <Target Name="_StrideAfterGetTargetPathWithTargetPlatformMoniker" AfterTargets="GetTargetPathWithTargetPlatformMoniker">
     <ItemGroup>
       <TargetPathWithTargetPlatformMoniker Update="$(TargetPath)">
         <PlatformTarget>$(PlatformTarget)</PlatformTarget>

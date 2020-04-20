@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,15 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Assets.Presentation.AssetEditors.AssetHighlighters;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Xenko.Editor.EditorGame.Game;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Assets.Presentation.AssetEditors.AssetHighlighters;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Editor.EditorGame.Game;
 
-namespace Xenko.Assets.Presentation.AssetEditors.GameEditor.Game
+namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Game
 {
     public class EditorGameAssetHighlighterService : EditorGameServiceBase, IEditorGameAssetHighlighterViewModelService
     {
@@ -26,7 +26,7 @@ namespace Xenko.Assets.Presentation.AssetEditors.GameEditor.Game
         public EditorGameAssetHighlighterService(IEditorGameController controller, [NotNull] IAssetDependencyManager dependencyManager)
         {
             this.controller = controller;
-            foreach (var assetHighlighterType in XenkoDefaultAssetsPlugin.AssetHighlighterTypesDictionary)
+            foreach (var assetHighlighterType in StrideDefaultAssetsPlugin.AssetHighlighterTypesDictionary)
             {
                 var instance = (AssetHighlighter)Activator.CreateInstance(assetHighlighterType.Value, dependencyManager);
                 assetHighlighters.Add(assetHighlighterType.Key, instance);

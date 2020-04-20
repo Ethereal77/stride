@@ -1,8 +1,8 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-namespace Xenko.Core.Assets.Diagnostics
+namespace Stride.Core.Assets.Diagnostics
 {
     /// <summary>
     /// A message code used by <see cref="AssetLogMessage"/> to identify an error/warning.

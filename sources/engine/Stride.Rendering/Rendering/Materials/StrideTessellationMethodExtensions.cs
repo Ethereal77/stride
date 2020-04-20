@@ -1,21 +1,21 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Graphics;
+using Stride.Graphics;
 
-namespace Xenko.Rendering
+namespace Stride.Rendering
 {
-    public static class XenkoTessellationMethodExtensions
+    public static class StrideTessellationMethodExtensions
     {
-        public static bool PerformsAdjacentEdgeAverage(this XenkoTessellationMethod method)
+        public static bool PerformsAdjacentEdgeAverage(this StrideTessellationMethod method)
         {
-            return (method & XenkoTessellationMethod.AdjacentEdgeAverage) != 0;
+            return (method & StrideTessellationMethod.AdjacentEdgeAverage) != 0;
         }
 
-        public static PrimitiveType GetPrimitiveType(this XenkoTessellationMethod method)
+        public static PrimitiveType GetPrimitiveType(this StrideTessellationMethod method)
         {
-            if ((method & XenkoTessellationMethod.PointNormal) == 0)
+            if ((method & StrideTessellationMethod.PointNormal) == 0)
                 return PrimitiveType.TriangleList;
 
             var controlsCount = method.PerformsAdjacentEdgeAverage() ? 12 : 3;

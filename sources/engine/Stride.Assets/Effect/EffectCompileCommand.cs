@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,19 +7,19 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.BuildEngine;
-using Xenko.Core;
-using Xenko.Core.IO;
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Shaders;
-using Xenko.Shaders.Compiler;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.BuildEngine;
+using Stride.Core;
+using Stride.Core.IO;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Shaders;
+using Stride.Shaders.Compiler;
 
-namespace Xenko.Assets.Effect
+namespace Stride.Assets.Effect
 {
     /// <summary>
     /// This command is responsible to compile a single permutation of an effect (xkfx or xksl)

@@ -1,21 +1,21 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Xenko.Assets.Presentation.SceneEditor;
-using Xenko.Editor.EditorGame.Game;
-using Xenko.Engine;
-using Xenko.Engine.Processors;
-using Xenko.Input;
-using Xenko.Rendering.Compositing;
+using Stride.Core.Mathematics;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Editor.EditorGame.Game;
+using Stride.Engine;
+using Stride.Engine.Processors;
+using Stride.Input;
+using Stride.Rendering.Compositing;
 
-namespace Xenko.Assets.Presentation.AssetEditors.GameEditor.Game
+namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Game
 {
     public abstract class EditorGameCameraService : EditorGameMouseServiceBase, IEditorGameCameraService, IEditorGameCameraViewModelService
     {

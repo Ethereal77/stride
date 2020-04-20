@@ -1,14 +1,14 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets.Compiler;
-using Xenko.Assets.Entities;
-using Xenko.Assets.Presentation.Resources.Thumbnails;
-using Xenko.Editor.Resources;
-using Xenko.Editor.Thumbnails;
+using Stride.Core.Assets.Compiler;
+using Stride.Assets.Entities;
+using Stride.Assets.Presentation.Resources.Thumbnails;
+using Stride.Editor.Resources;
+using Stride.Editor.Thumbnails;
 
-namespace Xenko.Assets.Presentation.Thumbnails
+namespace Stride.Assets.Presentation.Thumbnails
 {
     [AssetCompiler(typeof(SceneAsset), typeof(ThumbnailCompilationContext))]
     public class SceneThumbnailCompiler : StaticThumbnailCompiler<SceneAsset>

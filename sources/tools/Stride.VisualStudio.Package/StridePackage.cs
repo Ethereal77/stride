@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -26,16 +26,16 @@ using Microsoft.VisualStudio.Threading;
 
 using NShader;
 
-using Xenko.VisualStudio.BuildEngine;
-using Xenko.VisualStudio.Commands;
-using Xenko.VisualStudio.Shaders;
+using Stride.VisualStudio.BuildEngine;
+using Stride.VisualStudio.Commands;
+using Stride.VisualStudio.Shaders;
 
 using Task = System.Threading.Tasks.Task;
 
-namespace Xenko.VisualStudio
+namespace Stride.VisualStudio
 {
     /// <summary>
-    ///  Quick and temporary VS package to allow platform switch for Xenko.
+    ///  Quick and temporary VS package to allow platform switch for Stride.
     ///  This code needs to be largely refactored and correctly designed.
     ///  - alex
     ///
@@ -57,11 +57,11 @@ namespace Xenko.VisualStudio
     //[ProvideMenuResource("Menus.ctmenu", 1)]
     // This attribute registers a tool window exposed by this package.
     //[ProvideToolWindow(typeof (MyToolWindow))]
-    [Guid(GuidList.guidXenko_VisualStudio_PackagePkgString)]
-    // Xenko Shader LanguageService
-    [ProvideService(typeof(NShaderLanguageService), ServiceName = "Xenko Shader Language Service", IsAsyncQueryable = true)]
+    [Guid(GuidList.guidStride_VisualStudio_PackagePkgString)]
+    // Stride Shader LanguageService
+    [ProvideService(typeof(NShaderLanguageService), ServiceName = "Stride Shader Language Service", IsAsyncQueryable = true)]
     [ProvideLanguageServiceAttribute(typeof(NShaderLanguageService),
-                             "Xenko Shader Language",
+                             "Stride Shader Language",
                              0,
                              EnableCommenting = true,
                              EnableFormatSelection = true,
@@ -69,14 +69,14 @@ namespace Xenko.VisualStudio
                              DefaultToInsertSpaces = true,
                              CodeSense = true
                              )]
-    [ProvideLanguageExtensionAttribute(typeof(NShaderLanguageService), NShaderSupportedExtensions.Xenko_Shader)]
-    [ProvideLanguageExtensionAttribute(typeof(NShaderLanguageService), NShaderSupportedExtensions.Xenko_Effect)]
-    // Xenko C# Effect Code Generator
+    [ProvideLanguageExtensionAttribute(typeof(NShaderLanguageService), NShaderSupportedExtensions.Stride_Shader)]
+    [ProvideLanguageExtensionAttribute(typeof(NShaderLanguageService), NShaderSupportedExtensions.Stride_Effect)]
+    // Stride C# Effect Code Generator
     [CodeGeneratorRegistration(typeof(EffectCodeFileGenerator), EffectCodeFileGenerator.InternalName, GuidList.vsContextGuidVCSProject, GeneratorRegKeyName = ".xkfx")]
     [CodeGeneratorRegistration(typeof(EffectCodeFileGenerator), EffectCodeFileGenerator.DisplayName, GuidList.vsContextGuidVCSProject, GeneratorRegKeyName = EffectCodeFileGenerator.InternalName, GeneratesDesignTimeSource = true, GeneratesSharedDesignTimeSource = true)]
     [CodeGeneratorRegistration(typeof(EffectCodeFileGenerator), EffectCodeFileGenerator.InternalName, GuidList.vsContextGuidVCSNewProject, GeneratorRegKeyName = ".xkfx")]
     [CodeGeneratorRegistration(typeof(EffectCodeFileGenerator), EffectCodeFileGenerator.DisplayName, GuidList.vsContextGuidVCSNewProject, GeneratorRegKeyName = EffectCodeFileGenerator.InternalName, GeneratesDesignTimeSource = true, GeneratesSharedDesignTimeSource = true)]
-    // Xenko C# Shader Key Generator
+    // Stride C# Shader Key Generator
     [CodeGeneratorRegistration(typeof(ShaderKeyFileGenerator), ShaderKeyFileGenerator.InternalName, GuidList.vsContextGuidVCSProject, GeneratorRegKeyName = ".xksl")]
     [CodeGeneratorRegistration(typeof(ShaderKeyFileGenerator), ShaderKeyFileGenerator.DisplayName, GuidList.vsContextGuidVCSProject, GeneratorRegKeyName = ShaderKeyFileGenerator.InternalName, GeneratesDesignTimeSource = true, GeneratesSharedDesignTimeSource = true)]
     [CodeGeneratorRegistration(typeof(ShaderKeyFileGenerator), ShaderKeyFileGenerator.InternalName, GuidList.vsContextGuidVCSNewProject, GeneratorRegKeyName = ".xksl")]
@@ -84,7 +84,7 @@ namespace Xenko.VisualStudio
     // Temporarily force load for easier debugging
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(VSConstants.UICONTEXT.SolutionExists_string, PackageAutoLoadFlags.BackgroundLoad)]
-    public sealed class XenkoPackage : AsyncPackage, IOleComponent
+    public sealed class StridePackage : AsyncPackage, IOleComponent
     {
         public const string Version = "2.0";
 
@@ -106,7 +106,7 @@ namespace Xenko.VisualStudio
         ///     not sited yet inside Visual Studio environment. The place to do all the other
         ///     initialization is the Initialize method.
         /// </summary>
-        public XenkoPackage()
+        public StridePackage()
         {
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", ToString()));
         }
@@ -144,7 +144,7 @@ namespace Xenko.VisualStudio
                    errorListProvider = new ErrorListProvider(this)
                    {
                        ProviderGuid = new Guid("ad1083c5-32ad-403d-af3d-32fee7abbdf1"),
-                       ProviderName = "Xenko Shading Language"
+                       ProviderName = "Stride Shading Language"
                    };
                    var langService = new NShaderLanguageService(errorListProvider);
                    langService.SetSite(this);
@@ -156,8 +156,8 @@ namespace Xenko.VisualStudio
             var mcs = await GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (null != mcs)
             {
-                XenkoCommands.ServiceProvider = this;
-                XenkoCommands.RegisterCommands(mcs);
+                StrideCommands.ServiceProvider = this;
+                StrideCommands.RegisterCommands(mcs);
             }
 
             // Register a timer to call our language service during
@@ -189,13 +189,13 @@ namespace Xenko.VisualStudio
         public static bool IsProjectExecutable(EnvDTE.Project project)
         {
             var buildProjects = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(project.FileName);
-            return buildProjects.Any(x => x.GetPropertyValue("XenkoProjectType") == "Executable");
+            return buildProjects.Any(x => x.GetPropertyValue("StrideProjectType") == "Executable");
         }
 
         public static string GetProjectPlatform(EnvDTE.Project project)
         {
             var buildProjects = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(project.FileName);
-            return buildProjects.Select(x => x.GetPropertyValue("XenkoPlatform")).FirstOrDefault(x => !string.IsNullOrEmpty(x));
+            return buildProjects.Select(x => x.GetPropertyValue("StridePlatform")).FirstOrDefault(x => !string.IsNullOrEmpty(x));
         }
 
         private void SolutionEventsListener_OnStartupProjectChanged(IVsHierarchy hierarchy)
@@ -315,7 +315,7 @@ namespace Xenko.VisualStudio
 
         private void solutionEventsListener_BeforeSolutionClosed()
         {
-            // Disable UIContext (this will hide Xenko menus)
+            // Disable UIContext (this will hide Stride menus)
             UpdateCommandVisibilityContext(false);
         }
 
@@ -325,31 +325,31 @@ namespace Xenko.VisualStudio
             var dte = (DTE)GetService(typeof(DTE));
             var solutionPath = dte.Solution.FullName;
 
-            var xenkoPackageInfo = await XenkoCommandsProxy.FindXenkoSdkDir(solutionPath);
-            if (xenkoPackageInfo.LoadedVersion == null)
+            var stridePackageInfo = await StrideCommandsProxy.FindStrideSdkDir(solutionPath);
+            if (stridePackageInfo.LoadedVersion == null)
                 return;
-            XenkoCommandsProxy.InitializeFromSolution(solutionPath, xenkoPackageInfo);
+            StrideCommandsProxy.InitializeFromSolution(solutionPath, stridePackageInfo);
 
             // Get General Output pane (for error logging)
             var generalOutputPane = GetGeneralOutputPane();
 
-            // Enable UIContext depending on wheter it is a Xenko project. This will show or hide Xenko menus.
-            var isXenkoSolution = xenkoPackageInfo.LoadedVersion != null;
-            UpdateCommandVisibilityContext(isXenkoSolution);
+            // Enable UIContext depending on wheter it is a Stride project. This will show or hide Stride menus.
+            var isStrideSolution = stridePackageInfo.LoadedVersion != null;
+            UpdateCommandVisibilityContext(isStrideSolution);
 
             // If a package is associated with the solution, check if the correct version was found
-            if (xenkoPackageInfo.ExpectedVersion != null && xenkoPackageInfo.ExpectedVersion != xenkoPackageInfo.LoadedVersion)
+            if (stridePackageInfo.ExpectedVersion != null && stridePackageInfo.ExpectedVersion != stridePackageInfo.LoadedVersion)
             {
-                if (xenkoPackageInfo.ExpectedVersion < XenkoCommandsProxy.MinimumVersion)
+                if (stridePackageInfo.ExpectedVersion < StrideCommandsProxy.MinimumVersion)
                 {
                     // The package version is deprecated
-                    generalOutputPane.OutputStringThreadSafe($"Could not initialize Xenko extension for package with version {xenkoPackageInfo.ExpectedVersion}. Versions earlier than {XenkoCommandsProxy.MinimumVersion} are not supported. Loading latest version {xenkoPackageInfo.LoadedVersion} instead.\r\n");
+                    generalOutputPane.OutputStringThreadSafe($"Could not initialize Stride extension for package with version {stridePackageInfo.ExpectedVersion}. Versions earlier than {StrideCommandsProxy.MinimumVersion} are not supported. Loading latest version {stridePackageInfo.LoadedVersion} instead.\r\n");
                     generalOutputPane.Activate();
                 }
-                else if (xenkoPackageInfo.LoadedVersion == null)
+                else if (stridePackageInfo.LoadedVersion == null)
                 {
                     // No version found
-                    generalOutputPane.OutputStringThreadSafe("Could not find Xenko SDK directory.");
+                    generalOutputPane.OutputStringThreadSafe("Could not find Stride SDK directory.");
                     generalOutputPane.Activate();
 
                     // Don't try to create any services
@@ -358,7 +358,7 @@ namespace Xenko.VisualStudio
                 else
                 {
                     // The package version was not found
-                    generalOutputPane.OutputStringThreadSafe($"Could not find SDK directory for Xenko version {xenkoPackageInfo.ExpectedVersion}. Loading latest version {xenkoPackageInfo.LoadedVersion} instead.\r\n");
+                    generalOutputPane.OutputStringThreadSafe($"Could not find SDK directory for Stride version {stridePackageInfo.ExpectedVersion}. Loading latest version {stridePackageInfo.LoadedVersion} instead.\r\n");
                     generalOutputPane.Activate();
                 }
             }
@@ -372,14 +372,14 @@ namespace Xenko.VisualStudio
                 if (buildMonitorDomain != null)
                     AppDomain.Unload(buildMonitorDomain);
 
-                buildMonitorDomain = XenkoCommandsProxy.CreateXenkoDomain();
-                XenkoCommandsProxy.InitializeFromSolution(solutionPath, xenkoPackageInfo, buildMonitorDomain);
-                var remoteCommands = XenkoCommandsProxy.CreateProxy(buildMonitorDomain);
+                buildMonitorDomain = StrideCommandsProxy.CreateStrideDomain();
+                StrideCommandsProxy.InitializeFromSolution(solutionPath, stridePackageInfo, buildMonitorDomain);
+                var remoteCommands = StrideCommandsProxy.CreateProxy(buildMonitorDomain);
                 remoteCommands.StartRemoteBuildLogServer(new BuildMonitorCallback(), buildLogPipeGenerator.LogPipeUrl);
             }
             catch (Exception e)
             {
-                generalOutputPane.OutputStringThreadSafe($"Error loading Xenko SDK: {e}\r\n");
+                generalOutputPane.OutputStringThreadSafe($"Error loading Stride SDK: {e}\r\n");
                 generalOutputPane.Activate();
 
                 // Unload domain right away
@@ -393,11 +393,11 @@ namespace Xenko.VisualStudio
                 {
                     try
                     {
-                        XenkoCommandsProxy.GetProxy();
+                        StrideCommandsProxy.GetProxy();
                     }
                     catch (Exception ex)
                     {
-                        generalOutputPane.OutputStringThreadSafe($"Error Initializing Xenko Language Service: {ex.InnerException ?? ex}\r\n");
+                        generalOutputPane.OutputStringThreadSafe($"Error Initializing Stride Language Service: {ex.InnerException ?? ex}\r\n");
                         generalOutputPane.Activate();
                         errorListProvider?.Tasks.Add(new ErrorTask(ex.InnerException ?? ex));
                     }
@@ -408,10 +408,10 @@ namespace Xenko.VisualStudio
         private void UpdateCommandVisibilityContext(bool enabled)
         {
             IVsMonitorSelection selMon = (IVsMonitorSelection)GetService(typeof(SVsShellMonitorSelection));
-            uint cmdUIContextXenko;
-            var cmdSet = GuidList.guidXenko_VisualStudio_PackageCmdSet;
-            if (selMon.GetCmdUIContextCookie(ref cmdSet, out cmdUIContextXenko) == VSConstants.S_OK)
-                selMon.SetCmdUIContext(cmdUIContextXenko, enabled ? 1 : 0);
+            uint cmdUIContextStride;
+            var cmdSet = GuidList.guidStride_VisualStudio_PackageCmdSet;
+            if (selMon.GetCmdUIContextCookie(ref cmdSet, out cmdUIContextStride) == VSConstants.S_OK)
+                selMon.SetCmdUIContext(cmdUIContextStride, enabled ? 1 : 0);
         }
 
         protected override void Dispose(bool disposing)

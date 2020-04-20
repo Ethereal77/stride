@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -14,11 +14,11 @@ using Microsoft.Xaml.Behaviors;
 using GraphX;
 using GraphX.Controls;
 
-using Xenko.Core.Presentation.Extensions;
-using Xenko.Core.Presentation.Graph.Helper;
-using Xenko.Core.Presentation.Graph.ViewModel;
+using Stride.Core.Presentation.Extensions;
+using Stride.Core.Presentation.Graph.Helper;
+using Stride.Core.Presentation.Graph.ViewModel;
 
-namespace Xenko.Core.Presentation.Graph.Behaviors
+namespace Stride.Core.Presentation.Graph.Behaviors
 {
     /// <summary>
     /// 

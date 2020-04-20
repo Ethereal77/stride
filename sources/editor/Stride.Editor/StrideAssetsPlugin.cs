@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,24 +8,24 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Extensions;
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.Reflection;
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Presentation.View;
-using Xenko.Editor.Preview;
-using Xenko.Editor.Preview.ViewModel;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Extensions;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.Reflection;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Presentation.View;
+using Stride.Editor.Preview;
+using Stride.Editor.Preview.ViewModel;
 
-namespace Xenko.Editor
+namespace Stride.Editor
 {
     public delegate IAssetPreview AssetPreviewFactory(IPreviewBuilder builder, PreviewGame game, AssetItem asset);
 
-    public abstract class XenkoAssetsPlugin : AssetsPlugin
+    public abstract class StrideAssetsPlugin : AssetsPlugin
     {
         private readonly Dictionary<object, object> enumImagesDictionary = new Dictionary<object, object>();
         private readonly List<ITemplateProvider> templateProviderList = new List<ITemplateProvider>();

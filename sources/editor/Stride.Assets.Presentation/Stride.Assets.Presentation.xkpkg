@@ -8,7 +8,7 @@ TemplateFolders:
         - !file Templates/Core/ProjectExecutable.xktpl
         - !file Templates/Core/ProjectLibrary.xktpl
         - !file Templates/Core/UpdatePlatforms.xktpl
-    - Path: !dir ../../data/XenkoPackage/Templates/Core
+    - Path: !dir ../../data/StridePackage/Templates/Core
       Group: Core
       Exclude: "**/*.psd;**/*.md"
     - Path: !dir Templates/Assets

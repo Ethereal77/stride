@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using Xenko.Core.MicroThreading;
+using Stride.Core.MicroThreading;
 
 using Xunit;
 
-namespace Xenko.Core.Tests
+namespace Stride.Core.Tests
 {
     // TODO: Add some checks to see if tests really complete within scheduler.Step() callstack
     // (if something is wrong with scheduling, it could end up being ran on another thread).

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,13 +8,13 @@ using System.Linq;
 
 using Xunit;
 
-using Xenko.Core;
-using Xenko.Assets.Textures;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Graphics.Regression;
+using Stride.Core;
+using Stride.Assets.Textures;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Graphics.Regression;
 
-namespace Xenko.Assets.Tests2
+namespace Stride.Assets.Tests2
 {
     /// <summary>
     /// Tests for automatic alpha detection in textures and sprite sheets

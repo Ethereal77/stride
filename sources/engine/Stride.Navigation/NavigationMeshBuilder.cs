@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,16 +8,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Threading;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Graphics.GeometricPrimitives;
-using Xenko.Physics;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.Mathematics;
+using Stride.Core.Threading;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Graphics.GeometricPrimitives;
+using Stride.Physics;
 
-namespace Xenko.Navigation
+namespace Stride.Navigation
 {
     /// <summary>
     /// Incremental navigation mesh builder. 

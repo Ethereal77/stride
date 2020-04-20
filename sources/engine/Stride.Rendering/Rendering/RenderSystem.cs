@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading;
 
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Core.Threading;
-using Xenko.Graphics;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Core.Threading;
+using Stride.Graphics;
 
-namespace Xenko.Rendering
+namespace Stride.Rendering
 {
     /// <summary>
     /// Facility to perform rendering: extract rendering data from scene, determine effects and GPU states, compute and prepare data (i.e. matrices, buffers, etc...) and finally draw it.

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,16 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Presentation.Preview.Views;
-using Xenko.Assets.Sprite;
-using Xenko.Assets.Textures;
-using Xenko.Editor.Preview;
-using Xenko.Graphics;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Assets.Presentation.Preview.Views;
+using Stride.Assets.Sprite;
+using Stride.Assets.Textures;
+using Stride.Editor.Preview;
+using Stride.Graphics;
 
-namespace Xenko.Assets.Presentation.Preview
+namespace Stride.Assets.Presentation.Preview
 {
     public enum SpriteSheetDisplayMode
     {

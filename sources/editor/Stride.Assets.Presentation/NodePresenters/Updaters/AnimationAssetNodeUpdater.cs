@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters;
-using Xenko.Core.Annotations;
-using Xenko.Assets.Models;
-using Xenko.Assets.Presentation.ViewModel;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters;
+using Stride.Core.Annotations;
+using Stride.Assets.Models;
+using Stride.Assets.Presentation.ViewModel;
 
-namespace Xenko.Assets.Presentation.NodePresenters.Updaters
+namespace Stride.Assets.Presentation.NodePresenters.Updaters
 {
     internal sealed class AnimationAssetNodeUpdater : AssetNodePresenterUpdaterBase
     {

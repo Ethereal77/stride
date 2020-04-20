@@ -1,14 +1,14 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Quantum;
-using Xenko.Core.Quantum;
-using Xenko.Assets.Rendering;
-using Xenko.Rendering;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Quantum;
+using Stride.Core.Quantum;
+using Stride.Assets.Rendering;
+using Stride.Rendering;
 
-namespace Xenko.Assets.Presentation.AssetEditors.GraphicsCompositorEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.GraphicsCompositorEditor.ViewModels
 {
     /// <summary>
     /// View model for <see cref="RenderStage"/>.

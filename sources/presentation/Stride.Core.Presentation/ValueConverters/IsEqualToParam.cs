@@ -1,13 +1,13 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Globalization;
 
-using Xenko.Core.Presentation.Internal;
+using Stride.Core.Presentation.Internal;
 
-namespace Xenko.Core.Presentation.ValueConverters
+namespace Stride.Core.Presentation.ValueConverters
 {
     /// <summary>
     /// This converter will convert an object to a boolean. If the given value is equal (or reference-equal for non-value type) to the parameter, it will

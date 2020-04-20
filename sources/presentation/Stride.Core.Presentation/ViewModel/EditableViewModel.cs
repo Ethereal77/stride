@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,14 +10,14 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Transactions;
-using Xenko.Core.Presentation.Dirtiables;
-using Xenko.Core.Presentation.Services;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Transactions;
+using Stride.Core.Presentation.Dirtiables;
+using Stride.Core.Presentation.Services;
 
-namespace Xenko.Core.Presentation.ViewModel
+namespace Stride.Core.Presentation.ViewModel
 {
     public abstract class EditableViewModel : DispatcherViewModel
     {

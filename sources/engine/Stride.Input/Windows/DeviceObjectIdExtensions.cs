@@ -1,12 +1,12 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
 
 using SharpDX.DirectInput;
 
-namespace Xenko.Input
+namespace Stride.Input
 {
     /// <summary>
     /// Provides easy operations on <see cref="DeviceObjectTypeFlags"/>

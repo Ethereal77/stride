@@ -1,16 +1,16 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Engine;
-using Xenko.Engine.Design;
-using Xenko.Engine.Processors;
-using Xenko.Rendering;
-using Xenko.Rendering.Shadows;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Engine;
+using Stride.Engine.Design;
+using Stride.Engine.Processors;
+using Stride.Rendering;
+using Stride.Rendering.Shadows;
 
-namespace Xenko.Engine
+namespace Stride.Engine
 {
     /// <summary>
     /// The source for light shafts, should be placed on the same entity as the light component which will be used for light shafts

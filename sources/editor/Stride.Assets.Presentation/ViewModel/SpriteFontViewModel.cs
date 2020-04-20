@@ -1,21 +1,21 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core;
-using Xenko.Core.IO;
-using Xenko.Assets.SpriteFont;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.Windows;
-using Xenko.Core.Translation;
-using Xenko.Graphics;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core;
+using Stride.Core.IO;
+using Stride.Assets.SpriteFont;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.Windows;
+using Stride.Core.Translation;
+using Stride.Graphics;
 
-namespace Xenko.Assets.Presentation.ViewModel
+namespace Stride.Assets.Presentation.ViewModel
 {
     [AssetViewModel(typeof(SpriteFontAsset))]
     public class SpriteFontViewModel : AssetViewModel<SpriteFontAsset>

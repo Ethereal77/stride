@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,9 +8,9 @@ using GraphX;
 using GraphX.Controls;
 using GraphX.Controls.Models;
 
-using Xenko.Core.Presentation.Graph.Controls;
+using Stride.Core.Presentation.Graph.Controls;
 
-namespace Xenko.Core.Presentation.Graph.ViewModel
+namespace Stride.Core.Presentation.Graph.ViewModel
 {
     /// <summary>
     /// Factory class responsible for NodeVertexControl and NodeEdgeControl objects creation

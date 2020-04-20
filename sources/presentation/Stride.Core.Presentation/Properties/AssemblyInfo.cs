@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,18 +10,18 @@ using System.Windows.Markup;
 
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 
-[assembly: InternalsVisibleTo("Xenko.Core.Presentation.Tests")]
+[assembly: InternalsVisibleTo("Stride.Core.Presentation.Tests")]
 
-[assembly: XmlnsPrefix("http://schemas.xenko.com/xaml/presentation", "xk")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.Behaviors")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.Collections")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.Commands")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.Controls")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.Controls.Commands")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.Core")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.Interactivity")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.MarkupExtensions")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.ValueConverters")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.View")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Presentation.ViewModel")]
+[assembly: XmlnsPrefix("http://schemas.stride3d.net/xaml/presentation", "xk")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Behaviors")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Collections")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Commands")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Controls")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Controls.Commands")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Core")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Interactivity")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.MarkupExtensions")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.ValueConverters")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.View")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.ViewModel")]

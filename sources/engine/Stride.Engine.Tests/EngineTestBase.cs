@@ -1,17 +1,17 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Threading.Tasks;
 
-using Xenko.Core.Mathematics;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
-using Xenko.Graphics.Regression;
-using Xenko.Rendering.Colors;
-using Xenko.Rendering.Lights;
+using Stride.Core.Mathematics;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
+using Stride.Graphics.Regression;
+using Stride.Rendering.Colors;
+using Stride.Rendering.Lights;
 
-namespace Xenko.Engine.Tests
+namespace Stride.Engine.Tests
 {
     /// <summary>
     /// Base class for engine tests.

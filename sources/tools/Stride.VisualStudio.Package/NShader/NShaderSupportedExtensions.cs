@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2009 NShader - Alexandre Mutel, Microsoft Corporation
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -19,8 +19,8 @@ namespace NShader
         public const string HLSL_PSH = ".psh";
         public const string SL_FX = ".slfx";
 
-        // Xenko file extensions
-        public const string Xenko_Shader = ".xksl";
-        public const string Xenko_Effect = ".xkfx";
+        // Stride file extensions
+        public const string Stride_Shader = ".xksl";
+        public const string Stride_Effect = ".xkfx";
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -16,11 +16,11 @@ using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
 using NuGet.RuntimeModel;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Packages;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Packages;
 
-namespace Xenko.Core.Assets
+namespace Stride.Core.Assets
 {
     partial class PackageSession
     {
@@ -113,7 +113,7 @@ namespace Xenko.Core.Assets
                         ? ProjectType.Executable
                         : ProjectType.Library;
 
-                    // Note: Platform might be incorrect if Xenko is not restored yet (it won't include Xenko targets)
+                    // Note: Platform might be incorrect if Stride is not restored yet (it won't include Stride targets)
                     // Also, if already set, don't try to query it again
                     if (project.Type == ProjectType.Executable && project.Platform == PlatformType.Shared)
                         project.Platform = VSProjectHelper.GetPlatformTypeFromProject(msProject) ?? PlatformType.Shared;

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Collections;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Core;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.ViewModel;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Collections;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Core;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.ViewModel;
 
-namespace Xenko.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Editor.ViewModel
 {
     /// <summary>
     /// This view model represents the union of the tags of a collection of selected assets.

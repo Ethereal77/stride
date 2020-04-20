@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,16 +8,16 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Diagnostics;
-using Xenko.Assets.SpriteFont;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using Xenko.Graphics;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Diagnostics;
+using Stride.Assets.SpriteFont;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Stride.Graphics;
 
-namespace Xenko.GameStudio.Tests
+namespace Stride.GameStudio.Tests
 {
     public class TestThumbnails
     {
@@ -40,14 +40,14 @@ namespace Xenko.GameStudio.Tests
         {
             // load assembly to register the assets extensions
             RuntimeHelpers.RunModuleConstructor(typeof(Asset).Module.ModuleHandle);
-            var assembly = Assembly.Load("Xenko.Assets.Presentation");
+            var assembly = Assembly.Load("Stride.Assets.Presentation");
             foreach (var module in assembly.Modules)
             {
                 RuntimeHelpers.RunModuleConstructor(module.ModuleHandle);
             }
 
             // load the project
-            var projectSessionResult = PackageSession.Load("..\\..\\sources\\tools\\Xenko.Previewer.Tests\\Assets\\Assets.xkpkg");
+            var projectSessionResult = PackageSession.Load("..\\..\\sources\\tools\\Stride.Previewer.Tests\\Assets\\Assets.xkpkg");
             projectSession = projectSessionResult.Session;
             //projectSession = PackageSession.Load(@"C:\Dev\sengokurun\SengokuRun\SengokuRun\GameAssets\SengokuRun.xkpkg");
 
@@ -55,7 +55,7 @@ namespace Xenko.GameStudio.Tests
             //previewAsset = projectSession.FindAsset("mc00_entity");
             // create the asset previewer and subscribe to the build progress events
             // TODO: desactivated
-            //thumbnailService = new GameStudioPreviewService(projectSession, null, "..\\..\\sources\\tools\\Xenko.Previewer.Tests\\obj", null).ThumbnailService;
+            //thumbnailService = new GameStudioPreviewService(projectSession, null, "..\\..\\sources\\tools\\Stride.Previewer.Tests\\obj", null).ThumbnailService;
             //thumbnailService.ThumbnailCompleted += PreviewerOnThumbnailBuilt; 
         }
 

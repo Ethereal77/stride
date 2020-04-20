@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Globalization;
 
 using Irony.Parsing;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
-using Xenko.Core.Shaders.Utility;
-using StorageQualifier = Xenko.Core.Shaders.Ast.StorageQualifier;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Utility;
+using StorageQualifier = Stride.Core.Shaders.Ast.StorageQualifier;
 
-namespace Xenko.Core.Shaders.Grammar
+namespace Stride.Core.Shaders.Grammar
 {
     /// <summary>
     /// Methods used to create the Abstract Syntax Tree..

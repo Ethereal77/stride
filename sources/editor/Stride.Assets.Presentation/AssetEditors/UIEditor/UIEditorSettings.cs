@@ -1,11 +1,11 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Settings;
-using Xenko.Core.Translation;
+using Stride.Core.Settings;
+using Stride.Core.Translation;
 
-namespace Xenko.Assets.Presentation.AssetEditors.UIEditor
+namespace Stride.Assets.Presentation.AssetEditors.UIEditor
 {
     internal static class UIEditorSettings
     {
@@ -15,7 +15,7 @@ namespace Xenko.Assets.Presentation.AssetEditors.UIEditor
         static UIEditorSettings()
         {
             // Note: assignments cannot be moved to initializer, because category names need to be assigned first.
-            AskBeforeDeletingUIElements = new SettingsKey<bool>("UIEditor/AskBeforeDeletingUIElements", Xenko.Core.Assets.Editor.Settings.EditorSettings.SettingsContainer, true)
+            AskBeforeDeletingUIElements = new SettingsKey<bool>("UIEditor/AskBeforeDeletingUIElements", Stride.Core.Assets.Editor.Settings.EditorSettings.SettingsContainer, true)
             {
                 DisplayName = $"{UIEditor}/{Tr._p("Settings", "Ask before deleting UI elements")}"
             };
@@ -25,7 +25,7 @@ namespace Xenko.Assets.Presentation.AssetEditors.UIEditor
 
         public static void Save()
         {
-            Xenko.Core.Assets.Editor.Settings.EditorSettings.Save();
+            Stride.Core.Assets.Editor.Settings.EditorSettings.Save();
         }
     }
 }

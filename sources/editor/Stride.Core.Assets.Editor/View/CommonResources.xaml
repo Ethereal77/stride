@@ -2,14 +2,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                    xmlns:xk="http://schemas.xenko.com/xaml/presentation"
-                    xmlns:view="clr-namespace:Xenko.Core.Assets.Editor.View"
-                    xmlns:viewModel="clr-namespace:Xenko.Core.Assets.Editor.ViewModel"
-                    xmlns:behaviors="clr-namespace:Xenko.Core.Assets.Editor.View.Behaviors"
+                    xmlns:xk="http://schemas.stride3d.net/xaml/presentation"
+                    xmlns:view="clr-namespace:Stride.Core.Assets.Editor.View"
+                    xmlns:viewModel="clr-namespace:Stride.Core.Assets.Editor.ViewModel"
+                    xmlns:behaviors="clr-namespace:Stride.Core.Assets.Editor.View.Behaviors"
                     mc:Ignorable="d">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="/Xenko.Core.Presentation;component/Themes/ExpressionDark/Theme.xaml"/>
+    <ResourceDictionary Source="/Stride.Core.Presentation;component/Themes/ExpressionDark/Theme.xaml"/>
     <ResourceDictionary Source="ImageDictionary.xaml"/>
     <ResourceDictionary Source="../Themes/ExpressionDark/TableflowView.ExpressionDark.normalcolor.xaml"/>
   </ResourceDictionary.MergedDictionaries>

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,22 +8,22 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using Xenko.Core.BuildEngine;
-using Xenko.Core;
-using Xenko.Core.Extensions;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Xenko.Assets.Presentation.AssetEditors.Gizmos;
-using Xenko.Assets.Presentation.SceneEditor;
-using Xenko.Editor.EditorGame.Game;
-using Xenko.Engine;
-using Xenko.Engine.Design;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
-using Xenko.Rendering.Sprites;
+using Stride.Core.BuildEngine;
+using Stride.Core;
+using Stride.Core.Extensions;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.Gizmos;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Editor.EditorGame.Game;
+using Stride.Engine;
+using Stride.Engine.Design;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
+using Stride.Rendering.Sprites;
 
-namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
+namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
     public class EditorGameComponentGizmoService : EditorGameServiceBase, IEditorGameComponentGizmoService, IEditorGameComponentGizmoViewModelService
     {
@@ -248,8 +248,8 @@ namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 if (attribute == null || !attribute.IsMainGizmo)
                     continue;
 
-                var compIndex = XenkoDefaultAssetsPlugin.ComponentOrders.IndexOf(t => t.type == component.GetType());
-                var order = compIndex >= 0 ? XenkoDefaultAssetsPlugin.ComponentOrders[compIndex].order : default(int);
+                var compIndex = StrideDefaultAssetsPlugin.ComponentOrders.IndexOf(t => t.type == component.GetType());
+                var order = compIndex >= 0 ? StrideDefaultAssetsPlugin.ComponentOrders[compIndex].order : default(int);
                 if (order > mainComponentOrder)
                 {
                     mainComponentOrder = order;
@@ -343,7 +343,7 @@ namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         {
             if (componentType == null) throw new ArgumentNullException(nameof(componentType));
             Type gizmoType;
-            while (!XenkoDefaultAssetsPlugin.GizmoTypeDictionary.TryGetValue(componentType, out gizmoType))
+            while (!StrideDefaultAssetsPlugin.GizmoTypeDictionary.TryGetValue(componentType, out gizmoType))
             {
                 componentType = componentType.BaseType;
                 if (componentType == null) throw new ArgumentException(@"The given type is not an EntityComponent type", nameof(componentType));

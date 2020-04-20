@@ -1,13 +1,13 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Globalization;
 
-using Xenko.Core;
-using Xenko.Core.Mathematics;
+using Stride.Core;
+using Stride.Core.Mathematics;
 
-namespace Xenko.Assets.Textures.Packing
+namespace Stride.Assets.Textures.Packing
 {
     /// <summary>
     /// RotableRectangle adds a rotating status to Rectangle struct type indicating that this rectangle is rotated by 90 degree and that width and height is swapped.

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,19 +10,19 @@ using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using Xenko.Core.LZ4;
+using Stride.Core.LZ4;
 
-namespace Xenko.Graphics.Regression
+namespace Stride.Graphics.Regression
 {
     public partial class TestRunner
     {
-        public const string XenkoVersion = "XENKO_VERSION";
+        public const string StrideVersion = "STRIDE_VERSION";
 
-        public const string XenkoBuildNumber = "XENKO_BUILD_NUMBER";
+        public const string StrideBuildNumber = "STRIDE_BUILD_NUMBER";
 
-        public const string XenkoTestName = "XENKO_TEST_NAME";
+        public const string StrideTestName = "STRIDE_TEST_NAME";
 
-        public const string XenkoBranchName = "XENKO_BRANCH_NAME";
+        public const string StrideBranchName = "STRIDE_BRANCH_NAME";
     }
 
     enum ImageServerMessageType
@@ -43,9 +43,9 @@ namespace Xenko.Graphics.Regression
 
             result.Platform = "Windows";
             result.Serial = Environment.MachineName;
-#if XENKO_GRAPHICS_API_DIRECT3D12
+#if STRIDE_GRAPHICS_API_DIRECT3D12
             result.DeviceName = "Direct3D12";
-#elif XENKO_GRAPHICS_API_DIRECT3D11
+#elif STRIDE_GRAPHICS_API_DIRECT3D11
             result.DeviceName = "Direct3D";
 #endif
 
@@ -71,9 +71,9 @@ namespace Xenko.Graphics.Regression
 
         public static TestPlatform GetPlatform()
         {
-#if XENKO_GRAPHICS_API_NULL
+#if STRIDE_GRAPHICS_API_NULL
             return TestPlatform.None;
-#elif XENKO_GRAPHICS_API_DIRECT3D
+#elif STRIDE_GRAPHICS_API_DIRECT3D
             return TestPlatform.WindowsDx;
 #endif
         }

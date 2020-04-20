@@ -1,19 +1,19 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core.Assets.Editor.Components.Properties;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Quantum;
-using Xenko.Core.Presentation.ViewModel;
-using Xenko.Core.Quantum;
+using Stride.Core.Assets.Editor.Components.Properties;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Quantum;
+using Stride.Core.Presentation.ViewModel;
+using Stride.Core.Quantum;
 
-namespace Xenko.Assets.Presentation.AssetEditors.GraphicsCompositorEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.GraphicsCompositorEditor.ViewModels
 {
     /// <summary>
     /// Common view model for items that will display in the property grid for <see cref="GraphicsCompositorEditorViewModel"/>.

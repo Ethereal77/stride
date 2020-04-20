@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -13,10 +13,10 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
-using Xenko.Core.Serialization;
-using Xenko.Core.Storage;
+using Stride.Core.Serialization;
+using Stride.Core.Storage;
 
-namespace Xenko.Core.AssemblyProcessor
+namespace Stride.Core.AssemblyProcessor
 {
     // Source: http://stackoverflow.com/questions/4968755/mono-cecil-call-generic-base-class-method-from-other-assembly
     public static class CecilExtensions
@@ -37,21 +37,21 @@ namespace Xenko.Core.AssemblyProcessor
             return type.Methods.FirstOrDefault(x => x.IsConstructor && (x.IsPublic || allowPrivate) && !x.IsStatic && x.Parameters.Count == 0);
         }
 
-        public static ModuleDefinition GetXenkoCoreModule(this AssemblyDefinition assembly)
+        public static ModuleDefinition GetStrideCoreModule(this AssemblyDefinition assembly)
         {
-            var xenkoCoreAssembly = assembly.Name.Name == "Xenko.Core"
+            var strideCoreAssembly = assembly.Name.Name == "Stride.Core"
                 ? assembly
-                : assembly.MainModule.AssemblyResolver.Resolve(new AssemblyNameReference("Xenko.Core", null));
-            var xenkoCoreModule = xenkoCoreAssembly.MainModule;
-            return xenkoCoreModule;
+                : assembly.MainModule.AssemblyResolver.Resolve(new AssemblyNameReference("Stride.Core", null));
+            var strideCoreModule = strideCoreAssembly.MainModule;
+            return strideCoreModule;
         }
 
         public static void AddModuleInitializer(this MethodDefinition initializeMethod, int order = 0)
         {
             var assembly = initializeMethod.Module.Assembly;
-            var xenkoCoreModule = GetXenkoCoreModule(assembly);
+            var strideCoreModule = GetStrideCoreModule(assembly);
 
-            var moduleInitializerAttribute = xenkoCoreModule.GetType("Xenko.Core.ModuleInitializerAttribute");
+            var moduleInitializerAttribute = strideCoreModule.GetType("Stride.Core.ModuleInitializerAttribute");
             var moduleInitializerCtor = moduleInitializerAttribute.GetConstructors().Single(x => !x.IsStatic && x.Parameters.Count == 1);
             initializeMethod.CustomAttributes.Add(
                 new CustomAttribute(assembly.MainModule.ImportReference(moduleInitializerCtor))

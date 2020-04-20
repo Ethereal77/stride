@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2014 OxyPlot contributors
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -9,13 +9,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Extensions;
-using Xenko.Core.Presentation.Internal;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Extensions;
+using Stride.Core.Presentation.Internal;
 
-using MathUtil = Xenko.Core.Mathematics.MathUtil;
+using MathUtil = Stride.Core.Mathematics.MathUtil;
 
-namespace Xenko.Core.Presentation.Controls
+namespace Stride.Core.Presentation.Controls
 {
     [TemplatePart(Name = HorizontalLinePartName, Type = typeof(Line))]
     [TemplatePart(Name = VerticalLinePartName, Type = typeof(Line))]

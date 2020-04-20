@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Engine.Design;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.Sprites;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Engine.Design;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.Sprites;
 
-namespace Xenko.Engine
+namespace Stride.Engine
 {
     /// <summary>
     /// Add a <see cref="Sprite"/> to an <see cref="Entity"/>. It could be an animated sprite.

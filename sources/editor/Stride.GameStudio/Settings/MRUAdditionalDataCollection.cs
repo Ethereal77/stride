@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,15 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Extensions;
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.Core.Settings;
-using Xenko.Core.MostRecentlyUsedFiles;
-using Xenko.Core.Presentation.Collections;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Extensions;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.Core.Settings;
+using Stride.Core.MostRecentlyUsedFiles;
+using Stride.Core.Presentation.Collections;
 
-namespace Xenko.GameStudio
+namespace Stride.GameStudio
 {
     internal class MRUAdditionalDataCollection
     {

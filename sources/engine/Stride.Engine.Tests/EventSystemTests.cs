@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Xenko.Core.MicroThreading;
-using Xenko.Engine.Events;
-using Xenko.Graphics.Regression;
+using Stride.Core.MicroThreading;
+using Stride.Engine.Events;
+using Stride.Graphics.Regression;
 // ReSharper disable AccessToDisposedClosure
 // ReSharper disable FunctionNeverReturns
 
-namespace Xenko.Engine.Tests
+namespace Stride.Engine.Tests
 {
     internal class EventSystemTest
     {

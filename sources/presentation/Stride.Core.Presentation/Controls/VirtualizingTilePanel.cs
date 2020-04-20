@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,9 +9,9 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-using Xenko.Core.Annotations;
+using Stride.Core.Annotations;
 
-namespace Xenko.Core.Presentation.Controls
+namespace Stride.Core.Presentation.Controls
 {
     /// <summary>
     /// This class describes a Panel similar to a <see cref="WrapPanel"/> except that items have a reserved space that is equal to the size of the largest items. Every item

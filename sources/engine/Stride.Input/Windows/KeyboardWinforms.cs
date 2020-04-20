@@ -1,8 +1,8 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
 
 using System;
 using System.Collections.Generic;
@@ -11,9 +11,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-using Xenko.Games;
+using Stride.Games;
 
-namespace Xenko.Input
+namespace Stride.Input
 {
     internal class KeyboardWinforms : KeyboardDeviceBase, ITextInputDevice, IDisposable
     {
@@ -69,21 +69,21 @@ namespace Xenko.Input
 
         internal void HandleKeyDown(System.Windows.Forms.Keys winFormsKey)
         {
-            // Translate from windows key enum to Xenko key enum
-            Keys xenkoKey;
-            if (WinKeys.MapKeys.TryGetValue(winFormsKey, out xenkoKey) && xenkoKey != Keys.None)
+            // Translate from windows key enum to Stride key enum
+            Keys strideKey;
+            if (WinKeys.MapKeys.TryGetValue(winFormsKey, out strideKey) && strideKey != Keys.None)
             {
-                HandleKeyDown(xenkoKey);
+                HandleKeyDown(strideKey);
             }
         }
 
         internal void HandleKeyUp(System.Windows.Forms.Keys winFormsKey)
         {
-            // Translate from windows key enum to Xenko key enum
-            Keys xenkoKey;
-            if (WinKeys.MapKeys.TryGetValue(winFormsKey, out xenkoKey) && xenkoKey != Keys.None)
+            // Translate from windows key enum to Stride key enum
+            Keys strideKey;
+            if (WinKeys.MapKeys.TryGetValue(winFormsKey, out strideKey) && strideKey != Keys.None)
             {
-                HandleKeyUp(xenkoKey);
+                HandleKeyUp(strideKey);
             }
         }
 

@@ -1,24 +1,24 @@
 ﻿<Project>
-  <Import Project="..\..\targets\Xenko.PreSettings.UnitTests.targets" />
+  <Import Project="..\..\targets\Stride.PreSettings.UnitTests.targets" />
   <PropertyGroup>
     <TargetFrameworks>net461</TargetFrameworks>
-    <AssemblyName>Xenko.UI.Tests</AssemblyName>
-    <RootNamespace>Xenko.UI.Tests</RootNamespace>
+    <AssemblyName>Stride.UI.Tests</AssemblyName>
+    <RootNamespace>Stride.UI.Tests</RootNamespace>
     <EnableDefaultItems>false</EnableDefaultItems>
-    <XenkoBuildTags>*</XenkoBuildTags>
-    <XenkoCompileAssets>true</XenkoCompileAssets>
-    <XenkoGraphicsApiDependent>true</XenkoGraphicsApiDependent>
+    <StrideBuildTags>*</StrideBuildTags>
+    <StrideCompileAssets>true</StrideCompileAssets>
+    <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
     <!-- Force MSBuild to check to rebuild this assembly instead of letting VS IDE guess -->
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>xunit.runner.xenko.Program</StartupObject>
+    <StartupObject>xunit.runner.stride.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\tests\xunit.runner.xenko\xunit.runner.xenko.csproj" />
-    <ProjectReference Include="..\Xenko.Engine\Xenko.Engine.csproj" />
-    <ProjectReference Include="..\Xenko.UI\Xenko.UI.csproj" />
-    <ProjectReference Include="..\Xenko.Graphics.Regression\Xenko.Graphics.Regression.csproj" />
+    <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
+    <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
+    <ProjectReference Include="..\Stride.UI\Stride.UI.csproj" />
+    <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="XunitAttributes.cs" />
@@ -114,7 +114,7 @@
     <None Include="Assets\UIImages.xksheet" />
     <None Include="Assets\Untitled.xktex" />
     <None Include="Assets\uv.xktex" />
-    <None Include="Assets\XenkoBackground.xktex" />
+    <None Include="Assets\StrideBackground.xktex" />
     <None Include="Regression\ElementTestDesigns.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ElementTestDesigns.cs</LastGenOutput>
@@ -125,7 +125,7 @@
     <None Include="Resources\ButtonPressed.dds" />
     <None Include="Resources\EditTextInactive.dds" />
     <None Include="Resources\EditTextOverred.dds" />
-    <None Include="Xenko.UI.Tests.xkpkg" />
+    <None Include="Stride.UI.Tests.xkpkg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ToggleChecked.dds" />
@@ -135,5 +135,5 @@
   <ItemGroup>
     <None Include="Resources\UIDesigns.dds" />
   </ItemGroup>
-  <Import Project="..\..\targets\Xenko.UnitTests.targets" />
+  <Import Project="..\..\targets\Stride.UnitTests.targets" />
 </Project>

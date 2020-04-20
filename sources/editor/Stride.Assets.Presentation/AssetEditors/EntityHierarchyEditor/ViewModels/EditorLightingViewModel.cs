@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,21 +7,21 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Extensions;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.ViewModel;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering.LightProbes;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Extensions;
+using Stride.Core.Mathematics;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.ViewModel;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering.LightProbes;
 
-namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
 {
     public class EditorLightingViewModel : DispatcherViewModel
     {

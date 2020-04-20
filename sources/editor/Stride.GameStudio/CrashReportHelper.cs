@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,22 +9,22 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Xenko.Core.Assets.Editor.Components.Transactions;
+using Stride.Core.Assets.Editor.Components.Transactions;
 #if DEBUG
 using System.Diagnostics;
 #endif
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Extensions;
-using Xenko.Core.Transactions;
-using Xenko.Core.Windows;
-using Xenko.Assets;
-using Xenko.CrashReport;
-using Xenko.Core.Presentation.Services;
-using Xenko.Editor.CrashReport;
-using Xenko.Graphics;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Extensions;
+using Stride.Core.Transactions;
+using Stride.Core.Windows;
+using Stride.Assets;
+using Stride.CrashReport;
+using Stride.Core.Presentation.Services;
+using Stride.Editor.CrashReport;
+using Stride.Graphics;
 using DialogResult = System.Windows.Forms.DialogResult;
 
-namespace Xenko.GameStudio
+namespace Stride.GameStudio
 {
     public static class CrashReportHelper
     {
@@ -32,7 +32,7 @@ namespace Xenko.GameStudio
         {
             public ReportSettings()
             {
-                Email = Xenko.Core.Assets.Editor.Settings.EditorSettings.StoreCrashEmail.GetValue();
+                Email = Stride.Core.Assets.Editor.Settings.EditorSettings.StoreCrashEmail.GetValue();
                 StoreCrashEmail = !string.IsNullOrEmpty(Email);
             }
 
@@ -42,8 +42,8 @@ namespace Xenko.GameStudio
 
             public void Save()
             {
-                Xenko.Core.Assets.Editor.Settings.EditorSettings.StoreCrashEmail.SetValue(Email);
-                Xenko.Core.Assets.Editor.Settings.EditorSettings.Save();
+                Stride.Core.Assets.Editor.Settings.EditorSettings.StoreCrashEmail.SetValue(Email);
+                Stride.Core.Assets.Editor.Settings.EditorSettings.Save();
             }
         }
 
@@ -56,7 +56,7 @@ namespace Xenko.GameStudio
                 ["Application"] = "GameStudio",
                 ["UserEmail"] = "",
                 ["UserMessage"] = "",
-                ["XenkoVersion"] = XenkoVersion.NuGetVersion,
+                ["StrideVersion"] = StrideVersion.NuGetVersion,
                 ["GameStudioVersion"] = DebugVersion.ToString(),
                 ["ThreadName"] = string.IsNullOrEmpty(threadName) ? "" : threadName,
 #if DEBUG
@@ -130,7 +130,7 @@ namespace Xenko.GameStudio
                     var stackField = typeof(UndoRedoService).GetField("stack", BindingFlags.Instance | BindingFlags.NonPublic);
                     if (stackField != null)
                     {
-                        var transactionsInProgressField = typeof(ITransactionStack).Assembly.GetType("Xenko.Core.Transactions.TransactionStack")?.GetField("transactionsInProgress", BindingFlags.Instance | BindingFlags.NonPublic);
+                        var transactionsInProgressField = typeof(ITransactionStack).Assembly.GetType("Stride.Core.Transactions.TransactionStack")?.GetField("transactionsInProgress", BindingFlags.Instance | BindingFlags.NonPublic);
                         if (transactionsInProgressField != null)
                         {
                             var stack = stackField.GetValue(actionService);
@@ -189,7 +189,7 @@ namespace Xenko.GameStudio
 
             var reporter = new CrashReportForm(crashReport, new ReportSettings());
             var result = reporter.ShowDialog();
-            XenkoGameStudio.MetricsClient?.CrashedSession(result == DialogResult.Yes);
+            StrideGameStudio.MetricsClient?.CrashedSession(result == DialogResult.Yes);
         }
 
         private static void ExpandAction(TransactionViewModel actionItem, StringBuilder sb, int increment)

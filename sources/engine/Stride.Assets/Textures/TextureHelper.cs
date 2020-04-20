@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,18 +7,18 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-using Xenko.Core.BuildEngine;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Streaming;
-using Xenko.Assets.Sprite;
-using Xenko.Graphics;
-using Xenko.Graphics.Data;
-using Xenko.TextureConverter;
+using Stride.Core.BuildEngine;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Streaming;
+using Stride.Assets.Sprite;
+using Stride.Graphics;
+using Stride.Graphics.Data;
+using Stride.TextureConverter;
 
-namespace Xenko.Assets.Textures
+namespace Stride.Assets.Textures
 {
     /// <summary>
     /// An helper for the compile commands that needs to process textures.
@@ -363,7 +363,7 @@ namespace Xenko.Assets.Textures
                 return result;
 
             // Save the texture
-            using (var outputImage = textureTool.ConvertToXenkoImage(texImage))
+            using (var outputImage = textureTool.ConvertToStrideImage(texImage))
             {
                 if (cancellationToken.IsCancellationRequested) // abort the process if cancellation is demanded
                     return ResultStatus.Cancelled;
@@ -387,7 +387,7 @@ namespace Xenko.Assets.Textures
             var dataUrl = convertParameters.OutputUrl + "_Data";
             commandContext.AddTag(new ObjectUrl(UrlType.Content, dataUrl), Builder.DoNotCompressTag);
 
-            using (var outputImage = textureTool.ConvertToXenkoImage(texImage))
+            using (var outputImage = textureTool.ConvertToStrideImage(texImage))
             {
                 if (cancellationToken.IsCancellationRequested)
                     return ResultStatus.Cancelled;

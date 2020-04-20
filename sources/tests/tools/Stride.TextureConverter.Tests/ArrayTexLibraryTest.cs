@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,10 +8,10 @@ using System.IO;
 
 using Xunit;
 
-using Xenko.TextureConverter.Requests;
-using Xenko.TextureConverter.TexLibraries;
+using Stride.TextureConverter.Requests;
+using Stride.TextureConverter.TexLibraries;
 
-namespace Xenko.TextureConverter.Tests
+namespace Stride.TextureConverter.Tests
 {
     public class ArrayTexLibraryTest : IDisposable
     {

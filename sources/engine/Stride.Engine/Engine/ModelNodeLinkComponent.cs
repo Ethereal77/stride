@@ -1,13 +1,13 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Engine.Design;
-using Xenko.Engine.Processors;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Engine.Design;
+using Stride.Engine.Processors;
 
-namespace Xenko.Engine
+namespace Stride.Engine
 {
     [DataContract("ModelNodeLinkComponent")]
     [Display("Bone link", Expand = ExpandRule.Once)]
@@ -28,7 +28,7 @@ namespace Xenko.Engine
         /// The model which contains the hierarchy to use.
         /// </value>
         /// <userdoc>The model that contains the skeleton to attach this entity to. If null, the entity attaches to the parent. 
-        /// Note: Xenko does not support as target entities that themself linked to another bone.</userdoc>
+        /// Note: Stride does not support as target entities that themself linked to another bone.</userdoc>
         [DataMember(10)]
         [Display("Model (parent if not set)")]
         public ModelComponent Target

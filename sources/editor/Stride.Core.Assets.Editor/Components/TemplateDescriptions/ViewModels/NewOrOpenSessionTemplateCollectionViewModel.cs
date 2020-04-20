@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,16 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.Settings;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core.IO;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.ViewModel;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.Settings;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Templates;
+using Stride.Core.IO;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.ViewModel;
 
-namespace Xenko.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
+namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 {
     public class NewOrOpenSessionTemplateCollectionViewModel : ProjectTemplateCollectionViewModel
     {
@@ -51,7 +51,7 @@ namespace Xenko.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 
             Location = InternalSettings.TemplatesWindowDialogLastNewSessionTemplateDirectory.GetValue();
             if (string.IsNullOrWhiteSpace(Location))
-                Location = UPath.Combine<UDirectory>(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Xenko Projects");
+                Location = UPath.Combine<UDirectory>(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Stride Projects");
 
             BrowseForExistingProjectCommand = new AnonymousTaskCommand(serviceProvider, BrowseForExistingProject);
             SelectedGroup = recentGroup.Templates.Count == 0 ? rootGroup : recentGroup;

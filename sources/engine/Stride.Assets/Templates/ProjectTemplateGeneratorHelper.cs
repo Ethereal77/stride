@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,18 +8,18 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.ProjectTemplating;
-using Xenko.Graphics;
-using Xenko.Shaders.Parser.Mixins;
-using Xenko.Core.VisualStudio;
-using Xenko.Core.Extensions;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Templates;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.ProjectTemplating;
+using Stride.Graphics;
+using Stride.Shaders.Parser.Mixins;
+using Stride.Core.VisualStudio;
+using Stride.Core.Extensions;
 
-namespace Xenko.Assets.Templates
+namespace Stride.Assets.Templates
 {
     public static class ProjectTemplateGeneratorHelper
     {
@@ -253,7 +253,7 @@ namespace Xenko.Assets.Templates
             var projectTemplate = ProjectTemplate.Load(templateFilePath);
             // TODO assemblies are not configurable from the outside
             projectTemplate.Assemblies.Add(typeof(ProjectType).Assembly.FullName);
-            projectTemplate.Assemblies.Add(typeof(XenkoConfig).Assembly.FullName);
+            projectTemplate.Assemblies.Add(typeof(StrideConfig).Assembly.FullName);
             projectTemplate.Assemblies.Add(typeof(GraphicsPlatform).Assembly.FullName);
             projectTemplate.Assemblies.Add(typeof(DisplayOrientation).Assembly.FullName);
 

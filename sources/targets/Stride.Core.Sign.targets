@@ -1,16 +1,16 @@
 <!--
 ***********************************************************************************************
-  Xenko.Core.Sign.targets
+  Stride.Core.Sign.targets
 
   Build file post-included after the building of the project to configure the strong-signing
   of the generated assemblies.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="_XenkoSignExecutable" BeforeTargets="CopyFilesToOutputDirectory">
-    <SignFile Condition="'$(XenkoSign)' == 'true' And '$(XenkoProjectType)' != 'Cpp'" CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec" SigningTarget="$(IntermediateOutputPath)$(TargetName)$(TargetExt)" TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
-    <SignFile Condition="'$(XenkoSign)' == 'true' And '$(XenkoProjectType)' == 'Cpp'" CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec" SigningTarget="$(OutputPath)$(TargetName)$(TargetExt)" TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
+  <Target Name="_StrideSignExecutable" BeforeTargets="CopyFilesToOutputDirectory">
+    <SignFile Condition="'$(StrideSign)' == 'true' And '$(StrideProjectType)' != 'Cpp'" CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec" SigningTarget="$(IntermediateOutputPath)$(TargetName)$(TargetExt)" TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
+    <SignFile Condition="'$(StrideSign)' == 'true' And '$(StrideProjectType)' == 'Cpp'" CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec" SigningTarget="$(OutputPath)$(TargetName)$(TargetExt)" TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
   </Target>
 </Project>

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System;
 using System.Globalization;
 using System.Windows;
 
-using Xenko.Core.Reflection;
-using Xenko.Core.Translation;
-using Xenko.Core.Translation.Annotations;
-using Xenko.Core.Translation.Presentation.ValueConverters;
+using Stride.Core.Reflection;
+using Stride.Core.Translation;
+using Stride.Core.Translation.Annotations;
+using Stride.Core.Translation.Presentation.ValueConverters;
 
-namespace Xenko.Core.Assets.Editor.View.ValueConverters
+namespace Stride.Core.Assets.Editor.View.ValueConverters
 {
     public class EnumToTooltip : LocalizableConverter<EnumToTooltip>
     {

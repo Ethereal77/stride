@@ -1,8 +1,8 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_GRAPHICS_API_DIRECT3D // Need SharpDX
+#if STRIDE_GRAPHICS_API_DIRECT3D // Need SharpDX
 
 using System;
 using System.Collections.Generic;
@@ -11,16 +11,16 @@ using System.Linq;
 using SharpDX;
 using SharpDX.D3DCompiler;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Storage;
-using Xenko.Rendering;
-using Xenko.Graphics;
+using Stride.Core.Diagnostics;
+using Stride.Core.Storage;
+using Stride.Rendering;
+using Stride.Graphics;
 
-using ConstantBufferType = Xenko.Shaders.ConstantBufferType;
-using ShaderBytecode = Xenko.Shaders.ShaderBytecode;
+using ConstantBufferType = Stride.Shaders.ConstantBufferType;
+using ShaderBytecode = Stride.Shaders.ShaderBytecode;
 using ShaderVariableType = SharpDX.D3DCompiler.ShaderVariableType;
 
-namespace Xenko.Shaders.Compiler.Direct3D
+namespace Stride.Shaders.Compiler.Direct3D
 {
     internal class ShaderCompiler : IShaderCompiler
     {

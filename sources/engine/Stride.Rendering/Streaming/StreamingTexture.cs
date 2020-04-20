@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,14 +6,14 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Streaming;
-using Xenko.Graphics;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Streaming;
+using Stride.Graphics;
 
-namespace Xenko.Streaming
+namespace Stride.Streaming
 {
     /// <summary>
     /// Texture streaming object.

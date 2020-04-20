@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,14 +9,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Tests.Helpers;
-using Xenko.Core.Assets.Yaml;
-using Xenko.Core.Reflection;
-using Xenko.Core.Yaml;
+using Stride.Core.Assets.Tests.Helpers;
+using Stride.Core.Assets.Yaml;
+using Stride.Core.Reflection;
+using Stride.Core.Yaml;
 
 using Xunit;
 
-namespace Xenko.Core.Assets.Quantum.Tests.Helpers
+namespace Stride.Core.Assets.Quantum.Tests.Helpers
 {
     public static class SerializationHelper
     {

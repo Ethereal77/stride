@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2007-2011 SlimDX Group
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -7,7 +7,7 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Xenko.Core.Mathematics
+namespace Stride.Core.Mathematics
 {
     /// <summary>
     /// Represents a three dimensional line based on a point in space and a direction.
@@ -27,7 +27,7 @@ namespace Xenko.Core.Mathematics
         public Vector3 Direction;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Ray"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Ray"/> struct.
         /// </summary>
         /// <param name="position">The position in three dimensional space of the origin of the ray.</param>
         /// <param name="direction">The normalized direction of the ray.</param>
@@ -48,7 +48,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.Ray"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.Ray"/>.
         /// </summary>
         /// <param name="ray">The ray to test.</param>
         /// <returns>Whether the two objects intersected.</returns>
@@ -59,11 +59,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.Ray"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.Ray"/>.
         /// </summary>
         /// <param name="ray">The ray to test.</param>
         /// <param name="point">When the method completes, contains the point of intersection,
-        /// or <see cref="Xenko.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
+        /// or <see cref="Stride.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
         /// <returns>Whether the two objects intersected.</returns>
         public bool Intersects(ref Ray ray, out Vector3 point)
         {
@@ -71,7 +71,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.Plane"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.Plane"/>.
         /// </summary>
         /// <param name="plane">The plane to test</param>
         /// <returns>Whether the two objects intersected.</returns>
@@ -82,7 +82,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.Plane"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.Plane"/>.
         /// </summary>
         /// <param name="plane">The plane to test.</param>
         /// <param name="distance">When the method completes, contains the distance of the intersection,
@@ -94,11 +94,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.Plane"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.Plane"/>.
         /// </summary>
         /// <param name="plane">The plane to test.</param>
         /// <param name="point">When the method completes, contains the point of intersection,
-        /// or <see cref="Xenko.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
+        /// or <see cref="Stride.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
         /// <returns>Whether the two objects intersected.</returns>
         public bool Intersects(ref Plane plane, out Vector3 point)
         {
@@ -139,7 +139,7 @@ namespace Xenko.Core.Mathematics
         /// <param name="vertex2">The second vertex of the triangle to test.</param>
         /// <param name="vertex3">The third vertex of the triangle to test.</param>
         /// <param name="point">When the method completes, contains the point of intersection,
-        /// or <see cref="Xenko.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
+        /// or <see cref="Stride.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
         /// <returns>Whether the two objects intersected.</returns>
         public bool Intersects(ref Vector3 vertex1, ref Vector3 vertex2, ref Vector3 vertex3, out Vector3 point)
         {
@@ -147,7 +147,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.BoundingBox"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.BoundingBox"/>.
         /// </summary>
         /// <param name="box">The box to test.</param>
         /// <returns>Whether the two objects intersected.</returns>
@@ -158,7 +158,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.BoundingBox"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.BoundingBox"/>.
         /// </summary>
         /// <param name="box">The box to test.</param>
         /// <param name="distance">When the method completes, contains the distance of the intersection,
@@ -170,11 +170,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.BoundingBox"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.BoundingBox"/>.
         /// </summary>
         /// <param name="box">The box to test.</param>
         /// <param name="point">When the method completes, contains the point of intersection,
-        /// or <see cref="Xenko.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
+        /// or <see cref="Stride.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
         /// <returns>Whether the two objects intersected.</returns>
         public bool Intersects(ref BoundingBox box, out Vector3 point)
         {
@@ -182,7 +182,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.BoundingSphere"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.BoundingSphere"/>.
         /// </summary>
         /// <param name="sphere">The sphere to test.</param>
         /// <returns>Whether the two objects intersected.</returns>
@@ -193,7 +193,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.BoundingSphere"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.BoundingSphere"/>.
         /// </summary>
         /// <param name="sphere">The sphere to test.</param>
         /// <param name="distance">When the method completes, contains the distance of the intersection,
@@ -205,11 +205,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines if there is an intersection between the current object and a <see cref="Xenko.Core.Mathematics.BoundingSphere"/>.
+        /// Determines if there is an intersection between the current object and a <see cref="Stride.Core.Mathematics.BoundingSphere"/>.
         /// </summary>
         /// <param name="sphere">The sphere to test.</param>
         /// <param name="point">When the method completes, contains the point of intersection,
-        /// or <see cref="Xenko.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
+        /// or <see cref="Stride.Core.Mathematics.Vector3.Zero"/> if there was no intersection.</param>
         /// <returns>Whether the two objects intersected.</returns>
         public bool Intersects(ref BoundingSphere sphere, out Vector3 point)
         {
@@ -300,11 +300,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="Xenko.Core.Mathematics.Vector4"/> is equal to this instance.
+        /// Determines whether the specified <see cref="Stride.Core.Mathematics.Vector4"/> is equal to this instance.
         /// </summary>
-        /// <param name="value">The <see cref="Xenko.Core.Mathematics.Vector4"/> to compare with this instance.</param>
+        /// <param name="value">The <see cref="Stride.Core.Mathematics.Vector4"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Xenko.Core.Mathematics.Vector4"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Stride.Core.Mathematics.Vector4"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public bool Equals(Ray value)
         {
@@ -331,7 +331,7 @@ namespace Xenko.Core.Mathematics
 
 #if SlimDX1xInterop
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Ray"/> to <see cref="SlimDX.Ray"/>.
+        /// Performs an implicit conversion from <see cref="Stride.Core.Mathematics.Ray"/> to <see cref="SlimDX.Ray"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -341,7 +341,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="SlimDX.Ray"/> to <see cref="Xenko.Core.Mathematics.Ray"/>.
+        /// Performs an implicit conversion from <see cref="SlimDX.Ray"/> to <see cref="Stride.Core.Mathematics.Ray"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -353,7 +353,7 @@ namespace Xenko.Core.Mathematics
 
 #if XnaInterop
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Ray"/> to <see cref="Microsoft.Xna.Framework.Ray"/>.
+        /// Performs an implicit conversion from <see cref="Stride.Core.Mathematics.Ray"/> to <see cref="Microsoft.Xna.Framework.Ray"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -363,7 +363,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Microsoft.Xna.Framework.Ray"/> to <see cref="Xenko.Core.Mathematics.Ray"/>.
+        /// Performs an implicit conversion from <see cref="Microsoft.Xna.Framework.Ray"/> to <see cref="Stride.Core.Mathematics.Ray"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>

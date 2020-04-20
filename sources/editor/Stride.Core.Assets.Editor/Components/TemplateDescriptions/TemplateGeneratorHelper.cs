@@ -1,16 +1,16 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel.Progress;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core.Translation;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel.Progress;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Translation;
 
-namespace Xenko.Core.Assets.Editor.Components.TemplateDescriptions
+namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions
 {
     internal static class TemplateGeneratorHelper
     {

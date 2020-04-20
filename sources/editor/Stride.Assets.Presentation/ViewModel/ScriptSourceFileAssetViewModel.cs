@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -18,20 +18,20 @@ using ICSharpCode.AvalonEdit.Utils;
 
 using RoslynPad.Editor;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.Windows;
-using Xenko.Assets.Presentation.AssetEditors.ScriptEditor;
-using Xenko.Assets.Scripts;
-using Xenko.Core.Assets.TextAccessors;
-using Xenko.Core.Annotations;
-using Xenko.Core.Translation;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Diagnostics;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.Windows;
+using Stride.Assets.Presentation.AssetEditors.ScriptEditor;
+using Stride.Assets.Scripts;
+using Stride.Core.Assets.TextAccessors;
+using Stride.Core.Annotations;
+using Stride.Core.Translation;
 
 using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
 
-namespace Xenko.Assets.Presentation.ViewModel
+namespace Stride.Assets.Presentation.ViewModel
 {
     [AssetViewModel(typeof(ScriptSourceFileAsset))]
     public class ScriptSourceFileAssetViewModel : CodeAssetViewModel<ScriptSourceFileAsset>
@@ -253,8 +253,8 @@ namespace Xenko.Assets.Presentation.ViewModel
             DocumentId = Task.Run(async () =>
             {
                 // Find DocumentId
-                var xenkoAssets = await XenkoAssetsViewModel.InstanceTask;
-                workspace = await xenkoAssets.Code.Workspace;
+                var strideAssets = await StrideAssetsViewModel.InstanceTask;
+                workspace = await strideAssets.Code.Workspace;
 
                 AssetItem.UpdateSourceFolders();
                 var sourceProject = ((SolutionProject)AssetItem.Package.Container).FullPath.ToWindowsPath();

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,25 +8,25 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using Xenko.Audio;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Storage;
-using Xenko.Engine.Design;
-using Xenko.Engine.Processors;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Graphics.Font;
-using Xenko.Input;
-using Xenko.Profiling;
-using Xenko.Rendering;
-using Xenko.Rendering.Fonts;
-using Xenko.Rendering.Sprites;
-using Xenko.Shaders.Compiler;
-using Xenko.Streaming;
+using Stride.Audio;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Storage;
+using Stride.Engine.Design;
+using Stride.Engine.Processors;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Graphics.Font;
+using Stride.Input;
+using Stride.Profiling;
+using Stride.Rendering;
+using Stride.Rendering.Fonts;
+using Stride.Rendering.Sprites;
+using Stride.Shaders.Compiler;
+using Stride.Streaming;
 
-namespace Xenko.Engine
+namespace Stride.Engine
 {
     /// <summary>
     /// Main Game class system.

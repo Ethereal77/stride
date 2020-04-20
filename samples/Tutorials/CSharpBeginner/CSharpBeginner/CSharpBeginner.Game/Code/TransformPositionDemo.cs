@@ -1,8 +1,8 @@
-// Copyright (c) Xenko contributors (https://xenko.com)
+// Copyright (c) Stride contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more in
 
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
+using Stride.Core.Mathematics;
+using Stride.Engine;
 
 namespace CSharpBeginner.Code
 {

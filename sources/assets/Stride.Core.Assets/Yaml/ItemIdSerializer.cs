@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core.Reflection;
-using Xenko.Core.Storage;
-using Xenko.Core.Yaml.Events;
-using Xenko.Core.Yaml.Serialization;
+using Stride.Core.Reflection;
+using Stride.Core.Storage;
+using Stride.Core.Yaml.Events;
+using Stride.Core.Yaml.Serialization;
 
-namespace Xenko.Core.Yaml
+namespace Stride.Core.Yaml
 {
     /// <summary>
     /// A Yaml serializer for <see cref="ItemId"/> without associated data.

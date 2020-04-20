@@ -1,17 +1,17 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Dirtiables;
+using Stride.Core.Assets.Quantum;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Dirtiables;
 
-namespace Xenko.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Editor.ViewModel
 {
     /// <summary>
     /// Represents the operation of updating the mapping of deleted part instances in an <see cref="AssetCompositeHierarchyPropertyGraph{TAssetPartDesign,TAssetPart}"/>.

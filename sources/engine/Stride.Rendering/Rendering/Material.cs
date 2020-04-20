@@ -1,16 +1,16 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core;
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Graphics;
-using Xenko.Rendering.Materials;
+using Stride.Core;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Graphics;
+using Stride.Rendering.Materials;
 
-namespace Xenko.Rendering
+namespace Stride.Rendering
 {
     /// <summary>
     /// A compiled version of <see cref="MaterialDescriptor"/>.

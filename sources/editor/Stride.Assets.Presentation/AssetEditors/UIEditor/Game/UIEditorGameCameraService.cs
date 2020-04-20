@@ -1,19 +1,19 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Xenko.Assets.Presentation.SceneEditor;
-using Xenko.Editor.EditorGame.Game;
-using Xenko.Engine;
-using Xenko.Input;
+using Stride.Core.Mathematics;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Editor.EditorGame.Game;
+using Stride.Engine;
+using Stride.Input;
 
-namespace Xenko.Assets.Presentation.AssetEditors.UIEditor.Game
+namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 {
     internal sealed class UIEditorGameCameraService : EditorGameCameraService
     {

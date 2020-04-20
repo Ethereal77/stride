@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,13 +11,13 @@ using Microsoft.CodeAnalysis;
 
 using RoslynPad.Editor;
 
-using Xenko.Core.Presentation.Controls;
-using Xenko.Core.Presentation.Core;
-using Xenko.Core.Presentation.Extensions;
+using Stride.Core.Presentation.Controls;
+using Stride.Core.Presentation.Core;
+using Stride.Core.Presentation.Extensions;
 
 using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
 
-namespace Xenko.Assets.Presentation.AssetEditors.ScriptEditor
+namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 {
     [TemplatePart(Name = "PART_CodeEditor", Type = typeof(SimpleCodeTextEditor))]
     public class ScriptTextEditor : TextBoxBase

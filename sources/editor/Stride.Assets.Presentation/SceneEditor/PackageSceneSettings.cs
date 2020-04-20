@@ -1,21 +1,21 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Settings;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Xenko.Engine;
-using Xenko.Engine.Processors;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Core.Settings;
+using Stride.Assets.Presentation.AssetEditors.GameEditor;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Engine;
+using Stride.Engine.Processors;
 
-namespace Xenko.Assets.Presentation.SceneEditor
+namespace Stride.Assets.Presentation.SceneEditor
 {
     [DataContract(nameof(SceneSettingsData))]
     public sealed class SceneSettingsData

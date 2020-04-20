@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Input;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Input;
 
 namespace ##Namespace##
 {

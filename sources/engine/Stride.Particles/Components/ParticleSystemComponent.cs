@@ -1,18 +1,18 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.ComponentModel;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Engine.Design;
-using Xenko.Engine;
-using Xenko.Particles.Rendering;
-using Xenko.Rendering;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Engine.Design;
+using Stride.Engine;
+using Stride.Particles.Rendering;
+using Stride.Rendering;
 
-namespace Xenko.Particles.Components
+namespace Stride.Particles.Components
 {
     /// <summary>
     /// Add a <see cref="ParticleSystem"/> to an <see cref="Entity"/>

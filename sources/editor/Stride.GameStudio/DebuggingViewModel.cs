@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -15,27 +15,27 @@ using System.Threading.Tasks.Dataflow;
 using Microsoft.Build.Execution;
 using Microsoft.CodeAnalysis;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Components.Status;
-using Xenko.Core.Assets.Editor.Settings;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.GameStudio.Logs;
-using Xenko.GameStudio.Debugging;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.ViewModel;
-using Xenko.Assets.Presentation.AssemblyReloading;
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Annotations;
-using Xenko.Core.Translation;
-using Xenko.Assets.Presentation.AssetEditors;
-using Xenko.GameStudio.Services;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Components.Status;
+using Stride.Core.Assets.Editor.Settings;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.GameStudio.Logs;
+using Stride.GameStudio.Debugging;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.ViewModel;
+using Stride.Assets.Presentation.AssemblyReloading;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Annotations;
+using Stride.Core.Translation;
+using Stride.Assets.Presentation.AssetEditors;
+using Stride.GameStudio.Services;
 
-namespace Xenko.GameStudio
+namespace Stride.GameStudio
 {
     public class DebuggingViewModel : DispatcherViewModel, IDisposable
     {
@@ -85,7 +85,7 @@ namespace Xenko.GameStudio
 
             Task.Run(async () =>
             {
-                var watcher = await editor.XenkoAssets.Code.ProjectWatcher;
+                var watcher = await editor.StrideAssets.Code.ProjectWatcher;
                 await scriptsSorter.Initialize(editor.Session, watcher, assemblyTrackingCancellation.Token);
                 PullAssemblyChanges(watcher);
             });
@@ -394,8 +394,8 @@ namespace Xenko.GameStudio
                 var target = "Build";
                 var extraProperties = new Dictionary<string, string>
                 {
-                    ["XenkoBuildEngineLogPipeUrl"] = BuildLog.PipeName,
-                    ["XenkoBuildEngineLogVerbose"] = "true",
+                    ["StrideBuildEngineLogPipeUrl"] = BuildLog.PipeName,
+                    ["StrideBuildEngineLogVerbose"] = "true",
                 };
 
                 var projectViewModel = Session.CurrentProject.Type == ProjectType.Executable ? Session.CurrentProject : null;
@@ -531,8 +531,8 @@ namespace Xenko.GameStudio
                 var extraProperties = new Dictionary<string, string>
                 {
                     ["SolutionPlatform"] = "Any CPU",
-                    ["XenkoBuildEngineLogPipeUrl"] = BuildLog.PipeName,
-                    ["XenkoBuildEngineLogVerbose"] = "true",
+                    ["StrideBuildEngineLogPipeUrl"] = BuildLog.PipeName,
+                    ["StrideBuildEngineLogVerbose"] = "true",
                 };
 
                 currentBuild = VSProjectHelper.CompileProjectAssemblyAsync(Session?.SolutionPath, projectPath, logger, target, configuration, platformName, extraProperties, BuildRequestDataFlags.ProvideProjectStateAfterBuild);

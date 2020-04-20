@@ -1,18 +1,18 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-namespace Xenko.TextureConverter.Requests
+namespace Stride.TextureConverter.Requests
 {
     /// <summary>
-    /// Request to load a texture, either from a file, or from memory with an <see cref="TexImage"/> or a <see cref="Xenko.Graphics.Image"/>
+    /// Request to load a texture, either from a file, or from memory with an <see cref="TexImage"/> or a <see cref="Stride.Graphics.Image"/>
     /// </summary>
     internal class LoadingRequest : IRequest
     {
         /// <summary>
-        /// The different loading mode : TexImage, file, Xenko Image
+        /// The different loading mode : TexImage, file, Stride Image
         /// </summary>
         public enum LoadingMode
         {
@@ -39,9 +39,9 @@ namespace Xenko.TextureConverter.Requests
         public TexImage Image { set; get; }
 
         /// <summary>
-        /// The Xenko Image to be loaded
+        /// The Stride Image to be loaded
         /// </summary>
-        public Xenko.Graphics.Image XkImage;
+        public Stride.Graphics.Image XkImage;
 
         /// <summary>
         /// Indicate if we should keep the original mip-maps during the load
@@ -78,11 +78,11 @@ namespace Xenko.TextureConverter.Requests
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoadingRequest"/> class to load a texture from a <see cref="Xenko.Graphics.Image"/> instance.
+        /// Initializes a new instance of the <see cref="LoadingRequest"/> class to load a texture from a <see cref="Stride.Graphics.Image"/> instance.
         /// </summary>
         /// <param name="image">The image.</param>
         /// <param name="loadAsSRgb">Indicate if the input file should be loaded as in sRGB file</param>
-        public LoadingRequest(Xenko.Graphics.Image image, bool loadAsSRgb)
+        public LoadingRequest(Stride.Graphics.Image image, bool loadAsSRgb)
         {
             XkImage = image;
             Mode = LoadingMode.XkImage;

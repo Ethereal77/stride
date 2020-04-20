@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -16,12 +16,12 @@ using Microsoft.VisualStudio.Text.Adornments;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-using Xenko.Core;
-using Xenko.Core.Yaml;
-using Xenko.Core.Yaml.Schemas;
-using Xenko.Core.Yaml.Tokens;
+using Stride.Core;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Schemas;
+using Stride.Core.Yaml.Tokens;
 
-namespace Xenko.VisualStudio.Assets
+namespace Stride.VisualStudio.Assets
 {
 
 	#region Provider definition

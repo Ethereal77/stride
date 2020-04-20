@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,18 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.Extensions;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters.Commands;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters.Keys;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Quantum.Presenters;
-using Xenko.Assets.Navigation;
-using Xenko.Navigation;
+using Stride.Core.Assets.Editor.Extensions;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters.Keys;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Quantum.Presenters;
+using Stride.Assets.Navigation;
+using Stride.Navigation;
 
-namespace Xenko.Assets.Presentation.NodePresenters.Updaters
+namespace Stride.Assets.Presentation.NodePresenters.Updaters
 {
     public class NavigationNodeUpdater : AssetNodePresenterUpdaterBase
     {

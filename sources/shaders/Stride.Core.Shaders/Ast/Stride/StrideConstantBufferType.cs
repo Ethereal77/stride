@@ -1,32 +1,32 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Ast.Hlsl;
 
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
-    public partial class XenkoConstantBufferType : ConstantBufferType
+    public partial class StrideConstantBufferType : ConstantBufferType
     {
         /// <summary>
         ///   Resource group keyword (rgroup).
         /// </summary>
-        public static readonly XenkoConstantBufferType ResourceGroup = new XenkoConstantBufferType("rgroup");
+        public static readonly StrideConstantBufferType ResourceGroup = new StrideConstantBufferType("rgroup");
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="XenkoStorageQualifier"/> class.
+        /// Initializes a new instance of the <see cref="StrideStorageQualifier"/> class.
         /// </summary>
-        public XenkoConstantBufferType()
+        public StrideConstantBufferType()
         {
         }
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="XenkoStorageQualifier"/> class.
+        /// Initializes a new instance of the <see cref="StrideStorageQualifier"/> class.
         /// </summary>
         /// <param name="key">
         /// The key.
         /// </param>
-        public XenkoConstantBufferType(string key)
+        public StrideConstantBufferType(string key)
             : base(key)
         {
         }

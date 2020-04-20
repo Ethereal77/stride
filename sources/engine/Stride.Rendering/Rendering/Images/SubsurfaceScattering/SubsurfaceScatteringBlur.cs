@@ -1,19 +1,19 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.ComponentModel;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.Rendering.Compositing;
-using Xenko.Rendering.Images;
-using Xenko.Rendering.Materials;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.Rendering.Compositing;
+using Stride.Rendering.Images;
+using Stride.Rendering.Materials;
 
-namespace Xenko.Rendering.SubsurfaceScattering
+namespace Stride.Rendering.SubsurfaceScattering
 {
     [DataContract("SubsurfaceScatteringBlur")]
     [Display("Subsurface Scattering Blur")]

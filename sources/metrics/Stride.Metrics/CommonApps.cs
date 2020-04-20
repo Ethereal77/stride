@@ -1,9 +1,9 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-namespace Xenko.Metrics
+namespace Stride.Metrics
 {
     /// <summary>
     /// Identifiers for common apps.
@@ -11,15 +11,15 @@ namespace Xenko.Metrics
     public static class CommonApps
     {
         /// <summary>
-        /// The xenko launcher application identifier
+        /// The stride launcher application identifier
         /// </summary>
-        public static readonly MetricAppId XenkoLauncherAppId =
-            new MetricAppId(new Guid("B3149460-226D-4877-9E54-057308847969"), "XenkoLauncher");
+        public static readonly MetricAppId StrideLauncherAppId =
+            new MetricAppId(new Guid("B3149460-226D-4877-9E54-057308847969"), "StrideLauncher");
 
         /// <summary>
-        /// The xenko editor application identifier
+        /// The stride editor application identifier
         /// </summary>
-        public static readonly MetricAppId XenkoEditorAppId =
-            new MetricAppId(new Guid("BD1F1188-9ED7-410C-8080-F4E0A698DE2A"), "XenkoEditor");
+        public static readonly MetricAppId StrideEditorAppId =
+            new MetricAppId(new Guid("BD1F1188-9ED7-410C-8080-F4E0A698DE2A"), "StrideEditor");
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters;
-using Xenko.Core.Serialization;
-using Xenko.Core.Presentation.Quantum;
-using Xenko.Core.Presentation.Quantum.Presenters;
-using Xenko.Core.Presentation.Quantum.ViewModels;
-using Xenko.Core.Presentation.Services;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters;
+using Stride.Core.Serialization;
+using Stride.Core.Presentation.Quantum;
+using Stride.Core.Presentation.Quantum.Presenters;
+using Stride.Core.Presentation.Quantum.ViewModels;
+using Stride.Core.Presentation.Services;
 
-namespace Xenko.Core.Assets.Editor.Quantum.ViewModels
+namespace Stride.Core.Assets.Editor.Quantum.ViewModels
 {
     public class AssetNodeViewModel : NodeViewModel, IInternalAssetNodeViewModel
     {

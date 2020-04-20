@@ -1,16 +1,16 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Quantum;
-using Xenko.Assets.Models;
-using Xenko.Rendering;
-using Xenko.Rendering.ProceduralModels;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Quantum;
+using Stride.Assets.Models;
+using Stride.Rendering;
+using Stride.Rendering.ProceduralModels;
 
-namespace Xenko.Assets.Presentation.ViewModel
+namespace Stride.Assets.Presentation.ViewModel
 {
     [AssetViewModel(typeof(ProceduralModelAsset))]
     public class ProceduralModelViewModel : AssetViewModel<ProceduralModelAsset>

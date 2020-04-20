@@ -1,359 +1,359 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Visitor;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Visitor;
 
-namespace Xenko.Core.Shaders.Visitor
+namespace Stride.Core.Shaders.Visitor
 {
     public partial class ShaderVisitor<TResult>
     {
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.ClassIdentifierGeneric classIdentifierGeneric)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.ClassIdentifierGeneric classIdentifierGeneric)
         {
             return DefaultVisit(classIdentifierGeneric);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.EnumType enumType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.EnumType enumType)
         {
             return DefaultVisit(enumType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.ForEachStatement forEachStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.ForEachStatement forEachStatement)
         {
             return DefaultVisit(forEachStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.ImportBlockStatement importBlockStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.ImportBlockStatement importBlockStatement)
         {
             return DefaultVisit(importBlockStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.LinkType linkType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.LinkType linkType)
         {
             return DefaultVisit(linkType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.LiteralIdentifier literalIdentifier)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.LiteralIdentifier literalIdentifier)
         {
             return DefaultVisit(literalIdentifier);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.MemberName memberName)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.MemberName memberName)
         {
             return DefaultVisit(memberName);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.MixinStatement mixinStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.MixinStatement mixinStatement)
         {
             return DefaultVisit(mixinStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.NamespaceBlock namespaceBlock)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.NamespaceBlock namespaceBlock)
         {
             return DefaultVisit(namespaceBlock);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.ParametersBlock parametersBlock)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.ParametersBlock parametersBlock)
         {
             return DefaultVisit(parametersBlock);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.SemanticType semanticType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.SemanticType semanticType)
         {
             return DefaultVisit(semanticType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.EffectBlock effectBlock)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.EffectBlock effectBlock)
         {
             return DefaultVisit(effectBlock);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderClassType shaderClassType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.ShaderClassType shaderClassType)
         {
             return DefaultVisit(shaderClassType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderRootClassType shaderRootClassType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.ShaderRootClassType shaderRootClassType)
         {
             return DefaultVisit(shaderRootClassType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderTypeName shaderTypeName)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.ShaderTypeName shaderTypeName)
         {
             return DefaultVisit(shaderTypeName);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.TypeIdentifier typeIdentifier)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.TypeIdentifier typeIdentifier)
         {
             return DefaultVisit(typeIdentifier);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.UsingParametersStatement usingParametersStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.UsingParametersStatement usingParametersStatement)
         {
             return DefaultVisit(usingParametersStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.UsingStatement usingStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.UsingStatement usingStatement)
         {
             return DefaultVisit(usingStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.VarType varType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.VarType varType)
         {
             return DefaultVisit(varType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Xenko.XenkoConstantBufferType xenkoConstantBufferType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Stride.StrideConstantBufferType strideConstantBufferType)
         {
-            return DefaultVisit(xenkoConstantBufferType);
+            return DefaultVisit(strideConstantBufferType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
         {
             return DefaultVisit(arrayInitializerExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ArrayType arrayType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ArrayType arrayType)
         {
             return DefaultVisit(arrayType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
         {
             return DefaultVisit(assignmentExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.BinaryExpression binaryExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.BinaryExpression binaryExpression)
         {
             return DefaultVisit(binaryExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.BlockStatement blockStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.BlockStatement blockStatement)
         {
             return DefaultVisit(blockStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.CaseStatement caseStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.CaseStatement caseStatement)
         {
             return DefaultVisit(caseStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.CompositeEnum compositeEnum)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.CompositeEnum compositeEnum)
         {
             return DefaultVisit(compositeEnum);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
         {
             return DefaultVisit(conditionalExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.EmptyStatement emptyStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.EmptyStatement emptyStatement)
         {
             return DefaultVisit(emptyStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.EmptyExpression emptyExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.EmptyExpression emptyExpression)
         {
             return DefaultVisit(emptyExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
             return DefaultVisit(classType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
         {
             return DefaultVisit(identifierGeneric);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
         {
             return DefaultVisit(identifierNs);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
         {
             return DefaultVisit(identifierDot);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.TextureType textureType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.TextureType textureType)
         {
             return DefaultVisit(textureType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.Annotations annotations)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.Annotations annotations)
         {
             return DefaultVisit(annotations);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
         {
             return DefaultVisit(asmExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
         {
             return DefaultVisit(attributeDeclaration);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
         {
             return DefaultVisit(castExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
         {
             return DefaultVisit(compileExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
         {
             return DefaultVisit(constantBuffer);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
         {
             return DefaultVisit(constantBufferType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
         {
             return DefaultVisit(interfaceType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
         {
             return DefaultVisit(packOffset);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.Pass pass)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.Pass pass)
         {
             return DefaultVisit(pass);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
         {
             return DefaultVisit(registerLocation);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.Semantic semantic)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.Semantic semantic)
         {
             return DefaultVisit(semantic);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
         {
             return DefaultVisit(stateExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
         {
             return DefaultVisit(stateInitializer);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.Technique technique)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.Technique technique)
         {
             return DefaultVisit(technique);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Hlsl.Typedef typedef)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Hlsl.Typedef typedef)
         {
             return DefaultVisit(typedef);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ExpressionList expressionList)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ExpressionList expressionList)
         {
             return DefaultVisit(expressionList);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
         {
             return DefaultVisit(genericDeclaration);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.GenericParameterType genericParameterType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.GenericParameterType genericParameterType)
         {
             return DefaultVisit(genericParameterType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.DeclarationStatement declarationStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.DeclarationStatement declarationStatement)
         {
             return DefaultVisit(declarationStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ExpressionStatement expressionStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ExpressionStatement expressionStatement)
         {
             return DefaultVisit(expressionStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ForStatement forStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ForStatement forStatement)
         {
             return DefaultVisit(forStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.GenericType genericType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.GenericType genericType)
         {
             return DefaultVisit(genericType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Identifier identifier)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Identifier identifier)
         {
             return DefaultVisit(identifier);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.IfStatement ifStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.IfStatement ifStatement)
         {
             return DefaultVisit(ifStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.IndexerExpression indexerExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.IndexerExpression indexerExpression)
         {
             return DefaultVisit(indexerExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.KeywordExpression keywordExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.KeywordExpression keywordExpression)
         {
             return DefaultVisit(keywordExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Literal literal)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Literal literal)
         {
             return DefaultVisit(literal);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.LiteralExpression literalExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.LiteralExpression literalExpression)
         {
             return DefaultVisit(literalExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.MatrixType matrixType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.MatrixType matrixType)
         {
             return DefaultVisit(matrixType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
         {
             return DefaultVisit(memberReferenceExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
         {
             return DefaultVisit(methodDeclaration);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.MethodDefinition methodDefinition)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.MethodDefinition methodDefinition)
         {
             return DefaultVisit(methodDefinition);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
         {
             return DefaultVisit(methodInvocationExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ObjectType objectType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ObjectType objectType)
         {
             return DefaultVisit(objectType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Parameter parameter)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Parameter parameter)
         {
             return DefaultVisit(parameter);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
         {
             return DefaultVisit(parenthesizedExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Qualifier qualifier)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Qualifier qualifier)
         {
             return DefaultVisit(qualifier);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ReturnStatement returnStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ReturnStatement returnStatement)
         {
             return DefaultVisit(returnStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.ScalarType scalarType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.ScalarType scalarType)
         {
             return DefaultVisit(scalarType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Shader shader)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Shader shader)
         {
             return DefaultVisit(shader);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.StatementList statementList)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.StatementList statementList)
         {
             return DefaultVisit(statementList);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.StructType structType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.StructType structType)
         {
             return DefaultVisit(structType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
         {
             return DefaultVisit(switchCaseGroup);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.SwitchStatement switchStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.SwitchStatement switchStatement)
         {
             return DefaultVisit(switchStatement);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.TypeName typeName)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.TypeName typeName)
         {
             return DefaultVisit(typeName);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
         {
             return DefaultVisit(typeReferenceExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.UnaryExpression unaryExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.UnaryExpression unaryExpression)
         {
             return DefaultVisit(unaryExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.Variable variable)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.Variable variable)
         {
             return DefaultVisit(variable);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
         {
             return DefaultVisit(variableReferenceExpression);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.VectorType vectorType)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.VectorType vectorType)
         {
             return DefaultVisit(vectorType);
         }
-        public virtual TResult Visit(Xenko.Core.Shaders.Ast.WhileStatement whileStatement)
+        public virtual TResult Visit(Stride.Core.Shaders.Ast.WhileStatement whileStatement)
         {
             return DefaultVisit(whileStatement);
         }
@@ -361,138 +361,138 @@ namespace Xenko.Core.Shaders.Visitor
 
     public partial class ShaderRewriter
     {
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ClassIdentifierGeneric classIdentifierGeneric)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ClassIdentifierGeneric classIdentifierGeneric)
         {
             VisitList(classIdentifierGeneric.Indices);
             VisitList(classIdentifierGeneric.Generics);
             return base.Visit(classIdentifierGeneric);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.EnumType enumType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.EnumType enumType)
         {
             VisitList(enumType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(enumType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(enumType.Name);
             if (!ReferenceEquals(nameTemp, enumType.Name))
                 enumType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(enumType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(enumType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, enumType.Qualifiers))
                 enumType.Qualifiers = qualifiersTemp;
             VisitList(enumType.Values);
             return base.Visit(enumType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ForEachStatement forEachStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ForEachStatement forEachStatement)
         {
             VisitList(forEachStatement.Attributes);
-            var collectionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(forEachStatement.Collection);
+            var collectionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(forEachStatement.Collection);
             if (!ReferenceEquals(collectionTemp, forEachStatement.Collection))
                 forEachStatement.Collection = collectionTemp;
-            var variableTemp = (Xenko.Core.Shaders.Ast.Variable)VisitDynamic(forEachStatement.Variable);
+            var variableTemp = (Stride.Core.Shaders.Ast.Variable)VisitDynamic(forEachStatement.Variable);
             if (!ReferenceEquals(variableTemp, forEachStatement.Variable))
                 forEachStatement.Variable = variableTemp;
-            var bodyTemp = (Xenko.Core.Shaders.Ast.Statement)VisitDynamic(forEachStatement.Body);
+            var bodyTemp = (Stride.Core.Shaders.Ast.Statement)VisitDynamic(forEachStatement.Body);
             if (!ReferenceEquals(bodyTemp, forEachStatement.Body))
                 forEachStatement.Body = bodyTemp;
             return base.Visit(forEachStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ImportBlockStatement importBlockStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ImportBlockStatement importBlockStatement)
         {
             VisitList(importBlockStatement.Attributes);
-            var statementsTemp = (Xenko.Core.Shaders.Ast.StatementList)VisitDynamic(importBlockStatement.Statements);
+            var statementsTemp = (Stride.Core.Shaders.Ast.StatementList)VisitDynamic(importBlockStatement.Statements);
             if (!ReferenceEquals(statementsTemp, importBlockStatement.Statements))
                 importBlockStatement.Statements = statementsTemp;
             return base.Visit(importBlockStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.LinkType linkType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.LinkType linkType)
         {
             VisitList(linkType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(linkType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(linkType.Name);
             if (!ReferenceEquals(nameTemp, linkType.Name))
                 linkType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(linkType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(linkType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, linkType.Qualifiers))
                 linkType.Qualifiers = qualifiersTemp;
             return base.Visit(linkType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.LiteralIdentifier literalIdentifier)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.LiteralIdentifier literalIdentifier)
         {
             VisitList(literalIdentifier.Indices);
-            var valueTemp = (Xenko.Core.Shaders.Ast.Literal)VisitDynamic(literalIdentifier.Value);
+            var valueTemp = (Stride.Core.Shaders.Ast.Literal)VisitDynamic(literalIdentifier.Value);
             if (!ReferenceEquals(valueTemp, literalIdentifier.Value))
                 literalIdentifier.Value = valueTemp;
             return base.Visit(literalIdentifier);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.MemberName memberName)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.MemberName memberName)
         {
             VisitList(memberName.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(memberName.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(memberName.Name);
             if (!ReferenceEquals(nameTemp, memberName.Name))
                 memberName.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(memberName.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(memberName.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, memberName.Qualifiers))
                 memberName.Qualifiers = qualifiersTemp;
             return base.Visit(memberName);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.MixinStatement mixinStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.MixinStatement mixinStatement)
         {
             VisitList(mixinStatement.Attributes);
-            var valueTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(mixinStatement.Value);
+            var valueTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(mixinStatement.Value);
             if (!ReferenceEquals(valueTemp, mixinStatement.Value))
                 mixinStatement.Value = valueTemp;
             return base.Visit(mixinStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.NamespaceBlock namespaceBlock)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.NamespaceBlock namespaceBlock)
         {
             VisitList(namespaceBlock.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(namespaceBlock.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(namespaceBlock.Name);
             if (!ReferenceEquals(nameTemp, namespaceBlock.Name))
                 namespaceBlock.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(namespaceBlock.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(namespaceBlock.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, namespaceBlock.Qualifiers))
                 namespaceBlock.Qualifiers = qualifiersTemp;
             VisitList(namespaceBlock.Body);
             return base.Visit(namespaceBlock);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ParametersBlock parametersBlock)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ParametersBlock parametersBlock)
         {
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(parametersBlock.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(parametersBlock.Name);
             if (!ReferenceEquals(nameTemp, parametersBlock.Name))
                 parametersBlock.Name = nameTemp;
-            var bodyTemp = (Xenko.Core.Shaders.Ast.BlockStatement)VisitDynamic(parametersBlock.Body);
+            var bodyTemp = (Stride.Core.Shaders.Ast.BlockStatement)VisitDynamic(parametersBlock.Body);
             if (!ReferenceEquals(bodyTemp, parametersBlock.Body))
                 parametersBlock.Body = bodyTemp;
             return base.Visit(parametersBlock);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.SemanticType semanticType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.SemanticType semanticType)
         {
             VisitList(semanticType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(semanticType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(semanticType.Name);
             if (!ReferenceEquals(nameTemp, semanticType.Name))
                 semanticType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(semanticType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(semanticType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, semanticType.Qualifiers))
                 semanticType.Qualifiers = qualifiersTemp;
             return base.Visit(semanticType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.EffectBlock effectBlock)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.EffectBlock effectBlock)
         {
             VisitList(effectBlock.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(effectBlock.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(effectBlock.Name);
             if (!ReferenceEquals(nameTemp, effectBlock.Name))
                 effectBlock.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(effectBlock.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(effectBlock.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, effectBlock.Qualifiers))
                 effectBlock.Qualifiers = qualifiersTemp;
-            var bodyTemp = (Xenko.Core.Shaders.Ast.BlockStatement)VisitDynamic(effectBlock.Body);
+            var bodyTemp = (Stride.Core.Shaders.Ast.BlockStatement)VisitDynamic(effectBlock.Body);
             if (!ReferenceEquals(bodyTemp, effectBlock.Body))
                 effectBlock.Body = bodyTemp;
             return base.Visit(effectBlock);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderClassType shaderClassType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ShaderClassType shaderClassType)
         {
             VisitList(shaderClassType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(shaderClassType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(shaderClassType.Name);
             if (!ReferenceEquals(nameTemp, shaderClassType.Name))
                 shaderClassType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(shaderClassType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(shaderClassType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, shaderClassType.Qualifiers))
                 shaderClassType.Qualifiers = qualifiersTemp;
             VisitList(shaderClassType.BaseClasses);
@@ -502,13 +502,13 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(shaderClassType.ShaderGenerics);
             return base.Visit(shaderClassType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderRootClassType shaderRootClassType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ShaderRootClassType shaderRootClassType)
         {
             VisitList(shaderRootClassType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(shaderRootClassType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(shaderRootClassType.Name);
             if (!ReferenceEquals(nameTemp, shaderRootClassType.Name))
                 shaderRootClassType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(shaderRootClassType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(shaderRootClassType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, shaderRootClassType.Qualifiers))
                 shaderRootClassType.Qualifiers = qualifiersTemp;
             VisitList(shaderRootClassType.BaseClasses);
@@ -518,148 +518,148 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(shaderRootClassType.ShaderGenerics);
             return base.Visit(shaderRootClassType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderTypeName shaderTypeName)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ShaderTypeName shaderTypeName)
         {
             VisitList(shaderTypeName.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(shaderTypeName.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(shaderTypeName.Name);
             if (!ReferenceEquals(nameTemp, shaderTypeName.Name))
                 shaderTypeName.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(shaderTypeName.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(shaderTypeName.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, shaderTypeName.Qualifiers))
                 shaderTypeName.Qualifiers = qualifiersTemp;
             return base.Visit(shaderTypeName);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.TypeIdentifier typeIdentifier)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.TypeIdentifier typeIdentifier)
         {
             VisitList(typeIdentifier.Indices);
-            var typeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(typeIdentifier.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(typeIdentifier.Type);
             if (!ReferenceEquals(typeTemp, typeIdentifier.Type))
                 typeIdentifier.Type = typeTemp;
             return base.Visit(typeIdentifier);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.UsingParametersStatement usingParametersStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.UsingParametersStatement usingParametersStatement)
         {
             VisitList(usingParametersStatement.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(usingParametersStatement.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(usingParametersStatement.Name);
             if (!ReferenceEquals(nameTemp, usingParametersStatement.Name))
                 usingParametersStatement.Name = nameTemp;
-            var bodyTemp = (Xenko.Core.Shaders.Ast.BlockStatement)VisitDynamic(usingParametersStatement.Body);
+            var bodyTemp = (Stride.Core.Shaders.Ast.BlockStatement)VisitDynamic(usingParametersStatement.Body);
             if (!ReferenceEquals(bodyTemp, usingParametersStatement.Body))
                 usingParametersStatement.Body = bodyTemp;
             return base.Visit(usingParametersStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.UsingStatement usingStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.UsingStatement usingStatement)
         {
             VisitList(usingStatement.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(usingStatement.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(usingStatement.Name);
             if (!ReferenceEquals(nameTemp, usingStatement.Name))
                 usingStatement.Name = nameTemp;
             return base.Visit(usingStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.VarType varType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.VarType varType)
         {
             VisitList(varType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(varType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(varType.Name);
             if (!ReferenceEquals(nameTemp, varType.Name))
                 varType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(varType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(varType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, varType.Qualifiers))
                 varType.Qualifiers = qualifiersTemp;
             return base.Visit(varType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.XenkoConstantBufferType xenkoConstantBufferType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.StrideConstantBufferType strideConstantBufferType)
         {
-            return base.Visit(xenkoConstantBufferType);
+            return base.Visit(strideConstantBufferType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
         {
             VisitList(arrayInitializerExpression.Items);
             return base.Visit(arrayInitializerExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ArrayType arrayType)
+        public override Node Visit(Stride.Core.Shaders.Ast.ArrayType arrayType)
         {
             VisitList(arrayType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(arrayType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(arrayType.Name);
             if (!ReferenceEquals(nameTemp, arrayType.Name))
                 arrayType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(arrayType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(arrayType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, arrayType.Qualifiers))
                 arrayType.Qualifiers = qualifiersTemp;
             VisitList(arrayType.Dimensions);
-            var typeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(arrayType.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(arrayType.Type);
             if (!ReferenceEquals(typeTemp, arrayType.Type))
                 arrayType.Type = typeTemp;
             return base.Visit(arrayType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
         {
-            var targetTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(assignmentExpression.Target);
+            var targetTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(assignmentExpression.Target);
             if (!ReferenceEquals(targetTemp, assignmentExpression.Target))
                 assignmentExpression.Target = targetTemp;
-            var valueTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(assignmentExpression.Value);
+            var valueTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(assignmentExpression.Value);
             if (!ReferenceEquals(valueTemp, assignmentExpression.Value))
                 assignmentExpression.Value = valueTemp;
             return base.Visit(assignmentExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.BinaryExpression binaryExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.BinaryExpression binaryExpression)
         {
-            var leftTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(binaryExpression.Left);
+            var leftTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(binaryExpression.Left);
             if (!ReferenceEquals(leftTemp, binaryExpression.Left))
                 binaryExpression.Left = leftTemp;
-            var rightTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(binaryExpression.Right);
+            var rightTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(binaryExpression.Right);
             if (!ReferenceEquals(rightTemp, binaryExpression.Right))
                 binaryExpression.Right = rightTemp;
             return base.Visit(binaryExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.BlockStatement blockStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.BlockStatement blockStatement)
         {
             VisitList(blockStatement.Attributes);
-            var statementsTemp = (Xenko.Core.Shaders.Ast.StatementList)VisitDynamic(blockStatement.Statements);
+            var statementsTemp = (Stride.Core.Shaders.Ast.StatementList)VisitDynamic(blockStatement.Statements);
             if (!ReferenceEquals(statementsTemp, blockStatement.Statements))
                 blockStatement.Statements = statementsTemp;
             return base.Visit(blockStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.CaseStatement caseStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.CaseStatement caseStatement)
         {
             VisitList(caseStatement.Attributes);
-            var caseTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(caseStatement.Case);
+            var caseTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(caseStatement.Case);
             if (!ReferenceEquals(caseTemp, caseStatement.Case))
                 caseStatement.Case = caseTemp;
             return base.Visit(caseStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.CompositeEnum compositeEnum)
+        public override Node Visit(Stride.Core.Shaders.Ast.CompositeEnum compositeEnum)
         {
             return base.Visit(compositeEnum);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
         {
-            var conditionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(conditionalExpression.Condition);
+            var conditionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(conditionalExpression.Condition);
             if (!ReferenceEquals(conditionTemp, conditionalExpression.Condition))
                 conditionalExpression.Condition = conditionTemp;
-            var leftTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(conditionalExpression.Left);
+            var leftTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(conditionalExpression.Left);
             if (!ReferenceEquals(leftTemp, conditionalExpression.Left))
                 conditionalExpression.Left = leftTemp;
-            var rightTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(conditionalExpression.Right);
+            var rightTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(conditionalExpression.Right);
             if (!ReferenceEquals(rightTemp, conditionalExpression.Right))
                 conditionalExpression.Right = rightTemp;
             return base.Visit(conditionalExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.EmptyStatement emptyStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.EmptyStatement emptyStatement)
         {
             VisitList(emptyStatement.Attributes);
             return base.Visit(emptyStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.EmptyExpression emptyExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.EmptyExpression emptyExpression)
         {
             return base.Visit(emptyExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
             VisitList(classType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(classType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(classType.Name);
             if (!ReferenceEquals(nameTemp, classType.Name))
                 classType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(classType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(classType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, classType.Qualifiers))
                 classType.Qualifiers = qualifiersTemp;
             VisitList(classType.BaseClasses);
@@ -668,101 +668,101 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(classType.Members);
             return base.Visit(classType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
         {
             VisitList(identifierGeneric.Indices);
             VisitList(identifierGeneric.Identifiers);
             return base.Visit(identifierGeneric);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
         {
             VisitList(identifierNs.Indices);
             VisitList(identifierNs.Identifiers);
             return base.Visit(identifierNs);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
         {
             VisitList(identifierDot.Indices);
             VisitList(identifierDot.Identifiers);
             return base.Visit(identifierDot);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.TextureType textureType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.TextureType textureType)
         {
             VisitList(textureType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(textureType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(textureType.Name);
             if (!ReferenceEquals(nameTemp, textureType.Name))
                 textureType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(textureType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(textureType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, textureType.Qualifiers))
                 textureType.Qualifiers = qualifiersTemp;
             return base.Visit(textureType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Annotations annotations)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Annotations annotations)
         {
             VisitList(annotations.Variables);
             return base.Visit(annotations);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
         {
             return base.Visit(asmExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
         {
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(attributeDeclaration.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(attributeDeclaration.Name);
             if (!ReferenceEquals(nameTemp, attributeDeclaration.Name))
                 attributeDeclaration.Name = nameTemp;
             VisitList(attributeDeclaration.Parameters);
             return base.Visit(attributeDeclaration);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
         {
-            var fromTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(castExpression.From);
+            var fromTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(castExpression.From);
             if (!ReferenceEquals(fromTemp, castExpression.From))
                 castExpression.From = fromTemp;
-            var targetTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(castExpression.Target);
+            var targetTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(castExpression.Target);
             if (!ReferenceEquals(targetTemp, castExpression.Target))
                 castExpression.Target = targetTemp;
             return base.Visit(castExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
         {
-            var functionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(compileExpression.Function);
+            var functionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(compileExpression.Function);
             if (!ReferenceEquals(functionTemp, compileExpression.Function))
                 compileExpression.Function = functionTemp;
-            var profileTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(compileExpression.Profile);
+            var profileTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(compileExpression.Profile);
             if (!ReferenceEquals(profileTemp, compileExpression.Profile))
                 compileExpression.Profile = profileTemp;
             return base.Visit(compileExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
         {
             VisitList(constantBuffer.Attributes);
-            var typeTemp = (Xenko.Core.Shaders.Ast.Hlsl.ConstantBufferType)VisitDynamic(constantBuffer.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.Hlsl.ConstantBufferType)VisitDynamic(constantBuffer.Type);
             if (!ReferenceEquals(typeTemp, constantBuffer.Type))
                 constantBuffer.Type = typeTemp;
             VisitList(constantBuffer.Members);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(constantBuffer.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(constantBuffer.Name);
             if (!ReferenceEquals(nameTemp, constantBuffer.Name))
                 constantBuffer.Name = nameTemp;
-            var registerTemp = (Xenko.Core.Shaders.Ast.Hlsl.RegisterLocation)VisitDynamic(constantBuffer.Register);
+            var registerTemp = (Stride.Core.Shaders.Ast.Hlsl.RegisterLocation)VisitDynamic(constantBuffer.Register);
             if (!ReferenceEquals(registerTemp, constantBuffer.Register))
                 constantBuffer.Register = registerTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(constantBuffer.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(constantBuffer.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, constantBuffer.Qualifiers))
                 constantBuffer.Qualifiers = qualifiersTemp;
             return base.Visit(constantBuffer);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
         {
             return base.Visit(constantBufferType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
         {
             VisitList(interfaceType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(interfaceType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(interfaceType.Name);
             if (!ReferenceEquals(nameTemp, interfaceType.Name))
                 interfaceType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(interfaceType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(interfaceType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, interfaceType.Qualifiers))
                 interfaceType.Qualifiers = qualifiersTemp;
             VisitList(interfaceType.GenericParameters);
@@ -770,432 +770,432 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(interfaceType.Methods);
             return base.Visit(interfaceType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
         {
-            var valueTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(packOffset.Value);
+            var valueTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(packOffset.Value);
             if (!ReferenceEquals(valueTemp, packOffset.Value))
                 packOffset.Value = valueTemp;
             return base.Visit(packOffset);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Pass pass)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Pass pass)
         {
             VisitList(pass.Attributes);
             VisitList(pass.Items);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(pass.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(pass.Name);
             if (!ReferenceEquals(nameTemp, pass.Name))
                 pass.Name = nameTemp;
             return base.Visit(pass);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
         {
-            var profileTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(registerLocation.Profile);
+            var profileTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(registerLocation.Profile);
             if (!ReferenceEquals(profileTemp, registerLocation.Profile))
                 registerLocation.Profile = profileTemp;
-            var registerTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(registerLocation.Register);
+            var registerTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(registerLocation.Register);
             if (!ReferenceEquals(registerTemp, registerLocation.Register))
                 registerLocation.Register = registerTemp;
             return base.Visit(registerLocation);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Semantic semantic)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Semantic semantic)
         {
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(semantic.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(semantic.Name);
             if (!ReferenceEquals(nameTemp, semantic.Name))
                 semantic.Name = nameTemp;
             return base.Visit(semantic);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
         {
-            var initializerTemp = (Xenko.Core.Shaders.Ast.Hlsl.StateInitializer)VisitDynamic(stateExpression.Initializer);
+            var initializerTemp = (Stride.Core.Shaders.Ast.Hlsl.StateInitializer)VisitDynamic(stateExpression.Initializer);
             if (!ReferenceEquals(initializerTemp, stateExpression.Initializer))
                 stateExpression.Initializer = initializerTemp;
-            var stateTypeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(stateExpression.StateType);
+            var stateTypeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(stateExpression.StateType);
             if (!ReferenceEquals(stateTypeTemp, stateExpression.StateType))
                 stateExpression.StateType = stateTypeTemp;
             return base.Visit(stateExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
         {
             VisitList(stateInitializer.Items);
             return base.Visit(stateInitializer);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Technique technique)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Technique technique)
         {
-            var typeTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(technique.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(technique.Type);
             if (!ReferenceEquals(typeTemp, technique.Type))
                 technique.Type = typeTemp;
             VisitList(technique.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(technique.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(technique.Name);
             if (!ReferenceEquals(nameTemp, technique.Name))
                 technique.Name = nameTemp;
             VisitList(technique.Passes);
             return base.Visit(technique);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Typedef typedef)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Typedef typedef)
         {
             VisitList(typedef.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(typedef.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(typedef.Name);
             if (!ReferenceEquals(nameTemp, typedef.Name))
                 typedef.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(typedef.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(typedef.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, typedef.Qualifiers))
                 typedef.Qualifiers = qualifiersTemp;
             VisitList(typedef.SubDeclarators);
-            var typeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(typedef.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(typedef.Type);
             if (!ReferenceEquals(typeTemp, typedef.Type))
                 typedef.Type = typeTemp;
             return base.Visit(typedef);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ExpressionList expressionList)
+        public override Node Visit(Stride.Core.Shaders.Ast.ExpressionList expressionList)
         {
             VisitList(expressionList.Expressions);
             return base.Visit(expressionList);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
+        public override Node Visit(Stride.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
         {
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(genericDeclaration.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(genericDeclaration.Name);
             if (!ReferenceEquals(nameTemp, genericDeclaration.Name))
                 genericDeclaration.Name = nameTemp;
             return base.Visit(genericDeclaration);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.GenericParameterType genericParameterType)
+        public override Node Visit(Stride.Core.Shaders.Ast.GenericParameterType genericParameterType)
         {
             VisitList(genericParameterType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(genericParameterType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(genericParameterType.Name);
             if (!ReferenceEquals(nameTemp, genericParameterType.Name))
                 genericParameterType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(genericParameterType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(genericParameterType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, genericParameterType.Qualifiers))
                 genericParameterType.Qualifiers = qualifiersTemp;
             return base.Visit(genericParameterType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.DeclarationStatement declarationStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.DeclarationStatement declarationStatement)
         {
             VisitList(declarationStatement.Attributes);
-            var contentTemp = (Xenko.Core.Shaders.Ast.Node)VisitDynamic(declarationStatement.Content);
+            var contentTemp = (Stride.Core.Shaders.Ast.Node)VisitDynamic(declarationStatement.Content);
             if (!ReferenceEquals(contentTemp, declarationStatement.Content))
                 declarationStatement.Content = contentTemp;
             return base.Visit(declarationStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ExpressionStatement expressionStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.ExpressionStatement expressionStatement)
         {
             VisitList(expressionStatement.Attributes);
-            var expressionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(expressionStatement.Expression);
+            var expressionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(expressionStatement.Expression);
             if (!ReferenceEquals(expressionTemp, expressionStatement.Expression))
                 expressionStatement.Expression = expressionTemp;
             return base.Visit(expressionStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ForStatement forStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.ForStatement forStatement)
         {
             VisitList(forStatement.Attributes);
-            var startTemp = (Xenko.Core.Shaders.Ast.Statement)VisitDynamic(forStatement.Start);
+            var startTemp = (Stride.Core.Shaders.Ast.Statement)VisitDynamic(forStatement.Start);
             if (!ReferenceEquals(startTemp, forStatement.Start))
                 forStatement.Start = startTemp;
-            var conditionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(forStatement.Condition);
+            var conditionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(forStatement.Condition);
             if (!ReferenceEquals(conditionTemp, forStatement.Condition))
                 forStatement.Condition = conditionTemp;
-            var nextTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(forStatement.Next);
+            var nextTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(forStatement.Next);
             if (!ReferenceEquals(nextTemp, forStatement.Next))
                 forStatement.Next = nextTemp;
-            var bodyTemp = (Xenko.Core.Shaders.Ast.Statement)VisitDynamic(forStatement.Body);
+            var bodyTemp = (Stride.Core.Shaders.Ast.Statement)VisitDynamic(forStatement.Body);
             if (!ReferenceEquals(bodyTemp, forStatement.Body))
                 forStatement.Body = bodyTemp;
             return base.Visit(forStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.GenericType genericType)
+        public override Node Visit(Stride.Core.Shaders.Ast.GenericType genericType)
         {
             VisitList(genericType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(genericType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(genericType.Name);
             if (!ReferenceEquals(nameTemp, genericType.Name))
                 genericType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(genericType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(genericType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, genericType.Qualifiers))
                 genericType.Qualifiers = qualifiersTemp;
             VisitList(genericType.Parameters);
             return base.Visit(genericType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Identifier identifier)
+        public override Node Visit(Stride.Core.Shaders.Ast.Identifier identifier)
         {
             VisitList(identifier.Indices);
             return base.Visit(identifier);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.IfStatement ifStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.IfStatement ifStatement)
         {
             VisitList(ifStatement.Attributes);
-            var conditionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(ifStatement.Condition);
+            var conditionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(ifStatement.Condition);
             if (!ReferenceEquals(conditionTemp, ifStatement.Condition))
                 ifStatement.Condition = conditionTemp;
-            var elseTemp = (Xenko.Core.Shaders.Ast.Statement)VisitDynamic(ifStatement.Else);
+            var elseTemp = (Stride.Core.Shaders.Ast.Statement)VisitDynamic(ifStatement.Else);
             if (!ReferenceEquals(elseTemp, ifStatement.Else))
                 ifStatement.Else = elseTemp;
-            var thenTemp = (Xenko.Core.Shaders.Ast.Statement)VisitDynamic(ifStatement.Then);
+            var thenTemp = (Stride.Core.Shaders.Ast.Statement)VisitDynamic(ifStatement.Then);
             if (!ReferenceEquals(thenTemp, ifStatement.Then))
                 ifStatement.Then = thenTemp;
             return base.Visit(ifStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.IndexerExpression indexerExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.IndexerExpression indexerExpression)
         {
-            var indexTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(indexerExpression.Index);
+            var indexTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(indexerExpression.Index);
             if (!ReferenceEquals(indexTemp, indexerExpression.Index))
                 indexerExpression.Index = indexTemp;
-            var targetTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(indexerExpression.Target);
+            var targetTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(indexerExpression.Target);
             if (!ReferenceEquals(targetTemp, indexerExpression.Target))
                 indexerExpression.Target = targetTemp;
             return base.Visit(indexerExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.KeywordExpression keywordExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.KeywordExpression keywordExpression)
         {
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(keywordExpression.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(keywordExpression.Name);
             if (!ReferenceEquals(nameTemp, keywordExpression.Name))
                 keywordExpression.Name = nameTemp;
             return base.Visit(keywordExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Literal literal)
+        public override Node Visit(Stride.Core.Shaders.Ast.Literal literal)
         {
             VisitList(literal.SubLiterals);
             return base.Visit(literal);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.LiteralExpression literalExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.LiteralExpression literalExpression)
         {
-            var literalTemp = (Xenko.Core.Shaders.Ast.Literal)VisitDynamic(literalExpression.Literal);
+            var literalTemp = (Stride.Core.Shaders.Ast.Literal)VisitDynamic(literalExpression.Literal);
             if (!ReferenceEquals(literalTemp, literalExpression.Literal))
                 literalExpression.Literal = literalTemp;
             return base.Visit(literalExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MatrixType matrixType)
+        public override Node Visit(Stride.Core.Shaders.Ast.MatrixType matrixType)
         {
             VisitList(matrixType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(matrixType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(matrixType.Name);
             if (!ReferenceEquals(nameTemp, matrixType.Name))
                 matrixType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(matrixType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(matrixType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, matrixType.Qualifiers))
                 matrixType.Qualifiers = qualifiersTemp;
-            var typeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(matrixType.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(matrixType.Type);
             if (!ReferenceEquals(typeTemp, matrixType.Type))
                 matrixType.Type = typeTemp;
             return base.Visit(matrixType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
         {
-            var memberTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(memberReferenceExpression.Member);
+            var memberTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(memberReferenceExpression.Member);
             if (!ReferenceEquals(memberTemp, memberReferenceExpression.Member))
                 memberReferenceExpression.Member = memberTemp;
-            var targetTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(memberReferenceExpression.Target);
+            var targetTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(memberReferenceExpression.Target);
             if (!ReferenceEquals(targetTemp, memberReferenceExpression.Target))
                 memberReferenceExpression.Target = targetTemp;
             return base.Visit(memberReferenceExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
+        public override Node Visit(Stride.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
         {
             VisitList(methodDeclaration.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(methodDeclaration.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(methodDeclaration.Name);
             if (!ReferenceEquals(nameTemp, methodDeclaration.Name))
                 methodDeclaration.Name = nameTemp;
             VisitList(methodDeclaration.Parameters);
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(methodDeclaration.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(methodDeclaration.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, methodDeclaration.Qualifiers))
                 methodDeclaration.Qualifiers = qualifiersTemp;
-            var returnTypeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(methodDeclaration.ReturnType);
+            var returnTypeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(methodDeclaration.ReturnType);
             if (!ReferenceEquals(returnTypeTemp, methodDeclaration.ReturnType))
                 methodDeclaration.ReturnType = returnTypeTemp;
             return base.Visit(methodDeclaration);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MethodDefinition methodDefinition)
+        public override Node Visit(Stride.Core.Shaders.Ast.MethodDefinition methodDefinition)
         {
             VisitList(methodDefinition.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(methodDefinition.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(methodDefinition.Name);
             if (!ReferenceEquals(nameTemp, methodDefinition.Name))
                 methodDefinition.Name = nameTemp;
             VisitList(methodDefinition.Parameters);
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(methodDefinition.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(methodDefinition.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, methodDefinition.Qualifiers))
                 methodDefinition.Qualifiers = qualifiersTemp;
-            var returnTypeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(methodDefinition.ReturnType);
+            var returnTypeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(methodDefinition.ReturnType);
             if (!ReferenceEquals(returnTypeTemp, methodDefinition.ReturnType))
                 methodDefinition.ReturnType = returnTypeTemp;
-            var bodyTemp = (Xenko.Core.Shaders.Ast.StatementList)VisitDynamic(methodDefinition.Body);
+            var bodyTemp = (Stride.Core.Shaders.Ast.StatementList)VisitDynamic(methodDefinition.Body);
             if (!ReferenceEquals(bodyTemp, methodDefinition.Body))
                 methodDefinition.Body = bodyTemp;
             return base.Visit(methodDefinition);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
         {
-            var targetTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(methodInvocationExpression.Target);
+            var targetTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(methodInvocationExpression.Target);
             if (!ReferenceEquals(targetTemp, methodInvocationExpression.Target))
                 methodInvocationExpression.Target = targetTemp;
             VisitList(methodInvocationExpression.Arguments);
             return base.Visit(methodInvocationExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ObjectType objectType)
+        public override Node Visit(Stride.Core.Shaders.Ast.ObjectType objectType)
         {
             VisitList(objectType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(objectType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(objectType.Name);
             if (!ReferenceEquals(nameTemp, objectType.Name))
                 objectType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(objectType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(objectType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, objectType.Qualifiers))
                 objectType.Qualifiers = qualifiersTemp;
             return base.Visit(objectType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Parameter parameter)
+        public override Node Visit(Stride.Core.Shaders.Ast.Parameter parameter)
         {
             VisitList(parameter.Attributes);
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(parameter.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(parameter.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, parameter.Qualifiers))
                 parameter.Qualifiers = qualifiersTemp;
-            var typeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(parameter.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(parameter.Type);
             if (!ReferenceEquals(typeTemp, parameter.Type))
                 parameter.Type = typeTemp;
-            var initialValueTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(parameter.InitialValue);
+            var initialValueTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(parameter.InitialValue);
             if (!ReferenceEquals(initialValueTemp, parameter.InitialValue))
                 parameter.InitialValue = initialValueTemp;
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(parameter.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(parameter.Name);
             if (!ReferenceEquals(nameTemp, parameter.Name))
                 parameter.Name = nameTemp;
             VisitList(parameter.SubVariables);
             return base.Visit(parameter);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
         {
-            var contentTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(parenthesizedExpression.Content);
+            var contentTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(parenthesizedExpression.Content);
             if (!ReferenceEquals(contentTemp, parenthesizedExpression.Content))
                 parenthesizedExpression.Content = contentTemp;
             return base.Visit(parenthesizedExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Qualifier qualifier)
+        public override Node Visit(Stride.Core.Shaders.Ast.Qualifier qualifier)
         {
             return base.Visit(qualifier);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ReturnStatement returnStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.ReturnStatement returnStatement)
         {
             VisitList(returnStatement.Attributes);
-            var valueTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(returnStatement.Value);
+            var valueTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(returnStatement.Value);
             if (!ReferenceEquals(valueTemp, returnStatement.Value))
                 returnStatement.Value = valueTemp;
             return base.Visit(returnStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ScalarType scalarType)
+        public override Node Visit(Stride.Core.Shaders.Ast.ScalarType scalarType)
         {
             VisitList(scalarType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(scalarType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(scalarType.Name);
             if (!ReferenceEquals(nameTemp, scalarType.Name))
                 scalarType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(scalarType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(scalarType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, scalarType.Qualifiers))
                 scalarType.Qualifiers = qualifiersTemp;
             return base.Visit(scalarType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Shader shader)
+        public override Node Visit(Stride.Core.Shaders.Ast.Shader shader)
         {
             VisitList(shader.Declarations);
             return base.Visit(shader);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.StatementList statementList)
+        public override Node Visit(Stride.Core.Shaders.Ast.StatementList statementList)
         {
             VisitList(statementList.Attributes);
             VisitList(statementList.Statements);
             return base.Visit(statementList);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.StructType structType)
+        public override Node Visit(Stride.Core.Shaders.Ast.StructType structType)
         {
             VisitList(structType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(structType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(structType.Name);
             if (!ReferenceEquals(nameTemp, structType.Name))
                 structType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(structType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(structType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, structType.Qualifiers))
                 structType.Qualifiers = qualifiersTemp;
             VisitList(structType.Fields);
             return base.Visit(structType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
+        public override Node Visit(Stride.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
         {
             VisitList(switchCaseGroup.Cases);
-            var statementsTemp = (Xenko.Core.Shaders.Ast.StatementList)VisitDynamic(switchCaseGroup.Statements);
+            var statementsTemp = (Stride.Core.Shaders.Ast.StatementList)VisitDynamic(switchCaseGroup.Statements);
             if (!ReferenceEquals(statementsTemp, switchCaseGroup.Statements))
                 switchCaseGroup.Statements = statementsTemp;
             return base.Visit(switchCaseGroup);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.SwitchStatement switchStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.SwitchStatement switchStatement)
         {
             VisitList(switchStatement.Attributes);
-            var conditionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(switchStatement.Condition);
+            var conditionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(switchStatement.Condition);
             if (!ReferenceEquals(conditionTemp, switchStatement.Condition))
                 switchStatement.Condition = conditionTemp;
             VisitList(switchStatement.Groups);
             return base.Visit(switchStatement);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.TypeName typeName)
+        public override Node Visit(Stride.Core.Shaders.Ast.TypeName typeName)
         {
             VisitList(typeName.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(typeName.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(typeName.Name);
             if (!ReferenceEquals(nameTemp, typeName.Name))
                 typeName.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(typeName.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(typeName.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, typeName.Qualifiers))
                 typeName.Qualifiers = qualifiersTemp;
             return base.Visit(typeName);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
         {
-            var typeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(typeReferenceExpression.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(typeReferenceExpression.Type);
             if (!ReferenceEquals(typeTemp, typeReferenceExpression.Type))
                 typeReferenceExpression.Type = typeTemp;
             return base.Visit(typeReferenceExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.UnaryExpression unaryExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.UnaryExpression unaryExpression)
         {
-            var expressionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(unaryExpression.Expression);
+            var expressionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(unaryExpression.Expression);
             if (!ReferenceEquals(expressionTemp, unaryExpression.Expression))
                 unaryExpression.Expression = expressionTemp;
             return base.Visit(unaryExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Variable variable)
+        public override Node Visit(Stride.Core.Shaders.Ast.Variable variable)
         {
             VisitList(variable.Attributes);
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(variable.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(variable.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, variable.Qualifiers))
                 variable.Qualifiers = qualifiersTemp;
-            var typeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(variable.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(variable.Type);
             if (!ReferenceEquals(typeTemp, variable.Type))
                 variable.Type = typeTemp;
-            var initialValueTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(variable.InitialValue);
+            var initialValueTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(variable.InitialValue);
             if (!ReferenceEquals(initialValueTemp, variable.InitialValue))
                 variable.InitialValue = initialValueTemp;
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(variable.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(variable.Name);
             if (!ReferenceEquals(nameTemp, variable.Name))
                 variable.Name = nameTemp;
             VisitList(variable.SubVariables);
             return base.Visit(variable);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
         {
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(variableReferenceExpression.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(variableReferenceExpression.Name);
             if (!ReferenceEquals(nameTemp, variableReferenceExpression.Name))
                 variableReferenceExpression.Name = nameTemp;
             return base.Visit(variableReferenceExpression);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.VectorType vectorType)
+        public override Node Visit(Stride.Core.Shaders.Ast.VectorType vectorType)
         {
             VisitList(vectorType.Attributes);
-            var nameTemp = (Xenko.Core.Shaders.Ast.Identifier)VisitDynamic(vectorType.Name);
+            var nameTemp = (Stride.Core.Shaders.Ast.Identifier)VisitDynamic(vectorType.Name);
             if (!ReferenceEquals(nameTemp, vectorType.Name))
                 vectorType.Name = nameTemp;
-            var qualifiersTemp = (Xenko.Core.Shaders.Ast.Qualifier)VisitDynamic(vectorType.Qualifiers);
+            var qualifiersTemp = (Stride.Core.Shaders.Ast.Qualifier)VisitDynamic(vectorType.Qualifiers);
             if (!ReferenceEquals(qualifiersTemp, vectorType.Qualifiers))
                 vectorType.Qualifiers = qualifiersTemp;
-            var typeTemp = (Xenko.Core.Shaders.Ast.TypeBase)VisitDynamic(vectorType.Type);
+            var typeTemp = (Stride.Core.Shaders.Ast.TypeBase)VisitDynamic(vectorType.Type);
             if (!ReferenceEquals(typeTemp, vectorType.Type))
                 vectorType.Type = typeTemp;
             return base.Visit(vectorType);
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.WhileStatement whileStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.WhileStatement whileStatement)
         {
             VisitList(whileStatement.Attributes);
-            var conditionTemp = (Xenko.Core.Shaders.Ast.Expression)VisitDynamic(whileStatement.Condition);
+            var conditionTemp = (Stride.Core.Shaders.Ast.Expression)VisitDynamic(whileStatement.Condition);
             if (!ReferenceEquals(conditionTemp, whileStatement.Condition))
                 whileStatement.Condition = conditionTemp;
-            var statementTemp = (Xenko.Core.Shaders.Ast.Statement)VisitDynamic(whileStatement.Statement);
+            var statementTemp = (Stride.Core.Shaders.Ast.Statement)VisitDynamic(whileStatement.Statement);
             if (!ReferenceEquals(statementTemp, whileStatement.Statement))
                 whileStatement.Statement = statementTemp;
             return base.Visit(whileStatement);
@@ -1204,10 +1204,10 @@ namespace Xenko.Core.Shaders.Visitor
 
     public partial class ShaderCloner
     {
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ClassIdentifierGeneric classIdentifierGeneric)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ClassIdentifierGeneric classIdentifierGeneric)
         {
-            classIdentifierGeneric = (Xenko.Core.Shaders.Ast.Xenko.ClassIdentifierGeneric)base.Visit(classIdentifierGeneric);
-            return new Xenko.Core.Shaders.Ast.Xenko.ClassIdentifierGeneric
+            classIdentifierGeneric = (Stride.Core.Shaders.Ast.Stride.ClassIdentifierGeneric)base.Visit(classIdentifierGeneric);
+            return new Stride.Core.Shaders.Ast.Stride.ClassIdentifierGeneric
             {
                 Span = classIdentifierGeneric.Span,
                 Tags = classIdentifierGeneric.Tags,
@@ -1217,10 +1217,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Generics = classIdentifierGeneric.Generics,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.EnumType enumType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.EnumType enumType)
         {
-            enumType = (Xenko.Core.Shaders.Ast.Xenko.EnumType)base.Visit(enumType);
-            return new Xenko.Core.Shaders.Ast.Xenko.EnumType
+            enumType = (Stride.Core.Shaders.Ast.Stride.EnumType)base.Visit(enumType);
+            return new Stride.Core.Shaders.Ast.Stride.EnumType
             {
                 Span = enumType.Span,
                 Tags = enumType.Tags,
@@ -1232,10 +1232,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Values = enumType.Values,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ForEachStatement forEachStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ForEachStatement forEachStatement)
         {
-            forEachStatement = (Xenko.Core.Shaders.Ast.Xenko.ForEachStatement)base.Visit(forEachStatement);
-            return new Xenko.Core.Shaders.Ast.Xenko.ForEachStatement
+            forEachStatement = (Stride.Core.Shaders.Ast.Stride.ForEachStatement)base.Visit(forEachStatement);
+            return new Stride.Core.Shaders.Ast.Stride.ForEachStatement
             {
                 Span = forEachStatement.Span,
                 Tags = forEachStatement.Tags,
@@ -1245,10 +1245,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Body = forEachStatement.Body,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ImportBlockStatement importBlockStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ImportBlockStatement importBlockStatement)
         {
-            importBlockStatement = (Xenko.Core.Shaders.Ast.Xenko.ImportBlockStatement)base.Visit(importBlockStatement);
-            return new Xenko.Core.Shaders.Ast.Xenko.ImportBlockStatement
+            importBlockStatement = (Stride.Core.Shaders.Ast.Stride.ImportBlockStatement)base.Visit(importBlockStatement);
+            return new Stride.Core.Shaders.Ast.Stride.ImportBlockStatement
             {
                 Span = importBlockStatement.Span,
                 Tags = importBlockStatement.Tags,
@@ -1257,10 +1257,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Name = importBlockStatement.Name,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.LinkType linkType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.LinkType linkType)
         {
-            linkType = (Xenko.Core.Shaders.Ast.Xenko.LinkType)base.Visit(linkType);
-            return new Xenko.Core.Shaders.Ast.Xenko.LinkType
+            linkType = (Stride.Core.Shaders.Ast.Stride.LinkType)base.Visit(linkType);
+            return new Stride.Core.Shaders.Ast.Stride.LinkType
             {
                 Span = linkType.Span,
                 Tags = linkType.Tags,
@@ -1271,10 +1271,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsBuiltIn = linkType.IsBuiltIn,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.LiteralIdentifier literalIdentifier)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.LiteralIdentifier literalIdentifier)
         {
-            literalIdentifier = (Xenko.Core.Shaders.Ast.Xenko.LiteralIdentifier)base.Visit(literalIdentifier);
-            return new Xenko.Core.Shaders.Ast.Xenko.LiteralIdentifier
+            literalIdentifier = (Stride.Core.Shaders.Ast.Stride.LiteralIdentifier)base.Visit(literalIdentifier);
+            return new Stride.Core.Shaders.Ast.Stride.LiteralIdentifier
             {
                 Span = literalIdentifier.Span,
                 Tags = literalIdentifier.Tags,
@@ -1284,10 +1284,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Value = literalIdentifier.Value,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.MemberName memberName)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.MemberName memberName)
         {
-            memberName = (Xenko.Core.Shaders.Ast.Xenko.MemberName)base.Visit(memberName);
-            return new Xenko.Core.Shaders.Ast.Xenko.MemberName
+            memberName = (Stride.Core.Shaders.Ast.Stride.MemberName)base.Visit(memberName);
+            return new Stride.Core.Shaders.Ast.Stride.MemberName
             {
                 Span = memberName.Span,
                 Tags = memberName.Tags,
@@ -1298,10 +1298,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsBuiltIn = memberName.IsBuiltIn,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.MixinStatement mixinStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.MixinStatement mixinStatement)
         {
-            mixinStatement = (Xenko.Core.Shaders.Ast.Xenko.MixinStatement)base.Visit(mixinStatement);
-            return new Xenko.Core.Shaders.Ast.Xenko.MixinStatement
+            mixinStatement = (Stride.Core.Shaders.Ast.Stride.MixinStatement)base.Visit(mixinStatement);
+            return new Stride.Core.Shaders.Ast.Stride.MixinStatement
             {
                 Span = mixinStatement.Span,
                 Tags = mixinStatement.Tags,
@@ -1310,10 +1310,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Value = mixinStatement.Value,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.NamespaceBlock namespaceBlock)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.NamespaceBlock namespaceBlock)
         {
-            namespaceBlock = (Xenko.Core.Shaders.Ast.Xenko.NamespaceBlock)base.Visit(namespaceBlock);
-            return new Xenko.Core.Shaders.Ast.Xenko.NamespaceBlock
+            namespaceBlock = (Stride.Core.Shaders.Ast.Stride.NamespaceBlock)base.Visit(namespaceBlock);
+            return new Stride.Core.Shaders.Ast.Stride.NamespaceBlock
             {
                 Span = namespaceBlock.Span,
                 Tags = namespaceBlock.Tags,
@@ -1325,10 +1325,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Body = namespaceBlock.Body,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ParametersBlock parametersBlock)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ParametersBlock parametersBlock)
         {
-            parametersBlock = (Xenko.Core.Shaders.Ast.Xenko.ParametersBlock)base.Visit(parametersBlock);
-            return new Xenko.Core.Shaders.Ast.Xenko.ParametersBlock
+            parametersBlock = (Stride.Core.Shaders.Ast.Stride.ParametersBlock)base.Visit(parametersBlock);
+            return new Stride.Core.Shaders.Ast.Stride.ParametersBlock
             {
                 Span = parametersBlock.Span,
                 Tags = parametersBlock.Tags,
@@ -1336,10 +1336,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Body = parametersBlock.Body,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.SemanticType semanticType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.SemanticType semanticType)
         {
-            semanticType = (Xenko.Core.Shaders.Ast.Xenko.SemanticType)base.Visit(semanticType);
-            return new Xenko.Core.Shaders.Ast.Xenko.SemanticType
+            semanticType = (Stride.Core.Shaders.Ast.Stride.SemanticType)base.Visit(semanticType);
+            return new Stride.Core.Shaders.Ast.Stride.SemanticType
             {
                 Span = semanticType.Span,
                 Tags = semanticType.Tags,
@@ -1350,10 +1350,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsBuiltIn = semanticType.IsBuiltIn,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.EffectBlock effectBlock)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.EffectBlock effectBlock)
         {
-            effectBlock = (Xenko.Core.Shaders.Ast.Xenko.EffectBlock)base.Visit(effectBlock);
-            return new Xenko.Core.Shaders.Ast.Xenko.EffectBlock
+            effectBlock = (Stride.Core.Shaders.Ast.Stride.EffectBlock)base.Visit(effectBlock);
+            return new Stride.Core.Shaders.Ast.Stride.EffectBlock
             {
                 Span = effectBlock.Span,
                 Tags = effectBlock.Tags,
@@ -1366,10 +1366,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Body = effectBlock.Body,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderClassType shaderClassType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ShaderClassType shaderClassType)
         {
-            shaderClassType = (Xenko.Core.Shaders.Ast.Xenko.ShaderClassType)base.Visit(shaderClassType);
-            return new Xenko.Core.Shaders.Ast.Xenko.ShaderClassType
+            shaderClassType = (Stride.Core.Shaders.Ast.Stride.ShaderClassType)base.Visit(shaderClassType);
+            return new Stride.Core.Shaders.Ast.Stride.ShaderClassType
             {
                 Span = shaderClassType.Span,
                 Tags = shaderClassType.Tags,
@@ -1386,10 +1386,10 @@ namespace Xenko.Core.Shaders.Visitor
                 ShaderGenerics = shaderClassType.ShaderGenerics,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderRootClassType shaderRootClassType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ShaderRootClassType shaderRootClassType)
         {
-            shaderRootClassType = (Xenko.Core.Shaders.Ast.Xenko.ShaderRootClassType)base.Visit(shaderRootClassType);
-            return new Xenko.Core.Shaders.Ast.Xenko.ShaderRootClassType
+            shaderRootClassType = (Stride.Core.Shaders.Ast.Stride.ShaderRootClassType)base.Visit(shaderRootClassType);
+            return new Stride.Core.Shaders.Ast.Stride.ShaderRootClassType
             {
                 Span = shaderRootClassType.Span,
                 Tags = shaderRootClassType.Tags,
@@ -1406,10 +1406,10 @@ namespace Xenko.Core.Shaders.Visitor
                 ShaderGenerics = shaderRootClassType.ShaderGenerics,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderTypeName shaderTypeName)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.ShaderTypeName shaderTypeName)
         {
-            shaderTypeName = (Xenko.Core.Shaders.Ast.Xenko.ShaderTypeName)base.Visit(shaderTypeName);
-            return new Xenko.Core.Shaders.Ast.Xenko.ShaderTypeName
+            shaderTypeName = (Stride.Core.Shaders.Ast.Stride.ShaderTypeName)base.Visit(shaderTypeName);
+            return new Stride.Core.Shaders.Ast.Stride.ShaderTypeName
             {
                 Span = shaderTypeName.Span,
                 Tags = shaderTypeName.Tags,
@@ -1420,10 +1420,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsBuiltIn = shaderTypeName.IsBuiltIn,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.TypeIdentifier typeIdentifier)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.TypeIdentifier typeIdentifier)
         {
-            typeIdentifier = (Xenko.Core.Shaders.Ast.Xenko.TypeIdentifier)base.Visit(typeIdentifier);
-            return new Xenko.Core.Shaders.Ast.Xenko.TypeIdentifier
+            typeIdentifier = (Stride.Core.Shaders.Ast.Stride.TypeIdentifier)base.Visit(typeIdentifier);
+            return new Stride.Core.Shaders.Ast.Stride.TypeIdentifier
             {
                 Span = typeIdentifier.Span,
                 Tags = typeIdentifier.Tags,
@@ -1433,10 +1433,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Type = typeIdentifier.Type,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.UsingParametersStatement usingParametersStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.UsingParametersStatement usingParametersStatement)
         {
-            usingParametersStatement = (Xenko.Core.Shaders.Ast.Xenko.UsingParametersStatement)base.Visit(usingParametersStatement);
-            return new Xenko.Core.Shaders.Ast.Xenko.UsingParametersStatement
+            usingParametersStatement = (Stride.Core.Shaders.Ast.Stride.UsingParametersStatement)base.Visit(usingParametersStatement);
+            return new Stride.Core.Shaders.Ast.Stride.UsingParametersStatement
             {
                 Span = usingParametersStatement.Span,
                 Tags = usingParametersStatement.Tags,
@@ -1445,10 +1445,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Body = usingParametersStatement.Body,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.UsingStatement usingStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.UsingStatement usingStatement)
         {
-            usingStatement = (Xenko.Core.Shaders.Ast.Xenko.UsingStatement)base.Visit(usingStatement);
-            return new Xenko.Core.Shaders.Ast.Xenko.UsingStatement
+            usingStatement = (Stride.Core.Shaders.Ast.Stride.UsingStatement)base.Visit(usingStatement);
+            return new Stride.Core.Shaders.Ast.Stride.UsingStatement
             {
                 Span = usingStatement.Span,
                 Tags = usingStatement.Tags,
@@ -1456,10 +1456,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Name = usingStatement.Name,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.VarType varType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.VarType varType)
         {
-            varType = (Xenko.Core.Shaders.Ast.Xenko.VarType)base.Visit(varType);
-            return new Xenko.Core.Shaders.Ast.Xenko.VarType
+            varType = (Stride.Core.Shaders.Ast.Stride.VarType)base.Visit(varType);
+            return new Stride.Core.Shaders.Ast.Stride.VarType
             {
                 Span = varType.Span,
                 Tags = varType.Tags,
@@ -1470,21 +1470,21 @@ namespace Xenko.Core.Shaders.Visitor
                 IsBuiltIn = varType.IsBuiltIn,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Xenko.XenkoConstantBufferType xenkoConstantBufferType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Stride.StrideConstantBufferType strideConstantBufferType)
         {
-            xenkoConstantBufferType = (Xenko.Core.Shaders.Ast.Xenko.XenkoConstantBufferType)base.Visit(xenkoConstantBufferType);
-            return new Xenko.Core.Shaders.Ast.Xenko.XenkoConstantBufferType
+            strideConstantBufferType = (Stride.Core.Shaders.Ast.Stride.StrideConstantBufferType)base.Visit(strideConstantBufferType);
+            return new Stride.Core.Shaders.Ast.Stride.StrideConstantBufferType
             {
-                Span = xenkoConstantBufferType.Span,
-                Tags = xenkoConstantBufferType.Tags,
-                IsFlag = xenkoConstantBufferType.IsFlag,
-                Key = xenkoConstantBufferType.Key,
+                Span = strideConstantBufferType.Span,
+                Tags = strideConstantBufferType.Tags,
+                IsFlag = strideConstantBufferType.IsFlag,
+                Key = strideConstantBufferType.Key,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
         {
-            arrayInitializerExpression = (Xenko.Core.Shaders.Ast.ArrayInitializerExpression)base.Visit(arrayInitializerExpression);
-            return new Xenko.Core.Shaders.Ast.ArrayInitializerExpression
+            arrayInitializerExpression = (Stride.Core.Shaders.Ast.ArrayInitializerExpression)base.Visit(arrayInitializerExpression);
+            return new Stride.Core.Shaders.Ast.ArrayInitializerExpression
             {
                 Span = arrayInitializerExpression.Span,
                 Tags = arrayInitializerExpression.Tags,
@@ -1492,10 +1492,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Items = arrayInitializerExpression.Items,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ArrayType arrayType)
+        public override Node Visit(Stride.Core.Shaders.Ast.ArrayType arrayType)
         {
-            arrayType = (Xenko.Core.Shaders.Ast.ArrayType)base.Visit(arrayType);
-            return new Xenko.Core.Shaders.Ast.ArrayType
+            arrayType = (Stride.Core.Shaders.Ast.ArrayType)base.Visit(arrayType);
+            return new Stride.Core.Shaders.Ast.ArrayType
             {
                 Span = arrayType.Span,
                 Tags = arrayType.Tags,
@@ -1508,10 +1508,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Type = arrayType.Type,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
         {
-            assignmentExpression = (Xenko.Core.Shaders.Ast.AssignmentExpression)base.Visit(assignmentExpression);
-            return new Xenko.Core.Shaders.Ast.AssignmentExpression
+            assignmentExpression = (Stride.Core.Shaders.Ast.AssignmentExpression)base.Visit(assignmentExpression);
+            return new Stride.Core.Shaders.Ast.AssignmentExpression
             {
                 Span = assignmentExpression.Span,
                 Tags = assignmentExpression.Tags,
@@ -1521,10 +1521,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Value = assignmentExpression.Value,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.BinaryExpression binaryExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.BinaryExpression binaryExpression)
         {
-            binaryExpression = (Xenko.Core.Shaders.Ast.BinaryExpression)base.Visit(binaryExpression);
-            return new Xenko.Core.Shaders.Ast.BinaryExpression
+            binaryExpression = (Stride.Core.Shaders.Ast.BinaryExpression)base.Visit(binaryExpression);
+            return new Stride.Core.Shaders.Ast.BinaryExpression
             {
                 Span = binaryExpression.Span,
                 Tags = binaryExpression.Tags,
@@ -1534,10 +1534,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Right = binaryExpression.Right,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.BlockStatement blockStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.BlockStatement blockStatement)
         {
-            blockStatement = (Xenko.Core.Shaders.Ast.BlockStatement)base.Visit(blockStatement);
-            return new Xenko.Core.Shaders.Ast.BlockStatement
+            blockStatement = (Stride.Core.Shaders.Ast.BlockStatement)base.Visit(blockStatement);
+            return new Stride.Core.Shaders.Ast.BlockStatement
             {
                 Span = blockStatement.Span,
                 Tags = blockStatement.Tags,
@@ -1545,10 +1545,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Statements = blockStatement.Statements,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.CaseStatement caseStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.CaseStatement caseStatement)
         {
-            caseStatement = (Xenko.Core.Shaders.Ast.CaseStatement)base.Visit(caseStatement);
-            return new Xenko.Core.Shaders.Ast.CaseStatement
+            caseStatement = (Stride.Core.Shaders.Ast.CaseStatement)base.Visit(caseStatement);
+            return new Stride.Core.Shaders.Ast.CaseStatement
             {
                 Span = caseStatement.Span,
                 Tags = caseStatement.Tags,
@@ -1556,10 +1556,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Case = caseStatement.Case,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.CompositeEnum compositeEnum)
+        public override Node Visit(Stride.Core.Shaders.Ast.CompositeEnum compositeEnum)
         {
-            compositeEnum = (Xenko.Core.Shaders.Ast.CompositeEnum)base.Visit(compositeEnum);
-            return new Xenko.Core.Shaders.Ast.CompositeEnum
+            compositeEnum = (Stride.Core.Shaders.Ast.CompositeEnum)base.Visit(compositeEnum);
+            return new Stride.Core.Shaders.Ast.CompositeEnum
             {
                 Span = compositeEnum.Span,
                 Tags = compositeEnum.Tags,
@@ -1567,10 +1567,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Key = compositeEnum.Key,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
         {
-            conditionalExpression = (Xenko.Core.Shaders.Ast.ConditionalExpression)base.Visit(conditionalExpression);
-            return new Xenko.Core.Shaders.Ast.ConditionalExpression
+            conditionalExpression = (Stride.Core.Shaders.Ast.ConditionalExpression)base.Visit(conditionalExpression);
+            return new Stride.Core.Shaders.Ast.ConditionalExpression
             {
                 Span = conditionalExpression.Span,
                 Tags = conditionalExpression.Tags,
@@ -1580,30 +1580,30 @@ namespace Xenko.Core.Shaders.Visitor
                 Right = conditionalExpression.Right,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.EmptyStatement emptyStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.EmptyStatement emptyStatement)
         {
-            emptyStatement = (Xenko.Core.Shaders.Ast.EmptyStatement)base.Visit(emptyStatement);
-            return new Xenko.Core.Shaders.Ast.EmptyStatement
+            emptyStatement = (Stride.Core.Shaders.Ast.EmptyStatement)base.Visit(emptyStatement);
+            return new Stride.Core.Shaders.Ast.EmptyStatement
             {
                 Span = emptyStatement.Span,
                 Tags = emptyStatement.Tags,
                 Attributes = emptyStatement.Attributes,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.EmptyExpression emptyExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.EmptyExpression emptyExpression)
         {
-            emptyExpression = (Xenko.Core.Shaders.Ast.EmptyExpression)base.Visit(emptyExpression);
-            return new Xenko.Core.Shaders.Ast.EmptyExpression
+            emptyExpression = (Stride.Core.Shaders.Ast.EmptyExpression)base.Visit(emptyExpression);
+            return new Stride.Core.Shaders.Ast.EmptyExpression
             {
                 Span = emptyExpression.Span,
                 Tags = emptyExpression.Tags,
                 TypeInference = emptyExpression.TypeInference,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
-            classType = (Xenko.Core.Shaders.Ast.Hlsl.ClassType)base.Visit(classType);
-            return new Xenko.Core.Shaders.Ast.Hlsl.ClassType
+            classType = (Stride.Core.Shaders.Ast.Hlsl.ClassType)base.Visit(classType);
+            return new Stride.Core.Shaders.Ast.Hlsl.ClassType
             {
                 Span = classType.Span,
                 Tags = classType.Tags,
@@ -1619,10 +1619,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Members = classType.Members,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
         {
-            identifierGeneric = (Xenko.Core.Shaders.Ast.Hlsl.IdentifierGeneric)base.Visit(identifierGeneric);
-            return new Xenko.Core.Shaders.Ast.Hlsl.IdentifierGeneric
+            identifierGeneric = (Stride.Core.Shaders.Ast.Hlsl.IdentifierGeneric)base.Visit(identifierGeneric);
+            return new Stride.Core.Shaders.Ast.Hlsl.IdentifierGeneric
             {
                 Span = identifierGeneric.Span,
                 Tags = identifierGeneric.Tags,
@@ -1632,10 +1632,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Identifiers = identifierGeneric.Identifiers,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
         {
-            identifierNs = (Xenko.Core.Shaders.Ast.Hlsl.IdentifierNs)base.Visit(identifierNs);
-            return new Xenko.Core.Shaders.Ast.Hlsl.IdentifierNs
+            identifierNs = (Stride.Core.Shaders.Ast.Hlsl.IdentifierNs)base.Visit(identifierNs);
+            return new Stride.Core.Shaders.Ast.Hlsl.IdentifierNs
             {
                 Span = identifierNs.Span,
                 Tags = identifierNs.Tags,
@@ -1645,10 +1645,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Identifiers = identifierNs.Identifiers,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
         {
-            identifierDot = (Xenko.Core.Shaders.Ast.Hlsl.IdentifierDot)base.Visit(identifierDot);
-            return new Xenko.Core.Shaders.Ast.Hlsl.IdentifierDot
+            identifierDot = (Stride.Core.Shaders.Ast.Hlsl.IdentifierDot)base.Visit(identifierDot);
+            return new Stride.Core.Shaders.Ast.Hlsl.IdentifierDot
             {
                 Span = identifierDot.Span,
                 Tags = identifierDot.Tags,
@@ -1658,10 +1658,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Identifiers = identifierDot.Identifiers,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.TextureType textureType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.TextureType textureType)
         {
-            textureType = (Xenko.Core.Shaders.Ast.Hlsl.TextureType)base.Visit(textureType);
-            return new Xenko.Core.Shaders.Ast.Hlsl.TextureType
+            textureType = (Stride.Core.Shaders.Ast.Hlsl.TextureType)base.Visit(textureType);
+            return new Stride.Core.Shaders.Ast.Hlsl.TextureType
             {
                 Span = textureType.Span,
                 Tags = textureType.Tags,
@@ -1673,20 +1673,20 @@ namespace Xenko.Core.Shaders.Visitor
                 AlternativeNames = textureType.AlternativeNames,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Annotations annotations)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Annotations annotations)
         {
-            annotations = (Xenko.Core.Shaders.Ast.Hlsl.Annotations)base.Visit(annotations);
-            return new Xenko.Core.Shaders.Ast.Hlsl.Annotations
+            annotations = (Stride.Core.Shaders.Ast.Hlsl.Annotations)base.Visit(annotations);
+            return new Stride.Core.Shaders.Ast.Hlsl.Annotations
             {
                 Span = annotations.Span,
                 Tags = annotations.Tags,
                 Variables = annotations.Variables,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
         {
-            asmExpression = (Xenko.Core.Shaders.Ast.Hlsl.AsmExpression)base.Visit(asmExpression);
-            return new Xenko.Core.Shaders.Ast.Hlsl.AsmExpression
+            asmExpression = (Stride.Core.Shaders.Ast.Hlsl.AsmExpression)base.Visit(asmExpression);
+            return new Stride.Core.Shaders.Ast.Hlsl.AsmExpression
             {
                 Span = asmExpression.Span,
                 Tags = asmExpression.Tags,
@@ -1694,10 +1694,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Text = asmExpression.Text,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
         {
-            attributeDeclaration = (Xenko.Core.Shaders.Ast.Hlsl.AttributeDeclaration)base.Visit(attributeDeclaration);
-            return new Xenko.Core.Shaders.Ast.Hlsl.AttributeDeclaration
+            attributeDeclaration = (Stride.Core.Shaders.Ast.Hlsl.AttributeDeclaration)base.Visit(attributeDeclaration);
+            return new Stride.Core.Shaders.Ast.Hlsl.AttributeDeclaration
             {
                 Span = attributeDeclaration.Span,
                 Tags = attributeDeclaration.Tags,
@@ -1705,10 +1705,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Parameters = attributeDeclaration.Parameters,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
         {
-            castExpression = (Xenko.Core.Shaders.Ast.Hlsl.CastExpression)base.Visit(castExpression);
-            return new Xenko.Core.Shaders.Ast.Hlsl.CastExpression
+            castExpression = (Stride.Core.Shaders.Ast.Hlsl.CastExpression)base.Visit(castExpression);
+            return new Stride.Core.Shaders.Ast.Hlsl.CastExpression
             {
                 Span = castExpression.Span,
                 Tags = castExpression.Tags,
@@ -1717,10 +1717,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Target = castExpression.Target,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
         {
-            compileExpression = (Xenko.Core.Shaders.Ast.Hlsl.CompileExpression)base.Visit(compileExpression);
-            return new Xenko.Core.Shaders.Ast.Hlsl.CompileExpression
+            compileExpression = (Stride.Core.Shaders.Ast.Hlsl.CompileExpression)base.Visit(compileExpression);
+            return new Stride.Core.Shaders.Ast.Hlsl.CompileExpression
             {
                 Span = compileExpression.Span,
                 Tags = compileExpression.Tags,
@@ -1729,10 +1729,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Profile = compileExpression.Profile,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
         {
-            constantBuffer = (Xenko.Core.Shaders.Ast.Hlsl.ConstantBuffer)base.Visit(constantBuffer);
-            return new Xenko.Core.Shaders.Ast.Hlsl.ConstantBuffer
+            constantBuffer = (Stride.Core.Shaders.Ast.Hlsl.ConstantBuffer)base.Visit(constantBuffer);
+            return new Stride.Core.Shaders.Ast.Hlsl.ConstantBuffer
             {
                 Span = constantBuffer.Span,
                 Tags = constantBuffer.Tags,
@@ -1744,10 +1744,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Qualifiers = constantBuffer.Qualifiers,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
         {
-            constantBufferType = (Xenko.Core.Shaders.Ast.Hlsl.ConstantBufferType)base.Visit(constantBufferType);
-            return new Xenko.Core.Shaders.Ast.Hlsl.ConstantBufferType
+            constantBufferType = (Stride.Core.Shaders.Ast.Hlsl.ConstantBufferType)base.Visit(constantBufferType);
+            return new Stride.Core.Shaders.Ast.Hlsl.ConstantBufferType
             {
                 Span = constantBufferType.Span,
                 Tags = constantBufferType.Tags,
@@ -1755,10 +1755,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Key = constantBufferType.Key,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
         {
-            interfaceType = (Xenko.Core.Shaders.Ast.Hlsl.InterfaceType)base.Visit(interfaceType);
-            return new Xenko.Core.Shaders.Ast.Hlsl.InterfaceType
+            interfaceType = (Stride.Core.Shaders.Ast.Hlsl.InterfaceType)base.Visit(interfaceType);
+            return new Stride.Core.Shaders.Ast.Hlsl.InterfaceType
             {
                 Span = interfaceType.Span,
                 Tags = interfaceType.Tags,
@@ -1773,10 +1773,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Methods = interfaceType.Methods,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
         {
-            packOffset = (Xenko.Core.Shaders.Ast.Hlsl.PackOffset)base.Visit(packOffset);
-            return new Xenko.Core.Shaders.Ast.Hlsl.PackOffset
+            packOffset = (Stride.Core.Shaders.Ast.Hlsl.PackOffset)base.Visit(packOffset);
+            return new Stride.Core.Shaders.Ast.Hlsl.PackOffset
             {
                 Span = packOffset.Span,
                 Tags = packOffset.Tags,
@@ -1786,10 +1786,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Value = packOffset.Value,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Pass pass)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Pass pass)
         {
-            pass = (Xenko.Core.Shaders.Ast.Hlsl.Pass)base.Visit(pass);
-            return new Xenko.Core.Shaders.Ast.Hlsl.Pass
+            pass = (Stride.Core.Shaders.Ast.Hlsl.Pass)base.Visit(pass);
+            return new Stride.Core.Shaders.Ast.Hlsl.Pass
             {
                 Span = pass.Span,
                 Tags = pass.Tags,
@@ -1798,10 +1798,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Name = pass.Name,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
         {
-            registerLocation = (Xenko.Core.Shaders.Ast.Hlsl.RegisterLocation)base.Visit(registerLocation);
-            return new Xenko.Core.Shaders.Ast.Hlsl.RegisterLocation
+            registerLocation = (Stride.Core.Shaders.Ast.Hlsl.RegisterLocation)base.Visit(registerLocation);
+            return new Stride.Core.Shaders.Ast.Hlsl.RegisterLocation
             {
                 Span = registerLocation.Span,
                 Tags = registerLocation.Tags,
@@ -1812,10 +1812,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Register = registerLocation.Register,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Semantic semantic)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Semantic semantic)
         {
-            semantic = (Xenko.Core.Shaders.Ast.Hlsl.Semantic)base.Visit(semantic);
-            return new Xenko.Core.Shaders.Ast.Hlsl.Semantic
+            semantic = (Stride.Core.Shaders.Ast.Hlsl.Semantic)base.Visit(semantic);
+            return new Stride.Core.Shaders.Ast.Hlsl.Semantic
             {
                 Span = semantic.Span,
                 Tags = semantic.Tags,
@@ -1825,10 +1825,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Name = semantic.Name,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
         {
-            stateExpression = (Xenko.Core.Shaders.Ast.Hlsl.StateExpression)base.Visit(stateExpression);
-            return new Xenko.Core.Shaders.Ast.Hlsl.StateExpression
+            stateExpression = (Stride.Core.Shaders.Ast.Hlsl.StateExpression)base.Visit(stateExpression);
+            return new Stride.Core.Shaders.Ast.Hlsl.StateExpression
             {
                 Span = stateExpression.Span,
                 Tags = stateExpression.Tags,
@@ -1837,10 +1837,10 @@ namespace Xenko.Core.Shaders.Visitor
                 StateType = stateExpression.StateType,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
         {
-            stateInitializer = (Xenko.Core.Shaders.Ast.Hlsl.StateInitializer)base.Visit(stateInitializer);
-            return new Xenko.Core.Shaders.Ast.Hlsl.StateInitializer
+            stateInitializer = (Stride.Core.Shaders.Ast.Hlsl.StateInitializer)base.Visit(stateInitializer);
+            return new Stride.Core.Shaders.Ast.Hlsl.StateInitializer
             {
                 Span = stateInitializer.Span,
                 Tags = stateInitializer.Tags,
@@ -1848,10 +1848,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Items = stateInitializer.Items,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Technique technique)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Technique technique)
         {
-            technique = (Xenko.Core.Shaders.Ast.Hlsl.Technique)base.Visit(technique);
-            return new Xenko.Core.Shaders.Ast.Hlsl.Technique
+            technique = (Stride.Core.Shaders.Ast.Hlsl.Technique)base.Visit(technique);
+            return new Stride.Core.Shaders.Ast.Hlsl.Technique
             {
                 Span = technique.Span,
                 Tags = technique.Tags,
@@ -1861,10 +1861,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Passes = technique.Passes,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Hlsl.Typedef typedef)
+        public override Node Visit(Stride.Core.Shaders.Ast.Hlsl.Typedef typedef)
         {
-            typedef = (Xenko.Core.Shaders.Ast.Hlsl.Typedef)base.Visit(typedef);
-            return new Xenko.Core.Shaders.Ast.Hlsl.Typedef
+            typedef = (Stride.Core.Shaders.Ast.Hlsl.Typedef)base.Visit(typedef);
+            return new Stride.Core.Shaders.Ast.Hlsl.Typedef
             {
                 Span = typedef.Span,
                 Tags = typedef.Tags,
@@ -1877,10 +1877,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Type = typedef.Type,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ExpressionList expressionList)
+        public override Node Visit(Stride.Core.Shaders.Ast.ExpressionList expressionList)
         {
-            expressionList = (Xenko.Core.Shaders.Ast.ExpressionList)base.Visit(expressionList);
-            return new Xenko.Core.Shaders.Ast.ExpressionList
+            expressionList = (Stride.Core.Shaders.Ast.ExpressionList)base.Visit(expressionList);
+            return new Stride.Core.Shaders.Ast.ExpressionList
             {
                 Span = expressionList.Span,
                 Tags = expressionList.Tags,
@@ -1888,10 +1888,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Expressions = expressionList.Expressions,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
+        public override Node Visit(Stride.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
         {
-            genericDeclaration = (Xenko.Core.Shaders.Ast.GenericDeclaration)base.Visit(genericDeclaration);
-            return new Xenko.Core.Shaders.Ast.GenericDeclaration
+            genericDeclaration = (Stride.Core.Shaders.Ast.GenericDeclaration)base.Visit(genericDeclaration);
+            return new Stride.Core.Shaders.Ast.GenericDeclaration
             {
                 Span = genericDeclaration.Span,
                 Tags = genericDeclaration.Tags,
@@ -1901,10 +1901,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsUsingBase = genericDeclaration.IsUsingBase,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.GenericParameterType genericParameterType)
+        public override Node Visit(Stride.Core.Shaders.Ast.GenericParameterType genericParameterType)
         {
-            genericParameterType = (Xenko.Core.Shaders.Ast.GenericParameterType)base.Visit(genericParameterType);
-            return new Xenko.Core.Shaders.Ast.GenericParameterType
+            genericParameterType = (Stride.Core.Shaders.Ast.GenericParameterType)base.Visit(genericParameterType);
+            return new Stride.Core.Shaders.Ast.GenericParameterType
             {
                 Span = genericParameterType.Span,
                 Tags = genericParameterType.Tags,
@@ -1915,10 +1915,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsBuiltIn = genericParameterType.IsBuiltIn,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.DeclarationStatement declarationStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.DeclarationStatement declarationStatement)
         {
-            declarationStatement = (Xenko.Core.Shaders.Ast.DeclarationStatement)base.Visit(declarationStatement);
-            return new Xenko.Core.Shaders.Ast.DeclarationStatement
+            declarationStatement = (Stride.Core.Shaders.Ast.DeclarationStatement)base.Visit(declarationStatement);
+            return new Stride.Core.Shaders.Ast.DeclarationStatement
             {
                 Span = declarationStatement.Span,
                 Tags = declarationStatement.Tags,
@@ -1926,10 +1926,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Content = declarationStatement.Content,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ExpressionStatement expressionStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.ExpressionStatement expressionStatement)
         {
-            expressionStatement = (Xenko.Core.Shaders.Ast.ExpressionStatement)base.Visit(expressionStatement);
-            return new Xenko.Core.Shaders.Ast.ExpressionStatement
+            expressionStatement = (Stride.Core.Shaders.Ast.ExpressionStatement)base.Visit(expressionStatement);
+            return new Stride.Core.Shaders.Ast.ExpressionStatement
             {
                 Span = expressionStatement.Span,
                 Tags = expressionStatement.Tags,
@@ -1937,10 +1937,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Expression = expressionStatement.Expression,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ForStatement forStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.ForStatement forStatement)
         {
-            forStatement = (Xenko.Core.Shaders.Ast.ForStatement)base.Visit(forStatement);
-            return new Xenko.Core.Shaders.Ast.ForStatement
+            forStatement = (Stride.Core.Shaders.Ast.ForStatement)base.Visit(forStatement);
+            return new Stride.Core.Shaders.Ast.ForStatement
             {
                 Span = forStatement.Span,
                 Tags = forStatement.Tags,
@@ -1951,10 +1951,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Body = forStatement.Body,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.GenericType genericType)
+        public override Node Visit(Stride.Core.Shaders.Ast.GenericType genericType)
         {
-            genericType = (Xenko.Core.Shaders.Ast.GenericType)base.Visit(genericType);
-            return new Xenko.Core.Shaders.Ast.GenericType
+            genericType = (Stride.Core.Shaders.Ast.GenericType)base.Visit(genericType);
+            return new Stride.Core.Shaders.Ast.GenericType
             {
                 Span = genericType.Span,
                 Tags = genericType.Tags,
@@ -1967,10 +1967,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Parameters = genericType.Parameters,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Identifier identifier)
+        public override Node Visit(Stride.Core.Shaders.Ast.Identifier identifier)
         {
-            identifier = (Xenko.Core.Shaders.Ast.Identifier)base.Visit(identifier);
-            return new Xenko.Core.Shaders.Ast.Identifier
+            identifier = (Stride.Core.Shaders.Ast.Identifier)base.Visit(identifier);
+            return new Stride.Core.Shaders.Ast.Identifier
             {
                 Span = identifier.Span,
                 Tags = identifier.Tags,
@@ -1979,10 +1979,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Text = identifier.Text,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.IfStatement ifStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.IfStatement ifStatement)
         {
-            ifStatement = (Xenko.Core.Shaders.Ast.IfStatement)base.Visit(ifStatement);
-            return new Xenko.Core.Shaders.Ast.IfStatement
+            ifStatement = (Stride.Core.Shaders.Ast.IfStatement)base.Visit(ifStatement);
+            return new Stride.Core.Shaders.Ast.IfStatement
             {
                 Span = ifStatement.Span,
                 Tags = ifStatement.Tags,
@@ -1992,10 +1992,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Then = ifStatement.Then,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.IndexerExpression indexerExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.IndexerExpression indexerExpression)
         {
-            indexerExpression = (Xenko.Core.Shaders.Ast.IndexerExpression)base.Visit(indexerExpression);
-            return new Xenko.Core.Shaders.Ast.IndexerExpression
+            indexerExpression = (Stride.Core.Shaders.Ast.IndexerExpression)base.Visit(indexerExpression);
+            return new Stride.Core.Shaders.Ast.IndexerExpression
             {
                 Span = indexerExpression.Span,
                 Tags = indexerExpression.Tags,
@@ -2004,10 +2004,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Target = indexerExpression.Target,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.KeywordExpression keywordExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.KeywordExpression keywordExpression)
         {
-            keywordExpression = (Xenko.Core.Shaders.Ast.KeywordExpression)base.Visit(keywordExpression);
-            return new Xenko.Core.Shaders.Ast.KeywordExpression
+            keywordExpression = (Stride.Core.Shaders.Ast.KeywordExpression)base.Visit(keywordExpression);
+            return new Stride.Core.Shaders.Ast.KeywordExpression
             {
                 Span = keywordExpression.Span,
                 Tags = keywordExpression.Tags,
@@ -2015,10 +2015,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Name = keywordExpression.Name,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Literal literal)
+        public override Node Visit(Stride.Core.Shaders.Ast.Literal literal)
         {
-            literal = (Xenko.Core.Shaders.Ast.Literal)base.Visit(literal);
-            return new Xenko.Core.Shaders.Ast.Literal
+            literal = (Stride.Core.Shaders.Ast.Literal)base.Visit(literal);
+            return new Stride.Core.Shaders.Ast.Literal
             {
                 Span = literal.Span,
                 Tags = literal.Tags,
@@ -2027,10 +2027,10 @@ namespace Xenko.Core.Shaders.Visitor
                 SubLiterals = literal.SubLiterals,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.LiteralExpression literalExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.LiteralExpression literalExpression)
         {
-            literalExpression = (Xenko.Core.Shaders.Ast.LiteralExpression)base.Visit(literalExpression);
-            return new Xenko.Core.Shaders.Ast.LiteralExpression
+            literalExpression = (Stride.Core.Shaders.Ast.LiteralExpression)base.Visit(literalExpression);
+            return new Stride.Core.Shaders.Ast.LiteralExpression
             {
                 Span = literalExpression.Span,
                 Tags = literalExpression.Tags,
@@ -2040,10 +2040,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Value = literalExpression.Value,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MatrixType matrixType)
+        public override Node Visit(Stride.Core.Shaders.Ast.MatrixType matrixType)
         {
-            matrixType = (Xenko.Core.Shaders.Ast.MatrixType)base.Visit(matrixType);
-            return new Xenko.Core.Shaders.Ast.MatrixType
+            matrixType = (Stride.Core.Shaders.Ast.MatrixType)base.Visit(matrixType);
+            return new Stride.Core.Shaders.Ast.MatrixType
             {
                 Span = matrixType.Span,
                 Tags = matrixType.Tags,
@@ -2057,10 +2057,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Type = matrixType.Type,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
         {
-            memberReferenceExpression = (Xenko.Core.Shaders.Ast.MemberReferenceExpression)base.Visit(memberReferenceExpression);
-            return new Xenko.Core.Shaders.Ast.MemberReferenceExpression
+            memberReferenceExpression = (Stride.Core.Shaders.Ast.MemberReferenceExpression)base.Visit(memberReferenceExpression);
+            return new Stride.Core.Shaders.Ast.MemberReferenceExpression
             {
                 Span = memberReferenceExpression.Span,
                 Tags = memberReferenceExpression.Tags,
@@ -2069,10 +2069,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Target = memberReferenceExpression.Target,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
+        public override Node Visit(Stride.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
         {
-            methodDeclaration = (Xenko.Core.Shaders.Ast.MethodDeclaration)base.Visit(methodDeclaration);
-            return new Xenko.Core.Shaders.Ast.MethodDeclaration
+            methodDeclaration = (Stride.Core.Shaders.Ast.MethodDeclaration)base.Visit(methodDeclaration);
+            return new Stride.Core.Shaders.Ast.MethodDeclaration
             {
                 Span = methodDeclaration.Span,
                 Tags = methodDeclaration.Tags,
@@ -2085,10 +2085,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsBuiltin = methodDeclaration.IsBuiltin,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MethodDefinition methodDefinition)
+        public override Node Visit(Stride.Core.Shaders.Ast.MethodDefinition methodDefinition)
         {
-            methodDefinition = (Xenko.Core.Shaders.Ast.MethodDefinition)base.Visit(methodDefinition);
-            return new Xenko.Core.Shaders.Ast.MethodDefinition
+            methodDefinition = (Stride.Core.Shaders.Ast.MethodDefinition)base.Visit(methodDefinition);
+            return new Stride.Core.Shaders.Ast.MethodDefinition
             {
                 Span = methodDefinition.Span,
                 Tags = methodDefinition.Tags,
@@ -2102,10 +2102,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Body = methodDefinition.Body,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
         {
-            methodInvocationExpression = (Xenko.Core.Shaders.Ast.MethodInvocationExpression)base.Visit(methodInvocationExpression);
-            return new Xenko.Core.Shaders.Ast.MethodInvocationExpression
+            methodInvocationExpression = (Stride.Core.Shaders.Ast.MethodInvocationExpression)base.Visit(methodInvocationExpression);
+            return new Stride.Core.Shaders.Ast.MethodInvocationExpression
             {
                 Span = methodInvocationExpression.Span,
                 Tags = methodInvocationExpression.Tags,
@@ -2114,10 +2114,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Arguments = methodInvocationExpression.Arguments,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ObjectType objectType)
+        public override Node Visit(Stride.Core.Shaders.Ast.ObjectType objectType)
         {
-            objectType = (Xenko.Core.Shaders.Ast.ObjectType)base.Visit(objectType);
-            return new Xenko.Core.Shaders.Ast.ObjectType
+            objectType = (Stride.Core.Shaders.Ast.ObjectType)base.Visit(objectType);
+            return new Stride.Core.Shaders.Ast.ObjectType
             {
                 Span = objectType.Span,
                 Tags = objectType.Tags,
@@ -2129,10 +2129,10 @@ namespace Xenko.Core.Shaders.Visitor
                 AlternativeNames = objectType.AlternativeNames,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Parameter parameter)
+        public override Node Visit(Stride.Core.Shaders.Ast.Parameter parameter)
         {
-            parameter = (Xenko.Core.Shaders.Ast.Parameter)base.Visit(parameter);
-            return new Xenko.Core.Shaders.Ast.Parameter
+            parameter = (Stride.Core.Shaders.Ast.Parameter)base.Visit(parameter);
+            return new Stride.Core.Shaders.Ast.Parameter
             {
                 Span = parameter.Span,
                 Tags = parameter.Tags,
@@ -2144,10 +2144,10 @@ namespace Xenko.Core.Shaders.Visitor
                 SubVariables = parameter.SubVariables,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
         {
-            parenthesizedExpression = (Xenko.Core.Shaders.Ast.ParenthesizedExpression)base.Visit(parenthesizedExpression);
-            return new Xenko.Core.Shaders.Ast.ParenthesizedExpression
+            parenthesizedExpression = (Stride.Core.Shaders.Ast.ParenthesizedExpression)base.Visit(parenthesizedExpression);
+            return new Stride.Core.Shaders.Ast.ParenthesizedExpression
             {
                 Span = parenthesizedExpression.Span,
                 Tags = parenthesizedExpression.Tags,
@@ -2155,10 +2155,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Content = parenthesizedExpression.Content,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Qualifier qualifier)
+        public override Node Visit(Stride.Core.Shaders.Ast.Qualifier qualifier)
         {
-            qualifier = (Xenko.Core.Shaders.Ast.Qualifier)base.Visit(qualifier);
-            return new Xenko.Core.Shaders.Ast.Qualifier
+            qualifier = (Stride.Core.Shaders.Ast.Qualifier)base.Visit(qualifier);
+            return new Stride.Core.Shaders.Ast.Qualifier
             {
                 Span = qualifier.Span,
                 Tags = qualifier.Tags,
@@ -2167,10 +2167,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsPost = qualifier.IsPost,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ReturnStatement returnStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.ReturnStatement returnStatement)
         {
-            returnStatement = (Xenko.Core.Shaders.Ast.ReturnStatement)base.Visit(returnStatement);
-            return new Xenko.Core.Shaders.Ast.ReturnStatement
+            returnStatement = (Stride.Core.Shaders.Ast.ReturnStatement)base.Visit(returnStatement);
+            return new Stride.Core.Shaders.Ast.ReturnStatement
             {
                 Span = returnStatement.Span,
                 Tags = returnStatement.Tags,
@@ -2178,10 +2178,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Value = returnStatement.Value,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.ScalarType scalarType)
+        public override Node Visit(Stride.Core.Shaders.Ast.ScalarType scalarType)
         {
-            scalarType = (Xenko.Core.Shaders.Ast.ScalarType)base.Visit(scalarType);
-            return new Xenko.Core.Shaders.Ast.ScalarType
+            scalarType = (Stride.Core.Shaders.Ast.ScalarType)base.Visit(scalarType);
+            return new Stride.Core.Shaders.Ast.ScalarType
             {
                 Span = scalarType.Span,
                 Tags = scalarType.Tags,
@@ -2193,20 +2193,20 @@ namespace Xenko.Core.Shaders.Visitor
                 Type = scalarType.Type,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Shader shader)
+        public override Node Visit(Stride.Core.Shaders.Ast.Shader shader)
         {
-            shader = (Xenko.Core.Shaders.Ast.Shader)base.Visit(shader);
-            return new Xenko.Core.Shaders.Ast.Shader
+            shader = (Stride.Core.Shaders.Ast.Shader)base.Visit(shader);
+            return new Stride.Core.Shaders.Ast.Shader
             {
                 Span = shader.Span,
                 Tags = shader.Tags,
                 Declarations = shader.Declarations,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.StatementList statementList)
+        public override Node Visit(Stride.Core.Shaders.Ast.StatementList statementList)
         {
-            statementList = (Xenko.Core.Shaders.Ast.StatementList)base.Visit(statementList);
-            return new Xenko.Core.Shaders.Ast.StatementList
+            statementList = (Stride.Core.Shaders.Ast.StatementList)base.Visit(statementList);
+            return new Stride.Core.Shaders.Ast.StatementList
             {
                 Span = statementList.Span,
                 Tags = statementList.Tags,
@@ -2214,10 +2214,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Statements = statementList.Statements,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.StructType structType)
+        public override Node Visit(Stride.Core.Shaders.Ast.StructType structType)
         {
-            structType = (Xenko.Core.Shaders.Ast.StructType)base.Visit(structType);
-            return new Xenko.Core.Shaders.Ast.StructType
+            structType = (Stride.Core.Shaders.Ast.StructType)base.Visit(structType);
+            return new Stride.Core.Shaders.Ast.StructType
             {
                 Span = structType.Span,
                 Tags = structType.Tags,
@@ -2229,10 +2229,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Fields = structType.Fields,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
+        public override Node Visit(Stride.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
         {
-            switchCaseGroup = (Xenko.Core.Shaders.Ast.SwitchCaseGroup)base.Visit(switchCaseGroup);
-            return new Xenko.Core.Shaders.Ast.SwitchCaseGroup
+            switchCaseGroup = (Stride.Core.Shaders.Ast.SwitchCaseGroup)base.Visit(switchCaseGroup);
+            return new Stride.Core.Shaders.Ast.SwitchCaseGroup
             {
                 Span = switchCaseGroup.Span,
                 Tags = switchCaseGroup.Tags,
@@ -2240,10 +2240,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Statements = switchCaseGroup.Statements,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.SwitchStatement switchStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.SwitchStatement switchStatement)
         {
-            switchStatement = (Xenko.Core.Shaders.Ast.SwitchStatement)base.Visit(switchStatement);
-            return new Xenko.Core.Shaders.Ast.SwitchStatement
+            switchStatement = (Stride.Core.Shaders.Ast.SwitchStatement)base.Visit(switchStatement);
+            return new Stride.Core.Shaders.Ast.SwitchStatement
             {
                 Span = switchStatement.Span,
                 Tags = switchStatement.Tags,
@@ -2252,10 +2252,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Groups = switchStatement.Groups,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.TypeName typeName)
+        public override Node Visit(Stride.Core.Shaders.Ast.TypeName typeName)
         {
-            typeName = (Xenko.Core.Shaders.Ast.TypeName)base.Visit(typeName);
-            return new Xenko.Core.Shaders.Ast.TypeName
+            typeName = (Stride.Core.Shaders.Ast.TypeName)base.Visit(typeName);
+            return new Stride.Core.Shaders.Ast.TypeName
             {
                 Span = typeName.Span,
                 Tags = typeName.Tags,
@@ -2266,10 +2266,10 @@ namespace Xenko.Core.Shaders.Visitor
                 IsBuiltIn = typeName.IsBuiltIn,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
         {
-            typeReferenceExpression = (Xenko.Core.Shaders.Ast.TypeReferenceExpression)base.Visit(typeReferenceExpression);
-            return new Xenko.Core.Shaders.Ast.TypeReferenceExpression
+            typeReferenceExpression = (Stride.Core.Shaders.Ast.TypeReferenceExpression)base.Visit(typeReferenceExpression);
+            return new Stride.Core.Shaders.Ast.TypeReferenceExpression
             {
                 Span = typeReferenceExpression.Span,
                 Tags = typeReferenceExpression.Tags,
@@ -2278,10 +2278,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Declaration = typeReferenceExpression.Declaration,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.UnaryExpression unaryExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.UnaryExpression unaryExpression)
         {
-            unaryExpression = (Xenko.Core.Shaders.Ast.UnaryExpression)base.Visit(unaryExpression);
-            return new Xenko.Core.Shaders.Ast.UnaryExpression
+            unaryExpression = (Stride.Core.Shaders.Ast.UnaryExpression)base.Visit(unaryExpression);
+            return new Stride.Core.Shaders.Ast.UnaryExpression
             {
                 Span = unaryExpression.Span,
                 Tags = unaryExpression.Tags,
@@ -2290,10 +2290,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Expression = unaryExpression.Expression,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.Variable variable)
+        public override Node Visit(Stride.Core.Shaders.Ast.Variable variable)
         {
-            variable = (Xenko.Core.Shaders.Ast.Variable)base.Visit(variable);
-            return new Xenko.Core.Shaders.Ast.Variable
+            variable = (Stride.Core.Shaders.Ast.Variable)base.Visit(variable);
+            return new Stride.Core.Shaders.Ast.Variable
             {
                 Span = variable.Span,
                 Tags = variable.Tags,
@@ -2305,10 +2305,10 @@ namespace Xenko.Core.Shaders.Visitor
                 SubVariables = variable.SubVariables,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
+        public override Node Visit(Stride.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
         {
-            variableReferenceExpression = (Xenko.Core.Shaders.Ast.VariableReferenceExpression)base.Visit(variableReferenceExpression);
-            return new Xenko.Core.Shaders.Ast.VariableReferenceExpression
+            variableReferenceExpression = (Stride.Core.Shaders.Ast.VariableReferenceExpression)base.Visit(variableReferenceExpression);
+            return new Stride.Core.Shaders.Ast.VariableReferenceExpression
             {
                 Span = variableReferenceExpression.Span,
                 Tags = variableReferenceExpression.Tags,
@@ -2316,10 +2316,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Name = variableReferenceExpression.Name,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.VectorType vectorType)
+        public override Node Visit(Stride.Core.Shaders.Ast.VectorType vectorType)
         {
-            vectorType = (Xenko.Core.Shaders.Ast.VectorType)base.Visit(vectorType);
-            return new Xenko.Core.Shaders.Ast.VectorType
+            vectorType = (Stride.Core.Shaders.Ast.VectorType)base.Visit(vectorType);
+            return new Stride.Core.Shaders.Ast.VectorType
             {
                 Span = vectorType.Span,
                 Tags = vectorType.Tags,
@@ -2332,10 +2332,10 @@ namespace Xenko.Core.Shaders.Visitor
                 Type = vectorType.Type,
             };
         }
-        public override Node Visit(Xenko.Core.Shaders.Ast.WhileStatement whileStatement)
+        public override Node Visit(Stride.Core.Shaders.Ast.WhileStatement whileStatement)
         {
-            whileStatement = (Xenko.Core.Shaders.Ast.WhileStatement)base.Visit(whileStatement);
-            return new Xenko.Core.Shaders.Ast.WhileStatement
+            whileStatement = (Stride.Core.Shaders.Ast.WhileStatement)base.Visit(whileStatement);
+            return new Stride.Core.Shaders.Ast.WhileStatement
             {
                 Span = whileStatement.Span,
                 Tags = whileStatement.Tags,
@@ -2349,351 +2349,351 @@ namespace Xenko.Core.Shaders.Visitor
 
     public partial class ShaderVisitor
     {
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.ClassIdentifierGeneric classIdentifierGeneric)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.ClassIdentifierGeneric classIdentifierGeneric)
         {
             DefaultVisit(classIdentifierGeneric);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.EnumType enumType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.EnumType enumType)
         {
             DefaultVisit(enumType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.ForEachStatement forEachStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.ForEachStatement forEachStatement)
         {
             DefaultVisit(forEachStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.ImportBlockStatement importBlockStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.ImportBlockStatement importBlockStatement)
         {
             DefaultVisit(importBlockStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.LinkType linkType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.LinkType linkType)
         {
             DefaultVisit(linkType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.LiteralIdentifier literalIdentifier)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.LiteralIdentifier literalIdentifier)
         {
             DefaultVisit(literalIdentifier);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.MemberName memberName)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.MemberName memberName)
         {
             DefaultVisit(memberName);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.MixinStatement mixinStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.MixinStatement mixinStatement)
         {
             DefaultVisit(mixinStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.NamespaceBlock namespaceBlock)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.NamespaceBlock namespaceBlock)
         {
             DefaultVisit(namespaceBlock);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.ParametersBlock parametersBlock)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.ParametersBlock parametersBlock)
         {
             DefaultVisit(parametersBlock);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.SemanticType semanticType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.SemanticType semanticType)
         {
             DefaultVisit(semanticType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.EffectBlock effectBlock)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.EffectBlock effectBlock)
         {
             DefaultVisit(effectBlock);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderClassType shaderClassType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.ShaderClassType shaderClassType)
         {
             DefaultVisit(shaderClassType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderRootClassType shaderRootClassType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.ShaderRootClassType shaderRootClassType)
         {
             DefaultVisit(shaderRootClassType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderTypeName shaderTypeName)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.ShaderTypeName shaderTypeName)
         {
             DefaultVisit(shaderTypeName);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.TypeIdentifier typeIdentifier)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.TypeIdentifier typeIdentifier)
         {
             DefaultVisit(typeIdentifier);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.UsingParametersStatement usingParametersStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.UsingParametersStatement usingParametersStatement)
         {
             DefaultVisit(usingParametersStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.UsingStatement usingStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.UsingStatement usingStatement)
         {
             DefaultVisit(usingStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.VarType varType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.VarType varType)
         {
             DefaultVisit(varType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Xenko.XenkoConstantBufferType xenkoConstantBufferType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Stride.StrideConstantBufferType strideConstantBufferType)
         {
-            DefaultVisit(xenkoConstantBufferType);
+            DefaultVisit(strideConstantBufferType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
         {
             DefaultVisit(arrayInitializerExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ArrayType arrayType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ArrayType arrayType)
         {
             DefaultVisit(arrayType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
         {
             DefaultVisit(assignmentExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.BinaryExpression binaryExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.BinaryExpression binaryExpression)
         {
             DefaultVisit(binaryExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.BlockStatement blockStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.BlockStatement blockStatement)
         {
             DefaultVisit(blockStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.CaseStatement caseStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.CaseStatement caseStatement)
         {
             DefaultVisit(caseStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.CompositeEnum compositeEnum)
+        public virtual void Visit(Stride.Core.Shaders.Ast.CompositeEnum compositeEnum)
         {
             DefaultVisit(compositeEnum);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
         {
             DefaultVisit(conditionalExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.EmptyStatement emptyStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.EmptyStatement emptyStatement)
         {
             DefaultVisit(emptyStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.EmptyExpression emptyExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.EmptyExpression emptyExpression)
         {
             DefaultVisit(emptyExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
             DefaultVisit(classType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
         {
             DefaultVisit(identifierGeneric);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
         {
             DefaultVisit(identifierNs);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
         {
             DefaultVisit(identifierDot);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.TextureType textureType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.TextureType textureType)
         {
             DefaultVisit(textureType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.Annotations annotations)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.Annotations annotations)
         {
             DefaultVisit(annotations);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
         {
             DefaultVisit(asmExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
         {
             DefaultVisit(attributeDeclaration);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
         {
             DefaultVisit(castExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
         {
             DefaultVisit(compileExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
         {
             DefaultVisit(constantBuffer);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
         {
             DefaultVisit(constantBufferType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
         {
             DefaultVisit(interfaceType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
         {
             DefaultVisit(packOffset);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.Pass pass)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.Pass pass)
         {
             DefaultVisit(pass);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
         {
             DefaultVisit(registerLocation);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.Semantic semantic)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.Semantic semantic)
         {
             DefaultVisit(semantic);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
         {
             DefaultVisit(stateExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
         {
             DefaultVisit(stateInitializer);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.Technique technique)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.Technique technique)
         {
             DefaultVisit(technique);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Hlsl.Typedef typedef)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Hlsl.Typedef typedef)
         {
             DefaultVisit(typedef);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ExpressionList expressionList)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ExpressionList expressionList)
         {
             DefaultVisit(expressionList);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
+        public virtual void Visit(Stride.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
         {
             DefaultVisit(genericDeclaration);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.GenericParameterType genericParameterType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.GenericParameterType genericParameterType)
         {
             DefaultVisit(genericParameterType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.DeclarationStatement declarationStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.DeclarationStatement declarationStatement)
         {
             DefaultVisit(declarationStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ExpressionStatement expressionStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ExpressionStatement expressionStatement)
         {
             DefaultVisit(expressionStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ForStatement forStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ForStatement forStatement)
         {
             DefaultVisit(forStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.GenericType genericType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.GenericType genericType)
         {
             DefaultVisit(genericType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Identifier identifier)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Identifier identifier)
         {
             DefaultVisit(identifier);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.IfStatement ifStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.IfStatement ifStatement)
         {
             DefaultVisit(ifStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.IndexerExpression indexerExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.IndexerExpression indexerExpression)
         {
             DefaultVisit(indexerExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.KeywordExpression keywordExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.KeywordExpression keywordExpression)
         {
             DefaultVisit(keywordExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Literal literal)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Literal literal)
         {
             DefaultVisit(literal);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.LiteralExpression literalExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.LiteralExpression literalExpression)
         {
             DefaultVisit(literalExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.MatrixType matrixType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.MatrixType matrixType)
         {
             DefaultVisit(matrixType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
         {
             DefaultVisit(memberReferenceExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
+        public virtual void Visit(Stride.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
         {
             DefaultVisit(methodDeclaration);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.MethodDefinition methodDefinition)
+        public virtual void Visit(Stride.Core.Shaders.Ast.MethodDefinition methodDefinition)
         {
             DefaultVisit(methodDefinition);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
         {
             DefaultVisit(methodInvocationExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ObjectType objectType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ObjectType objectType)
         {
             DefaultVisit(objectType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Parameter parameter)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Parameter parameter)
         {
             DefaultVisit(parameter);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
         {
             DefaultVisit(parenthesizedExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Qualifier qualifier)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Qualifier qualifier)
         {
             DefaultVisit(qualifier);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ReturnStatement returnStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ReturnStatement returnStatement)
         {
             DefaultVisit(returnStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.ScalarType scalarType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.ScalarType scalarType)
         {
             DefaultVisit(scalarType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Shader shader)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Shader shader)
         {
             DefaultVisit(shader);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.StatementList statementList)
+        public virtual void Visit(Stride.Core.Shaders.Ast.StatementList statementList)
         {
             DefaultVisit(statementList);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.StructType structType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.StructType structType)
         {
             DefaultVisit(structType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
+        public virtual void Visit(Stride.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
         {
             DefaultVisit(switchCaseGroup);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.SwitchStatement switchStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.SwitchStatement switchStatement)
         {
             DefaultVisit(switchStatement);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.TypeName typeName)
+        public virtual void Visit(Stride.Core.Shaders.Ast.TypeName typeName)
         {
             DefaultVisit(typeName);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
         {
             DefaultVisit(typeReferenceExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.UnaryExpression unaryExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.UnaryExpression unaryExpression)
         {
             DefaultVisit(unaryExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.Variable variable)
+        public virtual void Visit(Stride.Core.Shaders.Ast.Variable variable)
         {
             DefaultVisit(variable);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
+        public virtual void Visit(Stride.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
         {
             DefaultVisit(variableReferenceExpression);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.VectorType vectorType)
+        public virtual void Visit(Stride.Core.Shaders.Ast.VectorType vectorType)
         {
             DefaultVisit(vectorType);
         }
-        public virtual void Visit(Xenko.Core.Shaders.Ast.WhileStatement whileStatement)
+        public virtual void Visit(Stride.Core.Shaders.Ast.WhileStatement whileStatement)
         {
             DefaultVisit(whileStatement);
         }
@@ -2701,13 +2701,13 @@ namespace Xenko.Core.Shaders.Visitor
 
     public partial class ShaderWalker
     {
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.ClassIdentifierGeneric classIdentifierGeneric)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.ClassIdentifierGeneric classIdentifierGeneric)
         {
             VisitList(classIdentifierGeneric.Indices);
             VisitList(classIdentifierGeneric.Generics);
             base.Visit(classIdentifierGeneric);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.EnumType enumType)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.EnumType enumType)
         {
             VisitList(enumType.Attributes);
             VisitDynamic(enumType.Name);
@@ -2715,7 +2715,7 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(enumType.Values);
             base.Visit(enumType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.ForEachStatement forEachStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.ForEachStatement forEachStatement)
         {
             VisitList(forEachStatement.Attributes);
             VisitDynamic(forEachStatement.Collection);
@@ -2723,39 +2723,39 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(forEachStatement.Body);
             base.Visit(forEachStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.ImportBlockStatement importBlockStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.ImportBlockStatement importBlockStatement)
         {
             VisitList(importBlockStatement.Attributes);
             VisitDynamic(importBlockStatement.Statements);
             base.Visit(importBlockStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.LinkType linkType)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.LinkType linkType)
         {
             VisitList(linkType.Attributes);
             VisitDynamic(linkType.Name);
             VisitDynamic(linkType.Qualifiers);
             base.Visit(linkType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.LiteralIdentifier literalIdentifier)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.LiteralIdentifier literalIdentifier)
         {
             VisitList(literalIdentifier.Indices);
             VisitDynamic(literalIdentifier.Value);
             base.Visit(literalIdentifier);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.MemberName memberName)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.MemberName memberName)
         {
             VisitList(memberName.Attributes);
             VisitDynamic(memberName.Name);
             VisitDynamic(memberName.Qualifiers);
             base.Visit(memberName);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.MixinStatement mixinStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.MixinStatement mixinStatement)
         {
             VisitList(mixinStatement.Attributes);
             VisitDynamic(mixinStatement.Value);
             base.Visit(mixinStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.NamespaceBlock namespaceBlock)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.NamespaceBlock namespaceBlock)
         {
             VisitList(namespaceBlock.Attributes);
             VisitDynamic(namespaceBlock.Name);
@@ -2763,20 +2763,20 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(namespaceBlock.Body);
             base.Visit(namespaceBlock);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.ParametersBlock parametersBlock)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.ParametersBlock parametersBlock)
         {
             VisitDynamic(parametersBlock.Name);
             VisitDynamic(parametersBlock.Body);
             base.Visit(parametersBlock);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.SemanticType semanticType)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.SemanticType semanticType)
         {
             VisitList(semanticType.Attributes);
             VisitDynamic(semanticType.Name);
             VisitDynamic(semanticType.Qualifiers);
             base.Visit(semanticType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.EffectBlock effectBlock)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.EffectBlock effectBlock)
         {
             VisitList(effectBlock.Attributes);
             VisitDynamic(effectBlock.Name);
@@ -2784,7 +2784,7 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(effectBlock.Body);
             base.Visit(effectBlock);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderClassType shaderClassType)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.ShaderClassType shaderClassType)
         {
             VisitList(shaderClassType.Attributes);
             VisitDynamic(shaderClassType.Name);
@@ -2796,7 +2796,7 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(shaderClassType.ShaderGenerics);
             base.Visit(shaderClassType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderRootClassType shaderRootClassType)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.ShaderRootClassType shaderRootClassType)
         {
             VisitList(shaderRootClassType.Attributes);
             VisitDynamic(shaderRootClassType.Name);
@@ -2808,49 +2808,49 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(shaderRootClassType.ShaderGenerics);
             base.Visit(shaderRootClassType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.ShaderTypeName shaderTypeName)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.ShaderTypeName shaderTypeName)
         {
             VisitList(shaderTypeName.Attributes);
             VisitDynamic(shaderTypeName.Name);
             VisitDynamic(shaderTypeName.Qualifiers);
             base.Visit(shaderTypeName);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.TypeIdentifier typeIdentifier)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.TypeIdentifier typeIdentifier)
         {
             VisitList(typeIdentifier.Indices);
             VisitDynamic(typeIdentifier.Type);
             base.Visit(typeIdentifier);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.UsingParametersStatement usingParametersStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.UsingParametersStatement usingParametersStatement)
         {
             VisitList(usingParametersStatement.Attributes);
             VisitDynamic(usingParametersStatement.Name);
             VisitDynamic(usingParametersStatement.Body);
             base.Visit(usingParametersStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.UsingStatement usingStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.UsingStatement usingStatement)
         {
             VisitList(usingStatement.Attributes);
             VisitDynamic(usingStatement.Name);
             base.Visit(usingStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.VarType varType)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.VarType varType)
         {
             VisitList(varType.Attributes);
             VisitDynamic(varType.Name);
             VisitDynamic(varType.Qualifiers);
             base.Visit(varType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Xenko.XenkoConstantBufferType xenkoConstantBufferType)
+        public override void Visit(Stride.Core.Shaders.Ast.Stride.StrideConstantBufferType strideConstantBufferType)
         {
-            base.Visit(xenkoConstantBufferType);
+            base.Visit(strideConstantBufferType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.ArrayInitializerExpression arrayInitializerExpression)
         {
             VisitList(arrayInitializerExpression.Items);
             base.Visit(arrayInitializerExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ArrayType arrayType)
+        public override void Visit(Stride.Core.Shaders.Ast.ArrayType arrayType)
         {
             VisitList(arrayType.Attributes);
             VisitDynamic(arrayType.Name);
@@ -2859,51 +2859,51 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(arrayType.Type);
             base.Visit(arrayType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.AssignmentExpression assignmentExpression)
         {
             VisitDynamic(assignmentExpression.Target);
             VisitDynamic(assignmentExpression.Value);
             base.Visit(assignmentExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.BinaryExpression binaryExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.BinaryExpression binaryExpression)
         {
             VisitDynamic(binaryExpression.Left);
             VisitDynamic(binaryExpression.Right);
             base.Visit(binaryExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.BlockStatement blockStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.BlockStatement blockStatement)
         {
             VisitList(blockStatement.Attributes);
             VisitDynamic(blockStatement.Statements);
             base.Visit(blockStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.CaseStatement caseStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.CaseStatement caseStatement)
         {
             VisitList(caseStatement.Attributes);
             VisitDynamic(caseStatement.Case);
             base.Visit(caseStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.CompositeEnum compositeEnum)
+        public override void Visit(Stride.Core.Shaders.Ast.CompositeEnum compositeEnum)
         {
             base.Visit(compositeEnum);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.ConditionalExpression conditionalExpression)
         {
             VisitDynamic(conditionalExpression.Condition);
             VisitDynamic(conditionalExpression.Left);
             VisitDynamic(conditionalExpression.Right);
             base.Visit(conditionalExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.EmptyStatement emptyStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.EmptyStatement emptyStatement)
         {
             VisitList(emptyStatement.Attributes);
             base.Visit(emptyStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.EmptyExpression emptyExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.EmptyExpression emptyExpression)
         {
             base.Visit(emptyExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.ClassType classType)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.ClassType classType)
         {
             VisitList(classType.Attributes);
             VisitDynamic(classType.Name);
@@ -2914,59 +2914,59 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(classType.Members);
             base.Visit(classType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierGeneric identifierGeneric)
         {
             VisitList(identifierGeneric.Indices);
             VisitList(identifierGeneric.Identifiers);
             base.Visit(identifierGeneric);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierNs identifierNs)
         {
             VisitList(identifierNs.Indices);
             VisitList(identifierNs.Identifiers);
             base.Visit(identifierNs);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.IdentifierDot identifierDot)
         {
             VisitList(identifierDot.Indices);
             VisitList(identifierDot.Identifiers);
             base.Visit(identifierDot);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.TextureType textureType)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.TextureType textureType)
         {
             VisitList(textureType.Attributes);
             VisitDynamic(textureType.Name);
             VisitDynamic(textureType.Qualifiers);
             base.Visit(textureType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.Annotations annotations)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.Annotations annotations)
         {
             VisitList(annotations.Variables);
             base.Visit(annotations);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.AsmExpression asmExpression)
         {
             base.Visit(asmExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.AttributeDeclaration attributeDeclaration)
         {
             VisitDynamic(attributeDeclaration.Name);
             VisitList(attributeDeclaration.Parameters);
             base.Visit(attributeDeclaration);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.CastExpression castExpression)
         {
             VisitDynamic(castExpression.From);
             VisitDynamic(castExpression.Target);
             base.Visit(castExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.CompileExpression compileExpression)
         {
             VisitDynamic(compileExpression.Function);
             VisitDynamic(compileExpression.Profile);
             base.Visit(compileExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBuffer constantBuffer)
         {
             VisitList(constantBuffer.Attributes);
             VisitDynamic(constantBuffer.Type);
@@ -2976,11 +2976,11 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(constantBuffer.Qualifiers);
             base.Visit(constantBuffer);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.ConstantBufferType constantBufferType)
         {
             base.Visit(constantBufferType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.InterfaceType interfaceType)
         {
             VisitList(interfaceType.Attributes);
             VisitDynamic(interfaceType.Name);
@@ -2990,41 +2990,41 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(interfaceType.Methods);
             base.Visit(interfaceType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.PackOffset packOffset)
         {
             VisitDynamic(packOffset.Value);
             base.Visit(packOffset);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.Pass pass)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.Pass pass)
         {
             VisitList(pass.Attributes);
             VisitList(pass.Items);
             VisitDynamic(pass.Name);
             base.Visit(pass);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.RegisterLocation registerLocation)
         {
             VisitDynamic(registerLocation.Profile);
             VisitDynamic(registerLocation.Register);
             base.Visit(registerLocation);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.Semantic semantic)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.Semantic semantic)
         {
             VisitDynamic(semantic.Name);
             base.Visit(semantic);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.StateExpression stateExpression)
         {
             VisitDynamic(stateExpression.Initializer);
             VisitDynamic(stateExpression.StateType);
             base.Visit(stateExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.StateInitializer stateInitializer)
         {
             VisitList(stateInitializer.Items);
             base.Visit(stateInitializer);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.Technique technique)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.Technique technique)
         {
             VisitDynamic(technique.Type);
             VisitList(technique.Attributes);
@@ -3032,7 +3032,7 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(technique.Passes);
             base.Visit(technique);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Hlsl.Typedef typedef)
+        public override void Visit(Stride.Core.Shaders.Ast.Hlsl.Typedef typedef)
         {
             VisitList(typedef.Attributes);
             VisitDynamic(typedef.Name);
@@ -3041,36 +3041,36 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(typedef.Type);
             base.Visit(typedef);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ExpressionList expressionList)
+        public override void Visit(Stride.Core.Shaders.Ast.ExpressionList expressionList)
         {
             VisitList(expressionList.Expressions);
             base.Visit(expressionList);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
+        public override void Visit(Stride.Core.Shaders.Ast.GenericDeclaration genericDeclaration)
         {
             VisitDynamic(genericDeclaration.Name);
             base.Visit(genericDeclaration);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.GenericParameterType genericParameterType)
+        public override void Visit(Stride.Core.Shaders.Ast.GenericParameterType genericParameterType)
         {
             VisitList(genericParameterType.Attributes);
             VisitDynamic(genericParameterType.Name);
             VisitDynamic(genericParameterType.Qualifiers);
             base.Visit(genericParameterType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.DeclarationStatement declarationStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.DeclarationStatement declarationStatement)
         {
             VisitList(declarationStatement.Attributes);
             VisitDynamic(declarationStatement.Content);
             base.Visit(declarationStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ExpressionStatement expressionStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.ExpressionStatement expressionStatement)
         {
             VisitList(expressionStatement.Attributes);
             VisitDynamic(expressionStatement.Expression);
             base.Visit(expressionStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ForStatement forStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.ForStatement forStatement)
         {
             VisitList(forStatement.Attributes);
             VisitDynamic(forStatement.Start);
@@ -3079,7 +3079,7 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(forStatement.Body);
             base.Visit(forStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.GenericType genericType)
+        public override void Visit(Stride.Core.Shaders.Ast.GenericType genericType)
         {
             VisitList(genericType.Attributes);
             VisitDynamic(genericType.Name);
@@ -3087,12 +3087,12 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(genericType.Parameters);
             base.Visit(genericType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Identifier identifier)
+        public override void Visit(Stride.Core.Shaders.Ast.Identifier identifier)
         {
             VisitList(identifier.Indices);
             base.Visit(identifier);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.IfStatement ifStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.IfStatement ifStatement)
         {
             VisitList(ifStatement.Attributes);
             VisitDynamic(ifStatement.Condition);
@@ -3100,28 +3100,28 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(ifStatement.Then);
             base.Visit(ifStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.IndexerExpression indexerExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.IndexerExpression indexerExpression)
         {
             VisitDynamic(indexerExpression.Index);
             VisitDynamic(indexerExpression.Target);
             base.Visit(indexerExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.KeywordExpression keywordExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.KeywordExpression keywordExpression)
         {
             VisitDynamic(keywordExpression.Name);
             base.Visit(keywordExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Literal literal)
+        public override void Visit(Stride.Core.Shaders.Ast.Literal literal)
         {
             VisitList(literal.SubLiterals);
             base.Visit(literal);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.LiteralExpression literalExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.LiteralExpression literalExpression)
         {
             VisitDynamic(literalExpression.Literal);
             base.Visit(literalExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.MatrixType matrixType)
+        public override void Visit(Stride.Core.Shaders.Ast.MatrixType matrixType)
         {
             VisitList(matrixType.Attributes);
             VisitDynamic(matrixType.Name);
@@ -3129,13 +3129,13 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(matrixType.Type);
             base.Visit(matrixType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.MemberReferenceExpression memberReferenceExpression)
         {
             VisitDynamic(memberReferenceExpression.Member);
             VisitDynamic(memberReferenceExpression.Target);
             base.Visit(memberReferenceExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
+        public override void Visit(Stride.Core.Shaders.Ast.MethodDeclaration methodDeclaration)
         {
             VisitList(methodDeclaration.Attributes);
             VisitDynamic(methodDeclaration.Name);
@@ -3144,7 +3144,7 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(methodDeclaration.ReturnType);
             base.Visit(methodDeclaration);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.MethodDefinition methodDefinition)
+        public override void Visit(Stride.Core.Shaders.Ast.MethodDefinition methodDefinition)
         {
             VisitList(methodDefinition.Attributes);
             VisitDynamic(methodDefinition.Name);
@@ -3154,20 +3154,20 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(methodDefinition.Body);
             base.Visit(methodDefinition);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.MethodInvocationExpression methodInvocationExpression)
         {
             VisitDynamic(methodInvocationExpression.Target);
             VisitList(methodInvocationExpression.Arguments);
             base.Visit(methodInvocationExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ObjectType objectType)
+        public override void Visit(Stride.Core.Shaders.Ast.ObjectType objectType)
         {
             VisitList(objectType.Attributes);
             VisitDynamic(objectType.Name);
             VisitDynamic(objectType.Qualifiers);
             base.Visit(objectType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Parameter parameter)
+        public override void Visit(Stride.Core.Shaders.Ast.Parameter parameter)
         {
             VisitList(parameter.Attributes);
             VisitDynamic(parameter.Qualifiers);
@@ -3177,40 +3177,40 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(parameter.SubVariables);
             base.Visit(parameter);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.ParenthesizedExpression parenthesizedExpression)
         {
             VisitDynamic(parenthesizedExpression.Content);
             base.Visit(parenthesizedExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Qualifier qualifier)
+        public override void Visit(Stride.Core.Shaders.Ast.Qualifier qualifier)
         {
             base.Visit(qualifier);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ReturnStatement returnStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.ReturnStatement returnStatement)
         {
             VisitList(returnStatement.Attributes);
             VisitDynamic(returnStatement.Value);
             base.Visit(returnStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.ScalarType scalarType)
+        public override void Visit(Stride.Core.Shaders.Ast.ScalarType scalarType)
         {
             VisitList(scalarType.Attributes);
             VisitDynamic(scalarType.Name);
             VisitDynamic(scalarType.Qualifiers);
             base.Visit(scalarType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Shader shader)
+        public override void Visit(Stride.Core.Shaders.Ast.Shader shader)
         {
             VisitList(shader.Declarations);
             base.Visit(shader);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.StatementList statementList)
+        public override void Visit(Stride.Core.Shaders.Ast.StatementList statementList)
         {
             VisitList(statementList.Attributes);
             VisitList(statementList.Statements);
             base.Visit(statementList);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.StructType structType)
+        public override void Visit(Stride.Core.Shaders.Ast.StructType structType)
         {
             VisitList(structType.Attributes);
             VisitDynamic(structType.Name);
@@ -3218,37 +3218,37 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(structType.Fields);
             base.Visit(structType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
+        public override void Visit(Stride.Core.Shaders.Ast.SwitchCaseGroup switchCaseGroup)
         {
             VisitList(switchCaseGroup.Cases);
             VisitDynamic(switchCaseGroup.Statements);
             base.Visit(switchCaseGroup);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.SwitchStatement switchStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.SwitchStatement switchStatement)
         {
             VisitList(switchStatement.Attributes);
             VisitDynamic(switchStatement.Condition);
             VisitList(switchStatement.Groups);
             base.Visit(switchStatement);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.TypeName typeName)
+        public override void Visit(Stride.Core.Shaders.Ast.TypeName typeName)
         {
             VisitList(typeName.Attributes);
             VisitDynamic(typeName.Name);
             VisitDynamic(typeName.Qualifiers);
             base.Visit(typeName);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.TypeReferenceExpression typeReferenceExpression)
         {
             VisitDynamic(typeReferenceExpression.Type);
             base.Visit(typeReferenceExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.UnaryExpression unaryExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.UnaryExpression unaryExpression)
         {
             VisitDynamic(unaryExpression.Expression);
             base.Visit(unaryExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.Variable variable)
+        public override void Visit(Stride.Core.Shaders.Ast.Variable variable)
         {
             VisitList(variable.Attributes);
             VisitDynamic(variable.Qualifiers);
@@ -3258,12 +3258,12 @@ namespace Xenko.Core.Shaders.Visitor
             VisitList(variable.SubVariables);
             base.Visit(variable);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
+        public override void Visit(Stride.Core.Shaders.Ast.VariableReferenceExpression variableReferenceExpression)
         {
             VisitDynamic(variableReferenceExpression.Name);
             base.Visit(variableReferenceExpression);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.VectorType vectorType)
+        public override void Visit(Stride.Core.Shaders.Ast.VectorType vectorType)
         {
             VisitList(vectorType.Attributes);
             VisitDynamic(vectorType.Name);
@@ -3271,7 +3271,7 @@ namespace Xenko.Core.Shaders.Visitor
             VisitDynamic(vectorType.Type);
             base.Visit(vectorType);
         }
-        public override void Visit(Xenko.Core.Shaders.Ast.WhileStatement whileStatement)
+        public override void Visit(Stride.Core.Shaders.Ast.WhileStatement whileStatement)
         {
             VisitList(whileStatement.Attributes);
             VisitDynamic(whileStatement.Condition);
@@ -3281,7 +3281,7 @@ namespace Xenko.Core.Shaders.Visitor
     }
 }
 
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class ClassIdentifierGeneric
     {
@@ -3295,7 +3295,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class EnumType
     {
@@ -3309,7 +3309,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class ForEachStatement
     {
@@ -3323,7 +3323,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class ImportBlockStatement
     {
@@ -3337,7 +3337,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class LinkType
     {
@@ -3351,7 +3351,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class LiteralIdentifier
     {
@@ -3365,7 +3365,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class MemberName
     {
@@ -3379,7 +3379,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class MixinStatement
     {
@@ -3393,7 +3393,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class NamespaceBlock
     {
@@ -3407,7 +3407,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class ParametersBlock
     {
@@ -3421,7 +3421,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class SemanticType
     {
@@ -3435,7 +3435,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class EffectBlock
     {
@@ -3449,7 +3449,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class ShaderClassType
     {
@@ -3463,7 +3463,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class ShaderRootClassType
     {
@@ -3477,7 +3477,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class ShaderTypeName
     {
@@ -3491,7 +3491,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class TypeIdentifier
     {
@@ -3505,7 +3505,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class UsingParametersStatement
     {
@@ -3519,7 +3519,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class UsingStatement
     {
@@ -3533,7 +3533,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
     public partial class VarType
     {
@@ -3547,9 +3547,9 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Xenko
+namespace Stride.Core.Shaders.Ast.Stride
 {
-    public partial class XenkoConstantBufferType
+    public partial class StrideConstantBufferType
     {
         public override void Accept(ShaderVisitor visitor)
         {
@@ -3561,7 +3561,7 @@ namespace Xenko.Core.Shaders.Ast.Xenko
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ArrayInitializerExpression
     {
@@ -3575,7 +3575,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ArrayType
     {
@@ -3589,7 +3589,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class AssignmentExpression
     {
@@ -3603,7 +3603,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class BinaryExpression
     {
@@ -3617,7 +3617,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class BlockStatement
     {
@@ -3631,7 +3631,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class CaseStatement
     {
@@ -3645,7 +3645,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class CompositeEnum
     {
@@ -3659,7 +3659,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ConditionalExpression
     {
@@ -3673,7 +3673,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class EmptyStatement
     {
@@ -3687,7 +3687,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class EmptyExpression
     {
@@ -3701,7 +3701,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class ClassType
     {
@@ -3715,7 +3715,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class IdentifierGeneric
     {
@@ -3729,7 +3729,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class IdentifierNs
     {
@@ -3743,7 +3743,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class IdentifierDot
     {
@@ -3757,7 +3757,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class TextureType
     {
@@ -3771,7 +3771,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class Annotations
     {
@@ -3785,7 +3785,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class AsmExpression
     {
@@ -3799,7 +3799,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class AttributeDeclaration
     {
@@ -3813,7 +3813,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class CastExpression
     {
@@ -3827,7 +3827,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class CompileExpression
     {
@@ -3841,7 +3841,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class ConstantBuffer
     {
@@ -3855,7 +3855,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class ConstantBufferType
     {
@@ -3869,7 +3869,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class InterfaceType
     {
@@ -3883,7 +3883,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class PackOffset
     {
@@ -3897,7 +3897,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class Pass
     {
@@ -3911,7 +3911,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class RegisterLocation
     {
@@ -3925,7 +3925,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class Semantic
     {
@@ -3939,7 +3939,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class StateExpression
     {
@@ -3953,7 +3953,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class StateInitializer
     {
@@ -3967,7 +3967,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class Technique
     {
@@ -3981,7 +3981,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast.Hlsl
+namespace Stride.Core.Shaders.Ast.Hlsl
 {
     public partial class Typedef
     {
@@ -3995,7 +3995,7 @@ namespace Xenko.Core.Shaders.Ast.Hlsl
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ExpressionList
     {
@@ -4009,7 +4009,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class GenericDeclaration
     {
@@ -4023,7 +4023,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class GenericParameterType
     {
@@ -4037,7 +4037,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class DeclarationStatement
     {
@@ -4051,7 +4051,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ExpressionStatement
     {
@@ -4065,7 +4065,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ForStatement
     {
@@ -4079,7 +4079,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class GenericType
     {
@@ -4093,7 +4093,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class Identifier
     {
@@ -4107,7 +4107,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class IfStatement
     {
@@ -4121,7 +4121,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class IndexerExpression
     {
@@ -4135,7 +4135,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class KeywordExpression
     {
@@ -4149,7 +4149,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class Literal
     {
@@ -4163,7 +4163,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class LiteralExpression
     {
@@ -4177,7 +4177,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class MatrixType
     {
@@ -4191,7 +4191,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class MemberReferenceExpression
     {
@@ -4205,7 +4205,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class MethodDeclaration
     {
@@ -4219,7 +4219,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class MethodDefinition
     {
@@ -4233,7 +4233,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class MethodInvocationExpression
     {
@@ -4247,7 +4247,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ObjectType
     {
@@ -4261,7 +4261,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class Parameter
     {
@@ -4275,7 +4275,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ParenthesizedExpression
     {
@@ -4289,7 +4289,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class Qualifier
     {
@@ -4303,7 +4303,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ReturnStatement
     {
@@ -4317,7 +4317,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class ScalarType
     {
@@ -4331,7 +4331,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class Shader
     {
@@ -4345,7 +4345,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class StatementList
     {
@@ -4359,7 +4359,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class StructType
     {
@@ -4373,7 +4373,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class SwitchCaseGroup
     {
@@ -4387,7 +4387,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class SwitchStatement
     {
@@ -4401,7 +4401,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class TypeName
     {
@@ -4415,7 +4415,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class TypeReferenceExpression
     {
@@ -4429,7 +4429,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class UnaryExpression
     {
@@ -4443,7 +4443,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class Variable
     {
@@ -4457,7 +4457,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class VariableReferenceExpression
     {
@@ -4471,7 +4471,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class VectorType
     {
@@ -4485,7 +4485,7 @@ namespace Xenko.Core.Shaders.Ast
         }
     }
 }
-namespace Xenko.Core.Shaders.Ast
+namespace Stride.Core.Shaders.Ast
 {
     public partial class WhileStatement
     {

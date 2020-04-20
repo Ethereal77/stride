@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-using Xenko.ExecServer;
+using Stride.ExecServer;
 
-namespace Xenko.Core.Assets.CompilerClient
+namespace Stride.Core.Assets.CompilerClient
 {
     /// <summary>
     /// Small wrapper to communicate through ExecServer to launch Assets.CompilerApp.exe.
@@ -24,7 +24,7 @@ namespace Xenko.Core.Assets.CompilerClient
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            const string CompilerAppExeName = "Xenko.Core.Assets.CompilerApp.exe";
+            const string CompilerAppExeName = "Stride.Core.Assets.CompilerApp.exe";
 
             var serverApp = new ExecServerApp();
             // The first two parameters are the executable path and the current directory

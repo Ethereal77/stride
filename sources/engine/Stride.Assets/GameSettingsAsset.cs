@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,21 +7,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Reflection;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Yaml;
-using Xenko.Core.Yaml.Serialization;
-using Xenko.Data;
-using Xenko.Engine;
-using Xenko.Engine.Design;
-using Xenko.Rendering.Compositing;
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Reflection;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Serialization;
+using Stride.Data;
+using Stride.Engine;
+using Stride.Engine.Design;
+using Stride.Rendering.Compositing;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
 
-namespace Xenko.Assets
+namespace Stride.Assets
 {
     /// <summary>
     /// Settings for a game with the default scene, resolution, graphics profile...
@@ -32,8 +32,8 @@ namespace Xenko.Assets
     [AssetContentType(typeof(GameSettings))]
     [CategoryOrder(4050, "Splash screen")]
     [NonIdentifiableCollectionItems]
-    [AssetFormatVersion(XenkoConfig.PackageName, CurrentVersion, "2.1.0.3")]
-    [AssetUpgrader(XenkoConfig.PackageName, "2.1.0.3", "3.1.0.1", typeof(RenderingSplitUpgrader))]
+    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.1.0.3")]
+    [AssetUpgrader(StrideConfig.PackageName, "2.1.0.3", "3.1.0.1", typeof(RenderingSplitUpgrader))]
     public partial class GameSettingsAsset : Asset
     {
         private const string CurrentVersion = "3.1.0.1";
@@ -139,7 +139,7 @@ namespace Xenko.Assets
             return GetOrCreate<T>();
         }
 
-        // In 3.1, Xenko.Engine was splitted into a sub-assembly Xenko.Rendering
+        // In 3.1, Stride.Engine was splitted into a sub-assembly Stride.Rendering
         private class RenderingSplitUpgrader : AssetUpgraderBase
         {
             protected override void UpgradeAsset(AssetMigrationContext context, PackageVersion currentVersion, PackageVersion targetVersion, dynamic asset, PackageLoadingAssetFile assetFile, OverrideUpgraderHint overrideHint)
@@ -147,9 +147,9 @@ namespace Xenko.Assets
                 YamlNode assetNode = asset.Node;
                 foreach (var node in assetNode.AllNodes)
                 {
-                    if (node.Tag == "!Xenko.Streaming.StreamingSettings,Xenko.Engine")
+                    if (node.Tag == "!Stride.Streaming.StreamingSettings,Stride.Engine")
                     {
-                        node.Tag = node.Tag.Replace(",Xenko.Engine", ",Xenko.Rendering");
+                        node.Tag = node.Tag.Replace(",Stride.Engine", ",Stride.Rendering");
                     }
                 }
             }

@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Annotations;
-using Xenko.Core.Reflection;
-using Xenko.Editor.Preview.View;
+using Stride.Core.Assets;
+using Stride.Core.Annotations;
+using Stride.Core.Reflection;
+using Stride.Editor.Preview.View;
 
-namespace Xenko.Editor.Preview
+namespace Stride.Editor.Preview
 {
     /// <summary>
     /// This attribute is used to register a preview class and associate it to an asset type. A preview view class can also
@@ -49,6 +49,6 @@ namespace Xenko.Editor.Preview
         /// <summary>
         /// Gets the default view to use when <see cref="ViewType"/> is <c>null</c>.
         /// </summary>
-        public static Type DefaultViewType => typeof(XenkoPreviewView);
+        public static Type DefaultViewType => typeof(StridePreviewView);
     }
 }

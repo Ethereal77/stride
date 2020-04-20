@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,10 +11,10 @@ using System.Xml.Linq;
 
 using Mono.Options;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.VisualStudio;
+using Stride.Core.Diagnostics;
+using Stride.Core.VisualStudio;
 
-namespace Xenko.FixProjectReferences
+namespace Stride.FixProjectReferences
 {
     public static class FixProjectReference
     {
@@ -28,8 +28,8 @@ namespace Xenko.FixProjectReferences
 
             var p = new OptionSet
                 {
-                    "Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved",
-                    "Xenko Fix Project References - Version: "
+                    "Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved",
+                    "Stride Fix Project References - Version: "
                     +
                     String.Format(
                         "{0}.{1}.{2}",
@@ -96,8 +96,8 @@ namespace Xenko.FixProjectReferences
                 var ns = doc.Root.Name.Namespace;
                 var allElements = doc.DescendantNodes().OfType<XElement>().ToList();
 
-                var hasOutputPath = allElements.Any(element => element.Name.LocalName == "OutputPath" || element.Name.LocalName == "XenkoOutputPath");
-                var isTest = allElements.Any(element => element.Name.LocalName == "XenkoOutputFolder" && element.Value.StartsWith("Tests"));
+                var hasOutputPath = allElements.Any(element => element.Name.LocalName == "OutputPath" || element.Name.LocalName == "StrideOutputPath");
+                var isTest = allElements.Any(element => element.Name.LocalName == "StrideOutputFolder" && element.Value.StartsWith("Tests"));
                 if (!hasOutputPath && !isTest)
                 {
                     bool projectUpdated = false;

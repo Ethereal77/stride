@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,9 +6,9 @@ using System;
 using System.IO;
 using System.Reflection;
 
-using Xenko.Core.Annotations;
+using Stride.Core.Annotations;
 
-namespace Xenko.Core
+namespace Stride.Core
 {
     /// <summary>
     /// Folders used for the running platform.
@@ -150,7 +150,7 @@ namespace Xenko.Core
             {
                 return Path.GetDirectoryName(executableName);
             }
-    #if XENKO_RUNTIME_CORECLR
+    #if STRIDE_RUNTIME_CORECLR
             return AppContext.BaseDirectory;
     #else
             return AppDomain.CurrentDomain.BaseDirectory;
@@ -160,7 +160,7 @@ namespace Xenko.Core
         static string FindCoreAssemblyDirectory(string entryDirectory)
         {
             //simple case
-            var corePath = Path.Combine(entryDirectory, "Xenko.Core.dll");
+            var corePath = Path.Combine(entryDirectory, "Stride.Core.dll");
             if (File.Exists(corePath))
             {
                 return entryDirectory;
@@ -169,7 +169,7 @@ namespace Xenko.Core
             {
                 foreach (var subfolder in Directory.GetDirectories(entryDirectory))
                 {
-                    corePath = Path.Combine(subfolder, "Xenko.Core.dll");
+                    corePath = Path.Combine(subfolder, "Stride.Core.dll");
                     if (File.Exists(corePath))
                     {
                         return subfolder;

@@ -1,22 +1,22 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel.CopyPasteProcessors;
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core;
-using Xenko.Core.Quantum;
-using Xenko.Assets.Presentation.Quantum;
-using Xenko.Assets.UI;
-using Xenko.UI;
-using Xenko.UI.Panels;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel.CopyPasteProcessors;
+using Stride.Core.Assets.Quantum;
+using Stride.Core;
+using Stride.Core.Quantum;
+using Stride.Assets.Presentation.Quantum;
+using Stride.Assets.UI;
+using Stride.UI;
+using Stride.UI.Panels;
 
-namespace Xenko.Assets.Presentation.ViewModel.CopyPasteProcessors
+namespace Stride.Assets.Presentation.ViewModel.CopyPasteProcessors
 {
     public class UIHierarchyPasteProcessor : AssetCompositeHierarchyPasteProcessor<UIElementDesign, UIElement>
     {

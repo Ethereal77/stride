@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 using Xunit;
 
-using Xenko.Core;
-using Xenko.Core.Presentation.Quantum.Tests.Helpers;
-using Xenko.Core.Quantum;
+using Stride.Core;
+using Stride.Core.Presentation.Quantum.Tests.Helpers;
+using Stride.Core.Quantum;
 
-namespace Xenko.Core.Presentation.Quantum.Tests
+namespace Stride.Core.Presentation.Quantum.Tests
 {
     public class TestNodePresenterProperties
     {

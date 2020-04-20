@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets.Compiler;
-using Xenko.Assets.Models;
-using Xenko.Assets.Presentation.Preview.Views;
-using Xenko.Editor.Preview;
-using Xenko.Engine;
-using Xenko.Rendering;
+using Stride.Core.Assets.Compiler;
+using Stride.Assets.Models;
+using Stride.Assets.Presentation.Preview.Views;
+using Stride.Editor.Preview;
+using Stride.Engine;
+using Stride.Rendering;
 
-namespace Xenko.Assets.Presentation.Preview
+namespace Stride.Assets.Presentation.Preview
 {
     /// <summary>
     /// An implementation of the <see cref="AssetPreview"/> that can preview materials.

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,21 +9,21 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.Particles.Initializers;
-using Xenko.Particles.Materials;
-using Xenko.Particles.Modules;
-using Xenko.Particles.ShapeBuilders;
-using Xenko.Particles.Sorters;
-using Xenko.Particles.Spawners;
-using Xenko.Particles.VertexLayouts;
-using Xenko.Rendering;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.Particles.Initializers;
+using Stride.Particles.Materials;
+using Stride.Particles.Modules;
+using Stride.Particles.ShapeBuilders;
+using Stride.Particles.Sorters;
+using Stride.Particles.Spawners;
+using Stride.Particles.VertexLayouts;
+using Stride.Rendering;
 
-namespace Xenko.Particles
+namespace Stride.Particles
 {
     public enum EmitterRandomSeedMethod : byte
     {

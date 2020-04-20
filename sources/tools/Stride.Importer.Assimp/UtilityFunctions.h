@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,9 +6,9 @@
 
 
 using namespace System;
-using namespace Xenko::Animations;
-using namespace Xenko::Core::Diagnostics;
-using namespace Xenko::Core::Mathematics;
+using namespace Stride::Animations;
+using namespace Stride::Core::Diagnostics;
+using namespace Stride::Core::Mathematics;
 
 // Assimp types convertion
 String^ aiStringToString(aiString str);

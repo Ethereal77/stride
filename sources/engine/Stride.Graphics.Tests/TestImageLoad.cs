@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Games;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization.Contents;
+using Stride.Games;
 
-namespace Xenko.Graphics.Tests
+namespace Stride.Graphics.Tests
 {
     public class TestImageLoad : GraphicTestGameBase
     {

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.UI.Controls;
-using Xenko.UI.Panels;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.UI.Controls;
+using Stride.UI.Panels;
 
-namespace Xenko.UI.Tests.Regression
+namespace Stride.UI.Tests.Regression
 {
     /// <summary>
     /// Test to see if the children of a panel's panel get rendered correctly the root panel size is manually set.

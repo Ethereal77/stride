@@ -1,11 +1,11 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets;
-using Xenko.Core;
+using Stride.Core.Assets;
+using Stride.Core;
 
-namespace Xenko.Assets.Effect
+namespace Stride.Assets.Effect
 {
     /// <summary>
     /// Describes a shader effect asset (xksl).
@@ -19,7 +19,7 @@ namespace Xenko.Assets.Effect
         /// </summary>
         public const string FileExtension = ".xkfx";
 
-        public override string Generator => "XenkoEffectCodeGenerator";
+        public override string Generator => "StrideEffectCodeGenerator";
 
         public override void SaveGeneratedAsset(AssetItem assetItem)
         {

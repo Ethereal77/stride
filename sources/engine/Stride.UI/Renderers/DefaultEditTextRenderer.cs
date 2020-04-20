@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.Graphics.Font;
-using Xenko.UI.Controls;
-using IServiceRegistry = Xenko.Core.IServiceRegistry;
-using Vector3 = Xenko.Core.Mathematics.Vector3;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.Graphics.Font;
+using Stride.UI.Controls;
+using IServiceRegistry = Stride.Core.IServiceRegistry;
+using Vector3 = Stride.Core.Mathematics.Vector3;
 
-namespace Xenko.UI.Renderers
+namespace Stride.UI.Renderers
 {
     /// <summary>
     /// The default renderer for <see cref="EditText"/>.

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,17 +9,17 @@ using namespace System;
 using namespace System::IO;
 using namespace System::Collections::Generic;
 using namespace System::Runtime::InteropServices;
-using namespace Xenko::Core::Diagnostics;
-using namespace Xenko::Animations;
-using namespace Xenko::Rendering;
-using namespace Xenko::Engine;
-using namespace Xenko::Core::Mathematics;
+using namespace Stride::Core::Diagnostics;
+using namespace Stride::Animations;
+using namespace Stride::Rendering;
+using namespace Stride::Engine;
+using namespace Stride::Core::Mathematics;
 
-namespace Xenko {
+namespace Stride {
 	namespace Importer {
 		namespace FBX {
 			/// <summary>
-			/// Contains mapping between FBX nodes and Xenko ModelNodeDefinition
+			/// Contains mapping between FBX nodes and Stride ModelNodeDefinition
 			/// </summary>
 			ref class SceneMapping
 			{
@@ -96,7 +96,7 @@ namespace Xenko {
 				/// Finds the index of the FBX node in the <see cref="ModelNodeDefinition"/> from a FBX node.
 				/// </summary>
 				/// <param name="node">The node.</param>
-				/// <returns>Xenko.Rendering.ModelNodeDefinition.</returns>
+				/// <returns>Stride.Rendering.ModelNodeDefinition.</returns>
 				int FindNodeIndex(FbxNode* node)
 				{
 					int nodeIndex;
@@ -113,7 +113,7 @@ namespace Xenko {
 				/// Finds a <see cref="ModelNodeDefinition"/> from a FBX node.
 				/// </summary>
 				/// <param name="node">The node.</param>
-				/// <returns>Xenko.Rendering.ModelNodeDefinition.</returns>
+				/// <returns>Stride.Rendering.ModelNodeDefinition.</returns>
 				ModelNodeDefinition FindNode(FbxNode* node)
 				{
 					int nodeIndex;

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,10 +8,10 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 
-using Xenko.Engine;
-using Xenko.Core.Presentation.ValueConverters;
+using Stride.Engine;
+using Stride.Core.Presentation.ValueConverters;
 
-namespace Xenko.Assets.Presentation.ValueConverters
+namespace Stride.Assets.Presentation.ValueConverters
 {
     public class EntityComponentToTransformLinkInfo : OneWayValueConverter<EntityComponentToTransformLinkInfo>
     {

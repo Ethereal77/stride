@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,22 +11,22 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.Assets.Diagnostics;
-using Xenko.Core.BuildEngine;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.MicroThreading;
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Reflection;
-using Xenko.Core.Serialization.Contents;
-using Xenko;
-using Xenko.Assets;
-using Xenko.Graphics;
-using Xenko.Core.VisualStudio;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.Assets.Diagnostics;
+using Stride.Core.BuildEngine;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.MicroThreading;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Reflection;
+using Stride.Core.Serialization.Contents;
+using Stride;
+using Stride.Assets;
+using Stride.Graphics;
+using Stride.Core.VisualStudio;
 
-namespace Xenko.Core.Assets.CompilerApp
+namespace Stride.Core.Assets.CompilerApp
 {
     public class PackageBuilder
     {

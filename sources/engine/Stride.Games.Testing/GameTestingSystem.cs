@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,15 +9,15 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Engine;
-using Xenko.Engine.Network;
-using Xenko.Games.Testing.Requests;
-using Xenko.Graphics;
-using Xenko.Graphics.Regression;
-using Xenko.Input;
+using Stride.Core;
+using Stride.Engine;
+using Stride.Engine.Network;
+using Stride.Games.Testing.Requests;
+using Stride.Graphics;
+using Stride.Graphics.Regression;
+using Stride.Input;
 
-namespace Xenko.Games.Testing
+namespace Stride.Games.Testing
 {
     /// <summary>
     /// This game system will be automatically injected by the Module initialized when included in the build processing via MSBuild
@@ -52,7 +52,7 @@ namespace Xenko.Games.Testing
         {
             var game = (Game)Game;
 
-            var url = $"/service/Xenko.SamplesTestServer/{XenkoVersion.NuGetVersion}/Xenko.SamplesTestServer.exe";
+            var url = $"/service/Stride.SamplesTestServer/{StrideVersion.NuGetVersion}/Stride.SamplesTestServer.exe";
 
             var socketContext = await RouterClient.RequestServer(url);
 

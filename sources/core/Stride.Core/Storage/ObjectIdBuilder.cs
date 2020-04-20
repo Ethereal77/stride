@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -22,9 +22,9 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-using Xenko.Core.Annotations;
+using Stride.Core.Annotations;
 
-namespace Xenko.Core.Storage
+namespace Stride.Core.Storage
 {
     /// <summary>
     /// A builder for <see cref="ObjectId"/> using Murmurshash3 128 bits
@@ -35,7 +35,7 @@ namespace Xenko.Core.Storage
         // ***************************************************************
         // NOTE: This file is shared with the AssemblyProcessor.
         // If this file is modified, the AssemblyProcessor has to be
-        // recompiled separately. See build\Xenko-AssemblyProcessor.sln
+        // recompiled separately. See build\Stride-AssemblyProcessor.sln
         // ***************************************************************
 
         private readonly uint seed;
@@ -226,7 +226,7 @@ namespace Xenko.Core.Storage
 
 // Those routines are using Interop which are not implemented when compiling
 // the assembly processor as it is it that generates them (Chicken & Egg problem).
-#if !XENKO_ASSEMBLY_PROCESSOR
+#if !STRIDE_ASSEMBLY_PROCESSOR
         /// <summary>
         /// Writes the specified buffer to this instance.
         /// </summary>

@@ -1,7 +1,7 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Engine;
+using Stride.Engine;
 
 namespace CSharpBeginner
 {
@@ -9,7 +9,7 @@ namespace CSharpBeginner
     {
         static void Main(string[] args)
         {
-            using (var game = new Xenko.Engine.Game())
+            using (var game = new Stride.Engine.Game())
             {
                 game.Run();
             }

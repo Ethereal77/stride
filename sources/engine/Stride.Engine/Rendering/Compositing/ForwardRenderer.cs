@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,19 +8,19 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Storage;
-using Xenko.Graphics;
-using Xenko.Rendering.Images;
-using Xenko.Rendering.Lights;
-using Xenko.Rendering.Shadows;
-using Xenko.Rendering.SubsurfaceScattering;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Core.Storage;
+using Stride.Graphics;
+using Stride.Rendering.Images;
+using Stride.Rendering.Lights;
+using Stride.Rendering.Shadows;
+using Stride.Rendering.SubsurfaceScattering;
 
-namespace Xenko.Rendering.Compositing
+namespace Stride.Rendering.Compositing
 {
     /// <summary>
     /// Renders your game. It should use current <see cref="RenderContext.RenderView"/> and <see cref="CameraComponentRendererExtensions.GetCurrentCamera"/>.

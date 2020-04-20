@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,20 +8,20 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.Assets.Diagnostics;
-using Xenko.Core.BuildEngine;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Storage;
-using Xenko.Assets.Effect;
-using Xenko.Editor.Resources;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.Assets.Diagnostics;
+using Stride.Core.BuildEngine;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Storage;
+using Stride.Assets.Effect;
+using Stride.Editor.Resources;
 
-namespace Xenko.Editor.Thumbnails
+namespace Stride.Editor.Thumbnails
 {
     /// <summary>
     /// Base implementation for <see cref="IAssetCompiler"/> suitable to build a thumbnail of a single type of <see cref="Asset"/>.

@@ -1,20 +1,20 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
 
 using System;
 using System.Globalization;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-#if !XENKO_GRAPHICS_API_NULL
+#if !STRIDE_GRAPHICS_API_NULL
 using SharpDX.Win32;
 #endif
 
-namespace Xenko.Games
+namespace Stride.Games
 {
     /// <summary>
     /// RenderLoop provides a rendering loop infrastructure. See remarks for usage.

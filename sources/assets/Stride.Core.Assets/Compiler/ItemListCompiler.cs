@@ -1,16 +1,16 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core.Assets.Diagnostics;
-using Xenko.Core.BuildEngine;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Serialization.Contents;
+using Stride.Core.Assets.Diagnostics;
+using Stride.Core.BuildEngine;
+using Stride.Core.Diagnostics;
+using Stride.Core.Serialization.Contents;
 
-namespace Xenko.Core.Assets.Compiler
+namespace Stride.Core.Assets.Compiler
 {
     /// <summary>
     /// The base class to compile a series of <see cref="AssetItem"/>s using associated <see cref="IAssetCompiler"/>s.

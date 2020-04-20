@@ -1,25 +1,25 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core.IO;
-using Xenko.Core.Settings;
-using Xenko.Core.Assets.Editor.Settings;
-using Xenko.Core.Translation;
+using Stride.Core.IO;
+using Stride.Core.Settings;
+using Stride.Core.Assets.Editor.Settings;
+using Stride.Core.Translation;
 
-namespace Xenko.GameStudio
+namespace Stride.GameStudio
 {
-    public static class XenkoEditorSettings
+    public static class StrideEditorSettings
     {
         // Categories
         public static readonly string Remote = Tr._p("Settings", "Remote");
 
-        static XenkoEditorSettings()
+        static StrideEditorSettings()
         {
             // Note: assignments cannot be moved to initializer, because category names need to be assigned first.
-            StartupSession = new SettingsKey<UFile>("Interface/StartupSession" + XenkoGameStudio.EditorVersion, EditorSettings.SettingsContainer, "")
+            StartupSession = new SettingsKey<UFile>("Interface/StartupSession" + StrideGameStudio.EditorVersion, EditorSettings.SettingsContainer, "")
             {
                 // Note: the name of this settings is based on the editor version, because we want to force displaying the release notes on a new version.
                 DisplayName = $"{EditorSettings.Interface}/{Tr._p("Settings", "Default session to load")}"

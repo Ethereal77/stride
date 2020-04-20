@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering.Sprites;
-using Xenko.UI;
-using Xenko.UI.Controls;
-using Xenko.UI.Panels;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering.Sprites;
+using Stride.UI;
+using Stride.UI.Controls;
+using Stride.UI.Panels;
 
 namespace SpaceEscape
 {
@@ -55,11 +55,11 @@ namespace SpaceEscape
 
         private void CreateMainMenuUI()
         {
-            var xenkoLogo = new ImageElement { Source = SpriteFromSheet.Create(UIImages, "xk_logo") };
+            var strideLogo = new ImageElement { Source = SpriteFromSheet.Create(UIImages, "xk_logo") };
 
-            xenkoLogo.SetCanvasPinOrigin(new Vector3(0.5f, 0.5f, 1f));
-            xenkoLogo.SetCanvasRelativeSize(new Vector3(0.8f, 0.5f, 1f));
-            xenkoLogo.SetCanvasRelativePosition(new Vector3(0.5f, 0.3f, 1f));
+            strideLogo.SetCanvasPinOrigin(new Vector3(0.5f, 0.5f, 1f));
+            strideLogo.SetCanvasRelativeSize(new Vector3(0.8f, 0.5f, 1f));
+            strideLogo.SetCanvasRelativePosition(new Vector3(0.5f, 0.3f, 1f));
 
             StartButton = new Button
             {
@@ -76,7 +76,7 @@ namespace SpaceEscape
             StartButton.SetCanvasRelativePosition(new Vector3(0.5f, 0.8f, 0f));
 
             var mainMenuCanvas = new Canvas();
-            mainMenuCanvas.Children.Add(xenkoLogo);
+            mainMenuCanvas.Children.Add(strideLogo);
             mainMenuCanvas.Children.Add(StartButton);
 
             mainMenuRoot = new ModalElement

@@ -1,19 +1,19 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering.Lights;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering.Lights;
 
-namespace Xenko.Rendering.Shadows
+namespace Stride.Rendering.Shadows
 {
     /// <summary>
     /// Handles rendering of shadow map casters.

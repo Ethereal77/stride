@@ -1,18 +1,18 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.BuildEngine;
-using Xenko.Core.Mathematics;
-using Xenko.Editor.Thumbnails;
-using Xenko.Engine;
-using Xenko.Rendering.Compositing;
-using Xenko.SpriteStudio.Offline;
-using Xenko.SpriteStudio.Runtime;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.BuildEngine;
+using Stride.Core.Mathematics;
+using Stride.Editor.Thumbnails;
+using Stride.Engine;
+using Stride.Rendering.Compositing;
+using Stride.SpriteStudio.Offline;
+using Stride.SpriteStudio.Runtime;
 
-namespace Xenko.Assets.Presentation.Thumbnails
+namespace Stride.Assets.Presentation.Thumbnails
 {
     [AssetCompiler(typeof(SpriteStudioModelAsset), typeof(ThumbnailCompilationContext))]
     public class SpriteStudioModelAssetThumbnailCompiler : ThumbnailCompilerBase<SpriteStudioModelAsset>

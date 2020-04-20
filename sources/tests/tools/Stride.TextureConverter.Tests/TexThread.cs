@@ -1,11 +1,11 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.IO;
 
-namespace Xenko.TextureConverter.Tests
+namespace Stride.TextureConverter.Tests
 {
     class TexThread : IDisposable
     {
@@ -45,7 +45,7 @@ namespace Xenko.TextureConverter.Tests
                 string outFile = Path.GetDirectoryName(filePath) + "\\out\\" + Path.GetFileName(filePath);
                 outFile = Path.ChangeExtension(outFile, ".dds");
 
-                texTool.Save(image, outFile, Xenko.Graphics.PixelFormat.BC3_UNorm);
+                texTool.Save(image, outFile, Stride.Graphics.PixelFormat.BC3_UNorm);
 
                 image.Dispose();
             }

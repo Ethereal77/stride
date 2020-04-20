@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,13 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Reflection;
-using Xenko.Core.Quantum;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Reflection;
+using Stride.Core.Quantum;
 
-namespace Xenko.Core.Presentation.Quantum.Presenters
+namespace Stride.Core.Presentation.Quantum.Presenters
 {
     public abstract class NodePresenterBase : IInitializingNodePresenter
     {

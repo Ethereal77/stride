@@ -1,28 +1,28 @@
-<UserControl x:Class="Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Views.EntityHierarchyEditorView"
+<UserControl x:Class="Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Views.EntityHierarchyEditorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:p="clr-namespace:Xenko.Assets.Presentation"
-             xmlns:strings="clr-namespace:Xenko.Assets.Presentation.Resources.Strings"
-             xmlns:viewModel="clr-namespace:Xenko.Assets.Presentation.ViewModel"
-             xmlns:pvc="clr-namespace:Xenko.Assets.Presentation.ValueConverters"
-             xmlns:assetEditors="clr-namespace:Xenko.Assets.Presentation.AssetEditors"
-             xmlns:gameEditor="clr-namespace:Xenko.Assets.Presentation.AssetEditors.GameEditor"
-             xmlns:ehvm="clr-namespace:Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels"
-             xmlns:ehv="clr-namespace:Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Views"
-             xmlns:svm="clr-namespace:Xenko.Assets.Presentation.AssetEditors.SceneEditor.ViewModels"
-             xmlns:entityFactories="clr-namespace:Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFactories"
-             xmlns:views="clr-namespace:Xenko.Assets.Presentation.AssetEditors.AssetCompositeGameEditor.Views"
-             xmlns:xk="http://schemas.xenko.com/xaml/presentation"
+             xmlns:p="clr-namespace:Stride.Assets.Presentation"
+             xmlns:strings="clr-namespace:Stride.Assets.Presentation.Resources.Strings"
+             xmlns:viewModel="clr-namespace:Stride.Assets.Presentation.ViewModel"
+             xmlns:pvc="clr-namespace:Stride.Assets.Presentation.ValueConverters"
+             xmlns:assetEditors="clr-namespace:Stride.Assets.Presentation.AssetEditors"
+             xmlns:gameEditor="clr-namespace:Stride.Assets.Presentation.AssetEditors.GameEditor"
+             xmlns:ehvm="clr-namespace:Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels"
+             xmlns:ehv="clr-namespace:Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Views"
+             xmlns:svm="clr-namespace:Stride.Assets.Presentation.AssetEditors.SceneEditor.ViewModels"
+             xmlns:entityFactories="clr-namespace:Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFactories"
+             xmlns:views="clr-namespace:Stride.Assets.Presentation.AssetEditors.AssetCompositeGameEditor.Views"
+             xmlns:xk="http://schemas.stride3d.net/xaml/presentation"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance viewModel:EntityHierarchyViewModel}">
   <UserControl.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Xenko.Core.Assets.Editor;component/View/CommonResources.xaml"/>
-        <ResourceDictionary Source="/Xenko.Assets.Presentation;component/View/ImageDictionary.xaml"/>
+        <ResourceDictionary Source="/Stride.Core.Assets.Editor;component/View/CommonResources.xaml"/>
+        <ResourceDictionary Source="/Stride.Assets.Presentation;component/View/ImageDictionary.xaml"/>
       </ResourceDictionary.MergedDictionaries>
 
       <Style x:Key="EnumListBoxItemContainerStyle" TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
@@ -65,7 +65,7 @@
         <MenuItem Header="{xk:Localize Folder, Context=Menu}" Command="{Binding Editor.CreateFolderInRootCommand}"/>
         <MenuItem Header="{xk:Localize Empty entity, Context=Menu}" Command="{Binding Editor.CreateEntityInRootCommand}"/>
         <!-- IsCheckable=True is a hack to prevent WPF from clearing the selected sub menu item -->
-        <MenuItem ItemsSource="{x:Static p:XenkoDefaultAssetsPlugin.EntityFactoryCategories}" IsCheckable="True" d:DataContext="{d:DesignInstance entityFactories:EntityFactoryCategory}">
+        <MenuItem ItemsSource="{x:Static p:StrideDefaultAssetsPlugin.EntityFactoryCategories}" IsCheckable="True" d:DataContext="{d:DesignInstance entityFactories:EntityFactoryCategory}">
           <MenuItem.ItemContainerStyle>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
               <Setter Property="ItemsSource" Value="{Binding Factories.Values, Mode=OneWay}"/>
@@ -109,7 +109,7 @@
         <MenuItem Header="{xk:Localize Folder, Context=Menu}" Command="{Binding Editor.CreateFolderInSelectionCommand}"/>
         <MenuItem Header="{xk:Localize Empty entity, Context=Menu}" Command="{Binding Editor.CreateEntityInSelectionCommand}"/>
         <!-- IsCheckable=True is a hack to prevent WPF from clearing the selected sub menu item -->
-        <MenuItem ItemsSource="{x:Static p:XenkoDefaultAssetsPlugin.EntityFactoryCategories}" IsCheckable="True" d:DataContext="{d:DesignInstance entityFactories:EntityFactoryCategory}">
+        <MenuItem ItemsSource="{x:Static p:StrideDefaultAssetsPlugin.EntityFactoryCategories}" IsCheckable="True" d:DataContext="{d:DesignInstance entityFactories:EntityFactoryCategory}">
           <MenuItem.ItemContainerStyle>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
               <Setter Property="ItemsSource" Value="{Binding Factories.Values, Mode=OneWay}"/>
@@ -190,7 +190,7 @@
                 <!-- For some reason I have to set the style explicitly for this menu item, otherwise it is wrong-->
                 <MenuItem Header="{xk:Localize Empty entity, Context=Menu}" Command="{Binding Editor.CreateEntityInRootCommand}" Style="{StaticResource {x:Type MenuItem}}"/>
                 <!-- IsCheckable=True is a hack to prevent WPF from clearing the selected sub menu item -->
-                <MenuItem ItemsSource="{x:Static p:XenkoDefaultAssetsPlugin.EntityFactoryCategories}" IsCheckable="True" d:DataContext="{d:DesignInstance entityFactories:EntityFactoryCategory}">
+                <MenuItem ItemsSource="{x:Static p:StrideDefaultAssetsPlugin.EntityFactoryCategories}" IsCheckable="True" d:DataContext="{d:DesignInstance entityFactories:EntityFactoryCategory}">
                   <MenuItem.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
                       <Setter Property="ItemsSource" Value="{Binding Factories.Values, Mode=OneWay}"/>
@@ -787,7 +787,7 @@
               <MenuItem Header="{xk:Localize Create, Context=Menu}" Style="{StaticResource MenuGroupSeparatorStyle}"/>
               <MenuItem Header="{xk:Localize Empty entity, Context=Menu}" Command="{Binding CreateEntityCommand}"/>
               <!-- IsCheckable=True is a hack to prevent WPF from clearing the selected sub menu item -->
-              <MenuItem ItemsSource="{x:Static p:XenkoDefaultAssetsPlugin.EntityFactoryCategories}" IsCheckable="True">
+              <MenuItem ItemsSource="{x:Static p:StrideDefaultAssetsPlugin.EntityFactoryCategories}" IsCheckable="True">
                 <MenuItem.ItemContainerStyle>
                   <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}" d:DataContext="{d:DesignInstance entityFactories:EntityFactoryCategory}">
                     <Setter Property="ItemsSource" Value="{Binding Factories.Values, Mode=OneWay}"/>

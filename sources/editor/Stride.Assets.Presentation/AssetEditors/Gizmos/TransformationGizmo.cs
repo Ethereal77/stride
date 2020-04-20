@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,17 +6,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Xenko.Engine;
-using Xenko.Engine.Processors;
-using Xenko.Graphics;
-using Xenko.Input;
-using Xenko.Rendering;
+using Stride.Core.Mathematics;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.GameEditor;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Engine;
+using Stride.Engine.Processors;
+using Stride.Graphics;
+using Stride.Input;
+using Stride.Rendering;
 
-namespace Xenko.Assets.Presentation.AssetEditors.Gizmos
+namespace Stride.Assets.Presentation.AssetEditors.Gizmos
 {
     /// <summary>
     /// Base class for all gizmo that applies a transformation on entity

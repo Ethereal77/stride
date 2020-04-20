@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,7 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace Xenko.TextureConverter.DxtWrapper
+namespace Stride.TextureConverter.DxtWrapper
 {
     #region enum
     /// <summary>
@@ -936,7 +936,7 @@ namespace Xenko.TextureConverter.DxtWrapper
                 fixed (byte* ptr = buffer)
                 {
                     DDSHeaderDX9* headerPtr = &header;
-                    Xenko.Core.Utilities.CopyMemory((IntPtr)headerPtr, (IntPtr)ptr, headerSize);
+                    Stride.Core.Utilities.CopyMemory((IntPtr)headerPtr, (IntPtr)ptr, headerSize);
                 }
                 if (header.dwMagic != 0x20534444 || header.dwPfSize != 32)
                     return -1;

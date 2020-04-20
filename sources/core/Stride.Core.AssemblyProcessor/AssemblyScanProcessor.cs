@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -15,7 +15,7 @@ using Mono.Cecil.Rocks;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using TypeAttributes = Mono.Cecil.TypeAttributes;
 
-namespace Xenko.Core.AssemblyProcessor
+namespace Stride.Core.AssemblyProcessor
 {
     internal class AssemblyScanProcessor : IAssemblyDefinitionProcessor
     {
@@ -56,11 +56,11 @@ namespace Xenko.Core.AssemblyProcessor
                 // This code should mirror what AssemblyScanCodeGenerator.tt generates
                 var assembly = context.Assembly;
 
-                var xenkoCoreModule = assembly.GetXenkoCoreModule();
-                var assemblyRegistryType = xenkoCoreModule.GetType("Xenko.Core.Reflection.AssemblyRegistry");
+                var strideCoreModule = assembly.GetStrideCoreModule();
+                var assemblyRegistryType = strideCoreModule.GetType("Stride.Core.Reflection.AssemblyRegistry");
 
                 // Generate code
-                var assemblyScanType = new TypeDefinition("Xenko.Core.Serialization.AssemblyScan",
+                var assemblyScanType = new TypeDefinition("Stride.Core.Serialization.AssemblyScan",
                     Utilities.BuildValidClassName(assembly.Name.Name) + "AssemblyScan",
                     TypeAttributes.BeforeFieldInit | TypeAttributes.AnsiClass | TypeAttributes.AutoClass |
                     TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract,
@@ -144,7 +144,7 @@ namespace Xenko.Core.AssemblyProcessor
             foreach (var attribute in scanType.Resolve().CustomAttributes)
             {
                 // Check if scanned type has any AssemblyScanAttribute attribute
-                if (attribute.AttributeType.FullName == "Xenko.Core.Reflection.AssemblyScanAttribute")
+                if (attribute.AttributeType.FullName == "Stride.Core.Reflection.AssemblyScanAttribute")
                 {
                     RegisterType(log, assemblyScanRegistry, type, scanType);
                 }
@@ -154,7 +154,7 @@ namespace Xenko.Core.AssemblyProcessor
                 foreach (var attributeAttribute in attribute.AttributeType.Resolve().CustomAttributes)
                 {
                     var hasAssemblyScanAttribute = false;
-                    if (attributeAttribute.AttributeType.FullName == "Xenko.Core.Reflection.AssemblyScanAttribute")
+                    if (attributeAttribute.AttributeType.FullName == "Stride.Core.Reflection.AssemblyScanAttribute")
                     {
                         hasAssemblyScanAttribute = true;
                     }

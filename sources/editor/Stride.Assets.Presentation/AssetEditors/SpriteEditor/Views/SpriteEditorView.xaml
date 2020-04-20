@@ -1,24 +1,24 @@
-<UserControl x:Class="Xenko.Assets.Presentation.AssetEditors.SpriteEditor.Views.SpriteEditorView"
+<UserControl x:Class="Stride.Assets.Presentation.AssetEditors.SpriteEditor.Views.SpriteEditorView"
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-       xmlns:vm="clr-namespace:Xenko.Assets.Presentation.ViewModel"
-       xmlns:xk="http://schemas.xenko.com/xaml/presentation"
+       xmlns:vm="clr-namespace:Stride.Assets.Presentation.ViewModel"
+       xmlns:xk="http://schemas.stride3d.net/xaml/presentation"
        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-       xmlns:behaviors="clr-namespace:Xenko.Assets.Presentation.View.Behaviors"
-       xmlns:valueConverters="clr-namespace:Xenko.Assets.Presentation.ValueConverters"
-       xmlns:sprite="clr-namespace:Xenko.Assets.Sprite;assembly=Xenko.Assets"
-       xmlns:strings="clr-namespace:Xenko.Assets.Presentation.Resources.Strings"
-       xmlns:view="clr-namespace:Xenko.Assets.Presentation.AssetEditors.SpriteEditor.Views"
-       xmlns:sevm="clr-namespace:Xenko.Assets.Presentation.AssetEditors.SpriteEditor.ViewModels"
+       xmlns:behaviors="clr-namespace:Stride.Assets.Presentation.View.Behaviors"
+       xmlns:valueConverters="clr-namespace:Stride.Assets.Presentation.ValueConverters"
+       xmlns:sprite="clr-namespace:Stride.Assets.Sprite;assembly=Stride.Assets"
+       xmlns:strings="clr-namespace:Stride.Assets.Presentation.Resources.Strings"
+       xmlns:view="clr-namespace:Stride.Assets.Presentation.AssetEditors.SpriteEditor.Views"
+       xmlns:sevm="clr-namespace:Stride.Assets.Presentation.AssetEditors.SpriteEditor.ViewModels"
        mc:Ignorable="d" 
        d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:SpriteSheetViewModel}">
   <UserControl.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Xenko.Core.Assets.Editor;component/View/CommonResources.xaml"/>
-        <ResourceDictionary Source="/Xenko.Assets.Presentation;component/View/ImageDictionary.xaml"/>
+        <ResourceDictionary Source="/Stride.Core.Assets.Editor;component/View/CommonResources.xaml"/>
+        <ResourceDictionary Source="/Stride.Assets.Presentation;component/View/ImageDictionary.xaml"/>
       </ResourceDictionary.MergedDictionaries>
 
       <!-- TODO: Put the styles in generic! -->

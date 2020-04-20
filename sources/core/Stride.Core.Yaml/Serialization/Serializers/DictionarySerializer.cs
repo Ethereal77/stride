@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Reflection;
-using Xenko.Core.Yaml.Events;
+using Stride.Core.Diagnostics;
+using Stride.Core.Reflection;
+using Stride.Core.Yaml.Events;
 
-using Scalar = Xenko.Core.Yaml.Events.Scalar;
+using Scalar = Stride.Core.Yaml.Events.Scalar;
 
-namespace Xenko.Core.Yaml.Serialization.Serializers
+namespace Stride.Core.Yaml.Serialization.Serializers
 {
     /// <summary>
     /// Class for serializing a <see cref="IDictionary{TKey,TValue}"/> or <see cref="System.Collections.IDictionary"/>

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -14,11 +14,11 @@ using System.Text;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio.TextTemplating;
 
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
 
-namespace Xenko.Core.ProjectTemplating
+namespace Stride.Core.ProjectTemplating
 {
     internal class ProjectTemplatingHost : Microsoft.VisualStudio.TextTemplating.ITextTemplatingEngineHost, ITextTemplatingSessionHost
     {
@@ -42,7 +42,7 @@ namespace Xenko.Core.ProjectTemplating
                     "Mono.TextTemplating",
                     typeof(PlatformType).Assembly.FullName,
                     typeof(UPath).Assembly.FullName,
-                    "Xenko.Core.ProjectTemplating"
+                    "Stride.Core.ProjectTemplating"
                 };
             assembliesToLoad.AddRange(assemblies);
             StandardAssemblyReferences = assembliesToLoad;
@@ -53,7 +53,7 @@ namespace Xenko.Core.ProjectTemplating
                     "System.Text",
                     "System.Collections.Generic",
                     "System.Dynamic",
-                    "Xenko.Core.ProjectTemplating"
+                    "Stride.Core.ProjectTemplating"
                 };
         }
 

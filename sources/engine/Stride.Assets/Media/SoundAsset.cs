@@ -1,20 +1,20 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.ComponentModel;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Audio;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Audio;
 
-namespace Xenko.Assets.Media
+namespace Stride.Assets.Media
 {
     [DataContract("Sound")]
     [AssetDescription(FileExtension)]
     [AssetContentType(typeof(Sound))]
-    [AssetFormatVersion(XenkoConfig.PackageName, CurrentVersion, "2.0.0.0")]
+    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.0.0.0")]
     public partial class SoundAsset : AssetWithSource
     {
         private const string CurrentVersion = "2.0.0.0";

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,14 +9,14 @@ using System.Windows;
 using Renci.SshNet;
 using Renci.SshNet.Common;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.GameStudio.Services;
-using Xenko.Core.Translation;
+using Stride.Core.Assets.Editor.Services;
+using Stride.GameStudio.Services;
+using Stride.Core.Translation;
 
-using MessageBoxButton = Xenko.Core.Presentation.Services.MessageBoxButton;
-using MessageBoxImage = Xenko.Core.Presentation.Services.MessageBoxImage;
+using MessageBoxButton = Stride.Core.Presentation.Services.MessageBoxButton;
+using MessageBoxImage = Stride.Core.Presentation.Services.MessageBoxImage;
 
-namespace Xenko.GameStudio.View
+namespace Stride.GameStudio.View
 {
     /// <summary>
     /// </summary>
@@ -39,11 +39,11 @@ namespace Xenko.GameStudio.View
         {
             // Setup our dialogs using saved settings.
             Service = service;
-            Host.Text = XenkoEditorSettings.Host.GetValue();
-            Port.Value = XenkoEditorSettings.Port.GetValue();
-            Username.Text = XenkoEditorSettings.Username.GetValue();
-            Password.Password = RemoteFacilities.Decrypt(XenkoEditorSettings.Password.GetValue());
-            Location.Text = XenkoEditorSettings.Location.GetValue();
+            Host.Text = StrideEditorSettings.Host.GetValue();
+            Port.Value = StrideEditorSettings.Port.GetValue();
+            Username.Text = StrideEditorSettings.Username.GetValue();
+            Password.Password = RemoteFacilities.Decrypt(StrideEditorSettings.Password.GetValue());
+            Location.Text = StrideEditorSettings.Location.GetValue();
         }
 
         /// <summary>
@@ -104,13 +104,13 @@ namespace Xenko.GameStudio.View
             CheckCredentials();
             if (lastError == CredentialError.None)
             {
-                XenkoEditorSettings.Host.SetValue(Host.Text);
-                XenkoEditorSettings.Port.SetValue((int) Port.Value);
-                XenkoEditorSettings.Username.SetValue(Username.Text);
-                XenkoEditorSettings.Password.SetValue(RemoteFacilities.Encrypt(Password.Password));
-                XenkoEditorSettings.Location.SetValue(Location.Text);
-                XenkoEditorSettings.AskForCredentials.SetValue(CheckBox.IsChecked == null || !CheckBox.IsChecked.Value);
-                XenkoEditorSettings.Save();
+                StrideEditorSettings.Host.SetValue(Host.Text);
+                StrideEditorSettings.Port.SetValue((int) Port.Value);
+                StrideEditorSettings.Username.SetValue(Username.Text);
+                StrideEditorSettings.Password.SetValue(RemoteFacilities.Encrypt(Password.Password));
+                StrideEditorSettings.Location.SetValue(Location.Text);
+                StrideEditorSettings.AskForCredentials.SetValue(CheckBox.IsChecked == null || !CheckBox.IsChecked.Value);
+                StrideEditorSettings.Save();
                 AreCredentialsValid = true;
                 Result = Core.Presentation.Services.DialogResult.Ok;
                 Close();

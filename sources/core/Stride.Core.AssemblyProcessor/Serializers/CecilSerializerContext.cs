@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,10 +10,10 @@ using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-using Xenko.Core;
-using Xenko.Core.Serialization;
+using Stride.Core;
+using Stride.Core.Serialization;
 
-namespace Xenko.Core.AssemblyProcessor.Serializers
+namespace Stride.Core.AssemblyProcessor.Serializers
 {
     internal class CecilSerializerContext
     {
@@ -29,7 +29,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
             ComplexTypes = new Dictionary<TypeDefinition, SerializableTypeInfo>();
             this.log = log;
 
-            XenkoCoreModule = assembly.GetXenkoCoreModule();
+            StrideCoreModule = assembly.GetStrideCoreModule();
         }
 
         public PlatformType Platform { get; }
@@ -42,7 +42,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
         /// </value>
         public AssemblyDefinition Assembly { get; private set; }
 
-        public ModuleDefinition XenkoCoreModule { get; private set; }
+        public ModuleDefinition StrideCoreModule { get; private set; }
 
         public List<Tuple<string, TypeDefinition, bool>> DataContractAliases { get; } = new List<Tuple<string, TypeDefinition, bool>>();
 
@@ -94,7 +94,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
                 {
                     if (profile == "Default")
                     {
-                        var arraySerializerType = XenkoCoreModule.GetTypeResolved("Xenko.Core.Serialization.Serializers.ArraySerializer`1");
+                        var arraySerializerType = StrideCoreModule.GetTypeResolved("Stride.Core.Serialization.Serializers.ArraySerializer`1");
                         var serializerType = new GenericInstanceType(arraySerializerType);
                         serializerType.GenericArguments.Add(arrayType.ElementType);
                         AddSerializableType(type, serializableTypeInfo = new SerializableTypeInfo(serializerType, true), profile);
@@ -211,7 +211,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
             foreach (var serializableItem in ComplexSerializerRegistry.GetSerializableItems(type, true))
             {
                 // Check that all closed types have a proper serializer
-                if (serializableItem.Attributes.Any(x => x.AttributeType.FullName == "Xenko.Core.DataMemberCustomSerializerAttribute")
+                if (serializableItem.Attributes.Any(x => x.AttributeType.FullName == "Stride.Core.DataMemberCustomSerializerAttribute")
                     || serializableItem.Type.ContainsGenericParameter())
                     continue;
 
@@ -261,7 +261,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
             {
                 // Enum
                 // Let's generate a EnumSerializer
-                var enumSerializerType = XenkoCoreModule.GetTypeResolved("Xenko.Core.Serialization.Serializers.EnumSerializer`1");
+                var enumSerializerType = StrideCoreModule.GetTypeResolved("Stride.Core.Serialization.Serializers.EnumSerializer`1");
                 var serializerType = new GenericInstanceType(enumSerializerType);
                 serializerType.GenericArguments.Add(type);
 
@@ -283,7 +283,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
             // 2.1. Check if there is DataSerializerAttribute on this type (if yes, it is serializable, but not a "complex type")
             var dataSerializerAttribute =
                 resolvedType.CustomAttributes.FirstOrDefault(
-                    x => x.AttributeType.FullName == "Xenko.Core.Serialization.DataSerializerAttribute");
+                    x => x.AttributeType.FullName == "Stride.Core.Serialization.DataSerializerAttribute");
             if (dataSerializerAttribute != null)
             {
                 var modeField = dataSerializerAttribute.Fields.FirstOrDefault(x => x.Name == "Mode");
@@ -333,7 +333,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
             // 2.2. Check if SerializableExtendedAttribute is set on this class, or any of its base class with ApplyHierarchy
             var serializableExtendedAttribute =
                 resolvedType.CustomAttributes.FirstOrDefault(
-                    x => x.AttributeType.FullName == "Xenko.Core.DataContractAttribute");
+                    x => x.AttributeType.FullName == "Stride.Core.DataContractAttribute");
             if (dataSerializerAttribute == null && serializableExtendedAttribute != null)
             {
                 // CHeck if ApplyHierarchy is active, otherwise it needs to be the exact type.
@@ -423,7 +423,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
                 className += "`" + type.GenericParameters.Count;
             if (isLocal && type is TypeDefinition)
             {
-                dataSerializerType = new TypeDefinition("Xenko.Core.DataSerializers", className,
+                dataSerializerType = new TypeDefinition("Stride.Core.DataSerializers", className,
                     TypeAttributes.AnsiClass | TypeAttributes.AutoClass | TypeAttributes.Sealed |
                     TypeAttributes.BeforeFieldInit |
                     (type.HasGenericParameters ? TypeAttributes.Public : TypeAttributes.NotPublic));
@@ -433,7 +433,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
             }
             else
             {
-                dataSerializerType = new TypeReference("Xenko.Core.DataSerializers", className, type.Module, type.Scope);
+                dataSerializerType = new TypeReference("Stride.Core.DataSerializers", className, type.Module, type.Scope);
             }
 
             var mode = DataSerializerGenericMode.None;
@@ -462,7 +462,7 @@ namespace Xenko.Core.AssemblyProcessor.Serializers
                 // Setup base class
                 var resolvedType = type.Resolve();
                 var useClassDataSerializer = resolvedType.IsClass && !resolvedType.IsValueType && !resolvedType.IsAbstract && !resolvedType.IsInterface && resolvedType.GetEmptyConstructor() != null;
-                var classDataSerializerType = Assembly.GetXenkoCoreModule().GetType(useClassDataSerializer ? "Xenko.Core.Serialization.ClassDataSerializer`1" : "Xenko.Core.Serialization.DataSerializer`1");
+                var classDataSerializerType = Assembly.GetStrideCoreModule().GetType(useClassDataSerializer ? "Stride.Core.Serialization.ClassDataSerializer`1" : "Stride.Core.Serialization.DataSerializer`1");
                 var parentType = Assembly.MainModule.ImportReference(classDataSerializerType).MakeGenericType(type.MakeGenericType(dataSerializerType.GenericParameters.ToArray<TypeReference>()));
                 //parentType = ResolveGenericsVisitor.Process(serializerType, type.BaseType);
                 dataSerializerTypeDefinition.BaseType = parentType;

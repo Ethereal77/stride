@@ -1,11 +1,11 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 // Computes screen space velocity for backgrounds
 effect BackgroundVelocityEffect
 {
-    using params XenkoEffectBaseKeys;
+    using params StrideEffectBaseKeys;
 
     mixin ShaderBase;
     mixin ShadingBase;
@@ -14,7 +14,7 @@ effect BackgroundVelocityEffect
     // -----------------------------------------------
     // MRT output definitions (color0 excluded)
     // -----------------------------------------------
-    var targetExtensions = XenkoEffectBaseKeys.RenderTargetExtensions;
+    var targetExtensions = StrideEffectBaseKeys.RenderTargetExtensions;
     if (targetExtensions != null)
     {
         mixin (targetExtensions);

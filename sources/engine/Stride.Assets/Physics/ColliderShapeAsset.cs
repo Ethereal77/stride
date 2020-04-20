@@ -1,26 +1,26 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Physics;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Physics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Yaml;
-using Xenko.Core.Yaml.Serialization;
+using Stride.Core.Annotations;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Serialization;
 
-namespace Xenko.Assets.Physics
+namespace Stride.Assets.Physics
 {
     [DataContract("ColliderShapeAsset")]
     [AssetDescription(FileExtension)]
     [AssetContentType(typeof(PhysicsColliderShape))]
-    [AssetFormatVersion(XenkoConfig.PackageName, CurrentVersion, "2.0.0.0")]
-    [AssetUpgrader(XenkoConfig.PackageName, "2.0.0.0", "3.0.0.0", typeof(ConvexHullDecompositionParametersUpgrader))]
+    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.0.0.0")]
+    [AssetUpgrader(StrideConfig.PackageName, "2.0.0.0", "3.0.0.0", typeof(ConvexHullDecompositionParametersUpgrader))]
     public partial class ColliderShapeAsset : Asset
     {
         private const string CurrentVersion = "3.0.0.0";

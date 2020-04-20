@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,9 +10,9 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
-using Xenko.Core.AssemblyProcessor;
+using Stride.Core.AssemblyProcessor;
 
-namespace Xenko.Core.AssemblyProcessor
+namespace Stride.Core.AssemblyProcessor
 {
     internal class ModuleInitializerProcessor : IAssemblyDefinitionProcessor
     {
@@ -26,7 +26,7 @@ namespace Xenko.Core.AssemblyProcessor
             {
                 foreach (var method in type.Methods)
                 {
-                    var moduleInitializerAttribute = method.CustomAttributes.FirstOrDefault(x => x.AttributeType.FullName == "Xenko.Core.ModuleInitializerAttribute");
+                    var moduleInitializerAttribute = method.CustomAttributes.FirstOrDefault(x => x.AttributeType.FullName == "Stride.Core.ModuleInitializerAttribute");
                     if (moduleInitializerAttribute != null)
                     {
                         var order = moduleInitializerAttribute.HasConstructorArguments ? (int)moduleInitializerAttribute.ConstructorArguments[0].Value : 0;

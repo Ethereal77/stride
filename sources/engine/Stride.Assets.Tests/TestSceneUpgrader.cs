@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,10 +8,10 @@ using System.Text;
 
 using Xunit;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Diagnostics;
+using Stride.Core.Assets;
+using Stride.Core.Diagnostics;
 
-namespace Xenko.Assets.Tests
+namespace Stride.Assets.Tests
 {
     /// <summary>
     /// Test upgrade of scenes
@@ -39,7 +39,7 @@ namespace Xenko.Assets.Tests
                 var file = new PackageLoadingAssetFile(sceneFile, Path.GetDirectoryName(sceneFile));
 
                 var context = new AssetMigrationContext(null, file.ToReference(), file.FilePath.ToWindowsPath(), logger);
-                var needMigration = AssetMigration.MigrateAssetIfNeeded(context, file, "Xenko");
+                var needMigration = AssetMigration.MigrateAssetIfNeeded(context, file, "Stride");
 
                 foreach (var message in logger.Messages)
                 {

@@ -1,12 +1,12 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Assets.Presentation.Preview.Views;
-using Xenko.Assets.SpriteFont;
-using Xenko.Editor.Preview;
+using Stride.Assets.Presentation.Preview.Views;
+using Stride.Assets.SpriteFont;
+using Stride.Editor.Preview;
 
-namespace Xenko.Assets.Presentation.Preview
+namespace Stride.Assets.Presentation.Preview
 {
     /// <summary>
     /// An implementation of the <see cref="AssetPreview"/> that can preview precompiled sprite fonts.

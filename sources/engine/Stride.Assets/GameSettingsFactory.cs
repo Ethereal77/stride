@@ -1,19 +1,19 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization;
-using Xenko.Assets.Textures;
-using Xenko.Audio;
-using Xenko.Graphics;
-using Xenko.Navigation;
-using Xenko.Physics;
-using Xenko.Streaming;
+using Stride.Core.Assets;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization;
+using Stride.Assets.Textures;
+using Stride.Audio;
+using Stride.Graphics;
+using Stride.Navigation;
+using Stride.Physics;
+using Stride.Streaming;
 
-namespace Xenko.Assets
+namespace Stride.Assets
 {
     public class GameSettingsFactory : AssetFactory<GameSettingsAsset>
     {
@@ -22,7 +22,7 @@ namespace Xenko.Assets
         {
             var asset = new GameSettingsAsset();
 
-            asset.SplashScreenTexture = AttachedReferenceManager.CreateProxyObject<Texture>(new AssetId("d26edb11-10bd-403c-b3c2-9c7fcccf25e5"), "XenkoDefaultSplashScreen");
+            asset.SplashScreenTexture = AttachedReferenceManager.CreateProxyObject<Texture>(new AssetId("d26edb11-10bd-403c-b3c2-9c7fcccf25e5"), "StrideDefaultSplashScreen");
             asset.SplashScreenColor = Color.Black;
 
             //add default filters, todo maybe a config file somewhere is better

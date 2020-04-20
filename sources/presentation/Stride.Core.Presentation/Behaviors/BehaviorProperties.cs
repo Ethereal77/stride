@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,12 +10,12 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Extensions;
-using Xenko.Core.Presentation.Internal;
-using Xenko.Core.Presentation.Interop;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Extensions;
+using Stride.Core.Presentation.Internal;
+using Stride.Core.Presentation.Interop;
 
-namespace Xenko.Core.Presentation.Behaviors
+namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
     /// This static class contains attached dependency properties that can be used as behavior to add or change features of controls.

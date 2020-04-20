@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Xenko.Core.Assets.Editor;
-using Xenko.Core.Extensions;
-using Xenko.Core.MostRecentlyUsedFiles;
-using Xenko.Core.IO;
-using Xenko.Core.Settings;
-using Xenko.Core.Yaml;
+using Stride.Core.Assets.Editor;
+using Stride.Core.Extensions;
+using Stride.Core.MostRecentlyUsedFiles;
+using Stride.Core.IO;
+using Stride.Core.Settings;
+using Stride.Core.Yaml;
 
-namespace Xenko.LauncherApp.Services
+namespace Stride.LauncherApp.Services
 {
     public static class GameStudioSettings
     {
@@ -100,11 +100,11 @@ namespace Xenko.LauncherApp.Services
             UpdateMostRecentlyUsed();
         }
 
-        public static void RemoveMostRecentlyUsed(UFile filePath, string xenkoVersion)
+        public static void RemoveMostRecentlyUsed(UFile filePath, string strideVersion)
         {
             lock (LockObject)
             {
-                MRU.RemoveFile(filePath, xenkoVersion);
+                MRU.RemoveFile(filePath, strideVersion);
                 UpdateMostRecentlyUsed();
             }
         }

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,7 +11,7 @@ using System.Windows.Markup;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-[assembly: XmlnsPrefix("http://schemas.xenko.com/xaml/presentation", "xk")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Translation.Presentation")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Translation.Presentation.MarkupExtensions")]
-[assembly: XmlnsDefinition("http://schemas.xenko.com/xaml/presentation", "Xenko.Core.Translation.Presentation.ValueConverters")]
+[assembly: XmlnsPrefix("http://schemas.stride3d.net/xaml/presentation", "xk")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Translation.Presentation")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Translation.Presentation.MarkupExtensions")]
+[assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Translation.Presentation.ValueConverters")]

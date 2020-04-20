@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2007-2011 SlimDX Group
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Xenko.Core.Mathematics
+namespace Stride.Core.Mathematics
 {
     /// <summary>
     /// Represents a two dimensional mathematical vector.
@@ -19,27 +19,27 @@ namespace Xenko.Core.Mathematics
     public struct Vector2 : IEquatable<Vector2>, IFormattable
     {
         /// <summary>
-        /// The size of the <see cref="Xenko.Core.Mathematics.Vector2"/> type, in bytes.
+        /// The size of the <see cref="Stride.Core.Mathematics.Vector2"/> type, in bytes.
         /// </summary>
         public static readonly int SizeInBytes = Utilities.SizeOf<Vector2>();
 
         /// <summary>
-        /// A <see cref="Xenko.Core.Mathematics.Vector2"/> with all of its components set to zero.
+        /// A <see cref="Stride.Core.Mathematics.Vector2"/> with all of its components set to zero.
         /// </summary>
         public static readonly Vector2 Zero = new Vector2();
 
         /// <summary>
-        /// The X unit <see cref="Xenko.Core.Mathematics.Vector2"/> (1, 0).
+        /// The X unit <see cref="Stride.Core.Mathematics.Vector2"/> (1, 0).
         /// </summary>
         public static readonly Vector2 UnitX = new Vector2(1.0f, 0.0f);
 
         /// <summary>
-        /// The Y unit <see cref="Xenko.Core.Mathematics.Vector2"/> (0, 1).
+        /// The Y unit <see cref="Stride.Core.Mathematics.Vector2"/> (0, 1).
         /// </summary>
         public static readonly Vector2 UnitY = new Vector2(0.0f, 1.0f);
 
         /// <summary>
-        /// A <see cref="Xenko.Core.Mathematics.Vector2"/> with all of its components set to one.
+        /// A <see cref="Stride.Core.Mathematics.Vector2"/> with all of its components set to one.
         /// </summary>
         public static readonly Vector2 One = new Vector2(1.0f, 1.0f);
 
@@ -56,7 +56,7 @@ namespace Xenko.Core.Mathematics
         public float Y;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Vector2"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Vector2"/> struct.
         /// </summary>
         /// <param name="value">The value that will be assigned to all components.</param>
         public Vector2(float value)
@@ -66,7 +66,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Vector2"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Vector2"/> struct.
         /// </summary>
         /// <param name="x">Initial value for the X component of the vector.</param>
         /// <param name="y">Initial value for the Y component of the vector.</param>
@@ -77,7 +77,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Xenko.Core.Mathematics.Vector2"/> struct.
+        /// Initializes a new instance of the <see cref="Stride.Core.Mathematics.Vector2"/> struct.
         /// </summary>
         /// <param name="values">The values to assign to the X and Y components of the vector. This must be an array with two elements.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
@@ -137,7 +137,7 @@ namespace Xenko.Core.Mathematics
         /// </summary>
         /// <returns>The length of the vector.</returns>
         /// <remarks>
-        /// <see cref="Xenko.Core.Mathematics.Vector2.LengthSquared"/> may be preferred when only the relative length is needed
+        /// <see cref="Stride.Core.Mathematics.Vector2.LengthSquared"/> may be preferred when only the relative length is needed
         /// and speed is of the essence.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -151,7 +151,7 @@ namespace Xenko.Core.Mathematics
         /// </summary>
         /// <returns>The squared length of the vector.</returns>
         /// <remarks>
-        /// This method may be preferred to <see cref="Xenko.Core.Mathematics.Vector2.Length"/> when only a relative length is needed
+        /// This method may be preferred to <see cref="Stride.Core.Mathematics.Vector2.Length"/> when only a relative length is needed
         /// and speed is of the essence.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -351,11 +351,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Returns a <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
+        /// Returns a <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
         /// </summary>
-        /// <param name="value1">A <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 3 of the triangle.</param>
+        /// <param name="value1">A <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 1 of the triangle.</param>
+        /// <param name="value2">A <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 2 of the triangle.</param>
+        /// <param name="value3">A <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 3 of the triangle.</param>
         /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
         /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
         /// <param name="result">When the method completes, contains the 2D Cartesian coordinates of the specified point.</param>
@@ -367,14 +367,14 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Returns a <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
+        /// Returns a <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of a point specified in Barycentric coordinates relative to a 2D triangle.
         /// </summary>
-        /// <param name="value1">A <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 1 of the triangle.</param>
-        /// <param name="value2">A <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 2 of the triangle.</param>
-        /// <param name="value3">A <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 3 of the triangle.</param>
+        /// <param name="value1">A <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 1 of the triangle.</param>
+        /// <param name="value2">A <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 2 of the triangle.</param>
+        /// <param name="value3">A <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of vertex 3 of the triangle.</param>
         /// <param name="amount1">Barycentric coordinate b2, which expresses the weighting factor toward vertex 2 (specified in <paramref name="value2"/>).</param>
         /// <param name="amount2">Barycentric coordinate b3, which expresses the weighting factor toward vertex 3 (specified in <paramref name="value3"/>).</param>
-        /// <returns>A new <see cref="Xenko.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of the specified point.</returns>
+        /// <returns>A new <see cref="Stride.Core.Mathematics.Vector2"/> containing the 2D Cartesian coordinates of the specified point.</returns>
         public static Vector2 Barycentric(Vector2 value1, Vector2 value2, Vector2 value3, float amount1, float amount2)
         {
             Vector2 result;
@@ -423,7 +423,7 @@ namespace Xenko.Core.Mathematics
         /// <param name="value2">The second vector.</param>
         /// <param name="result">When the method completes, contains the distance between the two vectors.</param>
         /// <remarks>
-        /// <see cref="Xenko.Core.Mathematics.Vector2.DistanceSquared(ref Vector2, ref Vector2, out float)"/> may be preferred when only the relative distance is needed
+        /// <see cref="Stride.Core.Mathematics.Vector2.DistanceSquared(ref Vector2, ref Vector2, out float)"/> may be preferred when only the relative distance is needed
         /// and speed is of the essence.
         /// </remarks>
         public static void Distance(ref Vector2 value1, ref Vector2 value2, out float result)
@@ -441,7 +441,7 @@ namespace Xenko.Core.Mathematics
         /// <param name="value2">The second vector.</param>
         /// <returns>The distance between the two vectors.</returns>
         /// <remarks>
-        /// <see cref="Xenko.Core.Mathematics.Vector2.DistanceSquared(Vector2, Vector2)"/> may be preferred when only the relative distance is needed
+        /// <see cref="Stride.Core.Mathematics.Vector2.DistanceSquared(Vector2, Vector2)"/> may be preferred when only the relative distance is needed
         /// and speed is of the essence.
         /// </remarks>
         public static float Distance(Vector2 value1, Vector2 value2)
@@ -865,11 +865,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms a 2D vector by the given <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation.
+        /// Transforms a 2D vector by the given <see cref="Stride.Core.Mathematics.Quaternion"/> rotation.
         /// </summary>
         /// <param name="vector">The vector to rotate.</param>
-        /// <param name="rotation">The <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation to apply.</param>
-        /// <param name="result">When the method completes, contains the transformed <see cref="Xenko.Core.Mathematics.Vector4"/>.</param>
+        /// <param name="rotation">The <see cref="Stride.Core.Mathematics.Quaternion"/> rotation to apply.</param>
+        /// <param name="result">When the method completes, contains the transformed <see cref="Stride.Core.Mathematics.Vector4"/>.</param>
         public static void Transform(ref Vector2 vector, ref Quaternion rotation, out Vector2 result)
         {
             float x = rotation.X + rotation.X;
@@ -885,11 +885,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms a 2D vector by the given <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation.
+        /// Transforms a 2D vector by the given <see cref="Stride.Core.Mathematics.Quaternion"/> rotation.
         /// </summary>
         /// <param name="vector">The vector to rotate.</param>
-        /// <param name="rotation">The <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation to apply.</param>
-        /// <returns>The transformed <see cref="Xenko.Core.Mathematics.Vector4"/>.</returns>
+        /// <param name="rotation">The <see cref="Stride.Core.Mathematics.Quaternion"/> rotation to apply.</param>
+        /// <returns>The transformed <see cref="Stride.Core.Mathematics.Vector4"/>.</returns>
         public static Vector2 Transform(Vector2 vector, Quaternion rotation)
         {
             Vector2 result;
@@ -898,10 +898,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms an array of vectors by the given <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation.
+        /// Transforms an array of vectors by the given <see cref="Stride.Core.Mathematics.Quaternion"/> rotation.
         /// </summary>
         /// <param name="source">The array of vectors to transform.</param>
-        /// <param name="rotation">The <see cref="Xenko.Core.Mathematics.Quaternion"/> rotation to apply.</param>
+        /// <param name="rotation">The <see cref="Stride.Core.Mathematics.Quaternion"/> rotation to apply.</param>
         /// <param name="destination">The array for which the transformed vectors are stored.
         /// This array may be the same array as <paramref name="source"/>.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
@@ -938,11 +938,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms a 2D vector by the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Transforms a 2D vector by the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="vector">The source vector.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
-        /// <param name="result">When the method completes, contains the transformed <see cref="Xenko.Core.Mathematics.Vector4"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="result">When the method completes, contains the transformed <see cref="Stride.Core.Mathematics.Vector4"/>.</param>
         public static void Transform(ref Vector2 vector, ref Matrix transform, out Vector4 result)
         {
             result = new Vector4(
@@ -953,11 +953,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms a 2D vector by the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Transforms a 2D vector by the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="vector">The source vector.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
-        /// <returns>The transformed <see cref="Xenko.Core.Mathematics.Vector4"/>.</returns>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
+        /// <returns>The transformed <see cref="Stride.Core.Mathematics.Vector4"/>.</returns>
         public static Vector4 Transform(Vector2 vector, Matrix transform)
         {
             Vector4 result;
@@ -966,10 +966,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Transforms an array of 2D vectors by the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Transforms an array of 2D vectors by the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="source">The array of vectors to transform.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
         /// <param name="destination">The array for which the transformed vectors are stored.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="destination"/> is shorter in length than <paramref name="source"/>.</exception>
@@ -989,10 +989,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs a coordinate transformation using the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Performs a coordinate transformation using the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="coordinate">The coordinate vector to transform.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
         /// <param name="result">When the method completes, contains the transformed coordinates.</param>
         /// <remarks>
         /// A coordinate transform performs the transformation with the assumption that the w component
@@ -1013,10 +1013,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs a coordinate transformation using the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Performs a coordinate transformation using the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="coordinate">The coordinate vector to transform.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
         /// <returns>The transformed coordinates.</returns>
         /// <remarks>
         /// A coordinate transform performs the transformation with the assumption that the w component
@@ -1033,10 +1033,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs a coordinate transformation on an array of vectors using the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Performs a coordinate transformation on an array of vectors using the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="source">The array of coordinate vectors to trasnform.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
         /// <param name="destination">The array for which the transformed vectors are stored.
         /// This array may be the same array as <paramref name="source"/>.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
@@ -1064,10 +1064,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs a normal transformation using the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Performs a normal transformation using the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="normal">The normal vector to transform.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
         /// <param name="result">When the method completes, contains the transformed normal.</param>
         /// <remarks>
         /// A normal transform performs the transformation with the assumption that the w component
@@ -1084,10 +1084,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs a normal transformation using the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Performs a normal transformation using the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="normal">The normal vector to transform.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
         /// <returns>The transformed normal.</returns>
         /// <remarks>
         /// A normal transform performs the transformation with the assumption that the w component
@@ -1104,10 +1104,10 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs a normal transformation on an array of vectors using the given <see cref="Xenko.Core.Mathematics.Matrix"/>.
+        /// Performs a normal transformation on an array of vectors using the given <see cref="Stride.Core.Mathematics.Matrix"/>.
         /// </summary>
         /// <param name="source">The array of normal vectors to transform.</param>
-        /// <param name="transform">The transformation <see cref="Xenko.Core.Mathematics.Matrix"/>.</param>
+        /// <param name="transform">The transformation <see cref="Stride.Core.Mathematics.Matrix"/>.</param>
         /// <param name="destination">The array for which the transformed vectors are stored.
         /// This array may be the same array as <paramref name="source"/>.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="destination"/> is <c>null</c>.</exception>
@@ -1275,7 +1275,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="Xenko.Core.Mathematics.Vector2"/> to <see cref="Xenko.Core.Mathematics.Vector3"/>.
+        /// Performs an explicit conversion from <see cref="Stride.Core.Mathematics.Vector2"/> to <see cref="Stride.Core.Mathematics.Vector3"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1285,7 +1285,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="Xenko.Core.Mathematics.Vector2"/> to <see cref="Xenko.Core.Mathematics.Vector4"/>.
+        /// Performs an explicit conversion from <see cref="Stride.Core.Mathematics.Vector2"/> to <see cref="Stride.Core.Mathematics.Vector4"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1360,11 +1360,11 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="Xenko.Core.Mathematics.Vector2"/> is equal to this instance.
+        /// Determines whether the specified <see cref="Stride.Core.Mathematics.Vector2"/> is equal to this instance.
         /// </summary>
-        /// <param name="other">The <see cref="Xenko.Core.Mathematics.Vector2"/> to compare with this instance.</param>
+        /// <param name="other">The <see cref="Stride.Core.Mathematics.Vector2"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Xenko.Core.Mathematics.Vector2"/> is equal to this instance; otherwise, <c>false</c>.
+        /// <c>true</c> if the specified <see cref="Stride.Core.Mathematics.Vector2"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public bool Equals(Vector2 other)
         {
@@ -1392,7 +1392,7 @@ namespace Xenko.Core.Mathematics
 
 #if WPFInterop
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Vector2"/> to <see cref="System.Windows.Point"/>.
+        /// Performs an implicit conversion from <see cref="Stride.Core.Mathematics.Vector2"/> to <see cref="System.Windows.Point"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1402,7 +1402,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="System.Windows.Point"/> to <see cref="Xenko.Core.Mathematics.Vector2"/>.
+        /// Performs an explicit conversion from <see cref="System.Windows.Point"/> to <see cref="Stride.Core.Mathematics.Vector2"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1414,7 +1414,7 @@ namespace Xenko.Core.Mathematics
 
 #if XnaInterop
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Vector2"/> to <see cref="Microsoft.Xna.Framework.Vector2"/>.
+        /// Performs an implicit conversion from <see cref="Stride.Core.Mathematics.Vector2"/> to <see cref="Microsoft.Xna.Framework.Vector2"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -1424,7 +1424,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Microsoft.Xna.Framework.Vector2"/> to <see cref="Xenko.Core.Mathematics.Vector2"/>.
+        /// Performs an implicit conversion from <see cref="Microsoft.Xna.Framework.Vector2"/> to <see cref="Stride.Core.Mathematics.Vector2"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>

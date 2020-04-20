@@ -1,18 +1,18 @@
 <!--
 ***********************************************************************************************
-  Xenko.Core.GlobalSettings.Local.targets
+  Stride.Core.GlobalSettings.Local.targets
 
   Build file pre-included before the building of the project to configure the output paths
   based on the selected platforms.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- Define the location where to build assemblies. -->
-    <XenkoBuildDirectory>$(XenkoPlatformFullName)</XenkoBuildDirectory>
-    <XenkoOutputCommonDir>$(MSBuildThisFileDirectory)..\Bin\$(XenkoBuildDirectory)\</XenkoOutputCommonDir>
-    <XenkoOutputCommonDir>$([System.IO.Path]::GetFullPath('$(XenkoOutputCommonDir)'))</XenkoOutputCommonDir>
+    <StrideBuildDirectory>$(StridePlatformFullName)</StrideBuildDirectory>
+    <StrideOutputCommonDir>$(MSBuildThisFileDirectory)..\Bin\$(StrideBuildDirectory)\</StrideOutputCommonDir>
+    <StrideOutputCommonDir>$([System.IO.Path]::GetFullPath('$(StrideOutputCommonDir)'))</StrideOutputCommonDir>
   </PropertyGroup>
 </Project>

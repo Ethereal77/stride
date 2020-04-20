@@ -1,12 +1,12 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Runtime.CompilerServices;
 
-using Xenko.Core.Annotations;
+using Stride.Core.Annotations;
 
-namespace Xenko.Core.Diagnostics
+namespace Stride.Core.Diagnostics
 {
     /// <summary>
     /// A class to store <a href="http://msdn.microsoft.com/en-us/library/hh534540%28v=vs.110%29.aspx">Caller Information</a> attributes.

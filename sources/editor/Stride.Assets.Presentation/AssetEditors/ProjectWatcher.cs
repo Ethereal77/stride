@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -19,16 +19,16 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.CodeAnalysis.Text;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.IO;
-using Xenko.Core.Collections;
-using Xenko.Core.Extensions;
-using Xenko.Assets.Presentation.AssetEditors.ScriptEditor;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.IO;
+using Stride.Core.Collections;
+using Stride.Core.Extensions;
+using Stride.Assets.Presentation.AssetEditors.ScriptEditor;
 
 using Project = Microsoft.CodeAnalysis.Project;
 
-namespace Xenko.Assets.Presentation.AssetEditors
+namespace Stride.Assets.Presentation.AssetEditors
 {
     public enum AssemblyChangeType
     {

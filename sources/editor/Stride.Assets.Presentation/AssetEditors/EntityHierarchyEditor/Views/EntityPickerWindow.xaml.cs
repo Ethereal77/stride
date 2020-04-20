@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Collections;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
-using Xenko.Assets.Presentation.SceneEditor.Services;
-using Xenko.Engine;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Collections;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
+using Stride.Assets.Presentation.SceneEditor.Services;
+using Stride.Engine;
 
-namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Views
+namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Views
 {
     /// <summary>
     /// Interaction logic for EntityPickerWindow.xaml
@@ -110,7 +110,7 @@ namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Views
 
         protected override void OnClosed(EventArgs e)
         {
-            if (Result != Xenko.Core.Presentation.Services.DialogResult.Ok)
+            if (Result != Stride.Core.Presentation.Services.DialogResult.Ok)
                 SelectedEntity = null;
 
             base.OnClosed(e);

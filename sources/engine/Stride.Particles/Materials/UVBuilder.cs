@@ -1,12 +1,12 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core;
-using Xenko.Particles.Sorters;
-using Xenko.Particles.VertexLayouts;
+using Stride.Core;
+using Stride.Particles.Sorters;
+using Stride.Particles.VertexLayouts;
 
-namespace Xenko.Particles.Materials
+namespace Stride.Particles.Materials
 {
     /// <summary>
     /// Base class for building and animating the texture coordinates in a particle vertex buffer stream

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,16 +8,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.ReferenceCounting;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Shaders;
-using Xenko.Shaders.Compiler;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.ReferenceCounting;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Shaders;
+using Stride.Shaders.Compiler;
 
-namespace Xenko.Rendering
+namespace Stride.Rendering
 {
     /// <summary>
     /// The effect system.

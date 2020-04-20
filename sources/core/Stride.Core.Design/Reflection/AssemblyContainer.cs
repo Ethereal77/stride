@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -12,11 +12,11 @@ using System.Runtime.CompilerServices;
 
 using Microsoft.Extensions.DependencyModel;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
+using Stride.Core.Annotations;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
 
-namespace Xenko.Core.Reflection
+namespace Stride.Core.Reflection
 {
     public class LoadedAssembly
     {
@@ -196,7 +196,7 @@ namespace Xenko.Core.Reflection
                     if (new UDirectory(AppDomain.CurrentDomain.BaseDirectory) == new UFile(assemblyFullPath).GetFullDirectory())
                     {
                         // If loading from base directory, don't even try to load through byte array, as Assembly.Load will notice there is a "safer" version to load
-                        // This happens usually when opening Xenko assemblies themselves
+                        // This happens usually when opening Stride assemblies themselves
                         assembly = Assembly.LoadFrom(assemblyFullPath);
                     }
                     else

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core.Yaml;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Yaml;
 using System.IO;
 
-using Xenko.Core.IO;
+using Stride.Core.IO;
 
-namespace Xenko.Core.Assets.Editor.Components.TemplateDescriptions
+namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions
 {
     /// <summary>
     /// An implementation of <see cref="ITemplateGenerator"/> that will save the session and update the assembly references.

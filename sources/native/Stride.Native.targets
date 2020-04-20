@@ -1,95 +1,95 @@
 <!--
 ***********************************************************************************************
-  Xenko.Native.targets
+  Stride.Native.targets
 
   Build file post-included after the building of the project to configure the generation of the
   needed native libraries for each runtime / architecture, and the linking between these
   libraries and the dependent .NET assemblies.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Condition="Exists('$(MSBuildProjectDirectory)\Xenko.Native.Libs.targets')" Project="$(MSBuildProjectDirectory)\Xenko.Native.Libs.targets" />
+  <Import Condition="Exists('$(MSBuildProjectDirectory)\Stride.Native.Libs.targets')" Project="$(MSBuildProjectDirectory)\Stride.Native.Libs.targets" />
 
   <PropertyGroup>
     <!-- ignore bin and obj folders -->
-    <XenkoNativeDefaultItemExcludes>$(XenkoNativeDefaultItemExcludes);$(BaseOutputPath)/**</XenkoNativeDefaultItemExcludes>
-    <XenkoNativeDefaultItemExcludes>$(XenkoNativeDefaultItemExcludes);$(BaseIntermediateOutputPath)/**</XenkoNativeDefaultItemExcludes>
+    <StrideNativeDefaultItemExcludes>$(StrideNativeDefaultItemExcludes);$(BaseOutputPath)/**</StrideNativeDefaultItemExcludes>
+    <StrideNativeDefaultItemExcludes>$(StrideNativeDefaultItemExcludes);$(BaseIntermediateOutputPath)/**</StrideNativeDefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
-    <XenkoNativeCFile Include="**\*.c;**\*.cpp" Exclude="$(XenkoNativeDefaultItemExcludes)" />
-    <XenkoNativeHFile Include="**\*.h;**\*.hpp" Exclude="$(XenkoNativeDefaultItemExcludes)" />
+    <StrideNativeCFile Include="**\*.c;**\*.cpp" Exclude="$(StrideNativeDefaultItemExcludes)" />
+    <StrideNativeHFile Include="**\*.h;**\*.hpp" Exclude="$(StrideNativeDefaultItemExcludes)" />
   </ItemGroup>
 
   <PropertyGroup>
     <!--Use "-v" to debug the tooling -->
-    <XenkoNativeToolingDebug></XenkoNativeToolingDebug>
+    <StrideNativeToolingDebug></StrideNativeToolingDebug>
 
-    <XenkoNativeClang>$(XenkoNativeToolingDebug) -Wno-ignored-attributes -Wno-delete-non-virtual-dtor -Wno-macro-redefined -I&quot;$(XenkoDependenciesDir)\NativePath&quot; -I&quot;$(XenkoDependenciesDir)\NativePath\standard&quot;</XenkoNativeClang>
-    <XenkoNativeClangCPP>-std=c++11 -fno-rtti -fno-exceptions</XenkoNativeClangCPP>
+    <StrideNativeClang>$(StrideNativeToolingDebug) -Wno-ignored-attributes -Wno-delete-non-virtual-dtor -Wno-macro-redefined -I&quot;$(StrideDependenciesDir)\NativePath&quot; -I&quot;$(StrideDependenciesDir)\NativePath\standard&quot;</StrideNativeClang>
+    <StrideNativeClangCPP>-std=c++11 -fno-rtti -fno-exceptions</StrideNativeClangCPP>
 
-    <!--<XenkoNativeOutputPath>$([MSBuild]::MakeRelative('$(OutputPath)', '$(XenkoPackageXenkoPlatformBin)\'))</XenkoNativeOutputPath>-->
+    <!--<StrideNativeOutputPath>$([MSBuild]::MakeRelative('$(OutputPath)', '$(StridePackageStridePlatformBin)\'))</StrideNativeOutputPath>-->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.so; .a; $(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <PropertyGroup>
-    <XenkoNativeClang Condition="'$(Configuration)' == 'Debug'">$(XenkoNativeClang) -O0 -g</XenkoNativeClang>
-    <XenkoNativeClang Condition="'$(Configuration)' == 'Release'">$(XenkoNativeClang) -O3</XenkoNativeClang>
+    <StrideNativeClang Condition="'$(Configuration)' == 'Debug'">$(StrideNativeClang) -O0 -g</StrideNativeClang>
+    <StrideNativeClang Condition="'$(Configuration)' == 'Release'">$(StrideNativeClang) -O3</StrideNativeClang>
   </PropertyGroup>
 
   <!-- Define NEED_DLL_EXPORT for platforms that requires it. -->
   <PropertyGroup>
-    <XenkoNativeClang>$(XenkoNativeClang) -DNEED_DLL_EXPORT</XenkoNativeClang>
+    <StrideNativeClang>$(StrideNativeClang) -DNEED_DLL_EXPORT</StrideNativeClang>
   </PropertyGroup>
 
   <!-- Define default CPU architectures -->
   <ItemGroup>
-    <XenkoNativeCPU Include="x86;x64"/>
+    <StrideNativeCPU Include="x86;x64"/>
   </ItemGroup>
 
   <!-- Define default dynamic library extensions -->
   <PropertyGroup>
-    <XenkoNativeLibraryTargetExt>.dll</XenkoNativeLibraryTargetExt>
+    <StrideNativeLibraryTargetExt>.dll</StrideNativeLibraryTargetExt>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- Special case: no CPU-specific libraries, output at top level -->
-    <_XenkoNativeOutput Condition="'@(XenkoNativeCPU)'==''" Include="$(XenkoNativeOutputName)$(XenkoNativeLibraryTargetExt)">
+    <_StrideNativeOutput Condition="'@(StrideNativeCPU)'==''" Include="$(StrideNativeOutputName)$(StrideNativeLibraryTargetExt)">
       <RelativePath>%(Identity)</RelativePath>
-    </_XenkoNativeOutput>
+    </_StrideNativeOutput>
     <!-- One output file per CPU -->
-    <_XenkoNativeOutput Include="@(XenkoNativeCPU->'%(Identity)\$(XenkoNativeOutputName)$(XenkoNativeLibraryTargetExt)')">
+    <_StrideNativeOutput Include="@(StrideNativeCPU->'%(Identity)\$(StrideNativeOutputName)$(StrideNativeLibraryTargetExt)')">
       <RelativePath>%(Identity)</RelativePath>
-    </_XenkoNativeOutput>
+    </_StrideNativeOutput>
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Include="@(XenkoNativeCFile)" />
-    <UpToDateCheckInput Include="@(XenkoNativeHFile)" />
-    <UpToDateCheckOutput Include="@(XenkoNativeOutput)" />
+    <UpToDateCheckInput Include="@(StrideNativeCFile)" />
+    <UpToDateCheckInput Include="@(StrideNativeHFile)" />
+    <UpToDateCheckOutput Include="@(StrideNativeOutput)" />
   </ItemGroup>
 
-  <!-- Update XenkoNativeOutput.Link using computed OutputPath and add to XenkoNativeLib -->
-  <Target Name="_XenkoRegisterNativeOutputs" Condition="'$(TargetFramework)' != ''" BeforeTargets="_XenkoRegisterDependenciesOutputs;_XenkoGenerateDependencies">
+  <!-- Update StrideNativeOutput.Link using computed OutputPath and add to StrideNativeLib -->
+  <Target Name="_StrideRegisterNativeOutputs" Condition="'$(TargetFramework)' != ''" BeforeTargets="_StrideRegisterDependenciesOutputs;_StrideGenerateDependencies">
     <PropertyGroup>
       <OutputObjectPath>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)</OutputObjectPath>
-      <XenkoNativeOutputPath>$([System.IO.Path]::GetFullPath('$(OutputPath)'))</XenkoNativeOutputPath>
+      <StrideNativeOutputPath>$([System.IO.Path]::GetFullPath('$(OutputPath)'))</StrideNativeOutputPath>
       <_OutputPathRelative>$([System.IO.Path]::GetFullPath('$(OutputPath)'))</_OutputPathRelative>
     </PropertyGroup>
     <ItemGroup>
-      <XenkoNativeOutput Include="@(_XenkoNativeOutput->'$(XenkoNativeOutputPath)%(Identity)')"/>
-      <XenkoNativeOutput>
-        <Link>$([MSBuild]::MakeRelative('$(_OutputPathRelative)', '$(XenkoNativeOutputPath)'))%(RelativePath)</Link>
-      </XenkoNativeOutput>
-      <XenkoNativeLib Include="@(XenkoNativeOutput)"/>
+      <StrideNativeOutput Include="@(_StrideNativeOutput->'$(StrideNativeOutputPath)%(Identity)')"/>
+      <StrideNativeOutput>
+        <Link>$([MSBuild]::MakeRelative('$(_OutputPathRelative)', '$(StrideNativeOutputPath)'))%(RelativePath)</Link>
+      </StrideNativeOutput>
+      <StrideNativeLib Include="@(StrideNativeOutput)"/>
     </ItemGroup>
   </Target>
 
-  <Target Name="_XenkoNativeTouchAfterCompile" AfterTargets="CoreCompile">
-    <!-- This is necessary for UpToDateCheck: CompileNativeClang is checking only XenkoNativeOutput against native sources
-         but FastUpToDateCheck check XenkoNativeOutput against various other unrelated files such as C# sources, so we want to mark the file as modified after, even if CompileNativeClang was skipped -->
-    <Touch Files="@(XenkoNativeOutput)" />
+  <Target Name="_StrideNativeTouchAfterCompile" AfterTargets="CoreCompile">
+    <!-- This is necessary for UpToDateCheck: CompileNativeClang is checking only StrideNativeOutput against native sources
+         but FastUpToDateCheck check StrideNativeOutput against various other unrelated files such as C# sources, so we want to mark the file as modified after, even if CompileNativeClang was skipped -->
+    <Touch Files="@(StrideNativeOutput)" />
   </Target>
 
   <!-- Define ItemGroup so that they are properly copied -->
@@ -97,65 +97,65 @@
   <!--<PropertyGroup>
     <AssignTargetPathsDependsOn>
       $(AssignTargetPathsDependsOn);
-      _XenkoRegisterNativeOutputs;
+      _StrideRegisterNativeOutputs;
     </AssignTargetPathsDependsOn>
   </PropertyGroup>
-  <Target Name="_XenkoRegisterNativeOutputs">
-    <Message Importance="High" Text="XenkoNativeOutput: @(XenkoNativeOutput->'%(TargetFullPath)')"/>
+  <Target Name="_StrideRegisterNativeOutputs">
+    <Message Importance="High" Text="StrideNativeOutput: @(StrideNativeOutput->'%(TargetFullPath)')"/>
     <ItemGroup>
-      <Content Include="@(XenkoNativeOutput->'%(TargetFullPath)')" KeepMetadata="Nothing">
-        <Link>%(XenkoNativeOutput.Identity)</Link>
+      <Content Include="@(StrideNativeOutput->'%(TargetFullPath)')" KeepMetadata="Nothing">
+        <Link>%(StrideNativeOutput.Identity)</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
   </Target>-->
 
-  <!--<Target Name="_XenkoGenerateNativeFile" BeforeTargets="Build">
-    <Touch AlwaysCreate="true" Files="$(OutputPath)\$(XenkoNativeOutputName).ss_native"/>
+  <!--<Target Name="_StrideGenerateNativeFile" BeforeTargets="Build">
+    <Touch AlwaysCreate="true" Files="$(OutputPath)\$(StrideNativeOutputName).ss_native"/>
   </Target>-->
 
   <Target Name="CompileNativeClang_Windows"
-          Inputs="@(XenkoNativeCFile);@(XenkoNativeHFile)"
-          Outputs="@(XenkoNativeOutput)"
-          Condition="'$(XenkoPlatform)' == 'Windows' And $(DesignTimeBuild) != true And $(BuildingProject) != false"
+          Inputs="@(StrideNativeCFile);@(StrideNativeHFile)"
+          Outputs="@(StrideNativeOutput)"
+          Condition="'$(StridePlatform)' == 'Windows' And $(DesignTimeBuild) != true And $(BuildingProject) != false"
           BeforeTargets="CoreCompile"
-          DependsOnTargets="_XenkoRegisterNativeOutputs">
+          DependsOnTargets="_StrideRegisterNativeOutputs">
     
     <MakeDir Directories="$(OutputObjectPath)\x86"/>
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' != '.cpp'"
-          Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x86\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' == '.cpp'" 
-          Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClangCPP) $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x86\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
+    <Exec Condition="'%(StrideNativeCFile.Extension)' != '.cpp'"
+          Command="&quot;$(StrideDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(StrideNativeClang) -o &quot;$(OutputObjectPath)\x86\%(StrideNativeCFile.Filename).obj&quot; -c &quot;%(StrideNativeCFile.FullPath)&quot; -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
+    <Exec Condition="'%(StrideNativeCFile.Extension)' == '.cpp'" 
+          Command="&quot;$(StrideDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(StrideNativeClangCPP) $(StrideNativeClang) -o &quot;$(OutputObjectPath)\x86\%(StrideNativeCFile.Filename).obj&quot; -c &quot;%(StrideNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
     <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\WindowsDesktop\WindowsDesktop.vcxproj"
     <SignFile Condition="'$(XenkoSignTool)' == 'true'" CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec" SigningTarget="%(XenkoNativeOutput.Identity)" TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
              Targets="Build" 
-             Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)\x86;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x86;Configuration=$(Configuration);Platform=x86" 
+             Properties="StrideNativeOutputName=$(StrideNativeOutputName);StrideNativeOutputDir=$(StrideNativeOutputPath)\x86;StrideDependenciesDir=$(StrideDependenciesDir);StrideNativePathLibs=libNativePath.lib $(StrideNativePathLibs);StrideNativeProjectFolder=$(ProjectDir);StrideNativeProjectObjFolder=$(OutputObjectPath)\x86;Configuration=$(Configuration);Platform=x86" 
              StopOnFirstFailure="true" />
 
     <MakeDir Directories="$(OutputObjectPath)\x64"/>
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' != '.cpp'"
-          Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x64\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot; -fms-extensions -DWINDOWS_DESKTOP -target x86_64-pc-windows-msvc" />
-    <Exec Condition="'%(XenkoNativeCFile.Extension)' == '.cpp'" 
-          Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClangCPP) $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x64\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target x86_64-pc-windows-msvc" />
+    <Exec Condition="'%(StrideNativeCFile.Extension)' != '.cpp'"
+          Command="&quot;$(StrideDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(StrideNativeClang) -o &quot;$(OutputObjectPath)\x64\%(StrideNativeCFile.Filename).obj&quot; -c &quot;%(StrideNativeCFile.FullPath)&quot; -fms-extensions -DWINDOWS_DESKTOP -target x86_64-pc-windows-msvc" />
+    <Exec Condition="'%(StrideNativeCFile.Extension)' == '.cpp'" 
+          Command="&quot;$(StrideDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(StrideNativeClangCPP) $(StrideNativeClang) -o &quot;$(OutputObjectPath)\x64\%(StrideNativeCFile.Filename).obj&quot; -c &quot;%(StrideNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target x86_64-pc-windows-msvc" />
     <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\WindowsDesktop\WindowsDesktop.vcxproj" 
              Targets="Build" 
-             Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)x64;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x64;Configuration=$(Configuration);Platform=x64" 
+             Properties="StrideNativeOutputName=$(StrideNativeOutputName);StrideNativeOutputDir=$(StrideNativeOutputPath)x64;StrideDependenciesDir=$(StrideDependenciesDir);StrideNativePathLibs=libNativePath.lib $(StrideNativePathLibs);StrideNativeProjectFolder=$(ProjectDir);StrideNativeProjectObjFolder=$(OutputObjectPath)\x64;Configuration=$(Configuration);Platform=x64" 
              StopOnFirstFailure="true" />
 
-    <SignFile Condition="'$(XenkoSign)' == 'true'"
+    <SignFile Condition="'$(StrideSign)' == 'true'"
               CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec"
-              SigningTarget="%(XenkoNativeOutput.Identity)"
+              SigningTarget="%(StrideNativeOutput.Identity)"
               TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
 
     <!-- Workaround: forcing C# rebuild so that timestamp are up to date (ideally we should have separate input/output groups for C# and Native) -->
     <Delete Files="@(IntermediateAssembly)"/>
   </Target>
 
-  <Target Name="CompileNativeClang_Clean" BeforeTargets="Clean" DependsOnTargets="_XenkoRegisterNativeOutputs">
+  <Target Name="CompileNativeClang_Clean" BeforeTargets="Clean" DependsOnTargets="_StrideRegisterNativeOutputs">
     <ItemGroup Condition="'$(OutputObjectPath)' != ''">
       <ObjFiles Include="$(OutputObjectPath)\**\*.obj" />
     </ItemGroup>
-    <Delete Files="@(XenkoNativeOutput)" />
+    <Delete Files="@(StrideNativeOutput)" />
     <Delete Files="@(ObjFiles)" />
   </Target>
 </Project>

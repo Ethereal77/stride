@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,21 +8,21 @@ using System.Linq;
 
 using Xunit;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core.Assets.Tests.Helpers;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Quantum;
-using Xenko.Assets.Entities;
-using Xenko.Assets.Presentation.Quantum;
-using Xenko.Assets.Presentation.ViewModel.CopyPasteProcessors;
-using Xenko.Engine;
-using Xenko.GameStudio.Tests.Helpers;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Assets.Tests.Helpers;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Core.Quantum;
+using Stride.Assets.Entities;
+using Stride.Assets.Presentation.Quantum;
+using Stride.Assets.Presentation.ViewModel.CopyPasteProcessors;
+using Stride.Engine;
+using Stride.GameStudio.Tests.Helpers;
 
-namespace Xenko.GameStudio.Tests
+namespace Stride.GameStudio.Tests
 {
     public class TestCopyPasteWithEntities
     {

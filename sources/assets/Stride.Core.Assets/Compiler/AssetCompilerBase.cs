@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Tracking;
-using Xenko.Core.IO;
-using Xenko.Core.Serialization.Contents;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Tracking;
+using Stride.Core.IO;
+using Stride.Core.Serialization.Contents;
 
-namespace Xenko.Core.Assets.Compiler
+namespace Stride.Core.Assets.Compiler
 {
     /// <summary>
     /// Base implementation for <see cref="IAssetCompiler"/> suitable to compile a single type of <see cref="Asset"/>.

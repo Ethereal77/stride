@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Assets.Visitors;
-using Xenko.Core.IO;
-using Xenko.Core.Reflection;
+using Stride.Core.Assets.Visitors;
+using Stride.Core.IO;
+using Stride.Core.Reflection;
 
-namespace Xenko.Core.Assets.Tracking
+namespace Stride.Core.Assets.Tracking
 {
     public class SourceFilesCollector : AssetVisitorBase
     {

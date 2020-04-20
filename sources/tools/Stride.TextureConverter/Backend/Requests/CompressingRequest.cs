@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Xenko.TextureConverter.Requests
+namespace Stride.TextureConverter.Requests
 {
     /// <summary>
     /// Request to compress a texture to a specified format
@@ -20,7 +20,7 @@ namespace Xenko.TextureConverter.Requests
         /// <summary>
         /// The format.
         /// </summary>
-        public Xenko.Graphics.PixelFormat Format { get; private set; }
+        public Stride.Graphics.PixelFormat Format { get; private set; }
 
         /// <summary>
         /// Gets the quality.
@@ -32,7 +32,7 @@ namespace Xenko.TextureConverter.Requests
         /// Initializes a new instance of the <see cref="CompressingRequest"/> class.
         /// </summary>
         /// <param name="format">The compression format.</param>
-        public CompressingRequest(Xenko.Graphics.PixelFormat format, TextureQuality quality = TextureQuality.Fast)
+        public CompressingRequest(Stride.Graphics.PixelFormat format, TextureQuality quality = TextureQuality.Fast)
         {
             this.Format = format;
             this.Quality = quality;

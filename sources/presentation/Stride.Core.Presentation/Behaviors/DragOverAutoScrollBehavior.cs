@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,11 +10,11 @@ using System.Windows.Controls;
 
 using Microsoft.Xaml.Behaviors;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Extensions;
-using Xenko.Core.Presentation.Internal;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Extensions;
+using Stride.Core.Presentation.Internal;
 
-namespace Xenko.Core.Presentation.Behaviors
+namespace Stride.Core.Presentation.Behaviors
 {
     // TODO: The drag'n'drop is pretty broken in WPF, especially the DragLeave event (see https://social.msdn.microsoft.com/Forums/vstudio/en-US/d326384b-e182-4f48-ab8b-841a2c2ca4ab/whats-up-with-dragleave-and-egetposition?forum=wpf&prof=required)
     public class DragOverAutoScrollBehavior : Behavior<Control>

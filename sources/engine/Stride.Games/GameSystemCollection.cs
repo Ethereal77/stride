@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -7,11 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Core.Diagnostics;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Core.Diagnostics;
 
-namespace Xenko.Games
+namespace Stride.Games
 {
     /// <summary>A collection of game components.</summary>
     public class GameSystemCollection : TrackingCollection<IGameSystemBase>, IGameSystemCollection, IDisposable

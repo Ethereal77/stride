@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
@@ -11,12 +11,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 
-using Xenko.Core.Reflection;
-using Xenko.Core.Yaml.Serialization;
+using Stride.Core.Reflection;
+using Stride.Core.Yaml.Serialization;
 
 using Xunit;
 
-namespace Xenko.Core.Yaml.Tests
+namespace Stride.Core.Yaml.Tests
 {
     public class DescriptorTests
     {

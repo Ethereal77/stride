@@ -1,10 +1,10 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-namespace Xenko.TextureConverter
+namespace Stride.TextureConverter
 {
     /// <summary>
     /// Request type, used internally, to check whether a library can handle a request.
@@ -22,7 +22,7 @@ namespace Xenko.TextureConverter
         Export,
         Decompressing,
         MipMapsGeneration,
-        ExportToXenko,
+        ExportToStride,
         NormalMapGeneration,
         GammaCorrection,
         PreMultiplyAlpha,

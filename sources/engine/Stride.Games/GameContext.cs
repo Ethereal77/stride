@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,9 +8,9 @@
 using System;
 using System.Reflection;
 
-using Xenko.Graphics;
+using Stride.Graphics;
 
-namespace Xenko.Games
+namespace Stride.Games
 {
     /// <summary>
     /// Contains context used to render the game (Control for WinForm, a DrawingSurface for WP8...etc.).
@@ -23,7 +23,7 @@ namespace Xenko.Games
         public AppContextType ContextType { get; protected set; }
 
         /// <summary>
-        /// Indicating whether the user will call the main loop. E.g. Xenko is used as a library.
+        /// Indicating whether the user will call the main loop. E.g. Stride is used as a library.
         /// </summary>
         public bool IsUserManagingRun { get; protected set; }
 
@@ -75,7 +75,7 @@ namespace Xenko.Games
             {
                 var assembly = Assembly.GetEntryAssembly();
                 var productAttribute = assembly?.GetCustomAttribute<AssemblyProductAttribute>();
-                return productAttribute?.Product ?? "Xenko Game";
+                return productAttribute?.Product ?? "Stride Game";
             }
         }
 
@@ -94,7 +94,7 @@ namespace Xenko.Games
 
         // This code is for backward compatibility only where the generated games
         // would not explicitly create the context, but would just use a Winform
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
         /// <summary>
         /// Performs an implicit conversion from <see cref="Control"/> to <see cref="GameContextWinforms"/>.
         /// </summary>

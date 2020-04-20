@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,21 +6,21 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Engine;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.ComputeEffect.LambertianPrefiltering;
-using Xenko.Rendering.Images.SphericalHarmonics;
-using Xenko.Rendering.LightProbes;
-using Xenko.Rendering.Skyboxes;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization.Contents;
+using Stride.Engine;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.ComputeEffect.LambertianPrefiltering;
+using Stride.Rendering.Images.SphericalHarmonics;
+using Stride.Rendering.LightProbes;
+using Stride.Rendering.Skyboxes;
 
-namespace Xenko.Rendering.LightProbes
+namespace Stride.Rendering.LightProbes
 {
     public static class LightProbeGenerator
     {

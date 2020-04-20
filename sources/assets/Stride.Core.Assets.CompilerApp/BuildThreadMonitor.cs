@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,11 +9,11 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.MicroThreading;
-using Xenko.Core.BuildEngine;
+using Stride.Core.Diagnostics;
+using Stride.Core.MicroThreading;
+using Stride.Core.BuildEngine;
 
-namespace Xenko.Core.Assets.CompilerApp
+namespace Stride.Core.Assets.CompilerApp
 {
     internal class BuildThreadMonitor : IBuildThreadMonitor
     {

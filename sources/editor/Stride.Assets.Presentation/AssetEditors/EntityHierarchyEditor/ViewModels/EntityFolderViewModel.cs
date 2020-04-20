@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,16 +7,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Quantum;
-using Xenko.Core.Translation;
-using Xenko.Assets.Entities;
-using Xenko.Assets.Presentation.ViewModel;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Quantum;
+using Stride.Core.Translation;
+using Stride.Assets.Entities;
+using Stride.Assets.Presentation.ViewModel;
 
-namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
 {
     [DebuggerDisplay("Folder = {" + nameof(Name) + "}")]
     public sealed class EntityFolderViewModel : EntityHierarchyItemViewModel

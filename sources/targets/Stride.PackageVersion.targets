@@ -1,11 +1,11 @@
 <!--
 ***********************************************************************************************
-  Xenko.PackageVersion.targets
+  Stride.PackageVersion.targets
 
   Build file pre-included before the building of the project to configure the version info of
   the generated assemblies and generate the NuGet packages version and metadata.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -17,24 +17,24 @@
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
 
-    <_XenkoSharedAssemblyInfoLines Condition="'$(XenkoPackageBuild)' == 'true'">$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.NuGet.cs'))</_XenkoSharedAssemblyInfoLines>
-    <_XenkoSharedAssemblyInfoLines Condition="'$(XenkoPackageBuild)' != 'true'">$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.cs'))</_XenkoSharedAssemblyInfoLines>
-    <XenkoPublicVersion>$([System.Text.RegularExpressions.Regex]::Match($(_XenkoSharedAssemblyInfoLines), `.*PublicVersion = \"(.*)\";.*`).Groups[1].Value)</XenkoPublicVersion>
-    <XenkoNuGetVersionSuffix>$([System.Text.RegularExpressions.Regex]::Match($(_XenkoSharedAssemblyInfoLines), `.*NuGetVersionSuffix = \"(.*)\";.*`).Groups[1].Value)</XenkoNuGetVersionSuffix>
-    <XenkoBuildMetadata>$([System.Text.RegularExpressions.Regex]::Match($(_XenkoSharedAssemblyInfoLines), `.*BuildMetadata = \"(.*)\";.*`).Groups[1].Value)</XenkoBuildMetadata>
-    <XenkoNuGetVersion>$(XenkoPublicVersion)$(XenkoNuGetVersionSuffix)$(XenkoBuildMetadata)</XenkoNuGetVersion>
+    <_StrideSharedAssemblyInfoLines Condition="'$(StridePackageBuild)' == 'true'">$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.NuGet.cs'))</_StrideSharedAssemblyInfoLines>
+    <_StrideSharedAssemblyInfoLines Condition="'$(StridePackageBuild)' != 'true'">$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.cs'))</_StrideSharedAssemblyInfoLines>
+    <StridePublicVersion>$([System.Text.RegularExpressions.Regex]::Match($(_StrideSharedAssemblyInfoLines), `.*PublicVersion = \"(.*)\";.*`).Groups[1].Value)</StridePublicVersion>
+    <StrideNuGetVersionSuffix>$([System.Text.RegularExpressions.Regex]::Match($(_StrideSharedAssemblyInfoLines), `.*NuGetVersionSuffix = \"(.*)\";.*`).Groups[1].Value)</StrideNuGetVersionSuffix>
+    <StrideBuildMetadata>$([System.Text.RegularExpressions.Regex]::Match($(_StrideSharedAssemblyInfoLines), `.*BuildMetadata = \"(.*)\";.*`).Groups[1].Value)</StrideBuildMetadata>
+    <StrideNuGetVersion>$(StridePublicVersion)$(StrideNuGetVersionSuffix)$(StrideBuildMetadata)</StrideNuGetVersion>
   </PropertyGroup>
 
   <!--
    NuGet Package metadata
    -->
   <PropertyGroup>
-    <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(XenkoNuGetVersion)</PackageVersion>
-    <RepositoryUrl>https://github.com/xenko3d/xenko</RepositoryUrl>
-    <PackageProjectUrl>https://xenko.com</PackageProjectUrl>
-    <PackageTags>Xenko;3D;gamedev;Game Engine;engine;games;D3D</PackageTags>
-    <Authors>Xenko contributors;Silicon Studio Corp.</Authors>
-    <Copyright>Copyright © Xenko contributors and Silicon Studio Corp.</Copyright>
+    <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(StrideNuGetVersion)</PackageVersion>
+    <RepositoryUrl>https://github.com/stride3d/stride</RepositoryUrl>
+    <PackageProjectUrl>https://stride.com</PackageProjectUrl>
+    <PackageTags>Stride;3D;gamedev;Game Engine;engine;games;D3D</PackageTags>
+    <Authors>Stride contributors;Silicon Studio Corp.</Authors>
+    <Copyright>Copyright © Stride contributors and Silicon Studio Corp.</Copyright>
   </PropertyGroup>
 
   <!-- License -->

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-using Xenko.Core.Extensions;
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Presentation.AssetEditors.UIEditor.Adorners;
-using Xenko.Assets.Presentation.AssetEditors.UIEditor.Services;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.Engine;
-using Xenko.Input;
-using Xenko.Rendering.UI;
-using Xenko.UI;
+using Stride.Core.Extensions;
+using Stride.Core.Mathematics;
+using Stride.Assets.Presentation.AssetEditors.UIEditor.Adorners;
+using Stride.Assets.Presentation.AssetEditors.UIEditor.Services;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Engine;
+using Stride.Input;
+using Stride.Rendering.UI;
+using Stride.UI;
 
-namespace Xenko.Assets.Presentation.AssetEditors.UIEditor.Game
+namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 {
     partial class UIEditorGameAdornerService
     {

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -16,10 +16,10 @@ using System.Xml;
 using System.Windows.Input;
 using System.Windows;
 
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.ViewModel;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.ViewModel;
 
-namespace Xenko.ConfigEditor.ViewModels
+namespace Stride.ConfigEditor.ViewModels
 {
     public class RootViewModel : ViewModelBase
     {
@@ -78,20 +78,20 @@ namespace Xenko.ConfigEditor.ViewModels
             }
         }
 
-        private string GetXenkoConfigurationFilename()
+        private string GetStrideConfigurationFilename()
         {
-            if (string.IsNullOrWhiteSpace(Options.XenkoConfigFilename))
-                return Path.Combine(Options.XenkoPath, @"Debug\Xenko.Starter.exe.config");
+            if (string.IsNullOrWhiteSpace(Options.StrideConfigFilename))
+                return Path.Combine(Options.StridePath, @"Debug\Stride.Starter.exe.config");
 
-            if (Path.IsPathRooted(Options.XenkoConfigFilename) == false)
-                return Path.Combine(Options.XenkoPath, Options.XenkoConfigFilename);
+            if (Path.IsPathRooted(Options.StrideConfigFilename) == false)
+                return Path.Combine(Options.StridePath, Options.StrideConfigFilename);
 
-            return Options.XenkoConfigFilename;
+            return Options.StrideConfigFilename;
         }
 
         public async void LoadAssemblies()
         {
-            if (Options == null || Options.XenkoPath == null)
+            if (Options == null || Options.StridePath == null)
             {
                 if (ShowOptionsWindow() == false)
                     return;
@@ -101,7 +101,7 @@ namespace Xenko.ConfigEditor.ViewModels
                 UntrackPropertyChanged(svm);
             workingSections.Clear();
 
-            string tempConfigFilename = GetXenkoConfigurationFilename();
+            string tempConfigFilename = GetStrideConfigurationFilename();
             try
             {
                 xmlDocument.Load(tempConfigFilename);
@@ -114,8 +114,8 @@ namespace Xenko.ConfigEditor.ViewModels
 
             var binPaths = new[]
             {
-                string.Format(@"{0}\Debug", Options.XenkoPath),
-                string.Format(@"{0}\scripts", Options.XenkoPath),
+                string.Format(@"{0}\Debug", Options.StridePath),
+                string.Format(@"{0}\scripts", Options.StridePath),
             };
 
             foreach (var path in binPaths)
@@ -362,7 +362,7 @@ namespace Xenko.ConfigEditor.ViewModels
 
         private void Save()
         {
-            xmlDocument.Save(GetXenkoConfigurationFilename());
+            xmlDocument.Save(GetStrideConfigurationFilename());
         }
 
         private byte[] xmlData;

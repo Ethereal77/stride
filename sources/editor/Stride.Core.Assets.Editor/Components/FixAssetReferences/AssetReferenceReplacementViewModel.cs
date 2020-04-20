@@ -1,14 +1,14 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets.Editor.Components.FixReferences;
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Extensions;
-using Xenko.Core.Quantum;
+using Stride.Core.Assets.Editor.Components.FixReferences;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Extensions;
+using Stride.Core.Quantum;
 
-namespace Xenko.Core.Assets.Editor.Components.FixAssetReferences
+namespace Stride.Core.Assets.Editor.Components.FixAssetReferences
 {
     public class AssetReferenceReplacementViewModel : ReferenceReplacementViewModel<AssetViewModel>
     {

@@ -1,11 +1,11 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
 
-namespace Xenko.Rendering.Images
+namespace Stride.Rendering.Images
 {
     /// <summary>
     /// Scales an input texture to an output texture (down or up, depending on the relative size between input and output)
@@ -31,7 +31,7 @@ namespace Xenko.Rendering.Images
         public SamplingPattern FilterPattern => EffectName == "ImageScalerEffect" ? SamplingPattern.Linear : SamplingPattern.Expanded;
 
         /// <summary>
-        /// Gets or sets the color multiplier. Default is <see cref="Xenko.Core.Mathematics.Color.White"/>
+        /// Gets or sets the color multiplier. Default is <see cref="Stride.Core.Mathematics.Color.White"/>
         /// </summary>
         /// <value>The color multiplier.</value>
         public Color4 Color { get; set; }

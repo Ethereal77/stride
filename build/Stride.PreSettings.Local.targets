@@ -1,17 +1,17 @@
 <!--
 ***********************************************************************************************
-  Xenko.PreSettings.Local.targets
+  Stride.PreSettings.Local.targets
 
   Build file pre-included before the building of the project to configure the default platform,
   graphics API, names, etc.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <XenkoCommonPreSettingsName>Xenko</XenkoCommonPreSettingsName>
-    <XenkoPlatforms Condition="'$(XenkoPlatforms)' == ''">Windows</XenkoPlatforms>
-    <XenkoGraphicsApisWindows Condition="'$(XenkoGraphicsApisWindows)' == ''">Direct3D11</XenkoGraphicsApisWindows>
+    <StrideCommonPreSettingsName>Stride</StrideCommonPreSettingsName>
+    <StridePlatforms Condition="'$(StridePlatforms)' == ''">Windows</StridePlatforms>
+    <StrideGraphicsApisWindows Condition="'$(StrideGraphicsApisWindows)' == ''">Direct3D11</StrideGraphicsApisWindows>
   </PropertyGroup>
 </Project>

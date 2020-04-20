@@ -1,10 +1,10 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-namespace Xenko.Graphics
+namespace Stride.Graphics
 {
     /// <summary>
     /// Resource options for textures.
@@ -36,7 +36,7 @@ namespace Xenko.Graphics
         ///     and SharpDX.Direct3D11.ResourceOptionFlags.SharedKeyedmutex flags instead.
         /// </remarks>
         Shared = 2,
-#if XENKO_GRAPHICS_API_DIRECT3D11
+#if STRIDE_GRAPHICS_API_DIRECT3D11
         /// <summary>
         ///     Enables the resource to be synchronized by using the SharpDX.DXGI.KeyedMutex.Acquire(System.Int64,System.Int32)
         ///     and SharpDX.DXGI.KeyedMutex.Release(System.Int64) APIs.         

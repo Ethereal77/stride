@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Annotations;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.Engine;
-using Xenko.SpriteStudio.Offline;
-using Xenko.SpriteStudio.Runtime;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Annotations;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Engine;
+using Stride.SpriteStudio.Offline;
+using Stride.SpriteStudio.Runtime;
 
-namespace Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
 {
     internal class AddSpriteStudioModelAssetPolicy : CreateComponentPolicyBase<SpriteStudioModelAsset, SpriteStudioModelViewModel>
     {

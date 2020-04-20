@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,24 +6,24 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Animations;
-using Xenko.Rendering;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Animations;
+using Stride.Rendering;
 
-namespace Xenko.Assets.Models
+namespace Stride.Assets.Models
 {
     [DataContract("Animation")]
     [AssetDescription(FileExtension)]
     [AssetContentType(typeof(AnimationClip))]
     [Display((int)AssetDisplayPriority.Models + 20, "Animation")]
-    [AssetFormatVersion(XenkoConfig.PackageName, CurrentVersion, "2.0.0.0")]
+    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.0.0.0")]
     public class AnimationAsset : Asset, IAssetWithSource
     {
         private const string CurrentVersion = "2.0.0.0";

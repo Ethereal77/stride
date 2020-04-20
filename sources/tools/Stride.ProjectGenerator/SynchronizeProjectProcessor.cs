@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,7 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace Xenko.ProjectGenerator
+namespace Stride.ProjectGenerator
 {
     class SynchronizeProjectProcessor : IProjectProcessor
     {
@@ -98,7 +98,7 @@ namespace Xenko.ProjectGenerator
         {
             return itemGroup
                 .Elements()
-                .Where(x => !x.Attributes().Any(y => y.Name == "Label" && y.Value == "Xenko.DoNotSync"))
+                .Where(x => !x.Attributes().Any(y => y.Name == "Label" && y.Value == "Stride.DoNotSync"))
                 .ToArray();
         }
 

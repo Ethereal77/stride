@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,12 +7,12 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
 
-namespace Xenko.Core.BuildEngine
+namespace Stride.Core.BuildEngine
 {
-    public class XenkoXmlObjectSerializer : XmlObjectSerializer
+    public class StrideXmlObjectSerializer : XmlObjectSerializer
     {
         public override void WriteObject(XmlDictionaryWriter writer, object graph)
         {

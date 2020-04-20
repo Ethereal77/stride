@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,10 +8,10 @@ using System.Collections.Generic;
 
 using Xunit;
 
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
 
-namespace Xenko.TextureConverter.Tests
+namespace Stride.TextureConverter.Tests
 {
     public class TextureToolTest : IDisposable
     {
@@ -161,10 +161,10 @@ namespace Xenko.TextureConverter.Tests
 
         [Theory(Skip = "Need check")]
         [InlineData("TextureArray_WMipMaps_BC3.dds")]
-        public void ConvertToXenkoImageTest(string file)
+        public void ConvertToStrideImageTest(string file)
         {
             TexImage image = texTool.Load(Module.PathToInputImages + file);
-            var xk = texTool.ConvertToXenkoImage(image);
+            var xk = texTool.ConvertToStrideImage(image);
             Assert.True(xk.TotalSizeInBytes == image.DataSize);
             Assert.True(xk.Description.MipLevels == image.MipmapCount);
             image.Dispose();
@@ -173,11 +173,11 @@ namespace Xenko.TextureConverter.Tests
 
         [Theory(Skip = "Need check")]
         [InlineData("TextureArray_WMipMaps_BC3.dds")]
-        public void LoadXenkoImageTest(string file)
+        public void LoadStrideImageTest(string file)
         {
             TexImage image = texTool.Load(Module.PathToInputImages + file);
 
-            var xk = texTool.ConvertToXenkoImage(image);
+            var xk = texTool.ConvertToStrideImage(image);
 
             TexImage xkImage = texTool.Load(xk, false);
 

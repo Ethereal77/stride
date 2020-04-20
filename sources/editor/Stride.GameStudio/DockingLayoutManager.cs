@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,18 +9,18 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Settings;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Behaviors;
-using Xenko.Core.Presentation.Extensions;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Settings;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Behaviors;
+using Stride.Core.Presentation.Extensions;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 using Microsoft.Xaml.Behaviors;
 
-namespace Xenko.GameStudio
+namespace Stride.GameStudio
 {
     /// <summary>
     /// A class that manages the docking layout of a <see cref="GameStudioWindow"/>, including switching between Editor and Normal mode, saving/loading

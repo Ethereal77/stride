@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Xenko.Core.Mathematics;
-using Xenko.Rendering;
-using Xenko.Rendering.ComputeEffect;
-using Xenko.Rendering.Images;
-using Xenko.Games;
-using Xenko.Graphics.Regression;
+using Stride.Core.Mathematics;
+using Stride.Rendering;
+using Stride.Rendering.ComputeEffect;
+using Stride.Rendering.Images;
+using Stride.Games;
+using Stride.Graphics.Regression;
 
-namespace Xenko.Graphics.Tests
+namespace Stride.Graphics.Tests
 {
     /// <summary>
     /// The the pass 2 of lambertian prefiltering SH

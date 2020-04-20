@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,14 +9,14 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.Core.LZ4;
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Serialization.Serializers;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.Core.LZ4;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Serialization.Serializers;
 
-namespace Xenko.Core.Storage
+namespace Stride.Core.Storage
 {
     /// <summary>
     /// Object Database Backend (ODB) implementation that bundles multiple chunks into a .bundle files, optionally compressed with LZ4.

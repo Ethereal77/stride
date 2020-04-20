@@ -1,13 +1,13 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core.Reflection;
+using Stride.Core.Reflection;
 
-namespace Xenko.Core.Yaml.Serialization.Serializers
+namespace Stride.Core.Yaml.Serialization.Serializers
 {
     /// <summary>
     /// Default implementation for <see cref="IObjectSerializerBackend"/>

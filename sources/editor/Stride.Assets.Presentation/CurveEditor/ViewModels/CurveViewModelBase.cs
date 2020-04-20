@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2014 OxyPlot contributors
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,21 +8,21 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Presentation.Collections;
-using Xenko.Core.Presentation.Drawing;
-using Xenko.Core.Presentation.Extensions;
-using Xenko.Core.Presentation.ViewModel;
-using Xenko.Core.Quantum;
-using Xenko.Animations;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Mathematics;
+using Stride.Core.Presentation.Collections;
+using Stride.Core.Presentation.Drawing;
+using Stride.Core.Presentation.Extensions;
+using Stride.Core.Presentation.ViewModel;
+using Stride.Core.Quantum;
+using Stride.Animations;
 
 using WindowsPoint = System.Windows.Point;
 using WindowsVector = System.Windows.Vector;
 using WindowsRect = System.Windows.Rect;
 
-namespace Xenko.Assets.Presentation.CurveEditor.ViewModels
+namespace Stride.Assets.Presentation.CurveEditor.ViewModels
 {
     /// <summary>
     /// Base class for all curves inside a curve editor.

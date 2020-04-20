@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
@@ -9,17 +9,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-using Xenko.Core.Yaml.Tokens;
+using Stride.Core.Yaml.Tokens;
 
-using AnchorAlias = Xenko.Core.Yaml.Tokens.AnchorAlias;
-using DocumentEnd = Xenko.Core.Yaml.Tokens.DocumentEnd;
-using DocumentStart = Xenko.Core.Yaml.Tokens.DocumentStart;
-using Event = Xenko.Core.Yaml.Events.ParsingEvent;
-using Scalar = Xenko.Core.Yaml.Tokens.Scalar;
-using StreamEnd = Xenko.Core.Yaml.Tokens.StreamEnd;
-using StreamStart = Xenko.Core.Yaml.Tokens.StreamStart;
+using AnchorAlias = Stride.Core.Yaml.Tokens.AnchorAlias;
+using DocumentEnd = Stride.Core.Yaml.Tokens.DocumentEnd;
+using DocumentStart = Stride.Core.Yaml.Tokens.DocumentStart;
+using Event = Stride.Core.Yaml.Events.ParsingEvent;
+using Scalar = Stride.Core.Yaml.Tokens.Scalar;
+using StreamEnd = Stride.Core.Yaml.Tokens.StreamEnd;
+using StreamStart = Stride.Core.Yaml.Tokens.StreamStart;
 
-namespace Xenko.Core.Yaml
+namespace Stride.Core.Yaml
 {
     /// <summary>
     /// Parses YAML streams.

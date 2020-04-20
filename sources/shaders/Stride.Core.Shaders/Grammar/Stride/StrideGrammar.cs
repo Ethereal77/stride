@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,14 +6,14 @@ using System;
 
 using Irony.Parsing;
 
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Xenko;
-using Xenko.Core.Shaders.Grammar.Hlsl;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Stride;
+using Stride.Core.Shaders.Grammar.Hlsl;
 
-namespace Xenko.Core.Shaders.Grammar.Xenko
+namespace Stride.Core.Shaders.Grammar.Stride
 {
-    [Language("hotei2", "5.0", "Xenko2 hlsl grammar")]
-    public partial class XenkoGrammar : HlslGrammar
+    [Language("hotei2", "5.0", "Stride2 hlsl grammar")]
+    public partial class StrideGrammar : HlslGrammar
     {
         protected readonly NonTerminal constant_buffer_name = T("constant_buffer_name", CreateConstantBufferNameAst);
         protected readonly NonTerminal semantic_type = T("semantic_type", CreateSemanticTypeAst);
@@ -52,9 +52,9 @@ namespace Xenko.Core.Shaders.Grammar.Xenko
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="XenkoGrammar"/> class.
+        /// Initializes a new instance of the <see cref="StrideGrammar"/> class.
         /// </summary>
-        public XenkoGrammar()
+        public StrideGrammar()
         {
             SnippetRoots.Add(expression);
 

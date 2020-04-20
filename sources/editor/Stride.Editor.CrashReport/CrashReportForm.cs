@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,13 +8,13 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Xenko.CrashReport;
+using Stride.CrashReport;
 
-namespace Xenko.Editor.CrashReport
+namespace Stride.Editor.CrashReport
 {
     public partial class CrashReportForm : Form
     {
-        public const string PrivacyPolicyUrl = "https://xenko.com/legal/privacy-policy";
+        public const string PrivacyPolicyUrl = "https://stride3d.net/legal/privacy-policy";
 
         private readonly CrashReportData currentData;
         private int initialHeight;
@@ -118,7 +118,7 @@ namespace Xenko.Editor.CrashReport
                 var error = "An error occurred while opening the browser. You can access the privacy policy at the following url:"
                     + Environment.NewLine + Environment.NewLine + PrivacyPolicyUrl;
 
-                MessageBox.Show(error, @"Xenko", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(error, @"Stride", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -150,7 +150,7 @@ namespace Xenko.Editor.CrashReport
             var result = task.Result;
             if (!result)
             {
-                MessageBox.Show(@"An error occurred while sending the report. Unable to contact the server.", @"Xenko", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(@"An error occurred while sending the report. Unable to contact the server.", @"Stride", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

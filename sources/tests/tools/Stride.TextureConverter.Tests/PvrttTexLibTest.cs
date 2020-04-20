@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,10 +6,10 @@ using System;
 
 using Xunit;
 
-using Xenko.TextureConverter.Requests;
-using Xenko.TextureConverter.TexLibraries;
+using Stride.TextureConverter.Requests;
+using Stride.TextureConverter.TexLibraries;
 
-namespace Xenko.TextureConverter.Tests
+namespace Stride.TextureConverter.Tests
 {
     public class PvrttTexLibTest : IDisposable
     {
@@ -74,9 +74,9 @@ namespace Xenko.TextureConverter.Tests
 
 
         [Theory(Skip = "Need check")]
-        [InlineData("TextureArray_WMipMaps_RGBA8888.pvr", Xenko.Graphics.PixelFormat.ETC2_RGBA)]
-        [InlineData("TextureCube_WMipMaps_RGBA8888.pvr", Xenko.Graphics.PixelFormat.ETC2_RGBA)]
-        public void CompressTest(string file, Xenko.Graphics.PixelFormat format)
+        [InlineData("TextureArray_WMipMaps_RGBA8888.pvr", Stride.Graphics.PixelFormat.ETC2_RGBA)]
+        [InlineData("TextureCube_WMipMaps_RGBA8888.pvr", Stride.Graphics.PixelFormat.ETC2_RGBA)]
+        public void CompressTest(string file, Stride.Graphics.PixelFormat format)
         {
             TexImage image = TestTools.Load(library, file);
 

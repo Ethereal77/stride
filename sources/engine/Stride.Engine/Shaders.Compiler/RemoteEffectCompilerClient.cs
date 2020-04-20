@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,11 +7,11 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Xenko.Core.Serialization;
-using Xenko.Engine.Network;
-using Xenko.Shaders.Compiler.Internals;
+using Stride.Core.Serialization;
+using Stride.Engine.Network;
+using Stride.Shaders.Compiler.Internals;
 
-namespace Xenko.Shaders.Compiler
+namespace Stride.Shaders.Compiler
 {
     /// <summary>
     /// Used internally by <see cref="RemoteEffectCompiler"/> to compile shaders remotely,
@@ -74,7 +74,7 @@ namespace Xenko.Shaders.Compiler
 
         public async Task<SocketMessageLayer> Connect(string packageName, CancellationToken cancellationToken)
         {
-            var url = $"/service/Xenko.EffectCompilerServer/{XenkoVersion.NuGetVersion}/Xenko.EffectCompilerServer.exe";
+            var url = $"/service/Stride.EffectCompilerServer/{StrideVersion.NuGetVersion}/Stride.EffectCompilerServer.exe";
             if (packageName != null)
                 url += string.Format("?packagename={0}", packageName);
 

@@ -1,20 +1,20 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Annotations;
-using Xenko.Core.Reflection;
-using Xenko.Assets.Entities;
-using Xenko.Core.Quantum;
-using Xenko.Animations;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
-using Xenko.Engine;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Annotations;
+using Stride.Core.Reflection;
+using Stride.Assets.Entities;
+using Stride.Core.Quantum;
+using Stride.Animations;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
+using Stride.Engine;
 
-namespace Xenko.Assets.Presentation.ViewModel
+namespace Stride.Assets.Presentation.ViewModel
 {
     public abstract class EntityHierarchyViewModel : AssetCompositeHierarchyViewModel<EntityDesign, Entity>
     {

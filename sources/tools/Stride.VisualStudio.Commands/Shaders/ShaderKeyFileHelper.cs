@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,10 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using Xenko.Shaders.Parser;
-using Xenko.Shaders.Parser.Mixins;
+using Stride.Shaders.Parser;
+using Stride.Shaders.Parser.Mixins;
 
-namespace Xenko.VisualStudio.Commands.Shaders
+namespace Stride.VisualStudio.Commands.Shaders
 {
     class ShaderKeyFileHelper
     {
@@ -20,7 +20,7 @@ namespace Xenko.VisualStudio.Commands.Shaders
             string result;
             try
             {
-                Xenko.Core.Shaders.Parser.ShaderMacro[] macros;
+                Stride.Core.Shaders.Parser.ShaderMacro[] macros;
 
                 // Changed some keywords to avoid ambiguities with HLSL and improve consistency
                 if (inputFileName != null && Path.GetExtension(inputFileName).ToLowerInvariant() == ".xkfx")
@@ -28,7 +28,7 @@ namespace Xenko.VisualStudio.Commands.Shaders
                     // XKFX
                     macros = new[]
                     {
-                        new Xenko.Core.Shaders.Parser.ShaderMacro("shader", "effect")
+                        new Stride.Core.Shaders.Parser.ShaderMacro("shader", "effect")
                     };
                 }
                 else
@@ -36,11 +36,11 @@ namespace Xenko.VisualStudio.Commands.Shaders
                     // XKSL
                     macros = new[]
                     {
-                        new Xenko.Core.Shaders.Parser.ShaderMacro("class", "shader")
+                        new Stride.Core.Shaders.Parser.ShaderMacro("class", "shader")
                     };
                 }
 
-                var parsingResult = XenkoShaderParser.TryPreProcessAndParse(inputFileContent, inputFileName, macros);
+                var parsingResult = StrideShaderParser.TryPreProcessAndParse(inputFileContent, inputFileName, macros);
 
                 if (parsingResult.HasErrors)
                 {

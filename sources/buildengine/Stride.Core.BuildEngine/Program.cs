@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,9 +10,9 @@ using System.Text;
 
 using Mono.Options;
 
-using Xenko.Core.Diagnostics;
+using Stride.Core.Diagnostics;
 
-namespace Xenko.Core.BuildEngine
+namespace Stride.Core.BuildEngine
 {
     class Program
     {
@@ -35,8 +35,8 @@ namespace Xenko.Core.BuildEngine
 
             var p = new OptionSet
                 {
-                    "Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved",
-                    "Xenko Build Tool - Version: "
+                    "Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved",
+                    "Stride Build Tool - Version: "
                     +
                     String.Format(
                         "{0}.{1}.{2}",

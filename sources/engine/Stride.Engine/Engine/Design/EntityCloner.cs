@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using Xenko.Animations;
-using Xenko.Audio;
-using Xenko.Core;
-using Xenko.Core.Serialization;
-using Xenko.Graphics;
-using Xenko.Graphics.Font;
-using Xenko.Rendering;
+using Stride.Animations;
+using Stride.Audio;
+using Stride.Core;
+using Stride.Core.Serialization;
+using Stride.Graphics;
+using Stride.Graphics.Font;
+using Stride.Rendering;
 
-namespace Xenko.Engine.Design
+namespace Stride.Engine.Design
 {
     /// <summary>
     /// Provides method for deep cloning of en <see cref="Entity"/>.

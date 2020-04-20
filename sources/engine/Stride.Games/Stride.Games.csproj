@@ -1,23 +1,23 @@
 <Project>
   <PropertyGroup>
-    <XenkoRuntime>true</XenkoRuntime>
-    <XenkoRuntimeWindowsDotNet>true</XenkoRuntimeWindowsDotNet>
-    <XenkoGraphicsApiDependent>true</XenkoGraphicsApiDependent>
+    <StrideRuntime>true</StrideRuntime>
+    <StrideRuntimeWindowsDotNet>true</StrideRuntimeWindowsDotNet>
+    <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
   </PropertyGroup>
-  <Import Project="..\..\targets\Xenko.PreSettings.targets" />
+  <Import Project="..\..\targets\Stride.PreSettings.targets" />
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <XenkoAssemblyProcessor>true</XenkoAssemblyProcessor>
-    <XenkoAssemblyProcessorOptions>--auto-module-initializer</XenkoAssemblyProcessorOptions>
-    <XenkoPlatformDependent>true</XenkoPlatformDependent>
-    <XenkoProjectPlatformDependentWindows>true</XenkoProjectPlatformDependentWindows>
-    <XenkoBuildTags>*</XenkoBuildTags>
-    <XenkoCodeAnalysis>true</XenkoCodeAnalysis>
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
+    <StridePlatformDependent>true</StridePlatformDependent>
+    <StrideProjectPlatformDependentWindows>true</StrideProjectPlatformDependentWindows>
+    <StrideBuildTags>*</StrideBuildTags>
+    <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
   <Choose>
-    <When Condition="$(XenkoUI.Contains('WINFORMS')) OR $(XenkoUI.Contains('WPF'))">
+    <When Condition="$(StrideUI.Contains('WINFORMS')) OR $(StrideUI.Contains('WPF'))">
       <ItemGroup>
         <Reference Include="System.Windows.Forms" />
       </ItemGroup>
@@ -34,7 +34,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Xenko.Graphics\Xenko.Graphics.csproj" />
+    <ProjectReference Include="..\Stride.Graphics\Stride.Graphics.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\GameResources.resx">
@@ -45,6 +45,6 @@
   <ItemGroup>
     <Content Include="Resources\Logo.ico" />
   </ItemGroup>
-  <Import Project="$(XenkoPostSettingsTargets)" />
+  <Import Project="$(StridePostSettingsTargets)" />
   <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
 </Project>

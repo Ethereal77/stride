@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Xenko.Assets.SpriteFont.Compiler
+namespace Stride.Assets.SpriteFont.Compiler
 {
     // Extracts font glyphs from a specially marked 2D bitmap. Characters should be
     // arranged in a grid ordered from top left to bottom right. Monochrome characters

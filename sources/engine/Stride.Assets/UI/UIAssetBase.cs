@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,18 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Serializers;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Yaml;
-using Xenko.Core.Yaml.Serialization;
-using Xenko.Engine;
-using Xenko.UI;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Serializers;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Mathematics;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Serialization;
+using Stride.Engine;
+using Stride.UI;
 
-namespace Xenko.Assets.UI
+namespace Stride.Assets.UI
 {
     /// <summary>
     /// Base class for assets containing a hierarchy of <see cref="UIElement"/>.

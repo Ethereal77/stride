@@ -1,17 +1,17 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Interop;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Interop;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
 
-namespace Xenko.Assets.Presentation.AssetEditors.GameEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.GameEditor.ViewModels
 {
     /// <summary>
     /// Base class for the view model of asset editors that runs an instance of a Game.

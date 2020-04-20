@@ -1,2 +1,2 @@
-set XenkoPlatforms=Windows
-Xenko.sln
+set StridePlatforms=Windows
+Stride.sln

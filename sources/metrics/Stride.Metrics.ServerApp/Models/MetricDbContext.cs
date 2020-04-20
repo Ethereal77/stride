@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -10,10 +10,10 @@ using System.Reflection;
 
 using Newtonsoft.Json;
 
-using Xenko.Metrics.ServerApp.Controllers;
-using Xenko.Metrics.ServerApp.Migrations;
+using Stride.Metrics.ServerApp.Controllers;
+using Stride.Metrics.ServerApp.Migrations;
 
-namespace Xenko.Metrics.ServerApp.Models
+namespace Stride.Metrics.ServerApp.Models
 {
     public class MetricDbContext : DbContext
     {
@@ -147,8 +147,8 @@ namespace Xenko.Metrics.ServerApp.Models
                 }
                 db.SaveChanges();
 
-                AppEditorId = db.GetApplicationId(CommonApps.XenkoEditorAppId.Guid);
-                AppLauncherId = db.GetApplicationId(CommonApps.XenkoLauncherAppId.Guid);
+                AppEditorId = db.GetApplicationId(CommonApps.StrideEditorAppId.Guid);
+                AppLauncherId = db.GetApplicationId(CommonApps.StrideLauncherAppId.Guid);
 
                 // TODO: comment this for production, only valid for testing the metrics, just run once. Note this is VERY SLOW
                 // MetricDbTest.Fill(db);

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Shaders.Parser.Analysis;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
-using Xenko.Core.Shaders.Ast.Xenko;
+using Stride.Core;
+using Stride.Shaders.Parser.Analysis;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Ast.Stride;
 
-namespace Xenko.Shaders.Parser.Mixins
+namespace Stride.Shaders.Parser.Mixins
 {
     [DebuggerDisplay("Variables[{VariablesReferences.Count}] Methods[{MethodsReferences.Count}]")]
     [DataContract]
@@ -78,7 +78,7 @@ namespace Xenko.Shaders.Parser.Mixins
                 VariablesReferences.Add(variable, new HashSet<ExpressionNodeCouple>());
 
             // Also add all the variables in that buffer so that they are not removed
-            var cbuffer = (ConstantBuffer)variable.GetTag(XenkoTags.ConstantBuffer);
+            var cbuffer = (ConstantBuffer)variable.GetTag(StrideTags.ConstantBuffer);
             if (cbuffer != null)
             {
                 foreach (var otherVariable in cbuffer.Members.OfType<Variable>())

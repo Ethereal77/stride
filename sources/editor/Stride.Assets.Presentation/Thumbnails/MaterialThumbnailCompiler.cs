@@ -1,18 +1,18 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.BuildEngine;
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Materials;
-using Xenko.Editor.Thumbnails;
-using Xenko.Engine;
-using Xenko.Rendering;
-using Xenko.Rendering.ProceduralModels;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.BuildEngine;
+using Stride.Core.Mathematics;
+using Stride.Assets.Materials;
+using Stride.Editor.Thumbnails;
+using Stride.Engine;
+using Stride.Rendering;
+using Stride.Rendering.ProceduralModels;
 
-namespace Xenko.Assets.Presentation.Thumbnails
+namespace Stride.Assets.Presentation.Thumbnails
 {
     [AssetCompiler(typeof(MaterialAsset), typeof(ThumbnailCompilationContext))]
     public class MaterialThumbnailCompiler : ThumbnailCompilerBase<MaterialAsset>
@@ -33,7 +33,7 @@ namespace Xenko.Assets.Presentation.Thumbnails
         /// </summary>
         private class MaterialThumbnailBuildCommand : ThumbnailFromEntityCommand<Material>
         {
-            private const string EditorMaterialPreviewEffect = "XenkoEditorMaterialPreviewEffect";
+            private const string EditorMaterialPreviewEffect = "StrideEditorMaterialPreviewEffect";
 
             private Model model;
 

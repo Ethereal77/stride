@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,9 +7,9 @@ using System.Linq;
 
 using Mono.Cecil.Rocks;
 
-using Xenko.Core.AssemblyProcessor.Serializers;
+using Stride.Core.AssemblyProcessor.Serializers;
 
-namespace Xenko.Core.AssemblyProcessor
+namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
     /// Collects DataContractAttribute.Alias so that they are registered during Module initialization.
@@ -20,7 +20,7 @@ namespace Xenko.Core.AssemblyProcessor
         {
             foreach (var type in context.Assembly.MainModule.GetAllTypes())
             {
-                foreach (var dataContractAttribute in type.CustomAttributes.Where(x => x.AttributeType.FullName == "Xenko.Core.DataContractAttribute" || x.AttributeType.FullName == "Xenko.Core.DataAliasAttribute"))
+                foreach (var dataContractAttribute in type.CustomAttributes.Where(x => x.AttributeType.FullName == "Stride.Core.DataContractAttribute" || x.AttributeType.FullName == "Stride.Core.DataAliasAttribute"))
                 {
                     // Only process if ctor with 1 argument
                     if (!dataContractAttribute.HasConstructorArguments || dataContractAttribute.ConstructorArguments.Count != 1)
@@ -29,7 +29,7 @@ namespace Xenko.Core.AssemblyProcessor
                     var alias = (string)dataContractAttribute.ConstructorArguments[0].Value;
 
                     // Third parameter is IsAlias (differentiate DataAlias from DataContract)
-                    context.DataContractAliases.Add(Tuple.Create(alias, type, dataContractAttribute.AttributeType.FullName == "Xenko.Core.DataAliasAttribute"));
+                    context.DataContractAliases.Add(Tuple.Create(alias, type, dataContractAttribute.AttributeType.FullName == "Stride.Core.DataAliasAttribute"));
                 }
             }
         }

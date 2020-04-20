@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Transactions;
+using Stride.Core.Annotations;
+using Stride.Core.Transactions;
 
-namespace Xenko.Core.Presentation.Dirtiables
+namespace Stride.Core.Presentation.Dirtiables
 {
     /// <summary>
     /// A class that will synchronize the dirty flag of <seealso cref="IDirtiable"/> objects according to operations on a given transaction stack.

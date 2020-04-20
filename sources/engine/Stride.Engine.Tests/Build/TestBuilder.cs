@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,12 +10,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Xunit;
-//using Xenko.Framework.Build.Pipeline;
-using Xenko.Core.IO;
+//using Stride.Framework.Build.Pipeline;
+using Stride.Core.IO;
 
 // Temporary disabling build unit tests, until we move them to a new csproj with correct dependencies
 
-namespace Xenko.Core.Tests.Build
+namespace Stride.Core.Tests.Build
 {
     //    //public class TestBuilder
     //{

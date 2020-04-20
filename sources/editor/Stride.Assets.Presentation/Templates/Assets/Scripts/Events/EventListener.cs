@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Engine;
-using Xenko.Engine.Events;
+using Stride.Core;
+using Stride.Engine;
+using Stride.Engine.Events;
 
 namespace ##Namespace##
 {

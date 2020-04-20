@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.Quantum;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.Assets.UI;
-using Xenko.UI;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.Quantum;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Assets.UI;
+using Stride.UI;
 
-namespace Xenko.Assets.Presentation.AssetEditors.UIEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.UIEditor.ViewModels
 {
     public abstract class UIRootViewModel : UIHierarchyItemViewModel
     {

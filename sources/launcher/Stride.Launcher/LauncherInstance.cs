@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor;
-using Xenko.Core.Extensions;
-using Xenko.LauncherApp.Views;
-using Xenko.Core.Packages;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.View;
-using Xenko.Core.Presentation.Windows;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor;
+using Stride.Core.Extensions;
+using Stride.LauncherApp.Views;
+using Stride.Core.Packages;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.View;
+using Stride.Core.Presentation.Windows;
 
-namespace Xenko.LauncherApp
+namespace Stride.LauncherApp
 {
     /// <summary>
     /// A class that manages a launcher instance, which must be single per user. It manages to show and hide windows, and keep the services alive

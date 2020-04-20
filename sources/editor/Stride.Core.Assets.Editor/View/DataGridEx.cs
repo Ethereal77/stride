@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,13 +11,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Extensions;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Extensions;
 
-namespace Xenko.Core.Assets.Editor.View
+namespace Stride.Core.Assets.Editor.View
 {
     /// <summary>
-    /// Xenko generic wpf data grid. Left empty for future development on a generic datagrid.
+    /// Stride generic wpf data grid. Left empty for future development on a generic datagrid.
     /// </summary>
     public class DataGridEx : DataGrid
     {

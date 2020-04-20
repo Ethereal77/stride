@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com)
+﻿// Copyright (c) Stride contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more in
 
 using System;
@@ -8,7 +8,7 @@ using ReactiveUI;
 
 using Xunit.Abstractions;
 
-namespace xunit.runner.xenko.ViewModels
+namespace xunit.runner.stride.ViewModels
 {
     public abstract class TestNodeViewModel : ViewModelBase
     {

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,10 +6,10 @@ using System;
 
 using Xunit;
 
-using Xenko.Core.Mathematics;
-using Xenko.UI.Controls;
+using Stride.Core.Mathematics;
+using Stride.UI.Controls;
 
-namespace Xenko.UI.Tests.Layering
+namespace Stride.UI.Tests.Layering
 {
     /// <summary>
     /// A class that contains test functions for layering of the <see cref="ScrollViewer"/> class.

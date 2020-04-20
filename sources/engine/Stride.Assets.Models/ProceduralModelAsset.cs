@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,16 +6,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Yaml;
-using Xenko.Core.Yaml.Serialization;
-using Xenko.Rendering;
-using Xenko.Rendering.ProceduralModels;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Serialization;
+using Stride.Rendering;
+using Stride.Rendering.ProceduralModels;
 
-namespace Xenko.Assets.Models
+namespace Stride.Assets.Models
 {
     /// <summary>
     /// The geometric primitive asset.
@@ -24,7 +24,7 @@ namespace Xenko.Assets.Models
     [AssetDescription(FileExtension)]
     [AssetContentType(typeof(Model))]
     [Display((int)AssetDisplayPriority.Models + 40, "Procedural model")]
-    [AssetFormatVersion(XenkoConfig.PackageName, CurrentVersion, "2.0.0.0")]
+    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.0.0.0")]
     public sealed class ProceduralModelAsset : Asset, IModelAsset
     {
         private const string CurrentVersion = "2.0.0.0";

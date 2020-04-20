@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,11 +7,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Reflection;
-using Xenko.Core.Quantum.References;
+using Stride.Core.Annotations;
+using Stride.Core.Reflection;
+using Stride.Core.Quantum.References;
 
-namespace Xenko.Core.Quantum
+namespace Stride.Core.Quantum
 {
     /// <summary>
     /// The default <see cref="INodeBuilder"/> implementation that construct a graph from a data object.

@@ -1,10 +1,10 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
 
-namespace Xenko.Assets.Presentation.SceneEditor.Services
+namespace Stride.Assets.Presentation.SceneEditor.Services
 {
     /// <summary>
     /// This interface represents an entity picked up from a <see cref="IEntityPickerDialog"/>.

@@ -1,16 +1,16 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Shaders.Ast.Xenko;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Visitor;
+using Stride.Core.Shaders.Ast.Stride;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Visitor;
 
-namespace Xenko.Shaders.Parser.Mixins
+namespace Stride.Shaders.Parser.Mixins
 {
-    internal class XenkoTagCleaner : ShaderWalker
+    internal class StrideTagCleaner : ShaderWalker
     {
-        public XenkoTagCleaner()
+        public StrideTagCleaner()
             : base(false, false)
         {
         }
@@ -22,16 +22,16 @@ namespace Xenko.Shaders.Parser.Mixins
 
         public override void DefaultVisit(Node node)
         {
-            // Keeping it for ShaderLinker (removed by XenkoShaderCleaner)
-            //node.RemoveTag(XenkoTags.ConstantBuffer);
-            node.RemoveTag(XenkoTags.ShaderScope);
-            node.RemoveTag(XenkoTags.StaticRef);
-            node.RemoveTag(XenkoTags.ExternRef);
-            node.RemoveTag(XenkoTags.StageInitRef);
-            node.RemoveTag(XenkoTags.CurrentShader);
-            node.RemoveTag(XenkoTags.VirtualTableReference);
-            node.RemoveTag(XenkoTags.BaseDeclarationMixin);
-            node.RemoveTag(XenkoTags.ShaderScope);
+            // Keeping it for ShaderLinker (removed by StrideShaderCleaner)
+            //node.RemoveTag(StrideTags.ConstantBuffer);
+            node.RemoveTag(StrideTags.ShaderScope);
+            node.RemoveTag(StrideTags.StaticRef);
+            node.RemoveTag(StrideTags.ExternRef);
+            node.RemoveTag(StrideTags.StageInitRef);
+            node.RemoveTag(StrideTags.CurrentShader);
+            node.RemoveTag(StrideTags.VirtualTableReference);
+            node.RemoveTag(StrideTags.BaseDeclarationMixin);
+            node.RemoveTag(StrideTags.ShaderScope);
             base.DefaultVisit(node);
         }
     }

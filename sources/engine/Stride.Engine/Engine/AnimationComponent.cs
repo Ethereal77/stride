@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,12 +8,12 @@ using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Xenko.Animations;
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Engine.Design;
+using Stride.Animations;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Engine.Design;
 
-namespace Xenko.Engine
+namespace Stride.Engine
 {
     /// <summary>
     /// Add animation capabilities to an <see cref="Entity"/>. It will usually apply to <see cref="ModelComponent.Skeleton"/>

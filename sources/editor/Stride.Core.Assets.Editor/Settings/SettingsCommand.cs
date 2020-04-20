@@ -1,13 +1,13 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core;
-using Xenko.Core.IO;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Settings;
+using Stride.Core;
+using Stride.Core.IO;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Settings;
 
-namespace Xenko.Core.Assets.Editor.Settings
+namespace Stride.Core.Assets.Editor.Settings
 {
     /// <summary>
     /// This class represents a command that can be executed from the settings menu.

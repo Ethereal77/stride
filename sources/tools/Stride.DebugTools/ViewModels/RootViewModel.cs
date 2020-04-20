@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-using Xenko.Framework.Time;
-using Xenko.Core.Presentation.Extensions;
+using Stride.Framework.Time;
+using Stride.Core.Presentation.Extensions;
 using System.Collections.ObjectModel;
 
-using Xenko.Framework.MicroThreading;
+using Stride.Framework.MicroThreading;
 using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Controls;
@@ -20,12 +20,12 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-using Xenko.Framework.Diagnostics;
-using Xenko.DebugTools.DataStructures;
-using Xenko.Core.Presentation;
-using Xenko.Core.Presentation.Commands;
+using Stride.Framework.Diagnostics;
+using Stride.DebugTools.DataStructures;
+using Stride.Core.Presentation;
+using Stride.Core.Presentation.Commands;
 
-namespace Xenko.DebugTools.ViewModels
+namespace Stride.DebugTools.ViewModels
 {
     public class RootViewModel : DeprecatedViewModelBase
     {

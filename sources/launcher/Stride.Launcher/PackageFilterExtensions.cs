@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,17 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Packages;
+using Stride.Core;
+using Stride.Core.Packages;
 
-namespace Xenko.LauncherApp
+namespace Stride.LauncherApp
 {
     static class PackageFilterExtensions
     {
-        public static IEnumerable<T> FilterXenkoMainPackages<T>(this IEnumerable<T> packages) where T : NugetPackage
+        public static IEnumerable<T> FilterStrideMainPackages<T>(this IEnumerable<T> packages) where T : NugetPackage
         {
-            // Xenko up to 3.0 package is Xenko, after it's Xenko.GameStudio
-            return packages.Where(x => x.Id != "Xenko" || x.Version < new PackageVersion(3, 1, 0, 0));
+            // Stride up to 3.0 package is Stride, after it's Stride.GameStudio
+            return packages.Where(x => x.Id != "Stride" || x.Version < new PackageVersion(3, 1, 0, 0));
         }
     }
 }

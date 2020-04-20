@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,21 +11,21 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Storage;
-using Xenko.Rendering;
-using Xenko.Graphics;
-using Xenko.Shaders.Parser;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
-using Xenko.Core.Shaders.Utility;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Storage;
+using Stride.Rendering;
+using Stride.Graphics;
+using Stride.Shaders.Parser;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Utility;
 using Encoding = System.Text.Encoding;
-using LoggerResult = Xenko.Core.Diagnostics.LoggerResult;
+using LoggerResult = Stride.Core.Diagnostics.LoggerResult;
 
-namespace Xenko.Shaders.Compiler
+namespace Stride.Shaders.Compiler
 {
     /// <summary>
     /// An <see cref="IEffectCompiler"/> which will compile effect into multiple shader code, and compile them with a <see cref="IShaderCompiler"/>.
@@ -108,12 +108,12 @@ namespace Xenko.Shaders.Compiler
             switch (effectParameters.Platform)
             {
                 case GraphicsPlatform.Direct3D11:
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D", 1);
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D11", 1);
+                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
+                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D11", 1);
                     break;
                 case GraphicsPlatform.Direct3D12:
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D", 1);
-                    shaderMixinSource.AddMacro("XENKO_GRAPHICS_API_DIRECT3D12", 1);
+                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
+                    shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D12", 1);
                     break;
 
                 default:
@@ -121,7 +121,7 @@ namespace Xenko.Shaders.Compiler
             }
 
             // Generate profile-specific macros
-            shaderMixinSource.AddMacro("XENKO_GRAPHICS_PROFILE", (int) effectParameters.Profile);
+            shaderMixinSource.AddMacro("STRIDE_GRAPHICS_PROFILE", (int) effectParameters.Profile);
             shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_0", (int) GraphicsProfile.Level_11_0);
             shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_1", (int) GraphicsProfile.Level_11_1);
             shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_2", (int) GraphicsProfile.Level_11_2);
@@ -141,7 +141,7 @@ namespace Xenko.Shaders.Compiler
             }
 
             // Convert the AST to HLSL
-            var writer = new Xenko.Core.Shaders.Writer.Hlsl.HlslWriter
+            var writer = new Stride.Core.Shaders.Writer.Hlsl.HlslWriter
             {
                 EnablePreprocessorLine = false, // Allow to output links to original pdxsl via #line pragmas
             };
@@ -325,7 +325,7 @@ namespace Xenko.Shaders.Compiler
             return new EffectBytecodeCompilerResult(bytecode, log);
         }
 
-        private static void CopyLogs(Xenko.Core.Shaders.Utility.LoggerResult inputLog, LoggerResult outputLog)
+        private static void CopyLogs(Stride.Core.Shaders.Utility.LoggerResult inputLog, LoggerResult outputLog)
         {
             foreach (var inputMessage in inputLog.Messages)
             {

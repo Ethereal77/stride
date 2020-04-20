@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2007-2011 SlimDX Group
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -7,7 +7,7 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace Xenko.Core.Mathematics
+namespace Stride.Core.Mathematics
 {
     /// <summary>
     /// Represents a color in the form of rgb.
@@ -662,7 +662,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="Color3"/> to <see cref="Xenko.Core.Mathematics.Vector3"/>.
+        /// Performs an explicit conversion from <see cref="Color3"/> to <see cref="Stride.Core.Mathematics.Vector3"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -672,7 +672,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="Xenko.Core.Mathematics.Vector3"/> to <see cref="Color3"/>.
+        /// Performs an explicit conversion from <see cref="Stride.Core.Mathematics.Vector3"/> to <see cref="Color3"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -797,7 +797,7 @@ namespace Xenko.Core.Mathematics
 
 #if SlimDX1xInterop
         /// <summary>
-        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Color3"/> to <see cref="SlimDX.Color3"/>.
+        /// Performs an implicit conversion from <see cref="Stride.Core.Mathematics.Color3"/> to <see cref="SlimDX.Color3"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -807,7 +807,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="SlimDX.Color3"/> to <see cref="Xenko.Core.Mathematics.Color3"/>.
+        /// Performs an implicit conversion from <see cref="SlimDX.Color3"/> to <see cref="Stride.Core.Mathematics.Color3"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -819,7 +819,7 @@ namespace Xenko.Core.Mathematics
 
 #if WPFInterop
         /// <summary>
-        /// Performs an explicit conversion from <see cref="Xenko.Core.Mathematics.Color3"/> to <see cref="System.Windows.Media.Color"/>.
+        /// Performs an explicit conversion from <see cref="Stride.Core.Mathematics.Color3"/> to <see cref="System.Windows.Media.Color"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -835,7 +835,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="System.Windows.Media.Color"/> to <see cref="Xenko.Core.Mathematics.Color3"/>.
+        /// Performs an explicit conversion from <see cref="System.Windows.Media.Color"/> to <see cref="Stride.Core.Mathematics.Color3"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -852,7 +852,7 @@ namespace Xenko.Core.Mathematics
 
 #if WinFormsInterop
         /// <summary>
-        /// Performs an explicit conversion from <see cref="Xenko.Core.Mathematics.Color3"/> to <see cref="System.Drawing.Color"/>.
+        /// Performs an explicit conversion from <see cref="Stride.Core.Mathematics.Color3"/> to <see cref="System.Drawing.Color"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>
@@ -865,7 +865,7 @@ namespace Xenko.Core.Mathematics
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="System.Drawing.Color"/> to <see cref="Xenko.Core.Mathematics.Color3"/>.
+        /// Performs an explicit conversion from <see cref="System.Drawing.Color"/> to <see cref="Stride.Core.Mathematics.Color3"/>.
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result of the conversion.</returns>

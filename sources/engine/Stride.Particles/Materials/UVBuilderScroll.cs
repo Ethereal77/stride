@@ -1,13 +1,13 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Particles.Sorters;
-using Xenko.Particles.VertexLayouts;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Particles.Sorters;
+using Stride.Particles.VertexLayouts;
 
-namespace Xenko.Particles.Materials
+namespace Stride.Particles.Materials
 {
     /// <summary>
     /// Animates the texture coordinates starting with one rectangle and scrolling/zooming it to an ending rectangle over the particle's life

@@ -1,10 +1,10 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Copyright (c) 2007-2011 SlimDX Group
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_GRAPHICS_API_DIRECT3D && (XENKO_UI_WINFORMS || XENKO_UI_WPF)
+#if STRIDE_GRAPHICS_API_DIRECT3D && (STRIDE_UI_WINFORMS || STRIDE_UI_WPF)
 
 using System;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace Xenko.Games
+namespace Stride.Games
 {
     /// <summary>
     /// Default Rendering Form on Windows desktop.

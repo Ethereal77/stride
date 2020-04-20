@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -12,12 +12,12 @@ using Microsoft.Build.Utilities;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Yaml;
-using Xenko.Core.Yaml.Events;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Events;
 
-namespace Xenko.Core.Assets.CompilerApp.Tasks
+namespace Stride.Core.Assets.CompilerApp.Tasks
 {
     public static class PackAssetsHelper
     {
@@ -43,7 +43,7 @@ namespace Xenko.Core.Assets.CompilerApp.Tasks
 
             void RegisterItem(UFile targetFilePath)
             {
-                generatedItems.Add((targetFilePath.ToWindowsPath(), UPath.Combine("xenko", targetFilePath.MakeRelative(outputPath)).ToWindowsPath()));
+                generatedItems.Add((targetFilePath.ToWindowsPath(), UPath.Combine("stride", targetFilePath.MakeRelative(outputPath)).ToWindowsPath()));
             }
 
             void TryCopyDirectory(UDirectory sourceDirectory, UDirectory targetDirectory, string exclude = null)

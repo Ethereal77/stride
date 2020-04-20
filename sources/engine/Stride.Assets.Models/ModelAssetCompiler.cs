@@ -1,19 +1,19 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.IO;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Assets.Materials;
-using Xenko.Graphics;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.IO;
+using Stride.Core.Serialization.Contents;
+using Stride.Assets.Materials;
+using Stride.Graphics;
 
-namespace Xenko.Assets.Models
+namespace Stride.Assets.Models
 {
     [AssetCompiler(typeof(ModelAsset), typeof(AssetCompilationContext))]
     public class ModelAssetCompiler : AssetCompilerBase

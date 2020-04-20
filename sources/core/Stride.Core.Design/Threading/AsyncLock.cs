@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2014 AsyncEx - StephenCleary
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 // Original idea from Stephen Toub: http://blogs.msdn.com/b/pfxteam/archive/2012/02/12/10266988.aspx
 
-namespace Xenko.Core.Threading
+namespace Stride.Core.Threading
 {
     /// <summary>
     /// A mutual exclusion lock that is compatible with async. Note that this lock is <b>not</b> recursive!

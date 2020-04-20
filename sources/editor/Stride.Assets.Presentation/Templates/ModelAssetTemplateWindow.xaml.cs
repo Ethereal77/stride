@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,16 +6,16 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core;
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Quantum;
-using Xenko.Core.Presentation.Quantum.ViewModels;
-using Xenko.Core.Presentation.ViewModel;
-using Xenko.Core.Quantum;
-using Xenko.Rendering;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Quantum;
+using Stride.Core.Presentation.Quantum.ViewModels;
+using Stride.Core.Presentation.ViewModel;
+using Stride.Core.Quantum;
+using Stride.Rendering;
 
-namespace Xenko.Assets.Presentation.Templates
+namespace Stride.Assets.Presentation.Templates
 {
     public class ImportModelFromFileViewModel : DispatcherViewModel
     {
@@ -85,13 +85,13 @@ namespace Xenko.Assets.Presentation.Templates
 
         private void ButtonOk(object sender, RoutedEventArgs e)
         {
-            Result = Xenko.Core.Presentation.Services.DialogResult.Ok;
+            Result = Stride.Core.Presentation.Services.DialogResult.Ok;
             Close();
         }
 
         private void ButtonCancel(object sender, RoutedEventArgs e)
         {
-            Result = Xenko.Core.Presentation.Services.DialogResult.Cancel;
+            Result = Stride.Core.Presentation.Services.DialogResult.Cancel;
             Close();
         }
     }

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Graphics.Font;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Graphics.Font;
 
-using Color = Xenko.Core.Mathematics.Color;
-using RectangleF = Xenko.Core.Mathematics.RectangleF;
+using Color = Stride.Core.Mathematics.Color;
+using RectangleF = Stride.Core.Mathematics.RectangleF;
 
-namespace Xenko.Graphics
+namespace Stride.Graphics
 {
     /// <summary>
     /// SpriteFont to use with <see cref="SpriteBatch"/>. See <see cref="SpriteFont"/> to learn how to use it.
@@ -116,7 +116,7 @@ namespace Xenko.Graphics
         public SpriteFontType FontType { get; protected set; }
 
         /// <summary>
-        /// The <see cref="Xenko.Graphics.Font.FontSystem"/> that is managing this sprite font.
+        /// The <see cref="Stride.Graphics.Font.FontSystem"/> that is managing this sprite font.
         /// </summary>
         [DataMemberIgnore]
         internal virtual FontSystem FontSystem

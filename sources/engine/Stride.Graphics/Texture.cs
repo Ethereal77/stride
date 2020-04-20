@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,17 +8,17 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Mathematics;
-using Xenko.Core.ReferenceCounting;
-using Xenko.Core.Serialization;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Graphics.Data;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Core.ReferenceCounting;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Graphics.Data;
 
-using Utilities = Xenko.Core.Utilities;
+using Utilities = Stride.Core.Utilities;
 
-namespace Xenko.Graphics
+namespace Stride.Graphics
 {
     /// <summary>
     /// Class used for all Textures (1D, 2D, 3D, DepthStencil, RenderTargets...etc.)
@@ -287,7 +287,7 @@ namespace Xenko.Graphics
         /// </summary>
         public IntPtr SharedHandle { get; private set; } = IntPtr.Zero;
 
-#if XENKO_GRAPHICS_API_DIRECT3D11
+#if STRIDE_GRAPHICS_API_DIRECT3D11
         /// <summary>
         /// Gets the name of the shared Nt handle when created with TextureOption.SharedNthandle.
         /// </summary>

@@ -1,17 +1,17 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets;
-using Xenko.Assets.Effect;
-using Xenko.Assets.Entities;
-using Xenko.Assets.Materials;
-using Xenko.Assets.Scripts;
-using Xenko.Assets.Skyboxes;
-using Xenko.Assets.Textures;
-using Xenko.Assets.UI;
+using Stride.Core.Assets;
+using Stride.Assets.Effect;
+using Stride.Assets.Entities;
+using Stride.Assets.Materials;
+using Stride.Assets.Scripts;
+using Stride.Assets.Skyboxes;
+using Stride.Assets.Textures;
+using Stride.Assets.UI;
 
-namespace Xenko.Assets
+namespace Stride.Assets
 {
     public class DefaultEffectShaderFactory : DefaultAssetFactory<EffectShaderAsset>
     {

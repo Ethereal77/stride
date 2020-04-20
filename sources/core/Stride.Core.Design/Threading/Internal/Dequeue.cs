@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2014 AsyncEx - StephenCleary
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Xenko.Core.Annotations;
+using Stride.Core.Annotations;
 
-namespace Xenko.Core.Threading
+namespace Stride.Core.Threading
 {
     /// <summary>
     /// A double-ended queue (deque), which provides O(1) indexed access, O(1) removals from the front and back, amortized O(1) insertions to the front and back, and O(N) insertions and removals anywhere else (with the operations getting slower as the index approaches the middle).

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,9 +8,9 @@ using System.Text;
 
 using Xunit;
 
-using Xenko.Shaders.Parser.Mixins;
+using Stride.Shaders.Parser.Mixins;
 
-namespace Xenko.Shaders.Tests
+namespace Stride.Shaders.Tests
 {
     /// <summary>
     /// Code used to regenerate all cs files from xksl/xkfx in the project
@@ -20,7 +20,7 @@ namespace Xenko.Shaders.Tests
         //[Fact]
         public void Test()
         {
-            var filePath = @"D:\Code\Xenko\sources\engine\Xenko.Shaders.Tests\GameAssets\Mixins\A.xksl";
+            var filePath = @"D:\Code\Stride\sources\engine\Stride.Shaders.Tests\GameAssets\Mixins\A.xksl";
             var source = File.ReadAllText(filePath);
             var content = ShaderMixinCodeGen.GenerateCsharp(source, filePath.Replace("C:", "D:"));
         }

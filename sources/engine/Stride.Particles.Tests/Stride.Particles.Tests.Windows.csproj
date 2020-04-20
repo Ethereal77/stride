@@ -1,24 +1,24 @@
 ﻿<Project>
-  <Import Project="..\..\targets\Xenko.PreSettings.UnitTests.targets" />
+  <Import Project="..\..\targets\Stride.PreSettings.UnitTests.targets" />
   <PropertyGroup>
     <TargetFrameworks>net461</TargetFrameworks>
-    <AssemblyName>Xenko.Particles.Tests</AssemblyName>
-    <RootNamespace>Xenko.Particles.Tests</RootNamespace>
+    <AssemblyName>Stride.Particles.Tests</AssemblyName>
+    <RootNamespace>Stride.Particles.Tests</RootNamespace>
     <EnableDefaultItems>false</EnableDefaultItems>
-    <XenkoBuildTags>*</XenkoBuildTags>
-    <XenkoCompileAssets>true</XenkoCompileAssets>
-    <XenkoGraphicsApiDependent>true</XenkoGraphicsApiDependent>
+    <StrideBuildTags>*</StrideBuildTags>
+    <StrideCompileAssets>true</StrideCompileAssets>
+    <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
     <!-- Force MSBuild to check to rebuild this assembly instead of letting VS IDE guess -->
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>xunit.runner.xenko.Program</StartupObject>
+    <StartupObject>xunit.runner.stride.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\tests\xunit.runner.xenko\xunit.runner.xenko.csproj" />
-    <ProjectReference Include="..\Xenko.Engine\Xenko.Engine.csproj" />
-    <ProjectReference Include="..\Xenko.Particles\Xenko.Particles.csproj" />
-    <ProjectReference Include="..\Xenko.Graphics.Regression\Xenko.Graphics.Regression.csproj" />
+    <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
+    <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
+    <ProjectReference Include="..\Stride.Particles\Stride.Particles.csproj" />
+    <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="XunitAttributes.cs" />
@@ -60,7 +60,7 @@
     <None Include="GameAssets\VisualTestSoftEdge.xkscene" />
     <None Include="GameAssets\VisualTestSpawners.xkscene" />
     <None Include="GameAssets\VisualTestUpdaters.xkscene" />
-    <None Include="Xenko.Particles.Tests.xkpkg" />
+    <None Include="Stride.Particles.Tests.xkpkg" />
   </ItemGroup>
-  <Import Project="..\..\targets\Xenko.UnitTests.targets" />
+  <Import Project="..\..\targets\Stride.UnitTests.targets" />
 </Project>

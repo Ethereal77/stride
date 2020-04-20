@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,10 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Xenko.Core;
-using Xenko.Core.Serialization.Contents;
+using Stride.Core;
+using Stride.Core.Serialization.Contents;
 
-namespace Xenko.Core.Assets.Selectors
+namespace Stride.Core.Assets.Selectors
 {
     /// <summary>
     /// Matches asset depending on their URL, using a gitignore-like format (based on fnmatch()).

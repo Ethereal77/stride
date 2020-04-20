@@ -1,16 +1,16 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Windows.Forms;
 
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Presentation.AssetEditors.UIEditor.Game;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.UI;
+using Stride.Core.Mathematics;
+using Stride.Assets.Presentation.AssetEditors.UIEditor.Game;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.UI;
 
-namespace Xenko.Assets.Presentation.AssetEditors.UIEditor.Adorners
+namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Adorners
 {
     /// <summary>
     /// Represents an adorner that can resize the associated <see cref="UIElement"/> in a specific direction.

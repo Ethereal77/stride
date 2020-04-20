@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -14,12 +14,12 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-using Xenko.Core.Mathematics;
+using Stride.Core.Mathematics;
 
 using DrawingColor = System.Drawing.Color;
 using Rectangle = System.Drawing.Rectangle;
 
-namespace Xenko.Assets.SpriteFont.Compiler
+namespace Stride.Assets.SpriteFont.Compiler
 {
     // Assorted helpers for doing useful things with bitmaps.
     internal static class BitmapUtils
@@ -130,7 +130,7 @@ namespace Xenko.Assets.SpriteFont.Compiler
                         int a;
                         if (srgb)
                         {
-                            var colorLinear = new Color4(new Xenko.Core.Mathematics.Color(color.R, color.G, color.B)).ToLinear();
+                            var colorLinear = new Color4(new Stride.Core.Mathematics.Color(color.R, color.G, color.B)).ToLinear();
                             var alphaLinear = (colorLinear.R + colorLinear.G + colorLinear.B) / 3.0f;
                             a = MathUtil.Clamp((int)Math.Round(alphaLinear * 255), 0, 255);
                         }
@@ -164,9 +164,9 @@ namespace Xenko.Assets.SpriteFont.Compiler
                         int b;
                         if (srgb)
                         {
-                            var colorLinear = new Color4(new Xenko.Core.Mathematics.Color(color.R, color.G, color.B)).ToLinear();
+                            var colorLinear = new Color4(new Stride.Core.Mathematics.Color(color.R, color.G, color.B)).ToLinear();
                             colorLinear *= color.A / 255.0f;
-                            var colorSRgb = (Xenko.Core.Mathematics.Color)colorLinear.ToSRgb();
+                            var colorSRgb = (Stride.Core.Mathematics.Color)colorLinear.ToSRgb();
                             r = colorSRgb.R;
                             g = colorSRgb.G;
                             b = colorSRgb.B;

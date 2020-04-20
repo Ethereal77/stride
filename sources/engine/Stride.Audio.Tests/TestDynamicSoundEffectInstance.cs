@@ -1,4 +1,4 @@
-//// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+//// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 //// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 //// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
@@ -6,15 +6,15 @@
 //using System.IO;
 //using System.Runtime.InteropServices;
 //
-//using Xenko.Core;
-//using Xenko.Core.IO;
-//using Xenko.Core.Serialization.Assets;
-//using Xenko.Audio.Wave;
-//using Xenko.Engine;
+//using Stride.Core;
+//using Stride.Core.IO;
+//using Stride.Core.Serialization.Assets;
+//using Stride.Audio.Wave;
+//using Stride.Engine;
 //
 //using Xunit;
 //
-//namespace Xenko.Audio.Tests
+//namespace Stride.Audio.Tests
 //{
 //    /// <summary>
 //    /// Tests for <see cref="DynamicSoundEffectInstance"/>.

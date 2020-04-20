@@ -1,21 +1,21 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.Extensions;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters.Commands;
-using Xenko.Core.Presentation.Quantum.Presenters;
-using Xenko.Assets.Effect;
-using Xenko.Assets.Materials;
-using Xenko.Assets.Presentation.NodePresenters.Keys;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.Rendering.Materials;
-using Xenko.Rendering.Materials.ComputeColors;
+using Stride.Core.Assets.Editor.Extensions;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands;
+using Stride.Core.Presentation.Quantum.Presenters;
+using Stride.Assets.Effect;
+using Stride.Assets.Materials;
+using Stride.Assets.Presentation.NodePresenters.Keys;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
 
-namespace Xenko.Assets.Presentation.NodePresenters.Updaters
+namespace Stride.Assets.Presentation.NodePresenters.Updaters
 {
     internal sealed class MaterialAssetNodeUpdater : AssetNodePresenterUpdaterBase
     {

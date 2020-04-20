@@ -1,13 +1,13 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 
-using Xenko.Core.Presentation.Quantum;
-using Xenko.Core.Presentation.Quantum.ViewModels;
+using Stride.Core.Presentation.Quantum;
+using Stride.Core.Presentation.Quantum.ViewModels;
 
-namespace Xenko.Core.Assets.Editor.View.TemplateProviders
+namespace Stride.Core.Assets.Editor.View.TemplateProviders
 {
     public class DictionaryStringKeyTemplateProvider : DictionaryTemplateProvider
     {

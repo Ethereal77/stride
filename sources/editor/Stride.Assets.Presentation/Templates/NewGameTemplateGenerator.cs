@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,34 +8,34 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Components.TemplateDescriptions;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization;
-using Xenko.Core.Presentation.Services;
-using Xenko.Assets.Entities;
-using Xenko.Assets.Materials;
-using Xenko.Assets.Skyboxes;
-using Xenko.Assets.Textures;
-using Xenko.Engine;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
-using Xenko.Rendering.Lights;
-using Xenko.Rendering.Materials;
-using Xenko.Rendering.Materials.ComputeColors;
-using Xenko.Rendering.ProceduralModels;
-using Xenko.Rendering.Skyboxes;
-using Xenko.Assets.Models;
-using Xenko.Assets.Rendering;
-using Xenko.Assets.Templates;
-using Xenko.Core.Extensions;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
+using Stride.Core.Assets.Templates;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization;
+using Stride.Core.Presentation.Services;
+using Stride.Assets.Entities;
+using Stride.Assets.Materials;
+using Stride.Assets.Skyboxes;
+using Stride.Assets.Textures;
+using Stride.Engine;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
+using Stride.Rendering.Lights;
+using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
+using Stride.Rendering.ProceduralModels;
+using Stride.Rendering.Skyboxes;
+using Stride.Assets.Models;
+using Stride.Assets.Rendering;
+using Stride.Assets.Templates;
+using Stride.Core.Extensions;
 
-namespace Xenko.Assets.Presentation.Templates
+namespace Stride.Assets.Presentation.Templates
 {
     /// <summary>
     /// Generator to create a whole package, game library and game executables
@@ -194,7 +194,7 @@ namespace Xenko.Assets.Presentation.Templates
 
             // Setup GraphicsCompositor using DefaultGraphicsCompositor
             var graphicsProfile = parameters.GetTag(GraphicsProfileKey);
-            var defaultCompositorUrl = XenkoPackageUpgrader.DefaultGraphicsCompositorLevel10Url;
+            var defaultCompositorUrl = StridePackageUpgrader.DefaultGraphicsCompositorLevel10Url;
             var defaultCompositor = session.FindAsset(defaultCompositorUrl);
 
             var graphicsCompositor = new AssetItem("GraphicsCompositor", defaultCompositor.CreateDerivedAsset());
@@ -403,7 +403,7 @@ namespace Xenko.Assets.Presentation.Templates
         {
             var logger = parameters.Logger;
 
-            var presentationPackageFile = PackageStore.Instance.GetPackageFileName("Xenko.Samples.Templates", new PackageVersionRange(new PackageVersion(Xenko.Samples.Templates.ThisPackageVersion.Current)));
+            var presentationPackageFile = PackageStore.Instance.GetPackageFileName("Stride.Samples.Templates", new PackageVersionRange(new PackageVersion(Stride.Samples.Templates.ThisPackageVersion.Current)));
             var assetPackagesDir = UDirectory.Combine(presentationPackageFile.GetFullDirectory(), @"Templates\Samples\Templates\Packs");
             var assetPacks = parameters.TryGetTag(AssetsKey);
             if (assetPacks == null)

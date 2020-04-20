@@ -1,24 +1,24 @@
 ﻿<!--
 ***********************************************************************************************
-  Xenko.Core.PreSettings.Local.targets
+  Stride.Core.PreSettings.Local.targets
 
   Build file pre-included before the building of the project to configure the platform name and
   the output directories for the NuGet package artifacts.
 
-  Copyright (C) 2020 Xenko and its contributors
+  Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <XenkoPackageXenko Condition="'$(XenkoPackageXenko)' == ''">$(MSBuildThisFileDirectory)..</XenkoPackageXenko>
+    <StridePackageStride Condition="'$(StridePackageStride)' == ''">$(MSBuildThisFileDirectory)..</StridePackageStride>
 
-    <XenkoPlatformFullName>$(XenkoPlatform)</XenkoPlatformFullName>
-    <XenkoPlatformFullName Condition="'$(XenkoBuildDirExtension)' != ''">$(XenkoPlatformFullName)-$(XenkoBuildDirExtension)</XenkoPlatformFullName>
+    <StridePlatformFullName>$(StridePlatform)</StridePlatformFullName>
+    <StridePlatformFullName Condition="'$(StrideBuildDirExtension)' != ''">$(StridePlatformFullName)-$(StrideBuildDirExtension)</StridePlatformFullName>
 
     <!-- Resolve path (remove ".." elements), for better support -->
-    <XenkoPackageXenko>$([System.IO.Path]::GetFullPath('$(XenkoPackageXenko)'))</XenkoPackageXenko>
-    <XenkoPackageXenkoBin Condition="'$(XenkoPackageXenkoBin)' == ''">$(XenkoPackageXenko)\Bin</XenkoPackageXenkoBin>
-    <XenkoPackageXenkoSdkBin Condition="'$(XenkoPackageXenkoSdkBin)' == ''">$(XenkoPackageXenkoBin)\Windows</XenkoPackageXenkoSdkBin>
-    <XenkoPackageXenkoPlatformBin Condition="'$(XenkoPackageXenkoPlatformBin)' == ''">$(XenkoPackageXenkoBin)\$(XenkoPlatformFullName)</XenkoPackageXenkoPlatformBin>
+    <StridePackageStride>$([System.IO.Path]::GetFullPath('$(StridePackageStride)'))</StridePackageStride>
+    <StridePackageStrideBin Condition="'$(StridePackageStrideBin)' == ''">$(StridePackageStride)\Bin</StridePackageStrideBin>
+    <StridePackageStrideSdkBin Condition="'$(StridePackageStrideSdkBin)' == ''">$(StridePackageStrideBin)\Windows</StridePackageStrideSdkBin>
+    <StridePackageStridePlatformBin Condition="'$(StridePackageStridePlatformBin)' == ''">$(StridePackageStrideBin)\$(StridePlatformFullName)</StridePackageStridePlatformBin>
   </PropertyGroup>
 </Project>

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,23 +9,23 @@ using System.Threading.Tasks;
 
 using Xunit;
 
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
-using Xenko.Engine.Processors;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Graphics.Regression;
-using Xenko.Graphics.Tests;
-using Xenko.Rendering;
-using Xenko.Rendering.Colors;
-using Xenko.Rendering.Compositing;
-using Xenko.Rendering.Lights;
-using Xenko.Rendering.Skyboxes;
-using Xenko.Rendering.Sprites;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Engine;
+using Stride.Engine.Processors;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Graphics.Regression;
+using Stride.Graphics.Tests;
+using Stride.Rendering;
+using Stride.Rendering.Colors;
+using Stride.Rendering.Compositing;
+using Stride.Rendering.Lights;
+using Stride.Rendering.Skyboxes;
+using Stride.Rendering.Sprites;
 
-namespace Xenko.Engine.NextGen
+namespace Stride.Engine.NextGen
 {
     public class NextGenTest1 : GraphicTestGameBase
     {
@@ -70,7 +70,7 @@ namespace Xenko.Engine.NextGen
             //var skyboxEntity = new Entity { new SkyboxComponent { Skybox = skybox } };
             //Scene.Entities.Add(skyboxEntity);
 
-            var backgroundTexture = Content.Load<Texture>("XenkoBackground");
+            var backgroundTexture = Content.Load<Texture>("StrideBackground");
             var backgroundEntity = new Entity { new BackgroundComponent { Texture = backgroundTexture } };
             Scene.Entities.Add(backgroundEntity);
 

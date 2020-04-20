@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,11 +7,11 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Graphics;
-using Xenko.TextureConverter.Requests;
+using Stride.Core.Diagnostics;
+using Stride.Graphics;
+using Stride.TextureConverter.Requests;
 
-namespace Xenko.TextureConverter.TexLibraries
+namespace Stride.TextureConverter.TexLibraries
 {
     /// <summary>
     /// Allows the creation and manipulation of texture atlas.

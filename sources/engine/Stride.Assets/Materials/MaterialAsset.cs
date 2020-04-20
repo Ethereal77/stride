@@ -1,18 +1,18 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Serialization;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Serialization;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
 
-namespace Xenko.Assets.Materials
+namespace Stride.Assets.Materials
 {
     /// <summary>
     /// The material asset.
@@ -20,7 +20,7 @@ namespace Xenko.Assets.Materials
     [DataContract("MaterialAsset")]
     [AssetDescription(FileExtension)]
     [AssetContentType(typeof(Material))]
-    [AssetFormatVersion(XenkoConfig.PackageName, CurrentVersion, "2.0.0.0")]
+    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.0.0.0")]
     public sealed partial class MaterialAsset : Asset, IMaterialDescriptor
     {
         private const string CurrentVersion = "2.0.0.0";

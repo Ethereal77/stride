@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,16 +6,16 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Extensions;
-using Xenko.Core.Mathematics;
-using Xenko.Particles.BoundingShapes;
-using Xenko.Particles.DebugDraw;
-using Xenko.Particles.Initializers;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Extensions;
+using Stride.Core.Mathematics;
+using Stride.Particles.BoundingShapes;
+using Stride.Particles.DebugDraw;
+using Stride.Particles.Initializers;
 
-namespace Xenko.Particles
+namespace Stride.Particles
 {
     [DataContract("ParticleSystem")]
     public class ParticleSystem : IDisposable

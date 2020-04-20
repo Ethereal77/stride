@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Collections;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.ViewModels;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Collections;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.ViewModels;
 
-namespace Xenko.Assets.Presentation.AssetEditors.AssetCompositeGameEditor.ViewModels
+namespace Stride.Assets.Presentation.AssetEditors.AssetCompositeGameEditor.ViewModels
 {
     /// <summary>
     /// Base class for the view model of an <see cref="AssetCompositeViewModel{TAsset}"/> editor.

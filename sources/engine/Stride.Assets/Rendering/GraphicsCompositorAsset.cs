@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-using Xenko.Core.Assets;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Yaml;
-using Xenko.Core.Yaml.Serialization;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
+using Stride.Core.Assets;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Serialization;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
 
-namespace Xenko.Assets.Rendering
+namespace Stride.Assets.Rendering
 {
     // TODO: this list is here just to easily identify object references. It can be removed once we have access to the path from IsObjectReference
     [DataContract]
@@ -34,8 +34,8 @@ namespace Xenko.Assets.Rendering
     [DataContract("GraphicsCompositorAsset")]
     [AssetContentType(typeof(GraphicsCompositor))]
     [AssetDescription(FileExtension)]
-    [AssetFormatVersion(XenkoConfig.PackageName, CurrentVersion, "2.1.0.2")]
-    [AssetUpgrader(XenkoConfig.PackageName, "2.1.0.2", "3.1.0.1", typeof(RenderingSplitUpgrader))]
+    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.1.0.2")]
+    [AssetUpgrader(StrideConfig.PackageName, "2.1.0.2", "3.1.0.1", typeof(RenderingSplitUpgrader))]
     public partial class GraphicsCompositorAsset : Asset
     {
         private const string CurrentVersion = "3.1.0.1";
@@ -128,7 +128,7 @@ namespace Xenko.Assets.Rendering
             return graphicsCompositor;
         }
 
-        // In 3.1, Xenko.Engine was splitted into a sub-assembly Xenko.Rendering
+        // In 3.1, Stride.Engine was splitted into a sub-assembly Stride.Rendering
         private class RenderingSplitUpgrader : AssetUpgraderBase
         {
             protected override void UpgradeAsset(AssetMigrationContext context, PackageVersion currentVersion, PackageVersion targetVersion, dynamic asset, PackageLoadingAssetFile assetFile, OverrideUpgraderHint overrideHint)
@@ -136,12 +136,12 @@ namespace Xenko.Assets.Rendering
                 YamlNode assetNode = asset.Node;
                 foreach (var node in assetNode.AllNodes)
                 {
-                    if (node.Tag != null && node.Tag.EndsWith(",Xenko.Engine")
-                        // Several types are still in Xenko.Engine
-                        && node.Tag != "!Xenko.Rendering.Compositing.ForwardRenderer,Xenko.Engine"
-                        && node.Tag != "!Xenko.Rendering.Compositing.SceneCameraRenderer,Xenko.Engine")
+                    if (node.Tag != null && node.Tag.EndsWith(",Stride.Engine")
+                        // Several types are still in Stride.Engine
+                        && node.Tag != "!Stride.Rendering.Compositing.ForwardRenderer,Stride.Engine"
+                        && node.Tag != "!Stride.Rendering.Compositing.SceneCameraRenderer,Stride.Engine")
                     {
-                        node.Tag = node.Tag.Replace(",Xenko.Engine", ",Xenko.Rendering");
+                        node.Tag = node.Tag.Replace(",Stride.Engine", ",Stride.Rendering");
                     }
                 }
             }

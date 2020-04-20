@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 Sockets-for-PCL, Ryan Davis
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -105,7 +105,7 @@ namespace Sockets.Plugin
         public Task DisconnectAsync()
         {
             return Task.Run(() => {
-#if !XENKO_RUNTIME_CORECLR
+#if !STRIDE_RUNTIME_CORECLR
                     // As long as we target .NET 4.5 we cannot use `Dispose'.
                 _backingTcpClient.Close();
 #else

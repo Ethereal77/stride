@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,17 +8,17 @@ using System.IO;
 
 using Xunit;
 
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization.Assets;
-using Xenko.Core.Storage;
-using Xenko.Rendering;
-using Xenko.Rendering;
-using Xenko.Games;
-using Xenko.Shaders;
-using Xenko.Shaders.Compiler;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization.Assets;
+using Stride.Core.Storage;
+using Stride.Rendering;
+using Stride.Rendering;
+using Stride.Games;
+using Stride.Shaders;
+using Stride.Shaders.Compiler;
 
-namespace Xenko.Graphics.Tests
+namespace Stride.Graphics.Tests
 {
     class TestMultiTextures : TestGameBase
     {
@@ -55,7 +55,7 @@ namespace Xenko.Graphics.Tests
                 foreach (var shaderName in Directory.EnumerateFiles(@"Compiler", "*.xksl"))
                     CopyStream(database, shaderName);
 
-                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\engine\Xenko.Graphics\Shaders", "*.xksl"))
+                foreach (var shaderName in Directory.EnumerateFiles(@"..\..\..\..\engine\Stride.Graphics\Shaders", "*.xksl"))
                     CopyStream(database, shaderName);
 
                 var compiler = new EffectCompiler();

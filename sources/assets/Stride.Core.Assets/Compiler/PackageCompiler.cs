@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Xenko.Core.BuildEngine;
+using Stride.Core.BuildEngine;
 
-namespace Xenko.Core.Assets.Compiler
+namespace Stride.Core.Assets.Compiler
 {
     /// <summary>
     /// A package assets compiler.
@@ -22,7 +22,7 @@ namespace Xenko.Core.Assets.Compiler
 
         static PackageCompiler()
         {
-            // Compute XenkoSdkDir from this assembly
+            // Compute StrideSdkDir from this assembly
             // TODO Move this code to a reusable method
             var codeBase = typeof(PackageCompiler).Assembly.CodeBase;
             var uri = new UriBuilder(codeBase);
@@ -41,7 +41,7 @@ namespace Xenko.Core.Assets.Compiler
         }
 
         /// <summary>
-        /// Gets or sets the SDK directory. Default is bound to env variable XenkoSdkDir
+        /// Gets or sets the SDK directory. Default is bound to env variable StrideSdkDir
         /// </summary>
         /// <value>The SDK directory.</value>
         public static string SdkDirectory { get; set; }

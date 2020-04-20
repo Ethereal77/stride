@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -14,9 +14,9 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
-using Xenko.Core.VisualStudio;
+using Stride.Core.VisualStudio;
 
-namespace Xenko.PackageInstall
+namespace Stride.PackageInstall
 {
     class Program
     {
@@ -120,7 +120,7 @@ namespace Xenko.PackageInstall
             if (AllowVisualStudioOnly && matchingVisualStudioInstallation != null)
             {
                 if (!matchingVisualStudioInstallation.Complete)
-                    MessageBox.Show("We detected Visual Studio 2019 was already installed but is not in a complete state.\r\nYou probably have to reboot, otherwise Xenko projects won't properly compile.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("We detected Visual Studio 2019 was already installed but is not in a complete state.\r\nYou probably have to reboot, otherwise Stride projects won't properly compile.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
@@ -177,7 +177,7 @@ namespace Xenko.PackageInstall
                     VisualStudioVersions.Refresh();
                     existingVisualStudio2019Install = VisualStudioVersions.AvailableVisualStudioInstances.FirstOrDefault(x => x.InstallationPath == existingVisualStudio2019Install.InstallationPath);
                     if (existingVisualStudio2019Install != null && !existingVisualStudio2019Install.Complete)
-                        MessageBox.Show("Visual Studio 2019 install needs a computer restart.\r\nIf you don't restart, Xenko projects likely won't compile.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Visual Studio 2019 install needs a computer restart.\r\nIf you don't restart, Stride projects likely won't compile.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {

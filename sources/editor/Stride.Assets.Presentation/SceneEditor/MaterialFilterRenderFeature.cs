@@ -1,12 +1,12 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using Xenko.Shaders;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Stride.Shaders;
 
-namespace Xenko.Assets.Presentation.SceneEditor
+namespace Stride.Assets.Presentation.SceneEditor
 {
     /// <summary>
     /// Performs material filtering to display only specific material shader streams on the screen, such as specular, normals, etc...

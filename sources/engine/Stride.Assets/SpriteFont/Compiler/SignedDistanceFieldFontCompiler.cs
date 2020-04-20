@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -16,10 +16,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using Xenko.Graphics;
-using Xenko.Graphics.Font;
+using Stride.Graphics;
+using Stride.Graphics.Font;
 
-namespace Xenko.Assets.SpriteFont.Compiler
+namespace Stride.Assets.SpriteFont.Compiler
 {
     /// <summary>
     /// Main class used to compile a Font file XML file.

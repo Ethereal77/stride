@@ -1,23 +1,23 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Editor.Extensions;
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel.Progress;
-using Xenko.Core.Assets.Tracking;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.Core.Storage;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Dirtiables;
-using Xenko.Core.Presentation.ViewModel;
+using Stride.Core.Assets.Editor.Extensions;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel.Progress;
+using Stride.Core.Assets.Tracking;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.Core.Storage;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Dirtiables;
+using Stride.Core.Presentation.ViewModel;
 
-namespace Xenko.Core.Assets.Editor.ViewModel
+namespace Stride.Core.Assets.Editor.ViewModel
 {
     public class AssetSourcesViewModel : DispatcherViewModel
     {

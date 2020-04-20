@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,10 +7,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
-using Xenko.Core.Annotations;
+using Stride.Core.Annotations;
 using Microsoft.Win32.SafeHandles;
 
-namespace Xenko.Core.Diagnostics
+namespace Stride.Core.Diagnostics
 {
     /// <summary>
     /// A <see cref="LogListener"/> implementation redirecting its output to the default OS console. If console is not supported message are output to <see cref="Debug"/>

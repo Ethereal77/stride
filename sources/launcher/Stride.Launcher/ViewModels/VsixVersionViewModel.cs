@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,15 +8,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Xenko.Core.Extensions;
-using Xenko.Core.VisualStudio;
-using Xenko.LauncherApp.Resources;
-using Xenko.LauncherApp.Services;
-using Xenko.Core.Packages;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Services;
+using Stride.Core.Extensions;
+using Stride.Core.VisualStudio;
+using Stride.LauncherApp.Resources;
+using Stride.LauncherApp.Services;
+using Stride.Core.Packages;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Services;
 
-namespace Xenko.LauncherApp.ViewModels
+namespace Stride.LauncherApp.ViewModels
 {
     internal sealed class VsixVersionViewModel : PackageVersionViewModel
     {

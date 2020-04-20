@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,23 +9,23 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.Core.MostRecentlyUsedFiles;
-using Xenko.Core.Presentation.Commands;
-using Xenko.Core.Presentation.Services;
-using Xenko.Core.Presentation.ViewModel;
-using Xenko.Core.Translation;
-using Xenko.Core.VisualStudio;
-using Xenko.Assets.Effect;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.GameStudio.Services;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.Core.MostRecentlyUsedFiles;
+using Stride.Core.Presentation.Commands;
+using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.ViewModel;
+using Stride.Core.Translation;
+using Stride.Core.VisualStudio;
+using Stride.Assets.Effect;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.GameStudio.Services;
 
-namespace Xenko.GameStudio
+namespace Stride.GameStudio
 {
     public class GameStudioViewModel : EditorViewModel
     {
@@ -35,7 +35,7 @@ namespace Xenko.GameStudio
         private readonly List<IDEInfo> availableIDEs;
 
         public GameStudioViewModel([NotNull] IViewModelServiceProvider serviceProvider, MostRecentlyUsedFileCollection mru)
-            : base(serviceProvider, mru, XenkoGameStudio.EditorName, XenkoGameStudio.EditorVersionMajor)
+            : base(serviceProvider, mru, StrideGameStudio.EditorName, StrideGameStudio.EditorVersionMajor)
         {
             Panels = new EditionPanelViewModel(ServiceProvider);
             availableIDEs = new List<IDEInfo> { VisualStudioVersions.DefaultIDE };
@@ -51,7 +51,7 @@ namespace Xenko.GameStudio
         [NotNull]
         public EditionPanelViewModel Panels { get; }
 
-        public XenkoAssetsViewModel XenkoAssets => XenkoAssetsViewModel.Instance;
+        public StrideAssetsViewModel StrideAssets => StrideAssetsViewModel.Instance;
 
         public PreviewViewModel Preview { get => preview; set => SetValue(ref preview, value); }
 
@@ -125,7 +125,7 @@ namespace Xenko.GameStudio
 
         private void OpenAboutPage()
         {
-            ServiceProvider.Get<IXenkoDialogService>().ShowAboutPage();
+            ServiceProvider.Get<IStrideDialogService>().ShowAboutPage();
         }
 
         private void RestartOnClosed()

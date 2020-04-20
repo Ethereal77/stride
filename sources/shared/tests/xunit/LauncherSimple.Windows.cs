@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -7,10 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace xunit.runner.xenko
+namespace xunit.runner.stride
 {
     class Program
     {
-        public static void Main(string[] args) => XenkoXunitRunner.Main(args);
+        public static void Main(string[] args) => StrideXunitRunner.Main(args);
     }
 }

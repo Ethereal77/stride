@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,11 +8,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using Xenko.Core;
-using Xenko.Core.IO;
-using Xenko.Core.Storage;
+using Stride.Core;
+using Stride.Core.IO;
+using Stride.Core.Storage;
 
-namespace Xenko.StorageTool
+namespace Stride.StorageTool
 {
     /// <summary>
     /// Description of an object entry in the bundle.
@@ -61,7 +61,7 @@ namespace Xenko.StorageTool
         /// Gets the listing from a bundle.
         /// </summary>
         /// <param name="bundlePath">The bundle path.</param>
-        /// <returns>System.Collections.Generic.List&lt;Xenko.StorageTool.ObjectEntry&gt;.</returns>
+        /// <returns>System.Collections.Generic.List&lt;Stride.StorageTool.ObjectEntry&gt;.</returns>
         private static List<ObjectEntry> GetBundleListing(string bundlePath)
         {
             if (bundlePath == null) throw new ArgumentNullException("bundlePath");

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2016, Eli Arbel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -15,9 +15,9 @@ using Microsoft.CodeAnalysis.CodeActions;
 using RoslynPad.Roslyn.CodeActions;
 using RoslynPad.Roslyn.Completion;
 
-using Xenko.Core.Presentation.ValueConverters;
+using Stride.Core.Presentation.ValueConverters;
 
-namespace Xenko.Assets.Presentation.AssetEditors.ScriptEditor.Converters
+namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor.Converters
 {
     internal sealed class CodeActionToGlyphConverter : OneWayValueConverter<CodeActionToGlyphConverter>
     {

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -12,12 +12,12 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 
-using Xenko.Core.Assets.Diagnostics;
-using Xenko.Core.Assets.Editor.ViewModel;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Presentation.Collections;
+using Stride.Core.Assets.Diagnostics;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Diagnostics;
+using Stride.Core.Presentation.Collections;
 
-namespace Xenko.Core.Assets.Editor.View.Controls
+namespace Stride.Core.Assets.Editor.View.Controls
 {
     /// <summary>
     /// This control displays a collection of <see cref="ILogMessage"/> in a grid.

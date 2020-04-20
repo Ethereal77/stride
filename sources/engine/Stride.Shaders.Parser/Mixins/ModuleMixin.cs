@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,12 +7,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Shaders.Parser.Analysis;
-using Xenko.Core.Shaders.Ast.Xenko;
-using Xenko.Core.Shaders.Ast;
+using Stride.Core;
+using Stride.Shaders.Parser.Analysis;
+using Stride.Core.Shaders.Ast.Stride;
+using Stride.Core.Shaders.Ast;
 
-namespace Xenko.Shaders.Parser.Mixins
+namespace Stride.Shaders.Parser.Mixins
 {
     [DebuggerDisplay("ModuleMixin {MixinName}")]
     [DataContract]
@@ -98,7 +98,7 @@ namespace Xenko.Shaders.Parser.Mixins
         /// <summary>
         /// The result of the parsing
         /// </summary>
-        public XenkoParsingInfo ParsingInfo { get; set; }
+        public StrideParsingInfo ParsingInfo { get; set; }
 
         /// <summary>
         /// Occurrence ID in the inheritance tree
@@ -228,7 +228,7 @@ namespace Xenko.Shaders.Parser.Mixins
         /// <returns>the overloaded MethodDeclaration</returns>
         public MethodDeclaration GetMethodFromDeclaration(MethodDeclaration methodDeclaration)
         {
-            var info = (VTableReference)methodDeclaration.GetTag(XenkoTags.VirtualTableReference);
+            var info = (VTableReference)methodDeclaration.GetTag(StrideTags.VirtualTableReference);
             return VirtualTable.GetMethod(info.Shader, info.Slot);
         }
 
@@ -239,7 +239,7 @@ namespace Xenko.Shaders.Parser.Mixins
         /// <returns>the overloaded MethodDeclaration</returns>
         public MethodDeclaration GetMethodFromExpression(Expression expression)
         {
-            var info = (VTableReference)expression.GetTag(XenkoTags.VirtualTableReference);
+            var info = (VTableReference)expression.GetTag(StrideTags.VirtualTableReference);
             return VirtualTable.GetMethod(info.Shader, info.Slot);
         }
 
@@ -251,7 +251,7 @@ namespace Xenko.Shaders.Parser.Mixins
         /// <returns>the base MethodDeclaration</returns>
         public MethodDeclaration GetBaseMethodFromExpression(Expression expression, ModuleMixin mixin)
         {
-            var info = (VTableReference)expression.GetTag(XenkoTags.VirtualTableReference);
+            var info = (VTableReference)expression.GetTag(StrideTags.VirtualTableReference);
             var thisMethod = VirtualTable.GetMethod(info.Shader, info.Slot);
 
             if (thisMethod == null)

@@ -1,21 +1,21 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Editor.Services;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core;
-using Xenko.Core.IO;
-using Xenko.Assets.Models;
-using Xenko.Assets.Physics;
-using Xenko.Physics;
-using Xenko.Rendering;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Templates;
+using Stride.Core;
+using Stride.Core.IO;
+using Stride.Assets.Models;
+using Stride.Assets.Physics;
+using Stride.Physics;
+using Stride.Rendering;
 
-namespace Xenko.Assets.Presentation.Templates
+namespace Stride.Assets.Presentation.Templates
 {
     public class ColliderShapeHullFactoryTemplateGenerator : AssetFactoryTemplateGenerator
     {

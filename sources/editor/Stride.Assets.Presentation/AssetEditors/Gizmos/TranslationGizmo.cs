@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,16 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core.Mathematics;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game;
-using Xenko.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Xenko.Engine;
-using Xenko.Extensions;
-using Xenko.Graphics;
-using Xenko.Graphics.GeometricPrimitives;
-using Xenko.Rendering;
+using Stride.Core.Mathematics;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Engine;
+using Stride.Extensions;
+using Stride.Graphics;
+using Stride.Graphics.GeometricPrimitives;
+using Stride.Rendering;
 
-namespace Xenko.Assets.Presentation.AssetEditors.Gizmos
+namespace Stride.Assets.Presentation.AssetEditors.Gizmos
 {
     public class TranslationGizmo : AxisTransformationGizmo
     {

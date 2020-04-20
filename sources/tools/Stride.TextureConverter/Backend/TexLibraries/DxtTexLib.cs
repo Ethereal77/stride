@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using Xenko.Core;
-using Xenko.Graphics;
-using Xenko.Core.Diagnostics;
-using Xenko.TextureConverter.DxtWrapper;
-using Xenko.TextureConverter.Requests;
+using Stride.Core;
+using Stride.Graphics;
+using Stride.Core.Diagnostics;
+using Stride.TextureConverter.DxtWrapper;
+using Stride.TextureConverter.Requests;
 
-using Utilities = Xenko.TextureConverter.DxtWrapper.Utilities;
+using Utilities = Stride.TextureConverter.DxtWrapper.Utilities;
 
-namespace Xenko.TextureConverter.TexLibraries
+namespace Stride.TextureConverter.TexLibraries
 {
 
     /// <summary>
@@ -715,11 +715,11 @@ namespace Xenko.TextureConverter.TexLibraries
 
 
         /// <summary>
-        /// Retrieves the native format from <see cref="Xenko.Graphics.PixelFormat"/>.
+        /// Retrieves the native format from <see cref="Stride.Graphics.PixelFormat"/>.
         /// </summary>
         /// <param name="format">The format.</param>
         /// <returns>The corresponding <see cref="DXGI_FORMAT"/></returns>
-        private DXGI_FORMAT RetrieveNativeFormat(Xenko.Graphics.PixelFormat format)
+        private DXGI_FORMAT RetrieveNativeFormat(Stride.Graphics.PixelFormat format)
         {
             return (DXGI_FORMAT)format;
         }

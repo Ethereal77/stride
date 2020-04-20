@@ -1,16 +1,16 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core.Mathematics;
-using Xenko.Graphics;
-using Xenko.Rendering.Images;
-using Buffer = Xenko.Graphics.Buffer;
+using Stride.Core.Mathematics;
+using Stride.Graphics;
+using Stride.Rendering.Images;
+using Buffer = Stride.Graphics.Buffer;
 
-namespace Xenko.Rendering.ComputeEffect.LambertianPrefiltering
+namespace Stride.Rendering.ComputeEffect.LambertianPrefiltering
 {
     /// <summary>
     /// Performs Lambertian pre-filtering in the form of Spherical Harmonics.

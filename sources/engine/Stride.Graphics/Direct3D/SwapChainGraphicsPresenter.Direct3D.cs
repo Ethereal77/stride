@@ -1,9 +1,9 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if XENKO_GRAPHICS_API_DIRECT3D
+#if STRIDE_GRAPHICS_API_DIRECT3D
 
 using System;
 using System.Reflection;
@@ -12,15 +12,15 @@ using SharpDX;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 
-using Xenko.Core.Collections;
+using Stride.Core.Collections;
 
-#if XENKO_GRAPHICS_API_DIRECT3D11
+#if STRIDE_GRAPHICS_API_DIRECT3D11
 using BackBufferResourceType = SharpDX.Direct3D11.Texture2D;
-#elif XENKO_GRAPHICS_API_DIRECT3D12
+#elif STRIDE_GRAPHICS_API_DIRECT3D12
 using BackBufferResourceType = SharpDX.Direct3D12.Resource;
 #endif
 
-namespace Xenko.Graphics
+namespace Stride.Graphics
 {
     /// <summary>
     /// Graphics presenter for SwapChain.
@@ -33,7 +33,7 @@ namespace Xenko.Graphics
 
         private int bufferCount;
 
-#if XENKO_GRAPHICS_API_DIRECT3D12
+#if STRIDE_GRAPHICS_API_DIRECT3D12
         private int bufferSwapIndex;
 #endif
 
@@ -131,7 +131,7 @@ namespace Xenko.Graphics
             try
             {
                 swapChain.Present((int)PresentInterval, PresentFlags.None);
-#if XENKO_GRAPHICS_API_DIRECT3D12
+#if STRIDE_GRAPHICS_API_DIRECT3D12
                 // Manually swap back buffer
                 backBuffer.NativeResource.Dispose();
                 backBuffer.InitializeFromImpl(swapChain.GetBackBuffer<BackBufferResourceType>((++bufferSwapIndex) % bufferCount), Description.BackBufferFormat.IsSRgb());
@@ -286,7 +286,7 @@ namespace Xenko.Graphics
         {
             bufferCount = 1;
             var backbufferFormat = Description.BackBufferFormat;
-#if XENKO_GRAPHICS_API_DIRECT3D12
+#if STRIDE_GRAPHICS_API_DIRECT3D12
             // TODO D3D12 (check if this setting make sense on D3D11 too?)
             backbufferFormat = backbufferFormat.ToNonSRgb();
             // TODO D3D12 Can we make it work with something else after?
@@ -298,9 +298,9 @@ namespace Xenko.Graphics
                     BufferCount = bufferCount, // TODO: Do we really need this to be configurable by the user?
                     OutputHandle = handle,
                     SampleDescription = new SampleDescription((int)Description.MultisampleCount, 0),
-#if XENKO_GRAPHICS_API_DIRECT3D11
+#if STRIDE_GRAPHICS_API_DIRECT3D11
                     SwapEffect = SwapEffect.Discard,
-#elif XENKO_GRAPHICS_API_DIRECT3D12
+#elif STRIDE_GRAPHICS_API_DIRECT3D12
                     SwapEffect = SwapEffect.FlipDiscard,
 #endif
                     Usage = SharpDX.DXGI.Usage.BackBuffer | SharpDX.DXGI.Usage.RenderTargetOutput,
@@ -308,9 +308,9 @@ namespace Xenko.Graphics
                     Flags = Description.IsFullScreen ? SwapChainFlags.AllowModeSwitch : SwapChainFlags.None,
                 };
 
-#if XENKO_GRAPHICS_API_DIRECT3D11
+#if STRIDE_GRAPHICS_API_DIRECT3D11
             var newSwapChain = new SwapChain(GraphicsAdapterFactory.NativeFactory, GraphicsDevice.NativeDevice, description);
-#elif XENKO_GRAPHICS_API_DIRECT3D12
+#elif STRIDE_GRAPHICS_API_DIRECT3D12
             var newSwapChain = new SwapChain(GraphicsAdapterFactory.NativeFactory, GraphicsDevice.NativeCommandQueue, description);
 #endif
 

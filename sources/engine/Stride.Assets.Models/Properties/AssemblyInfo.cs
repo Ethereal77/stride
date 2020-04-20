@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -18,4 +18,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("b094265f-f46a-4b4a-9e28-59134ac3d4ba")]
 
-[assembly: InternalsVisibleTo("Xenko.Assets.Model.Serializers")]
+[assembly: InternalsVisibleTo("Stride.Assets.Model.Serializers")]

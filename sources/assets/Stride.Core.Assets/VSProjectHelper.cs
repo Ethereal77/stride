@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -15,13 +15,13 @@ using Microsoft.Build.Framework;
 
 using NuGet.ProjectModel;
 
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
 
-using ILogger = Xenko.Core.Diagnostics.ILogger;
+using ILogger = Stride.Core.Diagnostics.ILogger;
 
-namespace Xenko.Core.Assets
+namespace Stride.Core.Assets
 {
     public interface ICancellableAsyncBuild
     {
@@ -36,8 +36,8 @@ namespace Xenko.Core.Assets
 
     public static class VSProjectHelper
     {
-        private const string XenkoProjectType = "XenkoProjectType";
-        private const string XenkoPlatform = "XenkoPlatform";
+        private const string StrideProjectType = "StrideProjectType";
+        private const string StridePlatform = "StridePlatform";
 
         private static BuildManager mainBuildManager = new BuildManager();
 
@@ -49,12 +49,12 @@ namespace Xenko.Core.Assets
 
         public static PlatformType? GetPlatformTypeFromProject(Microsoft.Build.Evaluation.Project project)
         {
-            return GetEnumFromProperty<PlatformType>(project, XenkoPlatform);
+            return GetEnumFromProperty<PlatformType>(project, StridePlatform);
         }
 
         public static ProjectType? GetProjectTypeFromProject(Microsoft.Build.Evaluation.Project project)
         {
-            return GetEnumFromProperty<ProjectType>(project, XenkoProjectType);
+            return GetEnumFromProperty<ProjectType>(project, StrideProjectType);
         }
 
         private static T? GetEnumFromProperty<T>(Microsoft.Build.Evaluation.Project project, string propertyName) where T : struct

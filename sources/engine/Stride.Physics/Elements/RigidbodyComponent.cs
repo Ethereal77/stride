@@ -1,17 +1,17 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.Rendering;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.Rendering;
 
-namespace Xenko.Physics
+namespace Stride.Physics
 {
     [DataContract("RigidbodyComponent")]
     [Display("Rigidbody")]
@@ -21,7 +21,7 @@ namespace Xenko.Physics
         internal BulletSharp.RigidBody InternalRigidBody;
 
         [DataMemberIgnore]
-        internal XenkoMotionState MotionState;
+        internal StrideMotionState MotionState;
 
         private float mass = 1.0f;
         private RigidBodyTypes type;
@@ -301,7 +301,7 @@ namespace Xenko.Physics
 
         protected override void OnAttach()
         {
-            MotionState = new XenkoMotionState(this);
+            MotionState = new StrideMotionState(this);
 
             SetupBoneLink();
 
@@ -633,11 +633,11 @@ namespace Xenko.Physics
             }
         }
 
-        internal class XenkoMotionState : BulletSharp.MotionState
+        internal class StrideMotionState : BulletSharp.MotionState
         {
             private RigidbodyComponent rigidBody;
 
-            public XenkoMotionState(RigidbodyComponent rb)
+            public StrideMotionState(RigidbodyComponent rb)
             {
                 rigidBody = rb;
             }
@@ -649,14 +649,14 @@ namespace Xenko.Physics
 
             public override void GetWorldTransform(out BulletSharp.Math.Matrix transform)
             {
-                rigidBody.RigidBodyGetWorldTransform(out var xenkoMatrix);
-                transform = xenkoMatrix;
+                rigidBody.RigidBodyGetWorldTransform(out var strideMatrix);
+                transform = strideMatrix;
             }
 
             public override void SetWorldTransform(ref BulletSharp.Math.Matrix transform)
             {
-                Matrix asXenkoMatrix = transform;
-                rigidBody.RigidBodySetWorldTransform(ref asXenkoMatrix);
+                Matrix asStrideMatrix = transform;
+                rigidBody.RigidBodySetWorldTransform(ref asStrideMatrix);
             }
         }
     }

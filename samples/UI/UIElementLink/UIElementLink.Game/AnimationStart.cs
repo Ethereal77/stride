@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Animations;
-using Xenko.Input;
-using Xenko.Engine;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Animations;
+using Stride.Input;
+using Stride.Engine;
 
 namespace UIElementLink
 {

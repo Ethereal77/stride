@@ -1,13 +1,13 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Assets.Editor.Components.Properties;
-using Xenko.Core.Assets.Editor.Quantum.NodePresenters.Keys;
-using Xenko.Core.IO;
-using Xenko.Core.Presentation.Quantum.Presenters;
+using Stride.Core.Assets.Editor.Components.Properties;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters.Keys;
+using Stride.Core.IO;
+using Stride.Core.Presentation.Quantum.Presenters;
 
-namespace Xenko.Core.Assets.Editor.Quantum.NodePresenters.Updaters
+namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Updaters
 {
     public sealed class UPathNodeUpdater : NodePresenterUpdaterBase
     {

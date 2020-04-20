@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -14,10 +14,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-using Xenko.Core.Mathematics;
-using Xenko.Graphics.Font;
+using Stride.Core.Mathematics;
+using Stride.Graphics.Font;
 
-namespace Xenko.Assets.SpriteFont.Compiler
+namespace Stride.Assets.SpriteFont.Compiler
 {
     // Writes the output sprite font binary file.
     internal static class OfflineRasterizedSpriteFontWriter

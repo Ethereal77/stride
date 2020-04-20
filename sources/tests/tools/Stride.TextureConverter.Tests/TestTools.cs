@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -9,9 +9,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 
-using Xenko.TextureConverter.Requests;
+using Stride.TextureConverter.Requests;
 
-namespace Xenko.TextureConverter.Tests
+namespace Stride.TextureConverter.Tests
 {
     class TestTools
     {
@@ -61,7 +61,7 @@ namespace Xenko.TextureConverter.Tests
         private TestTools() {
             Checksum = new Dictionary<string, string>
             {
-                // XenkoTexLibrary
+                // StrideTexLibrary
                 {"ExportTest_Texture3D_WMipMaps_ATC_RGBA_Explicit.xk", "b351c27d236ee7bd1dfd4c0e8a5a5c785a2b9c53"},
                 {"ExportTest_TextureArray_WMipMaps_ATC_RGBA_Explicit.xk", "cb04d7f022623eaf16741dc8820f6354ffe101f4"},
                 {"ExportTest_TextureCube_WMipMaps_RGBA8888.xk", "a1d07aced830ba66c965c2c7ab24fcc38a8ce9e7"},

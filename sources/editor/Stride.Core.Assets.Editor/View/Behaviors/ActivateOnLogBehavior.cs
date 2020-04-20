@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,10 +7,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Presentation.Behaviors;
+using Stride.Core.Diagnostics;
+using Stride.Core.Presentation.Behaviors;
 
-namespace Xenko.Core.Assets.Editor.View.Behaviors
+namespace Stride.Core.Assets.Editor.View.Behaviors
 {
     /// <summary>
     /// The base class for a behavior that allows to activate the associated dependency object when an observable collection of <see cref="ILogMessage"/>

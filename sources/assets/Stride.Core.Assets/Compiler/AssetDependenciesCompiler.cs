@@ -1,20 +1,20 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.BuildEngine;
-using Xenko.Core.Annotations;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.BuildEngine;
+using Stride.Core.Annotations;
 using System.Threading.Tasks;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
 using System.Linq;
 
-namespace Xenko.Core.Assets.Compiler
+namespace Stride.Core.Assets.Compiler
 {
     /// <summary>
     /// An asset compiler that will compile an asset with all its dependencies.

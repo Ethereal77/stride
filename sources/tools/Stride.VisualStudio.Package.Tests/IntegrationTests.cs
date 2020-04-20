@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -20,16 +20,16 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 using VSLangProj;
 
-using Xenko.Core;
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Mathematics;
-using Xenko.Core.VisualStudio;
-using Xenko.Assets.Templates;
-using Xenko.Assets.Presentation.Templates;
-using Xenko.Rendering;
+using Stride.Core;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Mathematics;
+using Stride.Core.VisualStudio;
+using Stride.Assets.Templates;
+using Stride.Assets.Presentation.Templates;
+using Stride.Rendering;
 
 using Xunit;
 
@@ -37,18 +37,18 @@ using Debugger = System.Diagnostics.Debugger;
 using Process = System.Diagnostics.Process;
 using Thread = System.Threading.Thread;
 
-namespace Xenko.VisualStudio.Package.Tests
+namespace Stride.VisualStudio.Package.Tests
 {
     /// <summary>
     /// Test class that runs experimental instance of Visual Studio to check our plugin works well.
     /// </summary>
     /// <remarks>
-    /// Right now it only has a test for .xksl C# code generator, but it also tests a lot of things along the way: VSPackage properly have all dependencies (no missing .dll), IXenkoCommands can be properly found, etc...
-    /// Also, it works against a dev version of Xenko, but it could eventually be improved to test against package version as well.
+    /// Right now it only has a test for .xksl C# code generator, but it also tests a lot of things along the way: VSPackage properly have all dependencies (no missing .dll), IStrideCommands can be properly found, etc...
+    /// Also, it works against a dev version of Stride, but it could eventually be improved to test against package version as well.
     /// </remarks>
     public class IntegrationTests : IDisposable
     {
-        private const string StartArguments = @"/RootSuffix Xenko /resetsettings Profiles\General.vssettings";
+        private const string StartArguments = @"/RootSuffix Stride /resetsettings Profiles\General.vssettings";
         private DTE dte;
         private Process process;
         private bool killVisualStudioProcessDuringTearDown;
@@ -162,7 +162,7 @@ namespace Xenko.VisualStudio.Package.Tests
                 var xkslItem = newGameProject.ProjectItems.AddFromFileCopy(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestGenerator.xksl"));
 
                 // Make sure custom tool is properly set
-                Assert.Equal("XenkoShaderKeyGenerator", xkslItem.Properties.Item("CustomTool").Value);
+                Assert.Equal("StrideShaderKeyGenerator", xkslItem.Properties.Item("CustomTool").Value);
 
                 // Wait for cs file to be generated (up to 5 seconds)
                 // TODO: Is there a better way to wait for it?

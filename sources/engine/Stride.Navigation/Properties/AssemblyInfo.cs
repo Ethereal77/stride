@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("a9968d1f-7e75-4d89-8411-27390a47e4d0")]
 
-#pragma warning disable 436 // Xenko.PublicKeys is defined in multiple assemblies
+#pragma warning disable 436 // Stride.PublicKeys is defined in multiple assemblies
 
-[assembly: InternalsVisibleTo("Xenko.Assets" + Xenko.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("Xenko.Assets.Presentation" + Xenko.PublicKeys.Default)]
+[assembly: InternalsVisibleTo("Stride.Assets" + Stride.PublicKeys.Default)]
+[assembly: InternalsVisibleTo("Stride.Assets.Presentation" + Stride.PublicKeys.Default)]

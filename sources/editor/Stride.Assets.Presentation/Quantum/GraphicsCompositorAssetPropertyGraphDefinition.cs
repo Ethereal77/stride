@@ -1,16 +1,16 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core.Assets.Quantum;
-using Xenko.Core.Quantum;
-using Xenko.Assets.Rendering;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Quantum;
+using Stride.Assets.Rendering;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
 
-namespace Xenko.Assets.Presentation.Quantum
+namespace Stride.Assets.Presentation.Quantum
 {
     [AssetPropertyGraphDefinition(typeof(GraphicsCompositorAsset))]
     public class GraphicsCompositorAssetPropertyGraphDefinition : AssetPropertyGraphDefinition

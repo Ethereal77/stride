@@ -1,20 +1,20 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xenko.Core.Yaml.Events;
-using Xenko.Core.Yaml.Tokens;
+using Stride.Core.Yaml.Events;
+using Stride.Core.Yaml.Tokens;
 
-using AnchorAlias = Xenko.Core.Yaml.Events.AnchorAlias;
-using DocumentEnd = Xenko.Core.Yaml.Events.DocumentEnd;
-using DocumentStart = Xenko.Core.Yaml.Events.DocumentStart;
-using Scalar = Xenko.Core.Yaml.Events.Scalar;
-using StreamEnd = Xenko.Core.Yaml.Events.StreamEnd;
-using StreamStart = Xenko.Core.Yaml.Events.StreamStart;
+using AnchorAlias = Stride.Core.Yaml.Events.AnchorAlias;
+using DocumentEnd = Stride.Core.Yaml.Events.DocumentEnd;
+using DocumentStart = Stride.Core.Yaml.Events.DocumentStart;
+using Scalar = Stride.Core.Yaml.Events.Scalar;
+using StreamEnd = Stride.Core.Yaml.Events.StreamEnd;
+using StreamStart = Stride.Core.Yaml.Events.StreamStart;
 
-namespace Xenko.Core.Yaml.Tests
+namespace Stride.Core.Yaml.Tests
 {
     public class ParserTestHelper : YamlTest
     {

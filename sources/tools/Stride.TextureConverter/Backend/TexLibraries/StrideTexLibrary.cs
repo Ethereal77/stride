@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,20 +7,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.TextureConverter.Requests;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.TextureConverter.Requests;
 
 
-namespace Xenko.TextureConverter.TexLibraries
+namespace Stride.TextureConverter.TexLibraries
 {
 
     /// <summary>
-    /// Class containing the needed native Data used by Xenko
+    /// Class containing the needed native Data used by Stride
     /// </summary>
-    internal class XenkoTextureLibraryData : ITextureLibraryData
+    internal class StrideTextureLibraryData : ITextureLibraryData
     {
         /// <summary>
         /// The <see cref="Image"/> image
@@ -30,17 +30,17 @@ namespace Xenko.TextureConverter.TexLibraries
 
 
     /// <summary>
-    /// Peforms requests from <see cref="TextureTool" /> using Xenko framework.
+    /// Peforms requests from <see cref="TextureTool" /> using Stride framework.
     /// </summary>
-    internal class XenkoTexLibrary : ITexLibrary
+    internal class StrideTexLibrary : ITexLibrary
     {
-        private static Logger Log = GlobalLogger.GetLogger("XenkoTexLibrary");
+        private static Logger Log = GlobalLogger.GetLogger("StrideTexLibrary");
         public static readonly string Extension = ".xk";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="XenkoTexLibrary"/> class.
+        /// Initializes a new instance of the <see cref="StrideTexLibrary"/> class.
         /// </summary>
-        public XenkoTexLibrary(){}
+        public StrideTexLibrary(){}
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. Nothing in this case
@@ -50,7 +50,7 @@ namespace Xenko.TextureConverter.TexLibraries
 
         public void Dispose(TexImage image)
         {
-            XenkoTextureLibraryData libraryData = (XenkoTextureLibraryData)image.LibraryData[this];
+            StrideTextureLibraryData libraryData = (StrideTextureLibraryData)image.LibraryData[this];
             if (libraryData.XkImage != null) libraryData.XkImage.Dispose();
         }
 
@@ -61,7 +61,7 @@ namespace Xenko.TextureConverter.TexLibraries
 
         public void StartLibrary(TexImage image)
         {
-            XenkoTextureLibraryData libraryData = new XenkoTextureLibraryData();
+            StrideTextureLibraryData libraryData = new StrideTextureLibraryData();
             image.LibraryData[this] = libraryData;
         }
 
@@ -83,10 +83,10 @@ namespace Xenko.TextureConverter.TexLibraries
                     }
 
                 case RequestType.InvertYUpdate:
-                case RequestType.ExportToXenko:
+                case RequestType.ExportToStride:
                     return true;
 
-                case RequestType.Loading: // Xenko can load dds file or his own format or a Xenko <see cref="Image"/> instance.
+                case RequestType.Loading: // Stride can load dds file or his own format or a Stride <see cref="Image"/> instance.
                     LoadingRequest load = (LoadingRequest)request;
                     if (load.Mode == LoadingRequest.LoadingMode.XkImage) return true;
                     else if (load.Mode == LoadingRequest.LoadingMode.FilePath)
@@ -101,7 +101,7 @@ namespace Xenko.TextureConverter.TexLibraries
 
         public void Execute(TexImage image, IRequest request)
         {
-            XenkoTextureLibraryData libraryData = image.LibraryData.TryGetValue(this, out var libData) ? (XenkoTextureLibraryData)libData : null;
+            StrideTextureLibraryData libraryData = image.LibraryData.TryGetValue(this, out var libData) ? (StrideTextureLibraryData)libData : null;
 
             switch (request.Type)
             {
@@ -109,8 +109,8 @@ namespace Xenko.TextureConverter.TexLibraries
                     Export(image, libraryData, (ExportRequest)request);
                     break;
 
-                case RequestType.ExportToXenko:
-                    ExportToXenko(image, libraryData, (ExportToXenkoRequest)request);
+                case RequestType.ExportToStride:
+                    ExportToStride(image, libraryData, (ExportToStrideRequest)request);
                     break;
 
                 case RequestType.Loading:
@@ -160,7 +160,7 @@ namespace Xenko.TextureConverter.TexLibraries
         }
 
         /// <summary>
-        /// Exports the specified image into regular DDS file or a Xenko own file format.
+        /// Exports the specified image into regular DDS file or a Stride own file format.
         /// </summary>
         /// <param name="image">The image.</param>
         /// <param name="libraryData">The library data.</param>
@@ -172,7 +172,7 @@ namespace Xenko.TextureConverter.TexLibraries
         /// </exception>
         /// <exception cref="System.NotImplementedException"></exception>
         /// <exception cref="TexLibraryException">Unsupported file extension.</exception>
-        private void Export(TexImage image, XenkoTextureLibraryData libraryDataf, ExportRequest request)
+        private void Export(TexImage image, StrideTextureLibraryData libraryDataf, ExportRequest request)
         {
             Log.Verbose("Exporting to " + request.FilePath + " ...");
 
@@ -311,7 +311,7 @@ namespace Xenko.TextureConverter.TexLibraries
             {
                 String extension = Path.GetExtension(request.FilePath);
                 if (extension.Equals(Extension))
-                    xkImage.Save(fileStream, ImageFileType.Xenko);
+                    xkImage.Save(fileStream, ImageFileType.Stride);
                 else if (extension.Equals(".dds"))
                     xkImage.Save(fileStream, ImageFileType.Dds);
                 else
@@ -327,7 +327,7 @@ namespace Xenko.TextureConverter.TexLibraries
 
 
         /// <summary>
-        /// Exports to Xenko <see cref="Image"/>. An instance will be stored in the <see cref="ExportToXenkoRequest"/> instance.
+        /// Exports to Stride <see cref="Image"/>. An instance will be stored in the <see cref="ExportToStrideRequest"/> instance.
         /// </summary>
         /// <param name="image">The image.</param>
         /// <param name="libraryData">The library data.</param>
@@ -335,12 +335,12 @@ namespace Xenko.TextureConverter.TexLibraries
         /// <exception cref="System.InvalidOperationException">
         /// Image size different than expected.
         /// or
-        /// Failed to convert texture into Xenko Image.
+        /// Failed to convert texture into Stride Image.
         /// </exception>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void ExportToXenko(TexImage image, XenkoTextureLibraryData libraryData, ExportToXenkoRequest request)
+        private void ExportToStride(TexImage image, StrideTextureLibraryData libraryData, ExportToStrideRequest request)
         {
-            Log.Verbose("Exporting to Xenko Image ...");
+            Log.Verbose("Exporting to Stride Image ...");
 
             Image xkImage = null;
             switch (image.Dimension)
@@ -379,9 +379,9 @@ namespace Xenko.TextureConverter.TexLibraries
         /// <param name="request">The request.</param>
         private void Load(TexImage image, LoadingRequest request)
         {
-            Log.Verbose("Loading Xenko Image ...");
+            Log.Verbose("Loading Stride Image ...");
 
-            var libraryData = new XenkoTextureLibraryData();
+            var libraryData = new StrideTextureLibraryData();
             image.LibraryData[this] = libraryData;
 
             Image inputImage;
@@ -394,7 +394,7 @@ namespace Xenko.TextureConverter.TexLibraries
                 using (var fileStream = new FileStream(request.FilePath, FileMode.Open, FileAccess.Read))
                     inputImage = Image.Load(fileStream);
 
-                libraryData.XkImage = inputImage; // the image need to be disposed by the xenko text library
+                libraryData.XkImage = inputImage; // the image need to be disposed by the stride text library
             }
             else
             {

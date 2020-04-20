@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Core.Collections;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Games;
+using Stride.Core;
+using Stride.Core.Collections;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Games;
 
-namespace Xenko.Input
+namespace Stride.Input
 {
     /// <summary>
     /// Manages collecting input from connected input device in the form of <see cref="IInputDevice"/> objects. Also provides some convenience functions for most commonly used devices
@@ -55,7 +55,7 @@ namespace Xenko.Input
 
         private Dictionary<IInputSource, EventHandler<TrackingCollectionChangedEventArgs>> devicesCollectionChangedActions = new Dictionary<IInputSource, EventHandler<TrackingCollectionChangedEventArgs>>();
 
-#if XENKO_INPUT_RAWINPUT
+#if STRIDE_INPUT_RAWINPUT
         private bool rawInputEnabled = false;
 #endif
 
@@ -232,7 +232,7 @@ namespace Xenko.Input
         /// </summary>
         public bool UseRawInput
         {
-#if XENKO_INPUT_RAWINPUT
+#if STRIDE_INPUT_RAWINPUT
             get
             {
                 return rawInputEnabled;
@@ -586,13 +586,13 @@ namespace Xenko.Input
             switch (Game.Context.ContextType)
             {
                 case AppContextType.Desktop:
-#if XENKO_UI_WINFORMS || XENKO_UI_WPF
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
                     Sources.Add(new InputSourceWinforms());
                     Sources.Add(new InputSourceWindowsDirectInput());
                     if (InputSourceWindowsXInput.IsSupported())
                         Sources.Add(new InputSourceWindowsXInput());
 #endif
-#if XENKO_INPUT_RAWINPUT
+#if STRIDE_INPUT_RAWINPUT
                     if (rawInputEnabled)
                         Sources.Add(new InputSourceWindowsRawInput());
 #endif

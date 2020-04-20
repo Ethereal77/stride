@@ -1,13 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:xk="http://schemas.xenko.com/xaml/presentation"
-                    xmlns:tp="clr-namespace:Xenko.Assets.Presentation.TemplateProviders"
+                    xmlns:xk="http://schemas.stride3d.net/xaml/presentation"
+                    xmlns:tp="clr-namespace:Stride.Assets.Presentation.TemplateProviders"
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:s="clr-namespace:System;assembly=mscorlib"
-                    xmlns:valueConverters="clr-namespace:Xenko.Assets.Presentation.ValueConverters"
-                    xmlns:qvm="clr-namespace:Xenko.Core.Presentation.Quantum.ViewModels;assembly=Xenko.Core.Presentation.Quantum">
+                    xmlns:valueConverters="clr-namespace:Stride.Assets.Presentation.ValueConverters"
+                    xmlns:qvm="clr-namespace:Stride.Core.Presentation.Quantum.ViewModels;assembly=Stride.Core.Presentation.Quantum">
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="/Xenko.Core.Assets.Editor;component/View/DefaultPropertyTemplateProviders.xaml"/>
+    <ResourceDictionary Source="/Stride.Core.Assets.Editor;component/View/DefaultPropertyTemplateProviders.xaml"/>
     <ResourceDictionary Source="ImageDictionary.xaml"/>
   </ResourceDictionary.MergedDictionaries>
 

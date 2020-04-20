@@ -1,18 +1,18 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core.Shaders.Ast.Xenko;
-using Xenko.Shaders.Parser.Utility;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
-using Xenko.Core.Shaders.Utility;
-using Xenko.Core.Shaders.Visitor;
+using Stride.Core.Shaders.Ast.Stride;
+using Stride.Shaders.Parser.Utility;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Utility;
+using Stride.Core.Shaders.Visitor;
 
-namespace Xenko.Shaders.Parser.Mixins
+namespace Stride.Shaders.Parser.Mixins
 {
     class ShaderDependencyVisitor : ShaderWalker
     {
@@ -80,7 +80,7 @@ namespace Xenko.Shaders.Parser.Mixins
                 else if (typeBase is ShaderTypeName)
                 {
                     // Special case for ShaderTypeName as we must generate an error if it is not found
-                    log.Error(XenkoMessageCode.ErrorClassNotFound, typeBase.Span, typeBase.Name.Text);
+                    log.Error(StrideMessageCode.ErrorClassNotFound, typeBase.Span, typeBase.Name.Text);
                 }
             }
         }

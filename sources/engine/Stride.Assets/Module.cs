@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,18 +6,18 @@ using System;
 using System.IO;
 using System.Reflection.Emit;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Templates;
-using Xenko.Core;
-using Xenko.Core.Reflection;
-using Xenko.Core.Yaml;
-using Xenko.Engine;
-using Xenko.Rendering;
-using Xenko.Rendering.Skyboxes;
-using Xenko.Graphics;
-using Xenko.Shaders;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Templates;
+using Stride.Core;
+using Stride.Core.Reflection;
+using Stride.Core.Yaml;
+using Stride.Engine;
+using Stride.Rendering;
+using Stride.Rendering.Skyboxes;
+using Stride.Graphics;
+using Stride.Shaders;
 
-namespace Xenko.Assets
+namespace Stride.Assets
 {
     internal class Module
     {
@@ -25,7 +25,7 @@ namespace Xenko.Assets
         public static void Initialize()
         {
             // Register solution platforms
-            XenkoConfig.RegisterSolutionPlatforms();
+            StrideConfig.RegisterSolutionPlatforms();
 
             AssemblyRegistry.Register(typeof(Module).Assembly, AssemblyCommonCategories.Assets);
             AssemblyRegistry.Register(typeof(ParameterKeys).Assembly, AssemblyCommonCategories.Assets);

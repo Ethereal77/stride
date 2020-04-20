@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.ComponentModel;
 
-using Xenko.Core;
-using Xenko.Core.Mathematics;
-using Xenko.Engine;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Engine;
 
-namespace Xenko.Physics
+namespace Stride.Physics
 {
     [DataContract("CharacterComponent")]
     [Display("Character")]
@@ -125,7 +125,7 @@ namespace Xenko.Physics
         /// Gets or sets if this character jump speed
         /// </summary>
         /// <value>
-        /// A float representing character jump speed in Xenko world units
+        /// A float representing character jump speed in Stride world units
         /// </value>
         /// <userdoc>
         /// The speed of the jump
@@ -154,7 +154,7 @@ namespace Xenko.Physics
         /// Gets or sets if this character is affected by any gravity
         /// </summary>
         /// <value>
-        /// A Vector3 representing directional gravity in Xenko world units
+        /// A Vector3 representing directional gravity in Stride world units
         /// </value>
         /// <userdoc>
         /// The gravity force applied to this character

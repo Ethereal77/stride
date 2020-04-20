@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
-namespace Xenko.LauncherApp
+namespace Stride.LauncherApp
 {
     static class Program
     {
@@ -87,7 +87,7 @@ namespace Xenko.LauncherApp
             // these types are loaded
             // TODO: can we register this handler in the Module initializer?
             AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
-            AppDomain.CurrentDomain.ExecuteAssemblyByName("Xenko.Launcher", null, args);
+            AppDomain.CurrentDomain.ExecuteAssemblyByName("Stride.Launcher", null, args);
         }
 
         private static bool CheckPrerequisites(StringBuilder prerequisiteLog)

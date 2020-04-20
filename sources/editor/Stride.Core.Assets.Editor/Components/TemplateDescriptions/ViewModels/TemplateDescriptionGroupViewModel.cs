@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,11 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core.Extensions;
-using Xenko.Core.Presentation.Collections;
-using Xenko.Core.Presentation.ViewModel;
+using Stride.Core.Extensions;
+using Stride.Core.Presentation.Collections;
+using Stride.Core.Presentation.ViewModel;
 
-namespace Xenko.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
+namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 {
     public class TemplateDescriptionGroupViewModel : DispatcherViewModel, IComparable<TemplateDescriptionGroupViewModel>
     {

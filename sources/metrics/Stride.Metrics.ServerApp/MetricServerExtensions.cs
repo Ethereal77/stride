@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -18,11 +18,11 @@ using Owin;
 
 using Thinktecture.IdentityServer.AccessTokenValidation;
 
-using Xenko.Metrics.ServerApp.Content;
-using Xenko.Metrics.ServerApp.Controllers;
-using Xenko.Metrics.ServerApp.Models;
+using Stride.Metrics.ServerApp.Content;
+using Stride.Metrics.ServerApp.Controllers;
+using Stride.Metrics.ServerApp.Models;
 
-namespace Xenko.Metrics.ServerApp
+namespace Stride.Metrics.ServerApp
 {
     public static class MetricServerExtensions
     {

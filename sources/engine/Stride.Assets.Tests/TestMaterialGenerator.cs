@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,14 +8,14 @@ using System.IO;
 
 using Xunit;
 
-using Xenko.Core.Mathematics;
-using Xenko.Core.Yaml;
-using Xenko.Rendering;
-using Xenko.Rendering.Materials;
-using Xenko.Rendering.Materials.ComputeColors;
-using Xenko.Shaders;
+using Stride.Core.Mathematics;
+using Stride.Core.Yaml;
+using Stride.Rendering;
+using Stride.Rendering.Materials;
+using Stride.Rendering.Materials.ComputeColors;
+using Stride.Shaders;
 
-namespace Xenko.Assets.Tests
+namespace Stride.Assets.Tests
 {
     /// <summary>
     /// Tests for <see cref="MaterialGenerator"/> and related classes

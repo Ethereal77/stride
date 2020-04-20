@@ -1,10 +1,10 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-namespace Xenko.Graphics
+namespace Stride.Graphics
 {
     /// <summary>
     /// <p>Which resources are supported for a given format and given device (see <strong><see cref="SharpDX.Direct3D11.Device.CheckFormatSupport"/></strong> and <strong><see cref="SharpDX.Direct3D11.Device.CheckFeatureSupport"/></strong>).</p>

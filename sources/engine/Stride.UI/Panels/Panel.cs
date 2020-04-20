@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,16 +7,16 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Collections;
-using Xenko.Core.Mathematics;
-using Xenko.UI.Controls;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Collections;
+using Stride.Core.Mathematics;
+using Stride.UI.Controls;
 
-namespace Xenko.UI.Panels
+namespace Stride.UI.Panels
 {
     /// <summary>
-    /// Provides a base class for all Panel elements. Use Panel elements to position and arrange child objects Xenko applications.
+    /// Provides a base class for all Panel elements. Use Panel elements to position and arrange child objects Stride applications.
     /// </summary>
     [DataContract(nameof(Panel))]
     [DebuggerDisplay("Panel - Name={Name}")]

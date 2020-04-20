@@ -1,20 +1,20 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Rendering;
-using Xenko.Rendering.Compositing;
+using Stride.Core;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization.Contents;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Rendering;
+using Stride.Rendering.Compositing;
 
-namespace Xenko.Engine
+namespace Stride.Engine
 {
     /// <summary>
     /// The scene system handles the scenes of a game.

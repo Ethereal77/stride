@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,16 +7,16 @@ using System.IO;
 
 using Xunit;
 
-using Xenko.Core.IO;
-using Xenko.Core.Serialization.Assets;
-using Xenko.Core.Storage;
-using Xenko.Rendering;
-using Xenko.Games;
-using Xenko.Shaders;
-using Xenko.Shaders.Compiler;
-using EffectCompiler = Xenko.Shaders.Compiler.EffectCompiler;
+using Stride.Core.IO;
+using Stride.Core.Serialization.Assets;
+using Stride.Core.Storage;
+using Stride.Rendering;
+using Stride.Games;
+using Stride.Shaders;
+using Stride.Shaders.Compiler;
+using EffectCompiler = Stride.Shaders.Compiler.EffectCompiler;
 
-namespace Xenko.Graphics
+namespace Stride.Graphics
 {
     public class TestEffect : Game
     {

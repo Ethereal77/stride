@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-namespace Xenko.PrivacyPolicy
+namespace Stride.PrivacyPolicy
 {
     /// <summary>
     /// Interaction logic for PrivacyPolicyWindow.xaml
@@ -41,7 +41,7 @@ namespace Xenko.PrivacyPolicy
         private void ButtonPrivacyPolicyAccepted(object sender, RoutedEventArgs e)
         {
             if (PrivacyPolicyAccepted)
-                PrivacyPolicyHelper.AcceptXenko30();
+                PrivacyPolicyHelper.AcceptStride30();
 
             Close();
         }

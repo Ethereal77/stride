@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -8,13 +8,13 @@ using System.IO;
 using SharpDX.DirectWrite;
 using SharpDX.Mathematics.Interop;
 
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core;
-using Xenko.Core.IO;
-using Xenko.Assets.SpriteFont.Compiler;
-using Xenko.Graphics.Font;
+using Stride.Core.Assets.Compiler;
+using Stride.Core;
+using Stride.Core.IO;
+using Stride.Assets.SpriteFont.Compiler;
+using Stride.Graphics.Font;
 
-namespace Xenko.Assets.SpriteFont
+namespace Stride.Assets.SpriteFont
 {
     [DataContract("FileFontProvider")]
     [Display("Font from File")]
@@ -47,13 +47,13 @@ namespace Xenko.Assets.SpriteFont
                 FontSimulations fontSimulations;
                 switch (Style)
                 {
-                    case Xenko.Graphics.Font.FontStyle.Regular:
+                    case Stride.Graphics.Font.FontStyle.Regular:
                         fontSimulations = FontSimulations.None;
                         break;
-                    case Xenko.Graphics.Font.FontStyle.Bold:
+                    case Stride.Graphics.Font.FontStyle.Bold:
                         fontSimulations = FontSimulations.Bold;
                         break;
-                    case Xenko.Graphics.Font.FontStyle.Italic:
+                    case Stride.Graphics.Font.FontStyle.Italic:
                         fontSimulations = FontSimulations.Oblique;
                         break;
                     default:

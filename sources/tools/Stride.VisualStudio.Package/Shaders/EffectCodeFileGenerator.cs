@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -12,19 +12,19 @@ using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.Shell;
 
-using Xenko.VisualStudio.CodeGenerator;
-using Xenko.VisualStudio.Commands;
+using Stride.VisualStudio.CodeGenerator;
+using Stride.VisualStudio.Commands;
 
-namespace Xenko.VisualStudio.Shaders
+namespace Stride.VisualStudio.Shaders
 {
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.None)]
-    [Guid(GuidList.guidXenko_VisualStudio_EffectCodeFileGenerator)]
+    [Guid(GuidList.guidStride_VisualStudio_EffectCodeFileGenerator)]
     [ProvideObject(typeof(EffectCodeFileGenerator), RegisterUsing = RegistrationMethod.CodeBase)]
     public class EffectCodeFileGenerator : BaseCodeGeneratorWithSite
     {
-        public const string DisplayName = "Xenko Effect C# Code Generator";
-        public const string InternalName = "XenkoEffectCodeGenerator";
+        public const string DisplayName = "Stride Effect C# Code Generator";
+        public const string InternalName = "StrideEffectCodeGenerator";
 
         protected override string GetDefaultExtension()
         {
@@ -38,7 +38,7 @@ namespace Xenko.VisualStudio.Shaders
             {
                 return System.Threading.Tasks.Task.Run(() =>
                 {
-                    var remoteCommands = XenkoCommandsProxy.GetProxy();
+                    var remoteCommands = StrideCommandsProxy.GetProxy();
                     return remoteCommands.GenerateShaderKeys(inputFileName, inputFileContent);
                 }).Result;
             }

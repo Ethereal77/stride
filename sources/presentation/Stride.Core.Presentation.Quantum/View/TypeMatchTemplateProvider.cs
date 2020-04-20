@@ -1,15 +1,15 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 
-using Xenko.Core.Presentation.Quantum.ViewModels;
+using Stride.Core.Presentation.Quantum.ViewModels;
 
-namespace Xenko.Core.Presentation.Quantum.View
+namespace Stride.Core.Presentation.Quantum.View
 {
     /// <summary>
-    /// An implementation of the <see cref="NodeViewModelTemplateProvider"/> that matches <see cref="Xenko.Core.Presentation.Quantum.ViewModels.NodeViewModel"/> of a specific type.
+    /// An implementation of the <see cref="NodeViewModelTemplateProvider"/> that matches <see cref="Stride.Core.Presentation.Quantum.ViewModels.NodeViewModel"/> of a specific type.
     /// </summary>
     public class TypeMatchTemplateProvider : NodeViewModelTemplateProvider
     {
@@ -22,8 +22,8 @@ namespace Xenko.Core.Presentation.Quantum.View
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="Type"/> to match. This provider will accept any node that has either a <see cref="Xenko.Core.Presentation.Quantum.ViewModels.NodeViewModel.Type"/>
-        /// or a <see cref="Xenko.Core.Presentation.Quantum.ViewModels.NodeViewModel.Value"/> with a type that is assignable to the type represented in this property.
+        /// Gets or sets the <see cref="Type"/> to match. This provider will accept any node that has either a <see cref="Stride.Core.Presentation.Quantum.ViewModels.NodeViewModel.Type"/>
+        /// or a <see cref="Stride.Core.Presentation.Quantum.ViewModels.NodeViewModel.Value"/> with a type that is assignable to the type represented in this property.
         /// </summary>
         public Type Type { get; set; }
 

@@ -1,28 +1,28 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Linq;
 
-using Xenko.Core.Diagnostics;
-using Xenko.Core.IO;
-using Xenko.Core.Serialization.Contents;
-using Xenko.Core.Storage;
-using Xenko.Games;
-using Xenko.Graphics;
-using Xenko.Shaders.Compiler;
-using Xenko.Shaders.Parser.Mixins;
-using Xenko.Core.Shaders.Ast;
-using Xenko.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Storage;
+using Stride.Games;
+using Stride.Graphics;
+using Stride.Shaders.Compiler;
+using Stride.Shaders.Parser.Mixins;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Hlsl;
 
 using Xunit;
 
-namespace Xenko.Shaders.Tests
+namespace Stride.Shaders.Tests
 {
     public class TestGenericClass
     {
         private ShaderSourceManager manager;
-        private Xenko.Core.Shaders.Utility.LoggerResult logger;
+        private Stride.Core.Shaders.Utility.LoggerResult logger;
         private ShaderLoader loader;
 
         private void Init()
@@ -33,7 +33,7 @@ namespace Xenko.Shaders.Tests
 
             manager = new ShaderSourceManager(databaseFileProvider);
             manager.LookupDirectoryList.Add("shaders");
-            logger = new Xenko.Core.Shaders.Utility.LoggerResult();
+            logger = new Stride.Core.Shaders.Utility.LoggerResult();
             loader = new ShaderLoader(manager);
         }
 
@@ -57,7 +57,7 @@ namespace Xenko.Shaders.Tests
             Assert.NotNull(shaderClass);
 
             Assert.Equal(10, shaderClass.Members.Count);
-            Assert.Equal(4, shaderClass.Members.OfType<Variable>().Count(x => x.Qualifiers.Contains(Xenko.Core.Shaders.Ast.Hlsl.StorageQualifier.Static)));
+            Assert.Equal(4, shaderClass.Members.OfType<Variable>().Count(x => x.Qualifiers.Contains(Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Static)));
             Assert.Empty(shaderClass.ShaderGenerics);
             Assert.Empty(shaderClass.GenericArguments);
             Assert.Empty(shaderClass.GenericParameters);

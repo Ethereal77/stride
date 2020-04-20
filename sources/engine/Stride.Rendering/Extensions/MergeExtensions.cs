@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Xenko.Core;
-using Xenko.Graphics;
-using Xenko.Graphics.Data;
-using Xenko.Rendering;
+using Stride.Core;
+using Stride.Graphics;
+using Stride.Graphics.Data;
+using Stride.Rendering;
 
-namespace Xenko.Extensions
+namespace Stride.Extensions
 {
     public static class MergeExtensions
     {

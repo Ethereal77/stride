@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -7,15 +7,15 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Xenko.Core.Assets;
-using Xenko.Core.Assets.Compiler;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Mathematics;
-using Xenko.Core.Storage;
-using Xenko.Editor.Resources;
-using Xenko.Graphics;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
+using Stride.Core.Storage;
+using Stride.Editor.Resources;
+using Stride.Graphics;
 
-namespace Xenko.Editor.Thumbnails
+namespace Stride.Editor.Thumbnails
 {
     /// <summary>
     /// The context used when building the thumbnail of an asset in a Package.

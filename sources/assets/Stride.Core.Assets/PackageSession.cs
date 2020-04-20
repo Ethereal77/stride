@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,21 +11,21 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xenko.Core;
-using Xenko.Core.Annotations;
-using Xenko.Core.Assets.Analysis;
-using Xenko.Core.Assets.Diagnostics;
-using Xenko.Core.Assets.Tracking;
-using Xenko.Core.Diagnostics;
-using Xenko.Core.Extensions;
-using Xenko.Core.IO;
-using Xenko.Core.Packages;
-using Xenko.Core.Reflection;
-using Xenko.Core.Serialization;
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Diagnostics;
+using Stride.Core.Assets.Tracking;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
+using Stride.Core.Packages;
+using Stride.Core.Reflection;
+using Stride.Core.Serialization;
 
-using ILogger = Xenko.Core.Diagnostics.ILogger;
+using ILogger = Stride.Core.Diagnostics.ILogger;
 
-namespace Xenko.Core.Assets
+namespace Stride.Core.Assets
 {
     public abstract class PackageContainer
     {
@@ -1467,7 +1467,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
                 // Load assemblies. Set the package filename to the path on disk, in case of renaming.
                 // TODO: Could referenced projects be associated to other packages than this one?
-                newLoadParameters.ExtraCompileProperties.Add("XenkoCurrentPackagePath", package.FullPath);
+                newLoadParameters.ExtraCompileProperties.Add("StrideCurrentPackagePath", package.FullPath);
                 package.LoadAssemblies(log, newLoadParameters);
 
                 // Load list of assets

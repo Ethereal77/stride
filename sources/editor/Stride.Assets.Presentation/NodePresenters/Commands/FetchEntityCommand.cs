@@ -1,18 +1,18 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
-using Xenko.Core;
-using Xenko.Core.Presentation.Quantum.Presenters;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
-using Xenko.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
-using Xenko.Assets.Presentation.ViewModel;
-using Xenko.Engine;
+using Stride.Core;
+using Stride.Core.Presentation.Quantum.Presenters;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Engine;
 
-namespace Xenko.Assets.Presentation.NodePresenters.Commands
+namespace Stride.Assets.Presentation.NodePresenters.Commands
 {
     public class FetchEntityCommand : SyncNodePresenterCommandBase
     {

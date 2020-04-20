@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020 Xenko and its contributors (https://xenko.com)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,12 +6,12 @@ using System;
 using System.Windows.Markup;
 using System.Windows.Media;
 
-using Xenko.Core.Annotations;
-using Xenko.Core.Presentation.Themes;
+using Stride.Core.Annotations;
+using Stride.Core.Presentation.Themes;
 
-namespace Xenko.Core.Presentation.MarkupExtensions
+namespace Stride.Core.Presentation.MarkupExtensions
 {
-    using static Xenko.Core.Presentation.Themes.IconThemeSelector;
+    using static Stride.Core.Presentation.Themes.IconThemeSelector;
 
     [MarkupExtensionReturnType(typeof(ImageSource))]
     public class ThemedSourceExtension : MarkupExtension
