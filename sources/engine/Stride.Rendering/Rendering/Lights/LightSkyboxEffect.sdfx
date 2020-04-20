@@ -1,0 +1,28 @@
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+using Stride.Rendering.Data;
+
+namespace Stride.Rendering.Lights
+{
+    /// <summary>
+    /// Base effect
+    /// </summary>
+    effect LightSkyboxEffect
+    {
+        using params LightSkyboxShaderKeys;
+
+        mixin LightSkyboxShader;
+
+        if (LightSkyboxShaderKeys.LightDiffuseColor != null)
+        {
+            mixin compose lightDiffuseColor = LightSkyboxShaderKeys.LightDiffuseColor;
+        }
+
+        if (LightSkyboxShaderKeys.LightSpecularColor != null)
+        {
+            mixin compose lightSpecularColor = LightSkyboxShaderKeys.LightSpecularColor;
+        }
+   };
+}

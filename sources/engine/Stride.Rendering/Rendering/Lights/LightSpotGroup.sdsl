@@ -1,0 +1,39 @@
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+namespace Stride.Rendering.Lights
+{
+    /// <summary>
+    /// Defines a group of spot lights
+    /// </summary>
+    shader LightSpotGroup<int TMaxLightCount> :
+        DirectLightGroupPerDraw,    // Required for "PrepareDirectLightCore()", "PrepareDirectLight()", "ComputeAttenuation()" and other stuff.
+        LightSpot,  // Required for "SpotLightData".
+        LightSpotAttenuationDefault    // Required for "ComputeAttenuation()"
+    {
+        cbuffer PerDraw.Lighting
+        {
+            SpotLightData Lights[TMaxLightCount];
+        }
+
+        override int GetMaxLightCount()
+        {
+            return TMaxLightCount;
+        }
+
+        /// <summary>
+        /// Compute the light color/direction for the specified index within this group
+        /// </summary>
+        override void PrepareDirectLightCore(int lightIndex)
+        {
+            ProcessLight(Lights[lightIndex]);
+        }
+
+        override float ComputeAttenuation(float3 position, int lightIndex)
+        {
+            float3 lightVectorNorm;
+            return ComputeAttenuation(Lights[lightIndex], position, lightVectorNorm);
+        }
+    };
+}

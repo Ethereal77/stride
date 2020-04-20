@@ -1,0 +1,24 @@
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+namespace Stride.Rendering.ComputeEffect
+{
+    /// <summary>
+    /// The effect for compute effect
+    /// </summary>
+    effect ComputeEffectShader
+    {
+        using params ComputeEffectShaderKeys;
+                
+        mixin macro ThreadNumberX = ComputeEffectShaderKeys.ThreadNumbers.X;
+        mixin macro ThreadNumberY = ComputeEffectShaderKeys.ThreadNumbers.Y;            
+        mixin macro ThreadNumberZ = ComputeEffectShaderKeys.ThreadNumbers.Z;
+
+        // base effect for computing
+        mixin ComputeShaderBase;
+
+        // user computing effect
+        mixin ComputeEffectShaderKeys.ComputeShaderName;
+    };
+}
