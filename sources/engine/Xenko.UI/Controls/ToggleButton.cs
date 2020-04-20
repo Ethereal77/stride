@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 using Xenko.Core;
 using Xenko.Engine;
+using Xenko.UI.Attributes;
 using Xenko.UI.Events;
 
 namespace Xenko.UI.Controls
@@ -16,6 +17,7 @@ namespace Xenko.UI.Controls
     /// Represent a UI toggle button. A toggle but can have two or three states depending on the <see cref="IsThreeState"/> property.
     /// </summary>
     [DataContract(nameof(ToggleButton))]
+    [DataContractMetadataType(typeof(ToggleButtonMetadata))]
     [DebuggerDisplay("ToggleButton - Name={Name}")]
     public class ToggleButton : ButtonBase
     {
@@ -37,7 +39,7 @@ namespace Xenko.UI.Controls
         public ToggleButton()
         {
             DrawLayerNumber += 1; // (toggle design image)
-            Padding = new Thickness(10, 5, 10, 7);
+            Padding = new Thickness(10, 5, 10, 7);  // Warning: this must also match in ToggleButtonMetadata
         }
 
         /// <summary>
@@ -130,7 +132,7 @@ namespace Xenko.UI.Controls
         [DefaultValue(ToggleState.UnChecked)]
         public ToggleState State
         {
-            get { return state; } 
+            get { return state; }
             set
             {
                 if (state == value)
@@ -236,6 +238,12 @@ namespace Xenko.UI.Controls
             base.OnClick(args);
 
             GoToNextState();
+        }
+
+        private class ToggleButtonMetadata
+        {
+            [DefaultThicknessValue(10, 5, 10, 7)]
+            public Thickness Padding { get; }
         }
     }
 }

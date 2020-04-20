@@ -233,6 +233,16 @@ namespace Xenko.Assets.Presentation.AssetEditors.GameEditor.Services
             return true;
         }
 
+        public void OnHideGame()
+        {
+            Game.IsEditorHidden = true;
+        }
+
+        public void OnShowGame()
+        {
+            Game.IsEditorHidden = false;
+        }
+
         public Vector3 GetMousePositionInScene(bool lastRightClick)
         {
             EnsureNotDestroyed();

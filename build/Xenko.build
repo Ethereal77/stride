@@ -19,6 +19,7 @@
     <XenkoStoreUrl Condition="'$(XenkoStoreUrl)' == ''">https://api.nuget.org/v3/index.json</XenkoStoreUrl>
 
     <BuildProperties>Configuration=Release;NoWarn=1591;DeployExtension=false;XenkoPlatforms=$([MSBuild]::Escape('$(XenkoPlatforms)'));XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)</BuildProperties>
+    <XenkoSign Condition="'$(XenkoSign)' == ''">true</XenkoSign>
     <BuildProperties Condition="'$(XenkoSign)' != ''">$(BuildProperties);XenkoSign=$(XenkoSign)</BuildProperties>
     <BuildProperties Condition="'$(XenkoOfficialBuild)' != ''">$(BuildProperties);XenkoOfficialBuild=$(XenkoOfficialBuild)</BuildProperties>
 
@@ -26,6 +27,7 @@
 
     <XunitRunnerConsoleVersion>2.4.1</XunitRunnerConsoleVersion>
     <AdvancedInstallerPath Condition="'$(AdvancedInstallerPath)' == '' And Exists('$(MSBuildProgramFiles32)\Caphyon\Advanced Installer 15.5.1\bin\x86\advinst.exe')">$(MSBuildProgramFiles32)\Caphyon\Advanced Installer 15.5.1\bin\x86\advinst.exe</AdvancedInstallerPath>
+    <XenkoBuildPrerequisitesInstaller Condition="'$(XenkoBuildPrerequisitesInstaller)' == ''">true</XenkoBuildPrerequisitesInstaller>
   </PropertyGroup>
 
   <UsingTask TaskName="Xenko.GitVersioning.GenerateVersionFile" AssemblyFile="$(XenkoRoot)deps\Xenko.GitVersioning\bin\Debug\net472\Xenko.GitVersioning.dll" />
@@ -102,7 +104,7 @@
   <!-- Package -->
   <Target Name="PreparePackageBuild">
     <PropertyGroup>
-      <BuildProperties>$(BuildProperties);XenkoPublicApi=true;XenkoPackageBuild=true;XenkoSignTool=true</BuildProperties>
+      <BuildProperties>$(BuildProperties);XenkoPublicApi=true;XenkoPackageBuild=true</BuildProperties>
     </PropertyGroup>
 
     <ItemGroup>
@@ -114,7 +116,7 @@
     <!-- Make sure Xenko.GitVersioning is built to run the task to update package version.
          It might be better to move it to a prebuilt assembly if that becomes a problem.
     -->
-	  <MSBuild Targets="Restore" Projects="$(XenkoRoot)deps\Xenko.GitVersioning\Xenko.GitVersioning.csproj"/>
+    <MSBuild Targets="Restore" Projects="$(XenkoRoot)deps\Xenko.GitVersioning\Xenko.GitVersioning.csproj"/>
     <MSBuild Targets="Build" Projects="$(XenkoRoot)deps\Xenko.GitVersioning\Xenko.GitVersioning.csproj"/>
 
     <!-- Create SharedAssemblyInfo.NuGet.cs with Git information (different between official build and internal builds) -->
@@ -125,19 +127,19 @@
       <Output TaskParameter="NuGetVersion" PropertyName="XenkoPackageVersion"/>
     </GenerateVersionFile>
 
-	  <Message Text="Done preparing build for version $(XenkoPackageVersion)"/>
-	  <TeamCitySetBuildNumber BuildNumber="$(XenkoPackageVersion)" Condition="'$(TEAMCITY_BUILD_PROPERTIES_FILE)' != '' " />
+    <Message Text="Done preparing build for version $(XenkoPackageVersion)"/>
+    <TeamCitySetBuildNumber BuildNumber="$(XenkoPackageVersion)" Condition="'$(TEAMCITY_BUILD_PROPERTIES_FILE)' != '' " />
   </Target>
 
-  <Target Name="Package" DependsOnTargets="PreparePackageBuild;PrerequisitesInstaller;Build;VSIXPlugin"/>
+  <PropertyGroup>
+    <_XenkoPackageTargetPrerequisitesInstaller Condition="'$(XenkoBuildPrerequisitesInstaller)' == 'true'">PrerequisitesInstaller</_XenkoPackageTargetPrerequisitesInstaller>
+  </PropertyGroup>
 
-  <Target Name="CopyXenkoKey">
-    <Copy Condition="'$(XenkoSign)' == 'true' And Exists('$(LOCALAPPDATA)\Xenko\XenkoBuildKey\xenko.snk')" SourceFiles="$(LOCALAPPDATA)\Xenko\XenkoBuildKey\xenko.snk" DestinationFolder="$(MSBuildThisFileDirectory)"/>
-  </Target>
-
+  <Target Name="Package" DependsOnTargets="PreparePackageBuild;$(_XenkoPackageTargetPrerequisitesInstaller);Build;VSIXPlugin"/>
+  
   <Target Name="Restore">
     <PropertyGroup>
-	  <RestoreExec><![CDATA[
+      <RestoreExec><![CDATA[
         set XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)
         set XenkoGraphicsApi=$(XenkoGraphicsApi)
         set XenkoPlatforms=$(XenkoPlatforms)
@@ -147,30 +149,30 @@
     <Exec Command="$(RestoreExec)" />
   </Target>
 
-  <Target Name="Build" DependsOnTargets="CopyXenkoKey">
+  <Target Name="Build">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution);XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
-	  <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);Platform=Mixed Platforms"/>
+    <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);Platform=Mixed Platforms"/>
   </Target>
 
-  <Target Name="BuildRuntime" DependsOnTargets="CopyXenkoKey">
+  <Target Name="BuildRuntime">
     <PropertyGroup>
       <XenkoSolution>$(XenkoSolution).Runtime</XenkoSolution>
     </PropertyGroup>
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution)"/>
-	  <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties)"/>
+    <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties)"/>
   </Target>
-
-  <Target Name="BuildWindows" DependsOnTargets="CopyXenkoKey">
+  
+  <Target Name="BuildWindows">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution);XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).sln" Properties="$(BuildProperties);XenkoSkipAutoPack=true;XenkoSkipUnitTests=true;XenkoGraphicsApiDependentBuildAll=$(XenkoGraphicsApiDependentBuildAll)"/>
   </Target>
 
-  <Target Name="BuildWindowsDirect3D11" DependsOnTargets="CopyXenkoKey">
+  <Target Name="BuildWindowsDirect3D11">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
 
-  <Target Name="BuildWindowsDirect3D12" DependsOnTargets="CopyXenkoKey">
+  <Target Name="BuildWindowsDirect3D12">
     <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="XenkoPlatforms=$(XenkoPlatforms);XenkoSolution=$(XenkoSolution).Runtime;XenkoGraphicsApi=Direct3D12"/>
     <MSBuild Targets="Build" Projects="$(XenkoSolution).Runtime.sln" Properties="$(BuildProperties);XenkoGraphicsApi=Direct3D12;XenkoSkipAutoPack=true;XenkoSkipUnitTests=true"/>
   </Target>
@@ -191,7 +193,7 @@
       <XenkoTestCategories Condition="'$(XenkoTestCategories)' == ''">Simple;Game;VSPackage</XenkoTestCategories>
       <!-- We enclose everything with ;, so that we could do full word matches more easily with string.Contains() -->
       <XenkoTestCategories>;$(XenkoTestCategories);</XenkoTestCategories>
-	    <XenkoTestExtraTargets></XenkoTestExtraTargets>
+      <XenkoTestExtraTargets></XenkoTestExtraTargets>
     </PropertyGroup>
 
     <!-- Simple standalone unit tests -->
@@ -242,7 +244,7 @@
       <UnitTest Include="@(UnitTestGame)"><Solution>$(XenkoSolution).Direct3D12.sln</Solution></UnitTest>
     </ItemGroup>
 
-	  <!-- Samples unit tests -->
+    <!-- Samples unit tests -->
     <ItemGroup Condition="$(XenkoTestCategories.Contains(';Samples;'))">
       <UnitTest Include="72-XenkoSamples\Xenko.Samples.Tests"/>
     </ItemGroup>
@@ -262,7 +264,7 @@
         <Solution Condition="'%(UnitTest.Solution)' == ''">$(XenkoSolution).sln</Solution>
       </UnitTest>
     </ItemGroup>
-
+	
     <!-- Restore NuGet packages -->
     <Message Importance="High" Text="Restoring NuGet packages"/>
     <Exec Condition="'%(UnitTestPrerequisites.Solution)' != ''" Command='"$(NuGetPath)" restore "%(UnitTestPrerequisites.Solution)"' />
@@ -373,8 +375,8 @@
     <Exec Command='"$(NuGetPath)" push ..\bin\launcher\*.nupkg -ApiKey $(XenkoStoreApiKey) -Source $(XenkoStoreUrl) -NoSymbols'/>
   </Target>
 
-  <Target Name="BuildLauncher" DependsOnTargets="CopyXenkoKey">
+  <Target Name="BuildLauncher">
     <Exec Command='"$(NuGetPath)" restore "$(XenkoSolutionLauncher).sln"' />
-	  <MSBuild Targets="Build" Projects="$(XenkoSolutionLauncher).sln" Properties="$(BuildProperties);XenkoSignTool=true;Platform=Any CPU"/>
+    <MSBuild Targets="Build" Projects="$(XenkoSolutionLauncher).sln" Properties="$(BuildProperties);Platform=Any CPU"/>
   </Target>
 </Project>

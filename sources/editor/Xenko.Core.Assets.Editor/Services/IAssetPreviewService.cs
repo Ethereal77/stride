@@ -15,5 +15,9 @@ namespace Xenko.Core.Assets.Editor.Services
         object GetCurrentPreviewView();
 
         event EventHandler<EventArgs> PreviewAssetUpdated;
+
+        void OnShowPreview();
+
+        void OnHidePreview();
     }
 }

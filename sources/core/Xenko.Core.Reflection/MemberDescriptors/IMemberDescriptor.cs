@@ -8,6 +8,8 @@ using System.Reflection;
 
 namespace Xenko.Core.Reflection
 {
+    public delegate bool ShouldSerializePredicate(object value, IMemberDescriptor parentTypeMemberDescriptor);
+
     /// <summary>
     /// Describe a member of an object.
     /// </summary>
@@ -49,8 +51,8 @@ namespace Xenko.Core.Reflection
         ITypeDescriptor TypeDescriptor { get; }
 
         /// <summary>
-        /// Gets the order of this member. 
-        /// Default is -1, meaning that it is using the alphabetical order 
+        /// Gets the order of this member.
+        /// Default is -1, meaning that it is using the alphabetical order
         /// based on the name of this property.
         /// </summary>
         /// <value>The order.</value>
@@ -77,7 +79,10 @@ namespace Xenko.Core.Reflection
         /// <summary>
         /// Gets a value indicating whether this member should be serialized.
         /// </summary>
-        Func<object, bool> ShouldSerialize { get; }
+        ShouldSerializePredicate ShouldSerialize { get; }
+
+        bool HasDefaultValue { get; }
+        object DefaultValue { get; }
 
         /// <summary>
         /// Gets the alternative names that will map back to this member (may be null).

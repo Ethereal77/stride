@@ -153,7 +153,7 @@ namespace Xenko.Games
         {
             game.Tick();
 
-            if (!IsBlockingRun && game.IsExiting() && !hasExitRan)
+            if (!IsBlockingRun && game.IsExiting && !hasExitRan)
             {
                 hasExitRan = true;
                 OnExiting(this, EventArgs.Empty);

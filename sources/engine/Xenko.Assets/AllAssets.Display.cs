@@ -103,6 +103,11 @@ namespace Xenko.Assets
         partial class ColliderShapeAsset
         {
         }
+
+        [Display((int)AssetDisplayPriority.Physics + 50, "Heightmap")]
+        partial class HeightmapAsset
+        {
+        }
     }
 
     namespace Rendering

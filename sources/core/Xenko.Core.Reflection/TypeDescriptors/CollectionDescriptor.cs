@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 using Xenko.Core.Yaml.Serialization;
 
@@ -62,7 +63,7 @@ namespace Xenko.Core.Reflection
             }
             var itype = type.GetInterface(typeof(ICollection<>));
 
-            // implements ICollection<T> 
+            // implements ICollection<T>
             if (!typeSupported && itype != null)
             {
                 var remove = itype.GetMethod(nameof(ICollection<object>.Remove), new[] { ElementType });
@@ -293,7 +294,7 @@ namespace Xenko.Core.Reflection
             return TypeHelper.IsCollection(type);
         }
 
-        protected override bool PrepareMember(MemberDescriptorBase member)
+        protected override bool PrepareMember(MemberDescriptorBase member, MemberInfo metadataClassMemberInfo)
         {
             // Filter members
             if (member is PropertyDescriptor && ListOfMembersToRemove.Contains(member.OriginalName))
@@ -302,7 +303,7 @@ namespace Xenko.Core.Reflection
                 return false;
             }
 
-            return !IsCompilerGenerated && base.PrepareMember(member);
+            return !IsCompilerGenerated && base.PrepareMember(member, metadataClassMemberInfo);
         }
     }
 }

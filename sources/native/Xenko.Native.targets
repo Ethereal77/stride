@@ -127,6 +127,7 @@
     <Exec Condition="'%(XenkoNativeCFile.Extension)' == '.cpp'" 
           Command="&quot;$(XenkoDependenciesDir)\LLVM\clang.exe&quot; -gcodeview -fno-ms-extensions -nobuiltininc -nostdinc++ $(XenkoNativeClangCPP) $(XenkoNativeClang) -o &quot;$(OutputObjectPath)\x86\%(XenkoNativeCFile.Filename).obj&quot; -c &quot;%(XenkoNativeCFile.FullPath)&quot;  -fms-extensions -DWINDOWS_DESKTOP -target i686-pc-windows-msvc" />
     <MSBuild Projects="$(MSBuildThisFileDirectory)\WindowsProjects\WindowsDesktop\WindowsDesktop.vcxproj"
+    <SignFile Condition="'$(XenkoSignTool)' == 'true'" CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec" SigningTarget="%(XenkoNativeOutput.Identity)" TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />
              Targets="Build" 
              Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)\x86;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x86;Configuration=$(Configuration);Platform=x86" 
              StopOnFirstFailure="true" />
@@ -141,7 +142,7 @@
              Properties="XenkoNativeOutputName=$(XenkoNativeOutputName);XenkoNativeOutputDir=$(XenkoNativeOutputPath)x64;XenkoDependenciesDir=$(XenkoDependenciesDir);XenkoNativePathLibs=libNativePath.lib $(XenkoNativePathLibs);XenkoNativeProjectFolder=$(ProjectDir);XenkoNativeProjectObjFolder=$(OutputObjectPath)\x64;Configuration=$(Configuration);Platform=x64" 
              StopOnFirstFailure="true" />
 
-    <SignFile Condition="'$(XenkoSignTool)' == 'true'"
+    <SignFile Condition="'$(XenkoSign)' == 'true'"
               CertificateThumbprint="edad2b260091eacffbc42859d0339c74b263bfec"
               SigningTarget="%(XenkoNativeOutput.Identity)"
               TimestampUrl="http://timestamp.globalsign.com/scripts/timstamp.dll" />

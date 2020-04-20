@@ -97,4 +97,17 @@ namespace Xenko.Assets.Physics
             return Create();
         }
     }
+
+    public class ColliderShapeHeightfieldFactory : AssetFactory<ColliderShapeAsset>
+    {
+        public static ColliderShapeAsset Create()
+        {
+            return new ColliderShapeAsset { ColliderShapes = { new HeightfieldColliderShapeDesc() } };
+        }
+
+        public override ColliderShapeAsset New()
+        {
+            return Create();
+        }
+    }
 }

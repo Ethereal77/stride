@@ -125,7 +125,7 @@ namespace Xenko.Core.Yaml.Serialization.Serializers
         public virtual void WriteMemberValue(ref ObjectContext objectContext, IMemberDescriptor memberDescriptor, object memberValue, Type memberType)
         {
             // Push the style of the current member
-            var memberObjectContext = new ObjectContext(objectContext.SerializerContext, memberValue, objectContext.SerializerContext.FindTypeDescriptor(memberType))
+            var memberObjectContext = new ObjectContext(objectContext.SerializerContext, memberValue, objectContext.SerializerContext.FindTypeDescriptor(memberType), objectContext.ParentTypeDescriptor, memberDescriptor)
             {
                 Style = memberDescriptor.Style,
                 ScalarStyle = memberDescriptor.ScalarStyle,
@@ -155,7 +155,7 @@ namespace Xenko.Core.Yaml.Serialization.Serializers
         }
 
         /// <inheritdoc/>
-        public virtual bool ShouldSerialize(IMemberDescriptor member, ref ObjectContext objectContext) => member.ShouldSerialize(objectContext.Instance);
+        public virtual bool ShouldSerialize(IMemberDescriptor member, ref ObjectContext objectContext) => member.ShouldSerialize(objectContext.Instance, objectContext.ParentTypeMemberDescriptor);
 
         protected object ReadYaml(ref ObjectContext objectContext)
         {
