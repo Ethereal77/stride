@@ -7,7 +7,7 @@ using System.Linq;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Keys used by <see cref="GaussianBlur"/> and GaussianBlurEffect xkfx
+    /// Keys used by <see cref="GaussianBlur"/> and GaussianBlurEffect sdfx
     /// </summary>
     internal static class GaussianBlurKeys
     {

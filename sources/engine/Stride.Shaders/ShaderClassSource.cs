@@ -15,7 +15,7 @@ using Stride.Core.Serialization;
 namespace Stride.Shaders
 {
     /// <summary>
-    /// A shader class based on .xksl file, used for mixin.
+    /// A shader class based on .sdsl file, used for mixin.
     /// </summary>
     [DataContract("ShaderClassSource")]
     public sealed class ShaderClassSource : ShaderClassCode, IEquatable<ShaderClassSource>

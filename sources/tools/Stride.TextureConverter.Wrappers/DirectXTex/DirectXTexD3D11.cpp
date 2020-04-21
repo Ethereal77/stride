@@ -15,7 +15,7 @@
 
 #include "directxtexp.h"
 
-#if !defined(_TITLE)
+#if !defined(_XBOX_ONE) || !defined(_TITLE)
 #include <d3d10.h>
 #endif
 
@@ -40,6 +40,33 @@ namespace
     {
         if (!pContext || !pSource || !result.GetPixels())
             return E_POINTER;
+
+#if defined(_XBOX_ONE) && defined(_TITLE)
+
+        ComPtr<ID3D11Device> d3dDevice;
+        pContext->GetDevice(d3dDevice.GetAddressOf());
+
+        if (d3dDevice->GetCreationFlags() & D3D11_CREATE_DEVICE_IMMEDIATE_CONTEXT_FAST_SEMANTICS)
+        {
+            ComPtr<ID3D11DeviceX> d3dDeviceX;
+            HRESULT hr = d3dDevice.As(&d3dDeviceX);
+            if (FAILED(hr))
+                return hr;
+
+            ComPtr<ID3D11DeviceContextX> d3dContextX;
+            hr = pContext->QueryInterface(IID_GRAPHICS_PPV_ARGS(d3dContextX.GetAddressOf()));
+            if (FAILED(hr))
+                return hr;
+
+            UINT64 copyFence = d3dContextX->InsertFence(0);
+
+            while (d3dDeviceX->IsFencePending(copyFence))
+            {
+                SwitchToThread();
+            }
+        }
+
+#endif
 
         if (metadata.IsVolumemap())
         {
@@ -192,6 +219,29 @@ bool DirectX::IsSupportedTexture(
     if (!IsValid(fmt))
         return false;
 
+    switch (fmt)
+    {
+    case DXGI_FORMAT_BC4_TYPELESS:
+    case DXGI_FORMAT_BC4_UNORM:
+    case DXGI_FORMAT_BC4_SNORM:
+    case DXGI_FORMAT_BC5_TYPELESS:
+    case DXGI_FORMAT_BC5_UNORM:
+    case DXGI_FORMAT_BC5_SNORM:
+        if (fl < D3D_FEATURE_LEVEL_10_0)
+            return false;
+        break;
+
+    case DXGI_FORMAT_BC6H_TYPELESS:
+    case DXGI_FORMAT_BC6H_UF16:
+    case DXGI_FORMAT_BC6H_SF16:
+    case DXGI_FORMAT_BC7_TYPELESS:
+    case DXGI_FORMAT_BC7_UNORM:
+    case DXGI_FORMAT_BC7_UNORM_SRGB:
+        if (fl < D3D_FEATURE_LEVEL_11_0)
+            return false;
+        break;
+    }
+
     // Validate miplevel count
     if (metadata.mipLevels > D3D11_REQ_MIP_LEVELS)
         return false;
@@ -225,6 +275,21 @@ bool DirectX::IsSupportedTexture(
             || (iWidth > D3D11_REQ_TEXTURE1D_U_DIMENSION))
             return false;
 
+        if (fl < D3D_FEATURE_LEVEL_11_0)
+        {
+            if ((arraySize > D3D10_REQ_TEXTURE1D_ARRAY_AXIS_DIMENSION)
+                || (iWidth > D3D10_REQ_TEXTURE1D_U_DIMENSION))
+                return false;
+
+            if (fl < D3D_FEATURE_LEVEL_10_0)
+            {
+                if ((arraySize > 1) || (iWidth > D3D_FL9_3_REQ_TEXTURE1D_U_DIMENSION))
+                    return false;
+
+                if ((fl < D3D_FEATURE_LEVEL_9_3) && (iWidth > D3D_FL9_1_REQ_TEXTURE1D_U_DIMENSION))
+                    return false;
+            }
+        }
         break;
 
     case TEX_DIMENSION_TEXTURE2D:
@@ -237,6 +302,29 @@ bool DirectX::IsSupportedTexture(
                 || (iWidth > D3D11_REQ_TEXTURECUBE_DIMENSION)
                 || (iHeight > D3D11_REQ_TEXTURECUBE_DIMENSION))
                 return false;
+
+            if (fl < D3D_FEATURE_LEVEL_11_0)
+            {
+                if ((arraySize > D3D10_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION)
+                    || (iWidth > D3D10_REQ_TEXTURECUBE_DIMENSION)
+                    || (iHeight > D3D10_REQ_TEXTURECUBE_DIMENSION))
+                    return false;
+
+                if ((fl < D3D_FEATURE_LEVEL_10_1) && (arraySize != 6))
+                    return false;
+
+                if (fl < D3D_FEATURE_LEVEL_10_0)
+                {
+                    if ((iWidth > D3D_FL9_3_REQ_TEXTURECUBE_DIMENSION)
+                        || (iHeight > D3D_FL9_3_REQ_TEXTURECUBE_DIMENSION))
+                        return false;
+
+                    if ((fl < D3D_FEATURE_LEVEL_9_3)
+                        && ((iWidth > D3D_FL9_1_REQ_TEXTURECUBE_DIMENSION)
+                            || (iHeight > D3D_FL9_1_REQ_TEXTURECUBE_DIMENSION)))
+                        return false;
+                }
+            }
         }
         else // Not a cube map
         {
@@ -247,6 +335,27 @@ bool DirectX::IsSupportedTexture(
                 || (iWidth > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION)
                 || (iHeight > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION))
                 return false;
+
+            if (fl < D3D_FEATURE_LEVEL_11_0)
+            {
+                if ((arraySize > D3D10_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION)
+                    || (iWidth > D3D10_REQ_TEXTURE2D_U_OR_V_DIMENSION)
+                    || (iHeight > D3D10_REQ_TEXTURE2D_U_OR_V_DIMENSION))
+                    return false;
+
+                if (fl < D3D_FEATURE_LEVEL_10_0)
+                {
+                    if ((arraySize > 1)
+                        || (iWidth > D3D_FL9_3_REQ_TEXTURE2D_U_OR_V_DIMENSION)
+                        || (iHeight > D3D_FL9_3_REQ_TEXTURE2D_U_OR_V_DIMENSION))
+                        return false;
+
+                    if ((fl < D3D_FEATURE_LEVEL_9_3)
+                        && ((iWidth > D3D_FL9_1_REQ_TEXTURE2D_U_OR_V_DIMENSION)
+                            || (iHeight > D3D_FL9_1_REQ_TEXTURE2D_U_OR_V_DIMENSION)))
+                        return false;
+                }
+            }
         }
         break;
 
@@ -260,6 +369,21 @@ bool DirectX::IsSupportedTexture(
             || (iDepth > D3D11_REQ_TEXTURE3D_U_V_OR_W_DIMENSION))
             return false;
 
+        if (fl < D3D_FEATURE_LEVEL_11_0)
+        {
+            if ((iWidth > D3D10_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
+                || (iHeight > D3D10_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
+                || (iDepth > D3D10_REQ_TEXTURE3D_U_V_OR_W_DIMENSION))
+                return false;
+
+            if (fl < D3D_FEATURE_LEVEL_10_0)
+            {
+                if ((iWidth > D3D_FL9_1_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
+                    || (iHeight > D3D_FL9_1_REQ_TEXTURE3D_U_V_OR_W_DIMENSION)
+                    || (iDepth > D3D_FL9_1_REQ_TEXTURE3D_U_V_OR_W_DIMENSION))
+                    return false;
+            }
+        }
         break;
 
     default:

@@ -134,7 +134,7 @@ namespace Stride.Assets.Navigation
                 writer.Write(sceneHash);
                 writer.Write(asset.SelectedGroups);
                 
-                var navigationSettings = gameSettingsAsset.GetOrCreate<NavigationSettings>();
+                var navigationSettings = gameSettingsAsset.GetOrDefault<NavigationSettings>();
                 writer.Write(navigationSettings.Groups);
             }
             
@@ -149,7 +149,7 @@ namespace Stride.Assets.Navigation
                 foreach (var colliderData in staticColliderDatas)
                     navigationMeshBuilder.Add(colliderData);
                 
-                var navigationSettings = gameSettingsAsset.GetOrCreate<NavigationSettings>();
+                var navigationSettings = gameSettingsAsset.GetOrDefault<NavigationSettings>();
                 var groupsLookup = navigationSettings.Groups.ToDictionary(x => x.Id, x => x);
 
                 var groups = new List<NavigationMeshGroup>();

@@ -12,7 +12,7 @@ namespace Stride.Shaders
     public static class EffectSourceCodeKeys
     {
         /// <summary>
-        /// When compiling a xksl, this will generate a source code file
+        /// When compiling a sdsl, this will generate a source code file
         /// </summary>
         public static readonly ObjectParameterKey<bool> Enable = ParameterKeys.NewObject<bool>();
 

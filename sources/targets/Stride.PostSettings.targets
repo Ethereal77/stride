@@ -26,7 +26,7 @@
 
   <!--Import Stride common settings-->
   <Import Project="$(MSBuildThisFileDirectory)..\targets\Stride.Core.PostSettings.targets"/>
-  
+
   <!-- If it exists, replace SharedAssemblyInfo.cs with the Package one (which contain NuGet and git versions) -->
   <Target Name="StrideReplaceVersionInfo" Condition="'$(StridePackageBuild)' == 'true'" BeforeTargets="PrepareResources">
     <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.NuGet.cs')" Text="File SharedAssemblyInfo.NuGet.cs doesn't seem to have been generated. Please make sure Stride.build PackageEnvironment target has been run succesfully."/>

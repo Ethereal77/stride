@@ -2303,7 +2303,7 @@ UsedParameters:
                 ClassName: MaterialStream
             - !ShaderClassSource
                 ClassName: MaterialPixelShadingStream
-    XenkoEffectBase.RenderTargetExtensions: !ShaderMixinSource
+    StrideEffectBase.RenderTargetExtensions: !ShaderMixinSource
         Macros:
             -   Name: STRIDE_MULTISAMPLE_COUNT
                 Definition: 1
@@ -2386,7 +2386,7 @@ UsedParameters:
                 ClassName: MaterialStream
             - !ShaderClassSource
                 ClassName: MaterialPixelShadingStream
-    XenkoEffectBase.RenderTargetExtensions: !ShaderMixinSource
+    StrideEffectBase.RenderTargetExtensions: !ShaderMixinSource
         Macros:
             -   Name: STRIDE_MULTISAMPLE_COUNT
                 Definition: 1
@@ -2469,7 +2469,7 @@ UsedParameters:
                 ClassName: MaterialStream
             - !ShaderClassSource
                 ClassName: MaterialPixelShadingStream
-    XenkoEffectBase.RenderTargetExtensions: !ShaderMixinSource
+    StrideEffectBase.RenderTargetExtensions: !ShaderMixinSource
         Macros:
             -   Name: STRIDE_MULTISAMPLE_COUNT
                 Definition: 1

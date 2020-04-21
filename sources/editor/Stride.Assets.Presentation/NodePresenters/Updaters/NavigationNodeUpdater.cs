@@ -42,7 +42,7 @@ namespace Stride.Assets.Presentation.NodePresenters.Updaters
                     return;
                 }
 
-                var navigationSettings = gameSettingsAsset.GetOrCreate<NavigationSettings>();
+                var navigationSettings = gameSettingsAsset.GetOrDefault<NavigationSettings>();
 
                 foreach (var child in node.Children)
                     child.IsVisible = false;

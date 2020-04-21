@@ -7,7 +7,7 @@ using System.Linq;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Keys used by <see cref="LightStreak"/> and LightStreakEffect xkfx.
+    /// Keys used by <see cref="LightStreak"/> and LightStreakEffect sdfx.
     /// </summary>
     internal static class LightStreakKeys
     {

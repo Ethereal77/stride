@@ -10,7 +10,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\build\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(StrideNETRuntime)' != 'CoreCLR'">
+  <PropertyGroup Condition="('$(StridePlatform)' == 'Windows') and ('$(StrideNETRuntime)' != 'CoreCLR')">
     <DefineConstants>STRIDE_VIDEO_FFMPEG;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AssetPackage\Assets\Shared\DefaultGraphicsCompositorLevel10.sdgfxcomp" />
+    <None Include="AssetPackage\Assets\Shared\DefaultGraphicsCompositorLevel9.sdgfxcomp" />
     <None Include="AssetPackage\Assets\Shared\StrideClearCoatMetalFlakesNM.sdtex" />
     <None Include="AssetPackage\Assets\Shared\StrideClearCoatOrangePeelNM.sdtex" />
     <None Include="AssetPackage\Assets\Shared\StrideDebugSpriteFont.sdtex" />

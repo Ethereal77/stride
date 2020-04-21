@@ -27,8 +27,8 @@
     <!-- Workaround for solution dependencies with incompatible frameworks: https://github.com/Microsoft/msbuild/issues/2661#issuecomment-338808156 -->
     <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
 	
-	<!-- Assembly version for the launcher, used to generate the appropriate NuGet package -->
-    <InformationalVersion>3.0.9</InformationalVersion>
+	<!-- Assembly version for the launcher, used to generate the appropriate nuget package -->
+    <InformationalVersion>4.0.1</InformationalVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -45,7 +45,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Launcher.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Stride.LauncherApp.Program</StartupObject>
@@ -57,7 +57,7 @@
     <Content Include="store.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\Logo.ico" />
+    <Resource Include="Resources\Launcher.ico" />
     <None Include="App.config" />
     <None Include="Stride.LauncherApp.nuspec">
       <SubType>Designer</SubType>

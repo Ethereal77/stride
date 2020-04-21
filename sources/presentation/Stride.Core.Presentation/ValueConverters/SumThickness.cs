@@ -13,7 +13,7 @@ namespace Stride.Core.Presentation.ValueConverters
 {
     /// <summary>
     /// This converter will sum a given <see cref="Thickness"/> with a <see cref="Thickness"/> passed as parameter. You can use
-    /// the <see cref="MarkupExtensions.ThicknessExtension"/> markup extension to easily pass one, with the following syntax: {xk:Thickness (arguments)}. 
+    /// the <see cref="MarkupExtensions.ThicknessExtension"/> markup extension to easily pass one, with the following syntax: {sd:Thickness (arguments)}. 
     /// </summary>
     [ValueConversion(typeof(Thickness), typeof(Thickness))]
     public class SumThickness : ValueConverterBase<SumThickness>

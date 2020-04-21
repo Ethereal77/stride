@@ -259,8 +259,8 @@ namespace Stride.Shaders.Parser
                 var simplifier = new ExpressionSimplifierVisitor();
                 simplifier.Run(finalShader);
 
-                var xkShaderLinker = new ShaderLinker(parsingResult);
-                xkShaderLinker.Run(finalShader);
+                var sdShaderLinker = new ShaderLinker(parsingResult);
+                sdShaderLinker.Run(finalShader);
 
                 // Return directly if there was any errors
                 if (parsingResult.HasErrors)

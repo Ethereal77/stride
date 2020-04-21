@@ -13,6 +13,7 @@ using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
 // Code from http://www.wpfmentor.com/2009/01/how-to-debug-triggers-using-trigger.html
+// No license specified - this code is trimmed out from Release build anyway so it should be ok using it this way
 
 // HOWTO: add the following attached property to any trigger and you will see when it is activated/deactivated in the output window
 //        TriggerTracing.TriggerName="your debug name"

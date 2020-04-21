@@ -9,7 +9,7 @@ namespace Stride.Rendering.Materials
     /// </summary>
     class MaterialSurfaceSubsurfaceScatteringShading :
         IMaterialSubsurfaceScatteringScatteringProfile,
-        IMaterialSurfaceShading,    // Required for the "PrepareForLightingAndShading()", "ComputeDirectLightContribution()" and "AfterLightingAndShading()" functions. Already includes "MaterialPixelStream.xksl".
+        IMaterialSurfaceShading,    // Required for the "PrepareForLightingAndShading()", "ComputeDirectLightContribution()" and "AfterLightingAndShading()" functions. Already includes "MaterialPixelStream.sdsl".
         MaterialPixelShadingStream,  // Required for "streams.shadingColorAlpha".
         ShadowStream,    // Required for "streams.thicknessWS".
         Math

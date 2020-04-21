@@ -13,7 +13,7 @@ namespace Stride.Rendering.Images
     {
         internal static PermutationParameterKey<bool> IsFirstPassKey = ParameterKeys.NewPermutation<bool>();
 
-        // TODO: Currently capturing two effects, because xkfx permutation triggers DynamicEffectCompiler
+        // TODO: Currently capturing two effects, because sdfx permutation triggers DynamicEffectCompiler
         private ImageEffectShader effectFirstPass;
         private ImageEffectShader effectNotFirstPass;
 

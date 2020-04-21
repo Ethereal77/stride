@@ -22,7 +22,7 @@ using Stride.Shaders.Compiler;
 namespace Stride.Assets.Effect
 {
     /// <summary>
-    /// This command is responsible to compile a single permutation of an effect (xkfx or xksl)
+    /// This command is responsible to compile a single permutation of an effect (sdfx or sdsl)
     /// </summary>
     internal sealed class EffectCompileCommand : IndexFileCommand
     {
@@ -150,7 +150,7 @@ namespace Stride.Assets.Effect
                     var shaderLocations = context.Properties.Get(EffectShaderAssetCompiler.ShaderLocationsKey);
 
                     // Temp copy URL to absolute file path to inform the compiler the absolute file location
-                    // of all xksl files.
+                    // of all sdsl files.
                     if (shaderLocations != null)
                     {
                         foreach (var shaderLocation in shaderLocations)

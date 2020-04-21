@@ -7,7 +7,7 @@ using System.Linq;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Keys used by <see cref="FlareArtifact"/> and FlareArtifactEffect xkfx.
+    /// Keys used by <see cref="FlareArtifact"/> and FlareArtifactEffect sdfx.
     /// </summary>
     internal static class FlareArtifactKeys
     {

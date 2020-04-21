@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Keys used by <see cref="ToneMap"/> and ToneMapEffect xkfx
+    /// Keys used by <see cref="ToneMap"/> and ToneMapEffect sdfx
     /// </summary>
     internal static class ColorTransformGroupKeys
     {

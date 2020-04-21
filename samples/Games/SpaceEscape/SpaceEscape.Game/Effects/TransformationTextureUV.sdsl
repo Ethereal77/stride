@@ -4,7 +4,7 @@
 
 shader TransformationTextureUV : ShaderBase, Texturing
 {
-    override void VSMain()
+    override stage void VSMain()
     {
         TransformUV_VS();
 

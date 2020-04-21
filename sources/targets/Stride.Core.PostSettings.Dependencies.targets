@@ -15,7 +15,7 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.ssdeps; $(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);_StrideRegisterDependenciesOutputs</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
-  
+
   <!--
   **********************************************************
    Reading of Dependencies (from .ssdeps)

@@ -13,7 +13,7 @@ using Stride.Shaders;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Post effect using an <see cref="Effect"/> (either xkfx or xksl).
+    /// Post effect using an <see cref="Effect"/> (either sdfx or sdsl).
     /// </summary>
     [DataContract("ImageEffectShader")]
     public class ImageEffectShader : ImageEffect

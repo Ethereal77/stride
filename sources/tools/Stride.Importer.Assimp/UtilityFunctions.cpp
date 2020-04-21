@@ -1,7 +1,5 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
-// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-
 #include "Stdafx.h"
 
 #include "UtilityFunctions.h"
@@ -72,8 +70,8 @@ Quaternion aiQuaternionToQuaternion(aiQuaterniont<float> quat)
 
 CompressedTimeSpan aiTimeToXkTimeSpan(double time, double aiTickPerSecond)
 {
-	double xkTime = CompressedTimeSpan::TicksPerSecond / aiTickPerSecond * time;
-	return CompressedTimeSpan((long)xkTime);
+	double sdTime = CompressedTimeSpan::TicksPerSecond / aiTickPerSecond * time;
+	return CompressedTimeSpan((long)sdTime);
 }
 
 

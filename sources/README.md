@@ -18,7 +18,7 @@ Folders and projects layout
    Micro-threading library based on C# 5.0 async (a.k.a. stackless programming)
 * __Stride.Core.AssemblyProcessor__:
    Internal tool used to patch assemblies to add various features, such as Serialization auto-generation, various memory/pinning operations, module initializers, etc...
-
+   
 ### presentation ###
 
 * __Stride.Core.Presentation__: WPF UI library (themes, controls such as propertygrid, behaviors, etc...)

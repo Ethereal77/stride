@@ -310,6 +310,9 @@ void DirectX::_CopyScanline(
         case DXGI_FORMAT_R10G10B10A2_UINT:
         case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:
         case DXGI_FORMAT_Y410:
+        case XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT:
+        case XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT:
+        case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
             if (inSize >= 4 && outSize >= 4)
             {
                 if (pDestination == pSource)
@@ -464,6 +467,7 @@ void DirectX::_SwizzleScanline(
     case DXGI_FORMAT_R10G10B10A2_UNORM:
     case DXGI_FORMAT_R10G10B10A2_UINT:
     case DXGI_FORMAT_R10G10B10_XR_BIAS_A2_UNORM:
+    case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
         if (inSize >= 4 && outSize >= 4)
         {
             if (flags & TEXP_SCANLINE_LEGACY)
@@ -1502,6 +1506,77 @@ _Use_decl_annotations_ bool DirectX::_LoadScanline(
         }
         return false;
 
+    case XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT:
+        // Xbox One specific 7e3 format
+        if (size >= sizeof(XMUDECN4))
+        {
+            const XMUDECN4 * __restrict sPtr = reinterpret_cast<const XMUDECN4*>(pSource);
+            for (size_t icount = 0; icount < (size - sizeof(XMUDECN4) + 1); icount += sizeof(XMUDECN4))
+            {
+                if (dPtr >= ePtr) break;
+
+                XMVECTORF32 vResult = {
+                    FloatFrom7e3(sPtr->x),
+                    FloatFrom7e3(sPtr->y),
+                    FloatFrom7e3(sPtr->z),
+                    (float)(sPtr->v >> 30) / 3.0f
+                };
+
+                ++sPtr;
+
+                *(dPtr++) = vResult.v;
+            }
+            return true;
+        }
+        return false;
+
+    case XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT:
+        // Xbox One specific 6e4 format
+        if (size >= sizeof(XMUDECN4))
+        {
+            const XMUDECN4 * __restrict sPtr = reinterpret_cast<const XMUDECN4*>(pSource);
+            for (size_t icount = 0; icount < (size - sizeof(XMUDECN4) + 1); icount += sizeof(XMUDECN4))
+            {
+                if (dPtr >= ePtr) break;
+
+                XMVECTORF32 vResult = {
+                    FloatFrom6e4(sPtr->x),
+                    FloatFrom6e4(sPtr->y),
+                    FloatFrom6e4(sPtr->z),
+                    (float)(sPtr->v >> 30) / 3.0f
+                };
+
+                ++sPtr;
+
+                *(dPtr++) = vResult.v;
+            }
+            return true;
+        }
+        return false;
+
+    case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
+        // Xbox One specific format
+        LOAD_SCANLINE(XMXDECN4, XMLoadXDecN4);
+
+    case XBOX_DXGI_FORMAT_R4G4_UNORM:
+        // Xbox One specific format
+        if (size >= sizeof(uint8_t))
+        {
+            static const XMVECTORF32 s_Scale = { 1.f / 15.f, 1.f / 15.f, 0.f, 0.f };
+            const uint8_t * __restrict sPtr = reinterpret_cast<const uint8_t*>(pSource);
+            for (size_t icount = 0; icount < (size - sizeof(uint8_t) + 1); icount += sizeof(uint8_t))
+            {
+                XMUNIBBLE4 nibble;
+                nibble.v = static_cast<uint16_t>(*sPtr++);
+                XMVECTOR v = XMLoadUNibble4(&nibble);
+                v = XMVectorMultiply(v, s_Scale);
+                if (dPtr >= ePtr) break;
+                *(dPtr++) = XMVectorSelect(g_XMIdentityR3, v, g_XMSelect1100);
+            }
+            return true;
+        }
+        return false;
+
         // We don't support the planar or palettized formats
 
     default:
@@ -2296,6 +2371,86 @@ bool DirectX::_StoreScanline(
         }
         return false;
 
+    case XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT:
+        // Xbox One specific 7e3 format with alpha
+        if (size >= sizeof(XMUDECN4))
+        {
+            static const XMVECTORF32  Scale = { 1.0f, 1.0f, 1.0f, 3.0f };
+            static const XMVECTORF32  C = { 31.875f, 31.875f, 31.875f, 3.f };
+
+            XMUDECN4 * __restrict dPtr = reinterpret_cast<XMUDECN4*>(pDestination);
+            for (size_t icount = 0; icount < (size - sizeof(XMUDECN4) + 1); icount += sizeof(XMUDECN4))
+            {
+                if (sPtr >= ePtr) break;
+
+                XMVECTOR V = XMVectorMultiply(*sPtr++, Scale);
+                V = XMVectorClamp(V, g_XMZero, C);
+
+                XMFLOAT4A tmp;
+                XMStoreFloat4A(&tmp, V);
+
+                dPtr->x = FloatTo7e3(tmp.x);
+                dPtr->y = FloatTo7e3(tmp.y);
+                dPtr->z = FloatTo7e3(tmp.z);
+                dPtr->w = (uint32_t)tmp.w;
+                ++dPtr;
+            }
+            return true;
+        }
+        return false;
+
+    case XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT:
+        // Xbox One specific 6e4 format with alpha
+        if (size >= sizeof(XMUDECN4))
+        {
+            static const XMVECTORF32  Scale = { 1.0f, 1.0f, 1.0f, 3.0f };
+            static const XMVECTORF32  C = { 508.f, 508.f, 508.f, 3.f };
+
+            XMUDECN4 * __restrict dPtr = reinterpret_cast<XMUDECN4*>(pDestination);
+            for (size_t icount = 0; icount < (size - sizeof(XMUDECN4) + 1); icount += sizeof(XMUDECN4))
+            {
+                if (sPtr >= ePtr) break;
+
+                XMVECTOR V = XMVectorMultiply(*sPtr++, Scale);
+                V = XMVectorClamp(V, g_XMZero, C);
+
+                XMFLOAT4A tmp;
+                XMStoreFloat4A(&tmp, V);
+
+                dPtr->x = FloatTo6e4(tmp.x);
+                dPtr->y = FloatTo6e4(tmp.y);
+                dPtr->z = FloatTo6e4(tmp.z);
+                dPtr->w = (uint32_t)tmp.w;
+                ++dPtr;
+            }
+            return true;
+        }
+        return false;
+
+    case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
+        // Xbox One specific format
+        STORE_SCANLINE(XMXDECN4, XMStoreXDecN4);
+
+    case XBOX_DXGI_FORMAT_R4G4_UNORM:
+        // Xbox One specific format
+        if (size >= sizeof(uint8_t))
+        {
+            static const XMVECTORF32 s_Scale = { 15.f, 15.f, 0.f, 0.f };
+            uint8_t * __restrict dPtr = reinterpret_cast<uint8_t*>(pDestination);
+            for (size_t icount = 0; icount < (size - sizeof(uint8_t) + 1); icount += sizeof(uint8_t))
+            {
+                if (sPtr >= ePtr) break;
+                XMVECTOR v = XMVectorMultiply(*sPtr++, s_Scale);
+
+                XMUNIBBLE4 nibble;
+                XMStoreUNibble4(&nibble, v);
+                *dPtr = static_cast<uint8_t>(nibble.v);
+                ++dPtr;
+            }
+            return true;
+        }
+        return false;
+
         // We don't support the planar or palettized formats
 
     default:
@@ -2723,6 +2878,10 @@ namespace
         { DXGI_FORMAT_Y210,                         10, CONVF_UNORM | CONVF_YUV | CONVF_PACKED | CONVF_R | CONVF_G | CONVF_B },
         { DXGI_FORMAT_Y216,                         16, CONVF_UNORM | CONVF_YUV | CONVF_PACKED | CONVF_R | CONVF_G | CONVF_B },
         { DXGI_FORMAT_B4G4R4A4_UNORM,               4, CONVF_UNORM | CONVF_BGR | CONVF_R | CONVF_G | CONVF_B | CONVF_A },
+        { XBOX_DXGI_FORMAT_R10G10B10_7E3_A2_FLOAT,  10, CONVF_FLOAT | CONVF_POS_ONLY | CONVF_R | CONVF_G | CONVF_B | CONVF_A },
+        { XBOX_DXGI_FORMAT_R10G10B10_6E4_A2_FLOAT,  10, CONVF_FLOAT | CONVF_POS_ONLY | CONVF_R | CONVF_G | CONVF_B | CONVF_A },
+        { XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM,10, CONVF_SNORM | CONVF_R | CONVF_G | CONVF_B | CONVF_A },
+        { XBOX_DXGI_FORMAT_R4G4_UNORM,               4, CONVF_UNORM | CONVF_R | CONVF_G },
     };
 
 #pragma prefast( suppress : 25004, "Signature must match bsearch_s" );
@@ -4033,6 +4192,56 @@ bool DirectX::_StoreScanlineDither(
     case DXGI_FORMAT_B4G4R4A4_UNORM:
         STORE_SCANLINE(XMUNIBBLE4, g_Scale4pc, true, true, uint8_t, 0xF, y, true)
 
+    case XBOX_DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM:
+        STORE_SCANLINE(XMXDECN4, g_Scale9pc, false, true, uint16_t, 0x3FF, y, false)
+
+    case XBOX_DXGI_FORMAT_R4G4_UNORM:
+        if (size >= sizeof(uint8_t))
+        {
+            uint8_t * __restrict dest = reinterpret_cast<uint8_t*>(pDestination);
+            for (size_t i = 0; i < count; ++i)
+            {
+                ptrdiff_t index = static_cast<ptrdiff_t>((y & 1) ? (count - i - 1) : i);
+                ptrdiff_t delta = (y & 1) ? -2 : 0;
+
+                XMVECTOR v = XMVectorSaturate(sPtr[index]);
+                v = XMVectorAdd(v, vError);
+                v = XMVectorMultiply(v, g_Scale4pc);
+
+                XMVECTOR target;
+                if (pDiffusionErrors)
+                {
+                    target = XMVectorRound(v);
+                    vError = XMVectorSubtract(v, target);
+                    vError = XMVectorDivide(vError, g_Scale4pc);
+
+                    // Distribute error to next scanline and next pixel
+                    pDiffusionErrors[index - delta] += XMVectorMultiply(g_ErrorWeight3, vError);
+                    pDiffusionErrors[index + 1] += XMVectorMultiply(g_ErrorWeight5, vError);
+                    pDiffusionErrors[index + 2 + delta] += XMVectorMultiply(g_ErrorWeight1, vError);
+                    vError = XMVectorMultiply(vError, g_ErrorWeight7);
+                }
+                else
+                {
+                    // Applied ordered dither
+                    target = XMVectorAdd(v, ordered[index & 3]);
+                    target = XMVectorRound(target);
+                }
+
+                target = XMVectorClamp(target, g_XMZero, g_Scale4pc);
+
+                XMFLOAT4A tmp;
+                XMStoreFloat4A(&tmp, target);
+
+                auto dPtr = &dest[index];
+                if (dPtr >= ePtr) break;
+                *dPtr = (static_cast<uint8_t>(tmp.x) & 0xF)
+                    | ((static_cast<uint8_t>(tmp.y) & 0xF) << 4);
+            }
+            return true;
+        }
+        return false;
+
     default:
         return _StoreScanline(pDestination, size, format, pSource, count, threshold);
     }
@@ -4088,6 +4297,17 @@ namespace
             // X2 Scale & Bias conversions not supported by WIC code paths
             return false;
         }
+
+#if defined(_XBOX_ONE) && defined(_TITLE)
+        if (sformat == DXGI_FORMAT_R16G16B16A16_FLOAT
+            || sformat == DXGI_FORMAT_R16_FLOAT
+            || tformat == DXGI_FORMAT_R16G16B16A16_FLOAT
+            || tformat == DXGI_FORMAT_R16_FLOAT)
+        {
+            // Use non-WIC code paths as these conversions are not supported by Xbox One XDK
+            return false;
+        }
+#endif
 
         // Check for special cases
         switch (sformat)

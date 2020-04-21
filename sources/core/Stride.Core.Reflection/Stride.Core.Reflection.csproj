@@ -14,7 +14,7 @@
     <StrideAssemblyProcessorOptions>$(StrideAssemblyProcessorDefaultOptions)</StrideAssemblyProcessorOptions>
     <StrideProjectPlatformDependentWindows>true</StrideProjectPlatformDependentWindows>
     <StrideBuildTags>*</StrideBuildTags>
- -->
+    -->
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>

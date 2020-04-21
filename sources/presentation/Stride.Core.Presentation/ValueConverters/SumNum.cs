@@ -11,7 +11,7 @@ namespace Stride.Core.Presentation.ValueConverters
 {
     /// <summary>
     /// This converter will sum a given numeric value with a numeric value passed as parameter. You can use the <see cref="MarkupExtensions.DoubleExtension"/>
-    /// markup extension to easily pass a double value as parameter, with the following syntax: {xk:Double (argument)}. 
+    /// markup extension to easily pass a double value as parameter, with the following syntax: {sd:Double (argument)}. 
     /// </summary>
     public class SumNum : ValueConverterBase<SumNum>
     {

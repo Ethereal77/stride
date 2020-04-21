@@ -373,7 +373,7 @@ For example the Japanese catalog for `Stride.GameStudio` should be named **Strid
 ### Import
 
 #### Supported import formats
-For the moment we only support **.po** and **.resx** files compiled into satellite assemblies. However the `Stride.Core.Translation` library is flexible and can be extended to support additional providers. This could include CSV (not necessarily compiled), XLIFF, **.mo** files (which is another kind of compiled **.po**). This could also be considered for asset translation (e.g. **.xktpl**) where we externalize the translations into files that can be distributed separately and loaded/discovered using a dedicated provider.
+For the moment we only support **.po** and **.resx** files compiled into satellite assemblies. However the `Stride.Core.Translation` library is flexible and can be extended to support additional providers. This could include CSV (not necessarily compiled), XLIFF, **.mo** files (which is another kind of compiled **.po**). This could also be considered for asset translation (e.g. **.sdtpl**) where we externalize the translations into files that can be distributed separately and loaded/discovered using a dedicated provider.
 
 #### Compilation to satellite assemblies
 **.po** files can be compiled into a satellite assemblies that the `GettextTranslationProvider` (and under the hood the `GNU.Gettext` library) will use to retrieve translations for a given language. It it a similar mechanism to the satellite assemblies generated from the **.resx files**. In fact `GettextResourceManager` inherits from `ResourceManager` with additional support for capabilities provided by Gettext such as context and plurals.

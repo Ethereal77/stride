@@ -90,7 +90,7 @@ namespace JumpyJet
 
         private void CreateMainMenuUI()
         {
-            var strideLogo = new ImageElement { Source = SpriteFromSheet.Create(UIImages, "xk_logo") };
+            var strideLogo = new ImageElement { Source = SpriteFromSheet.Create(UIImages, "sd_logo") };
 
             strideLogo.SetCanvasPinOrigin(new Vector3(0.5f, 0.5f, 1f));
             strideLogo.SetCanvasRelativeSize(new Vector3(0.75f, 0.5f, 1f));

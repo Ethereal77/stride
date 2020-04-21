@@ -12,7 +12,7 @@ using System.Windows.Markup;
 
 [assembly: InternalsVisibleTo("Stride.Core.Presentation.Tests")]
 
-[assembly: XmlnsPrefix("http://schemas.stride3d.net/xaml/presentation", "xk")]
+[assembly: XmlnsPrefix("http://schemas.stride3d.net/xaml/presentation", "sd")]
 [assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation")]
 [assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Behaviors")]
 [assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Presentation.Collections")]

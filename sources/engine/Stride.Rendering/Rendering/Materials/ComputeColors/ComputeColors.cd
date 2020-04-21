@@ -160,7 +160,7 @@
       <FileName>Rendering\Materials\IComputeColor.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Xenko.Rendering.Materials.ComputeColors.IComputeVertexStream" Collapsed="true">
+  <Interface Name="Stride.Rendering.Materials.ComputeColors.IComputeVertexStream" Collapsed="true">
     <Position X="5" Y="1.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>

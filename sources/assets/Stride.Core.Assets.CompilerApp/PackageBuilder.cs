@@ -95,7 +95,7 @@ namespace Stride.Core.Assets.CompilerApp
 
                 projectSession = projectSessionResult.Session;
 
-                // Find loaded package (either xkpkg or csproj) -- otherwise fallback to first one
+                // Find loaded package (either sdpkg or csproj) -- otherwise fallback to first one
                 var packageFile = (UFile)builderOptions.PackageFile;
                 var package = projectSession.LocalPackages.FirstOrDefault(x => x.FullPath == packageFile || (x.Container is SolutionProject project && project.FullPath == packageFile))
                     ?? projectSession.LocalPackages.First();

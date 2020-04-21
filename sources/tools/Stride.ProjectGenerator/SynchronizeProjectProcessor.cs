@@ -101,46 +101,5 @@ namespace Stride.ProjectGenerator
                 .Where(x => !x.Attributes().Any(y => y.Name == "Label" && y.Value == "Stride.DoNotSync"))
                 .ToArray();
         }
-
-        private static void GenerateInfoFile(string infoFile, string bundleDisplayName, string bundleIdentifier)
-        {
-            var doc = new XDocument(
-                new XDeclaration("1.0", "UTF-8", "yes"),
-                new XDocumentType("plist", "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd", null),
-                new XElement("plist", new XAttribute("version", "1.0"),
-                    new XElement("dict",
-                        new XElement("key", "UIDeviceFamily"),
-                        new XElement("array",
-                            new XElement("integer", "1"), // 1 = app runs on iPhone and iPod Touch
-                            new XElement("integer", "2") //  2 = app runs on iPad (3 = app runs on Apple TV)
-                            ),
-                        new XElement("key", "UISupportedInterfaceOrientations"),
-                        new XElement("array",
-                            new XElement("string", "UIInterfaceOrientationPortrait"),
-                            new XElement("string", "UIInterfaceOrientationLandscapeLeft"),
-                            new XElement("string", "UIInterfaceOrientationLandscapeRight")
-                            ),
-                        new XElement("key", "UISupportedInterfaceOrientations~ipad"),
-                        new XElement("array",
-                            new XElement("string", "UIInterfaceOrientationPortrait"),
-                            new XElement("string", "UIInterfaceOrientationPortraitUpsideDown"),
-                            new XElement("string", "UIInterfaceOrientationLandscapeRight"),
-                            new XElement("string", "UIInterfaceOrientationLandscapeRight")
-                            ),
-                        new XElement("key", "MinimumOSVersion"),
-                        new XElement("string", "3.2"),
-                        new XElement("key", "CFBundleDisplayName"),
-                        new XElement("string", bundleDisplayName),
-                        new XElement("key", "CFBundleIdentifier"),
-                        new XElement("string", bundleIdentifier)
-                        )
-                    )
-                );
-
-            using (var fileStream = new StreamWriter(infoFile))
-            {
-                fileStream.Write(doc.ToString());
-            }
-        }
     }
 }

@@ -17,15 +17,7 @@ namespace Stride.Rendering.Lights
             float3 Color;
         };
 
-        struct PointLightDataInternal
-        {
-            float3 PositionWS;
-            float  InvSquareRadius;
-            [Color]
-            float3 Color;
-        };
-
-        void ProcessLight(PointLightDataInternal light)
+        void ProcessLight(PointLightData light)
         {
             float3 lightVectorNorm;
             float attenuation = ComputeAttenuation(light, streams.PositionWS.xyz, lightVectorNorm);
@@ -35,7 +27,7 @@ namespace Stride.Rendering.Lights
             streams.lightDirectionWS = lightVectorNorm;
         }
 
-        float ComputeAttenuation(PointLightDataInternal light, float3 position, inout float3 lightVectorNorm)
+        float ComputeAttenuation(PointLightData light, float3 position, inout float3 lightVectorNorm)
         {
             float3 lightVector = light.PositionWS - position;
             float lightVectorLength = length(lightVector);

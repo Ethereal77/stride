@@ -4,8 +4,8 @@
 
 using System;
 using System.Diagnostics;
-using Xenko.Core;
-using Xenko.UI.Attributes;
+using Stride.Core;
+using Stride.UI.Attributes;
 
 namespace Stride.UI.Controls
 {

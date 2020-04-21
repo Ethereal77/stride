@@ -36,7 +36,6 @@
     <ProjectReference Include="..\Stride.Core.ProjectTemplating\Stride.Core.ProjectTemplating.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="ResharperDotSettings.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>ResharperDotSettings.cs</LastGenOutput>
@@ -53,9 +52,6 @@
     <None Include="Templates\Stride.UnitTests\Stride.UnitTests.ttproj" />
     <None Include="Templates\Stride.UnitTests\Properties\AssemblyInfo.cs.t4" />
     <None Include="Templates\Stride.UnitTests\TestClass1.cs.t4" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Templates\Stride.UnitTests\Resources\drawable\Icon.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Templates\Stride.GraphicsRegressionTests\" />

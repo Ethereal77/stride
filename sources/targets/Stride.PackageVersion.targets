@@ -8,6 +8,7 @@
   Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
+
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- Sdk settings -->
@@ -26,31 +27,28 @@
   </PropertyGroup>
 
   <!--
-   NuGet Package metadata
+     NuGet Package metadata
    -->
   <PropertyGroup>
     <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(StrideNuGetVersion)</PackageVersion>
-    <RepositoryUrl>https://github.com/stride3d/stride</RepositoryUrl>
-    <PackageProjectUrl>https://stride.com</PackageProjectUrl>
-    <PackageTags>Stride;3D;gamedev;Game Engine;engine;games;D3D</PackageTags>
+    <RepositoryUrl>https://github.com/Ethereal77/stride</RepositoryUrl>
+    <PackageProjectUrl>https://stride3d.net</PackageProjectUrl>
     <Authors>Stride contributors;Silicon Studio Corp.</Authors>
     <Copyright>Copyright © Stride contributors and Silicon Studio Corp.</Copyright>
+    <PackageTags>Stride;Xenko;3D;gamedev;Game Engine;engine;games;D3D</PackageTags>
   </PropertyGroup>
 
   <!-- License -->
   <PropertyGroup>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageLicenseUrl>https://github.com/Ethereal77/stride/blob/master/LICENSE.md</PackageLicenseUrl>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="$(SolutionDir)..\LICENSE.md" Pack="true" PackagePath="$(PackageLicenseFile)"/>
-  </ItemGroup>
 
   <!-- Icon -->
   <PropertyGroup>
-    <PackageIcon>Logo.png</PackageIcon>
+    <PackageIcon>nuget-icon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(SolutionDir)..\Logo.png" Pack="true" PackagePath="$(PackageIcon)"/>
+    <None Include="$(MSBuildThisFileDirectory)nuget-icon.png" Pack="true" PackagePath="" Visible="false"/>
   </ItemGroup>
 
 </Project>

@@ -40,7 +40,7 @@ namespace Stride.Rendering.Lights
             streams.lightIndex++;
 
             // Build PointLightData
-            PointLightDataInternal pointLight;
+            PointLightData pointLight;
             float4 pointLight1 = PointLights.Load(realLightIndex * 2);
             float4 pointLight2 = PointLights.Load(realLightIndex * 2 + 1);
             pointLight.PositionWS = pointLight1.xyz;

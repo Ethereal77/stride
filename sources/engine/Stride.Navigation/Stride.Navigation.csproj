@@ -26,9 +26,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Stride.Navigation.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Stride.Native.Libs.targets">
       <SubType>Designer</SubType>
     </None>

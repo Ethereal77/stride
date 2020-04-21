@@ -288,8 +288,8 @@ namespace Stride.Assets.Templates
 
         private static void ConvertXkfxToCSharp(string sdfxfile)
         {
-            var xkfileContent = File.ReadAllText(sdfxfile);
-            var result = ShaderMixinCodeGen.GenerateCsharp(xkfileContent, sdfxfile);
+            var sdfileContent = File.ReadAllText(sdfxfile);
+            var result = ShaderMixinCodeGen.GenerateCsharp(sdfileContent, sdfxfile);
             File.WriteAllText(Path.ChangeExtension(sdfxfile, ".cs"), result, Encoding.UTF8);
         }
 

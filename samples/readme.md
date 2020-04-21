@@ -1,22 +1,34 @@
-# Stride Samples
+Stride Samples
+==============
 
-- Each sample must be a **self-contained Stride Game Package, created with GameStudio**
-	- It means that a sample package must not reference assets/files outside its directory
-- A sample package must use a package name that is unique and can be replaced by a simple regex in files using it (.csproj, .cs ...etc.). For example: `SimpleAudio`
-- We are currently using the following categories as directories to group samples under a same category
-	- `Audio` : All samples related to audio
-	- `Games` : All small game samples
-	- `Graphics` : All graphics samples (display 3d models, sprites, text...etc.)
-	- `Input` : All input samples (touch, mouse, gamepad...etc.)
-	- `UI` : All UI samples
-	- `StrideSamples.sln` : A top level `StrideSamples.sln` referencing all Game Packages (xkpkg)
-- Inside a category, we store a package in its own directory. For example `SimpleAudio` in `Audio`
-	- Audio
+* Each sample must be a **self-contained Stride Game Package, created with Game Studio**
+
+	- This means that a sample package **must not reference** assets/files outside its directory.
+
+* A sample package must use a package name that is unique and can be replaced by a simple regex
+  in the files using it (.csproj, .cs, etc).
+
+  For example: `SimpleAudio`.
+
+* We are currently using the following directories as categories to group samples:
+
+	- `Audio` : Samples related to audio.
+	- `Games` : Small games.
+	- `Graphics` : Graphics samples (display 3D models, sprites, text, etc).
+	- `Input` : Input samples (touch, mouse, gamepad, etc).
+	- `UI` : UI samples.
+
+* `StrideSamples.sln` ia a top level solution referencing all Game Packages (`sdpkg`).
+
+* Inside each category, we store a package in its own directory.
+  For example,`SimpleAudio` in `Audio`:
+
+	- `Audio`
 		- `SimpleAudio`
-			- `.xktpl` : Directory containing icons/screenshots used to display the template in the UI
-			- `Assets` : contains assets (.xk files)
-			- `Resources` : contains resource files (.jpg, .fbx ... files)
-			- `SimpleAudio.Game` : Common Game code
-			- `SimpleAudio.Windows` : Windows Desktop executable
-			- `SimpleAudio.xkpkg` : Package description
-			- `SimpleAudio.xktpl` : Package Template description
+			- `.sdtpl` : Directory containing icons/screenshots used to display the template in the UI.
+			- `Assets` : Assets files (`.sd` files).
+			- `Resources` : Resource files (`.jpg`, `.fbx`, etc).
+			- `SimpleAudio.Game` : Common Game code.
+			- `SimpleAudio.Windows` : Windows Desktop executable.
+			- `SimpleAudio.sdpkg` : Package description.
+			- `SimpleAudio.sdtpl` : Package Template description.

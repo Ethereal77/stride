@@ -11,7 +11,7 @@ using System.Windows.Markup;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-[assembly: XmlnsPrefix("http://schemas.stride3d.net/xaml/presentation", "xk")]
+[assembly: XmlnsPrefix("http://schemas.stride3d.net/xaml/presentation", "sd")]
 [assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Translation.Presentation")]
 [assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Translation.Presentation.MarkupExtensions")]
 [assembly: XmlnsDefinition("http://schemas.stride3d.net/xaml/presentation", "Stride.Core.Translation.Presentation.ValueConverters")]

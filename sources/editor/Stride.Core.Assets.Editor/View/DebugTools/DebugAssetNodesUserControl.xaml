@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:debug="clr-namespace:Stride.Core.Assets.Editor.View.DebugTools"
-             xmlns:xk="http://schemas.stride3d.net/xaml/presentation"
+             xmlns:sd="http://schemas.stride3d.net/xaml/presentation"
              xmlns:q="clr-namespace:Stride.Core.Quantum;assembly=Stride.Core.Quantum"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -76,12 +76,12 @@
         <Button Content="Refresh" Command="{Binding RefreshQuantumNodesCommand}"/>
       </ToolBar>
     </ToolBarTray>
-    <xk:TreeView ItemsSource="{Binding AssetNodes}" SelectedItem="{Binding SelectedNode, Mode=TwoWay}" SelectionMode="Single">
+    <sd:TreeView ItemsSource="{Binding AssetNodes}" SelectedItem="{Binding SelectedNode, Mode=TwoWay}" SelectionMode="Single">
       <ItemsControl.ItemContainerStyle>
-        <Style TargetType="{x:Type xk:TreeViewItem}" BasedOn="{StaticResource {x:Type xk:TreeViewItem}}">
+        <Style TargetType="{x:Type sd:TreeViewItem}" BasedOn="{StaticResource {x:Type sd:TreeViewItem}}">
           <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
           </Style>
         </ItemsControl.ItemContainerStyle>
-    </xk:TreeView>
+    </sd:TreeView>
   </DockPanel>
 </UserControl>

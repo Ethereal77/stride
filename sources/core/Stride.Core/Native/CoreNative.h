@@ -1,12 +1,11 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
-// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 #ifndef _CoreNative_h_
 #define _CoreNative_h_
 
 /*
- * Some platforms requires a special declaration before the function declaration to export them
+ * Some platforms requires a special declaration before the function declaration to export them 
  * in the shared library. Defining NEED_DLL_EXPORT will define DLL_EXPORT_API to do the right thing
  * for those platforms.
  *
@@ -25,3 +24,4 @@ typedef void(*CnPrintDebugFunc)(const char* string);
 DLL_EXPORT_API CnPrintDebugFunc cnDebugPrintLine;
 
 #endif
+

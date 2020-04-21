@@ -1,6 +1,6 @@
 ﻿<#@ template inherits="ProjectTemplateTransformation" language="C#" #>
   <PropertyGroup>
-    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)<#= Properties.Package.Meta.Name #>.xkpkg</StrideCurrentPackagePath>
+    <StrideCurrentPackagePath>$(MSBuildThisFileDirectory)<#= Properties.Package.Meta.Name #>.sdpkg</StrideCurrentPackagePath>
     <OutputPath><#= Properties.StrideSdkRelativeDir #>\Bin\$(StridePlatformFullName)\$(StrideOutputFolder)\</OutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(StridePlatformFullName)-$(StrideGraphicsApi)\$(Configuration)</IntermediateOutputPath>
   </PropertyGroup>

@@ -100,12 +100,12 @@ namespace Stride.Core.Assets
                 var packageRoot = (UDirectory)store.GetRealPath(package);
                 var packageFilename = new UFile(packageName + Package.PackageFileExtension);
 
-                // First look for xkpkg at package root
+                // First look for sdpkg at package root
                 var packageFile = UPath.Combine(packageRoot, packageFilename);
                 if (File.Exists(packageFile))
                     return packageFile;
 
-                // Then look for xkpkg inside stride subfolder
+                // Then look for sdpkg inside stride subfolder
                 packageFile = UPath.Combine(UPath.Combine(packageRoot, (UDirectory)"stride"), packageFilename);
                 if (File.Exists(packageFile))
                     return packageFile;

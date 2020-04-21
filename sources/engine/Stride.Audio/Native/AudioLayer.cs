@@ -11,7 +11,7 @@ using Stride.Core.Mathematics;
 namespace Stride.Audio
 {
     /// <summary>
-    /// Wrapper around OpenAL
+    ///   Wrapper around XAudio2.
     /// </summary>
     public class AudioLayer
     {

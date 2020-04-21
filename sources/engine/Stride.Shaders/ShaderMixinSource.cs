@@ -31,9 +31,9 @@ namespace Stride.Shaders
         }
 
         /// <summary>
-        /// Gets or sets the name of the xkfx effect linked to this node.
+        /// Gets or sets the name of the sdfx effect linked to this node.
         /// </summary>
-        /// <value>The name of the xkfx effect.</value>
+        /// <value>The name of the sdfx effect.</value>
         [DataMember(0)]
         [DefaultValue(null)]
         public string Name { get; set; }

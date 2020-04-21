@@ -5,17 +5,17 @@
 namespace Stride.Rendering.Lights
 {
     /// <summary>
-    /// Base class for computing texture projection for a light. Defines functions for computing the color of the projected texture at this world space position.
+    ///   Base class for computing texture projection for a light. Defines functions for computing the color of the projected texture at this world space position.
     /// </summary>
     /// <remarks>
-    /// PerLightGroup: Parameter used to uniquely identify this group of lights.
-    /// TCascadeCountBase: The number of cascades of the current light.
-    /// TLightCountBase: The number of lights inside of this light group.
+    ///   PerLightGroup: Parameter used to uniquely identify this group of lights.
+    ///   TCascadeCountBase: The number of cascades of the current light.
+    ///   TLightCountBase: The number of lights inside of this light group.
     /// </remarks>
     internal shader TextureProjectionReceiverBase<MemberName PerLightGroup, int TCascadeCountBase, int TLightCountBase, int TFlipMode> :   // TODO: Rename to "TextureProjectionReceiver".
-        TextureProjectionCommon<PerLightGroup>, // Required for accessing the texture that is projected.
-        TextureProjectionFilterDefault<PerLightGroup>, // Defines "FilterProjectedTexture()".
-        Texturing   // Required for the texture sampling.
+        TextureProjectionCommon<PerLightGroup>,          // Required for accessing the texture that is projected.
+        TextureProjectionFilterDefault<PerLightGroup>,   // Defines "FilterProjectedTexture()".
+        Texturing                                        // Required for the texture sampling.
     {
         // Enum values for the texture flip mode:
         // These values have to match the ones defined in "LightSpot.cs".

@@ -62,7 +62,7 @@
     <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
 
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <StrideCommonDependenciesDir>$(StridePackageStride)\deps\</StrideCommonDependenciesDir>
   </PropertyGroup>

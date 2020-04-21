@@ -95,7 +95,7 @@ namespace Stride.Shaders.Parser.Mixins
         /// <param name="autoGenericInstances"></param>
         /// <returns>A ShaderClassType or null if there was some errors.</returns>
         /// <exception cref="System.ArgumentNullException">shaderClassSource</exception>
-        public LoadedShaderClassType LoadClassSource(ShaderClassCode shaderClassSource, Xenko.Core.Shaders.Parser.ShaderMacro[] shaderMacros, LoggerResult log, bool autoGenericInstances)
+        public LoadedShaderClassType LoadClassSource(ShaderClassCode shaderClassSource, Stride.Core.Shaders.Parser.ShaderMacro[] shaderMacros, LoggerResult log, bool autoGenericInstances)
         {
             if (shaderClassSource == null) throw new ArgumentNullException("shaderClassSource");
 
@@ -278,7 +278,7 @@ namespace Stride.Shaders.Parser.Mixins
             return (Expression)result.Root.AstNode;
         }
 
-        private LoadedShaderClassType LoadShaderClass(ShaderClassCode classSource, string generics, LoggerResult log, Xenko.Core.Shaders.Parser.ShaderMacro[] macros = null)
+        private LoadedShaderClassType LoadShaderClass(ShaderClassCode classSource, string generics, LoggerResult log, Stride.Core.Shaders.Parser.ShaderMacro[] macros = null)
         {
             var type = classSource.ClassName;
             if (type == null) throw new ArgumentNullException("type");
@@ -327,7 +327,7 @@ namespace Stride.Shaders.Parser.Mixins
 
                 var shader = parsingResult.Shader;
 
-                // As shaders can be embedded in namespaces, get only the shader class and make sure there is only one in a xksl.
+                // As shaders can be embedded in namespaces, get only the shader class and make sure there is only one in a sdsl.
                 var shaderClassTypes = StrideShaderParser.GetShaderClassTypes(shader.Declarations).ToList();
                 if (shaderClassTypes.Count != 1)
                 {

@@ -19,8 +19,8 @@ namespace Stride.Physics
 {
     namespace Shapes
     {
-        [Obsolete("This class will be deprecated. Use 'Xenko.Physics.HeightfieldColliderShape'.", false)]
-        public class HeightfieldColliderShape : Xenko.Physics.HeightfieldColliderShape
+        [Obsolete("This class will be deprecated. Use 'Stride.Physics.HeightfieldColliderShape'.", false)]
+        public class HeightfieldColliderShape : Stride.Physics.HeightfieldColliderShape
         {
             public HeightfieldColliderShape(int heightStickWidth, int heightStickLength, UnmanagedArray<short> dynamicFieldData, float heightScale, float minHeight, float maxHeight, bool flipQuadEdges)
                 : base(heightStickWidth, heightStickLength, dynamicFieldData, heightScale, minHeight, maxHeight, flipQuadEdges)

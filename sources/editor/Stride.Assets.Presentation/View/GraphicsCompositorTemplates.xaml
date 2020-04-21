@@ -3,7 +3,7 @@
                     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:view="clr-namespace:Stride.Core.Presentation.Quantum.View;assembly=Stride.Core.Presentation.Quantum"
                     xmlns:rendering="clr-namespace:Stride.Rendering;assembly=Stride.Engine"
-                    xmlns:xk="http://schemas.stride3d.net/xaml/presentation">
+                    xmlns:sd="http://schemas.stride3d.net/xaml/presentation">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="/Stride.Core.Assets.Editor;component/View/DefaultPropertyTemplateProviders.xaml"/>

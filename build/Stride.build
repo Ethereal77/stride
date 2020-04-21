@@ -27,7 +27,7 @@
 
     <XunitRunnerConsoleVersion>2.4.1</XunitRunnerConsoleVersion>
     <AdvancedInstallerPath Condition="'$(AdvancedInstallerPath)' == '' And Exists('$(MSBuildProgramFiles32)\Caphyon\Advanced Installer 15.5.1\bin\x86\advinst.exe')">$(MSBuildProgramFiles32)\Caphyon\Advanced Installer 15.5.1\bin\x86\advinst.exe</AdvancedInstallerPath>
-    <XenkoBuildPrerequisitesInstaller Condition="'$(XenkoBuildPrerequisitesInstaller)' == ''">true</XenkoBuildPrerequisitesInstaller>
+    <StrideBuildPrerequisitesInstaller Condition="'$(StrideBuildPrerequisitesInstaller)' == ''">true</StrideBuildPrerequisitesInstaller>
   </PropertyGroup>
 
   <UsingTask TaskName="Stride.GitVersioning.GenerateVersionFile" AssemblyFile="$(StrideRoot)deps\Stride.GitVersioning\bin\Debug\net472\Stride.GitVersioning.dll" />

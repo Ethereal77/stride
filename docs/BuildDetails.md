@@ -1,13 +1,16 @@
-﻿# Build
+﻿Build
+=====
 
 ## Overview
 
-This is a technical description what happens in our build and how it is organized. This covers mostly the build architecture of Stride itself.
+This is a technical description what happens in our build and how it is organized.
+This covers mostly the build architecture of Stride itself.
 
-* [Targets](../Targets) contains the MSBuild target files used by Games
-* [sources/common/targets](../sources/common/targets) (generic) and [sources/targets](../sources/targets) (Stride-specific) contains the MSBuild target files used to build Stride itself.
+ * [Targets](../Targets) contains the MSBuild target files used by Games.
 
-Since 3.1, we switched from our custom build system to the new csproj system with one NuGet package per assembly.
+ * [sources/common/targets](../sources/common/targets) (generic) and [sources/targets](../sources/targets) (Stride-specific) contains the MSBuild target files used to build Stride itself.
+
+Since 3.1, we switched from our custom build system to the new csproj system with one nuget package per assembly.
 
 We use `TargetFrameworks` to properly compile the different platforms using a single project.
 
@@ -29,7 +32,7 @@ Later, we might want to take advantage of .NET Core dependency resolving to do t
 ## Versioning
 
 We have 3 places with versions:
-- Stride package version (.xkpkg)
+- Stride package version (.sdpkg)
 - Assembly version (SharedAssemblyInfo.cs) -- should be kept in sync with Stride package version (note: package build will report an error if versions are not matching)
 - NuGet package version (.nupkg) -- automatically derived from the Stride package version
 

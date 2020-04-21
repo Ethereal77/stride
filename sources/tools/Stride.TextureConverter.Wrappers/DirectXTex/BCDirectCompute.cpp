@@ -103,6 +103,28 @@ HRESULT GPUCompressBC::Initialize(ID3D11Device* pDevice)
     // Check for DirectCompute support
     D3D_FEATURE_LEVEL fl = pDevice->GetFeatureLevel();
 
+    if (fl < D3D_FEATURE_LEVEL_10_0)
+    {
+        // DirectCompute not supported on Feature Level 9.x hardware
+        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+    }
+
+    if (fl < D3D_FEATURE_LEVEL_11_0)
+    {
+        // DirectCompute support on Feature Level 10.x hardware is optional, and this function needs it
+        D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS hwopts;
+        HRESULT hr = pDevice->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &hwopts, sizeof(hwopts));
+        if (FAILED(hr))
+        {
+            memset(&hwopts, 0, sizeof(hwopts));
+        }
+
+        if (!hwopts.ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x)
+        {
+            return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        }
+    }
+
     // Save a device reference and obtain immediate context
     m_device = pDevice;
 

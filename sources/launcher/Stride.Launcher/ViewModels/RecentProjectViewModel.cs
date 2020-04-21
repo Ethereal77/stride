@@ -65,7 +65,7 @@ namespace Stride.LauncherApp.ViewModels
             Task.Run(async () =>
             {
                 var packageVersion = await PackageSessionHelper.GetPackageVersion(fullPath);
-                StrideVersion = new Version(packageVersion.Version.Major, packageVersion.Version.Minor);
+                StrideVersion = packageVersion != null ? new Version(packageVersion.Version.Major, packageVersion.Version.Minor) : null;
                 StrideVersionName = StrideVersion?.ToString();
 
                 Dispatcher.Invoke(() => OpenCommand.IsEnabled = StrideVersionName != null);
@@ -106,7 +106,7 @@ namespace Stride.LauncherApp.ViewModels
         private async Task OpenWith(StrideVersionViewModel version)
         {
             string message;
-            version = version ?? Launcher.StrideVersions.FirstOrDefault(x => x.Name == StrideVersionName);
+            version = version ?? Launcher.StrideVersions.FirstOrDefault(x => new Version(x.Major, x.Minor) == StrideVersion);
             if (version == null)
             {
                 message = string.Format(Strings.ErrorDoNotFindVersion, StrideVersion);

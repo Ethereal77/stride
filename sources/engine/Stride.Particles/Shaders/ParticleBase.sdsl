@@ -24,7 +24,7 @@ shader ParticleBase : DepthBase, ShaderBase, Texturing, ParticleUtilities
     // -------------------------------------
     //stage stream float4 Color : COLOR;
     nointerpolation stage stream float Lifetime : BATCH_LIFETIME;
-    nointerpolation stage stream float RandomSeed : BATCH_RANDOMSEED; // Ideally should be uint. Note! The xksl doesn't support nointerpolation, so cast the float as int before using it
+    nointerpolation stage stream float RandomSeed : BATCH_RANDOMSEED; // Ideally should be uint. Note! The sdsl doesn't support nointerpolation, so cast the float as int before using it
 
     cbuffer PerMaterial
     {

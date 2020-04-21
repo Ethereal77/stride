@@ -609,6 +609,18 @@ namespace Stride.Core.Assets
                 var projectPath = filePath;
                 var packagePath = Path.ChangeExtension(filePath, Package.PackageFileExtension);
                 var packageExists = File.Exists(packagePath);
+                
+                // Xenko to Stride migration
+                if (!packageExists)
+                {
+                    var oldPackagePath = Path.ChangeExtension(filePath, ".xkpkg");
+                    if (File.Exists(oldPackagePath))
+                    {
+                        packageExists = true;
+                        XenkoToStrideRenameHelper.RenameStrideFile(oldPackagePath, XenkoToStrideRenameHelper.StrideContentType.Package);
+                    }
+                }
+
                 var package = packageExists
                     ? LoadRaw(log, packagePath)
                     : new Package
@@ -1210,6 +1222,8 @@ namespace Stride.Core.Assets
 
                         // If this kind of file an asset file?
                         var ext = fileUPath.GetFileExtension();
+                        // Adjust extensions for Stride rename
+                        ext = ext.Replace(".xk", ".sd");
 
                         //make sure to add default shaders in this case, since we don't have a csproj for them
                         if (AssetRegistry.IsProjectCodeGeneratorAssetFileExtension(ext) && (!(package.Container is SolutionProject) || package.IsSystem))
@@ -1238,6 +1252,17 @@ namespace Stride.Core.Assets
                 FindAssetsInProject(listFiles, package);
             }
 
+            // Adjust extensions for Stride rename
+            foreach (var loadingAsset in listFiles)
+            {
+                var originalExt = loadingAsset.FilePath.GetFileExtension();
+                var ext = originalExt.Replace(".xk", ".sd");
+                if (ext != originalExt)
+                {
+                    loadingAsset.FilePath = new UFile(loadingAsset.FilePath.FullPath.Replace(".xk", ".sd"));
+                }
+            }
+
             return listFiles;
         }
 
@@ -1252,7 +1277,10 @@ namespace Stride.Core.Assets
                 nameSpace = null;
 
             var result = project.Items.Where(x => (x.ItemType == "Compile" || x.ItemType == "None") && string.IsNullOrEmpty(x.GetMetadataValue("AutoGen")))
-                .Select(x => new UFile(x.EvaluatedInclude)).Where(x => AssetRegistry.IsProjectAssetFileExtension(x.GetFileExtension()))
+                // Test both Stride and Xenko extensions
+                .Select(x => new UFile(x.EvaluatedInclude)).Where(x =>
+                    AssetRegistry.IsProjectAssetFileExtension(x.GetFileExtension())
+                    || AssetRegistry.IsProjectAssetFileExtension(x.GetFileExtension().Replace(".xk", ".sd")))
                 .Select(projectItem => UPath.Combine(dir, projectItem))
                 // avoid duplicates otherwise it might save a single file as separte file with renaming
                 // had issues with case such as Effect.sdsl being registered twice (with glob pattern) and being saved as Effect.sdsl and Effect (2).sdsl

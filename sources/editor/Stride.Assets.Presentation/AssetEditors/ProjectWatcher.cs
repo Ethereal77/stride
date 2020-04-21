@@ -396,7 +396,7 @@ namespace Stride.Assets.Presentation.AssetEditors
                             else 
                             {
                                 // Fallback to checking the tools version on the csproj 
-                                //  this happens when you open an xkpkg instead of a sln file as a project
+                                //  this happens when you open an sdpkg instead of a sln file as a project
                                 ProjectRootElement xml = ProjectRootElement.Open(projectPath);
                                 Version toolsVersion;
                                 if (Version.TryParse(xml.ToolsVersion, out toolsVersion))

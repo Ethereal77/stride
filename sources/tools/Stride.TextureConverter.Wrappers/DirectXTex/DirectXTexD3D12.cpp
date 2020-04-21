@@ -15,7 +15,11 @@
 
 #include "directxtexp.h"
 
+#if defined(_XBOX_ONE) && defined(_TITLE)
+#include "d3dx12_x.h"
+#else
 #include "d3dx12.h"
+#endif
 
 #ifndef IID_GRAPHICS_PPV_ARGS
 #define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
@@ -41,6 +45,9 @@ namespace
         case DXGI_FORMAT_NV12:
         case DXGI_FORMAT_P010:
         case DXGI_FORMAT_P016:
+        case XBOX_DXGI_FORMAT_D16_UNORM_S8_UINT:
+        case XBOX_DXGI_FORMAT_R16_UNORM_X8_TYPELESS:
+        case XBOX_DXGI_FORMAT_X16_TYPELESS_G8_UINT:
             if (!slicePlane)
             {
                 // Plane 0

@@ -337,7 +337,7 @@ namespace Stride.Core.IO
             string filename;
             do
             {
-                filename = "xk" + (tempFileRandom.Next() + 1).ToString("x") + ".tmp";
+                filename = "sd" + (tempFileRandom.Next() + 1).ToString("x") + ".tmp";
                 try
                 {
                     stream = ApplicationTemporary.OpenStream(filename, VirtualFileMode.CreateNew, VirtualFileAccess.ReadWrite);

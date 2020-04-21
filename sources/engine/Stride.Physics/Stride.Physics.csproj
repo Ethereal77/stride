@@ -12,7 +12,7 @@
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--serialization --parameter-key</StrideAssemblyProcessorOptions>
     <StrideBuildTags>*</StrideBuildTags>
-    <StrideBulletPlatform></StrideBulletPlatform>
+    <StrideBulletPlatform></StrideBulletPlatform> <!--Empty by default -->
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
@@ -20,7 +20,7 @@
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </StrideNativeLib>
     <Reference Include="BulletSharp">
-      <HintPath>..\..\..\deps\BulletPhysics\$(StrideBulletPlatform)\$(StrideBulletSignedDir)BulletSharp.NetStandard.dll</HintPath>
+      <HintPath>..\..\..\deps\BulletPhysics\$(StrideBulletPlatform)\BulletSharp.NetStandard.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 
 using System.Linq;
 
+using Stride.Core.Serialization;
 using Stride.Engine;
 using Stride.Input;
 

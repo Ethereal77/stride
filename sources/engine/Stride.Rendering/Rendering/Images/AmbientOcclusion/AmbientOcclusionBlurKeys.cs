@@ -7,7 +7,7 @@ using System.Linq;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Keys used by <see cref="AmbientOcclusionBlur"/> and AmbientOcclusionBlurEffect xkfx
+    /// Keys used by <see cref="AmbientOcclusionBlur"/> and AmbientOcclusionBlurEffect sdfx
     /// </summary>
     internal static class AmbientOcclusionBlurKeys
     {
