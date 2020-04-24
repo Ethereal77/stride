@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 
 //Error handling methods of CoreParser class
-namespace Irony.Parsing { 
+namespace Stride.Irony.Parsing { 
   public partial class CoreParser {
 
     private void ProcessParserError() {

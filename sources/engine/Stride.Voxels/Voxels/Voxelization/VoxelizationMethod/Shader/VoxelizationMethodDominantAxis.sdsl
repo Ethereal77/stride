@@ -1,31 +1,39 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 namespace Stride.Rendering.Voxels
 {
     /// <summary>
-    /// Voxelization, projects to axis of largest area and writes fragments to buffer
+    ///   Voxelization, projects to the axis of largest area and writes pixels to a buffer.
     /// </summary>
     shader VoxelizationMethodDominantAxis : VoxelizationMethod, Math, Transformation, ShaderBase, NormalStream, PositionStream4, VoxelPositionStream
     {
         centroid stream float3 centroidPositionWS;
         centroid stream float3 centroidNormalWS;
+
         override void PrepareFragment()
         {
             streams.PositionWS = float4(streams.centroidPositionWS,1);
             streams.normalWS = streams.centroidNormalWS;
         }
+
         override void PrepareVertex()
         {
             streams.centroidPositionWS = streams.PositionWS.xyz;
             streams.centroidNormalWS = streams.normalWS.xyz;
         }
+
         stream int dominantAxis;
+
         override void InitializeFromTriangle(triangle Input input[3])
         {
-            float3 nor = abs(cross((input[1].ShadingPosition.xyz - input[0].ShadingPosition.xyz), (input[2].ShadingPosition.xyz - input[0].ShadingPosition.xyz)));
+            float3 nor = abs(cross((input[1].ShadingPosition.xyz - input[0].ShadingPosition.xyz),
+                                   (input[2].ShadingPosition.xyz - input[0].ShadingPosition.xyz)));
+
             streams.dominantAxis = nor.x > nor.y ? 0 : 1;
             streams.dominantAxis = nor.z > nor.y && nor.z > nor.x ? 2 : streams.dominantAxis;
         }
+
         void TransformPoint(inout float4 v1)
         {
             if (streams.dominantAxis == 0)
@@ -38,6 +46,7 @@ namespace Stride.Rendering.Voxels
             }
             v1.w = 1;
         }
+
         override void Append(inout TriangleStream<Output> triangleStream)
         {
             TransformPoint(streams.ShadingPosition);

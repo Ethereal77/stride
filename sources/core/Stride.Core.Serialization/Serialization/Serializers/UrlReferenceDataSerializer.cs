@@ -1,13 +1,15 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+
 using Stride.Core.Annotations;
 using Stride.Core.Assets;
 
 namespace Stride.Core.Serialization.Serializers
 {
     /// <summary>
-    /// Serializer base class for for <see cref="UrlReference"/>.
+    ///   Serializer base class for <see cref="UrlReference"/>.
     /// </summary>
     public abstract class UrlReferenceDataSerializerBase<T> : DataSerializer<T>
         where T: IUrlReference
@@ -18,7 +20,7 @@ namespace Stride.Core.Serialization.Serializers
             if (mode == ArchiveMode.Serialize)
             {
                 var attachedReference = AttachedReferenceManager.GetAttachedReference(urlReference);
-                if(attachedReference == null)
+                if(attachedReference is null)
                 {
                     throw new InvalidOperationException("UrlReference does not have an AttachedReference.");
                 }
@@ -37,20 +39,16 @@ namespace Stride.Core.Serialization.Serializers
     }
 
     /// <summary>
-    /// Serializer for <see cref="UrlReference"/>.
+    ///   Serializer for <see cref="UrlReference"/>.
     /// </summary>
     public sealed class UrlReferenceDataSerializer : UrlReferenceDataSerializerBase<UrlReference>
-    {
- 
-    }
+    { }
 
     /// <summary>
-    /// Serializer for <see cref="UrlReference{T}"/>.
+    ///   Serializer for <see cref="UrlReference{T}"/>.
     /// </summary>
-    /// <typeparam name="T">The type of asset.</typeparam>
+    /// <typeparam name="T">The type of Asset referenced by this class.</typeparam>
     public sealed class UrlReferenceDataSerializer<T> : UrlReferenceDataSerializerBase<UrlReference<T>>
         where T : class
-    {
-       
-    }
+    { }
 }

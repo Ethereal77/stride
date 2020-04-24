@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace Irony.Parsing { 
+namespace Stride.Irony.Parsing { 
 
   public partial class Grammar {
 

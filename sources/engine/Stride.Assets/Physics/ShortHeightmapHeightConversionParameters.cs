@@ -1,5 +1,6 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
@@ -21,7 +22,7 @@ namespace Stride.Assets.Physics
         public float HeightScale => HeightScaleCalculator.Calculate(this);
 
         /// <summary>
-        /// Select how to calculate HeightScale.
+        ///   Select how to calculate HeightScale.
         /// </summary>
         [DataMember(20)]
         [NotNull]

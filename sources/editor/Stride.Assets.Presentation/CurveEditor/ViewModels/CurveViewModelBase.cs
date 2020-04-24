@@ -255,7 +255,7 @@ namespace Stride.Assets.Presentation.CurveEditor.ViewModels
         }
 
         /// <summary>
-        /// Checks wether both axes are defined.
+        /// Checks whether both axes are defined.
         /// </summary>
         protected bool CheckAxes()
         {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
   /* 
     A node for a parse tree (concrete syntax tree) - an initial syntax representation produced by parser.
     It contains all syntax elements of the input text, each element represented by a generic node ParseTreeNode. 

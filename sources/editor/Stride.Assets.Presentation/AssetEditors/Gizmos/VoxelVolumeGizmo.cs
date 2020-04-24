@@ -1,5 +1,6 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -8,13 +9,14 @@ using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Lights;
 using Stride.Rendering.Voxels;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Assets.Presentation.AssetEditors.Gizmos
 {
     /// <summary>
-    /// A gizmo to display the bounding boxes for voxel volumes inside the editor as a gizmo. 
-    /// this gizmo uses volume scale as the extent of the bounding box and is not affected by rotation
+    ///   A gizmo to display the bounding boxes for voxel volumes inside the editor as a gizmo. 
+    ///   This gizmo uses volume scale as the extent of the bounding box and is not affected by rotation.
     /// </summary>
     [GizmoComponent(typeof(VoxelVolumeComponent), false)]
     public class VoxelVolumeGizmo : EntityGizmo<VoxelVolumeComponent>
@@ -58,14 +60,12 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
             if (ContentEntity == null || GizmoRootEntity == null)
                 return;
 
-            // calculate the world matrix of the gizmo so that it is positioned exactly as the corresponding scene entity
-            // except the scale that is re-adjusted to the gizmo desired size (gizmo are insert at scene root so LocalMatrix = WorldMatrix)
-            Vector3 scale;
-            Quaternion rotation;
-            Vector3 translation;
-            ContentEntity.Transform.WorldMatrix.Decompose(out scale, out rotation, out translation);
+            // Calculate the world matrix of the gizmo so that it is positioned exactly as the corresponding scene entity
+            // except the scale that is re-adjusted to the gizmo desired size
+            // (gizmos are inserted at scene root so LocalMatrix = WorldMatrix)
+            ContentEntity.Transform.WorldMatrix.Decompose(out Vector3 scale, out Quaternion rotation, out Vector3 translation);
 
-            // Translation and Scale but no rotation on bounding boxes
+            // Translation and Scale but no Rotation on bounding boxes
             GizmoRootEntity.Transform.Position = translation;
             GizmoRootEntity.Transform.Scale = new Vector3(Component.VoxelVolumeSize * 0.5f);
             GizmoRootEntity.Transform.UpdateWorldMatrix();
@@ -88,7 +88,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
             }
         }
 
-        class BoxMesh
+        private class BoxMesh
         {
             public MeshDraw MeshDraw;
 

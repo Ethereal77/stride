@@ -4,7 +4,7 @@
 
 using Stride.Core.Assets.Editor.View.Behaviors;
 
-using Xceed.Wpf.AvalonDock.Layout;
+using AvalonDock.Layout;
 
 namespace Stride.GameStudio
 {

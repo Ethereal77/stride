@@ -3,6 +3,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Xml.Linq;
+
 namespace Stride.ProjectGenerator
 {
     public interface IProjectProcessor

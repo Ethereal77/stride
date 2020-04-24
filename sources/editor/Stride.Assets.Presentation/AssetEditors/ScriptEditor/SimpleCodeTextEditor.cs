@@ -15,10 +15,12 @@ using RoslynPad.Roslyn.BraceMatching;
 using RoslynPad.Roslyn.Diagnostics;
 using RoslynPad.Roslyn.QuickInfo;
 
+using Stride.Core.Presentation.Themes;
+
 namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 {
     /// <summary>
-    /// A <see cref="CodeTextEditor"/> with intellisense connected to our <see cref="RoslynWorkspace"/>.
+    /// A <see cref="CodeTextEditor"/> with IntelliSense connected to our <see cref="RoslynWorkspace"/>.
     /// </summary>
     public class SimpleCodeTextEditor : CodeTextEditor
     {
@@ -74,7 +76,7 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
             TextArea.Caret.PositionChanged += CaretOnPositionChanged;
 
             // Syntax highlighting
-            var classificationHighlightColors = new ClassificationHighlightColorsDark();
+            var classificationHighlightColors = ThemeController.CurrentTheme.GetThemeBase() == IconThemeSelector.ThemeBase.Dark ? new ClassificationHighlightColorsDark() : new ClassificationHighlightColors();
             syntaxHighlightingColorizer = new RoslynHighlightingColorizer(documentId, workspace.Host, classificationHighlightColors);
             TextArea.TextView.LineTransformers.Insert(0, syntaxHighlightingColorizer);
 
@@ -258,7 +260,7 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 
         private async Task ProcessAsyncToolTipRequest(ToolTipRequestEventArgs arg)
         {
-            // TODO: consider invoking this with a delay, then showing the tool-tip without one
+            // TODO: Consider invoking this with a delay, then showing the tool-tip without one
             var document = workspace.GetDocument(documentId);
             var info = await quickInfoProvider.GetItemAsync(document, arg.Position, CancellationToken.None).ConfigureAwait(true);
             if (info != null)

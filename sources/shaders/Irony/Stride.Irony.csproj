@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
     <StrideRuntimeNetStandard>true</StrideRuntimeNetStandard>
@@ -8,15 +8,15 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <SignAssembly>false</SignAssembly>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <StrideBuildTags>*</StrideBuildTags>
+
     <AssemblyName>Stride.Irony</AssemblyName>
+    <AssemblyTitle>Stride Irony Language Implementation Library</AssemblyTitle>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Compile Remove="**\*.cs" />
     <Compile Include="Parsing\AstInterfaces.cs" />
@@ -64,7 +64,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Update="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -72,11 +72,11 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="Parsing\Data\Construction\_about_parser_construction.txt" />
   </ItemGroup>
-  
+
   <Import Project="$(StridePostSettingsTargets)" />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 

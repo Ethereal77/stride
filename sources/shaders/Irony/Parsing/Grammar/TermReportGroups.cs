@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
   
   //Terminal report group is a facility for improving syntax error messages. 
   // Irony parser/scanner reports an error like "Syntax error, invalid character. Expected: <expected list>."

@@ -24,7 +24,8 @@ using Stride.Core.Threading;
 using Stride.Animations;
 using Stride.Assets.Presentation.CurveEditor.ViewModels;
 using Stride.Assets.Presentation.CurveEditor.Views;
-using Xceed.Wpf.AvalonDock.Layout;
+
+using AvalonDock.Layout;
 
 namespace Stride.GameStudio
 {
@@ -32,7 +33,7 @@ namespace Stride.GameStudio
     {
         private readonly Dictionary<IAssetEditorViewModel, LayoutAnchorable> assetEditors = new Dictionary<IAssetEditorViewModel, LayoutAnchorable>();
         private readonly HashSet<AssetViewModel> openedAssets = new HashSet<AssetViewModel>();
-        // TODO have a base interface for all editors and factorize to make curve editor not be a special case anymore
+        // TODO: Have a base interface for all editors and factorize to make curve editor not be a special case anymore
         private Tuple<CurveEditorViewModel, LayoutAnchorable> curveEditor;
 
         private readonly AsyncLock mutex = new AsyncLock();
@@ -41,8 +42,10 @@ namespace Stride.GameStudio
 
         public AssetEditorsManager([NotNull] DockingLayoutManager dockingLayoutManager, [NotNull] SessionViewModel session)
         {
-            if (dockingLayoutManager == null) throw new ArgumentNullException(nameof(dockingLayoutManager));
-            if (session == null) throw new ArgumentNullException(nameof(session));
+            if (dockingLayoutManager == null)
+                throw new ArgumentNullException(nameof(dockingLayoutManager));
+            if (session == null)
+                throw new ArgumentNullException(nameof(session));
 
             this.dockingLayoutManager = dockingLayoutManager;
             this.session = session;
@@ -66,15 +69,17 @@ namespace Stride.GameStudio
         /// <inheritdoc/>
         public void OpenCurveEditorWindow([NotNull] object curve, string name)
         {
-            if (curve == null) throw new ArgumentNullException(nameof(curve));
-            if (dockingLayoutManager == null) throw new InvalidOperationException("This method can only be invoked on the IEditorDialogService that has the editor main window as parent.");
+            if (curve == null)
+                throw new ArgumentNullException(nameof(curve));
+            if (dockingLayoutManager == null)
+                throw new InvalidOperationException("This method can only be invoked on the IEditorDialogService that has the editor main window as parent.");
 
             CurveEditorViewModel editorViewModel = null;
             LayoutAnchorable editorPane = null;
 
             if (curveEditor != null)
             {
-                // curve editor already exists
+                // Curve editor already exists
                 editorViewModel = curveEditor.Item1;
                 editorPane = curveEditor.Item2;
             }
@@ -155,7 +160,7 @@ namespace Stride.GameStudio
             var editor = curveEditor.Item1;
             var pane = curveEditor.Item2;
             curveEditor = null;
-            // clean view model
+            // Clean view model
             editor.Destroy();
 
             CleanEditorPane(pane);
@@ -192,7 +197,7 @@ namespace Stride.GameStudio
             if (assetEditors.Count > 0)
             {
                 // Nicolas: this case should not happen. Please let me know if it happens to you.
-                // Note: this likely means that some editors leaked (esp. in the case of multi-asset editors), but force removing should be enough.
+                // NOTE: This likely means that some editors leaked (esp. in the case of multi-asset editors), but force removing should be enough.
                 if (System.Diagnostics.Debugger.IsAttached)
                     System.Diagnostics.Debugger.Break();
 
@@ -258,8 +263,10 @@ namespace Stride.GameStudio
         /// <returns></returns>
         internal async Task OpenAssetEditorWindow([NotNull] AssetViewModel asset, bool saveSettings)
         {
-            if (asset == null) throw new ArgumentNullException(nameof(asset));
-            if (dockingLayoutManager == null) throw new InvalidOperationException("This method can only be invoked on the IEditorDialogService that has the editor main window as parent.");
+            if (asset == null)
+                throw new ArgumentNullException(nameof(asset));
+            if (dockingLayoutManager == null)
+                throw new InvalidOperationException("This method can only be invoked on the IEditorDialogService that has the editor main window as parent.");
 
             // Switch to the editor layout before adding any Pane
             if (assetEditors.Count == 0)
@@ -271,6 +278,7 @@ namespace Stride.GameStudio
             {
                 LayoutAnchorable editorPane = null;
                 IEditorView view;
+
                 // Asset already has an editor?
                 if (asset.Editor != null)
                 {
@@ -288,6 +296,7 @@ namespace Stride.GameStudio
                         }
                     }
                 }
+
                 // Existing editor?
                 if (editorPane != null)
                 {
@@ -346,7 +355,7 @@ namespace Stride.GameStudio
                             {
                                 if (item.Editor != null)
                                 {
-                                    // Note: this could happen in some case after undo/redo that involves parenting of scenes
+                                    // NOTE: This could happen in some case after undo/redo that involves parenting of scenes
                                     RemoveAssetEditor(item);
                                 }
                                 item.Editor = viewModel;
@@ -376,11 +385,11 @@ namespace Stride.GameStudio
 
         private void CloseEditorWindow([NotNull] AssetViewModel asset)
         {
-            // make asset view active
+            // Make asset view active
             asset.Session.ActiveProperties = asset.Session.AssetViewProperties;
-            // remove editor
+            // Remove editor
             RemoveAssetEditor(asset);
-            // if no more editor open, change layout
+            // If no more editor open, change layout
             if (assetEditors.Count == 0)
             {
                 dockingLayoutManager.SwitchToNormalLayout();
@@ -413,11 +422,14 @@ namespace Stride.GameStudio
                         }
                     }
                     break;
+
                 case NotifyCollectionChangedAction.Move:
-                    // nothing to do
+                    // Nothing to do
                     break;
+
                 case NotifyCollectionChangedAction.Reset:
                     throw new InvalidOperationException();
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

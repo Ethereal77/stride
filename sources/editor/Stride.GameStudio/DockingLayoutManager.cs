@@ -15,9 +15,11 @@ using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Extensions;
 using Stride.Core.Presentation.Behaviors;
 using Stride.Core.Presentation.Extensions;
-using Xceed.Wpf.AvalonDock;
-using Xceed.Wpf.AvalonDock.Layout;
-using Xceed.Wpf.AvalonDock.Layout.Serialization;
+
+using AvalonDock;
+using AvalonDock.Layout;
+using AvalonDock.Layout.Serialization;
+
 using Microsoft.Xaml.Behaviors;
 
 namespace Stride.GameStudio
@@ -57,8 +59,11 @@ namespace Stride.GameStudio
         /// <param name="session">The session opened in the Game Studio.</param>
         public DockingLayoutManager(GameStudioWindow gameStudioWindow, SessionViewModel session)
         {
-            if (gameStudioWindow == null) throw new ArgumentNullException(nameof(gameStudioWindow));
-            if (session == null) throw new ArgumentNullException(nameof(session));
+            if (gameStudioWindow == null)
+                throw new ArgumentNullException(nameof(gameStudioWindow));
+            if (session == null)
+                throw new ArgumentNullException(nameof(session));
+
             this.gameStudioWindow = gameStudioWindow;
             this.session = session;
         }
@@ -74,6 +79,7 @@ namespace Stride.GameStudio
         public void SaveCurrentLayout()
         {
             var layout = GetDockingLayout();
+
             if (isInEditorLayout)
                 mruDataCollection.UpdateEditorsLayout(session.SessionFilePath, layout);
             else
@@ -151,6 +157,7 @@ namespace Stride.GameStudio
 
             var layout = isInEditorLayout ? data.DockingLayoutEditors : data.DockingLayout;
             BindableSelectedItemsControl.DisableBindings = true;
+
             try
             {
                 // This exception is normal and will trigger a reset of the layout, since no layout can be loaded from the settings file.
@@ -210,6 +217,7 @@ namespace Stride.GameStudio
                     contentIdToBehaviors.Add(anchorable.ContentId, pendingBehaviours);
                 }
             }
+
             // Unregister docking manager
             AvalonDockHelper.UnregisterDockingManager(DockingManager);
             // This is a bit of a hack, but we need to do this with AssetPreview due to how bad the LayoutAnchorable is on determining
@@ -219,6 +227,7 @@ namespace Stride.GameStudio
             {
                 gameStudioWindow.UnregisterAssetPreview(assetPreviewAnchorable);
             }
+
             // Deserialize the string
             using (var stream = new MemoryStream())
             {
@@ -229,6 +238,7 @@ namespace Stride.GameStudio
                 var serializer = new XmlLayoutSerializer(DockingManager);
                 serializer.Deserialize(stream);
             }
+
             // Apply saved the binding expressions to the newly deserialized anchorables
             foreach (var anchorable in AvalonDockHelper.GetAllAnchorables(DockingManager).Where(x => !string.IsNullOrEmpty(x.ContentId)))
             {
@@ -252,6 +262,7 @@ namespace Stride.GameStudio
                     }
                 }
             }
+
             // Re-register docking manager with new layout
             AvalonDockHelper.RegisterDockingManager(session.ServiceProvider, DockingManager);
             // Hack: need to get AssetPreview and register handlers again

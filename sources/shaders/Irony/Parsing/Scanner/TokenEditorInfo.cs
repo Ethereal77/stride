@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
   // Helper classes for information used by syntax highlighters and editors
   // TokenColor, TokenTriggers and TokenType are copied from the Visual Studio integration assemblies. 
   //  Each terminal/token would have its TokenEditorInfo that can be used either by VS integration package 

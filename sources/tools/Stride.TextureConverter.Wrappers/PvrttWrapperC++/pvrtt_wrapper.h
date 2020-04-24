@@ -1,5 +1,7 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #ifndef PVRTT_WRAPPER_H
 #define PVRTT_WRAPPER_H
 
@@ -67,7 +69,5 @@ extern "C" {
 	PVRTT_API pvrtexture::uint64 pvrttConvertPixelType(PvrttPixelType pixelFormat);
 	PVRTT_API bool pvrttPreMultipliedAlpha(PvrttTexture& sTexture);
 } // extern "C"
-
-
 
 #endif // PVRTT_WRAPPER_H

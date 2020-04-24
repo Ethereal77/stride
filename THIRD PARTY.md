@@ -48,6 +48,7 @@ All such code will be identified clearly using at least one of these mechanisms:
 
 * [Assimp](http://assimp.sourceforge.net/) (BSD 3-clause License)
 * [AsyncEx](https://github.com/StephenCleary/AsyncEx) (MIT License)
+* [AvalonDock](https://github.com/Dirkster99/AvalonDock) (Ms-PL)
 * [DocFX](https://dotnet.github.io/docfx/) (MIT License)
 * [ffmpeg](https://ffmpeg.org/) (GPL 3)
 * [FreeImage](http://freeimage.sourceforge.net/) (FreeImage Public License - Version 1.0)
@@ -64,6 +65,7 @@ All such code will be identified clearly using at least one of these mechanisms:
 * [SLNTools](https://github.com/mtherien/slntools) (MIT License)
 * [WPFToolKit](http://wpftoolkit.codeplex.com/) (Ms-PL)
 * [XamlMarkdown](https://github.com/Kryptos-FR/XamlMarkdown/) (MIT License)
+* [Nerdbank.GitVersioning](https://github.com/dotnet/Nerdbank.GitVersioning) (MIT License)
 
 ### Fugue Icons
 

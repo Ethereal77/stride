@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 
-namespace Irony.Parsing { 
+namespace Stride.Irony.Parsing { 
   [Flags]
   public enum TermFlags {
     None = 0,

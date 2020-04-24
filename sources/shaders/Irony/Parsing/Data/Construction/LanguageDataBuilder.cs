@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace Irony.Parsing.Construction {
+namespace Stride.Irony.Parsing.Construction {
   internal class LanguageDataBuilder { 
 
     internal LanguageData Language;

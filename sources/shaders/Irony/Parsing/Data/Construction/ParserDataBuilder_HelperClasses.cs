@@ -14,7 +14,7 @@ using System.Diagnostics;
 // Many of the sets are actually lists and don't require hashset's functionality. 
 // But surprisingly, using LRItemSet proved to have much better performance (twice faster for lookbacks/lookaheads computation), so LRItemSet
 // is used everywhere.
-namespace Irony.Parsing.Construction { 
+namespace Stride.Irony.Parsing.Construction { 
 
   internal class ParserStateData {
     public readonly ParserState State;

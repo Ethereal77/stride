@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2011 Irony - Roman Ivantsov
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,16 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Irony.Parsing;
-using Irony.Parsing.Construction;
+using Stride.Irony.Parsing;
+using Stride.Irony.Parsing.Construction;
 
-namespace Irony.Parsing {
-  public static class ParserDataPrinter { 
+namespace Stride.Irony.Parsing {
+  public static class ParserDataPrinter {
 
     public static string PrintStateList(LanguageData language) {
       StringBuilder sb = new StringBuilder();
       foreach (ParserState state in language.ParserData.States) {
-        sb.Append("State " + state.Name); 
+        sb.Append("State " + state.Name);
         if (state.BuilderData.IsInadequate) sb.Append(" (Inadequate)");
         sb.AppendLine();
         var srConflicts = state.BuilderData.GetShiftReduceConflicts();
@@ -42,14 +42,14 @@ namespace Irony.Parsing {
           }
         }
         sb.Append("  Transitions: ");
-        bool atFirst = true; 
+        bool atFirst = true;
         foreach (BnfTerm key in state.Actions.Keys) {
           ParserAction action = state.Actions[key];
           var hasTransitions = action.ActionType == ParserActionType.Shift || action.ActionType == ParserActionType.Operator;
           if (!hasTransitions)
             continue;
           if (!atFirst) sb.Append(", ");
-          atFirst = false; 
+          atFirst = false;
           sb.Append(key.ToString());
           sb.Append("->");
           sb.Append(action.NewState.Name);

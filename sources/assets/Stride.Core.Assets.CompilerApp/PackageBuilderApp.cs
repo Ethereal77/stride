@@ -14,11 +14,12 @@ using System.Text;
 
 using Mono.Options;
 
-using Stride.Core.Assets.Diagnostics;
-using Stride.Core.BuildEngine;
 using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.Yaml;
+using Stride.Core.Assets.Diagnostics;
+using Stride.Core.Assets.CompilerApp.Tasks;
+using Stride.Core.BuildEngine;
 using Stride.Core.VisualStudio;
 using Stride.Assets.Models;
 using Stride.Assets.SpriteFont;
@@ -27,7 +28,6 @@ using Stride.Particles;
 using Stride.Rendering.Materials;
 using Stride.Rendering.ProceduralModels;
 using Stride.SpriteStudio.Offline;
-using Stride.Core.Assets.CompilerApp.Tasks;
 
 namespace Stride.Core.Assets.CompilerApp
 {
@@ -75,7 +75,8 @@ namespace Stride.Core.Assets.CompilerApp
 
             var p = new OptionSet
             {
-                "Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved",
+                "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
+                "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
                 "Stride Build Tool - Version: "
                 +
                 String.Format(

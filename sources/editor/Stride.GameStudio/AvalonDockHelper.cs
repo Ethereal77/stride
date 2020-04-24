@@ -10,9 +10,10 @@ using System.Windows;
 using Stride.Core.Extensions;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.ViewModel;
-using Xceed.Wpf.AvalonDock;
-using Xceed.Wpf.AvalonDock.Controls;
-using Xceed.Wpf.AvalonDock.Layout;
+
+using AvalonDock;
+using AvalonDock.Controls;
+using AvalonDock.Layout;
 
 namespace Stride.GameStudio
 {
@@ -20,6 +21,7 @@ namespace Stride.GameStudio
     {
         private static readonly List<LayoutAnchorable> VisiblityChangingAnchorable = new List<LayoutAnchorable>();
         private static IViewModelServiceProvider serviceProvider;
+
         public static readonly DependencyProperty IsVisibleProperty = DependencyProperty.RegisterAttached("IsVisible", typeof(bool), typeof(AvalonDockHelper), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, IsVisibleChanged));
 
         public static bool GetIsVisible(DependencyObject obj)
@@ -35,10 +37,12 @@ namespace Stride.GameStudio
         public static void RegisterDockingManager(IViewModelServiceProvider viewModelServiceProvider, DockingManager docking)
         {
             serviceProvider = viewModelServiceProvider;
+
             foreach (var anchorable in GetAllAnchorables(docking))
             {
                 if (!string.IsNullOrEmpty(anchorable.ContentId))
                     anchorable.IsVisibleChanged += AnchorableIsVisibleChanged;
+
                 AdjustAnchorableHideAndCloseCommands(anchorable);
             }
 
@@ -49,6 +53,7 @@ namespace Stride.GameStudio
         public static void UnregisterDockingManager(DockingManager docking)
         {
             serviceProvider = null;
+
             var layoutRoot = (LayoutRoot)docking.LayoutRootPanel?.Model.Root;
             if (layoutRoot != null)
             {

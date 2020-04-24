@@ -178,7 +178,7 @@ namespace Stride.Graphics
         public bool IsDebugMode { get; private set; }
 
         /// <summary>
-        ///     Indicates wether this device allows for concurrent building and deferred submission of CommandLists
+        ///     Indicates whether this device allows for concurrent building and deferred submission of CommandLists
         /// </summary>
         /// <value>
         ///     <c>true</c> if this instance is deferred; otherwise, <c>false</c>.

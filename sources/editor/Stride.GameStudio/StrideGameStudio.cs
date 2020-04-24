@@ -12,7 +12,7 @@ namespace Stride.GameStudio
     public static class StrideGameStudio
     {
         [NotNull]
-        public static string CopyrightText1 => "© 2018 Stride contributors";
+        public static string CopyrightText1 => "© 2018-2020 Stride contributors";
 
         [NotNull]
         public static string CopyrightText2 => "© 2011-2018 Silicon Studio Corp.";

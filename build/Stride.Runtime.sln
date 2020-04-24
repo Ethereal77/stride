@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00-Targets.Private", "00-Ta
 		..\sources\targets\Stride.Core.Sign.targets = ..\sources\targets\Stride.Core.Sign.targets
 		..\sources\targets\Stride.GlobalSettings.targets = ..\sources\targets\Stride.GlobalSettings.targets
 		..\sources\native\Stride.Native.targets = ..\sources\native\Stride.Native.targets
+		..\sources\targets\Stride.PackageVersion.targets = ..\sources\targets\Stride.PackageVersion.targets
 		..\sources\targets\Stride.PostSettings.targets = ..\sources\targets\Stride.PostSettings.targets
 		..\sources\targets\Stride.PreSettings.targets = ..\sources\targets\Stride.PreSettings.targets
 		..\sources\targets\Stride.PreSettings.UnitTests.targets = ..\sources\targets\Stride.PreSettings.UnitTests.targets
@@ -55,7 +56,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.Core.Shaders", "..\s
 		{5210FB81-B807-49BB-AF0D-31FB6A83A572} = {5210FB81-B807-49BB-AF0D-31FB6A83A572}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Irony", "..\sources\shaders\Irony\Irony.csproj", "{D81F5C91-D7DB-46E5-BC99-49488FB6814C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.Irony", "..\sources\shaders\Irony\Stride.Irony.csproj", "{D81F5C91-D7DB-46E5-BC99-49488FB6814C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.Games", "..\sources\engine\Stride.Games\Stride.Games.csproj", "{42780CBD-3FE7-48E3-BD5B-59945EA20137}"
 EndProject

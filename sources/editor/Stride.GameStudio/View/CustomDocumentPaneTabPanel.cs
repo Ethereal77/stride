@@ -5,7 +5,7 @@
 using System;
 using System.Windows;
 
-using Xceed.Wpf.AvalonDock.Controls;
+using AvalonDock.Controls;
 
 namespace Stride.GameStudio.View
 {
@@ -17,7 +17,7 @@ namespace Stride.GameStudio.View
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            // Note: this implementation is similar to the WrapPanel
+            // NOTE: this implementation is similar to the WrapPanel
             var rowSize = new Size();
             var totalSize = new Size();
             var internalChildren = InternalChildren;
@@ -55,7 +55,7 @@ namespace Stride.GameStudio.View
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            // Note: this implementation is similar to the WrapPanel
+            // NOTE: This implementation is similar to the WrapPanel
             var start = 0;
             var offsetY = 0.0;
             var rowSize = new Size();

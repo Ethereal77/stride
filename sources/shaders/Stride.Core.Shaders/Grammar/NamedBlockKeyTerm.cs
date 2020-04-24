@@ -4,7 +4,7 @@
 
 using GoldParser;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 
 namespace Stride.Core.Shaders.Grammar
 {

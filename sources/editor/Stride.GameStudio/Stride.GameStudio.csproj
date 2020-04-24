@@ -43,7 +43,7 @@
     <PackageReference Include="EnvDTE" Version="8.0.1" />
     <PackageReference Include="Stride.Metrics" Version="1.0.0" />
     <PackageReference Include="Stride.CrashReport" Version="1.0.1" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.1" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.2" />
     <Reference Include="Renci.SshNet, Version=2016.0.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\deps\SSH.NET\Renci.SshNet.dll</HintPath>

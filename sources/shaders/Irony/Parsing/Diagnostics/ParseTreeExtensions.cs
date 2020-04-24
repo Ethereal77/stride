@@ -10,7 +10,7 @@ using System.Text;
 using System.IO; 
 using System.Xml;
 
-namespace Irony.Parsing { 
+namespace Stride.Irony.Parsing { 
   public static class ParseTreeExtensions {
 
     public static string ToXml(this ParseTree parseTree) {

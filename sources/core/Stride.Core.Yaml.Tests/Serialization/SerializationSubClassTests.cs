@@ -1,7 +1,10 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System.ComponentModel;
+
 using Stride.Core.Yaml.Serialization;
+
 using Xunit;
 
 namespace Stride.Core.Yaml.Tests.Serialization

@@ -1,15 +1,17 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Stride.Assets.Textures;
+
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Compiler;
 using Stride.Core.BuildEngine;
 using Stride.Core.Mathematics;
 using Stride.Core.Serialization.Contents;
+using Stride.Assets.Textures;
 using Stride.Graphics;
 using Stride.Physics;
 using Stride.TextureConverter;
@@ -28,6 +30,7 @@ namespace Stride.Assets.Physics
         {
             var asset = (HeightmapAsset)assetItem.Asset;
             var url = asset.Source.FullPath;
+
             if (!string.IsNullOrEmpty(url))
             {
                 yield return new ObjectUrl(UrlType.File, url);
@@ -39,15 +42,18 @@ namespace Stride.Assets.Physics
             var asset = (HeightmapAsset)assetItem.Asset;
 
             result.BuildSteps = new AssetBuildStep(assetItem);
-            result.BuildSteps.Add(new HeightmapConvertCommand(targetUrlInStorage, asset, assetItem.Package) { InputFilesGetter = () => GetInputFiles(assetItem) });
+            result.BuildSteps.Add(
+                new HeightmapConvertCommand(targetUrlInStorage, asset, assetItem.Package)
+                {
+                    InputFilesGetter = () => GetInputFiles(assetItem)
+                });
         }
 
         public class HeightmapConvertCommand : AssetCommand<HeightmapAsset>
         {
             public HeightmapConvertCommand(string url, HeightmapAsset parameters, IAssetFinder assetFinder)
                 : base(url, parameters, assetFinder)
-            {
-            }
+            { }
 
             protected override Task<ResultStatus> DoCommandOverride(ICommandContext commandContext)
             {
@@ -68,9 +74,9 @@ namespace Stride.Assets.Physics
                 {
                     // Resize if needed.
 
-                    var size = Parameters.Resizing.Enabled ?
-                        Parameters.Resizing.Size :
-                        new Int2(texImage.Width, texImage.Height);
+                    var size = Parameters.Resizing.Enabled
+                        ? Parameters.Resizing.Size
+                        : new Int2(texImage.Width, texImage.Height);
 
                     HeightmapUtils.CheckHeightParameters(size, heightType, heightRange, heightScale, true);
 
@@ -250,7 +256,8 @@ namespace Stride.Assets.Physics
                                 throw new Exception($"{ heightType } height type is not supported.");
                         }
 
-                        commandContext.Logger.Info($"[{Url}] Convert Image(Format={ texImage.Format }, Width={ texImage.Width }, Height={ texImage.Height }) " +
+                        commandContext.Logger.Info(
+                            $"[{Url}] Convert Image(Format={ texImage.Format }, Width={ texImage.Width }, Height={ texImage.Height }) " +
                             $"to Heightmap(HeightType={ heightType }, MinHeight={ heightRange.X }, MaxHeight={ heightRange.Y }, HeightScale={ heightScale }, Size={ size }).");
                     }
                 }

@@ -4,7 +4,5 @@
 
 namespace Stride.ProjectGenerator
 {
-    public enum ProjectType
-    {
-    }
+    public enum ProjectType { }
 }

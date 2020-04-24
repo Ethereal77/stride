@@ -1,12 +1,13 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using Stride.Rendering.Data;
 using Stride.Rendering.Lights;
 
 namespace Stride.Rendering.Voxels.VoxelGI
 {
     /// <summary>
-    /// Base effect
+    ///   Base effect for voxel-based global illumination.
     /// </summary>
     effect LightVoxelEffect
     {
@@ -23,7 +24,8 @@ namespace Stride.Rendering.Voxels.VoxelGI
         {
             mixin compose specularMarcher = LightVoxelShaderKeys.specularMarcher;
         }
-        if (MarchAttributesKeys.AttributeSamplers!=null)
+
+        if (MarchAttributesKeys.AttributeSamplers != null)
         {
             foreach (var attr in MarchAttributesKeys.AttributeSamplers)
             {

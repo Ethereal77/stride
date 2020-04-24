@@ -11,7 +11,7 @@
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- Sdk settings -->
+  <!-- SDK settings -->
   <PropertyGroup>
     <!-- Customize GenerateAssemblyInfo -->
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>

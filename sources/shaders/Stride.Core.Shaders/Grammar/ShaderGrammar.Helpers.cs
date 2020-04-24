@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 using Stride.Core.Shaders.Ast;
 
 namespace Stride.Core.Shaders.Grammar

@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
 
   public class Terminal : BnfTerm {
     #region Constructors

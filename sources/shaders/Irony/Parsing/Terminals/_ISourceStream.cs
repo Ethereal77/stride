@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
   //
   /// <summary>
   /// Interface for Terminals to access the source stream and produce tokens.

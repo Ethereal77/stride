@@ -5,7 +5,7 @@
 
 using System;
 
-namespace Irony.Parsing
+namespace Stride.Irony.Parsing
 {
     // Parser class represents combination of scanner and LALR parser (CoreParser)
     /// <summary>

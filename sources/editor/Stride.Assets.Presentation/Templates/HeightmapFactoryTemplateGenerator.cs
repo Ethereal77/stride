@@ -1,16 +1,18 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Stride.Assets.Textures;
+
 using Stride.Core;
-using Stride.Core.Assets.Editor.Settings;
-using Stride.Core.Assets.IO;
-using Stride.Core.Assets.Templates;
 using Stride.Core.IO;
 using Stride.Core.Reflection;
+using Stride.Core.Assets.IO;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Assets.Editor.Settings;
+using Stride.Assets.Textures;
 
 namespace Stride.Assets.Presentation.Templates
 {
@@ -22,7 +24,9 @@ namespace Stride.Assets.Presentation.Templates
 
         public override bool IsSupportingTemplate(TemplateDescription templateDescription)
         {
-            if (templateDescription == null) throw new ArgumentNullException(nameof(templateDescription));
+            if (templateDescription is null)
+                throw new ArgumentNullException(nameof(templateDescription));
+
             return templateDescription.Id == TemplateId;
         }
 

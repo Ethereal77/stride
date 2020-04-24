@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Utility;
 

@@ -7,12 +7,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Xceed.Wpf.Toolkit.Core;
+
 using Stride.Core.Assets.Editor.View.Controls;
 using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
-
 
 namespace Stride.Core.Assets.Editor.View
 {
@@ -310,12 +309,6 @@ namespace Stride.Core.Assets.Editor.View
         {
             var control = (AssetViewUserControl)sender;
             e.CanExecute = control.CanBeginEdit();
-        }
-
-        private static void CanBeginEditEvent(object sender, CancelRoutedEventArgs e)
-        {
-            var control = (AssetViewUserControl)sender;
-            e.Cancel = !control.CanBeginEdit();
         }
 
         private static void BeginEdit(object sender, ExecutedRoutedEventArgs e)

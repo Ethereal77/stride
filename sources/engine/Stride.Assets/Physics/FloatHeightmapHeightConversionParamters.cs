@@ -1,5 +1,6 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Physics;
@@ -17,6 +18,6 @@ namespace Stride.Assets.Physics
         public Vector2 HeightRange { get; set; } = new Vector2(-10, 10);
 
         [DataMemberIgnore]
-        public float HeightScale => 1f;
+        public float HeightScale => 1.0f;
     }
 }

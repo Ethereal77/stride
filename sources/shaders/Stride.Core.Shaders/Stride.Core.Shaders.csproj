@@ -62,7 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Stride.Core\Stride.Core.csproj" />
-    <ProjectReference Include="..\Irony\Irony.csproj" />
+    <ProjectReference Include="..\Irony\Stride.Irony.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Resources.tt">

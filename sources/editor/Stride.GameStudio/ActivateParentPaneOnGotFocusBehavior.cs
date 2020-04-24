@@ -7,13 +7,13 @@ using System.Windows.Controls;
 
 using Microsoft.Xaml.Behaviors;
 
-using Xceed.Wpf.AvalonDock.Controls;
+using AvalonDock.Controls;
 
 using Stride.Core.Presentation.Extensions;
 
 namespace Stride.GameStudio
 {
-    // TODO: this behavior was previously broken, it might work now (migration to AvalonDock) but has not been tested!
+    // TODO: This behavior was previously broken, it might work now (migration to AvalonDock) but has not been tested!
     public class ActivateParentPaneOnGotFocusBehavior : Behavior<Control>
     {
         protected override void OnAttached()

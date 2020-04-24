@@ -1,5 +1,5 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more in
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
 
@@ -64,7 +64,6 @@ namespace CSharpBeginner.Code
             {
                 var button = new Button
                 {
-
                     Content = new TextBlock
                     {
                         Font = placeHolderTextBlock.Font,
@@ -79,7 +78,6 @@ namespace CSharpBeginner.Code
                     NotPressedImage = placeHolderButton.NotPressedImage,
                     PressedImage = placeHolderButton.PressedImage,
                     MouseOverImage = placeHolderButton.MouseOverImage,
-
                 };
                 button.Click += (sender, e) => BtnLoadTutorial(sender, e, keyPair);
                 

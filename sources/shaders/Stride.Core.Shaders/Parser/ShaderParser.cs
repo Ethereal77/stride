@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Grammar;
 using Stride.Core.Shaders.Utility;

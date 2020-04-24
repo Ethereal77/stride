@@ -1,21 +1,22 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.ComponentModel;
 using System.Globalization;
+
 using Stride.Core.Serialization;
 
 namespace Stride.Core.TypeConverters
 {
     /// <summary>
-    /// Defines a type converter for <see cref="IUrlReference"/>.
+    ///   Defines a type converter for <see cref="IUrlReference"/>.
     /// </summary>
     public class UrlReferenceConverter : BaseConverter
     {
-
         public UrlReferenceConverter()
         {
-            //TODO: PropertyDescriptor does not support Properties, only fields so can not currently Set Properties. Does not seem to impact usage.
+            // TODO: PropertyDescriptor does not support Properties, only Fields so can not currently Set Properties. Does not seem to impact usage.
         }
 
         /// <inheritdoc/>

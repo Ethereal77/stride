@@ -1,4 +1,4 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -28,13 +28,16 @@ namespace Stride.Core.Assets
             {
                 case StrideContentType.Package:
                     break;
+
                 case StrideContentType.Project:
                     content = Regex.Replace(content, "Include=\"Xenko", "Include=\"Stride");
                     break;
+
                 case StrideContentType.Code:
                     content = Regex.Replace(content, @"using Xenko", "using Stride");
                     content = Regex.Replace(content, @"\bXenko\.", "Stride.");
                     break;
+
                 case StrideContentType.Asset:
                     content = Regex.Replace(content, @"SerializedVersion: \{Xenko", "SerializedVersion: {Stride");
                     content = Regex.Replace(content, @"\!Xenko\.([^\s]+),Xenko\.([^\s]+)", "!Stride.$1,Stride.$2");

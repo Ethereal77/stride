@@ -35,6 +35,11 @@ namespace Stride.Core.Reflection
         Object,
 
         /// <summary>
+        /// An unsupported object. This will be treated the same as Object.
+        /// </summary>
+        NotSupportedObject,
+
+        /// <summary>
         /// A nullable value
         /// </summary>
         Nullable,

@@ -1,6 +1,8 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+
 using Stride.Core.Serialization;
 using Stride.Core.Yaml;
 using Stride.Core.Yaml.Events;
@@ -9,7 +11,7 @@ using Stride.Core.Yaml.Serialization;
 namespace Stride.Core.Assets.Serializers
 {
     /// <summary>
-    /// A Yaml serializer for <see cref="UrlReference"/>
+    ///   A Yaml serializer for <see cref="UrlReference"/>.
     /// </summary>
     [YamlSerializerFactory(YamlAssetProfile.Name)]
     internal class UrlReferenceSerializer : AssetScalarSerializerBase
@@ -45,7 +47,5 @@ namespace Stride.Core.Assets.Serializers
 
             throw new YamlException($"Unable to extract url reference from object [{objectContext.Instance}]");
         }
-
-
     }
 }

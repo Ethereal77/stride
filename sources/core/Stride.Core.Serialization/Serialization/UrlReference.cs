@@ -1,57 +1,51 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+
 using Stride.Core.Serialization.Serializers;
 
 namespace Stride.Core.Serialization
 {
     /// <summary>
-    /// Represents a Url to an asset.
+    ///   Represents an URL to an Asset.
     /// </summary>
     [DataSerializer(typeof(UrlReferenceDataSerializer))]
     public sealed class UrlReference : UrlReferenceBase
     {
         /// <summary>
-        /// Create a new <see cref="UrlReference"/> instance.
+        ///   Initializes a new instance of the class <see cref="UrlReference"/>.
         /// </summary>
-        public UrlReference()
-        {
-
-        }
+        public UrlReference() { }
 
         /// <summary>
-        /// Create a new <see cref="UrlReference"/> instance.
+        ///   Initializes a new instance of the class <see cref="UrlReference"/>.
         /// </summary>
-        /// <param name="url"></param>
-        /// <exception cref="ArgumentNullException">If <paramref name="url"/> is <c>null</c> or empty.</exception>
+        /// <param name="url">The URL to the Asset.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="url"/> is <c>null</c> or empty.</exception>
         public UrlReference(string url) : base(url)
-        {
-        }
+        { }
     }
 
     /// <summary>
-    /// Represents a Url to an asset of type <see cref="T"/>.
+    ///   Represents an URL to an Asset of a type specified by <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T">The type off asset.</typeparam>
+    /// <typeparam name="T">The type of the Asset referenced by this class.</typeparam>
     [DataSerializer(typeof(UrlReferenceDataSerializer<>), Mode = DataSerializerGenericMode.GenericArguments)]
     public sealed class UrlReference<T> : UrlReferenceBase
         where T : class
     {
         /// <summary>
-        /// Create a new <see cref="UrlReference{T}"/> instance.
+        ///   Initializes a new instance of the class <see cref="UrlReference{T}"/>.
         /// </summary>
-        public UrlReference()
-        {
-
-        }
+        public UrlReference() { }
 
         /// <summary>
-        /// Create a new <see cref="UrlReference{T}"/> instance.
+        ///   Initializes a new instance of the class <see cref="UrlReference{T}"/>.
         /// </summary>
-        /// <param name="url"></param>
-        /// <exception cref="ArgumentNullException">If <paramref name="url"/> is <c>null</c> or empty.</exception>
+        /// <param name="url">The URL to the Asset.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="url"/> is <c>null</c> or empty.</exception>
         public UrlReference(string url) : base(url)
-        {
-        }
+        { }
     }
 }

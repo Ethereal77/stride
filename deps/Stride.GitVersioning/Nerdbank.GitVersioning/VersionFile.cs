@@ -1,4 +1,5 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -9,15 +10,15 @@ using System.Text.RegularExpressions;
 namespace Nerdbank.GitVersioning
 {
     /// <summary>
-    /// Read version from .sdpkg, implemented for <see cref="GitExtensions"/>.
+    ///   Reads the version from a Stride Package (<c>.sdpkg</c>). Implemented for <see cref="GitExtensions"/>.
     /// </summary>
-    class VersionFile
+    internal class VersionFile
     {
         /// <summary>
-        /// Reads version from the given .sdpkg file.
+        ///   Reads the version from a given <c>.sdpkg</c> file.
         /// </summary>
-        /// <param name="packagePath"></param>
-        /// <returns></returns>
+        /// <param name="packagePath">Stride Package file path.</param>
+        /// <returns><see cref="VersionOptions"/> with the Stride Package version.</returns>
         public static VersionOptions GetVersion(string packagePath)
         {
             try
@@ -33,25 +34,25 @@ namespace Nerdbank.GitVersioning
             }
         }
 
+        /// <summary>
+        ///   Reads the version from a given <c>.sdpkg</c> file in a specific Git commit.
+        /// </summary>
+        /// <param name="commit"><see cref="LibGit2Sharp.Commit"/> in which to look for <paramref cref="packagePath"/>.</param>
+        /// <param name="packagePath">Stride Package file path.</param>
+        /// <returns><see cref="VersionOptions"/> with the Stride Package version.</returns>
         public static VersionOptions GetVersion(LibGit2Sharp.Commit commit, string packagePath)
         {
-            if (commit == null)
-            {
+            if (commit is null)
                 return null;
-            }
 
             try
             {
-                var packageData = commit.Tree[packagePath]?.Target as LibGit2Sharp.Blob;
-                if (packageData == null)
-                    return null;
+                if (commit.Tree[packagePath]?.Target is LibGit2Sharp.Blob packageData)
+                    return GetVersionFromStream(packageData.GetContentStream());
+            }
+            catch { }
 
-                return GetVersionFromStream(packageData.GetContentStream());
-            }
-            catch
-            {
-                return null;
-            }
+            return null;
         }
 
         private static VersionOptions GetVersionFromStream(Stream stream)

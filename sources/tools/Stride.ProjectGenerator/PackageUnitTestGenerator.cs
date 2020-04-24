@@ -37,7 +37,9 @@ namespace Stride.ProjectGenerator
 
         public sealed override bool Run(SessionTemplateGeneratorParameters parameters)
         {
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
             parameters.Validate();
 
             var name = parameters.Name;

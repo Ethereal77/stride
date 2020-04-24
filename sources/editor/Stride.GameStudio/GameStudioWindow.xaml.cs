@@ -27,7 +27,7 @@ using Stride.Core.Presentation.Interop;
 using Stride.Core.Presentation.Windows;
 using Stride.Core.Translation;
 
-using Xceed.Wpf.AvalonDock.Layout;
+using AvalonDock.Layout;
 
 #if DEBUG
 using Stride.Assets.Presentation.Test;
@@ -36,7 +36,7 @@ using Stride.Assets.Presentation.Test;
 namespace Stride.GameStudio
 {
     /// <summary>
-    /// Interaction logic for GameStudioWindow.xaml
+    ///   Interaction logic for GameStudioWindow.xaml.
     /// </summary>
     public partial class GameStudioWindow : IAsyncClosableWindow
     {
@@ -54,8 +54,11 @@ namespace Stride.GameStudio
 
         public GameStudioWindow(EditorViewModel editor)
         {
-            if (editor == null) throw new ArgumentNullException(nameof(editor));
-            if (editor.Session == null) throw new ArgumentException($@"A valid session must exist before creating a {nameof(GameStudioWindow)}", nameof(editor));
+            if (editor == null)
+                throw new ArgumentNullException(nameof(editor));
+            if (editor.Session == null)
+                throw new ArgumentException($@"A valid session must exist before creating a {nameof(GameStudioWindow)}", nameof(editor));
+
             DataContext = editor; // Must be set before calling InitializeComponent
 
             dockingLayout = new DockingLayoutManager(this, editor.Session);
@@ -82,6 +85,7 @@ namespace Stride.GameStudio
             {
                 var message = Tr._p("Message", "To reset the layout, Game Studio needs to close and re-open all asset and document editors. You won't lose unsaved changes.");
                 var buttons = DialogHelper.CreateButtons(new[] { "Reset layout", "Cancel" }, 1, 2);
+
                 var result = await Editor.ServiceProvider.Get<IEditorDialogService>().MessageBox(message, buttons);
                 if (result != 1)
                     return;
@@ -173,12 +177,14 @@ namespace Stride.GameStudio
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
+
             if (forceClose)
             {
                 // Stop listening to clipboard
                 ClipboardMonitor.UnregisterListener(this);
                 return;
             }
+
             // We need to run async stuff before closing, so let's always cancel the close at first.
             e.Cancel = true;
             // This method will shutdown the application if the session has been successfully closed.
@@ -337,6 +343,7 @@ namespace Stride.GameStudio
                 OpenDefaultScene(Editor.Session);
                 return;
             }
+
             // Open assets
             var assets = assetIds.Select(x => Editor.Session.GetAssetById(x)).NotNull().ToList();
             Editor.Session.ActiveAssetView.SelectAssets(assets.Last().Yield());

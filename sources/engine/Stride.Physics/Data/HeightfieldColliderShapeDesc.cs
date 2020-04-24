@@ -1,7 +1,8 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
@@ -15,7 +16,7 @@ namespace Stride.Physics
     public class HeightfieldColliderShapeDesc : IInlineColliderShapeDesc
     {
         /// <summary>
-        /// The source to initialize the height stick array.
+        ///   The source to initialize the height stick array.
         /// </summary>
         [DataMember(10)]
         [NotNull]
@@ -26,17 +27,17 @@ namespace Stride.Physics
         public bool FlipQuadEdges = false;
 
         /// <summary>
-        /// Add a value to local offset in order to center specific height.
+        ///   Local offset in order to center specific height.
         /// </summary>
         /// <remarks>
-        /// NOTE: The center height is the middle point of the range, if this is disabled with asymmetrical range.
+        ///   The center height is the middle point of the range. This can be disabled with asymmetrical range.
         /// </remarks>
         [DataMember(80)]
         public HeightfieldCenteringParameters Centering { get; set; } = new HeightfieldCenteringParameters
-        {
-            Enabled = true,
-            CenterHeight = 0,
-        };
+            {
+                Enabled = true,
+                CenterHeight = 0,
+            };
 
         [DataMember(100)]
         public Vector3 LocalOffset;
@@ -48,42 +49,37 @@ namespace Stride.Physics
         {
             var other = obj as HeightfieldColliderShapeDesc;
 
-            if (other == null)
-            {
+            if (other is null)
                 return false;
-            }
 
             if (LocalOffset != other.LocalOffset || LocalRotation != other.LocalRotation)
-            {
                 return false;
-            }
 
             var sourceMatch = other.HeightStickArraySource?.Match(HeightStickArraySource) ?? HeightStickArraySource == null;
 
             var centeringMatch = other.Centering.Match(Centering);
 
             return sourceMatch &&
-                centeringMatch &&
-                other.FlipQuadEdges == FlipQuadEdges;
+                   centeringMatch &&
+                   other.FlipQuadEdges == FlipQuadEdges;
         }
 
         /// <summary>
-        /// Get the offset required in order to center specific height.
+        ///   Calculates the offset required in order to center a specific height.
         /// </summary>
         /// <param name="heightRange">The range of the height.</param>
         /// <param name="centerHeight">The height to be centered.</param>
-        /// <returns>The value in y axis required in order to center specific height.</returns>
-        public static float GetCenteringOffset(Vector2 heightRange, float centerHeight)
-        {
-            return (heightRange.X + heightRange.Y) * 0.5f - centerHeight;
-        }
+        /// <returns>
+        ///   The height offset required in order to center <paramref cref="centerHeight"/> in
+        ///   <paramref cref="heightRange"/>.
+        /// </returns>
+        public static float GetCenteringOffset(Vector2 heightRange, float centerHeight) =>
+            (heightRange.X + heightRange.Y) * 0.5f - centerHeight;
 
         private static UnmanagedArray<T> CreateHeights<T>(IHeightStickArraySource heightStickArraySource) where T : struct
         {
             if (!heightStickArraySource?.IsValid() ?? false)
-            {
                 return null;
-            }
 
             var arrayLength = heightStickArraySource.HeightStickSize.X * heightStickArraySource.HeightStickSize.Y;
 
@@ -95,16 +91,20 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Get the centering offset that will be added to the local offset of the collider shape.
+        ///   Computes the centering offset that will be added to the local offset of the collider shape.
         /// </summary>
-        /// <returns>The value that will be added to the local offset of the collider shape in order to center specific height.</returns>
+        /// <returns>
+        ///   The value that will be added to the local offset of the collider shape in order to
+        ///   center specific height.
+        /// </returns>
         public float GetCenteringOffset()
         {
-            if (HeightStickArraySource == null) throw new InvalidOperationException($"{ nameof(HeightStickArraySource) } is a null.");
+            if (HeightStickArraySource == null)
+                throw new InvalidOperationException($"{ nameof(HeightStickArraySource) } is a null.");
 
-            return Centering.Enabled ?
-                GetCenteringOffset(HeightStickArraySource.HeightRange, Centering.CenterHeight) :
-                0f;
+            return Centering.Enabled
+                ? GetCenteringOffset(HeightStickArraySource.HeightRange, Centering.CenterHeight)
+                : 0f;
         }
 
         public ColliderShape CreateShape()
@@ -114,26 +114,23 @@ namespace Stride.Physics
             switch (HeightStickArraySource.HeightType)
             {
                 case HeightfieldTypes.Float:
-                {
                     unmanagedArray = CreateHeights<float>(HeightStickArraySource);
                     break;
-                }
+
                 case HeightfieldTypes.Short:
-                {
                     unmanagedArray = CreateHeights<short>(HeightStickArraySource);
                     break;
-                }
+
                 case HeightfieldTypes.Byte:
-                {
                     unmanagedArray = CreateHeights<byte>(HeightStickArraySource);
                     break;
-                }
 
                 default:
                     return null;
             }
 
-            if (unmanagedArray == null) return null;
+            if (unmanagedArray is null)
+                return null;
 
             var shape = new HeightfieldColliderShape
                         (

@@ -8,7 +8,7 @@ using System.IO;
 
 using GoldParser;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 using Stride.Core.Shaders.Properties;
 
 namespace Stride.Core.Shaders.Grammar

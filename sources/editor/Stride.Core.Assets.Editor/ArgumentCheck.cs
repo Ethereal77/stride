@@ -38,7 +38,7 @@ namespace Stride.Core.Assets.Editor
     public static class ArgumentCheck
     {
         /// <summary>
-        /// Checks wether the <paramref name="variable"/> meets the <see cref="predicate"/>.
+        /// Checks whether the <paramref name="variable"/> meets the <see cref="predicate"/>.
         /// Otherwise throws an exception.
         /// </summary>
         /// <typeparam name="T">The type of the <paramref name="variable"/>.</typeparam>
@@ -63,7 +63,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="collection"/> is not empty.
+        /// Checks whether the <paramref name="collection"/> is not empty.
         /// Otherwise throws an exception.
         /// </summary>
         /// <param name="collection">The collection to check.</param>
@@ -87,7 +87,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="collection"/> is not empty.
+        /// Checks whether the <paramref name="collection"/> is not empty.
         /// Otherwise throws an exception.
         /// </summary>
         /// <typeparam name="T">The type of the <paramref name="collection"/>.</typeparam>
@@ -112,7 +112,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="variable"/> is not an empty string.
+        /// Checks whether the <paramref name="variable"/> is not an empty string.
         /// Otherwise throws an exception.
         /// </summary>
         /// <param name="variable">The value to check.</param>
@@ -161,7 +161,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="variable"/> is not <see langword="null"/>.
+        /// Checks whether the <paramref name="variable"/> is not <see langword="null"/>.
         /// Otherwise throws an exception.
         /// </summary>
         /// <param name="variable">The value to check.</param>
@@ -180,7 +180,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="variable"/> is not a white-space string.
+        /// Checks whether the <paramref name="variable"/> is not a white-space string.
         /// Otherwise throws an exception.
         /// </summary>
         /// <param name="variable">The value to check.</param>
@@ -214,7 +214,7 @@ namespace Stride.Core.Assets.Editor
     public static class ArgumentDebugCheck
     {
         /// <summary>
-        /// Checks wether the <paramref name="variable"/> meets the <see cref="predicate"/>.
+        /// Checks whether the <paramref name="variable"/> meets the <see cref="predicate"/>.
         /// Otherwise throws an exception.
         /// </summary>
         /// <typeparam name="T">The type of the <paramref name="variable"/>.</typeparam>
@@ -240,7 +240,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="collection"/> is not empty.
+        /// Checks whether the <paramref name="collection"/> is not empty.
         /// Otherwise throws an exception.
         /// </summary>
         /// <param name="collection">The collection to check.</param>
@@ -265,7 +265,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="collection"/> is not empty.
+        /// Checks whether the <paramref name="collection"/> is not empty.
         /// Otherwise throws an exception.
         /// </summary>
         /// <typeparam name="T">The type of the <paramref name="collection"/>.</typeparam>
@@ -291,7 +291,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="variable"/> is not an empty string.
+        /// Checks whether the <paramref name="variable"/> is not an empty string.
         /// Otherwise throws an exception.
         /// </summary>
         /// <param name="variable">The value to check.</param>
@@ -342,7 +342,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="variable"/> is not <see langword="null"/>.
+        /// Checks whether the <paramref name="variable"/> is not <see langword="null"/>.
         /// Otherwise throws an exception.
         /// </summary>
         /// <param name="variable">The value to check.</param>
@@ -362,7 +362,7 @@ namespace Stride.Core.Assets.Editor
         }
 
         /// <summary>
-        /// Checks wether the <paramref name="variable"/> is not a white-space string.
+        /// Checks whether the <paramref name="variable"/> is not a white-space string.
         /// Otherwise throws an exception.
         /// </summary>
         /// <param name="variable">The value to check.</param>

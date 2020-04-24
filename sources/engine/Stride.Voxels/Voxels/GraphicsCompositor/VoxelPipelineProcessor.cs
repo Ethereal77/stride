@@ -1,13 +1,15 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System.Collections.Generic;
 using System.ComponentModel;
+
 using Stride.Graphics;
 
 namespace Stride.Rendering.Voxels
 {
     /// <summary>
-    /// Pipline processor for <see cref="RenderMesh"/> that cast shadows, to properly disable culling and depth clip.
+    ///   Pipline processor for <see cref="RenderMesh"/> that cast shadows, to properly disable culling and depth clip.
     /// </summary>
     public class VoxelPipelineProcessor : PipelineProcessor
     {

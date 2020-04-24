@@ -197,7 +197,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
           </Grid.ColumnDefinitions>
-          <ToggleButton Grid.Column="1" Template="{StaticResource DarkExpanderToggleButton}" Width="12" Height="12" HorizontalAlignment="Left"
+          <ToggleButton Grid.Column="1" Template="{StaticResource TreeExpanderToggleButton}" Width="12" Height="12" HorizontalAlignment="Left"
                                         IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=sd:PropertyViewItem}}"
                                         Visibility="{Binding VisibleChildrenCount, Converter={sd:Chained {sd:NumericToBool}, {sd:VisibleOrCollapsed}}}"/>
           <TextBlock x:Name="PropertyNameBlock" Grid.Column="2" Text="{Binding DisplayName}" HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -271,7 +271,7 @@
             </i:Interaction.Behaviors>
           </ComboBox>
         </StackPanel>
-        <ToggleButton DockPanel.Dock="Left" Template="{StaticResource DarkExpanderToggleButton}" Width="16" Height="16"
+        <ToggleButton DockPanel.Dock="Left" Template="{StaticResource PropertyGridHeaderExpanderToggleButton}" Width="16" Height="16"
                                     IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=sd:PropertyViewItem}}"
                                     Visibility="{Binding VisibleChildrenCount, Converter={sd:Chained {sd:NumericToBool}, {sd:VisibleOrCollapsed}}}"/>
         <StackPanel Orientation="Horizontal" Margin="8,0,0,0">
@@ -282,7 +282,8 @@
           <Image Source="{Binding NodeValue, Converter={sd:Chained {sd:ObjectToType}, {cvt:TypeToResource}}}" MaxWidth="16" MaxHeight="16"
                             RenderOptions.BitmapScalingMode="NearestNeighbor" Margin="0,0,4,0"/>
           <TextBlock x:Name="HeaderTextBlock" FontSize="16" TextTrimming="CharacterEllipsis"
-                     Text="{Binding DisplayName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                     Text="{Binding DisplayName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                     Foreground="{StaticResource SelectedTextBrush}"/>
         </StackPanel>
       </DockPanel>
       <i:Interaction.Behaviors>
@@ -1343,7 +1344,7 @@
   <sd:DefaultTemplateProvider x:Key="ObjectPropertyTemplateProvider" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor" OverrideRule="None">
     <DataTemplate DataType="qvm:NodeViewModel">
       <TextBlock Margin="2,0" VerticalAlignment="Center" x:Name="DefaultTextBlock"
-                       Text="{sd:PriorityBinding {Binding AttributeDisplayName, Mode=OneWay}, {Binding NodeValue, Mode=OneWay, StringFormat={sd:Localize {}{0} (Not supported)}, Converter={sd:ObjectToTypeName}}}"/>
+                 Text="{sd:PriorityBinding {Binding AttributeDisplayName, Mode=OneWay}, {Binding Type, Mode=OneWay, StringFormat={sd:Localize {}{0} (Not supported)}, Converter={sd:NotSupportedTypeToTypeName}}, {Binding NodeValue, Mode=OneWay, Converter={sd:ObjectToTypeName}}}"/>
       <DataTemplate.Triggers>
         <DataTrigger Binding="{Binding NodeValue}" Value="{x:Static qvm:NodeViewModel.DifferentValues}">
           <Setter TargetName="DefaultTextBlock" Property="Text" Value="{sd:Localize (Different values)}"/>

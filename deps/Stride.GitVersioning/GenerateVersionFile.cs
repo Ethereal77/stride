@@ -1,10 +1,13 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -13,20 +16,20 @@ namespace Stride.GitVersioning
     public class GenerateVersionFile : Task
     {
         /// <summary>
-        /// Gets or sets the version file.
+        ///   Gets or sets the version file.
         /// </summary>
         /// <value>The version file.</value>
         [Required]
         public ITaskItem VersionFile { get; set; }
 
         /// <summary>
-        /// The output file for the version information.
+        ///   The output file for the version information.
         /// </summary>
         [Required]
         public ITaskItem GeneratedVersionFile { get; set; }
 
         /// <summary>
-        /// Gets or sets the root directory.
+        ///   Gets or sets the root directory.
         /// </summary>
         [Required]
         public ITaskItem RootDirectory { get; set; }
@@ -44,21 +47,21 @@ namespace Stride.GitVersioning
 
         public override bool Execute()
         {
-            if (RootDirectory == null || !Directory.Exists(RootDirectory.ItemSpec))
+            if (RootDirectory is null || !Directory.Exists(RootDirectory.ItemSpec))
             {
-                Log.LogError("PackageFile is not set or doesn't exist");
+                Log.LogError("PackageFile is not set or doesn't exist.");
                 return false;
             }
 
-            if (VersionFile == null || !File.Exists(Path.Combine(RootDirectory.ItemSpec, VersionFile.ItemSpec)))
+            if (VersionFile is null || !File.Exists(Path.Combine(RootDirectory.ItemSpec, VersionFile.ItemSpec)))
             {
-                Log.LogError("VersionFile is not set or doesn't exist");
+                Log.LogError("VersionFile is not set or doesn't exist.");
                 return false;
             }
 
-            if (GeneratedVersionFile == null)
+            if (GeneratedVersionFile is null)
             {
-                Log.LogError("OutputVersionFile is not set");
+                Log.LogError("OutputVersionFile is not set.");
                 return false;
             }
 
@@ -89,9 +92,9 @@ namespace Stride.GitVersioning
                 var rootDirectory = RootDirectory.ItemSpec;
 
                 var repo = LibGit2Sharp.Repository.IsValid(rootDirectory) ? new LibGit2Sharp.Repository(rootDirectory) : null;
-                if (repo == null)
+                if (repo is null)
                 {
-                    Log.LogError("Could not open Git repository");
+                    Log.LogError("Could not open Git repository.");
                     return false;
                 }
 

@@ -117,7 +117,7 @@ namespace Stride.Core.Assets
                         ? ProjectType.Executable
                         : ProjectType.Library;
 
-                    // Note: Platform might be incorrect if Stride is not restored yet (it won't include Stride targets)
+                    // NOTE: Platform might be incorrect if Stride is not restored yet (it won't include Stride targets)
                     // Also, if already set, don't try to query it again
                     if (project.Type == ProjectType.Executable && project.Platform == PlatformType.Shared)
                         project.Platform = VSProjectHelper.GetPlatformTypeFromProject(msProject) ?? PlatformType.Shared;
@@ -148,8 +148,11 @@ namespace Stride.Core.Assets
                                     foreach (var dependencyPackageUpgrader in dependencyPackageUpgraders)
                                     {
                                         // Make sure this upgrader is not already added
-                                        if (!pendingPackageUpgrades.Contains(dependencyPackageUpgrader))
-                                            pendingPackageUpgrades.Add(dependencyPackageUpgrader);
+                                        if (!pendingPackageUpgrades.Any(x => x.DependencyPackage == dependencyPackageUpgrader.DependencyPackage))
+                                        {
+                                            // NOTE: It's important to clone because once upgraded, each instance will have its Dependency.Version tested/updated
+                                            pendingPackageUpgrades.Add(dependencyPackageUpgrader.Clone());
+                                        }
                                     }
                                 }
                             }

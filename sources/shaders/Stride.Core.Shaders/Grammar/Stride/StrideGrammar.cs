@@ -4,7 +4,7 @@
 
 using System;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Stride;
@@ -101,7 +101,7 @@ namespace Stride.Core.Shaders.Grammar.Stride
             member_reference_expression.Rule = postfix_expression + "." + identifier_or_generic;
 
             // ---------------------------------------------------
-            // New Mixin System 
+            // New Mixin System
             // ---------------------------------------------------
             params_block.Rule = attribute_qualifier_pre + Keyword("params") + identifier_raw + block_statement;
 
@@ -109,7 +109,7 @@ namespace Stride.Core.Shaders.Grammar.Stride
 
             using_params_statement.Rule = Keyword("using") + Keyword("params") + expression + ";"
                                           | Keyword("using") + Keyword("params") + expression + block_statement;
-            
+
 
             using_statement.Rule = Keyword("using") + identifier_or_dot + ";";
 

@@ -7,10 +7,11 @@ using System.Collections.Generic;
 using System.Text;
 
 using GoldParser;
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Utility;
+
 using ParameterQualifier = Stride.Core.Shaders.Ast.Hlsl.ParameterQualifier;
 using StorageQualifier = Stride.Core.Shaders.Ast.Hlsl.StorageQualifier;
 

@@ -176,6 +176,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public ICommandBase ExploreCommand { get; }
 
+        public ICommandBase ExploreSourceFileCommand { get; }
+
         public ICommandBase OpenWithTextEditorCommand { get; }
 
         public ICommandBase OpenAssetFileCommand { get; }
@@ -583,6 +585,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             RenameDirectoryOrPackageCommand = new AnonymousCommand<IEnumerable>(ServiceProvider, x => RenameDirectoryOrPackage(x.Cast<object>().LastOrDefault()));
             DeleteSelectedSolutionItemsCommand = new AnonymousTaskCommand(ServiceProvider, async () => await DeleteItems(ActiveAssetView.SelectedLocations));
             ExploreCommand = new AnonymousTaskCommand<object>(ServiceProvider, Explore);
+            ExploreSourceFileCommand = new AnonymousTaskCommand<AssetViewModel>(ServiceProvider, ExploreSourceFile);
             OpenWithTextEditorCommand = new AnonymousTaskCommand<AssetViewModel>(ServiceProvider, OpenWithTextEditor);
             OpenAssetFileCommand = new AnonymousTaskCommand<AssetViewModel>(ServiceProvider, OpenAssetFile);
             OpenSourceFileCommand = new AnonymousTaskCommand<AssetViewModel>(ServiceProvider, OpenSourceFile);
@@ -834,6 +837,42 @@ namespace Stride.Core.Assets.Editor.ViewModel
             }
         }
 
+        private async Task ExploreSourceFile(AssetViewModel asset)
+        {
+            var filePathToOpen = asset?.Asset?.MainSource;
+            if (filePathToOpen == null)
+            {
+                await Dialogs.MessageBox(Tr._p("Message", "This asset doesn't have a source file."), MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                bool fileSelection = true;
+                var stringPath = filePathToOpen.ToString().Replace('/', '\\');
+                if (!File.Exists(stringPath))
+                {
+                    // If the file doesn't exist, we want to at least try to go to the directory it belonged to
+                    stringPath = Path.GetDirectoryName(stringPath);
+                    fileSelection = false;
+                    if (!Directory.Exists(stringPath))
+                    {
+                        await Dialogs.MessageBox(Tr._p("Message", "Source file and path no longer exists."), MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+                }
+
+                ProcessStartInfo startInfo = fileSelection ? new ProcessStartInfo("explorer.exe", "/select," + stringPath) : new ProcessStartInfo(stringPath);
+                startInfo.UseShellExecute = true;
+                var explorer = new Process { StartInfo = startInfo };
+                explorer.Start();
+            }
+            catch (Exception)
+            {
+                await Dialogs.MessageBox(Tr._p("Message", "There was a problem starting the file explorer."), MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         public async Task<bool> SaveSession()
         {
             Dispatcher.EnsureAccess();
@@ -990,7 +1029,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Attempts to close the session. If the session has unsaved changes, ask the user wether to save it or not. If the user cancels
+        /// Attempts to close the session. If the session has unsaved changes, ask the user whether to save it or not. If the user cancels
         /// </summary>
         public async Task<bool> Close()
         {
@@ -1473,6 +1512,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             SetCurrentProjectCommand.IsEnabled = projectSelected;
             DeleteSelectedSolutionItemsCommand.IsEnabled = canDelete;
             ExploreCommand.IsEnabled = ActiveAssetView.SelectedContent.Count > 0 || ActiveAssetView.SelectedLocations.Count == 1;
+            ExploreSourceFileCommand.IsEnabled = asset?.Asset?.MainSource != null;
             RenameDirectoryOrPackageCommand.IsEnabled = canRename;
             NewDirectoryCommand.IsEnabled = packageSelected || directorySelected;
             ActivatePackagePropertiesCommand.IsEnabled = packageSelected || directorySelected;

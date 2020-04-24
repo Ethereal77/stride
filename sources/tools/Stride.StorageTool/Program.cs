@@ -25,7 +25,8 @@ namespace Stride.StorageTool
 
             var p = new OptionSet
                 {
-                    "Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved",
+                    "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
+                    "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
                     "Storage Tool - Version: "
                     +
                     String.Format(
@@ -61,18 +62,18 @@ namespace Stride.StorageTool
                 {
                     case "view":
                         if (commandArgs.Count != 2)
-                        {
                             throw new OptionException("View command expecting a path to bundle file","");
-                        }
+
                         StorageToolApp.View(commandArgs[1]);
                         break;
+
                     case "register":
-                        //[HKEY_CURRENT_USER\Software\Classes\.bundle]
-                        //@="bundlefile"
-                        //[HKEY_CURRENT_USER\Software\Classes\bundlefile]
-                        //@="Stride Bundle file Extension"
-                        //[HKEY_CURRENT_USER\Software\Classes\bundlefile\shell\View\command]
-                        //@="StorageTool.exe %1"
+                        // [HKEY_CURRENT_USER\Software\Classes\.bundle]
+                        // @="bundlefile"
+                        // [HKEY_CURRENT_USER\Software\Classes\bundlefile]
+                        // @="Stride Bundle file Extension"
+                        // [HKEY_CURRENT_USER\Software\Classes\bundlefile\shell\View\command]
+                        // @="StorageTool.exe %1"
 
                         var classesKey = Registry.CurrentUser.OpenSubKey("Software\\Classes", RegistryKeyPermissionCheck.ReadWriteSubTree);
                         var bundleKey = classesKey.CreateSubKey(".bundle");
@@ -83,8 +84,8 @@ namespace Stride.StorageTool
 
                         var commandKey = bundlefileKey.CreateSubKey("shell").CreateSubKey("View").CreateSubKey("command");
                         commandKey.SetValue(null, Assembly.GetExecutingAssembly().Location + " view %1");
-
                         break;
+
                     default:
                         throw new OptionException(string.Format("Invalid command [{0}]", command), "");
                 }

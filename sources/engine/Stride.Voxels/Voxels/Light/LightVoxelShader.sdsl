@@ -1,10 +1,12 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using Stride.Rendering.Lights;
+
 namespace Stride.Rendering.Voxels.VoxelGI
 {
     /// <summary>
-    /// Defines a Voxel environment light
+    ///   Defines a Voxel environment light.
     /// </summary>
     shader LightVoxelShader : MarchAttributes, Camera, Texturing, EnvironmentLight, MaterialPixelShadingStream, NormalStream, PositionStream4, Transformation
     {
@@ -20,6 +22,7 @@ namespace Stride.Rendering.Voxels.VoxelGI
         override void PrepareEnvironmentLight()
         {
             base.PrepareEnvironmentLight();
+
             if (Intensity > 0.0)
             {
                 float3 worldPos = streams.PositionWS;
@@ -35,8 +38,13 @@ namespace Stride.Rendering.Voxels.VoxelGI
                 reflLighting = diffuseMarcher.March(worldPos, streams.normalWS.xyz);
 
                 streams.envLightDiffuseColor = reflLighting.rgb * Intensity;
+                
                 if (SpecularIntensity > 0.0)
-                    streams.envLightSpecularColor = specularMarcher.MarchRadius(startPos, reflect(-streams.viewWS, streams.normalWS), sqrt(streams.alphaRoughness)).rgb * SpecularIntensity;
+                    streams.envLightSpecularColor =
+                        specularMarcher.MarchRadius(
+                            startPos,
+                            reflect(-streams.viewWS, streams.normalWS),
+                            sqrt(streams.alphaRoughness)).rgb * SpecularIntensity;
                 else
                     streams.envLightSpecularColor = float4(0,0,0,0);
             }

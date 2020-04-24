@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace Irony.Parsing
+namespace Stride.Irony.Parsing
 {
 
     /// <summary>

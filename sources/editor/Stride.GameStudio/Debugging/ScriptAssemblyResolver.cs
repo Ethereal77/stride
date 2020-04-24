@@ -2,13 +2,12 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+using Stride.Core.AssemblyProcessor;
+
 namespace Stride.GameStudio.Debugging
 {
     /// <summary>
     /// Resolves assemblies in currently compiled scripts
     /// </summary>
-    class ScriptAssemblyResolver : Stride.Core.AssemblyProcessor.CustomAssemblyResolver
-    {
-        
-    }
+    class ScriptAssemblyResolver : CustomAssemblyResolver { }
 }

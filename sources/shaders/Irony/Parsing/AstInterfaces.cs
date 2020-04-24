@@ -7,7 +7,7 @@ using System.Collections;
 using System.Linq;
 using System.Text;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
   // These are generic interfaces for AST implementors. They define some basic interface that Parser needs to 
   // construct AST tree. Note that we expect more than one interpreter/AST implementation: Irony.Interpreter.Ast 
   // namespace provides just one of them. That's why these AST interfaces are here, and not in Interpreter.Ast namespace.

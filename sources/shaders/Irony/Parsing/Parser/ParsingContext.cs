@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
 
   [Flags]
   public enum ParseOptions {

@@ -1,8 +1,10 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Core.Storage;
@@ -15,7 +17,7 @@ using Stride.Shaders;
 namespace Stride.Rendering.Voxels
 {
     /// <summary>
-    /// A render feature that computes and uploads info for voxelization
+    ///   A render feature that computes and uploads info for voxelization.
     /// </summary>
     public class VoxelRenderFeature : SubRenderFeature
     {
@@ -30,6 +32,7 @@ namespace Stride.Rendering.Voxels
         protected override void InitializeCore()
         {
             base.InitializeCore();
+
             renderEffectKey = ((RootEffectRenderFeature)RootRenderFeature).RenderEffectKey;
             VoxelizerStorerCasterKey = ((RootEffectRenderFeature)RootRenderFeature).CreateViewLogicalGroup("VoxelizerStorer");
         }
@@ -37,16 +40,16 @@ namespace Stride.Rendering.Voxels
         public override void PrepareEffectPermutations(RenderDrawContext context)
         {
             renderVoxelVolumeData = Context.VisibilityGroup.Tags.Get(CurrentProcessedVoxelVolumes);
-            if (renderVoxelVolumeData == null) return;
-
+            if (renderVoxelVolumeData is null)
+                return;
 
             var renderEffects = RootRenderFeature.RenderData.GetData(renderEffectKey);
             int effectSlotCount = ((RootEffectRenderFeature)RootRenderFeature).EffectPermutationSlotCount;
 
-
             var rootEffectRenderFeature = ((RootEffectRenderFeature)RootRenderFeature);
 
-            if (rootEffectRenderFeature == null) return;
+            if (rootEffectRenderFeature is null)
+                return;
 
             foreach (var processedVolumeKeyValue in renderVoxelVolumeData)
             {
@@ -63,7 +66,7 @@ namespace Stride.Rendering.Voxels
                 }
                 foreach (var group in processedVolume.groupedPasses)
                 {
-                    //Each pass in a group should have identical shaders
+                    // Each pass in a group should have identical shaders
                     var pass = group[0];
 
                     Dispatcher.ForEach(RootRenderFeature.RenderObjects, renderObject =>
@@ -72,10 +75,8 @@ namespace Stride.Rendering.Voxels
 
                         var staticObjectNode = renderMesh.StaticObjectNode;
 
-
                         var effectSlot = rootEffectRenderFeature.GetEffectPermutationSlot(RenderSystem.RenderStages[pass.view.RenderStages[0].Index]);
                         {
-
                             var staticEffectObjectNode = staticObjectNode * effectSlotCount + effectSlot.Index;
                             var renderEffect = renderEffects[staticEffectObjectNode];
 
@@ -91,10 +92,12 @@ namespace Stride.Rendering.Voxels
                 }
             }
         }
+
         public override void Prepare(RenderDrawContext context)
         {
             renderVoxelVolumeData = Context.VisibilityGroup.Tags.Get(CurrentProcessedVoxelVolumes);
-            if (renderVoxelVolumeData == null) return;
+            if (renderVoxelVolumeData is null)
+                return;
 
             foreach (var processedVolumeKeyValue in renderVoxelVolumeData)
             {
@@ -102,7 +105,6 @@ namespace Stride.Rendering.Voxels
                 foreach (VoxelizationPass pass in processedVolume.passList.passes)
                 {
                     var viewFeature = pass.view.Features[RootRenderFeature.Index];
-
 
                     // Find a PerView layout from an effect in normal state
                     ViewResourceGroupLayout firstViewLayout = null;
@@ -121,7 +123,7 @@ namespace Stride.Rendering.Voxels
                     }
 
                     // Nothing found for this view (no effects in normal state)
-                    if (firstViewLayout == null)
+                    if (firstViewLayout is null)
                         continue;
 
                     var viewParameters = new ParameterCollection();
@@ -130,15 +132,12 @@ namespace Stride.Rendering.Voxels
 
                     // Prepare layout (should be similar for all PerView)
                     {
-
                         // Generate layout
                         var viewParameterLayout = new ParameterCollectionLayout();
                         viewParameterLayout.ProcessLogicalGroup(firstViewLayout, ref firstViewLighting);
 
                         viewParameters.UpdateLayout(viewParameterLayout);
                     }
-
-
 
                     ParameterCollection VSViewParameters = viewParameters;
 
@@ -159,7 +158,6 @@ namespace Stride.Rendering.Voxels
 
                         if (voxelizerStorer.Hash != firstViewLighting.Hash)
                             throw new InvalidOperationException("PerView VoxelizerStorer layout differs between different RenderObject in the same RenderView");
-
 
                         var resourceGroup = viewLayout.Entries[pass.view.Index].Resources;
                         resourceGroup.UpdateLogicalGroup(ref voxelizerStorer, VSViewParameters);

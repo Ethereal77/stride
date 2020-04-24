@@ -1,23 +1,24 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
+
 using Stride.Core.Collections;
 using Stride.Core.Mathematics;
 using Stride.Engine;
+using Stride.Engine.Processors;
 using Stride.Graphics;
-using Stride.Rendering.Skyboxes;
 using Stride.Shaders;
 using Stride.Rendering.Voxels;
 using Stride.Rendering.Shadows;
 using Stride.Rendering.Lights;
-using Stride.Engine.Processors;
+using Stride.Rendering.Skyboxes;
 
 namespace Stride.Rendering.Voxels.VoxelGI
 {
     /// <summary>
-    /// Light renderer for <see cref="LightVoxel"/>.
+    ///   Light renderer for <see cref="LightVoxel"/>.
     /// </summary>
     public class LightVoxelRenderer : LightGroupRendererBase
     {
@@ -30,7 +31,6 @@ namespace Stride.Rendering.Voxels.VoxelGI
         {
             IsEnvironmentLight = true;
         }
-
 
         public override void Reset()
         {
@@ -101,12 +101,11 @@ namespace Stride.Rendering.Voxels.VoxelGI
             ProcessedVoxelVolume GetProcessedVolume()
             {
                 var lightVoxel = ((LightVoxel)Light.Type);
-                if (lightVoxel.Volume == null)
-                {
+                if (lightVoxel.Volume is null)
                     throw new ArgumentNullException("No Voxel Volume Component selected for voxel light.");
-                }
+
                 var voxelVolumeProcessor = lightVoxel.Volume.Entity.EntityManager.GetProcessor<VoxelVolumeProcessor>();
-                if (voxelVolumeProcessor == null)
+                if (voxelVolumeProcessor is null)
                     return null;
 
                 ProcessedVoxelVolume processedVolume = voxelVolumeProcessor.GetProcessedVolumeForComponent(lightVoxel.Volume);
@@ -118,7 +117,7 @@ namespace Stride.Rendering.Voxels.VoxelGI
                 var lightVoxel = ((LightVoxel)Light.Type);
 
                 ProcessedVoxelVolume processedVolume = GetProcessedVolume();
-                if (processedVolume == null)
+                if (processedVolume is null)
                     return null;
 
                 if (processedVolume.OutputAttributes.Count > lightVoxel.AttributeIndex)
@@ -126,10 +125,11 @@ namespace Stride.Rendering.Voxels.VoxelGI
                     return processedVolume.OutputAttributes[lightVoxel.AttributeIndex];
                 }
                 else
-                {
-                    throw new ArgumentOutOfRangeException("Tried to access attribute index " + lightVoxel.AttributeIndex.ToString() + " (zero-indexed) when the Voxel Volume Component has only " + processedVolume.OutputAttributes.Count.ToString() + " attributes.");
-                }
+                    throw new ArgumentOutOfRangeException(
+                        $"Tried to access attribute index {lightVoxel.AttributeIndex.ToString()} (zero-indexed) when the " +
+                         "Voxel Volume Component has only {processedVolume.OutputAttributes.Count.ToString()} attributes.");
             }
+
             public override void UpdateLayout(string compositionName)
             {
                 base.UpdateLayout(compositionName);
@@ -175,18 +175,18 @@ namespace Stride.Rendering.Voxels.VoxelGI
                 base.ApplyViewParameters(context, viewIndex, parameters);
 
                 var lightVoxel = ((LightVoxel)Light.Type);
-
-                if (lightVoxel.Volume == null)
+                if (lightVoxel.Volume is null)
                     return;
+
                 ProcessedVoxelVolume processedVolume = GetProcessedVolume();
-                if (processedVolume == null)
+                if (processedVolume is null)
                     return;
 
                 var intensity = Light.Intensity;
                 var intensityBounceScale = lightVoxel.BounceIntensityScale;
                 var specularIntensity = lightVoxel.SpecularIntensityScale * intensity;
 
-                VoxelViewContext viewContext = new VoxelViewContext(processedVolume.passList, viewIndex);
+                var viewContext = new VoxelViewContext(processedVolume.passList, viewIndex);
                 if (viewContext.IsVoxelView)
                 {
                     intensity *= intensityBounceScale / 3.141592f;
@@ -206,4 +206,3 @@ namespace Stride.Rendering.Voxels.VoxelGI
         }
     }
 }
-

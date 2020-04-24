@@ -25,7 +25,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
         public abstract Type ComponentType { get; }
 
         /// <summary>
-        /// Gets wether this gizmo is a main gizmo.
+        /// Gets whether this gizmo is a main gizmo.
         /// </summary>
         public bool IsMainGizmo { get { var attribute = GetType().GetCustomAttribute<GizmoComponentAttribute>(false); return attribute != null && attribute.IsMainGizmo; } }
 

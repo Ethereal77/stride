@@ -6,10 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Utility;
+
 using StorageQualifier = Stride.Core.Shaders.Ast.StorageQualifier;
 
 namespace Stride.Core.Shaders.Grammar

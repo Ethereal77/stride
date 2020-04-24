@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace Irony.Parsing
+namespace Stride.Irony.Parsing
 {
     /// <summary>
     /// Scanner base class. The Scanner's function is to transform a stream of characters into aggregates/words or lexemes, 

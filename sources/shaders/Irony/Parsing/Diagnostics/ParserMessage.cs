@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
 
   public enum ParserErrorLevel {
     Info = 0,

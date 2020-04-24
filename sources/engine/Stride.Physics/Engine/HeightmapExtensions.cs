@@ -1,7 +1,9 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Linq;
+
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
@@ -12,39 +14,38 @@ namespace Stride.Physics
     {
         public static bool IsValid([NotNull] this Heightmap heightmap)
         {
-            if (heightmap == null) throw new ArgumentNullException(nameof(heightmap));
+            if (heightmap is null)
+                throw new ArgumentNullException(nameof(heightmap));
 
-            bool IsValidHeights()
+            var length = heightmap.Size.X * heightmap.Size.Y;
+
+            bool hasValidHeights = false;
+            switch (heightmap.HeightType)
             {
-                var length = heightmap.Size.X * heightmap.Size.Y;
+                case HeightfieldTypes.Float when heightmap.Floats != null && heightmap.Floats.Length == length:
+                    hasValidHeights = true;
+                    break;
 
-                switch (heightmap.HeightType)
-                {
-                    case HeightfieldTypes.Float when heightmap.Floats != null && heightmap.Floats.Length == length:
-                        return true;
+                case HeightfieldTypes.Short when heightmap.Shorts != null && heightmap.Shorts.Length == length:
+                    hasValidHeights = true;
+                    break;
 
-                    case HeightfieldTypes.Short when heightmap.Shorts != null && heightmap.Shorts.Length == length:
-                        return true;
-
-                    case HeightfieldTypes.Byte when heightmap.Bytes != null && heightmap.Bytes.Length == length:
-                        return true;
-                }
-
-                return false;
+                case HeightfieldTypes.Byte when heightmap.Bytes != null && heightmap.Bytes.Length == length:
+                    hasValidHeights = true;
+                    break;
             }
 
             return HeightmapUtils.CheckHeightParameters(heightmap.Size, heightmap.HeightType, heightmap.HeightRange, heightmap.HeightScale, false) &&
-                IsValidHeights();
+                   hasValidHeights;
         }
 
         public static Texture CreateTexture([NotNull] this Heightmap heightmap, GraphicsDevice device)
         {
-            if (heightmap == null) throw new ArgumentNullException(nameof(heightmap));
+            if (heightmap is null)
+                throw new ArgumentNullException(nameof(heightmap));
 
-            if (device == null || !heightmap.IsValid())
-            {
+            if (device is null || !heightmap.IsValid())
                 return null;
-            }
 
             var min = heightmap.HeightRange.X / heightmap.HeightScale;
             var max = heightmap.HeightRange.Y / heightmap.HeightScale;

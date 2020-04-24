@@ -1,5 +1,6 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,38 +14,36 @@ using Stride.Core.Serialization;
 namespace Stride.Shaders
 {
     /// <summary>
-    /// A shader class based on source code string, used for mixin.
+    ///   A shader class based on a source code <see cref="System.String"/>. Used for mixins.
     /// </summary>
     [DataContract("ShaderClassString")]
     public sealed class ShaderClassString : ShaderClassCode, IEquatable<ShaderClassString>
     {
         /// <summary>
-        /// Gets the source code of this shader class as string, XKSL syntax.
+        ///   Gets the source code of this shader class as a <see cref="System.String"/>,
+        ///   using Stride SDSL syntax.
         /// </summary>
         /// <value>The source code of the shader class.</value>
         public string ShaderSourceCode { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShaderClassString"/> class.
+        ///   Initializes a new instance of the <see cref="ShaderClassString"/> class.
         /// </summary>
-        public ShaderClassString()
-        {
-        }
+        public ShaderClassString() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShaderClassString"/> class.
+        ///   Initializes a new instance of the <see cref="ShaderClassString"/> class.
         /// </summary>
-        /// <param name="className">Name of the class.</param>
+        /// <param name="className">Name of the shader class.</param>
         public ShaderClassString(string className, string shaderSourceCode)
             : this(className, shaderSourceCode, null)
-        {
-        }
+        { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShaderClassString"/> class.
+        ///   Initializes a new instance of the <see cref="ShaderClassString"/> class.
         /// </summary>
-        /// <param name="className">Name of the class.</param>
-        /// <param name="genericArguments">The generic parameters.</param>
+        /// <param name="className">Name of the shader class.</param>
+        /// <param name="genericArguments">Generic arguments that the shader class defines.</param>
         public ShaderClassString(string className, string shaderSourceCode, params string[] genericArguments)
         {
             ClassName = className;
@@ -53,10 +52,10 @@ namespace Stride.Shaders
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShaderClassString"/> class.
+        ///   Initializes a new instance of the <see cref="ShaderClassString"/> class.
         /// </summary>
-        /// <param name="className">Name of the class.</param>
-        /// <param name="genericArguments">The generic parameters.</param>
+        /// <param name="className">Name of the shader class.</param>
+        /// <param name="genericArguments">Generic arguments that the shader class defines.</param>
         public ShaderClassString(string className, string shaderSourceCode, params object[] genericArguments)
         {
             ClassName = className;
@@ -78,17 +77,23 @@ namespace Stride.Shaders
 
         public bool Equals(ShaderClassString shaderClassString)
         {
-            if (ReferenceEquals(null, shaderClassString)) return false;
-            if (ReferenceEquals(this, shaderClassString)) return true;
-            return string.Equals(ClassName, shaderClassString.ClassName) && Utilities.Compare(GenericArguments, shaderClassString.GenericArguments);
+            if (shaderClassString is null)
+                return false;
+            if (ReferenceEquals(this, shaderClassString))
+                return true;
+
+            return string.Equals(ClassName, shaderClassString.ClassName) &&
+                   Utilities.Compare(GenericArguments, shaderClassString.GenericArguments);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object other)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((ShaderClassString)obj);
+            if (other is null)
+                return false;
+            if (other is ShaderClassString otherShader)
+                return Equals(otherShader);
+
+            return false;
         }
 
         public override int GetHashCode()
@@ -110,7 +115,7 @@ namespace Stride.Shaders
         {
             return new ShaderClassString(ClassName, ShaderSourceCode, GenericArguments = GenericArguments != null ? GenericArguments.ToArray() : null);
         }
-        
+
         public override string ToString()
         {
             return ToClassName();

@@ -5,7 +5,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 
 namespace Stride.Core.Shaders.Grammar
 {

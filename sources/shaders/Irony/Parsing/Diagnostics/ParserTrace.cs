@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Irony.Parsing {
+namespace Stride.Irony.Parsing {
   public class ParserTraceEntry {
     public ParserState State;
     public ParseTreeNode StackTop;

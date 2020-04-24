@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace Irony.Parsing.Construction { 
+namespace Stride.Irony.Parsing.Construction { 
 
   // Methods constructing LALR automaton.
   // See _about_parser_construction.txt file in this folder for important comments

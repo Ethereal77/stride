@@ -1,9 +1,8 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.IO;
-
-using Xunit;
 
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
@@ -12,6 +11,8 @@ using Stride.Core.Storage;
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Shaders.Parser.Mixins;
+
+using Xunit;
 
 using LoggerResult = Stride.Core.Shaders.Utility.LoggerResult;
 
@@ -55,7 +56,7 @@ namespace Stride.Shaders.Tests
             // Reload it and check that it is not loaded twice
             var simple2 = sourceManager.LoadShaderSource(ShaderSourceName, ShaderSourceCode);
 
-            //TODO: cannot compare structure references
+            // TODO: Cannot compare structure references
             //Assert.That(ReferenceEquals(simple, simple2), Is.True);
             Assert.Equal(simple, simple2);
         }

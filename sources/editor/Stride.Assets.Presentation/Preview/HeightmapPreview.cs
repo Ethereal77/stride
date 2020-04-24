@@ -1,9 +1,11 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+
+using Stride.Core.Mathematics;
 using Stride.Assets.Physics;
 using Stride.Assets.Presentation.Preview.Views;
-using Stride.Core.Mathematics;
 using Stride.Editor.Preview;
 using Stride.Graphics;
 using Stride.Physics;
@@ -21,7 +23,7 @@ namespace Stride.Assets.Presentation.Preview
         public int Length => heightmap?.Size.Y ?? 0;
 
         /// <summary>
-        /// Gets or sets a callback that will be invoked when the texture is loaded.
+        ///   Gets or sets a callback that will be invoked when the texture is loaded.
         /// </summary>
         public Action NotifyHeightmapLoaded { get; set; }
 

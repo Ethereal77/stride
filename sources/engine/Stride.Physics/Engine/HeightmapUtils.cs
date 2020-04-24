@@ -1,7 +1,9 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Linq;
+
 using Stride.Core.Mathematics;
 
 namespace Stride.Physics
@@ -14,7 +16,8 @@ namespace Stride.Physics
             {
                 // Size
 
-                if (size.X < HeightfieldColliderShape.MinimumHeightStickWidth || size.Y < HeightfieldColliderShape.MinimumHeightStickLength)
+                if (size.X < HeightfieldColliderShape.MinimumHeightStickWidth ||
+                    size.Y < HeightfieldColliderShape.MinimumHeightStickLength)
                 {
                     throw new ArgumentException($"{ nameof(size) } parameters should be greater than or equal to 2.");
                 }
@@ -51,7 +54,8 @@ namespace Stride.Physics
             }
             catch (ArgumentException)
             {
-                if (throwExceptionWhenInvalid) throw;
+                if (throwExceptionWhenInvalid)
+                    throw;
 
                 return false;
             }

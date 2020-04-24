@@ -1,6 +1,8 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
+
 using Stride.Core;
 using Stride.Core.Mathematics;
 
@@ -11,7 +13,7 @@ namespace Stride.Physics
     public class HeightStickArraySourceFromHeightmap : IHeightStickArraySource
     {
         /// <summary>
-        /// The heightmap to initialize the height stick array.
+        ///   The heightmap to initialize the height stick array.
         /// </summary>
         [DataMember(10)]
         public Heightmap Heightmap { get; set; }
@@ -32,28 +34,37 @@ namespace Stride.Physics
 
         public void CopyTo<T>(UnmanagedArray<T> heightStickArray, int index) where T : struct
         {
-            if (Heightmap == null) throw new InvalidOperationException($"{ nameof(Heightmap) } is a null");
-            if (heightStickArray == null) throw new ArgumentNullException(nameof(heightStickArray));
+            if (Heightmap is null)
+                throw new InvalidOperationException($"{ nameof(Heightmap) } is a null");
+            if (heightStickArray is null)
+                throw new ArgumentNullException(nameof(heightStickArray));
 
             var heightStickArrayLength = heightStickArray.Length - index;
-            if (heightStickArrayLength <= 0) throw new IndexOutOfRangeException(nameof(index));
+            if (heightStickArrayLength <= 0)
+                throw new IndexOutOfRangeException(nameof(index));
 
             var typeOfT = typeof(T);
             T[] heights;
 
             if (typeOfT == typeof(float))
             {
-                if (Heightmap.Floats == null) throw new InvalidOperationException($"{ nameof(Heightmap.Floats) } is a null.");
+                if (Heightmap.Floats is null)
+                    throw new InvalidOperationException($"{ nameof(Heightmap.Floats) } is a null.");
+
                 heights = (T[])(object)Heightmap.Floats;
             }
             else if (typeOfT == typeof(short))
             {
-                if (Heightmap.Shorts == null) throw new InvalidOperationException($"{ nameof(Heightmap.Shorts) } is a null.");
+                if (Heightmap.Shorts is null)
+                    throw new InvalidOperationException($"{ nameof(Heightmap.Shorts) } is a null.");
+
                 heights = (T[])(object)Heightmap.Shorts;
             }
             else if (typeOfT == typeof(byte))
             {
-                if (Heightmap.Bytes == null) throw new InvalidOperationException($"{ nameof(Heightmap.Bytes) } is a null.");
+                if (Heightmap.Bytes is null)
+                    throw new InvalidOperationException($"{ nameof(Heightmap.Bytes) } is a null.");
+
                 heights = (T[])(object)Heightmap.Bytes;
             }
             else
@@ -62,7 +73,8 @@ namespace Stride.Physics
             }
 
             var heightsLength = heights.Length;
-            if (heightStickArrayLength < heightsLength) throw new ArgumentException($"{ nameof(heightStickArray) }.{ nameof(heightStickArray.Length) } is not enough to copy.");
+            if (heightStickArrayLength < heightsLength)
+                throw new ArgumentException($"{ nameof(heightStickArray) }.{ nameof(heightStickArray.Length) } is not enough to copy.");
 
             heightStickArray.Write(heights, index * Utilities.SizeOf<T>(), 0, heightsLength);
         }
@@ -71,10 +83,8 @@ namespace Stride.Physics
         {
             var other = obj as HeightStickArraySourceFromHeightmap;
 
-            if (other == null)
-            {
+            if (other is null)
                 return false;
-            }
 
             return other.Heightmap == Heightmap;
         }

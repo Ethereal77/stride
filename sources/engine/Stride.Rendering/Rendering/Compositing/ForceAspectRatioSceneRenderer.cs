@@ -27,7 +27,7 @@ namespace Stride.Rendering.Compositing
         public float FixedAspectRatio { get; set; } = DefaultAspectRatio;
 
         /// <summary>
-        /// Gets or sets a value wether to edit the Viewport to force the aspect ratio and add letterboxes or pillarboxes where needed
+        /// Gets or sets a value whether to edit the Viewport to force the aspect ratio and add letterboxes or pillarboxes where needed
         /// </summary>
         /// <userdoc>If checked and the viewport will be modified to fit the aspect ratio of Default Back Buffer Width and Default Back Buffer Height and letterboxes/pillarboxes might be added.</userdoc>
         public bool ForceAspectRatio { get; set; } = true;

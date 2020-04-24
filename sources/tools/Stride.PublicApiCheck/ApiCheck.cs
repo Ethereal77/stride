@@ -18,7 +18,6 @@ namespace Stride.PublicApiCheck
     /// </summary>
     public static class ApiCheck
     {
-
         /// <summary>
         /// Gets all the public API as string items from an assembly.
         /// </summary>

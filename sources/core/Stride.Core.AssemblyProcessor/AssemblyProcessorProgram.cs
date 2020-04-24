@@ -97,7 +97,8 @@ namespace Stride.Core.AssemblyProcessor
             var app = new AssemblyProcessorApp(logger);
             p = new OptionSet()
             {
-                "Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp) All Rights Reserved",
+                "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
+                "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
                 "Stride Assembly Processor tool - Version: "
                 +
                 String.Format(

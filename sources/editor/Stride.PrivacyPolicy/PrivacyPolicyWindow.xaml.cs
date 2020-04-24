@@ -41,7 +41,7 @@ namespace Stride.PrivacyPolicy
         private void ButtonPrivacyPolicyAccepted(object sender, RoutedEventArgs e)
         {
             if (PrivacyPolicyAccepted)
-                PrivacyPolicyHelper.AcceptStride30();
+                PrivacyPolicyHelper.AcceptStride40();
 
             Close();
         }

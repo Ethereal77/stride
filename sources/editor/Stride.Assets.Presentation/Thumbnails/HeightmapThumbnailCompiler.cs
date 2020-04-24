@@ -1,11 +1,13 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System.Collections.Generic;
-using Stride.Assets.Physics;
-using Stride.Core.Assets;
-using Stride.Core.Assets.Compiler;
+
 using Stride.Core.Mathematics;
 using Stride.Core.Serialization.Contents;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Assets.Physics;
 using Stride.Editor.Thumbnails;
 using Stride.Graphics;
 using Stride.Physics;
@@ -34,13 +36,17 @@ namespace Stride.Assets.Presentation.Thumbnails
 
         protected override void CompileThumbnail(ThumbnailCompilerContext context, string thumbnailStorageUrl, AssetItem assetItem, Package originalPackage, AssetCompilerResult result)
         {
-            result.BuildSteps.Add(new ThumbnailBuildStep(new HeightmapThumbnailCommand(context, assetItem, originalPackage, thumbnailStorageUrl,
-                new ThumbnailCommandParameters(assetItem.Asset, thumbnailStorageUrl, context.ThumbnailResolution))
-            { InputFilesGetter = () => GetInputFiles(assetItem) }));
+            result.BuildSteps.Add(
+                new ThumbnailBuildStep(
+                    new HeightmapThumbnailCommand(context, assetItem, originalPackage, thumbnailStorageUrl,
+                        new ThumbnailCommandParameters(assetItem.Asset, thumbnailStorageUrl, context.ThumbnailResolution))
+                    {
+                        InputFilesGetter = () => GetInputFiles(assetItem)
+                    }));
         }
 
         /// <summary>
-        /// Command used to build the thumbnail of the texture in the storage
+        ///   Command used to build the thumbnail of the texture in the storage.
         /// </summary>
         public class HeightmapThumbnailCommand : ThumbnailFromSpriteBatchCommand<Heightmap>
         {

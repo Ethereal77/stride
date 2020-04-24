@@ -1,4 +1,4 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Stride.Core;
@@ -9,10 +9,10 @@ using Stride.Rendering.Lights;
 namespace Stride.Rendering.Voxels.VoxelGI
 {
     /// <summary>
-    /// A light casting from a voxel representation.
+    ///   An environment light based on a voxel representation.
     /// </summary>
-    [DataContract("LightVoxel")]
     [Display("Voxel")]
+    [DataContract("LightVoxel")]
     public class LightVoxel : IEnvironmentLight
     {
         [DataMember(1)]

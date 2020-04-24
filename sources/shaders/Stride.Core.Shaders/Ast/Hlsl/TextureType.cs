@@ -6,7 +6,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 
-using Irony.Parsing;
+using Stride.Irony.Parsing;
 
 namespace Stride.Core.Shaders.Ast.Hlsl
 {

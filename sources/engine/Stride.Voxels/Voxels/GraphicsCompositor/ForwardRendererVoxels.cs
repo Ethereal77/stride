@@ -1,10 +1,12 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Collections;
@@ -22,7 +24,7 @@ using Stride.Rendering.Voxels.Debug;
 namespace Stride.Rendering.Voxels
 {
     /// <summary>
-    /// Renders your game. It should use current <see cref="RenderContext.RenderView"/> and <see cref="CameraComponentRendererExtensions.GetCurrentCamera"/>.
+    ///   Forward renderer specialization for voxel-based global illumination.
     /// </summary>
     [Display("Forward & Voxel renderer")]
     public class ForwardRendererVoxels : ForwardRenderer
@@ -35,14 +37,23 @@ namespace Stride.Rendering.Voxels
 
         protected override void InitializeCore()
         {
-            ShadowMapRenderer_notPrivate = Context.RenderSystem.RenderFeatures.OfType<MeshRenderFeature>().FirstOrDefault()?.RenderFeatures.OfType<ForwardLightingRenderFeature>().FirstOrDefault()?.ShadowMapRenderer;
+            ShadowMapRenderer_notPrivate =
+                Context.RenderSystem.RenderFeatures
+                    .OfType<MeshRenderFeature>()
+                    .FirstOrDefault()?.RenderFeatures
+                        .OfType<ForwardLightingRenderFeature>()
+                        .FirstOrDefault()?.ShadowMapRenderer;
+    
             base.InitializeCore();
         }
+
         protected override void CollectCore(RenderContext context)
         {
             VoxelRenderer?.Collect(Context, ShadowMapRenderer_notPrivate);
+
             base.CollectCore(context);
         }
+
         protected override void DrawCore(RenderContext context, RenderDrawContext drawContext)
         {
             using (drawContext.PushRenderTargetsAndRestore())
@@ -66,5 +77,3 @@ namespace Stride.Rendering.Voxels
         }
     }
 }
-
-

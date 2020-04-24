@@ -1,4 +1,4 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -14,37 +14,37 @@ using Stride.Core.Serialization;
 namespace Stride.Shaders
 {
     /// <summary>
-    /// A common base class for shader classes with source code.
+    ///   A common base class for shader classes with source code.
     /// </summary>
     [DataContract("ShaderClassCode")]
     public abstract class ShaderClassCode : ShaderSource
     {
         /// <summary>
-        /// Gets the name of the class.
+        ///   Gets the name of the shader class.
         /// </summary>
-        /// <value>The name of the class.</value>
+        /// <value>The name of the shader class.</value>
         [DataMember(10)]
         public string ClassName { get; set; }
 
         /// <summary>
-        /// Gets the generic parameters.
+        ///   Gets the generic parameters defined for the shader class.
         /// </summary>
         /// <value>The generic parameters.</value>
-        [DefaultValue(null), DataStyle(DataStyle.Compact)]
         [DataMember(20)]
+        [DefaultValue(null), DataStyle(DataStyle.Compact)]
         public string[] GenericArguments { get; set; }
 
-        [DefaultValue(null)]
         [DataMember(30)]
+        [DefaultValue(null)]
         public Dictionary<string, string> GenericParametersArguments { get; set; }
 
         /// <summary>
-        /// Returns a class name as a <see cref="System.String" /> that represents this instance.
+        ///   Returns a class name as a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <returns>A class name as a <see cref="System.String" /> that represents this instance.</returns>
         public string ToClassName()
         {
-            if (GenericArguments == null)
+            if (GenericArguments is null)
                 return ClassName;
 
             var result = new StringBuilder();
