@@ -9,11 +9,6 @@
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
 
   <PropertyGroup>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
     <StridePlatformDependent>true</StridePlatformDependent>
@@ -21,6 +16,9 @@
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <AssemblyTitle>Stride Engine Base Functionality</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

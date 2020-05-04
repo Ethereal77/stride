@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
@@ -6,8 +6,6 @@
   <Import Project="..\..\targets\Stride.PreSettings.targets" />
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
   <PropertyGroup>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StridePlatformDependent>true</StridePlatformDependent>
     <StrideProjectPlatformDependentWindows>true</StrideProjectPlatformDependentWindows>
@@ -15,10 +13,6 @@
     <StridePackAssets>true</StridePackAssets>
     <DefineConstants>$(DefineConstants);STRIDE_GRAPHICS_NO_DESCRIPTOR_COPIES</DefineConstants>
   </PropertyGroup>
-  <Choose>
-    <When Condition=" '$(AutoIncludeSystemAssembly)' != 'true'">
-    </When>
-  </Choose>
   <ItemGroup>
     <StrideNativeLib Include="$(StrideDependenciesDir)\freetype\$(StridePlatform)\**\*.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
@@ -32,6 +26,10 @@
       <HintPath>$(StrideDependenciesDir)SharpFont\Portable\SharpFont.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <PropertyGroup>
+    <AssemblyTitle>Stride Graphics Subsystem</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

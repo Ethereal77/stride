@@ -6,7 +6,6 @@
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
 
   <PropertyGroup>
-    <Description>Core assembly for all Stride assemblies.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
@@ -24,6 +23,9 @@
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="2.2.3" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <AssemblyTitle>Stride Core Types and Infrastructure</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

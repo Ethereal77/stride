@@ -5,22 +5,22 @@
     <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Plugin for Visual Studio</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>    
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\assets\Stride.Core.Assets\Stride.Core.Assets.csproj" />
     <ProjectReference Include="..\..\engine\Stride.Engine\Stride.Engine.csproj" />
     <ProjectReference Include="..\..\engine\Stride.Shaders.Parser\Stride.Shaders.Parser.csproj" />
-    <!-- Use PrivateReference="All" so that it is not a NuGet dependency, and to make sure we don't have any transitive reference of VS.Package being used (we should have explicit ProjectReference to everything we need) -->
+    <!-- Use PrivateAssets="all" so that it is not a NuGet dependency, and to make sure we don't have any transitive reference of VS.Package being used (we should have explicit ProjectReference to everything we need) -->
     <ProjectReference Include="..\Stride.VisualStudio.Package\Stride.VisualStudio.Package.csproj" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>

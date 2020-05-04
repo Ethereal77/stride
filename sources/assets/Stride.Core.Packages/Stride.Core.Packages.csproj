@@ -15,6 +15,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Management Library for NuGet and Asset Packages</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

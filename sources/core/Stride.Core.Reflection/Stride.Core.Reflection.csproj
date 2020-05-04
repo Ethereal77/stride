@@ -6,16 +6,11 @@
   <Import Project="..\..\targets\Stride.Core.PreSettings.targets" />
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <PropertyGroup>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
-    <!-- 
-    <StridePlatformDependent>true</StridePlatformDependent>
-    <StrideAssemblyProcessorOptions>$(StrideAssemblyProcessorDefaultOptions)</StrideAssemblyProcessorOptions>
-    <StrideProjectPlatformDependentWindows>true</StrideProjectPlatformDependentWindows>
-    <StrideBuildTags>*</StrideBuildTags>
-    -->
     <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Object Reflection</AssemblyTitle>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">

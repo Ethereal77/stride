@@ -15,26 +15,9 @@ using namespace System::Security::Permissions;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly:AssemblyTitleAttribute("Stride.Importer.FBX")];
-[assembly:AssemblyDescriptionAttribute("")];
-[assembly:AssemblyConfigurationAttribute("")];
-[assembly:AssemblyProductAttribute("Stride.Importer.FBX")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)")];
-[assembly:AssemblyTrademarkAttribute("")];
-[assembly:AssemblyCultureAttribute("")];
-
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
-//
-// You can specify all the value or you can default the Revision and Build Numbers
-// by using the '*' as shown below:
-
-[assembly:AssemblyVersionAttribute("1.0.*")];
+[assembly:AssemblyTitleAttribute("Stride Model Importer from FBX")];
+[assembly:AssemblyProductAttribute("Stride Game Engine")];
+[assembly:AssemblyCopyrightAttribute("Copyright © Stride contributors and Silicon Studio Corp.")];
 
 [assembly:ComVisible(false)];
 

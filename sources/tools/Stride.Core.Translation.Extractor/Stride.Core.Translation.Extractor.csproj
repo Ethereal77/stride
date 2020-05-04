@@ -2,8 +2,6 @@
   <Import Project="..\..\targets\Stride.PreSettings.targets" />
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
   <PropertyGroup>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{164A5B9A-E684-4B3F-9EF4-B7765FC0A8A1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
@@ -21,6 +19,9 @@
       </ItemGroup>
     </When>
   </Choose>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Strings Extractor Tool for Localization</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GNU.Getopt">
       <HintPath>..\..\..\deps\Gettext.Net\GNU.Getopt.dll</HintPath>

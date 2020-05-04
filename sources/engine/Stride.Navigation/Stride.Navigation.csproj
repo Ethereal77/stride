@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
@@ -20,6 +20,9 @@
     <ProjectReference Include="..\Stride.Physics\Stride.Physics.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <AssemblyTitle>Stride NavMesh Generation and Pathfinding Library</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

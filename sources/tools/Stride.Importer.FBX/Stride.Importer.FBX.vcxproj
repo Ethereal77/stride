@@ -5,8 +5,7 @@
     <StrideProjectType>Cpp</StrideProjectType>
     <TargetFrameworkVersion>$(TargetFrameworkVersionTool)</TargetFrameworkVersion>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <StrideAssemblyProcessorOptions>
-    </StrideAssemblyProcessorOptions>
+    <StrideAssemblyProcessorOptions></StrideAssemblyProcessorOptions>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <FbxSdkVersion>2019.0</FbxSdkVersion>
     <FbxSdkUrl>https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-2019-0</FbxSdkUrl>
@@ -159,10 +158,6 @@
       <Inputs>$(FbxSdkDir)\lib\$(FbxLibVersionDir)x64\release\libfbxsdk.dll</Inputs>
       <TreatOutputAsContent>true</TreatOutputAsContent>
     </CustomBuildStep>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationConverter.h" />

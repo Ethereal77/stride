@@ -11,6 +11,9 @@
     <StrideBuildTags>*</StrideBuildTags>
     <StridePackAssets>true</StridePackAssets>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Voxel GI Rendering</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

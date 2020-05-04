@@ -6,6 +6,9 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 
+[assembly: AssemblyTitleAttribute("Stride.LauncherApp")];
+[assembly: AssemblyDescriptionAttribute("Stride Launcher Application.")];
+
 [assembly: ComVisible(false)]
 
 [assembly: NeutralResourcesLanguage("en-US")]

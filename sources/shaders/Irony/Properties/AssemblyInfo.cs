@@ -4,14 +4,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Reflection;
 using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
-// General Information about an assembly is controlled through the following
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("44015759-db10-4a6f-8251-d1d18599b60f")]

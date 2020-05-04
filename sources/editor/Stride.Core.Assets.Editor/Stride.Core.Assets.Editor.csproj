@@ -26,6 +26,9 @@
     <Reference Include="PresentationFramework" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Asset Editors Views, ViewModels and Services for WPF</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\assets\Stride.Core.Assets\PackageSessionHelper.Solution.cs">
       <Link>Packages\PackageSessionHelper.Solution.cs</Link>

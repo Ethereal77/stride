@@ -6,7 +6,6 @@
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
 
   <PropertyGroup>
-    <Description>Stride Core IO assembly.</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
@@ -18,10 +17,9 @@
     <StrideBuildTags>*</StrideBuildTags>
   </PropertyGroup>
 
-  <Choose>
-    <When Condition=" '$(AutoIncludeSystemAssembly)' != 'true'">
-    </When>
-  </Choose>
+  <PropertyGroup>
+    <AssemblyTitle>Stride IO and Virtual File System</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

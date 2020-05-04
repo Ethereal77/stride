@@ -1,10 +1,13 @@
-﻿<Project>
+<Project>
   <Import Project="..\..\targets\Stride.PreSettings.targets" />
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
   <PropertyGroup>
     <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
     <StrideAssemblyProcessorOptions/>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Assimp (Asset Import Library) Wrapper</AssemblyTitle>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />

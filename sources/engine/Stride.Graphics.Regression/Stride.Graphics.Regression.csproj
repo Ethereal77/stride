@@ -14,7 +14,10 @@
     <StrideCompilerTargetsEnable Condition="'$(StrideSkipUnitTests)' == 'true'">false</StrideCompilerTargetsEnable>
     <StrideBuildTags>*</StrideBuildTags>
   </PropertyGroup>
-  
+
+  <PropertyGroup>
+    <AssemblyTitle>Stride Graphics Test Assembly for Regressions</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

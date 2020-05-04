@@ -4,6 +4,9 @@
   <PropertyGroup>
     <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Font Generator and Compiler</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

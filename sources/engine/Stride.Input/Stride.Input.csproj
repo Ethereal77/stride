@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
     <StrideRuntimeWindowsDotNet>true</StrideRuntimeWindowsDotNet>
@@ -14,13 +14,14 @@
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
     <DefineConstants Condition="$(TargetFramework.StartsWith('net4'))">$(DefineConstants);STRIDE_INPUT_RAWINPUT</DefineConstants>
   </PropertyGroup>
-  <Choose>
-    <When Condition=" '$(AutoIncludeSystemAssembly)' != 'true'">
-    </When>
-  </Choose>
+
   <ItemGroup Condition="$(StridePlatform) == 'Windows' And $(TargetFramework.StartsWith('net4'))">
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <AssemblyTitle>Stride Input Devices</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

@@ -5,8 +5,7 @@
     <StrideProjectType>Cpp</StrideProjectType>
     <TargetFrameworkVersion>$(TargetFrameworkVersionTool)</TargetFrameworkVersion>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <StrideAssemblyProcessorOptions>
-    </StrideAssemblyProcessorOptions>
+    <StrideAssemblyProcessorOptions></StrideAssemblyProcessorOptions>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -166,9 +165,6 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="UtilityFunctions.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

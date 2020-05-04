@@ -4,7 +4,6 @@
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Stride.Core.Yaml.Tests")]

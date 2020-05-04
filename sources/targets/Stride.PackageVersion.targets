@@ -30,17 +30,20 @@
      NuGet Package metadata
    -->
   <PropertyGroup>
-    <PackageVersion Condition=" '$(PackageVersion)' == '' ">$(StrideNuGetVersion)</PackageVersion>
-    <RepositoryUrl>https://github.com/Ethereal77/stride</RepositoryUrl>
-    <PackageProjectUrl>https://stride3d.net</PackageProjectUrl>
-    <Authors>Stride contributors;Silicon Studio Corp.</Authors>
+    <Product>Stride Game Engine</Product>
+    <ProductName>Stride Game Engine</ProductName>
+    <Authors>Stride contributors; Silicon Studio Corp.</Authors>
     <Copyright>Copyright © Stride contributors and Silicon Studio Corp.</Copyright>
-    <PackageTags>Stride;Xenko;3D;gamedev;Game Engine;engine;games;D3D</PackageTags>
-  </PropertyGroup>
 
-  <!-- License -->
-  <PropertyGroup>
+    <Version>$(StridePublicVersion)</Version>
+    <InformationalVersion>$(StrideNuGetVersion)</InformationalVersion>
+    <PackageVersion Condition="'$(PackageVersion)' == ''">$(StrideNuGetVersion)</PackageVersion>
+
+    <PackageProjectUrl>https://stride3d.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Ethereal77/stride</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/Ethereal77/stride/blob/master/LICENSE.md</PackageLicenseUrl>
+
+    <PackageTags>Stride;Xenko;3D;gamedev;Game Engine;engine;games;D3D</PackageTags>
   </PropertyGroup>
 
   <!-- Icon -->

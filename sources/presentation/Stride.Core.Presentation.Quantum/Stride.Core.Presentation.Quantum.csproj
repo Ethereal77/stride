@@ -1,14 +1,17 @@
-﻿<Project>
+<Project>
 
   <Import Project="..\..\targets\Stride.Core.PreSettings.targets" />
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
- 
+
   <PropertyGroup>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
     <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <AssemblyTitle>Stride Quantum Object Graph ViewModels and Commands for WPF</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

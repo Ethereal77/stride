@@ -9,6 +9,9 @@
     <ProjectReference Include="..\Stride.Assets\Stride.Assets.csproj" />
     <ProjectReference Include="..\Stride.Assets.Models\Stride.Assets.Models.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Test assembly for Stride Assets</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />

@@ -1,9 +1,7 @@
-﻿<Project>
+<Project>
   <Import Project="..\..\targets\Stride.Core.PreSettings.targets" />
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
   <PropertyGroup>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
     <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
@@ -21,10 +19,14 @@
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <AssemblyTitle>Stride Common Dialogs for WPF</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>  
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Stride.Core.Presentation\Stride.Core.Presentation.csproj" />

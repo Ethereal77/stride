@@ -17,8 +17,11 @@
     <Compile Include="XunitAttributes.cs" />
     <Compile Include="AutoAlphaTests.cs" />
   </ItemGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Test assembly for Stride AssetsCompiler</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
-    <None Include="readme.md" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
 </Project>

@@ -10,6 +10,9 @@
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Assets Compiler</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\core\Stride.Core\ModuleInitializerAttribute.cs">
       <Link>ModuleInitializerAttribute.cs</Link>

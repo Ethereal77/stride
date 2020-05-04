@@ -67,6 +67,9 @@
     <ProjectReference Include="..\Stride.Video\Stride.Video.csproj" />
     <ProjectReference Include="..\Stride\Stride.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+    <AssemblyTitle>Stride Assets Pipeline and Content Compilation</AssemblyTitle>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
