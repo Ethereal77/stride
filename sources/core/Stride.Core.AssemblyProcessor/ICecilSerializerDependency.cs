@@ -9,16 +9,16 @@ using Mono.Cecil;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Enumerates required subtypes the given serializer will use internally.
-    /// This is useful for generation of serialization assembly, when AOT is performed (all generic serializers must be available).
+    ///   Provides a method to enumerates required subtypes a given serializer will use internally.
+    ///   This is useful for generation of serialization assemblies, when AOT is performed (all generic serializers must be available).
     /// </summary>
     public interface ICecilSerializerDependency
     {
         /// <summary>
-        /// Enumerates the types this serializer requires.
+        ///   Enumerates the types this serializer requires.
         /// </summary>
         /// <param name="serializerType">Type of the serializer.</param>
-        /// <returns></returns>
+        /// <returns>Types this serializer requires.</returns>
         IEnumerable<TypeReference> EnumerateSubTypesFromSerializer(TypeReference serializerType);
     }
 }

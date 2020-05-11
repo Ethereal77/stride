@@ -4,9 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -76,7 +74,7 @@ namespace Stride.Core.AssemblyProcessor
             }
             var interlockedType = context.Assembly.MainModule.ImportReference(interlockedTypeDefinition);
 
-            // NOTE: We create method references manually, because ImportReference imports a different version of the runtime, causing  
+            // NOTE: We create method references manually, because ImportReference imports a different version of the runtime, causing
             interlockedIncrementMethod = new MethodReference("Increment", context.Assembly.MainModule.TypeSystem.Int32, interlockedType);
             interlockedIncrementMethod.Parameters.Add(new ParameterDefinition("", ParameterAttributes.None, context.Assembly.MainModule.TypeSystem.Int32.MakeByReferenceType()));
             //interlockedIncrementMethod = context.Assembly.MainModule.ImportReference(interlockedType.Methods.FirstOrDefault(x => x.Name == "Increment" && x.ReturnType.MetadataType == MetadataType.Int32));
@@ -191,9 +189,7 @@ namespace Stride.Core.AssemblyProcessor
             }
 
             // If the target is a compiler generated closure, we only handle local variable load instructions
-            int variableIndex;
-            OpCode storeOpCode;
-            if (!TryGetStoreOpcode(loadClosureInstruction, out storeOpCode, out variableIndex))
+            if (!TryGetStoreOpcode(loadClosureInstruction, out OpCode storeOpCode, out int variableIndex))
                 return false;
 
             // Find the instruction that stores the closure variable
@@ -225,8 +221,8 @@ namespace Stride.Core.AssemblyProcessor
             var localDelegateFieldInstance = delegateField.MakeGeneric(genericParameters);
 
             // Initialize delegate field (the closure instance (local 0) is already on the stack)
-            var delegateConstructorInstance = (MethodReference)delegateAllocationInstruction.Operand;
-            var delegateGenericArguments = (delegateFieldType as GenericInstanceType)?.GenericArguments.ToArray() ?? new TypeReference[0];
+            var delegateConstructorInstance = (MethodReference) delegateAllocationInstruction.Operand;
+            var delegateGenericArguments = (delegateFieldType as GenericInstanceType)?.GenericArguments.ToArray() ?? Array.Empty<TypeReference>();
             var genericDelegateConstructor = context.Assembly.MainModule.ImportReference(delegateConstructorInstance.Resolve()).MakeGeneric(delegateGenericArguments);
 
             var methodInstance = (MethodReference)functionPointerInstruction.Operand;
@@ -245,10 +241,12 @@ namespace Stride.Core.AssemblyProcessor
 
             var ilProcessor = method.Body.GetILProcessor();
 
-            Func<Instruction> generateClosureVariable = () => closureVarible == null ? ilProcessor.Create(loadClosureInstruction.OpCode) : ilProcessor.Create(loadClosureInstruction.OpCode, closureVarible.Resolve());
+            Instruction GenerateClosureVariable() => closureVarible == null
+                ? ilProcessor.Create(loadClosureInstruction.OpCode)
+                : ilProcessor.Create(loadClosureInstruction.OpCode, closureVarible.Resolve());
 
             // Retrieve from pool
-            var closureGenericArguments = (closureInstanceType as GenericInstanceType)?.GenericArguments.ToArray() ?? new TypeReference[0];
+            var closureGenericArguments = (closureInstanceType as GenericInstanceType)?.GenericArguments.ToArray() ?? Array.Empty<TypeReference>();
             var closureAllocation = storeClosureInstruction.Previous;
             if (closureAllocation.OpCode == OpCodes.Newobj)
             {
@@ -265,19 +263,19 @@ namespace Stride.Core.AssemblyProcessor
                 closureAllocation.Operand = null;
 
                 // Add a reference
-                ilProcessor.InsertBefore(methodPreviousStart, generateClosureVariable());
+                ilProcessor.InsertBefore(methodPreviousStart, GenerateClosureVariable());
                 ilProcessor.InsertBefore(methodPreviousStart, ilProcessor.Create(OpCodes.Callvirt, closure.AddReferenceMethod.MakeGeneric(closureGenericArguments)));
 
                 // TODO: Multiple returns + try/finally
                 // Release reference
                 var retInstructions = method.Body.Instructions.Where(x => x.OpCode == OpCodes.Ret).ToArray();
 
-                Instruction beforeReturn = generateClosureVariable();
+                Instruction beforeReturn = GenerateClosureVariable();
                 Instruction newReturnInstruction = ilProcessor.Create(OpCodes.Ret);
                 ilProcessor.Append(beforeReturn);
                 ilProcessor.Append(ilProcessor.Create(OpCodes.Ldnull));
                 ilProcessor.Append(ilProcessor.Create(OpCodes.Beq, newReturnInstruction));
-                ilProcessor.Append(generateClosureVariable());
+                ilProcessor.Append(GenerateClosureVariable());
                 ilProcessor.Append(ilProcessor.Create(OpCodes.Callvirt, closure.ReleaseMethod.MakeGeneric(closureGenericArguments)));
                 ilProcessor.Append(newReturnInstruction);
 
@@ -290,15 +288,15 @@ namespace Stride.Core.AssemblyProcessor
 
             // Get delegate from closure, instead of allocating
             ilProcessor.Remove(functionPointerInstruction);
-            ilProcessor.Replace(delegateAllocationInstruction, ilProcessor.Create(OpCodes.Ldfld, delegateField.MakeGeneric(closureGenericArguments))); // Closure object is already on the stack
+            ilProcessor.Replace(delegateAllocationInstruction,
+                ilProcessor.Create(OpCodes.Ldfld, delegateField.MakeGeneric(closureGenericArguments))); // Closure object is already on the stack
 
             return true;
         }
 
         private ClosureInfo ProcessClosure(AssemblyProcessorContext context, TypeDefinition closureType, TypeReference[] genericParameters)
         {
-            ClosureInfo closure;
-            if (closures.TryGetValue(closureType, out closure))
+            if (closures.TryGetValue(closureType, out ClosureInfo closure))
                 return closure;
 
             var closureTypeConstructor = closureType.Methods.FirstOrDefault(x => x.Name == ".ctor");
@@ -405,8 +403,7 @@ namespace Stride.Core.AssemblyProcessor
                 instruction = instruction.Previous;
 
                 // Calculate what the instruction pushes onto the stack
-                int delta;
-                if (!TryGetStackPushDelta(instruction, out delta))
+                if (!TryGetStackPushDelta(instruction, out int delta))
                     return null;
 
                 // If this the position on the stack, passed as parameter?
@@ -427,7 +424,7 @@ namespace Stride.Core.AssemblyProcessor
         private static bool TryGetStoreOpcode(Instruction loadInstruction, out OpCode storeOpCode, out int variableIndex)
         {
             variableIndex = 0;
-            storeOpCode = default(OpCode);
+            storeOpCode = default;
 
             var loadOpCode = loadInstruction.OpCode;
             if (loadOpCode == OpCodes.Ldloc_0)
@@ -473,12 +470,10 @@ namespace Stride.Core.AssemblyProcessor
             var cctor = type.Methods.FirstOrDefault(x => x.Name == ".cctor");
             if (cctor == null)
             {
-                cctor = new MethodDefinition(".cctor", MethodAttributes.Private
-                    | MethodAttributes.HideBySig
-                    | MethodAttributes.Static
-                    | MethodAttributes.Assembly
-                    | MethodAttributes.SpecialName
-                    | MethodAttributes.RTSpecialName, type.Module.TypeSystem.Void);
+                cctor = new MethodDefinition(".cctor",
+                    MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.Static |
+                    MethodAttributes.Assembly | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                    type.Module.TypeSystem.Void);
                 type.Methods.Add(cctor);
             }
 
@@ -494,8 +489,7 @@ namespace Stride.Core.AssemblyProcessor
 
         private TypeReference ChangeGenericArguments(AssemblyProcessorContext context, TypeReference type, TypeReference relativeType)
         {
-            var genericInstance = type as GenericInstanceType;
-            if (genericInstance == null)
+            if (!(type is GenericInstanceType genericInstance))
                 return type;
 
             var genericArguments = new List<TypeReference>();
@@ -524,44 +518,9 @@ namespace Stride.Core.AssemblyProcessor
             return context.Assembly.MainModule.ImportReference(genericInstance.Resolve()).MakeGenericInstanceType(genericArguments.ToArray());
         }
 
-        private MethodReference ChangeGenericArguments(AssemblyProcessorContext context, MethodReference method, TypeReference relativeType)
-        {
-            var genericInstance = method as GenericInstanceMethod;
-            if (genericInstance == null)
-                return method.Resolve().MakeGeneric(relativeType.Resolve().GenericParameters.ToArray());
-
-            Debugger.Launch();
-
-            var genericArguments = new List<TypeReference>();
-            foreach (var genericArgument in genericInstance.GenericArguments)
-            {
-                if (genericArgument.IsGenericParameter)
-                {
-                    var genericParameter = GetGenericParameterForArgument(relativeType, genericArgument);
-                    if (genericParameter != null)
-                    {
-                        genericArguments.Add(genericParameter);
-                    }
-                }
-                else
-                {
-                    var newGenericArgument = ChangeGenericArguments(context, genericArgument, relativeType);
-                    genericArguments.Add(newGenericArgument);
-                }
-            }
-
-            if (genericArguments.Count != genericInstance.GenericArguments.Count)
-            {
-                throw new InvalidOperationException("Could not resolve generic arguments");
-            }
-
-            return context.Assembly.MainModule.ImportReference(genericInstance.Resolve()).MakeGeneric(genericArguments.ToArray());
-        }
-
         private GenericParameter GetGenericParameterForArgument(TypeReference type, TypeReference genericArgument)
         {
-            var relativeGenericInstance = type as GenericInstanceType;
-            if (relativeGenericInstance == null)
+            if (!(type is GenericInstanceType relativeGenericInstance))
                 return null;
 
             for (int index = 0; index < relativeGenericInstance.GenericArguments.Count; index++)

@@ -30,7 +30,7 @@ namespace Stride.GameStudio.Debugging
 {
     public partial class AssemblyRecompiler
     {
-        private SourceGroup[] previousSortedConnectedGroups = new SourceGroup[0];
+        private SourceGroup[] previousSortedConnectedGroups = Array.Empty<SourceGroup>();
         private IMutableBidirectionalGraph<SourceGroup, CondensedEdge<SyntaxTree, SEdge<SyntaxTree>, SourceGroup>> previousStronglyConnected = new BidirectionalGraph<SourceGroup, CondensedEdge<SyntaxTree, SEdge<SyntaxTree>, SourceGroup>>();
         private ImmutableHashSet<SourceGroup> previousConnectedGroups;
         private int assemblyCounter;
@@ -44,7 +44,7 @@ namespace Stride.GameStudio.Debugging
         public async Task<UpdateResult> Recompile(Project gameProject, LoggerResult logger)
         {
             var result = new UpdateResult(logger);
-            if (solution == null)
+            if (solution is null)
                 solution = gameProject.Solution;
 
             // Detect new groups
@@ -83,8 +83,7 @@ namespace Stride.GameStudio.Debugging
             foreach (var sourceGroup in previousSortedConnectedGroups.Reverse())
             {
                 // Does this group needs reload?
-                SourceGroup newSourceGroup;
-                if (connectedGroups.TryGetValue(sourceGroup, out newSourceGroup))
+                if (connectedGroups.TryGetValue(sourceGroup, out SourceGroup newSourceGroup))
                 {
                     // Transfer project, as it can be reused
                     newSourceGroup.Project = sourceGroup.Project;
@@ -155,7 +154,7 @@ namespace Stride.GameStudio.Debugging
                     using (var pdbStream = new MemoryStream())
                     {
                         var emitResult = compilation.Emit(peStream, pdbStream);
-                        result.Info($"Compiling assembly containing {sourceGroup}");
+                        result.Info($"Compiling assembly containing {sourceGroup}.");
 
                         foreach (var diagnostic in emitResult.Diagnostics)
                         {
@@ -175,7 +174,7 @@ namespace Stride.GameStudio.Debugging
 
                         if (!emitResult.Success)
                         {
-                            result.Error($"Error compiling assembly containing {sourceGroup}");
+                            result.Error($"Error compiling assembly containing {sourceGroup}.");
                             break;
                         }
 
@@ -186,7 +185,7 @@ namespace Stride.GameStudio.Debugging
                             var referenceBuild = await Task.Run(() => VSProjectHelper.CompileProjectAssemblyAsync(null, gameProject.FilePath, result, "ResolveReferences", flags: Microsoft.Build.Execution.BuildRequestDataFlags.ProvideProjectStateAfterBuild));
                             if (referenceBuild == null)
                             {
-                                result.Error("Could not properly run ResolveAssemblyReferences");
+                                result.Error("Could not properly run ResolveAssemblyReferences.");
                                 break;
                             }
                             var referenceBuildResult = await referenceBuild.BuildTask;
@@ -199,30 +198,19 @@ namespace Stride.GameStudio.Debugging
                             foreach (var referencePath in referenceBuildResult.ProjectStateAfterBuild.Items.Where(x => x.ItemType == "ReferencePath"))
                             {
                                 assemblyProcessorApp.References.Add(referencePath.EvaluatedInclude);
-                                if (referencePath.EvaluatedInclude.EndsWith("Stride.SpriteStudio.Runtime.dll")) //todo hard-coded! needs to go when plug in system is in
-                                {
+                                // TODO: Hard-coded references! Needs to go when plugin system is in.
+                                if (referencePath.EvaluatedInclude.EndsWith("Stride.SpriteStudio.Runtime.dll"))
                                     assemblyProcessorApp.ReferencesToAdd.Add(referencePath.EvaluatedInclude);
-                                }
-                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.Physics.dll")) //todo hard-coded! needs to go when plug in system is in
-                                {
+                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.Physics.dll"))
                                     assemblyProcessorApp.ReferencesToAdd.Add(referencePath.EvaluatedInclude);
-                                }
-                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.Particles.dll")) //todo hard-coded! needs to go when plug in system is in
-                                {
+                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.Particles.dll"))
                                     assemblyProcessorApp.ReferencesToAdd.Add(referencePath.EvaluatedInclude);
-                                }
-                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.Native.dll")) //todo hard-coded! needs to go when plug in system is in
-                                {
+                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.Native.dll"))
                                     assemblyProcessorApp.ReferencesToAdd.Add(referencePath.EvaluatedInclude);
-                                }
-                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.UI.dll")) //todo hard-coded! needs to go when plug in system is in
-                                {
+                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.UI.dll"))
                                     assemblyProcessorApp.ReferencesToAdd.Add(referencePath.EvaluatedInclude);
-                                }
-                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.Video.dll")) //todo hard-coded! needs to go when plug in system is in
-                                {
+                                else if (referencePath.EvaluatedInclude.EndsWith("Stride.Video.dll"))
                                     assemblyProcessorApp.ReferencesToAdd.Add(referencePath.EvaluatedInclude);
-                                }
                             }
 
                             var assemblyResolver = assemblyProcessorApp.CreateAssemblyResolver();
@@ -232,7 +220,6 @@ namespace Stride.GameStudio.Debugging
                             foreach (var dependencySourceGroup in recursiveDependencies)
                             {
                                 assemblyResolver.Register(dependencySourceGroup.Target.Assembly, dependencySourceGroup.Target.PE);
-                                assemblyProcessorApp.MemoryReferences.Add(dependencySourceGroup.Target.Assembly);
                             }
 
                             // Rewind streams
@@ -243,12 +230,10 @@ namespace Stride.GameStudio.Debugging
                                 new ReaderParameters { AssemblyResolver = assemblyResolver, ReadSymbols = true, SymbolStream = pdbStream });
 
                             // Run assembly processor
-                            bool readWriteSymbols = true;
-                            bool modified;
                             assemblyProcessorApp.SerializationAssembly = true;
-                            if (!assemblyProcessorApp.Run(ref assemblyDefinition, ref readWriteSymbols, out modified))
+                            if (!assemblyProcessorApp.Run(ref assemblyDefinition, out var modified))
                             {
-                                result.Error("Error running assembly processor");
+                                result.Error("Error running assembly processor.");
                                 break;
                             }
 
@@ -318,14 +303,15 @@ namespace Stride.GameStudio.Debugging
 
                                             return !inQuotes && c == ' ';
                                         })
-                                .Select(arg => TrimMatchingQuotes(arg.Trim(), '\"'))
-                                .Where(arg => !string.IsNullOrEmpty(arg));
+                .Select(arg => TrimMatchingQuotes(arg.Trim(), '\"'))
+                .Where(arg => !string.IsNullOrEmpty(arg));
         }
 
         public static string TrimMatchingQuotes(string input, char quote)
         {
-            if ((input.Length >= 2) && 
-                (input[0] == quote) && (input[input.Length - 1] == quote))
+            if ((input.Length >= 2) &&
+                (input[0] == quote) &&
+                (input[input.Length - 1] == quote))
                 return input.Substring(1, input.Length - 2);
 
             return input;

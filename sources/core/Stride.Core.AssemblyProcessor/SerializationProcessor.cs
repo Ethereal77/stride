@@ -17,9 +17,9 @@ using Stride.Core.Serialization;
 using Stride.Core.Storage;
 
 using CustomAttributeNamedArgument = Mono.Cecil.CustomAttributeNamedArgument;
-using MethodAttributes = Mono.Cecil.MethodAttributes;
-using ParameterAttributes = Mono.Cecil.ParameterAttributes;
-using TypeAttributes = Mono.Cecil.TypeAttributes;
+using MethodAttributes             = Mono.Cecil.MethodAttributes;
+using ParameterAttributes          = Mono.Cecil.ParameterAttributes;
+using TypeAttributes               = Mono.Cecil.TypeAttributes;
 
 namespace Stride.Core.AssemblyProcessor
 {
@@ -27,13 +27,9 @@ namespace Stride.Core.AssemblyProcessor
     {
         public delegate void RegisterSourceCode(string code, string name = null);
 
-        public SerializationProcessor()
-        {
-        }
-
         public bool Process(AssemblyProcessorContext context)
         {
-            var registry = new ComplexSerializerRegistry(context.Platform, context.Assembly, context.Log);
+            var registry = new ComplexSerializerRegistry(context.Assembly, context.Log);
 
             // Register default serialization profile (to help AOT generic instantiation of serializers)
             RegisterDefaultSerializationProfile(context.AssemblyResolver, context.Assembly, registry, context.Log);
@@ -49,12 +45,12 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Generates serializer code using Cecil.
-        /// Note: we might want something more fluent? (probably lot of work to get the system working, but would make changes easier to do -- not sure if worth it considering it didn't change much recently)
+        ///   Generates serializer code using Cecil.
         /// </summary>
-        /// <param name="registry"></param>
         private static void GenerateSerializerCode(ComplexSerializerRegistry registry)
         {
+            // NOTE: We might want something more fluent? (probably lot of work to get the system working, but would make changes easier to do --not sure if worth it considering it didn't change much recently)
+
             var assembly = registry.Assembly;
             var strideCoreModule = assembly.GetStrideCoreModule();
 
@@ -71,19 +67,19 @@ namespace Stride.Core.AssemblyProcessor
             foreach (var complexType in registry.Context.ComplexTypes)
             {
                 var type = complexType.Key;
-                var serializerType = (TypeDefinition)complexType.Value.SerializerType;
+                var serializerType = (TypeDefinition) complexType.Value.SerializerType;
                 var genericParameters = serializerType.GenericParameters.ToArray<TypeReference>();
                 var typeWithGenerics = type.MakeGenericType(genericParameters);
 
                 TypeReference parentType = null;
                 FieldDefinition parentSerializerField = null;
-                if (complexType.Value.ComplexSerializerProcessParentType)
+                if (complexType.Value.IsComplexSerializerProcessParentType)
                 {
                     parentType = ResolveGenericsVisitor.Process(serializerType, type.BaseType);
                     serializerType.Fields.Add(parentSerializerField = new FieldDefinition("parentSerializer", Mono.Cecil.FieldAttributes.Private, dataSerializerTypeRef.MakeGenericType(parentType)));
                 }
 
-                var serializableItems = ComplexSerializerRegistry.GetSerializableItems(type, true).ToArray();
+                var serializableItems = ComplexSerializerRegistry.GetSerializableItems(type).ToArray();
                 var serializableItemInfos = new Dictionary<TypeReference, (FieldDefinition SerializerField, TypeReference Type)>(TypeReferenceEqualityComparer.Default);
                 var localsByTypes = new Dictionary<TypeReference, VariableDefinition>(TypeReferenceEqualityComparer.Default);
 
@@ -123,7 +119,7 @@ namespace Stride.Core.AssemblyProcessor
                 // Add Initialize method
                 var initialize = new MethodDefinition("Initialize", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual, assembly.MainModule.TypeSystem.Void);
                 initialize.Parameters.Add(new ParameterDefinition("serializerSelector", ParameterAttributes.None, serializerSelectorTypeRef));
-                if (complexType.Value.ComplexSerializerProcessParentType)
+                if (complexType.Value.IsComplexSerializerProcessParentType)
                 {
                     initialize.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
                     initialize.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
@@ -151,7 +147,7 @@ namespace Stride.Core.AssemblyProcessor
                     serialize.Parameters.Add(new ParameterDefinition(parentParameter.Name, ParameterAttributes.None, assembly.MainModule.ImportReference(parentParameter.ParameterType)));
                 }
 
-                if (complexType.Value.ComplexSerializerProcessParentType)
+                if (complexType.Value.IsComplexSerializerProcessParentType)
                 {
                     serialize.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
                     serialize.Body.Instructions.Add(Instruction.Create(OpCodes.Ldfld, parentSerializerField.MakeGeneric(genericParameters)));
@@ -292,7 +288,7 @@ namespace Stride.Core.AssemblyProcessor
             var getTypeFromHandleMethod = typeType.Methods.First(x => x.Name == nameof(Type.GetTypeFromHandle));
             var getTokenInfoExMethod = reflectionAssembly.MainModule.GetTypeResolved("System.Reflection.IntrospectionExtensions").Resolve().Methods.First(x => x.Name == nameof(IntrospectionExtensions.GetTypeInfo));
             var typeInfoType = reflectionAssembly.MainModule.GetTypeResolved(typeof(TypeInfo).FullName);
-            // Note: TypeInfo.Assembly/Module could be on the type itself or on its parent MemberInfo depending on runtime
+            // NOTE: TypeInfo.Assembly/Module could be on the type itself or on its parent MemberInfo depending on runtime
             var getTypeInfoAssembly = typeInfoType.Properties.Concat(typeInfoType.BaseType.Resolve().Properties).First(x => x.Name == nameof(TypeInfo.Assembly)).GetMethod;
             var getTypeInfoModule = typeInfoType.Properties.Concat(typeInfoType.BaseType.Resolve().Properties).First(x => x.Name == nameof(TypeInfo.Module)).GetMethod;
             var typeHandleProperty = typeType.Properties.First(x => x.Name == nameof(Type.TypeHandle));
@@ -313,7 +309,7 @@ namespace Stride.Core.AssemblyProcessor
 
             foreach (var profile in registry.Context.SerializableTypesProfiles)
             {
-                foreach (var type in profile.Value.SerializableTypes.Where(x => x.Value.Local))
+                foreach (var type in profile.Value.SerializableTypes.Where(x => x.Value.IsLocal))
                 {
                     // Generating: [DataSerializerGlobalAttribute(<#= type.Value.SerializerType != null ? $"typeof({type.Value.SerializerType.ConvertCSharp(false)})" : "null" #>, typeof(<#= type.Key.ConvertCSharp(false) #>), DataSerializerGenericMode.<#= type.Value.Mode.ToString() #>, <#=type.Value.Inherited ? "true" : "false"#>, <#=type.Value.ComplexSerializer ? "true" : "false"#>, Profile = "<#=profile.Key#>")]
                     serializerFactoryType.CustomAttributes.Add(new CustomAttribute(dataSerializerGlobalCtorRef)
@@ -322,9 +318,9 @@ namespace Stride.Core.AssemblyProcessor
                         {
                             new CustomAttributeArgument(typeTypeRef, type.Value.SerializerType != null ? assembly.MainModule.ImportReference(type.Value.SerializerType) : null),
                             new CustomAttributeArgument(typeTypeRef, assembly.MainModule.ImportReference(type.Key)),
-                            new CustomAttributeArgument(dataSerializerModeTypeRef, type.Value.Mode),
-                            new CustomAttributeArgument(assembly.MainModule.TypeSystem.Boolean, type.Value.Inherited),
-                            new CustomAttributeArgument(assembly.MainModule.TypeSystem.Boolean, type.Value.ComplexSerializer),
+                            new CustomAttributeArgument(dataSerializerModeTypeRef, type.Value.GenericsMode),
+                            new CustomAttributeArgument(assembly.MainModule.TypeSystem.Boolean, type.Value.IsInherited),
+                            new CustomAttributeArgument(assembly.MainModule.TypeSystem.Boolean, type.Value.IsComplexSerializer),
                         },
                         Properties =
                         {
@@ -332,7 +328,7 @@ namespace Stride.Core.AssemblyProcessor
                         },
                     });
                 }
-                foreach (var type in profile.Value.GenericSerializableTypes.Where(x => x.Value.Local))
+                foreach (var type in profile.Value.GenericSerializableTypes.Where(x => x.Value.IsLocal))
                 {
                     // Generating: [DataSerializerGlobalAttribute(<#= type.Value.SerializerType != null ? $"typeof({type.Value.SerializerType.ConvertCSharp(true)})" : "null" #>, typeof(<#= type.Key.ConvertCSharp(true) #>), DataSerializerGenericMode.<#= type.Value.Mode.ToString() #>, <#=type.Value.Inherited ? "true" : "false"#>, <#=type.Value.ComplexSerializer ? "true" : "false"#>, Profile = "<#=profile.Key#>")]
                     serializerFactoryType.CustomAttributes.Add(new CustomAttribute(dataSerializerGlobalCtorRef)
@@ -341,9 +337,9 @@ namespace Stride.Core.AssemblyProcessor
                         {
                             new CustomAttributeArgument(typeTypeRef, type.Value.SerializerType != null ? assembly.MainModule.ImportReference(type.Value.SerializerType) : null),
                             new CustomAttributeArgument(typeTypeRef, assembly.MainModule.ImportReference(type.Key)),
-                            new CustomAttributeArgument(dataSerializerModeTypeRef, type.Value.Mode),
-                            new CustomAttributeArgument(assembly.MainModule.TypeSystem.Boolean, type.Value.Inherited),
-                            new CustomAttributeArgument(assembly.MainModule.TypeSystem.Boolean, type.Value.ComplexSerializer),
+                            new CustomAttributeArgument(dataSerializerModeTypeRef, type.Value.GenericsMode),
+                            new CustomAttributeArgument(assembly.MainModule.TypeSystem.Boolean, type.Value.IsInherited),
+                            new CustomAttributeArgument(assembly.MainModule.TypeSystem.Boolean, type.Value.IsComplexSerializer),
                         },
                         Properties =
                         {
@@ -432,21 +428,21 @@ namespace Stride.Core.AssemblyProcessor
                 initializeMethodIL.Emit(OpCodes.Ldstr, profile.Key);
                 initializeMethodIL.Emit(OpCodes.Newobj, assemblySerializersPerProfileTypeCtorRef);
 
-                foreach (var type in profile.Value.SerializableTypes.Where(x => x.Value.Local))
+                foreach (var type in profile.Value.SerializableTypes.Where(x => x.Value.IsLocal))
                 {
                     // Generating: assemblySerializersProfile.Add(new AssemblySerializerEntry(<#=type.Key.ConvertTypeId()#>, typeof(<#= type.Key.ConvertCSharp() #>), <# if (type.Value.SerializerType != null) { #>typeof(<#= type.Value.SerializerType.ConvertCSharp() #>)<# } else { #>null<# } #>));
                     initializeMethodIL.Emit(OpCodes.Dup);
 
-                    var typeName = type.Key.ConvertCSharp(false);
+                    var typeName = type.Key.ConvertToValidCSharp(false);
                     var typeId = ObjectId.FromBytes(Encoding.UTF8.GetBytes(typeName));
 
                     unsafe
                     {
-                            var typeIdHash = (int*)&typeId;
+                        var typeIdHash = (int*)&typeId;
 
-                            for (int i = 0; i < ObjectId.HashSize / 4; ++i)
-                                initializeMethodIL.Emit(OpCodes.Ldc_I4, typeIdHash[i]);
-                        }
+                        for (int i = 0; i < ObjectId.HashSize / 4; ++i)
+                            initializeMethodIL.Emit(OpCodes.Ldc_I4, typeIdHash[i]);
+                    }
 
                     initializeMethodIL.Emit(OpCodes.Newobj, objectIdCtorRef);
 
@@ -518,8 +514,8 @@ namespace Stride.Core.AssemblyProcessor
             var mscorlibAssembly = CecilExtensions.FindCorlibAssembly(assembly);
             if (mscorlibAssembly == null)
             {
-                log.WriteLine("Missing mscorlib.dll from assembly {0}", assembly.FullName);
-                throw new InvalidOperationException("Missing mscorlib.dll from assembly");
+                log.WriteLine($"Missing mscorlib.dll from assembly {assembly.FullName}");
+                throw new InvalidOperationException("Missing mscorlib.dll from assembly.");
             }
 
             var coreSerializationAssembly = assemblyResolver.Resolve(new AssemblyNameReference("Stride.Core", null));

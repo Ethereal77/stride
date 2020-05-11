@@ -14,11 +14,11 @@ using Stride.Core.Serialization;
 namespace Stride.Core.AssemblyProcessor.Serializers
 {
     /// <summary>
-    /// Fill <see cref="CecilSerializerContext.SerializableTypes"/> with serializable types handled by referenced assemblies.
+    ///   Fill <see cref="CecilSerializerContext.SerializableTypes"/> with serializable types handled by referenced assemblies.
     /// </summary>
     class ReferencedAssemblySerializerProcessor : ICecilSerializerProcessor
     {
-        HashSet<AssemblyDefinition> processedAssemblies = new HashSet<AssemblyDefinition>();
+        private readonly HashSet<AssemblyDefinition> processedAssemblies = new HashSet<AssemblyDefinition>();
 
         public void ProcessSerializers(CecilSerializerContext context)
         {
@@ -88,14 +88,14 @@ namespace Stride.Core.AssemblyProcessor.Serializers
                     serializableTypeInfo = context.GenerateSerializer(dataType, profile: profile);
                     if (serializableTypeInfo == null)
                         throw new InvalidOperationException(string.Format("Can't find serializer for type {0}", dataType));
-                    serializableTypeInfo.Local = local;
-                    serializableTypeInfo.ExistingLocal = local;
+                    serializableTypeInfo.IsLocal = local;
+                    serializableTypeInfo.IsExistingLocal = local;
                     dataSerializerType = serializableTypeInfo.SerializerType;
                 }
                 else
                 {
                     // Add it to list of serializable types
-                    serializableTypeInfo = new CecilSerializerContext.SerializableTypeInfo(dataSerializerType, local, mode) { ExistingLocal = local, Inherited = inherited, ComplexSerializer = complexSerializer };
+                    serializableTypeInfo = new CecilSerializerContext.SerializableTypeInfo(dataSerializerType, local, mode) { IsExistingLocal = local, IsInherited = inherited, IsComplexSerializer = complexSerializer };
                     context.AddSerializableType(dataType, serializableTypeInfo, profile);
                 }
             }
@@ -108,8 +108,7 @@ namespace Stride.Core.AssemblyProcessor.Serializers
             var dataSerializerTypeCurrent = dataSerializerType;
             while (dataSerializerTypeCurrent != null)
             {
-                var genericInstanceType = dataSerializerTypeCurrent as GenericInstanceType;
-                if (genericInstanceType != null)
+                if (dataSerializerTypeCurrent is GenericInstanceType genericInstanceType)
                 {
                     if (genericInstanceType.ElementType.FullName == "Stride.Core.Serialization.DataSerializer`1")
                     {

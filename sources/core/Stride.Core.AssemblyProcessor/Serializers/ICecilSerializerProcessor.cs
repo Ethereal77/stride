@@ -5,13 +5,13 @@
 namespace Stride.Core.AssemblyProcessor.Serializers
 {
     /// <summary>
-    /// Gives the required generic serializer for a given type.
-    /// This is useful for generation of serialization assembly, when AOT is performed (all generic serializers must be available).
+    ///   Provides a method to retrieve the required generic serializer for a given type.
+    ///   This is useful for generation of serialization assembly, when AOT is performed (all generic serializers must be available).
     /// </summary>
     interface ICecilSerializerProcessor
     {
         /// <summary>
-        /// Process serializers for given assembly context.
+        ///   Process serializers for a given assembly context.
         /// </summary>
         /// <param name="context">The context.</param>
         void ProcessSerializers(CecilSerializerContext context);

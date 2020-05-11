@@ -21,10 +21,6 @@ namespace Stride.Core.AssemblyProcessor
     {
         private static readonly string attributeUsageTypeName = typeof(AttributeUsageAttribute).FullName;
 
-        public AssemblyScanProcessor()
-        {
-        }
-
         public bool Process(AssemblyProcessorContext context)
         {
             var registry = new AssemblyScanRegistry();

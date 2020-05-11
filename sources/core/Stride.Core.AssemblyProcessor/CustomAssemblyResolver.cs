@@ -11,77 +11,65 @@ using Mono.Cecil;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Allow to register assemblies manually, with their in-memory representation if necessary.
+    ///   Allow to register assemblies manually, with their in-memory representation if necessary.
     /// </summary>
     public class CustomAssemblyResolver : BaseAssemblyResolver
     {
         /// <summary>
-        /// Assemblies stored as byte arrays.
+        ///   Assemblies stored as byte arrays.
         /// </summary>
         private readonly Dictionary<AssemblyDefinition, byte[]> assemblyData = new Dictionary<AssemblyDefinition, byte[]>();
 
-        private readonly List<string> references = new List<string>();
+        private readonly IDictionary<string, AssemblyDefinition> assemblyCache = new Dictionary<string, AssemblyDefinition>(StringComparer.Ordinal);
         private readonly List<string> referencePaths = new List<string>();
+
+        public List<string> References { get; } = new List<string>();
+
+        /// <summary>
+        ///   Gets or sets the Windows SDK directory for Windows 10 apps.
+        /// </summary>
+        public string WindowsKitsReferenceDirectory { get; set; }
 
         private HashSet<string> existingWindowsKitsReferenceAssemblies;
 
         protected override void Dispose(bool disposing)
         {
-            foreach (var ass in cache)
-            {
-                ass.Value.Dispose();
-            }
-            cache.Clear();
+            foreach (var assemblyDef in assemblyCache)
+                assemblyDef.Value.Dispose();
+
+            assemblyCache.Clear();
             assemblyData.Clear();
-            references.Clear();
+            References.Clear();
             existingWindowsKitsReferenceAssemblies?.Clear();
 
             base.Dispose(disposing);
         }
 
-        /// <summary>
-        /// Gets or sets the windows kits directory for Windows 10 apps.
-        /// </summary>
-        public string WindowsKitsReferenceDirectory { get; set; }
-
- 		readonly IDictionary<string, AssemblyDefinition> cache;
-
-        public List<string> References
+        public override AssemblyDefinition Resolve(AssemblyNameReference name)
         {
-            get { return references; }
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            if (assemblyCache.TryGetValue(name.FullName, out AssemblyDefinition assembly))
+                return assembly;
+
+            assembly = base.Resolve(name);
+            assemblyCache[name.FullName] = assembly;
+
+            return assembly;
         }
 
-        public CustomAssemblyResolver ()
-		{
-			cache = new Dictionary<string, AssemblyDefinition> (StringComparer.Ordinal);
-		}
+        public void RegisterAssembly(AssemblyDefinition assembly)
+        {
+            if (assembly == null)
+                throw new ArgumentNullException(nameof(assembly));
 
-		public override AssemblyDefinition Resolve (AssemblyNameReference name)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
+            var name = assembly.Name.FullName;
+            if (assemblyCache.ContainsKey(name))
+                return;
 
-			AssemblyDefinition assembly;
-			if (cache.TryGetValue (name.FullName, out assembly))
-				return assembly;
-
-			assembly = base.Resolve (name);
-			cache [name.FullName] = assembly;
-
-			return assembly;
-		}
-
-		public void RegisterAssembly (AssemblyDefinition assembly)
-		{
-			if (assembly == null)
-				throw new ArgumentNullException ("assembly");
-
-			var name = assembly.Name.FullName;
-			if (cache.ContainsKey (name))
-				return;
-
-			cache [name] = assembly;
-		}
+            assemblyCache[name] = assembly;
+        }
 
         public void RegisterAssemblies(List<AssemblyDefinition> mergedAssemblies)
         {
@@ -92,48 +80,50 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Registers the specified assembly.
+        ///   Registers the specified assembly.
         /// </summary>
-        /// <param name="assembly">The assembly to register.</param>
+        /// <param name="assembly">Assembly to register.</param>
         public void Register(AssemblyDefinition assembly)
         {
-            this.RegisterAssembly(assembly);
+            RegisterAssembly(assembly);
+        }
+
+        /// <summary>
+        ///   Registers the specified assembly.
+        /// </summary>
+        /// <param name="assembly">Assembly to register.</param>
+        public void Register(AssemblyDefinition assembly, byte[] peData)
+        {
+            assemblyData[assembly] = peData;
+            RegisterAssembly(assembly);
         }
 
         public void RegisterReference(string path)
         {
-            references.Add(path);
+            References.Add(path);
             referencePaths.Add(Path.GetDirectoryName(path));
         }
 
         /// <summary>
-        /// Gets the assembly data (if it exists).
+        ///   Gets the assembly data (if it exists).
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        /// <returns></returns>
+        /// <returns>Data for the specified assembly.</returns>
         public byte[] GetAssemblyData(AssemblyDefinition assembly)
         {
-            byte[] data;
-            assemblyData.TryGetValue(assembly, out data);
+            assemblyData.TryGetValue(assembly, out byte[] data);
             return data;
         }
 
-        /// <summary>
-        /// Registers the specified assembly.
-        /// </summary>
-        /// <param name="assembly">The assembly to register.</param>
-        public void Register(AssemblyDefinition assembly, byte[] peData)
-        {
-            assemblyData[assembly] = peData;
-            this.RegisterAssembly(assembly);
-        }
+        private static readonly string[] assemblyExtensions = new[] { ".dll", ".exe" };
 
         public override AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
         {
             // Try list of references
-            foreach (var reference in references)
+            foreach (var reference in References)
             {
-                if (string.Compare(Path.GetFileNameWithoutExtension(reference), name.Name, StringComparison.OrdinalIgnoreCase) == 0 && File.Exists(reference))
+                if (string.Compare(Path.GetFileNameWithoutExtension(reference), name.Name, StringComparison.OrdinalIgnoreCase) == 0 &&
+                    File.Exists(reference))
                 {
                     return GetAssembly(reference, parameters);
                 }
@@ -142,13 +132,13 @@ namespace Stride.Core.AssemblyProcessor
             // Try list of reference paths
             foreach (var referencePath in referencePaths)
             {
-                foreach (var extension in new[] { ".dll", ".exe" })
+                foreach (var extension in assemblyExtensions)
                 {
                     var assemblyFile = Path.Combine(referencePath, name.Name + extension);
                     if (File.Exists(assemblyFile))
                     {
                         // Add it as a new reference
-                        references.Add(assemblyFile);
+                        References.Add(assemblyFile);
 
                         return GetAssembly(assemblyFile, parameters);
                     }
@@ -169,12 +159,10 @@ namespace Stride.Core.AssemblyProcessor
                             existingWindowsKitsReferenceAssemblies.Add(Path.GetFileName(directory));
                         }
                     }
-                    catch (Exception)
-                    {
-                    }
+                    catch (Exception) { }
                 }
 
-                // Look for this assembly in the windows kits directory
+                // Look for this assembly in the Windows SDK directory
                 if (existingWindowsKitsReferenceAssemblies.Contains(name.Name))
                 {
                     var assemblyFile = Path.Combine(WindowsKitsReferenceDirectory, name.Name, name.Version.ToString(), name.Name + ".winmd");
@@ -203,7 +191,7 @@ namespace Stride.Core.AssemblyProcessor
             catch (AssemblyResolutionException)
             {
                 // Check cache again, ignoring version numbers this time
-                foreach (var assembly in cache)
+                foreach (var assembly in assemblyCache)
                 {
                     if (assembly.Value.Name.Name == name.Name)
                     {
@@ -214,13 +202,14 @@ namespace Stride.Core.AssemblyProcessor
             }
         }
 
+        private static readonly string[] windowsMetadataExtensions = new[] { ".winmd" };
+
         // Copied from BaseAssemblyResolver
-        AssemblyDefinition SearchDirectoryExtra(AssemblyNameReference name, IEnumerable<string> directories, ReaderParameters parameters)
+        private AssemblyDefinition SearchDirectoryExtra(AssemblyNameReference name, IEnumerable<string> directories, ReaderParameters parameters)
         {
-            var extensions = new[] { ".winmd" };
             foreach (var directory in directories)
             {
-                foreach (var extension in extensions)
+                foreach (var extension in windowsMetadataExtensions)
                 {
                     string file = Path.Combine(directory, name.Name + extension);
                     if (File.Exists(file))
@@ -232,7 +221,7 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         // Copied from BaseAssemblyResolver
-        AssemblyDefinition GetAssembly(string file, ReaderParameters parameters)
+        private AssemblyDefinition GetAssembly(string file, ReaderParameters parameters)
         {
             if (parameters.AssemblyResolver == null)
                 parameters.AssemblyResolver = this;

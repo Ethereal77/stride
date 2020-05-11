@@ -4,15 +4,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Mono.Cecil;
 
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Transform open generic types to closed instantiation using context information.
-    /// See <see cref="Process"/> for more details.
+    ///   Transforms open generic types to closed instantiation using context information.
+    ///   As an example, if <c>B{T}</c> inherits from <c>A{T}</c>, running it with <c>B{C}</c> as context and <c>A{B.T}</c>
+    ///   as type, it will return <c>A{C}</c>.
     /// </summary>
     class ResolveGenericsVisitor : CecilTypeReferenceVisitor
     {
@@ -24,12 +24,13 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Transform open generic types to closed instantiation using context information.
-        /// As an example, if B{T} inherits from A{T}, running it with B{C} as context and A{B.T} as type, ti will return A{C}.
+        ///   Transforms open generic types to closed instantiation using context information.
+        ///   As an example, if <c>B{T}</c> inherits from <c>A{T}</c>, running it with <c>B{C}</c> as context and <c>A{B.T}</c>
+        ///   as type, it will return <c>A{C}</c>.
         /// </summary>
         public static TypeReference Process(TypeReference context, TypeReference type)
         {
-            if (type == null)
+            if (type is null)
                 return null;
 
             var parentContext = context;
@@ -42,7 +43,8 @@ namespace Stride.Core.AssemblyProcessor
 
                 parentContext = parentContext.Resolve().BaseType;
             }
-            if (genericInstanceTypeContext == null || genericInstanceTypeContext.ContainsGenericParameter())
+
+            if (genericInstanceTypeContext is null || genericInstanceTypeContext.ContainsGenericParameter)
                 return type;
 
             // Build dictionary that will map generic type to their real implementation type
@@ -64,7 +66,7 @@ namespace Stride.Core.AssemblyProcessor
             var result = visitor.VisitDynamic(type);
 
             // Make sure type is closed now
-            if (result.ContainsGenericParameter())
+            if (result.ContainsGenericParameter)
                 throw new InvalidOperationException("Unsupported generic resolution.");
 
             return result;
@@ -72,10 +74,9 @@ namespace Stride.Core.AssemblyProcessor
 
         public override TypeReference Visit(GenericParameter type)
         {
-            TypeReference result;
             TypeReference typeParent = type;
 
-            while (genericTypeMapping.TryGetValue(typeParent, out result))
+            while (genericTypeMapping.TryGetValue(typeParent, out TypeReference result))
                 typeParent = result;
 
             if (typeParent != type)

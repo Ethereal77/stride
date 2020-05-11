@@ -2,7 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Linq;
 
 using Mono.Cecil;
@@ -24,9 +23,8 @@ namespace Stride.Core.AssemblyProcessor.Serializers
 
         private static void ProcessType(CecilSerializerContext context, TypeDefinition type)
         {
-            CecilSerializerContext.SerializableTypeInfo serializableTypeInfo;
-            if (!context.SerializableTypes.TryGetSerializableTypeInfo(type, false, out serializableTypeInfo)
-                && !context.SerializableTypes.TryGetSerializableTypeInfo(type, true, out serializableTypeInfo))
+            if (!context.SerializableTypes.TryGetSerializableTypeInfo(type, isGeneric: false, out _) &&
+                !context.SerializableTypes.TryGetSerializableTypeInfo(type, isGeneric: true, out _))
             {
                 context.FindSerializerInfo(type, false);
             }

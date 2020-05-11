@@ -9,7 +9,7 @@ using Mono.Cecil;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// EqualityComparer for TypeReference, using FullName to compare.
+    ///   <see cref="EqualityComparer{T}"/> for <see cref="TypeReference"/>, using <see cref="TypeReference.FullName"/> to compare.
     /// </summary>
     public class TypeReferenceEqualityComparer : EqualityComparer<TypeReference>
     {

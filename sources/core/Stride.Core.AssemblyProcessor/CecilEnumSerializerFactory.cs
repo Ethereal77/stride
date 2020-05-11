@@ -7,7 +7,7 @@ using Mono.Cecil;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Generates enum serializer type from a given enum type.
+    ///   Generates a serializer type for a given <c>enum</c> type.
     /// </summary>
     public class CecilEnumSerializerFactory : ICecilSerializerFactory
     {

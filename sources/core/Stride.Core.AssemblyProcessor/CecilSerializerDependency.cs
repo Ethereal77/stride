@@ -11,7 +11,7 @@ using Mono.Cecil;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Enumerates required subtypes the given serializer will use internally.
+    ///   Enumerates required subtypes the given serializer will use internally.
     /// </summary>
     public class CecilSerializerDependency : ICecilSerializerDependency
     {
@@ -19,33 +19,28 @@ namespace Stride.Core.AssemblyProcessor
         TypeReference genericSerializableType;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CecilSerializerDependency" /> class.
-        /// It will enumerates T1, T2 from genericSerializerType{T1, T2}.
+        ///   Initializes a new instance of the <see cref="CecilSerializerDependency" /> class.
+        ///   It will enumerate T1, T2 from genericSerializerType{T1, T2}.
         /// </summary>
         /// <param name="genericSerializerType">Type of the generic serializer.</param>
         public CecilSerializerDependency(string genericSerializerTypeFullName)
         {
-            if (genericSerializerTypeFullName == null)
-                throw new ArgumentNullException("genericSerializerTypeFullName");
-
-            this.genericSerializerTypeFullName = genericSerializerTypeFullName;
+            this.genericSerializerTypeFullName = genericSerializerTypeFullName ??
+                                                 throw new ArgumentNullException(nameof(genericSerializerTypeFullName));
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CecilSerializerDependency" /> class.
-        /// It will enumerates genericSerializableType{T1, T2} from genericSerializerType{T1, T2}.
+        ///   Initializes a new instance of the <see cref="CecilSerializerDependency" /> class.
+        ///   It will enumerate genericSerializableType{T1, T2} from genericSerializerType{T1, T2}.
         /// </summary>
         /// <param name="genericSerializerType">Type of the generic serializer.</param>
         /// <param name="genericSerializableType">Type of the generic serializable.</param>
         public CecilSerializerDependency(string genericSerializerTypeFullName, TypeReference genericSerializableType)
         {
-            if (genericSerializerTypeFullName == null)
-                throw new ArgumentNullException("genericSerializerTypeFullName");
-            if (genericSerializableType == null)
-                throw new ArgumentNullException("genericSerializableType");
-
-            this.genericSerializerTypeFullName = genericSerializerTypeFullName;
-            this.genericSerializableType = genericSerializableType;
+            this.genericSerializerTypeFullName = genericSerializerTypeFullName ??
+                                                 throw new ArgumentNullException(nameof(genericSerializerTypeFullName));
+            this.genericSerializableType = genericSerializableType ??
+                                           throw new ArgumentNullException(nameof(genericSerializableType));
         }
 
         public IEnumerable<TypeReference> EnumerateSubTypesFromSerializer(TypeReference serializerType)

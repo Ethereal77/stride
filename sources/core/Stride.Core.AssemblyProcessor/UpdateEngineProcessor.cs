@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using Mono.Cecil;
@@ -13,11 +12,10 @@ using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
 using Stride.Core.AssemblyProcessor.Serializers;
-using Stride.Core.Serialization;
 
-using FieldAttributes = Mono.Cecil.FieldAttributes;
+using FieldAttributes  = Mono.Cecil.FieldAttributes;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
-using TypeAttributes = Mono.Cecil.TypeAttributes;
+using TypeAttributes   = Mono.Cecil.TypeAttributes;
 
 namespace Stride.Core.AssemblyProcessor
 {
@@ -30,8 +28,6 @@ namespace Stride.Core.AssemblyProcessor
         private TypeDefinition updatablePropertyGenericType;
         private MethodDefinition updatablePropertyGenericCtor;
         private MethodDefinition updatablePropertyObjectGenericCtor;
-
-        private MethodDefinition parameterCollectionResolverInstantiateValueAccessor;
 
         private MethodReference updateEngineRegisterMemberMethod;
         private MethodReference updateEngineRegisterMemberResolverMethod;
@@ -63,7 +59,7 @@ namespace Stride.Core.AssemblyProcessor
             var dispatcherMethod = new MethodDefinition($"Dispatcher_{method.Name}", MethodAttributes.HideBySig | MethodAttributes.Assembly | MethodAttributes.Static, assembly.MainModule.ImportReference(method.ReturnType));
             updateEngineType.Methods.Add(dispatcherMethod);
 
-            dispatcherMethod.Parameters.Add(new ParameterDefinition("this", Mono.Cecil.ParameterAttributes.None, method.DeclaringType));
+            dispatcherMethod.Parameters.Add(new ParameterDefinition("this", ParameterAttributes.None, method.DeclaringType));
             foreach (var param in method.Parameters)
             {
                 dispatcherMethod.Parameters.Add(new ParameterDefinition(param.Name, param.Attributes, param.ParameterType));
@@ -71,7 +67,7 @@ namespace Stride.Core.AssemblyProcessor
 
             var il = dispatcherMethod.Body.GetILProcessor();
             il.Emit(OpCodes.Ldarg_0);
-            foreach (var param in dispatcherMethod.Parameters.Skip(1)) // first parameter is "this"
+            foreach (var param in dispatcherMethod.Parameters.Skip(1)) // First parameter is "this"
             {
                 il.Emit(OpCodes.Ldarg, param);
             }
@@ -94,27 +90,28 @@ namespace Stride.Core.AssemblyProcessor
             var coreAssembly = CecilExtensions.FindCorlibAssembly(context.Assembly);
 
             // Only process assemblies depending on Stride.Engine
-            if (!references.Any(x => x.Name.Name == "Stride.Engine"))
+            if (!references.Any(assembly => assembly.Name.Name == "Stride.Engine"))
             {
                 // Make sure Stride.Engine.Serializers can access everything internally
                 var internalsVisibleToAttribute = coreAssembly.MainModule.GetTypeResolved(typeof(InternalsVisibleToAttribute).FullName);
-                var serializationAssemblyName = "Stride.Engine.Serializers";
+
+                const string SerializationAssemblyName = "Stride.Engine.Serializers";
 
                 // Add [InteralsVisibleTo] attribute
                 var internalsVisibleToAttributeCtor = context.Assembly.MainModule.ImportReference(internalsVisibleToAttribute.GetConstructors().Single());
                 var internalsVisibleAttribute = new CustomAttribute(internalsVisibleToAttributeCtor)
-                {
-                    ConstructorArguments =
+                    {
+                        ConstructorArguments =
                             {
-                                new CustomAttributeArgument(context.Assembly.MainModule.ImportReference(context.Assembly.MainModule.TypeSystem.String), serializationAssemblyName)
+                                new CustomAttributeArgument(
+                                    context.Assembly.MainModule.ImportReference(context.Assembly.MainModule.TypeSystem.String),
+                                    SerializationAssemblyName)
                             }
-                };
+                    };
                 context.Assembly.CustomAttributes.Add(internalsVisibleAttribute);
 
                 return;
             }
-
-
 
             var strideEngineAssembly = context.Assembly.Name.Name == "Stride.Engine"
                     ? context.Assembly
@@ -142,9 +139,6 @@ namespace Stride.Core.AssemblyProcessor
             var updatableArrayUpdateResolverGenericType = strideEngineModule.GetType("Stride.Updater.ArrayUpdateResolver`1");
             updatableArrayUpdateResolverGenericCtor = updatableArrayUpdateResolverGenericType.Methods.First(x => x.IsConstructor && !x.IsStatic);
 
-            var parameterCollectionResolver = strideEngineModule.GetType("Stride.Engine.Design.ParameterCollectionResolver");
-            parameterCollectionResolverInstantiateValueAccessor = parameterCollectionResolver.Methods.First(x => x.Name == "InstantiateValueAccessor");
-
             var registerMemberMethod = strideEngineModule.GetType("Stride.Updater.UpdateEngine").Methods.First(x => x.Name == "RegisterMember");
             updateEngineRegisterMemberMethod = context.Assembly.MainModule.ImportReference(registerMemberMethod);
 
@@ -162,11 +156,10 @@ namespace Stride.Core.AssemblyProcessor
             foreach (var serializableType in context.SerializableTypesProfiles.SelectMany(x => x.Value.SerializableTypes))
             {
                 // Special case: when processing Stride.Engine assembly, we automatically add dependent assemblies types too
-                if (!serializableType.Value.Local && strideEngineAssembly != context.Assembly)
+                if (!serializableType.Value.IsLocal && strideEngineAssembly != context.Assembly)
                     continue;
 
-                var typeDefinition = serializableType.Key as TypeDefinition;
-                if (typeDefinition == null)
+                if (!(serializableType.Key is TypeDefinition typeDefinition))
                     continue;
 
                 // Ignore already processed types
@@ -179,7 +172,7 @@ namespace Stride.Core.AssemblyProcessor
                 }
                 catch (Exception e)
                 {
-                    throw new InvalidOperationException(string.Format("Error when generating update engine code for {0}", typeDefinition), e);
+                    throw new InvalidOperationException($"Error when generating update engine code for {typeDefinition}.", e);
                 }
             }
 
@@ -188,7 +181,7 @@ namespace Stride.Core.AssemblyProcessor
             foreach (var serializableType in context.SerializableTypesProfiles.SelectMany(x => x.Value.SerializableTypes).ToArray())
             {
                 // Special case: when processing Stride.Engine assembly, we automatically add dependent assemblies types too
-                if (!serializableType.Value.Local && strideEngineAssembly != context.Assembly)
+                if (!serializableType.Value.IsLocal && strideEngineAssembly != context.Assembly)
                     continue;
 
                 // Try to find if original method definition was generated
@@ -201,7 +194,7 @@ namespace Stride.Core.AssemblyProcessor
                     var listInterfaceType = parentTypeDefinition.Interfaces.Select(x => x.InterfaceType).OfType<GenericInstanceType>().FirstOrDefault(x => x.ElementType.FullName == typeof(IList<>).FullName);
                     if (listInterfaceType != null)
                     {
-                        //call Updater.UpdateEngine.RegisterMemberResolver(new Updater.ListUpdateResolver<T>());
+                        // Call Updater.UpdateEngine.RegisterMemberResolver(new Updater.ListUpdateResolver<T>());
                         var elementType = ResolveGenericsVisitor.Process(serializableType.Key, listInterfaceType.GenericArguments[0]);
                         il.Emit(OpCodes.Newobj, context.Assembly.MainModule.ImportReference(updatableListUpdateResolverGenericCtor).MakeGeneric(context.Assembly.MainModule.ImportReference(elementType)));
                         il.Emit(OpCodes.Call, updateEngineRegisterMemberResolverMethod);
@@ -211,25 +204,31 @@ namespace Stride.Core.AssemblyProcessor
                 }
 
                 // Same for arrays
-                var arrayType = serializableType.Key as ArrayType;
-                if (arrayType != null)
+                if (serializableType.Key is ArrayType arrayType)
                 {
-                    //call Updater.UpdateEngine.RegisterMemberResolver(new Updater.ArrayUpdateResolver<T>());
+                    // Call Updater.UpdateEngine.RegisterMemberResolver(new Updater.ArrayUpdateResolver<T>());
                     var elementType = ResolveGenericsVisitor.Process(serializableType.Key, arrayType.ElementType);
                     il.Emit(OpCodes.Newobj, context.Assembly.MainModule.ImportReference(updatableArrayUpdateResolverGenericCtor).MakeGeneric(context.Assembly.MainModule.ImportReference(elementType)));
                     il.Emit(OpCodes.Call, updateEngineRegisterMemberResolverMethod);
                 }
 
-                var genericInstanceType = serializableType.Key as GenericInstanceType;
-                if (genericInstanceType != null)
+                if (serializableType.Key is GenericInstanceType genericInstanceType)
                 {
                     var expectedUpdateMethodName = ComputeUpdateMethodName(typeDefinition);
-                    var updateMethod = GetOrCreateUpdateType(typeDefinition.Module.Assembly, false)?.Methods.FirstOrDefault(x => x.Name == expectedUpdateMethodName && x.HasGenericParameters && x.GenericParameters.Count == genericInstanceType.GenericParameters.Count);
+                    var updateMethod = GetOrCreateUpdateType(typeDefinition.Module.Assembly, false)?.Methods
+                        .FirstOrDefault(method =>
+                            method.Name == expectedUpdateMethodName &&
+                            method.HasGenericParameters &&
+                            method.GenericParameters.Count == genericInstanceType.GenericParameters.Count);
 
-                    // If nothing was found in main assembly, also look in Stride.Engine assembly, just in case (it might defines some shared/corlib types -- currently not the case)
-                    if (updateMethod == null)
+                    // If nothing was found in main assembly, also look in Stride.Engine assembly, just in case (it might define some shared/corlib types -- currently not the case)
+                    if (updateMethod is null)
                     {
-                        updateMethod = GetOrCreateUpdateType(strideEngineAssembly, false)?.Methods.FirstOrDefault(x => x.Name == expectedUpdateMethodName && x.HasGenericParameters && x.GenericParameters.Count == genericInstanceType.GenericParameters.Count);
+                        updateMethod = GetOrCreateUpdateType(strideEngineAssembly, false)?.Methods
+                            .FirstOrDefault(method =>
+                                method.Name == expectedUpdateMethodName &&
+                                method.HasGenericParameters &&
+                                method.GenericParameters.Count == genericInstanceType.GenericParameters.Count);
                     }
 
                     if (updateMethod != null)
@@ -250,7 +249,7 @@ namespace Stride.Core.AssemblyProcessor
         {
             var typeDefinition = type.Resolve();
 
-            // No need to process enum
+            // No need to process Enum
             if (typeDefinition.IsEnum)
                 return;
 
@@ -268,6 +267,7 @@ namespace Stride.Core.AssemblyProcessor
                     {
                         Attributes = genericParameter.Attributes,
                     };
+
                     foreach (var constraint in genericParameter.Constraints)
                         genericParameterCopy.Constraints.Add(
                             new GenericParameterConstraint(context.Assembly.MainModule.ImportReference(constraint.ConstraintType)));
@@ -287,16 +287,17 @@ namespace Stride.Core.AssemblyProcessor
             VariableDefinition emptyStruct = null;
 
             // Note: forcing fields and properties to be processed in all cases
-            foreach (var serializableItem in ComplexSerializerRegistry.GetSerializableItems(type, true, ComplexTypeSerializerFlags.SerializePublicFields | ComplexTypeSerializerFlags.SerializePublicProperties | ComplexTypeSerializerFlags.Updatable))
+            foreach (var serializableItem in ComplexSerializerRegistry.GetSerializableItems(type, ComplexTypeSerializerFlags.SerializePublicFields | ComplexTypeSerializerFlags.SerializePublicProperties | ComplexTypeSerializerFlags.Updatable))
             {
                 if (serializableItem.MemberInfo is FieldReference fieldReference)
                 {
                     var field = fieldReference.Resolve();
 
-                    // First time it is needed, let's create empty object in the class (var emptyObject = new object()) or empty local struct in the method
+                    // First time it is needed. Let's create an empty object in the class (var emptyObject = new object())
+                    // or empty local struct in the method
                     if (typeIsValueType)
                     {
-                        if (emptyStruct == null)
+                        if (emptyStruct is null)
                         {
                             emptyStruct = new VariableDefinition(type);
                             updateMainMethod.Body.Variables.Add(emptyStruct);
@@ -304,16 +305,18 @@ namespace Stride.Core.AssemblyProcessor
                     }
                     else
                     {
-                        if (emptyObjectField == null)
+                        if (emptyObjectField is null)
                         {
                             emptyObjectField = new FieldDefinition("emptyObject", FieldAttributes.Static | FieldAttributes.Private, context.Assembly.MainModule.TypeSystem.Object);
 
                             // Create static ctor that will initialize this object
                             var staticConstructor = new MethodDefinition(".cctor",
-                                                    MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                                                    context.Assembly.MainModule.TypeSystem.Void);
+                                MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.Static |
+                                MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                                context.Assembly.MainModule.TypeSystem.Void);
                             var staticConstructorIL = staticConstructor.Body.GetILProcessor();
-                            staticConstructorIL.Emit(OpCodes.Newobj, context.Assembly.MainModule.ImportReference(emptyObjectField.FieldType.Resolve().GetConstructors().Single(x => !x.IsStatic && !x.HasParameters)));
+                            staticConstructorIL.Emit(OpCodes.Newobj, context.Assembly.MainModule.ImportReference(
+                                emptyObjectField.FieldType.Resolve().GetConstructors().Single(ctor => !ctor.IsStatic && !ctor.HasParameters)));
                             staticConstructorIL.Emit(OpCodes.Stsfld, emptyObjectField);
                             staticConstructorIL.Emit(OpCodes.Ret);
 
@@ -346,12 +349,12 @@ namespace Stride.Core.AssemblyProcessor
                     il.Emit(OpCodes.Call, updateEngineRegisterMemberMethod);
                 }
 
-                var propertyReference = serializableItem.MemberInfo as PropertyReference;
-                if (propertyReference != null)
+                if (serializableItem.MemberInfo is PropertyReference propertyReference)
                 {
                     var property = propertyReference.Resolve();
 
-                    var propertyGetMethod = context.Assembly.MainModule.ImportReference(property.GetMethod).MakeGeneric(updateCurrentMethod.GenericParameters.ToArray());
+                    var propertyGetMethod = context.Assembly.MainModule.ImportReference(property.GetMethod)
+                        .MakeGeneric(updateCurrentMethod.GenericParameters.ToArray());
 
                     il.Emit(OpCodes.Ldtoken, type);
                     il.Emit(OpCodes.Call, getTypeFromHandleMethod);
@@ -384,7 +387,9 @@ namespace Stride.Core.AssemblyProcessor
                     // Set whether setter method uses a VirtualDispatch (static call) or instance call
                     il.Emit((property.SetMethod?.IsVirtual ?? false) ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
 
-                    var propertyType = context.Assembly.MainModule.ImportReference(replaceGenericsVisitor != null ? replaceGenericsVisitor.VisitDynamic(property.PropertyType) : property.PropertyType);
+                    var propertyType = context.Assembly.MainModule.ImportReference(replaceGenericsVisitor != null
+                        ? replaceGenericsVisitor.VisitDynamic(property.PropertyType)
+                        : property.PropertyType);
 
                     var updatablePropertyInflatedCtor = GetOrCreateUpdatablePropertyCtor(context.Assembly, propertyType);
 
@@ -441,9 +446,9 @@ namespace Stride.Core.AssemblyProcessor
         {
             // Use different type depending on if type is a struct or not
             var updatablePropertyGenericType =
-                (propertyType.IsResolvedValueType() && (!propertyType.IsGenericInstance ||
-                                                    ((GenericInstanceType) propertyType).ElementType.FullName !=
-                                                    typeof(Nullable<>).FullName))
+                (propertyType.IsResolvedValueType() &&
+                (!propertyType.IsGenericInstance ||
+                    ((GenericInstanceType) propertyType).ElementType.FullName != typeof(Nullable<>).FullName))
                 ? updatablePropertyGenericCtor
                 : updatablePropertyObjectGenericCtor;
 
@@ -461,8 +466,9 @@ namespace Stride.Core.AssemblyProcessor
             {
                 // Avoid processing system assemblies
                 // TODO: Scan what is actually in framework folders
-                if (referencedAssemblyName.Name == "mscorlib" || referencedAssemblyName.Name.StartsWith("System")
-                    || referencedAssemblyName.FullName.Contains("PublicKeyToken=31bf3856ad364e35")) // Signed with Microsoft public key (likely part of system libraries)
+                if (referencedAssemblyName.Name == "mscorlib" ||
+                    referencedAssemblyName.Name.StartsWith("System") ||
+                    referencedAssemblyName.FullName.Contains("PublicKeyToken=31bf3856ad364e35")) // Signed with Microsoft public key (likely part of system libraries)
                     continue;
 
                 try
@@ -471,9 +477,7 @@ namespace Stride.Core.AssemblyProcessor
 
                     EnumerateReferences(assemblies, referencedAssembly);
                 }
-                catch (AssemblyResolutionException)
-                {
-                }
+                catch (AssemblyResolutionException) { }
             }
         }
     }

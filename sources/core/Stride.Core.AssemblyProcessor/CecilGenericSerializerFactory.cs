@@ -10,8 +10,8 @@ using Mono.Cecil;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Gives the specified serializer type constructed with generic arguments of the serialized type.
-    /// As an example, this instance with <see cref="ListSerializer{}"/> will give <see cref="ListSerializer{int}"/> from <see cref="int"/>.
+    ///   Gives the specified serializer type constructed with generic arguments of the serialized type.
+    ///   As an example, this instance with <see cref="ListSerializer{T}"/> will give <see cref="ListSerializer{int}"/> from <see cref="int"/>.
     /// </summary>
     public class CecilGenericSerializerFactory : ICecilSerializerFactory
     {
@@ -31,9 +31,9 @@ namespace Stride.Core.AssemblyProcessor
             : this(genericSerializableType, (type => genericSerializerType.MakeGenericType(((GenericInstanceType)type).GenericArguments.ToArray())))
         {
             if (genericSerializerType == null)
-                throw new ArgumentNullException("genericSerializerType");
+                throw new ArgumentNullException(nameof(genericSerializerType));
             if (genericSerializableType == null)
-                throw new ArgumentNullException("genericSerializableType");
+                throw new ArgumentNullException(nameof(genericSerializableType));
         }
 
         #region IDataSerializerFactory Members

@@ -12,7 +12,7 @@ using Stride.Core.AssemblyProcessor.Serializers;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Collects DataContractAttribute.Alias so that they are registered during Module initialization.
+    ///   Collects <c>DataContractAttribute.Alias</c> so that they are registered during Module initialization.
     /// </summary>
     internal class DataContractAliasProcessor : ICecilSerializerProcessor
     {

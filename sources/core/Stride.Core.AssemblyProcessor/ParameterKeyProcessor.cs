@@ -4,13 +4,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Pdb;
 using Mono.Cecil.Rocks;
 
 using MethodAttributes = Mono.Cecil.MethodAttributes;
@@ -53,8 +51,8 @@ namespace Stride.Core.AssemblyProcessor
                             break;
 
                         // TODO: Get PropertyKey.PropertyType instead
-                        var genericInstance = fieldBaseType as GenericInstanceType;
-                        if (genericInstance != null && genericInstance.ElementType.FullName == "Stride.Rendering.ParameterKey`1")
+                        if (fieldBaseType is GenericInstanceType genericInstance &&
+                            genericInstance.ElementType.FullName == "Stride.Rendering.ParameterKey`1")
                         {
                             var genericArgument = genericInstance.GenericArguments.First();
                             if (genericArgument.IsArray)

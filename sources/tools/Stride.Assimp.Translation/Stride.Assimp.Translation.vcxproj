@@ -5,7 +5,6 @@
     <StrideProjectType>Cpp</StrideProjectType>
     <TargetFrameworkVersion>$(TargetFrameworkVersionTool)</TargetFrameworkVersion>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <StrideAssemblyProcessorOptions />
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">

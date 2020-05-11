@@ -12,8 +12,8 @@
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

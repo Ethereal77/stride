@@ -7,8 +7,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <PlatformTarget>x86</PlatformTarget>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

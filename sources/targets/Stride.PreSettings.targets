@@ -13,7 +13,7 @@
     <StrideGlobalSettingsTargets>$(MSBuildThisFileDirectory)Stride.GlobalSettings.targets</StrideGlobalSettingsTargets>
     <StridePostSettingsTargets>$(MSBuildThisFileDirectory)Stride.PostSettings.targets</StridePostSettingsTargets>
     <StrideAssemblyProcessorGlobal>true</StrideAssemblyProcessorGlobal>
-    <StrideAssemblyProcessorDefaultOptions>--auto-notify-property --parameter-key --auto-module-initializer --serialization</StrideAssemblyProcessorDefaultOptions>
+    <StrideAssemblyProcessorDefaultOptions>--parameter-key --auto-module-initializer --serialization</StrideAssemblyProcessorDefaultOptions>
   </PropertyGroup>
 
   <!--Import Stride settings-->

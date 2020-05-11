@@ -4,26 +4,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
-
-using Stride.Core.Serialization;
-using Stride.Core.Storage;
 
 namespace Stride.Core.AssemblyProcessor
 {
     // Source: http://stackoverflow.com/questions/4968755/mono-cecil-call-generic-base-class-method-from-other-assembly
     public static class CecilExtensions
     {
-        // Not sure why Cecil made ContainsGenericParameter internal, but let's work around it by reflection.
-        private static readonly MethodInfo containsGenericParameterGetMethod = typeof(MemberReference).GetProperty("ContainsGenericParameter", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).GetMethod;
-
         public static bool IsResolvedValueType(this TypeReference type)
         {
             if (type.GetType() == typeof(TypeReference))
@@ -142,52 +133,41 @@ namespace Stride.Core.AssemblyProcessor
             return moduleDefinition.GetType(typeName);
         }
 
-        public static TypeDefinition GetTypeResolved(this ModuleDefinition moduleDefinition, string @namespace, string typeName)
-        {
-            foreach (var exportedType in moduleDefinition.ExportedTypes)
-            {
-                if (exportedType.Namespace == @namespace && exportedType.Name == typeName)
-                {
-                    var typeDefinition = exportedType.Resolve();
-                    return typeDefinition;
-                }
-            }
-
-            return moduleDefinition.GetType(@namespace, typeName);
-        }
-
         /// <summary>
-        /// Finds the corlib assembly which can be either mscorlib.dll or System.Runtime.dll depending on the .NET runtime environment.
+        ///   Finds the Core Library Assembly, which can be either <c>mscorlib.dll</c> or <c>System.Runtime.dll</c>
+        ///   depending on the .NET runtime environment.
         /// </summary>
-        /// <param name="assembly">Assembly where System.Object is found.</param>
-        /// <returns></returns>
+        /// <param name="assembly">Assembly where <see cref="object"/> is found.</param>
+        /// <returns>An <see cref="AssemblyDefinition"/> representing the Core Library.</returns>
         public static AssemblyDefinition FindCorlibAssembly(AssemblyDefinition assembly)
         {
-            // Ask Cecil for the core library which will be either mscorlib or System.Runtime.
+            // Ask Cecil for the core library which will be either mscorlib or System.Runtime
             AssemblyNameReference corlibReference = assembly.MainModule.TypeSystem.CoreLibrary as AssemblyNameReference;
             return assembly.MainModule.AssemblyResolver.Resolve(corlibReference);
         }
 
         /// <summary>
-        /// Finds the assembly in which the generic collections are defined. This can be either in mscorlib.dll or in System.Collections.dll depending on the .NET runtime environment.
+        ///   Finds the assembly in which the generic collections are defined. This can be either in <c>mscorlib.dll</c> or
+        ///   in <c>System.Collections.dll</c> depending on the .NET runtime environment.
         /// </summary>
         /// <param name="assembly">Assembly where the generic collections are defined.</param>
-        /// <returns></returns>
+        /// <returns>An <see cref="AssemblyDefinition"/> where the generic collections are defined.</returns>
         public static AssemblyDefinition FindCollectionsAssembly(AssemblyDefinition assembly)
         {
-            // Ask Cecil for the core library which will be either mscorlib or System.Runtime.
+            // Ask Cecil for the core library which will be either mscorlib or System.Runtime
             var corlibReference = FindCorlibAssembly(assembly);
 
             if (corlibReference.Name.Name.ToLower() == "system.runtime")
             {
-                // The core library is System.Runtime, so the collections assemblies are in System.Collections.dll.
+                // The core library is System.Runtime, so the collections assembly is System.Collections.dll.
                 // First we look if it is not already referenced by `assembly' and if not, we made an explicit reference
                 // to System.Collections.
                 var collectionsAssembly = assembly.MainModule.AssemblyReferences.FirstOrDefault(ass => ass.Name.ToLower() == "system.collections");
-                if (collectionsAssembly == null)
+                if (collectionsAssembly is null)
                 {
                     collectionsAssembly = new AssemblyNameReference("System.Collections", new Version(4,0,0,0));
                 }
+
                 return assembly.MainModule.AssemblyResolver.Resolve(collectionsAssembly);
             }
             else
@@ -197,46 +177,32 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Finds the assembly in which the generic collections are defined. This can be either in mscorlib.dll or in System.Collections.dll depending on the .NET runtime environment.
+        ///   Finds the assembly in which reflection infrastructure is defined. This can be either in <c>mscorlib.dll</c> or
+        ///   in <c>System.Collections.dll</c> depending on the .NET runtime environment.
         /// </summary>
-        /// <param name="assembly">Assembly where the generic collections are defined.</param>
-        /// <returns></returns>
+        /// <param name="assembly">Assembly where reflection infrastructure is defined.</param>
+        /// <returns>An <see cref="AssemblyDefinition"/> where reflection infrastructure is defined.</returns>
         public static AssemblyDefinition FindReflectionAssembly(AssemblyDefinition assembly)
         {
-            // Ask Cecil for the core library which will be either mscorlib or System.Runtime.
+            // Ask Cecil for the core library which will be either mscorlib or System.Runtime
             var corlibReference = FindCorlibAssembly(assembly);
 
             if (corlibReference.Name.Name.ToLower() == "system.runtime")
             {
-                // The core library is System.Runtime, so the collections assemblies are in System.Collections.dll.
+                // The core library is System.Runtime, so the reflection infrastructure is in System.Reflection.dll.
                 // First we look if it is not already referenced by `assembly' and if not, we made an explicit reference
-                // to System.Collections.
-                var collectionsAssembly = assembly.MainModule.AssemblyReferences.FirstOrDefault(ass => ass.Name.ToLower() == "system.reflection");
-                if (collectionsAssembly == null)
+                // to System.Reflection.
+                var reflectionAssembly = assembly.MainModule.AssemblyReferences.FirstOrDefault(ass => ass.Name.ToLower() == "system.reflection");
+                if (reflectionAssembly is null)
                 {
-                    collectionsAssembly = new AssemblyNameReference("System.Reflection", new Version(4, 0, 0, 0));
+                    reflectionAssembly = new AssemblyNameReference("System.Reflection", new Version(4, 0, 0, 0));
                 }
-                return assembly.MainModule.AssemblyResolver.Resolve(collectionsAssembly);
+                return assembly.MainModule.AssemblyResolver.Resolve(reflectionAssembly);
             }
             else
             {
                 return corlibReference;
             }
-        }
-
-        /// <summary>
-        /// Get AssemblyProcessorProgram Files x86
-        /// </summary>
-        /// <returns></returns>
-        public static string ProgramFilesx86()
-        {
-            if (8 == IntPtr.Size
-                || (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
-            {
-                return Environment.GetEnvironmentVariable("ProgramFiles(x86)");
-            }
-
-            return Environment.GetEnvironmentVariable("ProgramFiles");
         }
 
         public static GenericInstanceType ChangeGenericInstanceType(this GenericInstanceType type, TypeReference elementType, IEnumerable<TypeReference> genericArguments)
@@ -295,15 +261,13 @@ namespace Stride.Core.AssemblyProcessor
                 return type;
 
             TypeReference result;
-            var arrayType = type as ArrayType;
-            if (arrayType != null)
+            if (type is ArrayType arrayType)
             {
                 result = new ArrayType(arrayType.ElementType, arrayType.Rank);
             }
             else
             {
-                var genericInstanceType = type as GenericInstanceType;
-                if (genericInstanceType != null)
+                if (type is GenericInstanceType genericInstanceType)
                 {
                     result = new GenericInstanceType(genericInstanceType.ElementType);
                 }
@@ -323,11 +287,9 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Sometimes, TypeReference.IsValueType is not properly set (since it needs to load dependent assembly).
-        /// THis do so when necessary.
+        ///   Sometimes, <see cref="TypeReference.IsValueType"/> is not properly set (since it needs to load dependent assembly).
+        ///   This do so when necessary.
         /// </summary>
-        /// <param name="typeReference"></param>
-        /// <returns></returns>
         public static TypeReference FixupValueType(this TypeReference typeReference)
         {
             return FixupValueTypeVisitor.Default.VisitDynamic(typeReference);
@@ -339,10 +301,10 @@ namespace Stride.Core.AssemblyProcessor
                 result.GenericParameters.Add(genericParameter);
         }
 
-        public static string GenerateGenerics(this TypeReference type, bool empty = false)
+        public static string GenerateGenericsString(this TypeReference type, bool empty = false)
         {
             var genericInstanceType = type as GenericInstanceType;
-            if (!type.HasGenericParameters && genericInstanceType == null)
+            if (!type.HasGenericParameters && genericInstanceType is null)
                 return string.Empty;
 
             var result = new StringBuilder();
@@ -359,7 +321,7 @@ namespace Stride.Core.AssemblyProcessor
                         result.Append(",");
                     first = false;
                     if (!empty)
-                        result.Append(ConvertCSharp(genericArgument, empty));
+                        result.Append(ConvertToValidCSharp(genericArgument, empty));
                 }
 
                 result.Append(">");
@@ -378,7 +340,7 @@ namespace Stride.Core.AssemblyProcessor
                         result.Append(",");
                     first = false;
                     if (!empty)
-                        result.Append(ConvertCSharp(genericParameter, empty));
+                        result.Append(ConvertToValidCSharp(genericParameter, empty));
                 }
 
                 result.Append(">");
@@ -389,28 +351,15 @@ namespace Stride.Core.AssemblyProcessor
             return result.ToString();
         }
 
-        public unsafe static string ConvertTypeId(this TypeReference type)
-        {
-            var typeName = type.ConvertCSharp(false);
-            var typeId = ObjectId.FromBytes(Encoding.UTF8.GetBytes(typeName));
-
-            var typeIdHash = (uint*)&typeId;
-            return string.Format("new {0}(0x{1:x8}, 0x{2:x8}, 0x{3:x8}, 0x{4:x8})", typeof(ObjectId).FullName, typeIdHash[0], typeIdHash[1], typeIdHash[2], typeIdHash[3]);
-        }
-
         /// <summary>
-        /// Generates type name valid to use from C# source file.
+        ///   Generates a type name valid to use from C# source.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="empty"></param>
-        /// <returns></returns>
-        public static string ConvertCSharp(this TypeReference type, bool empty = false)
+        public static string ConvertToValidCSharp(this TypeReference type, bool empty = false)
         {
             // Try to process arrays
-            var arrayType = type as ArrayType;
-            if (arrayType != null)
+            if (type is ArrayType arrayType)
             {
-                return ConvertCSharp(arrayType.ElementType, empty) + "[]";
+                return ConvertToValidCSharp(arrayType.ElementType, empty) + "[]";
             }
 
             // Remove the `X at end of generic definition.
@@ -423,8 +372,7 @@ namespace Stride.Core.AssemblyProcessor
             typeName = typeName.Replace('/', '.');
 
             // Try to process generic instantiations
-            var genericInstanceType = type as GenericInstanceType;
-            if (genericInstanceType != null)
+            if (type is GenericInstanceType genericInstanceType)
             {
                 var result = new StringBuilder();
 
@@ -439,7 +387,7 @@ namespace Stride.Core.AssemblyProcessor
                         result.Append(",");
                     first = false;
                     if (!empty)
-                        result.Append(ConvertCSharp(genericArgument, empty));
+                        result.Append(ConvertToValidCSharp(genericArgument, empty));
                 }
 
                 result.Append(">");
@@ -462,7 +410,7 @@ namespace Stride.Core.AssemblyProcessor
                         result.Append(",");
                     first = false;
                     if (!empty)
-                        result.Append(ConvertCSharp(genericParameter, empty));
+                        result.Append(ConvertToValidCSharp(genericParameter, empty));
                 }
 
                 result.Append(">");
@@ -474,11 +422,11 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Generates the Mono.Cecil TypeReference from its .NET <see cref="Type"/> counterpart.
+        ///   Generates the <c>Mono.Cecil</c> <see cref="TypeReference"/> from its .NET <see cref="Type"/> counterpart.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="assemblyResolver">The assembly resolver.</param>
-        /// <returns></returns>
+        /// <returns><see cref="TypeReference"/> for the provided type.</returns>
         public static TypeReference GenerateTypeCecil(this Type type, BaseAssemblyResolver assemblyResolver)
         {
             var assemblyDefinition = assemblyResolver.Resolve(AssemblyNameReference.Parse(type.Assembly.FullName));
@@ -500,7 +448,7 @@ namespace Stride.Core.AssemblyProcessor
             }
 
             if (typeReference == null)
-                throw new InvalidOperationException("Could not resolve cecil type.");
+                throw new InvalidOperationException("Could not resolve Mono.Cecil type.");
 
             if (type.IsGenericType)
             {
@@ -525,16 +473,11 @@ namespace Stride.Core.AssemblyProcessor
             return typeReference;
         }
 
-        public static bool ContainsGenericParameter(this MemberReference memberReference)
-        {
-            return (bool)containsGenericParameterGetMethod.Invoke(memberReference, null);
-        }
-
         /// <summary>
-        /// Generates type name similar to Type.AssemblyQualifiedName.
+        ///   Generates a type name similar to <see cref="Type.AssemblyQualifiedName"/>.
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+        /// <param name="type">The <see cref="TypeReference"/>.</param>
+        /// <returns>Type name similar to <see cref="Type.AssemblyQualifiedName"/>.</returns>
         public static string ConvertAssemblyQualifiedName(this TypeReference type)
         {
             var result = new StringBuilder(256);
@@ -544,8 +487,6 @@ namespace Stride.Core.AssemblyProcessor
 
         private static void ConvertAssemblyQualifiedName(this TypeReference type, StringBuilder result)
         {
-            int start, end;
-
             var arrayType = type as ArrayType;
             if (arrayType != null)
             {
@@ -554,27 +495,17 @@ namespace Stride.Core.AssemblyProcessor
             }
 
             // Add FUllName from GetElementType() (remove generics etc...)
-            start = result.Length;
+            int start = result.Length;
             result.Append(type.GetElementType().FullName);
-            end = result.Length;
+            int end = result.Length;
 
             // Replace / into + (nested types)
             result = result.Replace('/', '+', start, end);
 
             // Try to process generic instantiations
-            var genericInstanceType = type as GenericInstanceType;
-            if (genericInstanceType != null)
+            if (type is GenericInstanceType genericInstanceType)
             {
-                // Ideally we would like to have access to Mono.Cecil TypeReference.ContainsGenericParameter, but it's internal.
-                // This doesn't cover every case but hopefully this should be enough for serialization
-                bool containsGenericParameter = false;
-                foreach (var genericArgument in genericInstanceType.GenericArguments)
-                {
-                    if (genericArgument.IsGenericParameter)
-                        containsGenericParameter = true;
-                }
-
-                if (!containsGenericParameter)
+                if (!type.ContainsGenericParameter)
                 {
                     // Use ElementType so that we have only the name without the <> part.
                     result.Append('[');
@@ -604,190 +535,61 @@ namespace Stride.Core.AssemblyProcessor
             }
 
             result.Append(", ");
-            start = result.Length;
             result.Append(type.Module.Assembly.FullName);
-            end = result.Length;
         }
 
-        public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
+        public static CustomAttribute GetCustomAttribute<T>(this AssemblyDefinition assembly) where T : Attribute
         {
-            var l = list as List<T>;
-            if (l != null)
-            {
-                l.AddRange(items);
-            }
-            else
-            {
-                foreach (var item in items)
-                {
-                    list.Add(item);
-                }
-            }
+            return assembly.CustomAttributes.FirstOrDefault(
+                x => string.Compare(x.AttributeType.FullName, typeof(T).FullName, StringComparison.Ordinal) == 0);
         }
 
-        public static void InflateGenericType(TypeDefinition genericType, TypeDefinition inflatedType, params TypeReference[] genericTypes)
+        public static CustomAttribute GetCustomAttribute(this AssemblyDefinition assembly, string attributeFullName)
         {
-            // Base type
-            var genericMapping = new Dictionary<TypeReference, TypeReference>();
-            for (int i = 0; i < genericTypes.Length; ++i)
-            {
-                genericMapping.Add(genericType.GenericParameters[i], genericTypes[i]);
-            }
-
-            var resolveGenericsVisitor = new ResolveGenericsVisitor(genericMapping);
-            inflatedType.BaseType = inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(genericType.BaseType));
-
-            // Some stuff are not handled yet
-            if (genericType.HasNestedTypes)
-            {
-                throw new NotImplementedException();
-            }
-
-            foreach (var field in genericType.Fields)
-            {
-                var clonedField = new FieldDefinition(field.Name, field.Attributes, inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(field.FieldType)));
-                inflatedType.Fields.Add(clonedField);
-            }
-
-            foreach (var property in genericType.Properties)
-            {
-                if (property.HasParameters)
-                    throw new NotImplementedException();
-
-                var clonedProperty = new PropertyDefinition(property.Name, property.Attributes, inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(property.PropertyType)))
-                {
-                    HasThis = property.HasThis,
-                    GetMethod = property.GetMethod != null ? InflateMethod(inflatedType, property.GetMethod, resolveGenericsVisitor) : null,
-                    SetMethod = property.SetMethod != null ? InflateMethod(inflatedType, property.GetMethod, resolveGenericsVisitor) : null,
-                };
-
-                inflatedType.Properties.Add(clonedProperty);
-            }
-
-            // Clone methods
-            foreach (var method in genericType.Methods)
-            {
-                var clonedMethod = InflateMethod(inflatedType, method, resolveGenericsVisitor);
-                inflatedType.Methods.Add(clonedMethod);
-            }
+            return assembly.CustomAttributes.FirstOrDefault(
+                x => string.Compare(x.AttributeType.FullName, attributeFullName, StringComparison.Ordinal) == 0);
         }
 
-        private static MethodDefinition InflateMethod(TypeDefinition inflatedType, MethodDefinition method, ResolveGenericsVisitor resolveGenericsVisitor)
+        public static CustomAttribute GetCustomAttribute<T>(this TypeDefinition type) where T : Attribute
         {
-            var clonedMethod = new MethodDefinition(method.Name, method.Attributes, inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(method.ReturnType)));
-            clonedMethod.Parameters.AddRange(
-                method.Parameters.Select(x => new ParameterDefinition(x.Name, x.Attributes, inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(x.ParameterType)))));
+            return type.CustomAttributes.FirstOrDefault(
+                x => string.Compare(x.AttributeType.FullName, typeof(T).FullName, StringComparison.Ordinal) == 0);
+        }
 
-            if (method.Body != null)
-            {
-                clonedMethod.Body.Variables.AddRange(
-                    method.Body.Variables.Select(x => new VariableDefinition(inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(x.VariableType)))));
+        public static CustomAttribute GetCustomAttribute(this TypeDefinition type, string attributeFullName)
+        {
+            return type.CustomAttributes.FirstOrDefault(
+                x => string.Compare(x.AttributeType.FullName, attributeFullName, StringComparison.Ordinal) == 0);
+        }
 
+        public static CustomAttribute GetCustomAttribute<T>(this FieldDefinition field) where T : Attribute
+        {
+            return field.CustomAttributes.FirstOrDefault(
+                x => string.Compare(x.AttributeType.FullName, typeof(T).FullName, StringComparison.Ordinal) == 0);
+        }
 
-                clonedMethod.Body.InitLocals = method.Body.InitLocals;
+        public static CustomAttribute GetCustomAttribute(this FieldDefinition field, string attributeFullName)
+        {
+            return field.CustomAttributes.FirstOrDefault(
+                x => string.Compare(x.AttributeType.FullName, attributeFullName, StringComparison.Ordinal) == 0);
+        }
 
-                var mappedInstructions = new Dictionary<Instruction, Instruction>();
-                foreach (var instruction in method.Body.Instructions)
-                {
-                    // Create nop instructions to start with (if we use actual opcode, it would do an operand check)
-                    var mappedInstruction = Instruction.Create(OpCodes.Nop);
-                    mappedInstruction.OpCode = instruction.OpCode;
-                    mappedInstruction.Operand = instruction.Operand;
-                    mappedInstructions[instruction] = mappedInstruction;
-                }
+        public static bool HasCustomAttribute(this AssemblyDefinition assembly, string attributeFullName)
+        {
+            return assembly.CustomAttributes.Any(
+                x => string.Compare(x.AttributeType.FullName, attributeFullName, StringComparison.Ordinal) == 0);
+        }
 
-                foreach (var instruction in method.Body.Instructions)
-                {
-                    // Fix operand
-                    var mappedInstruction = mappedInstructions[instruction];
-                    if (mappedInstruction.Operand is Instruction)
-                    {
-                        mappedInstruction.Operand = mappedInstructions[(Instruction)instruction.Operand];
-                    }
-                    else if (mappedInstruction.Operand is ParameterDefinition)
-                    {
-                        var parameterIndex = method.Parameters.IndexOf((ParameterDefinition)instruction.Operand);
-                        mappedInstruction.Operand = clonedMethod.Parameters[parameterIndex];
-                    }
-                    else if (mappedInstruction.Operand is VariableDefinition)
-                    {
-                        var variableIndex = method.Body.Variables.IndexOf((VariableDefinition)instruction.Operand);
-                        mappedInstruction.Operand = clonedMethod.Body.Variables[variableIndex];
-                    }
-                    else if (mappedInstruction.Operand is TypeReference)
-                    {
-                        var newTypeReference = resolveGenericsVisitor.VisitDynamic((TypeReference)mappedInstruction.Operand);
-                        newTypeReference = inflatedType.Module.ImportReference(newTypeReference);
-                        mappedInstruction.Operand = newTypeReference;
-                    }
-                    else if (mappedInstruction.Operand is FieldReference)
-                    {
-                        var fieldReference = (FieldReference)mappedInstruction.Operand;
-                        var newFieldReference = new FieldReference(fieldReference.Name,
-                            inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(fieldReference.FieldType)),
-                            inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(fieldReference.DeclaringType)));
-                        mappedInstruction.Operand = newFieldReference;
-                    }
-                    else if (mappedInstruction.Operand is MethodReference)
-                    {
-                        var methodReference = (MethodReference)mappedInstruction.Operand;
+        public static bool HasCustomAttribute(this FieldDefinition field, string attributeFullName)
+        {
+            return field.CustomAttributes.Any(
+                x => string.Compare(x.AttributeType.FullName, attributeFullName, StringComparison.Ordinal) == 0);
+        }
 
-                        var genericInstanceMethod = methodReference as GenericInstanceMethod;
-                        if (genericInstanceMethod != null)
-                        {
-                            methodReference = genericInstanceMethod.ElementMethod;
-                        }
-
-                        methodReference = methodReference.GetElementMethod();
-                        var newMethodReference = new MethodReference(methodReference.Name,
-                            inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(methodReference.ReturnType)),
-                            inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(methodReference.DeclaringType)))
-                        {
-                            HasThis = methodReference.HasThis,
-                            ExplicitThis = methodReference.ExplicitThis,
-                            CallingConvention = methodReference.CallingConvention,
-                        };
-
-                        foreach (var parameter in methodReference.Parameters)
-                            newMethodReference.Parameters.Add(new ParameterDefinition(inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(parameter.ParameterType))));
-
-                        if (methodReference.HasGenericParameters)
-                        {
-                            CopyGenericParameters(methodReference, newMethodReference);
-                        }
-
-                        if (genericInstanceMethod != null)
-                        {
-                            newMethodReference = newMethodReference.MakeGenericMethod(genericInstanceMethod.GenericArguments.Select(x => inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(x))).ToArray());
-                        }
-
-                        mappedInstruction.Operand = newMethodReference;
-                    }
-                    else if (mappedInstruction.Operand is Mono.Cecil.CallSite)
-                    {
-                        var callSite = (Mono.Cecil.CallSite)mappedInstruction.Operand;
-                        var newCallSite = new Mono.Cecil.CallSite(inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(callSite.ReturnType)))
-                        {
-                            HasThis = callSite.HasThis,
-                            ExplicitThis = callSite.ExplicitThis,
-                            CallingConvention = callSite.CallingConvention,
-                        };
-
-                        foreach (var parameter in callSite.Parameters)
-                            newCallSite.Parameters.Add(new ParameterDefinition(inflatedType.Module.ImportReference(resolveGenericsVisitor.VisitDynamic(parameter.ParameterType))));
-
-                        mappedInstruction.Operand = newCallSite;
-                    }
-                    else if (mappedInstruction.Operand is Instruction[])
-                    {
-                        // Not used in UpdatableProperty<T>
-                        throw new NotImplementedException();
-                    }
-                }
-
-                clonedMethod.Body.Instructions.AddRange(method.Body.Instructions.Select(x => mappedInstructions[x]));
-            }
-            return clonedMethod;
+        public static bool HasCustomAttribute(this PropertyDefinition property, string attributeFullName)
+        {
+            return property.CustomAttributes.Any(
+                x => string.Compare(x.AttributeType.FullName, attributeFullName, StringComparison.Ordinal) == 0);
         }
     }
 }

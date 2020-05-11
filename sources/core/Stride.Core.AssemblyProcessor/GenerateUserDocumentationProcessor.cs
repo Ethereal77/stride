@@ -39,8 +39,7 @@ namespace Stride.Core.AssemblyProcessor
                 var nameAttribute = member.Attribute("name");
                 if (nameAttribute == null)
                     continue;
-                
-            
+
                 foreach (var userdocElement in member.Descendants("userdoc"))
                 {
                     string userdoc = null;

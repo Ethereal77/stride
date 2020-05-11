@@ -27,14 +27,14 @@ namespace Stride.Core.AssemblyProcessor
             foreach (var serializatonProjectReferencePath in referencesToAdd)
             {
                 var shortAssemblyName = Path.GetFileNameWithoutExtension(serializatonProjectReferencePath);
-            
+
                 // Still in references (not optimized)
                 if (context.Assembly.MainModule.AssemblyReferences.Any(x => x.Name == shortAssemblyName))
                     continue;
-            
+
                 if (!File.Exists(serializatonProjectReferencePath))
                     continue;
-            
+
                 // For now, use AssemblyDefinition.ReadAssembly to compute full name -- maybe not very efficient but it shouldn't happen often anyway)
                 var referencedAssembly = AssemblyDefinition.ReadAssembly(serializatonProjectReferencePath, new ReaderParameters { AssemblyResolver = context.AssemblyResolver });
 

@@ -13,8 +13,8 @@ namespace Stride.Core.AssemblyProcessor
         SerializePublicProperties = 2,
 
         /// <summary>
-        /// If the member has DataMemberIgnore and DataMemberUpdatable, it will be included
+        ///   If the member has <c>DataMemberIgnore</c> and <c>DataMemberUpdatable</c>, it will be included.
         /// </summary>
-        Updatable = 4,
+        Updatable = 4
     }
 }

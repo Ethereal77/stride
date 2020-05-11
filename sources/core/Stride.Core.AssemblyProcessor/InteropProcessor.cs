@@ -5,16 +5,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
-
-using Stride.Core;
 
 using CallSite = Mono.Cecil.CallSite;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
@@ -25,17 +21,18 @@ namespace Stride.Core.AssemblyProcessor
     {
         private readonly List<TypeDefinition> classToRemoveList = new List<TypeDefinition>();
         private AssemblyDefinition assembly;
-        private TypeReference voidPointerType;
+
+        //private TypeReference voidPointerType;
         private TypeReference intType;
-        
+
         public bool Process(AssemblyProcessorContext context)
         {
-            this.assembly = context.Assembly;
+            assembly = context.Assembly;
             // Import void* and int32 from assembly using mscorlib specific version (2.0 or 4.0 depending on assembly)
-            voidPointerType = new PointerType(assembly.MainModule.TypeSystem.Void);
+            //voidPointerType = new PointerType(assembly.MainModule.TypeSystem.Void);
             intType = assembly.MainModule.TypeSystem.Int32;
 
-            context.Log.WriteLine($"Patch for assembly [{assembly.FullName}]");
+            context.Log.WriteLine($"Patching assembly [{assembly.FullName}].");
             foreach (var type in assembly.MainModule.Types)
                 PatchType(type);
 
@@ -52,12 +49,12 @@ namespace Stride.Core.AssemblyProcessor
         /// <param name="method">The method to add to the module init.</param>
         private void CreateModuleInit(MethodDefinition method)
         {
-            const MethodAttributes ModuleInitAttributes = MethodAttributes.Private
-                                                          | MethodAttributes.HideBySig
-                                                          | MethodAttributes.Static
-                                                          | MethodAttributes.Assembly
-                                                          | MethodAttributes.SpecialName
-                                                          | MethodAttributes.RTSpecialName;
+            const MethodAttributes ModuleInitAttributes = MethodAttributes.Private |
+                                                          MethodAttributes.HideBySig |
+                                                          MethodAttributes.Static |
+                                                          MethodAttributes.Assembly |
+                                                          MethodAttributes.SpecialName |
+                                                          MethodAttributes.RTSpecialName;
 
             var moduleType = assembly.MainModule.GetTypeResolved("<Module>");
 
@@ -93,7 +90,7 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the write method with the following signature: 
+        /// Creates the write method with the following signature:
         /// <code>
         /// public static unsafe void* Write&lt;T&gt;(void* pDest, ref T data) where T : struct
         /// </code>
@@ -131,7 +128,7 @@ namespace Stride.Core.AssemblyProcessor
             gen.Emit(OpCodes.Ldloc_0);
 
             // Emit cpblk
-            EmitCpblk(method, gen);
+            EmitCpblk(gen);
 
             // Return pDest + totalSize
             gen.Emit(OpCodes.Ldloc_0);
@@ -143,7 +140,7 @@ namespace Stride.Core.AssemblyProcessor
             gen.Emit(OpCodes.Ret);
         }
 
-        private void ReplacePinStatement(MethodDefinition method, ILProcessor ilProcessor, Instruction fixedtoPatch)
+        private void ReplacePinStatement(ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
             var previousInstruction = fixedtoPatch.Previous;
             int variableIndex;
@@ -221,21 +218,21 @@ namespace Stride.Core.AssemblyProcessor
             ilProcessor.Replace(fixedtoPatch, ldlocFixed);
         }
 
-        private void ReplaceReadInline(MethodDefinition method, ILProcessor ilProcessor, Instruction fixedtoPatch)
+        private void ReplaceReadInline(ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
             var paramT = ((GenericInstanceMethod)fixedtoPatch.Operand).GenericArguments[0];
             var copyInstruction = ilProcessor.Create(OpCodes.Ldobj, paramT);
             ilProcessor.Replace(fixedtoPatch, copyInstruction);
         }
 
-        private void ReplaceCopyInline(MethodDefinition method, ILProcessor ilProcessor, Instruction fixedtoPatch)
+        private void ReplaceCopyInline(ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
             var paramT = ((GenericInstanceMethod)fixedtoPatch.Operand).GenericArguments[0];
             var copyInstruction = ilProcessor.Create(OpCodes.Cpobj, paramT);
             ilProcessor.Replace(fixedtoPatch, copyInstruction);
         }
 
-        private void ReplaceSizeOfStructGeneric(MethodDefinition method, ILProcessor ilProcessor, Instruction fixedtoPatch)
+        private void ReplaceSizeOfStructGeneric(ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
             var paramT = ((GenericInstanceMethod)fixedtoPatch.Operand).GenericArguments[0];
             var copyInstruction = ilProcessor.Create(OpCodes.Sizeof, paramT);
@@ -304,7 +301,7 @@ namespace Stride.Core.AssemblyProcessor
             }
         }
 
-        private void ReplaceIncrementPinnedStructGeneric(MethodDefinition method, ILProcessor ilProcessor, Instruction incrementPinnedToPatch)
+        private void ReplaceIncrementPinnedStructGeneric(ILProcessor ilProcessor, Instruction incrementPinnedToPatch)
         {
             var paramT = ((GenericInstanceMethod)incrementPinnedToPatch.Operand).GenericArguments[0];
 
@@ -314,7 +311,7 @@ namespace Stride.Core.AssemblyProcessor
             ilProcessor.InsertAfter(sizeOfInst, ilProcessor.Create(OpCodes.Add));
         }
 
-        private void ReplaceAddPinnedStructGeneric(MethodDefinition method, ILProcessor ilProcessor, Instruction incrementPinnedToPatch)
+        private void ReplaceAddPinnedStructGeneric(ILProcessor ilProcessor, Instruction incrementPinnedToPatch)
         {
             var paramT = ((GenericInstanceMethod)incrementPinnedToPatch.Operand).GenericArguments[0];
 
@@ -452,7 +449,7 @@ namespace Stride.Core.AssemblyProcessor
             gen.Emit(OpCodes.Ldloc_0);
 
             // Emit cpblk
-            EmitCpblk(method, gen);
+            EmitCpblk(gen);
 
             // Return pDest + totalSize
             gen.Emit(OpCodes.Ldloc_0);
@@ -505,7 +502,7 @@ namespace Stride.Core.AssemblyProcessor
             gen.Emit(OpCodes.Ldloc_0);
 
             // Emit cpblk
-            EmitCpblk(method, gen);
+            EmitCpblk(gen);
 
             // Return pDest + totalSize
             gen.Emit(OpCodes.Ldloc_0);
@@ -515,26 +512,6 @@ namespace Stride.Core.AssemblyProcessor
 
             // Ret
             gen.Emit(OpCodes.Ret);
-        }
-
-        /// <summary>
-        /// Creates the read method with the following signature:
-        /// <code>
-        /// public static unsafe void Read&lt;T&gt;(void* pSrc, ref T data) where T : struct
-        /// </code>
-        /// </summary>
-        /// <param name="method">The method copy struct.</param>
-        private void CreateReadRawMethod(MethodDefinition method)
-        {
-            method.Body.Instructions.Clear();
-            method.Body.InitLocals = true;
-
-            var gen = method.Body.GetILProcessor();
-            var paramT = method.GenericParameters[0];
-
-            // Push (1) pSrc for memcpy
-            gen.Emit(OpCodes.Cpobj);
-
         }
 
         /// <summary>
@@ -581,7 +558,7 @@ namespace Stride.Core.AssemblyProcessor
             gen.Emit(OpCodes.Ldloc_0);
 
             // Emit cpblk
-            EmitCpblk(method, gen);
+            EmitCpblk(gen);
 
             // Return pDest + totalSize
             gen.Emit(OpCodes.Ldloc_0);
@@ -644,7 +621,7 @@ namespace Stride.Core.AssemblyProcessor
         /// </summary>
         /// <param name="method">The method.</param>
         /// <param name="gen">The gen.</param>
-        private void EmitCpblk(MethodDefinition method, ILProcessor gen)
+        private void EmitCpblk(ILProcessor gen)
         {
             var cpblk = gen.Create(OpCodes.Cpblk);
             //gen.Emit(OpCodes.Sizeof, voidPointerType);
@@ -722,13 +699,10 @@ namespace Stride.Core.AssemblyProcessor
                 var ilProcessor = method.Body.GetILProcessor();
 
                 var instructions = method.Body.Instructions;
-                Instruction instruction = null;
-                Instruction previousInstruction;
                 bool changes = false;
                 for (int i = 0; i < instructions.Count; i++)
                 {
-                    previousInstruction = instruction;
-                    instruction = instructions[i];
+                    Instruction instruction = instructions[i];
 
                     if (instruction.OpCode == OpCodes.Call && instruction.Operand is MethodReference)
                     {
@@ -792,34 +766,34 @@ namespace Stride.Core.AssemblyProcessor
                                 }
                                 else if (methodDescription.Name.StartsWith("ReadInline"))
                                 {
-                                    this.ReplaceReadInline(method, ilProcessor, instruction);
+                                    ReplaceReadInline(ilProcessor, instruction);
                                 }
                                 else if (methodDescription.Name.StartsWith("CopyInline") || methodDescription.Name.StartsWith("WriteInline"))
                                 {
-                                    this.ReplaceCopyInline(method, ilProcessor, instruction);
+                                    ReplaceCopyInline(ilProcessor, instruction);
                                 }
                                 else if (methodDescription.Name.StartsWith("SizeOf"))
                                 {
-                                    this.ReplaceSizeOfStructGeneric(method, ilProcessor, instruction);
+                                    ReplaceSizeOfStructGeneric(ilProcessor, instruction);
                                 }
                                 else if (methodDescription.Name.StartsWith("Pin"))
                                 {
                                     if (methodDescription.Parameters[0].ParameterType.IsByReference)
                                     {
-                                        this.ReplacePinStructGeneric(method, ilProcessor, instruction);
+                                        ReplacePinStructGeneric(method, ilProcessor, instruction);
                                     }
                                     else
                                     {
-                                        this.ReplacePinStatement(method, ilProcessor, instruction);
+                                        ReplacePinStatement(ilProcessor, instruction);
                                     }
                                 }
                                 else if (methodDescription.Name.StartsWith("IncrementPinned"))
                                 {
-                                    this.ReplaceIncrementPinnedStructGeneric(method, ilProcessor, instruction);
+                                    ReplaceIncrementPinnedStructGeneric(ilProcessor, instruction);
                                 }
                                 else if (methodDescription.Name.StartsWith("AddPinned"))
                                 {
-                                    this.ReplaceAddPinnedStructGeneric(method, ilProcessor, instruction);
+                                    ReplaceAddPinnedStructGeneric(ilProcessor, instruction);
                                 }
                             }
                         }

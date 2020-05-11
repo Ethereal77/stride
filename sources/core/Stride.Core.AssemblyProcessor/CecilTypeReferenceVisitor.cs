@@ -10,7 +10,7 @@ using Mono.Cecil;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Visit Cecil types recursively, and replace them if requested.
+    ///   Visits <c>Cecil</c> types recursively, and replace them if requested.
     /// </summary>
     public class CecilTypeReferenceVisitor
     {
@@ -41,24 +41,19 @@ namespace Stride.Core.AssemblyProcessor
 
         public virtual TypeReference VisitDynamic(TypeReference type)
         {
-            var arrayType = type as ArrayType;
-            if (arrayType != null)
+            if (type is ArrayType arrayType)
                 return Visit(arrayType);
 
-            var genericInstanceType = type as GenericInstanceType;
-            if (genericInstanceType != null)
+            if (type is GenericInstanceType genericInstanceType)
                 return Visit(genericInstanceType);
 
-            var genericParameter = type as GenericParameter;
-            if (genericParameter != null)
+            if (type is GenericParameter genericParameter)
                 return Visit(genericParameter);
 
-            var pointerType = type as PointerType;
-            if (pointerType != null)
+            if (type is PointerType pointerType)
                 return Visit(pointerType);
 
-            var pinnedType = type as PinnedType;
-            if (pinnedType != null)
+            if (type is PinnedType pinnedType)
                 return Visit(pinnedType);
 
             if (type.GetType() != typeof(TypeReference) && type.GetType() != typeof(TypeDefinition))

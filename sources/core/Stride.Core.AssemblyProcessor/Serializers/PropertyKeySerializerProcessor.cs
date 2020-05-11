@@ -22,11 +22,11 @@ namespace Stride.Core.AssemblyProcessor.Serializers
                     if (ComplexSerializerRegistry.IsMemberIgnored(member.CustomAttributes, ComplexTypeSerializerFlags.SerializePublicFields, DataMemberMode.Default))
                         continue;
 
-                    if (member.FieldType.Name == "PropertyKey`1"
-                        || member.FieldType.Name == "ParameterKey`1"
-                        || member.FieldType.Name == "ValueParameterKey`1"
-                        || member.FieldType.Name == "ObjectParameterKey`1"
-                        || member.FieldType.Name == "PermutationParameterKey`1")
+                    if (member.FieldType.Name == "PropertyKey`1" ||
+                        member.FieldType.Name == "ParameterKey`1" ||
+                        member.FieldType.Name == "ValueParameterKey`1" ||
+                        member.FieldType.Name == "ObjectParameterKey`1" ||
+                        member.FieldType.Name == "PermutationParameterKey`1")
                     {
                         context.GenerateSerializer(member.FieldType);
 

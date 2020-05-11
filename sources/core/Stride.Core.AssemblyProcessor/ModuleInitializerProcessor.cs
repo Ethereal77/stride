@@ -2,15 +2,12 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
-
-using Stride.Core.AssemblyProcessor;
 
 namespace Stride.Core.AssemblyProcessor
 {
@@ -46,7 +43,7 @@ namespace Stride.Core.AssemblyProcessor
             var staticConstructor = OpenModuleConstructor(assembly, out returnInstruction);
 
             var il = staticConstructor.Body.GetILProcessor();
-            
+
             var newReturnInstruction = Instruction.Create(returnInstruction.OpCode);
             newReturnInstruction.Operand = returnInstruction.Operand;
 
@@ -73,8 +70,9 @@ namespace Stride.Core.AssemblyProcessor
             if (staticConstructor == null)
             {
                 staticConstructor = new MethodDefinition(".cctor",
-                                                            MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                                                            voidType);
+                    MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.Static |
+                    MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                    voidType);
                 staticConstructor.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Ret));
 
                 moduleClass.Methods.Add(staticConstructor);

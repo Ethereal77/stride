@@ -7,7 +7,7 @@ using Mono.Cecil;
 namespace Stride.Core.AssemblyProcessor
 {
     /// <summary>
-    /// Generates array serializer type from a given array type.
+    ///   Generates a serializer type for a given array type.
     /// </summary>
     public class CecilArraySerializerFactory : ICecilSerializerFactory
     {

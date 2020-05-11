@@ -6,19 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Versioning;
-using System.Text;
-using System.Text.RegularExpressions;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Mdb;
 using Mono.Cecil.Pdb;
 using Mono.Cecil.Rocks;
-
-using Stride.Core;
 
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using TypeAttributes = Mono.Cecil.TypeAttributes;
@@ -27,7 +20,7 @@ namespace Stride.Core.AssemblyProcessor
 {
     public class AssemblyProcessorApp
     {
-        private TextWriter log;
+        private readonly TextWriter log;
 
         static AssemblyProcessorApp()
         {
@@ -38,20 +31,12 @@ namespace Stride.Core.AssemblyProcessor
 
         public AssemblyProcessorApp(TextWriter info)
         {
-            this.log = info ?? Console.Out;
-
-            SearchDirectories = new List<string>();
-            References = new List<string>();
-            ReferencesToAdd = new List<string>();
-            MemoryReferences = new List<AssemblyDefinition>();
-            ModuleInitializer = true;
+            log = info ?? Console.Out;
         }
-
-        public bool AutoNotifyProperty { get; set; }
 
         public bool ParameterKey { get; set; }
 
-        public bool ModuleInitializer { get; set; }
+        public bool ModuleInitializer { get; set; } = true;
 
         public bool SerializationAssembly { get; set; }
 
@@ -59,23 +44,14 @@ namespace Stride.Core.AssemblyProcessor
 
         public string NewAssemblyName { get; set; }
 
-        internal PlatformType Platform { get; set; }
+        public List<string> SearchDirectories { get; set; } = new List<string>();
 
-        public string TargetFramework { get; set; }
+        public List<string> References { get; set; } = new List<string>();
 
-        public List<string> SearchDirectories { get; set; }
-
-        public List<string> References { get; set; }
-
-        public List<AssemblyDefinition> MemoryReferences { get; set; }
-
-        public List<string> ReferencesToAdd { get; set; }
-
-        public string SignKeyFile { get; set; }
+        public List<string> ReferencesToAdd { get; set; } = new List<string>();
 
         public bool UseSymbols { get; set; }
 
-        public bool TreatWarningsAsErrors { get; set; }
         public bool DeleteOutputOnError { get; set; }
 
         /// <summary>
@@ -89,11 +65,10 @@ namespace Stride.Core.AssemblyProcessor
 
         public bool Run(string inputFile, string outputFile = null)
         {
-            if (inputFile == null) throw new ArgumentNullException("inputFile");
-            if (outputFile == null)
-            {
+            if (inputFile is null)
+                throw new ArgumentNullException(nameof(inputFile));
+            if (outputFile is null)
                 outputFile = inputFile;
-            }
 
             CustomAssemblyResolver assemblyResolver = null;
             AssemblyDefinition assemblyDefinition = null;
@@ -111,15 +86,19 @@ namespace Stride.Core.AssemblyProcessor
                         readWriteSymbols = false;
                     }
 
-                    assemblyDefinition = AssemblyDefinition.ReadAssembly(inputFile, new ReaderParameters { AssemblyResolver = assemblyResolver, ReadSymbols = readWriteSymbols, ReadWrite = true });
-                    bool modified;
+                    assemblyDefinition = AssemblyDefinition.ReadAssembly(inputFile, new ReaderParameters
+                        {
+                            AssemblyResolver = assemblyResolver,
+                            ReadSymbols = readWriteSymbols,
+                            ReadWrite = true
+                        });
 
                     // Check if pdb was actually read
                     readWriteSymbols = assemblyDefinition.MainModule.SymbolReader != null;
 
                     var symbolWriterProvider = assemblyDefinition.MainModule.SymbolReader?.GetWriterProvider();
 
-                    var result = Run(ref assemblyDefinition, ref readWriteSymbols, out modified);
+                    var result = Run(ref assemblyDefinition, out bool modified);
                     if (modified || inputFile != outputFile)
                     {
                         // Make sure output directory is created
@@ -173,24 +152,26 @@ namespace Stride.Core.AssemblyProcessor
             return assemblyResolver;
         }
 
-        public bool Run(ref AssemblyDefinition assemblyDefinition, ref bool readWriteSymbols, out bool modified)
+        public bool Run(ref AssemblyDefinition assemblyDefinition, out bool modified)
         {
             modified = false;
 
             try
             {
+                // Check if there is a AssemblyProcessedAttribute (already processed, we can skip).
+                // Note that we should probably also match the command line as well so that we throw an error if processing is different (need to rebuild).
+                if (assemblyDefinition.HasCustomAttribute("Stride.Core.AssemblyProcessedAttribute"))
+                {
+                    OnInfoAction($"Assembly [{assemblyDefinition.Name}] has already been processed. Skipping it.");
+                    return true;
+                }
+
                 var assemblyResolver = (CustomAssemblyResolver) assemblyDefinition.MainModule.AssemblyResolver;
 
                 // Register self
                 assemblyResolver.Register(assemblyDefinition);
 
                 var processors = new List<IAssemblyDefinitionProcessor>();
-
-                // We are no longer using it so we are deactivating it for now to avoid processing
-                //if (AutoNotifyProperty)
-                //{
-                //    processors.Add(new NotifyPropertyProcessor());
-                //}
 
                 processors.Add(new AddReferenceProcessor(ReferencesToAdd));
 
@@ -203,8 +184,6 @@ namespace Stride.Core.AssemblyProcessor
                 {
                     processors.Add(new RenameAssemblyProcessor(NewAssemblyName));
                 }
-
-                //processors.Add(new AsyncBridgeProcessor());
 
                 // Always applies the interop processor
                 processors.Add(new InteropProcessor());
@@ -230,35 +209,23 @@ namespace Stride.Core.AssemblyProcessor
                 processors.Add(new InitLocalsProcessor());
                 processors.Add(new DispatcherProcessor());
 
-                // Check if there is already a AssemblyProcessedAttribute (in which case we can skip processing, it has already been done).
-                // Note that we should probably also match the command line as well so that we throw an error if processing is different (need to rebuild).
-                if (
-                    assemblyDefinition.CustomAttributes.Any(
-                        x => x.AttributeType.FullName == "Stride.Core.AssemblyProcessedAttribute"))
-                {
-                    OnInfoAction($"Assembly [{assemblyDefinition.Name}] has already been processed, skip it.");
-                    return true;
-                }
-
                 // Register references so that our assembly resolver can use them
                 foreach (var reference in References)
                 {
                     assemblyResolver.RegisterReference(reference);
                 }
 
-                var assemblyProcessorContext = new AssemblyProcessorContext(assemblyResolver, assemblyDefinition,
-                    Platform, log);
+                var assemblyProcessorContext = new AssemblyProcessorContext(assemblyResolver, assemblyDefinition, log);
 
                 foreach (var processor in processors)
                     modified = processor.Process(assemblyProcessorContext) || modified;
 
-                // Assembly might have been recreated (i.e. il-repack), so let's use it from now on
+                // Assembly might have been recreated (i.e. IL-Repack), so let's use it from now on
                 assemblyDefinition = assemblyProcessorContext.Assembly;
 
                 if (modified)
                 {
-                    // In case assembly has been modified,
-                    // add AssemblyProcessedAttribute to assembly so that it doesn't get processed again
+                    // Add AssemblyProcessedAttribute to assembly so that it doesn't get processed again
                     var mscorlibAssembly = CecilExtensions.FindCorlibAssembly(assemblyDefinition);
                     if (mscorlibAssembly == null)
                     {
@@ -274,15 +241,16 @@ namespace Stride.Core.AssemblyProcessor
                     var voidType = assemblyDefinition.MainModule.TypeSystem.Void;
 
                     // Create custom attribute
-                    var assemblyProcessedAttributeType = new TypeDefinition("Stride.Core",
+                    var assemblyProcessedAttributeType = new TypeDefinition(
+                        "Stride.Core",
                         "AssemblyProcessedAttribute",
-                        TypeAttributes.BeforeFieldInit | TypeAttributes.AnsiClass | TypeAttributes.AutoClass |
-                        TypeAttributes.Public, attributeTypeRef);
+                        TypeAttributes.BeforeFieldInit | TypeAttributes.AnsiClass | TypeAttributes.AutoClass | TypeAttributes.Public,
+                        attributeTypeRef);
 
                     // Add constructor (call parent constructor)
                     var assemblyProcessedAttributeConstructor = new MethodDefinition(".ctor",
-                        MethodAttributes.RTSpecialName | MethodAttributes.SpecialName | MethodAttributes.HideBySig |
-                        MethodAttributes.Public, voidType);
+                        MethodAttributes.RTSpecialName | MethodAttributes.SpecialName | MethodAttributes.HideBySig | MethodAttributes.Public,
+                        voidType);
                     assemblyProcessedAttributeConstructor.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
                     assemblyProcessedAttributeConstructor.Body.Instructions.Add(Instruction.Create(OpCodes.Call,
                         attributeCtorRef));
@@ -299,19 +267,8 @@ namespace Stride.Core.AssemblyProcessor
                 OnErrorAction(null, e);
                 return false;
             }
-            finally
-            {
-            }
 
             return true;
-        }
-
-        public static string ByteArrayToString(byte[] bytes)
-        {
-            var result = new StringBuilder(bytes.Length * 2);
-            foreach (byte b in bytes)
-                result.AppendFormat("{0:x2}", b);
-            return result.ToString();
         }
 
         private void OnErrorAction(string errorMessage, Exception exception = null)

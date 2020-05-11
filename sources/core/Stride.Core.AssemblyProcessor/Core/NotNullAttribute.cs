@@ -4,15 +4,17 @@
 
 using System;
 
-// Delibate copy to make the type private
+// Deliberate copy to make the type private
 namespace Stride.Core.Annotations
 {
     /// <summary>
-    /// Indicates that the value of the marked element could never be <c>null</c>.
+    ///   Indicates that the value of the marked element could never be <c>null</c>.
     /// </summary>
     /// <example>
     /// <code>
-    /// [NotNull] object Foo() {
+    /// [NotNull]
+    /// object Foo()
+    /// {
     ///   return null; // Warning: Possible 'null' assignment
     /// }
     /// </code>
@@ -21,7 +23,5 @@ namespace Stride.Core.Annotations
          AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
          AttributeTargets.Delegate | AttributeTargets.Field | AttributeTargets.Event |
          AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.GenericParameter)]
-    sealed class NotNullAttribute : Attribute
-    {
-    }
+    internal sealed class NotNullAttribute : Attribute { }
 }

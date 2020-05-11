@@ -2,13 +2,11 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
 
 using Stride.Core.AssemblyProcessor.Serializers;
 
@@ -91,9 +89,9 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Helper class to generate code for UpdatablePropertyBase (since they usually have lot of similar code).
+        ///   Helper class to generate code for UpdatablePropertyBase (since they usually have lot of similar code).
         /// </summary>
-        abstract class UpdatablePropertyBaseCodeGenerator
+        private abstract class UpdatablePropertyBaseCodeGenerator
         {
             protected readonly AssemblyDefinition assembly;
             protected TypeDefinition declaringType;
@@ -105,9 +103,7 @@ namespace Stride.Core.AssemblyProcessor
 
             public abstract void EmitGetCode(ILProcessor il, TypeReference type);
 
-            public virtual void EmitSetCodeBeforeValue(ILProcessor il, TypeReference type)
-            {
-            }
+            public virtual void EmitSetCodeBeforeValue(ILProcessor il, TypeReference type) { }
 
             public abstract void EmitSetCodeAfterValue(ILProcessor il, TypeReference type);
 
@@ -152,7 +148,7 @@ namespace Stride.Core.AssemblyProcessor
             }
         }
 
-        class UpdatablePropertyCodeGenerator : UpdatablePropertyBaseCodeGenerator
+        private class UpdatablePropertyCodeGenerator : UpdatablePropertyBaseCodeGenerator
         {
             private readonly FieldDefinition updatablePropertyGetter;
             private readonly FieldDefinition updatablePropertySetter;
@@ -234,11 +230,9 @@ namespace Stride.Core.AssemblyProcessor
             }
         }
 
-        abstract class UpdatableCustomPropertyCodeGenerator : UpdatablePropertyBaseCodeGenerator
+        private abstract class UpdatableCustomPropertyCodeGenerator : UpdatablePropertyBaseCodeGenerator
         {
-            public UpdatableCustomPropertyCodeGenerator(AssemblyDefinition assembly) : base(assembly)
-            {
-            }
+            public UpdatableCustomPropertyCodeGenerator(AssemblyDefinition assembly) : base(assembly) { }
 
             public override void GenerateUpdatablePropertyCode()
             {
@@ -264,7 +258,7 @@ namespace Stride.Core.AssemblyProcessor
             }
         }
 
-        class UpdatableListCodeGenerator : UpdatableCustomPropertyCodeGenerator
+        private class UpdatableListCodeGenerator : UpdatableCustomPropertyCodeGenerator
         {
             private readonly FieldDefinition indexField;
             private readonly MethodReference ilistGetItem;
@@ -304,4 +298,4 @@ namespace Stride.Core.AssemblyProcessor
             }
         }
     }
-};
+}
