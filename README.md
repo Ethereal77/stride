@@ -1,9 +1,9 @@
 ![Stride](sources/data/images/Logo/stride-logo-readme.png)
 ==========================================================
 
-Welcome to the Xenko source code repository!
+Welcome to the Stride source code repository!
 
-Xenko is an open-source **C# game engine** for realistic rendering and an advanced editor (**Game Studio**) that allows
+Stride is an open-source **C# game engine** for realistic rendering and an advanced editor (**Game Studio**) that allows
 you create and manage the content of your games or applications in a visual and intuitive way.
 
 ![Stride Editor](https://stride3d.net/images/external/script-editor.png)
@@ -46,26 +46,26 @@ Ask for help or report issues:
 1. [Git](https://git-scm.com/downloads) (recent version that includes LFS, or install [Git LFS](https://git-lfs.github.com/) separately).
 
 2. [Visual Studio 2019](https://www.visualstudio.com/downloads/) with the following workloads:
+
   * `.NET desktop development` with `.NET Framework 4.7.2 targeting pack`
+
   * `Desktop development with C++` with
-    * `Windows 10 SDK (10.0.17763.0)` or later version (should be enabled by default)
-    * `MSVC v142 - VS2019 C++ x64/x86 build tools (v14.23)` or later version (should be enabled by default)
-    * `MSVC v142 - VS2019 C++ x64/x86 Spectre-mitigated libs (v14.23)` or later version (should be enabled by default)
+
+    - `Windows 10 SDK (10.0.17763.0)` or later version (should be enabled by default)
+    - `MSVC v142 - VS2019 C++ x64/x86 build tools (v14.23)` or later version (should be enabled by default)
+    - `MSVC v142 - VS2019 C++ x64/x86 Spectre-mitigated libs (v14.23)` or later version (should be enabled by default)
+
   * `.NET Core cross-platform development`
-  * Optional (to target UWP): `Universal Windows Platform development` with
-    * `Windows 10 SDK (10.0.17763.0)` or later version
-    * `MSVC v142 - VS2019 C++ ARM build tools (v14.23)` or later version (should be enabled by default)
-    * `MSVC v142 - VS2019 C++ ARM Spectre-mitigated libs (v14.23)` or later version (should be enabled by default)
-  * Optional (to target iOS/Android): `Mobile development with .NET` and `Android SDK setup (API level 27)` individual component, then in Visual Studio go to `Tools > Android > Android SDK Manager` and install `NDK` (version 19+) from `Tools` tab.
 
 3. [FBX SDK 2019.0 VS2015](https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-2019-0)
 
 ### Build Stride
 
 1. Clone Stride: `git clone https://github.com/Ethereal77/stride.git`
+
 2. Open `<StrideDir>\build\Stride.sln` with Visual Studio 2019, and build.
+
 3. Open `<StrideDir>\samples\StrideSamples.sln` and play with the samples.
-4. Optionally, open and build `Stride.Android.sln`, `Stride.iOS.sln`, etc...
 
 ### Contribution Guidelines
 
