@@ -18,7 +18,7 @@
     <AssemblyTitle>Stride Project Reference Fixup Tool</AssemblyTitle>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Mono.Options" Version="5.3.0.1" />
+    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />

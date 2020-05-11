@@ -9,8 +9,8 @@
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="EnvDTE" Version="8.0.1" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.5.3" />
+    <PackageReference Include="EnvDTE" Version="8.0.2" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.7.0" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>

@@ -162,7 +162,7 @@ namespace Stride.Core.Quantum
             var node = GetTargetNode();
             // TODO: review this, is there a typo here?
             var indices = (Node as IObjectNode)?.Indices.Select(x => x.Value);
-            if (indices == null)
+            if (indices is null)
                 throw new InvalidOperationException("This node is not enumerable.");
 
             dynamic thisNode = this;
