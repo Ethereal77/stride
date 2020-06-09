@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Stride.Core;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Diagnostics;
@@ -22,6 +23,8 @@ namespace Stride.Assets.Models
 {
     public abstract class ModelAssetImporter : AssetImporterBase
     {
+        public static readonly PropertyKey<bool> DeduplicateMaterialsKey = new PropertyKey<bool>("DeduplicateMaterials", typeof(ModelAssetImporter));
+
         public override IEnumerable<Type> RootAssetTypes
         {
             get
@@ -42,7 +45,7 @@ namespace Stride.Assets.Models
         }
 
         /// <summary>
-        /// Get the entity information.
+        ///   Get the entity information.
         /// </summary>
         /// <param name="localPath">The path of the asset.</param>
         /// <param name="logger">The logger to use to log import message.</param>
@@ -51,7 +54,7 @@ namespace Stride.Assets.Models
         public abstract EntityInfo GetEntityInfo(UFile localPath, Logger logger, AssetImporterParameters importParameters);
 
         /// <summary>
-        /// Get the total animation clip duration.
+        ///   Get the total animation clip duration.
         /// </summary>
         /// <param name="localPath">The path of the asset.</param>
         /// <param name="logger">The logger to use to log import message.</param>
@@ -61,25 +64,23 @@ namespace Stride.Assets.Models
         public abstract void GetAnimationDuration(UFile localPath, Logger logger, AssetImporterParameters importParameters, out TimeSpan startTime, out TimeSpan endTime);
 
         /// <summary>
-        /// Imports the model.
+        ///   Imports the model.
         /// </summary>
         /// <param name="localPath">The path of the asset.</param>
         /// <param name="importParameters">The parameters used to import the model.</param>
         /// <returns>A collection of assets.</returns>
         public override IEnumerable<AssetItem> Import(UFile localPath, AssetImporterParameters importParameters)
         {
-            var rawAssetReferences = new List<AssetItem>(); // the asset references without subdirectory path
+            // Asset references without subdirectory path
+            var rawAssetReferences = new List<AssetItem>();
 
             var entityInfo = GetEntityInfo(localPath, importParameters.Logger, importParameters);
-            if (entityInfo == null)
+            if (entityInfo is null)
                 return rawAssetReferences;
 
             //var isImportingEntity = importParameters.IsTypeSelectedForOutput<PrefabAsset>();
-
             var isImportingModel = importParameters.IsTypeSelectedForOutput<ModelAsset>();
-
             var isImportingMaterial = importParameters.IsTypeSelectedForOutput<MaterialAsset>();
-
             var isImportingTexture = importParameters.IsTypeSelectedForOutput<TextureAsset>();
 
             // 1. Textures
@@ -98,8 +99,7 @@ namespace Stride.Assets.Models
             // 3. Animation
             if (importParameters.IsTypeSelectedForOutput<AnimationAsset>())
             {
-                TimeSpan startTime, endTime;
-                GetAnimationDuration(localPath, importParameters.Logger, importParameters, out startTime, out endTime);
+                GetAnimationDuration(localPath, importParameters.Logger, importParameters, out TimeSpan startTime, out TimeSpan endTime);
 
                 ImportAnimation(rawAssetReferences, localPath, entityInfo.AnimationNodes, isImportingModel, skeletonAsset, startTime, endTime);
             }
@@ -113,7 +113,7 @@ namespace Stride.Assets.Models
             // 5. Model
             if (isImportingModel)
             {
-                ImportModel(rawAssetReferences, localPath, localPath, entityInfo, false, skeletonAsset);
+                ImportModel(rawAssetReferences, localPath, localPath, entityInfo, shouldPostFixName: false, skeletonAsset);
             }
 
             return rawAssetReferences;
@@ -179,7 +179,8 @@ namespace Stride.Assets.Models
                     }
                     asset.Materials.Add(modelMaterial);
                 }
-                //handle the case where during import we imported no materials at all
+
+                // Handle the case where during import we imported no materials at all
                 if (entityInfo.Materials.Count == 0)
                 {
                     var modelMaterial = new ModelMaterial { Name = "Material", MaterialInstance = new MaterialInstance() };
@@ -269,7 +270,7 @@ namespace Stride.Assets.Models
             //        var isTransparent = false;
             //        if (material.Parameters.ContainsKey(MaterialParameters.HasTransparency))
             //            isTransparent = (bool)material.Parameters[MaterialParameters.HasTransparency];
-                    
+
             //        if (!isTransparent)
             //        {
             //            // remove the diffuse node
@@ -286,7 +287,7 @@ namespace Stride.Assets.Models
 
         private static void ImportTextures(IEnumerable<string> textureDependencies, List<AssetItem> assetReferences)
         {
-            if (textureDependencies == null)
+            if (textureDependencies is null)
                 return;
 
             foreach (var textureFullPath in textureDependencies.Distinct(x => x))

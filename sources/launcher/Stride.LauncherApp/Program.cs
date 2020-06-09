@@ -83,9 +83,8 @@ namespace Stride.LauncherApp
 
             // Loading assemblies as embedded resources
             // see http://www.digitallycreated.net/Blog/61/combining-multiple-assemblies-into-a-single-exe-for-a-wpf-application
-            // NOTE: this class should not reference any of the embedded type to ensure the handler is registered before
-            // these types are loaded
-            // TODO: can we register this handler in the Module initializer?
+            // NOTE: This class should not reference any of the embedded type to ensure the handler is registered before these types are loaded.
+            // TODO: Can we register this handler in the Module initializer?
             AppDomain.CurrentDomain.AssemblyResolve += OnResolveAssembly;
             AppDomain.CurrentDomain.ExecuteAssemblyByName("Stride.Launcher", null, args);
         }
@@ -95,6 +94,8 @@ namespace Stride.LauncherApp
             var result = true;
 
             // Check for .NET 4.7.2+
+            // NOTE: It should now always be the case since renaming: Stride launcher is a separate forced setup to run, and it checks for 4.7.2.
+            // Still keeping code for future framework updates
             if (!CheckDotNet4Version(461808))
             {
                 prerequisiteLog.AppendLine("- .NET framework 4.7.2");
@@ -110,7 +111,7 @@ namespace Stride.LauncherApp
             // Check for .NET v4 version
             using (var ndpKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full"))
             {
-                if (ndpKey == null)
+                if (ndpKey is null)
                     return false;
 
                 int releaseKey = Convert.ToInt32(ndpKey.GetValue("Release"));
@@ -123,7 +124,7 @@ namespace Stride.LauncherApp
 
         private static Assembly OnResolveAssembly(object sender, ResolveEventArgs args)
         {
-            Assembly executingAssembly = Assembly.GetExecutingAssembly();
+            var executingAssembly = Assembly.GetExecutingAssembly();
             var assemblyName = new AssemblyName(args.Name);
 
             // PCL System assemblies are using version 2.0.5.0 while we have a 4.0

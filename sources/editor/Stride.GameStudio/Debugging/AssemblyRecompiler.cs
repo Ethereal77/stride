@@ -163,9 +163,11 @@ namespace Stride.GameStudio.Debugging
                                 case DiagnosticSeverity.Error:
                                     result.Error(diagnostic.GetMessage());
                                     break;
+
                                 case DiagnosticSeverity.Warning:
                                     result.Warning(diagnostic.GetMessage());
                                     break;
+
                                 case DiagnosticSeverity.Info:
                                     result.Info(diagnostic.GetMessage());
                                     break;
@@ -231,9 +233,9 @@ namespace Stride.GameStudio.Debugging
 
                             // Run assembly processor
                             assemblyProcessorApp.SerializationAssembly = true;
-                            if (!assemblyProcessorApp.Run(ref assemblyDefinition, out var modified))
+                            if (!assemblyProcessorApp.Run(ref assemblyDefinition, out _, out _))
                             {
-                                result.Error("Error running assembly processor.");
+                                result.Error("Error running Assembly Processor.");
                                 break;
                             }
 

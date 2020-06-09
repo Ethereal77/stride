@@ -5,18 +5,15 @@
 using System;
 using System.ComponentModel;
 
-using Stride.Core;
 using Stride.Core.IO;
 using Stride.Core.Reflection;
-using Stride.Core.Yaml;
 using Stride.Core.Yaml.Serialization;
 using Stride.Core.Yaml.Serialization.Serializers;
 
 namespace Stride.Core.Assets.Serializers
 {
     /// <summary>
-    /// A Yaml Serializer for <see cref="AssetBase"/>. Because this type is immutable
-    /// we need to implement a special serializer.
+    ///   A Yaml serializer specialized for <see cref="AssetItem"/>, which is an immutable type and needs special treatment.
     /// </summary>
     [YamlSerializerFactory(YamlAssetProfile.Name)]
     internal class AssetItemSerializer : ObjectSerializer, IDataCustomVisitor
@@ -47,6 +44,7 @@ namespace Stride.Core.Assets.Serializers
                 Location = item.Location;
                 SourceFolder = item.SourceFolder;
                 Asset = item.Asset;
+                AlternativePath = item.AlternativePath;
             }
 
             [DataMember(0)]
@@ -59,9 +57,12 @@ namespace Stride.Core.Assets.Serializers
             [DataMember(2)]
             public Asset Asset;
 
+            [DataMember(3)]
+            public UFile AlternativePath;
+
             public AssetItem ToAssetItem()
             {
-                return new AssetItem(Location, Asset) { SourceFolder = SourceFolder };
+                return new AssetItem(Location, Asset) { SourceFolder = SourceFolder, AlternativePath = AlternativePath };
             }
         }
 

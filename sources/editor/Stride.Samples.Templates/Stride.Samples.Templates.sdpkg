@@ -13,8 +13,6 @@ TemplateFolders:
         - !file ../../../samples/Graphics/MaterialShader/MaterialShader.sdtpl
         - !file ../../../samples/Graphics/SpriteFonts/SpriteFonts.sdtpl
         - !file ../../../samples/Graphics/SpriteStudioDemo/SpriteStudioDemo.sdtpl
-        - !file ../../../samples/Input/TouchInputs/TouchInputs.sdtpl
-        - !file ../../../samples/Input/GravitySensor/GravitySensor.sdtpl
         - !file ../../../samples/Particles/ParticlesSample/ParticlesSample.sdtpl
         - !file ../../../samples/Physics/PhysicsSample/PhysicsSample.sdtpl
         - !file ../../../samples/UI/GameMenu/GameMenu.sdtpl

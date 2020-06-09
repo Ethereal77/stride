@@ -22,6 +22,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <AssemblyTitle>Stride Launcher Application</AssemblyTitle>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -46,13 +47,19 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\Launcher.ico</ApplicationIcon>
     <RootNamespace>Stride.LauncherApp</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Announcements\**" />
+    <EmbeddedResource Remove="Announcements\**" />
+    <None Remove="Announcements\**" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="Resources\list-26.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Stride.Metrics" Version="1.0.0" />
-    <PackageReference Include="Stride.CrashReport" Version="1.0.1" />
+    <PackageReference Include="Stride.Metrics" Version="1.0.3" />
+    <PackageReference Include="Stride.CrashReport" Version="1.0.2" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Diagnostics.Debug" />
     <Reference Include="System.Management" />
@@ -119,8 +126,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Announcements\Release30.md" />
-    <Resource Include="Resources\EditorIcon.png" />
     <Resource Include="Resources\list-26.png" />
     <Resource Include="Resources\update.png" />
     <Resource Include="Resources\roadmap.png" />
@@ -192,9 +197,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Announcements\" />
   </ItemGroup>
   <Import Project="..\..\editor\Stride.PrivacyPolicy\Stride.PrivacyPolicy.projitems" Label="Shared" Condition="Exists('..\..\editor\Stride.PrivacyPolicy\Stride.PrivacyPolicy.projitems')" />
   <Import Project="..\..\editor\Stride.Core.MostRecentlyUsedFiles\Stride.Core.MostRecentlyUsedFiles.projitems" Label="Shared" />

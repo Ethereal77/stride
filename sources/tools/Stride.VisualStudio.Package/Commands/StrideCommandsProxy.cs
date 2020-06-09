@@ -24,7 +24,7 @@ using Stride.Core.Packages;
 namespace Stride.VisualStudio.Commands
 {
     /// <summary>
-    /// Proxies commands to real <see cref="IStrideCommands"/> implementation.
+    ///   Proxies commands to real <see cref="IStrideCommands"/> implementation.
     /// </summary>
     public class StrideCommandsProxy : MarshalByRefObject
     {
@@ -68,17 +68,17 @@ namespace Stride.VisualStudio.Commands
             AppDomain.CurrentDomain.AssemblyResolve += StrideDomainAssemblyResolve;
 
             var assembly = Assembly.Load("Stride.VisualStudio.Commands");
-            remote = (IStrideCommands)assembly.CreateInstance("Stride.VisualStudio.Commands.StrideCommands");
+            remote = (IStrideCommands) assembly.CreateInstance("Stride.VisualStudio.Commands.StrideCommands");
         }
 
         /// <summary>
-        /// Set the solution to use, when resolving the package containing the remote commands.
+        ///   Set the solution to use, when resolving the package containing the remote commands.
         /// </summary>
         /// <param name="solutionPath">The full path to the solution file.</param>
         /// <param name="domain">The AppDomain to set the solution on, or null the current AppDomain.</param>
         public static void InitializeFromSolution(string solutionPath, PackageInfo stridePackageInfo, AppDomain domain = null)
         {
-            if (domain == null)
+            if (domain is null)
             {
                 lock (computedPackageInfoLock)
                 {
@@ -107,7 +107,7 @@ namespace Stride.VisualStudio.Commands
                 {
                     SdkPaths = sdkPaths,
                     ExpectedVersion = expectedVersion != null ? new PackageVersion(expectedVersion) : null,
-                    LoadedVersion = loadedVersion != null ? new PackageVersion(loadedVersion) : null,
+                    LoadedVersion = loadedVersion != null ? new PackageVersion(loadedVersion) : null
                 });
             }
         }
@@ -121,15 +121,15 @@ namespace Stride.VisualStudio.Commands
         }
 
         /// <summary>
-        /// Gets the current proxy.
+        ///   Gets the current proxy.
         /// </summary>
-        /// <returns>StrideCommandsProxy.</returns>
+        /// <returns>The current <see cref="StrideCommandsProxy"/>.</returns>
         public static StrideCommandsProxy GetProxy()
         {
             lock (commandProxyLock)
             {
                 // New instance?
-                bool shouldReload = currentInstance == null || solutionChanged;
+                bool shouldReload = currentInstance is null || solutionChanged;
                 if (!shouldReload)
                 {
                     // Assemblies changed?
@@ -153,7 +153,7 @@ namespace Stride.VisualStudio.Commands
                     }
 
                     var stridePackageInfo = FindStrideSdkDir(solution).Result;
-                    if (stridePackageInfo.LoadedVersion == null)
+                    if (stridePackageInfo.LoadedVersion is null)
                         return null;
 
                     currentAppDomain = CreateStrideDomain();
@@ -168,27 +168,29 @@ namespace Stride.VisualStudio.Commands
         }
 
         /// <summary>
-        /// Creates the stride domain.
+        ///   Creates the Stride domain.
         /// </summary>
-        /// <returns>AppDomain.</returns>
+        /// <returns>The Stride <see cref="AppDomain"/>.</returns>
         public static AppDomain CreateStrideDomain()
         {
             return AppDomain.CreateDomain("stride-domain");
         }
 
         /// <summary>
-        /// Gets the current proxy.
+        ///   Gets the current proxy.
         /// </summary>
-        /// <returns>StrideCommandsProxy.</returns>
+        /// <returns>The current <see cref="StrideCommandsProxy"/>.</returns>
         public static StrideCommandsProxy CreateProxy(AppDomain domain)
         {
-            if (domain == null) throw new ArgumentNullException(nameof(domain));
-            return (StrideCommandsProxy)domain.CreateInstanceFromAndUnwrap(typeof(StrideCommandsProxy).Assembly.Location, typeof(StrideCommandsProxy).FullName);
+            if (domain is null)
+                throw new ArgumentNullException(nameof(domain));
+
+            return (StrideCommandsProxy) domain.CreateInstanceFromAndUnwrap(typeof(StrideCommandsProxy).Assembly.Location, typeof(StrideCommandsProxy).FullName);
         }
 
         public void Initialize()
         {
-            remote.Initialize(null);
+            remote.Initialize(strideSdkDir: null);
         }
 
         public bool ShouldReload()
@@ -289,9 +291,9 @@ namespace Stride.VisualStudio.Commands
         }
 
         /// <summary>
-        /// Gets the stride SDK dir.
+        ///   Gets the Stride SDK directory.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A <see cref="PackageInfo"/> representing the Stride SDK Package.</returns>
         internal static async Task<PackageInfo> FindStrideSdkDir(string solution, string packageName = "Stride.VisualStudio.Commands")
         {
             // Resolve the sdk version to load from the solution's package
@@ -339,7 +341,7 @@ namespace Stride.VisualStudio.Commands
                     var (request, result) = await RestoreHelper.Restore(logger, NuGetFramework.ParseFrameworkName(".NETFramework,Version=v4.7.2", DefaultFrameworkNameProvider.Instance), "win", packageName, new VersionRange(packageInfo.ExpectedVersion.ToNuGetVersion()));
                     if (result.Success)
                     {
-                        packageInfo.SdkPaths.AddRange(RestoreHelper.ListAssemblies(request, result));
+                        packageInfo.SdkPaths.AddRange(RestoreHelper.ListAssemblies(result.LockFile));
                         packageInfo.LoadedVersion = packageInfo.ExpectedVersion;
                     }
                     else

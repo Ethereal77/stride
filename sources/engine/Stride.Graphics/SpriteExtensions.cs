@@ -18,9 +18,9 @@ namespace Stride.Graphics
         /// </summary>
         /// <param name="sprite">The sprite</param>
         /// <param name="spriteBatch">The sprite batch used to draw the sprite.</param>
-        /// <param name="position">The position to which draw the sprite</param>
+        /// <param name="position">The position to which to draw the sprite</param>
         /// <param name="rotation">The rotation to apply on the sprite</param>
-        /// <param name="depthLayer">The depth layer to which draw the sprite</param>
+        /// <param name="depthLayer">The depth layer to which to draw the sprite</param>
         /// <param name="spriteEffects">The sprite effect to apply on the sprite</param>
         /// <remarks>This function must be called between the <see cref="SpriteBatch.Begin(Stride.Graphics.SpriteSortMode,Stride.Graphics.Effect)"/> 
         /// and <see cref="SpriteBatch.End()"/> calls of the provided <paramref name="spriteBatch"/></remarks>
@@ -36,11 +36,11 @@ namespace Stride.Graphics
         /// </summary>
         /// <param name="sprite">The sprite</param>
         /// <param name="spriteBatch">The sprite batch used to draw the sprite.</param>
-        /// <param name="position">The position to which draw the sprite</param>
+        /// <param name="position">The position to which to draw the sprite</param>
         /// <param name="color">The color to use to draw the sprite</param>
         /// <param name="rotation">The rotation to apply on the sprite</param>
         /// <param name="scales">The scale factors to apply on the sprite</param>
-        /// <param name="depthLayer">The depth layer to which draw the sprite</param>
+        /// <param name="depthLayer">The depth layer to which to draw the sprite</param>
         /// <param name="spriteEffects">The sprite effect to apply on the sprite</param>
         /// <remarks>This function must be called between the <see cref="SpriteBatch.Begin(Stride.Graphics.SpriteSortMode,Stride.Graphics.Effect)"/> 
         /// and <see cref="SpriteBatch.End()"/> calls of the provided <paramref name="spriteBatch"/></remarks>

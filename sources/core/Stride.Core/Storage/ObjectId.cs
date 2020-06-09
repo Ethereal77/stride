@@ -10,21 +10,21 @@ using Stride.Core.Annotations;
 namespace Stride.Core.Storage
 {
     /// <summary>
-    /// A hash to uniquely identify data.
+    ///   Represents a hash to uniquely identify a data object.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
 #if !STRIDE_ASSEMBLY_PROCESSOR
-    [DataContract("ObjectId")]
+    [DataContract("ObjectId"),Serializable]
 #endif
     public unsafe partial struct ObjectId : IEquatable<ObjectId>, IComparable<ObjectId>
     {
-        // ***************************************************************
+        // **************************************************************************************
         // NOTE: This file is shared with the AssemblyProcessor.
-        // If this file is modified, the AssemblyProcessor has to be
-        // recompiled separately. See build\Stride-AssemblyProcessor.sln
-        // ***************************************************************
+        //       If this file is modified, the AssemblyProcessor has to be recompiled separately.
+        //       See build\Stride-AssemblyProcessor.sln
+        // **************************************************************************************
 
-        // Murmurshash3 ahsh size is 128 bits.
+        // MurmurHash3 hash size is 128 bits
         public const int HashSize = 16;
         public const int HashStringLength = HashSize * 2;
         private const int HashSizeInUInt = HashSize / sizeof(uint);
@@ -32,27 +32,24 @@ namespace Stride.Core.Storage
 
         public static readonly ObjectId Empty = new ObjectId();
 
-        private uint hash1;
-        private uint hash2;
-        private uint hash3;
-        private uint hash4;
+        private uint hash1, hash2, hash3, hash4;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectId"/> struct.
+        ///   Initializes a new instance of the <see cref="ObjectId"/> struct.
         /// </summary>
-        /// <param name="hash">The hash.</param>
-        /// <exception cref="System.ArgumentNullException">hash</exception>
-        /// <exception cref="System.InvalidOperationException">ObjectId value doesn't match expected size.</exception>
+        /// <param name="hash">The initial hash value for this <see cref="ObjectId"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="hash"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="ArgumentException"><paramref name="hash"/>'s size doesn't match expected size (<see cref="HashSize"/>).</exception>
         public ObjectId([NotNull] byte[] hash)
         {
-            if (hash == null) throw new ArgumentNullException(nameof(hash));
-
+            if (hash is null)
+                throw new ArgumentNullException(nameof(hash));
             if (hash.Length != HashSize)
-                throw new InvalidOperationException("ObjectId value doesn't match expected size.");
+                throw new ArgumentException($"The hash size doesn't match expected size of {HashSize}.");
 
             fixed (byte* hashSource = hash)
             {
-                var hashSourceCurrent = (uint*)hashSource;
+                var hashSourceCurrent = (uint*) hashSource;
                 hash1 = *hashSourceCurrent++;
                 hash2 = *hashSourceCurrent++;
                 hash3 = *hashSourceCurrent++;
@@ -60,6 +57,9 @@ namespace Stride.Core.Storage
             }
         }
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="ObjectId"/> struct.
+        /// </summary>
         public ObjectId(uint hash1, uint hash2, uint hash3, uint hash4)
         {
             this.hash1 = hash1;
@@ -75,7 +75,7 @@ namespace Stride.Core.Storage
 
         public static ObjectId Combine(ObjectId left, ObjectId right)
         {
-            // Note: we don't carry (probably not worth the performance hit)
+            // NOTE: We don't carry (probably not worth the performance hit)
             return new ObjectId
             {
                 hash1 = left.hash1 * 3 + right.hash1,
@@ -87,7 +87,7 @@ namespace Stride.Core.Storage
 
         public static void Combine(ref ObjectId left, ref ObjectId right, out ObjectId result)
         {
-            // Note: we don't carry (probably not worth the performance hit)
+            // NOTE: We don't carry (probably not worth the performance hit)
             result = new ObjectId
             {
                 hash1 = left.hash1 * 3 + right.hash1,
@@ -98,9 +98,9 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Performs an explicit conversion from <see cref="ObjectId"/> to <see cref="byte[]"/>.
+        ///   Performs an explicit conversion from <see cref="ObjectId"/> to <see cref="byte[]"/>.
         /// </summary>
-        /// <param name="objectId">The object id.</param>
+        /// <param name="objectId">The <see cref="ObjectId"/> to convert.</param>
         /// <returns>The result of the conversion.</returns>
         [NotNull]
         public static explicit operator byte[](ObjectId objectId)
@@ -118,33 +118,27 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Implements the ==.
+        ///   Implements the equality operator.
         /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>The result of the operator.</returns>
-        public static bool operator ==(ObjectId left, ObjectId right)
-        {
-            return left.Equals(right);
-        }
+        /// <param name="left">The left-side <see cref="ObjectId"/> to compare.</param>
+        /// <param name="right">The right-side <see cref="ObjectId"/> to compare.</param>
+        /// <returns><c>true</c> if the two instances of <see cref="ObjectId"/> are equal; <c>false</c> otherwise.</returns>
+        public static bool operator ==(ObjectId left, ObjectId right) => left.Equals(right);
 
         /// <summary>
-        /// Implements the !=.
+        ///   Implements the inequality operator.
         /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>The result of the operator.</returns>
-        public static bool operator !=(ObjectId left, ObjectId right)
-        {
-            return !left.Equals(right);
-        }
+        /// <param name="left">The left-side <see cref="ObjectId"/> to compare.</param>
+        /// <param name="right">The right-side <see cref="ObjectId"/> to compare.</param>
+        /// <returns><c>true</c> if the two instances of <see cref="ObjectId"/> are different; <c>false</c> otherwise.</returns>
+        public static bool operator !=(ObjectId left, ObjectId right) => !left.Equals(right);
 
         /// <summary>
-        /// Tries to parse an <see cref="ObjectId"/> from a string.
+        ///   Tries to parse an <see cref="ObjectId"/> from a <see cref="string"/>.
         /// </summary>
-        /// <param name="input">The input hexa string.</param>
-        /// <param name="result">The result ObjectId.</param>
-        /// <returns><c>true</c> if parsing was successfull, <c>false</c> otherwise</returns>
+        /// <param name="input">The input string.</param>
+        /// <param name="result">The resulting parsed <see cref="ObjectId"/>.</param>
+        /// <returns><c>true</c> if the parsing was successful; <c>false</c> otherwise.</returns>
         public static bool TryParse([NotNull] string input, out ObjectId result)
         {
             if (input.Length != HashStringLength)
@@ -177,7 +171,7 @@ namespace Stride.Core.Storage
         /// <inheritdoc/>
         public bool Equals(ObjectId other)
         {
-            // Compare content
+            // Compare contents
             fixed (uint* xPtr = &hash1)
             {
                 var x1 = xPtr;
@@ -196,8 +190,9 @@ namespace Stride.Core.Storage
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is ObjectId && Equals((ObjectId)obj);
+            if (obj is ObjectId objectId)
+                return Equals(objectId);
+            return false;
         }
 
         /// <inheritdoc/>
@@ -205,7 +200,7 @@ namespace Stride.Core.Storage
         {
             fixed (uint* objPtr = &hash1)
             {
-                var obj1 = (int*)objPtr;
+                var obj1 = (int*) objPtr;
                 return *obj1;
             }
         }
@@ -213,7 +208,7 @@ namespace Stride.Core.Storage
         /// <inheritdoc/>
         public int CompareTo(ObjectId other)
         {
-            // Compare content
+            // Compare contents
             fixed (uint* xPtr = &hash1)
             {
                 var x1 = xPtr;
@@ -252,50 +247,49 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Gets a <see cref="Guid"/> from this object identifier.
+        ///   Gets a <see cref="Guid"/> representing this same object identifier.
         /// </summary>
         /// <returns>Guid.</returns>
         public Guid ToGuid()
         {
             fixed (void* hashStart = &hash1)
             {
-                return *(Guid*)hashStart;
+                return *(Guid*) hashStart;
             }
         }
 
         /// <summary>
-        /// News this instance.
+        ///   Returns a new instance of the <see cref="ObjectId"/> struct.
         /// </summary>
-        /// <returns>ObjectId.</returns>
-        public static ObjectId New()
-        {
-            return FromBytes(Guid.NewGuid().ToByteArray());
-        }
+        /// <returns>New <see cref="ObjectId"/> with a random hash.</returns>
+        public static ObjectId New() => FromBytes(Guid.NewGuid().ToByteArray());
 
         /// <summary>
-        /// Computes a hash from a byte buffer.
+        ///   Computes a hash from a byte buffer.
         /// </summary>
         /// <param name="buffer">The byte buffer.</param>
-        /// <returns>The hash of the object.</returns>
-        /// <exception cref="System.ArgumentNullException">buffer</exception>
+        /// <returns>The computed hash of the data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="buffer"/> is a <c>null</c> reference.</exception>
         public static ObjectId FromBytes([NotNull] byte[] buffer)
         {
-            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
 
             return FromBytes(buffer, 0, buffer.Length);
         }
 
         /// <summary>
-        /// Computes a hash from a byte buffer.
+        ///   Computes a hash from a byte buffer.
         /// </summary>
         /// <param name="buffer">The byte buffer.</param>
-        /// <param name="offset">The offset into the buffer.</param>
-        /// <param name="count">The number of bytes to read from the buffer starting at offset position.</param>
-        /// <returns>The hash of the object.</returns>
-        /// <exception cref="System.ArgumentNullException">buffer</exception>
+        /// <param name="offset">The offset into the <paramref name="buffer"/>.</param>
+        /// <param name="count">The number of bytes to read from the <paramref name="buffer"/> starting at <paramref name="offset"/> position.</param>
+        /// <returns>The computed hash of the data.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="buffer"/> is a <c>null</c> reference.</exception>
         public static ObjectId FromBytes([NotNull] byte[] buffer, int offset, int count)
         {
-            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
 
             var builder = new ObjectIdBuilder();
             builder.Write(buffer, offset, count);

@@ -6,12 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Mdb;
 using Mono.Cecil.Pdb;
 using Mono.Cecil.Rocks;
+
+using Stride.Core.Storage;
 
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using TypeAttributes = Mono.Cecil.TypeAttributes;
@@ -55,7 +58,7 @@ namespace Stride.Core.AssemblyProcessor
         public bool DeleteOutputOnError { get; set; }
 
         /// <summary>
-        /// Should we keep a copy of the original assembly? Useful for debugging.
+        ///   Gets a value indicating whether we should keep a copy of the original assembly. Useful for debugging.
         /// </summary>
         public bool KeepOriginal { get; internal set; }
 
@@ -98,7 +101,7 @@ namespace Stride.Core.AssemblyProcessor
 
                     var symbolWriterProvider = assemblyDefinition.MainModule.SymbolReader?.GetWriterProvider();
 
-                    var result = Run(ref assemblyDefinition, out bool modified);
+                    var result = Run(ref assemblyDefinition, out bool modified, out var serializationHash);
                     if (modified || inputFile != outputFile)
                     {
                         // Make sure output directory is created
@@ -117,7 +120,7 @@ namespace Stride.Core.AssemblyProcessor
 
                         if (assemblyDefinition.MainModule.FileName != outputFile)
                         {
-                            // Note: using FileShare.Read otherwise often had access conflict (maybe with antivirus or window ssearch?)
+                            // NOTE: Using FileShare.Read otherwise often had access conflict (maybe with antivirus or window ssearch?)
                             assemblyDefinition.MainModule.Write(outputFile, new WriterParameters() { WriteSymbols = readWriteSymbols, SymbolWriterProvider = symbolWriterProvider });
                         }
                         else
@@ -126,6 +129,17 @@ namespace Stride.Core.AssemblyProcessor
                         }
                     }
 
+                    if (serializationHash != null)
+                    {
+                        var assemblySerializationHashFile = Path.ChangeExtension(outputFile, ".sdserializationhash");
+                        // Check and update current value (if it exists)
+                        var serializationHashString = serializationHash.Value.ToString();
+                        if (!File.Exists(assemblySerializationHashFile) ||
+                            File.ReadAllText(assemblySerializationHashFile, Encoding.UTF8) != serializationHashString)
+                        {
+                            File.WriteAllText(assemblySerializationHashFile, serializationHashString, Encoding.UTF8);
+                        }
+                    }
                     return result;
                 }
                 finally
@@ -152,9 +166,10 @@ namespace Stride.Core.AssemblyProcessor
             return assemblyResolver;
         }
 
-        public bool Run(ref AssemblyDefinition assemblyDefinition, out bool modified)
+        public bool Run(ref AssemblyDefinition assemblyDefinition, out bool modified, out ObjectId? serializationHash)
         {
             modified = false;
+            serializationHash = null;
 
             try
             {
@@ -222,12 +237,13 @@ namespace Stride.Core.AssemblyProcessor
 
                 // Assembly might have been recreated (i.e. IL-Repack), so let's use it from now on
                 assemblyDefinition = assemblyProcessorContext.Assembly;
+                serializationHash = assemblyProcessorContext.SerializationHash;
 
                 if (modified)
                 {
                     // Add AssemblyProcessedAttribute to assembly so that it doesn't get processed again
                     var mscorlibAssembly = CecilExtensions.FindCorlibAssembly(assemblyDefinition);
-                    if (mscorlibAssembly == null)
+                    if (mscorlibAssembly is null)
                     {
                         OnErrorAction("Missing reference to mscorlib.dll or System.Runtime.dll in assembly!");
                         return false;
@@ -273,7 +289,7 @@ namespace Stride.Core.AssemblyProcessor
 
         private void OnErrorAction(string errorMessage, Exception exception = null)
         {
-            if (OnErrorEvent == null)
+            if (OnErrorEvent is null)
             {
                 if (errorMessage != null)
                 {
@@ -292,7 +308,7 @@ namespace Stride.Core.AssemblyProcessor
 
         private void OnInfoAction(string infoMessage)
         {
-            if (OnInfoEvent == null)
+            if (OnInfoEvent is null)
             {
                 log.WriteLine(infoMessage);
             }

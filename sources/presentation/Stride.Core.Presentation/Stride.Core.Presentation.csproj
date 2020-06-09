@@ -5,12 +5,14 @@
 
   <PropertyGroup>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
+    <TargetFrameworks>$(StrideEditorTargetFrameworks)</TargetFrameworks>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
     <StrideLocalized>true</StrideLocalized>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\build\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -47,10 +49,7 @@
     <Resource Include="Resources\Images\close_window.png" />
     <Resource Include="Resources\Images\error-32.png" />
     <Resource Include="Resources\Images\info-32.png" />
-    <Resource Include="Resources\Images\maximize_window.png" />
-    <Resource Include="Resources\Images\minimize_window.png" />
     <Resource Include="Resources\Images\question-32.png" />
-    <Resource Include="Resources\Images\restore_window.png" />
     <Resource Include="Resources\Images\gear--pencil.png" />
     <Resource Include="Resources\Images\lock-unlock.png" />
     <Resource Include="Resources\Images\lock.png" />

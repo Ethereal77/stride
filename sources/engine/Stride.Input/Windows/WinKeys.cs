@@ -2,16 +2,18 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if STRIDE_INPUT_RAWINPUT
+#if STRIDE_INPUT_RAWINPUT || STRIDE_UI_WINFORMS || STRIDE_UI_WPF
+
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+
 using WinFormsKeys = System.Windows.Forms.Keys;
 
 namespace Stride.Input
 {
     /// <summary>
-    /// Mapping between <see cref="WinFormsKeys"/> and <see cref="Stride.Input.Keys"/> needed for
-    /// translating Winform key events into Stride ones.
+    ///   Mapping between <see cref="WinFormsKeys"/> and <see cref="Stride.Input.Keys"/> needed for
+    ///   translating WinForms key events into Stride ones.
     /// </summary>
     internal static class WinKeys
     {
@@ -19,7 +21,7 @@ namespace Stride.Input
         internal static extern int MapVirtualKey(int uCode, uint uMapType);
 
         /// <summary>
-        /// Map between Winform keys and Stride keys.
+        ///   Map between WinForms keys and Stride keys.
         /// </summary>
         internal static readonly Dictionary<WinFormsKeys, Keys> MapKeys = NewMapKeys();
 
@@ -32,7 +34,7 @@ namespace Stride.Input
 #pragma warning restore SA1310 // Field names should not contain underscore
 
         /// <summary>
-        /// Create a mapping between <see cref="WinFormsKeys"/> and <see cref="Stride.Input.Keys"/>
+        ///   Create a mapping between <see cref="WinFormsKeys"/> and <see cref="Stride.Input.Keys"/>.
         /// </summary>
         /// <returns>A new map.</returns>
         private static Dictionary<WinFormsKeys, Keys> NewMapKeys()

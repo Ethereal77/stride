@@ -2,25 +2,20 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.ServiceModel;
-
+using System;
 using Stride.Core.Diagnostics;
 
 namespace Stride.Debugger.Target
 {
     /// <summary>
-    /// Represents the debugger host commands that the target can access
+    ///   Provides methods for a debugging host that can be accessed by a <see cref="IGameDebuggerTarget"/>.
     /// </summary>
-    [ServiceContract(CallbackContract = typeof(IGameDebuggerTarget))]
-    public interface IGameDebuggerHost
+    public interface IGameDebuggerHost : IDisposable
     {
-        [OperationContract]
-        void RegisterTarget();
+        void RegisterTarget(string callbackAddress);
 
-        [OperationContract]
         void OnGameExited();
 
-        [OperationContract(IsOneWay = true)]
         void OnLogMessage(SerializableLogMessage logMessage);
     }
 }

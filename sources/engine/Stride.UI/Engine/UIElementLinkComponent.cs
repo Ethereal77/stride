@@ -16,33 +16,37 @@ namespace Stride.Engine
     public sealed class UIElementLinkComponent : EntityComponent
     {
         /// <summary>
-        /// Gets or sets the ui component which contains the hierarchy to use.
+        ///   Gets or sets the UI component which contains the hierarchy to use.
         /// </summary>
-        /// <value>
-        /// The ui component which contains the hierarchy to use.
-        /// </value>
-        /// <userdoc>The reference to the target entity to which to attach the current entity. If null, parent will be used.</userdoc>
+        /// <value>The UI component which contains the hierarchy to use.</value>
+        /// <userdoc>
+        ///   The reference to the target entity to which to attach the current entity. If <c>null</c>,
+        ///   the parent will be used.
+        /// </userdoc>
         [Display("Target (Parent if not set)")]
         public UIComponent Target { get; set; }
 
         /// <summary>
-        /// Gets or sets the camera component which is required if the UI component is a billboard.
+        ///   Gets or sets the camera component towards which to orient the UI component if it is a billboard.
         /// </summary>
         /// <value>
-        /// The camera component which is required if the UI component is a billboard.
+        ///   The camera component which is required if the UI component is a billboard.
         /// </value>
-        /// <userdoc>The reference to the target camera used to render the component. It is only required in case the parent UI component is a billboard.</userdoc>
+        /// <userdoc>
+        ///   The reference to the target camera used to render the component. It is only required in case the
+        ///   parent UI component is a billboard.
+        /// </userdoc>
         [Display("Camera (if billboard)")]
         public CameraComponent Camera { get; set; }
 
 
         /// <summary>
-        /// Gets or sets the name of the element.
+        ///   Gets or sets the name of the element.
         /// </summary>
         /// <value>
-        /// The name of the element.
+        ///   The name of the element.
         /// </value>
-        /// <userdoc>The name of node of the model of the target entity to which attach the current entity.</userdoc>
+        /// <userdoc>The name of the node of the model of the target entity to which to attach the current entity.</userdoc>
         public string NodeName { get; set; }
     }
 }

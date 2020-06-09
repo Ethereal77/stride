@@ -7,28 +7,28 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Editor.Quantum;
-using Stride.Core.Assets.Editor.View.Behaviors;
-using Stride.Core.Assets.Editor.ViewModel;
-using Stride.Core.Assets.Quantum;
-using Stride.Core.Assets.Quantum.Visitors;
-using Stride.Core.Assets.Serializers;
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.Mathematics;
+using Stride.Core.Quantum;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Serializers;
+using Stride.Core.Assets.Editor.Quantum;
+using Stride.Core.Assets.Editor.View.Behaviors;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Assets.Quantum.Visitors;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Services;
-using Stride.Core.Quantum;
 using Stride.Assets.Entities;
 using Stride.Assets.Models;
+using Stride.Assets.Presentation.Quantum;
+using Stride.Assets.Presentation.ViewModel;
 using Stride.Assets.Presentation.AssetEditors.AssetCompositeGameEditor.ViewModels;
 using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFactories;
 using Stride.Assets.Presentation.AssetEditors.SceneEditor.ViewModels;
-using Stride.Assets.Presentation.Quantum;
-using Stride.Assets.Presentation.ViewModel;
 using Stride.Engine;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
@@ -43,14 +43,15 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
         protected EntityHierarchyItemViewModel([NotNull] EntityHierarchyEditorViewModel editor, [NotNull] EntityHierarchyViewModel asset, [NotNull] IEnumerable<EntityDesign> childEntities)
             : base(editor, asset)
         {
-            if (childEntities == null) throw new ArgumentNullException(nameof(childEntities));
+            if (childEntities is null)
+                throw new ArgumentNullException(nameof(childEntities));
 
-            // note: we want to ignore case and diacritics (e.g. accentuation) when sorting the folders
+            // NOTE: We want to ignore case and diacritics (e.g. accentuation) when sorting the folders
             Folders = new AutoUpdatingSortedObservableCollection<EntityFolderViewModel>((x, y) => string.Compare(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase));
 
-            // Note: we make sure that empty folders and null folders are grouped together
-            // TODO: implement a more robust folder grouping method that trims, etc.
-            // TODO: also ensure that empty folder are serialized as null (or vice-versa) to avoid this kind of issue
+            // NOTE: We make sure that empty folders and null folders are grouped together
+            // TODO: Implement a more robust folder grouping method that trims, etc.
+            // TODO: Also ensure that empty folder are serialized as null (or vice-versa) to avoid this kind of issue
             foreach (var folderGroup in childEntities.GroupBy(x => !string.IsNullOrWhiteSpace(x.Folder) ? x.Folder : null).OrderBy(x => x.Key))
             {
                 if (!EntityFolderViewModel.GenerateFolder(this, folderGroup.Key, folderGroup))
@@ -71,7 +72,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
             subEntities.CollectionChanged += SubEntityCollectionChanged;
 
             // Add policies for adding/inserting assets
-            // TODO: make it work with plugins (discovery, registration, override...)
+            // TODO: Make it work with plugins (discovery, registration, override...)
             addAssetPolicies = new List<IAddAssetPolicy>
             {
                 new AddModelAssetPolicy<ModelAsset>(),
@@ -97,13 +98,13 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
         public AutoUpdatingSortedObservableCollection<EntityFolderViewModel> Folders { get; }
 
         /// <summary>
-        /// An enumeration of the items represented by this item.
+        ///   An enumeration of the items represented by this item.
         /// </summary>
         /// <remarks>
-        /// In case of a <see cref="EntityFolderViewModel"/> it is equivalent to <see cref="TransformChildren"/>.
-        /// In case of an <see cref="EntityViewModel"/> it is equivalent to <c>this</c>.
+        ///   In case of a <see cref="EntityFolderViewModel"/> it is equivalent to <see cref="TransformChildren"/>.
+        ///   In case of an <see cref="EntityViewModel"/> it is equivalent to <c>this</c>.
         /// </remarks>
-        // FIXME: find a better name
+        // TODO: Find a better name
         [ItemNotNull, NotNull]
         public abstract IEnumerable<EntityViewModel> InnerSubEntities { get; }
 
@@ -114,13 +115,13 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
         public bool IsExpanded { get => isExpanded; set => SetValue(ref isExpanded, value); }
 
         /// <summary>
-        /// The owner of this item.
+        ///   The owner of this item.
         /// </summary>
         /// <remarks>
-        /// In case of a <see cref="EntityFolderViewModel"/> it looks up for an ancestor <see cref="EntityViewModel"/> or <see cref="EntityHierarchyRootViewModel"/>.
-        /// In case of an <see cref="EntityViewModel"/> it is equivalent to <c>this</c>.
+        ///   In case of a <see cref="EntityFolderViewModel"/> it looks up for an ancestor <see cref="EntityViewModel"/> or <see cref="EntityHierarchyRootViewModel"/>.
+        ///   In case of an <see cref="EntityViewModel"/> it is equivalent to <c>this</c>.
         /// </remarks>
-        // FIXME: find a better name
+        // TODO: Find a better name
         [NotNull]
         public abstract EntityHierarchyElementViewModel Owner { get; }
 
@@ -137,6 +138,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
             Folders.CollectionChanged -= FolderCollectionChanged;
             subEntities.CollectionChanged -= SubEntityCollectionChanged;
             Editor.SelectedContent.Remove(this);
+
             base.Destroy();
         }
 
@@ -221,7 +223,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
         internal void InsertEntityViewModel([NotNull] EntityViewModel entity, int index, bool expand = true)
         {
             if (entity.IsDestroyed)
-                throw new InvalidOperationException("The entity to insert has already been destroyed");
+                throw new InvalidOperationException("The entity to insert has already been destroyed.");
 
             // Add the view model first, so actual entities can be fetched
             if (index < 0)
@@ -241,7 +243,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
 
         internal static void RemoveEntityViewModel([NotNull] EntityViewModel entity)
         {
-            if (entity.Parent == null) throw new InvalidOperationException($"{nameof(entity)}.{nameof(entity.Parent)} cannot be null");
+            if (entity.Parent is null)
+                throw new InvalidOperationException($"{nameof(entity)}.{nameof(entity.Parent)} cannot be null.");
+
             // Remove the view model - from its parent in case there is a hierarchy of folders
             entity.Parent?.subEntities.Remove(entity);
             entity.Destroy();
@@ -250,7 +254,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
         [NotNull]
         public EntityHierarchyItemViewModel FindOrCreateFolder(string folderPath, bool expand = true)
         {
-            // TODO: this could be factorized with EntityFolderViewModel.GenerateFolder
+            // TODO: This could be factorized with EntityFolderViewModel.GenerateFolder
             if (string.IsNullOrEmpty(folderPath))
                 return this;
 
@@ -269,7 +273,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                 {
                     subFolder = new EntityFolderViewModel(parent.Editor, parent.Asset, folderName, Enumerable.Empty<EntityDesign>());
                     parent.Folders.Add(subFolder);
-                    // Note: we don't push an operation when the new folder comes from a change in the base prefab, since the order of operation would be incorrect when undoing.
+                    // NOTE: We don't push an operation when the new folder comes from a change in the base prefab, since the order of operation would be incorrect when undoing.
                     if (!Editor.UndoRedoService.UndoRedoInProgress && !Asset.PropertyGraph.UpdatingPropertyFromBase)
                     {
                         var operation = new EntityFolderOperation(Asset, EntityFolderOperation.Action.FolderCreated, subFolder.Path, subFolder.Owner.Id);
@@ -310,6 +314,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                         InsertItem(e.NewStartingIndex < 0 ? Folders.Count - e.NewItems.Count : addIndex++, newItem);
                     }
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     foreach (EntityFolderViewModel oldItem in e.OldItems)
                     {
@@ -319,20 +324,29 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                             RemoveItemAt(e.OldStartingIndex);
                     }
                     break;
+
                 case NotifyCollectionChangedAction.Move:
                     // This is a bit experimental, let's strongly assert on the arguments
-                    if (e.OldItems.Count != 1) throw new InvalidOperationException("OldItems.Count must be equal to one when using NotifyCollectionChangedAction.Move");
-                    if (e.NewItems.Count != 1) throw new InvalidOperationException("NewItems.Count must be equal to one when using NotifyCollectionChangedAction.Move");
-                    if (e.NewItems[0] != e.OldItems[0]) throw new InvalidOperationException("The old item must be equal to the new item when using NotifyCollectionChangedAction.Move");
-                    if (e.OldStartingIndex < 0) throw new InvalidOperationException("OldStartingIndex must be greater or equal to zero when using NotifyCollectionChangedAction.Move");
-                    if (e.NewStartingIndex < 0) throw new InvalidOperationException("NewStartingIndex must be greater or equal to zero when using NotifyCollectionChangedAction.Move");
+                    if (e.OldItems.Count != 1)
+                        throw new InvalidOperationException("OldItems.Count must be equal to one when using NotifyCollectionChangedAction.Move");
+                    if (e.NewItems.Count != 1)
+                        throw new InvalidOperationException("NewItems.Count must be equal to one when using NotifyCollectionChangedAction.Move");
+                    if (e.NewItems[0] != e.OldItems[0])
+                        throw new InvalidOperationException("The old item must be equal to the new item when using NotifyCollectionChangedAction.Move");
+                    if (e.OldStartingIndex < 0)
+                        throw new InvalidOperationException("OldStartingIndex must be greater or equal to zero when using NotifyCollectionChangedAction.Move");
+                    if (e.NewStartingIndex < 0)
+                        throw new InvalidOperationException("NewStartingIndex must be greater or equal to zero when using NotifyCollectionChangedAction.Move");
+
                     var item = (EntityFolderViewModel)e.NewItems[0];
                     RemoveItemAt(e.OldStartingIndex);
                     InsertItem(e.NewStartingIndex, item);
                     break;
+
                 case NotifyCollectionChangedAction.Replace:
                 case NotifyCollectionChangedAction.Reset:
                     throw new NotSupportedException();
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -353,6 +367,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                             InsertItem(addIndex++, newItem);
                     }
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     var delIndex = offset + e.OldStartingIndex;
                     foreach (EntityHierarchyItemViewModel oldItem in e.OldItems)
@@ -363,10 +378,12 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                             RemoveItemAt(delIndex);
                     }
                     break;
+
                 case NotifyCollectionChangedAction.Replace:
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Reset:
                     throw new NotSupportedException("Replace, Move and Reset are not supported on this collection.");
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -490,7 +507,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
             {
                 scene = element as SceneRootViewModel;
                 element = element.TransformParent;
-            } while (scene == null && element != null);
+
+            } while (scene is null && element != null);
 
             // Accumulate offsets from all scenes in hierarchy
             var offset = Vector3.Zero;
@@ -513,10 +531,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
         private void ComputeRelativePosition([NotNull] EntityViewModel entity, [NotNull] EntityHierarchyElementViewModel relativeTo)
         {
             // Get entity world space transformation
-            Vector3 translation; Quaternion rotation; Vector3 scale;
             var transform = entity.AssetSideEntity.Transform;
             transform.UpdateWorldMatrix();
-            transform.GetWorldTransformation(out translation, out rotation, out scale);
+            transform.GetWorldTransformation(out Vector3 translation, out Quaternion rotation, out Vector3 scale);
 
             // Apply possible scene changing offset
             translation += CalculateSceneOffset(entity);
@@ -536,7 +553,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
             transformNode[nameof(TransformComponent.Scale)].Update(scale);
         }
 
-        // FIXME: consider using the cut/paste mechanism for moving entities
+        // TODO: Consider using the cut/paste mechanism for moving entities
         protected virtual void MoveChildren([NotNull] IReadOnlyCollection<object> children, AddChildModifiers modifiers, int index)
         {
             if (children.Count == 0)
@@ -555,18 +572,18 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                 AddEntitiesFromAssets(children, index, modifiers);
 
                 // Empty subfolders of entities that are being moved, recursively
-                // Note: here we only care about folders which ancestor is an entity, folders and subfolders in the children collection are dealt with later
-                // Note: order is reversed to deepest first, so we can create undo/redo operations in proper logical order
+                // NOTE: Here we only care about folders which ancestor is an entity, folders and subfolders in the children collection are dealt with later
+                // NOTE: Order is reversed to deepest first, so we can create undo/redo operations in proper logical order
                 var emptySubfolders = children.OfType<EntityHierarchyItemViewModel>()
                     .DepthFirst(x => x.Children).OfType<EntityViewModel>()
                     .SelectMany(e => e.Folders).DepthFirst(f => f.Folders)
                     .Where(f => !f.InnerSubEntities.Any())
-                    .Reverse().Select(f => KeyValuePair.Create(f.Owner.Id, Tuple.Create(f.Path, f.Asset))).ToList();
+                    .Reverse().Select(f => Core.KeyValuePair.Create(f.Owner.Id, Tuple.Create(f.Path, f.Asset))).ToList();
 
                 // Entities that are being directly moved with their folder path
                 var thisPath = (this as EntityFolderViewModel)?.Path ?? "";
-                // Note: cannot use a dictionary here since sibling entities would have the same path.
-                var entities = children.OfType<EntityViewModel>().Select(entity => KeyValuePair.Create(thisPath, entity)).ToList();
+                // NOTE: Cannot use a dictionary here since sibling entities would have the same path.
+                var entities = children.OfType<EntityViewModel>().Select(entity => Core.KeyValuePair.Create(thisPath, entity)).ToList();
 
                 // Move entities that are within folders being directly moved
                 foreach (var folder in children.OfType<EntityFolderViewModel>())
@@ -584,7 +601,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                 }
 
                 // Create operations to remove empty subfolders, so that undo/redo will work.
-                // Note: Non-empty subfolders are handled automatically thanks to the entities they contain.
+                // NOTE: Non-empty subfolders are handled automatically thanks to the entities they contain.
                 foreach (var folder in emptySubfolders)
                 {
                     var operation = new EntityFolderOperation(folder.Value.Item2, EntityFolderOperation.Action.FolderDeleted, folder.Value.Item1, folder.Key);
@@ -595,7 +612,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                 var maintainWorldPosition = (modifiers & AddChildModifiers.Alt) == AddChildModifiers.Alt;
                 var hierarchies = new Dictionary<Guid, AssetCompositeHierarchyData<EntityDesign, Entity>>();
                 var idRemapping = new Dictionary<Guid, Guid>();
-                // remove all
+                // Remove all
                 var assetsToFixup = new HashSet<EntityHierarchyViewModel>();
                 foreach (var entity in entities.Select(kv => kv.Value))
                 {
@@ -611,7 +628,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                         --index;
 
                     // Hierarchy must be cloned before removing the entities!
-                    // Note: if the source asset is different than the current asset, we need to generate new ids.
+                    // NOTE: If the source asset is different than the current asset, we need to generate new ids.
                     var flags = entity.Asset == Asset ? SubHierarchyCloneFlags.None : SubHierarchyCloneFlags.GenerateNewIdsForIdentifiableObjects;
                     var hierarchy = EntityHierarchyPropertyGraph.CloneSubHierarchies(entity.Asset.Session.AssetNodeContainer, entity.Asset.Asset, entity.Id.ObjectId.Yield(), flags, out Dictionary<Guid, Guid> remapping);
                     idRemapping.AddRange(remapping);
@@ -621,7 +638,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                     entity.Asset.AssetHierarchyPropertyGraph.RemovePartFromAsset(entityToMove);
                     assetsToFixup.Add(entity.Asset);
                 }
-                // insert all
+                // Insert all
                 foreach (var kv in entities)
                 {
                     var folderName = kv.Key;
@@ -636,7 +653,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                     var oldValue = node.Retrieve();
                     node.Update(folderName);
                     // This is a bit hackish, but the entity should be currently disconnected from any asset (since we're going to add it), so we need to manually create an action item for the folder change.
-                    // TODO: update the folder after insert, and subscribe to changes in EntityDesignData.Folder from EntityViewModel to propagate folder change at that level
+                    // TODO: Update the folder after insert, and subscribe to changes in EntityDesignData.Folder from EntityViewModel to propagate folder change at that level
                     var actionItem = new ContentValueChangeOperation(node, ContentChangeType.ValueChange, NodeIndex.Empty, oldValue, folderName, Asset.Dirtiables);
                     Asset.ServiceProvider.Get<IUndoRedoService>().PushOperation(actionItem);
                     Asset.AssetHierarchyPropertyGraph.AddPartToAsset(hierarchy.Parts, movedEntity, (Owner as EntityViewModel)?.AssetSideEntity, index++);
@@ -647,7 +664,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                 assetsToFixup.Add(Asset);
                 foreach (var asset in assetsToFixup)
                 {
-                    // FIXME: the following lines are identical in AssetCompositeHierarchyPasteProcessor.ProcessDeserializedData(). Consider factorization.
+                    // TODO: The following lines are identical in AssetCompositeHierarchyPasteProcessor.ProcessDeserializedData(). Consider factorization.
                     // Collect all referenceable objects from the target asset (where we're pasting)
                     var targetPropertyGraph = Editor.Session.GraphContainer.TryGetGraph(asset.Id);
                     var referenceableObjects = IdentifiableObjectCollector.Collect(targetPropertyGraph.Definition, targetPropertyGraph.RootNode);
@@ -673,8 +690,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                     });
                 }
 
-                // Note: for the following operations we need to get the full hierarchies of folders and remember their path
-                // Note: order is reversed to deepest first, so we can create undo/redo operations in proper logical order
+                // NOTE: For the following operations we need to get the full hierarchies of folders and remember their path
+                // NOTE: Order is reversed to deepest first, so we can create undo/redo operations in proper logical order
                 var allFolders = children.OfType<EntityFolderViewModel>().DepthFirst(f => f.Folders).Reverse().ToDictionary(f => f.Path);
                 // Remove any folder that was moved
                 foreach (var folder in allFolders.Values)
@@ -699,7 +716,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                         objectId = folder.Key.ObjectId;
                     var ownerId = new AbsoluteId(Asset.Id, objectId);
                     var owner = (EntityHierarchyElementViewModel)Editor.FindPartViewModel(ownerId);
-                    if (owner == null) throw new InvalidOperationException($"{nameof(owner)} cannot be null");
+                    if (owner is null)
+                        throw new InvalidOperationException($"{nameof(owner)} cannot be null.");
                     owner.FindOrCreateFolder(folder.Value.Item1);
                 }
 
@@ -711,7 +729,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
         }
 
         /// <summary>
-        /// Gets the index at which children should be added.
+        ///   Gets the index at which children should be added.
         /// </summary>
         /// <param name="children"></param>
         /// <remarks>This method ignores the concept of folder.</remarks>
@@ -724,7 +742,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
         }
 
         /// <summary>
-        /// Gets the index at which children should be inserted.
+        ///   Gets the index at which children should be inserted.
         /// </summary>
         /// <param name="position"></param>
         /// <remarks>This method ignores the concept of folder.</remarks>

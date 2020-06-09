@@ -14,10 +14,9 @@ using Stride.Core.IO;
 
 namespace Stride.Core.Assets.Tests
 {
-  
     public class TestPackage : TestBase
     {
-        [Fact]
+        [Fact(Skip = "Need check: we don't work with package directly anymore, they are considered external")]
         public void TestBasicPackageCreateSaveLoad()
         {
             PackageSessionPublicHelper.FindAndSetMSBuildVersion();
@@ -36,7 +35,7 @@ namespace Stride.Core.Assets.Tests
             // Write the solution when saving
             session.SolutionPath = Path.Combine(dirPath, "TestPackage_TestBasicPackageCreateSaveLoad_Generated1.sln");
 
-            // Delete the solution before saving it 
+            // Delete the solution before saving it
             if (File.Exists(session.SolutionPath))
             {
                 File.Delete(session.SolutionPath);

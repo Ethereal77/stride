@@ -5,18 +5,23 @@
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// Interface for logging.
+    ///   Provides a mechanism to register logging messages and information about the functioning of a process,
+    ///   program or operation.
     /// </summary>
     public interface ILogger
     {
         /// <summary>
-        /// Gets the module this logger refers to.
+        ///   Gets the module this logger refers to.
         /// </summary>
         /// <value>The module.</value>
+        /// <remarks>
+        ///   The module is an identifier for a logical part of the system. It can be a class name, a namespace or a regular string
+        ///   not linked to a code hierarchy.
+        /// </remarks>
         string Module { get; }
 
         /// <summary>
-        /// Logs the specified log message.
+        ///   Logs the specified log message.
         /// </summary>
         /// <param name="logMessage">The log message.</param>
         void Log(ILogMessage logMessage);

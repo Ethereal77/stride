@@ -12,46 +12,43 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-using Stride.Core.Assets.Analysis;
-using Stride.Core.Assets.Editor.Components.Properties;
-using Stride.Core.Assets.Editor.Quantum;
-using Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands;
-using Stride.Core.Assets.Editor.Services;
-using Stride.Core.Assets.Quantum;
 using Stride.Core;
+using Stride.Core.IO;
 using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
-using Stride.Core.IO;
+using Stride.Core.Quantum;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Quantum;
+using Stride.Core.Assets.Editor.Components.Properties;
+using Stride.Core.Assets.Editor.Quantum;
+using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Presentation.Quantum;
-using Stride.Core.Presentation.Quantum.Presenters;
 using Stride.Core.Presentation.Quantum.ViewModels;
 using Stride.Core.Presentation.Services;
-using Stride.Core.Quantum;
-using Stride.Core.Quantum.References;
 using Stride.Core.Translation;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
     /// <summary>
-    /// An interface representing the view model of an <see cref="Asset"/>.
+    ///   An interface representing the view model of an <see cref="Assets.Asset"/>.
     /// </summary>
     /// <typeparam name="TAsset">The type of asset represented by this view model.</typeparam>
     public interface IAssetViewModel<out TAsset>
         where TAsset : Asset
     {
         /// <summary>
-        /// Gets the asset object related to this view model.
+        ///   Gets the asset object related to this view model.
         /// </summary>
         [NotNull]
         TAsset Asset { get; }
     }
 
     /// <summary>
-    /// A generic version of the <see cref="AssetViewModel"/> class that allows to access directly the proper type of asset represented by this view model.
+    ///   A generic version of the <see cref="AssetViewModel"/> class that allows to access directly the proper type of asset represented by this view model.
     /// </summary>
     /// <typeparam name="TAsset">The type of asset represented by this view model.</typeparam>
     public class AssetViewModel<TAsset> : AssetViewModel, IAssetViewModel<TAsset>
@@ -67,11 +64,11 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <inheritdoc />
-        public new TAsset Asset => (TAsset)base.Asset;
+        public new TAsset Asset => (TAsset) base.Asset;
     }
 
     /// <summary>
-    /// A view model class that represents a single asset.
+    ///   Represents a view model of a single <see cref="Assets.Asset"/>.
     /// </summary>
     public abstract class AssetViewModel : SessionObjectViewModel, IChildViewModel, ISessionObjectViewModel, IAssetPropertyProviderViewModel, IDisposable
     {
@@ -79,6 +76,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         protected readonly ObservableList<MenuCommandInfo> assetCommands;
         protected readonly SessionNodeContainer NodeContainer;
         protected readonly bool Initializing;
+
         private readonly AnonymousCommand clearArchetypeCommand;
         private readonly AnonymousCommand createDerivedAssetCommand;
         private Package package;
@@ -89,6 +87,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private AssetItem assetItem;
         private IAssetEditorViewModel editor;
         private TaskCompletionSource<int> editorInitialized = new TaskCompletionSource<int>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetViewModel"/> class.
         /// </summary>
@@ -116,7 +115,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             assetCommands = new ObservableList<MenuCommandInfo>();
             createDerivedAssetCommand = new AnonymousCommand(ServiceProvider, CreateDerivedAsset) { IsEnabled = CanDerive };
             clearArchetypeCommand = new AnonymousCommand(ServiceProvider, ClearArchetype) { IsEnabled = Asset.Archetype != null };
-            // TODO: make the view model independent of the view (ie. MenuCommandInfo.Icon and remove this dispatcher call.
+            // TODO: Make the view model independent of the view (ie. MenuCommandInfo.Icon and remove this dispatcher call.
             Dispatcher.InvokeAsync(() =>
             {
                 assetCommands.Add(new MenuCommandInfo(ServiceProvider, createDerivedAssetCommand)
@@ -144,38 +143,49 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Gets the url of this asset.
+        ///   Gets the URL of the <see cref="Asset"/>.
         /// </summary>
         public string Url => AssetItem.Location;
 
         /// <summary>
-        /// Gets the unique identifier of this asset.
+        ///   Gets the unique identifier of the <see cref="Asset"/>.
         /// </summary>
         public AssetId Id => AssetItem.Id;
 
         /// <summary>
-        /// Gets or sets the name of this asset.
+        ///   Gets or sets the name of the <see cref="Asset"/>.
         /// </summary>
-        public override string Name { get => name; set => Rename(value); }
+        public override string Name
+        {
+            get => name;
+            set => Rename(value);
+        }
 
         /// <summary>
-        /// Gets or sets the collection of tags associated to this asset.
+        ///   Gets the collection of tags associated to the <see cref="Asset"/>.
         /// </summary>
         public ObservableList<string> Tags { get; } = new ObservableList<string>();
 
         /// <summary>
-        /// Gets or sets the directory containing this asset.
+        ///   Gets or sets the directory containing the <see cref="Asset"/>.
         /// </summary>
-        public DirectoryBaseViewModel Directory { get => directory; set => SetValue(ref directory, value); }
+        public DirectoryBaseViewModel Directory
+        {
+            get => directory;
+            set => SetValue(ref directory, value);
+        }
 
         /// <summary>
-        /// Gets whether this asset can provide an <see cref="GraphViewModel"/> representing its properties.
+        ///   Gets a value indicating whether the <see cref="Asset"/> can provide an <see cref="GraphViewModel"/> representing its properties.
         /// </summary>
         public virtual bool CanProvidePropertiesViewModel => !IsDeleted && IsEditable;
 
         /// <summary>
-        /// Gets the view model used in the editor of this asset. This property is null if the asset is not opened in an editor.
+        ///   Gets the view model used in the editor of the <see cref="Asset"/>.
         /// </summary>
+        /// <value>
+        ///   View model used in the editor of the <see cref="Asset"/>, or <c>null</c> if it is not opened in an editor.
+        /// </value>
         public IAssetEditorViewModel Editor
         {
             get => editor;
@@ -183,38 +193,42 @@ namespace Stride.Core.Assets.Editor.ViewModel
             {
                 SetValueUncancellable(ref editor, value, () =>
                 {
-                    if (value != null)
-                        editorInitialized.SetResult(1);
-                    else
+                    if (value is null)
                         editorInitialized = new TaskCompletionSource<int>();
+                    else
+                        editorInitialized.SetResult(1);
                     Session?.UpdateSessionState();
                 });
             }
         }
 
         /// <summary>
-        /// Gets whether this asset can be opened in an editor.
+        ///   Gets a value indicating whether the <see cref="Asset"/> can be opened in an editor.
         /// </summary>
         public bool HasEditor => IsEditable && ServiceProvider.Get<IAssetsPluginService>().HasEditorView(Session, AssetType);
 
         /// <summary>
-        /// Gets a task that completes when the editor is initialized and is reset when the editor is disposed.
+        ///   Gets a <see cref="Task"/> that completes when the editor is initialized and is reset when the editor is disposed.
         /// </summary>
         public Task EditorInitialized => editorInitialized.Task;
 
         /// <summary>
-        /// Gets the type of this asset.
+        ///   Gets the type of the <see cref="Asset"/>.
         /// </summary>
         [NotNull]
         public Type AssetType => AssetItem.Asset.GetType();
 
         /// <summary>
-        /// Gets the <see cref="AssetItem"/> object.
+        ///   Gets the <see cref="Assets.AssetItem"/> object associated with the <see cref="Asset"/>.
         /// </summary>
-        public AssetItem AssetItem { get => assetItem; private set => SetValueUncancellable(ref assetItem, value); }
+        public AssetItem AssetItem
+        {
+            get => assetItem;
+            private set => SetValueUncancellable(ref assetItem, value);
+        }
 
         /// <summary>
-        /// Gets the asset object related to this view model.
+        ///   Gets the <see cref="Assets.Asset"/> related to this view model.
         /// </summary>
         [NotNull]
         public Asset Asset => AssetItem.Asset;
@@ -222,37 +236,48 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public AssetPropertyGraph PropertyGraph { get; }
 
         /// <summary>
-        /// Gets the <see cref="ThumbnailData"/> associated to this <see cref="AssetViewModel"/>.
+        ///   Gets the <see cref="Services.ThumbnailData"/> associated to this <see cref="AssetViewModel"/>.
         /// </summary>
-        public ThumbnailData ThumbnailData { get => thumbnailData; private set => SetValueUncancellable(ref thumbnailData, value); }
+        public ThumbnailData ThumbnailData
+        {
+            get => thumbnailData;
+            private set => SetValueUncancellable(ref thumbnailData, value);
+        }
 
         /// <summary>
-        /// Gets the display name of the type of this asset.
+        ///   Gets the display name of the type of the <see cref="Asset"/>.
         /// </summary>
-        public override string TypeDisplayName { get { var desc = DisplayAttribute.GetDisplay(AssetType); return desc != null ? desc.Name : AssetType.Name; } }
+        public override string TypeDisplayName
+        {
+            get
+            {
+                var desc = DisplayAttribute.GetDisplay(AssetType);
+                return desc != null ? desc.Name : AssetType.Name;
+            }
+        }
 
         /// <summary>
-        /// Gets the dependencies of this asset.
+        ///   Gets the dependencies of the <see cref="Asset"/>.
         /// </summary>
         public AssetDependenciesViewModel Dependencies { get; }
 
         /// <summary>
-        /// Gets the view model of the sources of this asset.
+        ///   Gets the view model of the sources of the <see cref="Asset"/>.
         /// </summary>
         public AssetSourcesViewModel Sources { get; }
 
         /// <summary>
-        /// Gets whether the properties of this asset can be edited.
+        ///   Gets a value indicating whether the properties of the <see cref="Asset"/> can be edited.
         /// </summary>
         public override bool IsEditable => Directory?.Package?.IsEditable ?? false;
 
         /// <summary>
-        /// Gets whether this asset is locked. A locked asset cannot be moved, renamed, nor deleted.
+        ///   Gets a value indicating whether the <see cref="Asset"/> is locked, meaning it cannot be moved, renamed, nor deleted.
         /// </summary>
         public virtual bool IsLocked => !Directory.Package.IsEditable;
 
         /// <summary>
-        /// Gets whether this asset has been upgraded while being loaded.
+        ///   Gets a value indicating whether the <see cref="Asset"/> has been upgraded while being loaded.
         /// </summary>
         public bool HasBeenUpgraded { get; }
 
@@ -271,10 +296,10 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Initializes this asset. This method is guaranteed to be called once every other assets are loaded in the session.
+        ///   Initializes the <see cref="Asset"/>. This method is guaranteed to be called once every other assets are loaded in the session.
         /// </summary>
         /// <remarks>
-        /// Inheriting classes should override it when necessary, provided that they also call the base implementation.
+        ///   Inheriting classes should override it when necessary, provided that they also call the base implementation.
         /// </remarks>
         protected internal virtual void Initialize()
         {
@@ -292,14 +317,16 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Moves this asset in a different directory of a different project.
+        ///   Moves the <see cref="Asset"/> to a different directory of a different project.
         /// </summary>
         /// <param name="newPackage">The target project.</param>
         /// <param name="newDirectory">The view model of the target directory.</param>
-        /// <returns></returns>
+        /// <returns><c>true</c> if the <see cref="Asset"/> has been moved succesfully.</returns>
+        /// <exception cref="ArgumentException">The directory <paramref name="newDirectory"/> is not contained in the package <paramref name="newPackage"/>.</exception>
         public bool MoveAsset(Package newPackage, [NotNull] DirectoryBaseViewModel newDirectory)
         {
-            if (!newDirectory.Package.Match(newPackage)) throw new ArgumentException("The given directory is not contained in the given package.");
+            if (!newDirectory.Package.Match(newPackage))
+                throw new ArgumentException("The given directory is not contained in the given package.");
 
             using (var transaction = UndoRedoService.CreateTransaction())
             {
@@ -325,15 +352,21 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Attempts to find the closest location to create an asset of the given type, if the given location does not accept it.
+        ///   Attempts to find the closest location to create an asset of the given type, if the given location does not accept it.
         /// </summary>
-        /// <param name="assetType">The type of asset to check</param>
+        /// <param name="assetType">The type of asset to check.</param>
         /// <param name="initialLocation">The initial location where to create the asset.</param>
-        /// <returns>A <see cref="DirectoryBaseViewModel"/> corresponding to a valid location to create the asset, if available. <c>Null</c> otherwise.</returns>
+        /// <returns>
+        ///   A <see cref="DirectoryBaseViewModel"/> corresponding to a valid location to create the asset, if available.
+        ///   Or <c>null</c> otherwise.
+        /// </returns>
+        /// <exception cref="ArgumentException">The type <paramref name="assetType"/> is not a type derived from <see cref="Assets.Asset"/>.</exception>
         [CanBeNull]
         public static DirectoryBaseViewModel FindValidCreationLocation(Type assetType, [NotNull] DirectoryBaseViewModel initialLocation, PackageViewModel currentPackage = null)
         {
-            if (!AssetRegistry.IsAssetType(assetType)) throw new ArgumentException(@"The given type is not an asset type", nameof(AssetType));
+            if (!AssetRegistry.IsAssetType(assetType))
+                throw new ArgumentException(@"The given type is not an Asset type.", nameof(assetType));
+
             // If the mount point of the current folder does not support this type of asset, try to select the first mount point that support it.
 
             if (initialLocation.Root.AcceptAssetType(assetType) && initialLocation.Root.Package.IsEditable)
@@ -516,7 +549,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 package.Assets.Remove(AssetItem);
                 package = newPackage;
 
-                var newAssetItem = new AssetItem(newUrl, AssetItem.Asset) { SourceFolder = AssetItem.SourceFolder };
+                var newAssetItem = new AssetItem(newUrl, AssetItem.Asset) { SourceFolder = AssetItem.SourceFolder, AlternativePath = AssetItem.AlternativePath };
                 AssetItem = newAssetItem;
                 package.Assets.Add(AssetItem);
             }
@@ -544,7 +577,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                     IsProcessingAssetReferences = true, SetDirtyFlagOnAssetWhenFixingUFile = true, IsLoggingAssetNotFoundAsError = true,
                 });
                 var log = assetReferenceAnalysis.Run();
-                // TODO: what should we do with this log?
+                // TODO: What should we do with this log?
                 //log.CopyTo(Directory.Package.Session.AssetLog);
 
                 OnPropertyChanged(nameof(Url));
@@ -593,12 +626,12 @@ namespace Stride.Core.Assets.Editor.ViewModel
         {
             if (Directory.Assets.Any(x => string.Equals(x.Name, newName, StringComparison.InvariantCultureIgnoreCase) && x != this))
             {
-                error = string.Format(Tr._p("Message", "Unable to rename asset to '{0}' because an asset with the same name exists in the same directory"), newName);
+                error = string.Format(Tr._p("Message", "Unable to rename asset to '{0}' because an asset with the same name exists in the same directory."), newName);
                 return false;
             }
             if (string.IsNullOrWhiteSpace(newName))
             {
-                error = Tr._p("Message", "Unable to rename asset with an empty name");
+                error = Tr._p("Message", "Unable to rename asset with an empty name.");
                 return false;
             }
             error = null;
@@ -633,7 +666,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             {
                 var targetDirectory = FindValidCreationLocation(assetItem.Asset.GetType(), directory, Session.CurrentProject);
 
-                if (targetDirectory == null)
+                if (targetDirectory is null)
                     return;
 
                 var childName = NamingHelper.ComputeNewName(Name + "-Derived", targetDirectory.Assets, x => x.Name);

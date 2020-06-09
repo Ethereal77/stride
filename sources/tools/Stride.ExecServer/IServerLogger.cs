@@ -3,17 +3,14 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.ServiceModel;
 
 namespace Stride.ExecServer
 {
     /// <summary>
-    /// Interface used to log back standard output and error to client.
+    ///   Provides a method to log back standard output and error to client from a server through ServiceWire.
     /// </summary>
-    [ServiceContract]
     public interface IServerLogger
     {
-        [OperationContract(IsOneWay = true)]
         void OnLog(string text, ConsoleColor color);
     }
 }

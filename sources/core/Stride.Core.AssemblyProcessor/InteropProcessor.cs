@@ -22,7 +22,6 @@ namespace Stride.Core.AssemblyProcessor
         private readonly List<TypeDefinition> classToRemoveList = new List<TypeDefinition>();
         private AssemblyDefinition assembly;
 
-        //private TypeReference voidPointerType;
         private TypeReference intType;
 
         public bool Process(AssemblyProcessorContext context)
@@ -44,9 +43,9 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates a module init for a C# assembly.
+        ///   Creates a module initializer for a C# assembly.
         /// </summary>
-        /// <param name="method">The method to add to the module init.</param>
+        /// <param name="method">The method to add to the module initializer.</param>
         private void CreateModuleInit(MethodDefinition method)
         {
             const MethodAttributes ModuleInitAttributes = MethodAttributes.Private |
@@ -90,10 +89,10 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the write method with the following signature:
-        /// <code>
-        /// public static unsafe void* Write&lt;T&gt;(void* pDest, ref T data) where T : struct
-        /// </code>
+        ///   Creates a method with the following signature:
+        ///   <code>
+        ///   public static unsafe void* Write&lt;T&gt;(void* pDest, ref T data) where T : struct
+        ///   </code>
         /// </summary>
         /// <param name="method">The method to patch</param>
         private void CreateWriteMethod(MethodDefinition method)
@@ -162,15 +161,15 @@ namespace Stride.Core.AssemblyProcessor
             }
             else if (previousInstruction.OpCode == OpCodes.Ldloc_S)
             {
-                variableIndex = ((VariableReference)previousInstruction.Operand).Index;
+                variableIndex = ((VariableReference) previousInstruction.Operand).Index;
             }
             else if (previousInstruction.OpCode == OpCodes.Ldloc)
             {
-                variableIndex = ((VariableReference)previousInstruction.Operand).Index;
+                variableIndex = ((VariableReference) previousInstruction.Operand).Index;
             }
             else
             {
-                throw new InvalidOperationException("Could not find a load operation right before Interop.Pin");
+                throw new InvalidOperationException("Could not find a load operation right before Interop.Pin.");
             }
 
             var variable = ilProcessor.Body.Variables[variableIndex];
@@ -182,7 +181,7 @@ namespace Stride.Core.AssemblyProcessor
 
         private void ReplaceFixedStatement(MethodDefinition method, ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
-            var paramT = ((GenericInstanceMethod)fixedtoPatch.Operand).GenericArguments[0];
+            var paramT = ((GenericInstanceMethod) fixedtoPatch.Operand).GenericArguments[0];
             // Preparing locals
             // local(0) T& pinned
             method.Body.Variables.Add(new VariableDefinition(new PinnedType(new ByReferenceType(paramT))));
@@ -220,21 +219,21 @@ namespace Stride.Core.AssemblyProcessor
 
         private void ReplaceReadInline(ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
-            var paramT = ((GenericInstanceMethod)fixedtoPatch.Operand).GenericArguments[0];
+            var paramT = ((GenericInstanceMethod) fixedtoPatch.Operand).GenericArguments[0];
             var copyInstruction = ilProcessor.Create(OpCodes.Ldobj, paramT);
             ilProcessor.Replace(fixedtoPatch, copyInstruction);
         }
 
         private void ReplaceCopyInline(ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
-            var paramT = ((GenericInstanceMethod)fixedtoPatch.Operand).GenericArguments[0];
+            var paramT = ((GenericInstanceMethod) fixedtoPatch.Operand).GenericArguments[0];
             var copyInstruction = ilProcessor.Create(OpCodes.Cpobj, paramT);
             ilProcessor.Replace(fixedtoPatch, copyInstruction);
         }
 
         private void ReplaceSizeOfStructGeneric(ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
-            var paramT = ((GenericInstanceMethod)fixedtoPatch.Operand).GenericArguments[0];
+            var paramT = ((GenericInstanceMethod) fixedtoPatch.Operand).GenericArguments[0];
             var copyInstruction = ilProcessor.Create(OpCodes.Sizeof, paramT);
             ilProcessor.Replace(fixedtoPatch, copyInstruction);
         }
@@ -270,7 +269,7 @@ namespace Stride.Core.AssemblyProcessor
             }
             else
             {
-                throw new InvalidOperationException("Could not find a store operation right after Interop.Pin");
+                throw new InvalidOperationException("Could not find a store operation right after Interop.Pin.");
             }
 
             // Transform variable from:
@@ -303,7 +302,7 @@ namespace Stride.Core.AssemblyProcessor
 
         private void ReplaceIncrementPinnedStructGeneric(ILProcessor ilProcessor, Instruction incrementPinnedToPatch)
         {
-            var paramT = ((GenericInstanceMethod)incrementPinnedToPatch.Operand).GenericArguments[0];
+            var paramT = ((GenericInstanceMethod) incrementPinnedToPatch.Operand).GenericArguments[0];
 
             var sizeOfInst = ilProcessor.Create(OpCodes.Sizeof, paramT);
 
@@ -313,7 +312,7 @@ namespace Stride.Core.AssemblyProcessor
 
         private void ReplaceAddPinnedStructGeneric(ILProcessor ilProcessor, Instruction incrementPinnedToPatch)
         {
-            var paramT = ((GenericInstanceMethod)incrementPinnedToPatch.Operand).GenericArguments[0];
+            var paramT = ((GenericInstanceMethod) incrementPinnedToPatch.Operand).GenericArguments[0];
 
             var sizeOfInst = ilProcessor.Create(OpCodes.Sizeof, paramT);
 
@@ -324,12 +323,12 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the cast  method with the following signature:
-        /// <code>
-        /// public static unsafe void* Cast&lt;T&gt;(ref T data) where T : struct
-        /// </code>
+        ///   Creates a method with the following signature:
+        ///   <code>
+        ///   public static unsafe void* Cast&lt;T&gt;(ref T data) where T : struct
+        ///   </code>
         /// </summary>
-        /// <param name="method">The method cast.</param>
+        /// <param name="method">The method to create.</param>
         private void CreateCastMethod(MethodDefinition method)
         {
             method.Body.Instructions.Clear();
@@ -344,12 +343,12 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the cast  method with the following signature:
-        /// <code>
-        /// public static TCAST[] CastArray&lt;TCAST, T&gt;(T[] arrayData) where T : struct where TCAST : struct
-        /// </code>
+        ///   Creates a method with the following signature:
+        ///   <code>
+        ///   public static TCAST[] CastArray&lt;TCAST, T&gt;(T[] arrayData) where T : struct where TCAST : struct
+        ///   </code>
         /// </summary>
-        /// <param name="method">The method cast array.</param>
+        /// <param name="method">The method to create.</param>
         private void CreateCastArrayMethod(MethodDefinition method)
         {
             method.Body.Instructions.Clear();
@@ -365,7 +364,7 @@ namespace Stride.Core.AssemblyProcessor
 
         private void ReplaceFixedArrayStatement(MethodDefinition method, ILProcessor ilProcessor, Instruction fixedtoPatch)
         {
-            var paramT = ((GenericInstanceMethod)fixedtoPatch.Operand).GenericArguments[0];
+            var paramT = ((GenericInstanceMethod) fixedtoPatch.Operand).GenericArguments[0];
             // Preparing locals
             // local(0) T*
             method.Body.Variables.Add(new VariableDefinition(new PinnedType(new ByReferenceType(paramT))));
@@ -380,18 +379,22 @@ namespace Stride.Core.AssemblyProcessor
                     stlocFixed = ilProcessor.Create(OpCodes.Stloc_0);
                     ldlocFixed = ilProcessor.Create(OpCodes.Ldloc_0);
                     break;
+
                 case 1:
                     stlocFixed = ilProcessor.Create(OpCodes.Stloc_1);
                     ldlocFixed = ilProcessor.Create(OpCodes.Ldloc_1);
                     break;
+
                 case 2:
                     stlocFixed = ilProcessor.Create(OpCodes.Stloc_2);
                     ldlocFixed = ilProcessor.Create(OpCodes.Ldloc_2);
                     break;
+
                 case 3:
                     stlocFixed = ilProcessor.Create(OpCodes.Stloc_3);
                     ldlocFixed = ilProcessor.Create(OpCodes.Ldloc_3);
                     break;
+
                 default:
                     stlocFixed = ilProcessor.Create(OpCodes.Stloc, index);
                     ldlocFixed = ilProcessor.Create(OpCodes.Ldloc, index);
@@ -407,12 +410,12 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the write range method with the following signature:
-        /// <code>
-        /// public static unsafe void* Write&lt;T&gt;(void* pDest, T[] data, int offset, int count) where T : struct
-        /// </code>
+        ///   Creates a method with the following signature:
+        ///   <code>
+        ///   public static unsafe void* Write&lt;T&gt;(void* pDest, T[] data, int offset, int count) where T : struct
+        ///   </code>
         /// </summary>
-        /// <param name="method">The method copy struct.</param>
+        /// <param name="method">The method to create.</param>
         private void CreateWriteRangeMethod(MethodDefinition method)
         {
             method.Body.Instructions.Clear();
@@ -462,12 +465,12 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the read method with the following signature:
-        /// <code>
-        /// public static unsafe void* Read&lt;T&gt;(void* pSrc, ref T data) where T : struct
-        /// </code>
+        ///   Creates a method with the following signature:
+        ///   <code>
+        ///   public static unsafe void* Read&lt;T&gt;(void* pSrc, ref T data) where T : struct
+        ///   </code>
         /// </summary>
-        /// <param name="method">The method copy struct.</param>
+        /// <param name="method">The method to create.</param>
         private void CreateReadMethod(MethodDefinition method)
         {
             method.Body.Instructions.Clear();
@@ -515,10 +518,10 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the read range method with the following signature:
-        /// <code>
-        /// public static unsafe void* Read&lt;T&gt;(void* pSrc, T[] data, int offset, int count) where T : struct
-        /// </code>
+        ///   Creates a method with the following signature:
+        ///   <code>
+        ///   public static unsafe void* Read&lt;T&gt;(void* pSrc, T[] data, int offset, int count) where T : struct
+        ///   </code>
         /// </summary>
         /// <param name="method">The method copy struct.</param>
         private void CreateReadRangeMethod(MethodDefinition method)
@@ -571,10 +574,10 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the memcpy method with the following signature:
-        /// <code>
-        /// public static unsafe void memcpy(void* pDest, void* pSrc, int count)
-        /// </code>
+        ///   Creates a method with the following signature:
+        ///   <code>
+        ///   public static unsafe void memcpy(void* pDest, void* pSrc, int count)
+        ///   </code>
         /// </summary>
         /// <param name="methodCopyStruct">The method copy struct.</param>
         private void CreateMemcpy(MethodDefinition methodCopyStruct)
@@ -594,12 +597,12 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Creates the memset method with the following signature:
-        /// <code>
-        /// public static unsafe void memset(void* pDest, byte value, int count)
-        /// </code>
+        ///   Creates a method with the following signature:
+        ///   <code>
+        ///   public static unsafe void memset(void* pDest, byte value, int count)
+        ///   </code>
         /// </summary>
-        /// <param name="methodSetStruct">The method set struct.</param>
+        /// <param name="methodSetStruct">The method to create.</param>
         private void CreateMemset(MethodDefinition methodSetStruct)
         {
             methodSetStruct.Body.Instructions.Clear();
@@ -617,10 +620,9 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Emits the cpblk method, supporting x86 and x64 platform.
+        ///   Emits the <c>cpblk</c> method, supporting x86 and x64 platform.
         /// </summary>
-        /// <param name="method">The method.</param>
-        /// <param name="gen">The gen.</param>
+        /// <param name="gen">An IL generator to emit instructions.</param>
         private void EmitCpblk(ILProcessor gen)
         {
             var cpblk = gen.Create(OpCodes.Cpblk);
@@ -629,7 +631,6 @@ namespace Stride.Core.AssemblyProcessor
             //gen.Emit(OpCodes.Bne_Un_S, cpblk);
             gen.Emit(OpCodes.Unaligned, (byte)1);       // unaligned to 1
             gen.Append(cpblk);
-
         }
 
         private List<string> GetSharpDXAttributes(MethodDefinition method)
@@ -648,9 +649,9 @@ namespace Stride.Core.AssemblyProcessor
         }
 
         /// <summary>
-        /// Patches the method.
+        ///   Patches a method.
         /// </summary>
-        /// <param name="method">The method.</param>
+        /// <param name="method">The method to patch.</param>
         bool PatchMethod(MethodDefinition method)
         {
             bool isSharpJit = false;
@@ -812,9 +813,9 @@ namespace Stride.Core.AssemblyProcessor
         bool containsSharpJit;
 
         /// <summary>
-        /// Patches the type.
+        ///   Patches the methods of a given type.
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type to patch.</param>
         void PatchType(TypeDefinition type)
         {
             // Patch methods

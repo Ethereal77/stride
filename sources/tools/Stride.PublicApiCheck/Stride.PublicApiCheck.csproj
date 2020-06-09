@@ -1,15 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net472</TargetFramework>
-    <!--<TargetFramework>$(TargetFrameworkTool)</TargetFramework>-->
+    <TargetFramework>net40</TargetFramework>
+    <TargetFrameworks>$(StrideEditorTargetFrameworks)</TargetFrameworks>
+    <StrideCommonDependenciesDir>..\..\..\deps\</StrideCommonDependenciesDir>
+    <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
+    <StrideBuildTags>WindowsTools</StrideBuildTags>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyTitle>Stride Tool to check Public API consistency between Assemblies</AssemblyTitle>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StrideCommonDependenciesDir>..\..\..\deps\</StrideCommonDependenciesDir>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>

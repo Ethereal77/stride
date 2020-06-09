@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
@@ -9,16 +9,17 @@ using System;
 namespace Stride.Core.Yaml.Serialization
 {
     /// <summary>
-    /// Creates instances of types.
+    ///   Provides a method to create an object instance of a certain type.
     /// </summary>
     /// <remarks>
-    /// This interface allows to provide a custom logic for creating instances during deserialization.
+    ///   This interface allows to provide custom logic for creating instances during deserialization.
     /// </remarks>
     public interface IObjectFactory
     {
         /// <summary>
-        /// Creates an instance of the specified type. Returns null if instance cannot be created.
+        ///   Creates an instance of the specified type.
         /// </summary>
+        /// <returns>Instance of the specified <paramref name="type"/>; or <c>null</c> if it couldn't be created.</returns>
         object Create(Type type);
     }
 }

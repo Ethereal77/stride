@@ -13,7 +13,7 @@ using Stride.Core.IO;
 namespace Stride.Core.Storage
 {
     /// <summary>
-    /// Gives access to the object database.
+    ///   Represents the object database, a store of blobs associated each one to an identifier.
     /// </summary>
     public class ObjectDatabase : IDisposable
     {
@@ -27,14 +27,17 @@ namespace Stride.Core.Storage
         private readonly IOdbBackend backendWrite;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectDatabase" /> class.
+        ///   Initializes a new instance of the <see cref="ObjectDatabase" /> class.
         /// </summary>
         /// <param name="vfsMainUrl">The VFS main URL.</param>
         /// <param name="indexName">Name of the index file.</param>
-        /// <param name="vfsAdditionalUrl">The VFS additional URL. It will be used only if vfsMainUrl is read-only.</param>
+        /// <param name="vfsAdditionalUrl">The VFS additional URL. It will be used only if <paramref name="vfsMainUrl"/> is read-only.</param>
+        /// <param name="loadDefaultBundle">Value indicating whether to load the default bundle.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="vfsMainUrl"/> is a <c>null</c> reference.</exception>
         public ObjectDatabase(string vfsMainUrl, string indexName, string vfsAdditionalUrl = null, bool loadDefaultBundle = true)
         {
-            if (vfsMainUrl == null) throw new ArgumentNullException(nameof(vfsMainUrl));
+            if (vfsMainUrl is null)
+                throw new ArgumentNullException(nameof(vfsMainUrl));
 
             // Create the merged asset index map
             ContentIndexMap = new ObjectDatabaseContentIndexMap();
@@ -69,9 +72,7 @@ namespace Stride.Core.Storage
                 {
                     BundleBackend.LoadBundle("default", ContentIndexMap).GetAwaiter().GetResult();
                 }
-                catch (FileNotFoundException)
-                {
-                }
+                catch (FileNotFoundException) { }
             }
         }
 
@@ -80,7 +81,8 @@ namespace Stride.Core.Storage
         public BundleOdbBackend BundleBackend { get; }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="ObjectDatabase"/> class using default database path, index name, and local database path, and loading default bundle.
+        ///   Creates a new instance of the <see cref="ObjectDatabase"/> class using the default database path, index name, and
+        ///   local database path, and loading the default bundle.
         /// </summary>
         /// <returns>A new instance of the <see cref="ObjectDatabase"/> class.</returns>
         public static ObjectDatabase CreateDefaultDatabase()
@@ -101,18 +103,19 @@ namespace Stride.Core.Storage
             }
         }
 
-        public void CreateBundle(ObjectId[] objectIds, string bundleName, BundleOdbBackend bundleBackend, ISet<ObjectId> disableCompressionIds, Dictionary<string, ObjectId> indexMap, IList<string> dependencies, bool useIncrementalBundle)
+        public string CreateBundle(ObjectId[] objectIds, string bundleName, BundleOdbBackend bundleBackend, ISet<ObjectId> disableCompressionIds, Dictionary<string, ObjectId> indexMap, IList<string> dependencies, bool useIncrementalBundle)
         {
-            if (bundleBackend == null)
+            if (bundleBackend is null)
                 throw new InvalidOperationException("Can't pack files.");
 
             if (objectIds.Length == 0)
-                return;
+                return null;
 
             var packUrl = bundleBackend.BundleDirectory + bundleName + BundleOdbBackend.BundleExtension;
 
             // Create pack
             BundleOdbBackend.CreateBundle(packUrl, backendRead1, objectIds, disableCompressionIds, indexMap, dependencies, useIncrementalBundle);
+            return packUrl;
         }
 
         public bool TryGetObjectLocation(ObjectId objectId, out string filePath, out long start, out long end)
@@ -138,17 +141,17 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Loads the specified bundle.
+        ///   Loads the specified bundle.
         /// </summary>
         /// <param name="bundleName">Name of the bundle.</param>
-        /// <returns>Task that will complete when bundle is loaded.</returns>
+        /// <returns><see cref="Task"/> that will complete when the bundle is loaded.</returns>
         public Task LoadBundle(string bundleName)
         {
             return BundleBackend.LoadBundle(bundleName, ContentIndexMap);
         }
 
         /// <summary>
-        /// Loads the specified bundle.
+        ///   Unloads the specified bundle.
         /// </summary>
         /// <param name="bundleName">Name of the bundle.</param>
         public void UnloadBundle(string bundleName)
@@ -176,7 +179,7 @@ namespace Stride.Core.Storage
 
         public void Delete(ObjectId objectId)
         {
-            if (backendWrite == null)
+            if (backendWrite is null)
                 throw new InvalidOperationException("Read-only object database.");
 
             backendWrite.Delete(objectId);
@@ -184,7 +187,9 @@ namespace Stride.Core.Storage
 
         public bool Exists(ObjectId objectId)
         {
-            return (BundleBackend != null && BundleBackend.Exists(objectId)) || backendRead1.Exists(objectId) || (backendRead2 != null && backendRead2.Exists(objectId));
+            return (BundleBackend != null && BundleBackend.Exists(objectId)) ||
+                   backendRead1.Exists(objectId) ||
+                   (backendRead2 != null && backendRead2.Exists(objectId));
         }
 
         public int GetSize(ObjectId objectId)
@@ -195,7 +200,7 @@ namespace Stride.Core.Storage
             if (backendRead1.Exists(objectId))
                 return backendRead1.GetSize(objectId);
 
-            if (backendRead2 == null)
+            if (backendRead2 is null)
                 throw new FileNotFoundException();
 
             return backendRead2.GetSize(objectId);
@@ -216,57 +221,57 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Writes the specified data using the active <see cref="IOdbBackend"/>.
+        ///   Writes the specified data using the active <see cref="IOdbBackend"/>.
         /// </summary>
         /// <param name="data">The data.</param>
         /// <param name="size">The size.</param>
-        /// <param name="forceWrite">Set to true to force writing the datastream even if a content is already stored with the same id. Default is false.</param>
+        /// <param name="forceWrite"><c>true</c> to force writing the data even if a content is already stored with the same id. Default is <c>false</c>.</param>
         /// <returns>The <see cref="ObjectId"/> of the given data.</returns>
         public ObjectId Write(IntPtr data, int size, bool forceWrite = false)
         {
-            if (backendWrite == null)
+            if (backendWrite is null)
                 throw new InvalidOperationException("Read-only object database.");
 
             return backendWrite.Write(ObjectId.Empty, new NativeMemoryStream(data, size), size, forceWrite);
         }
 
         /// <summary>
-        /// Writes the specified data using the active <see cref="IOdbBackend"/>.
+        ///   Writes the specified data using the active <see cref="IOdbBackend"/>.
         /// </summary>
         /// <param name="stream">The data stream.</param>
         /// <returns>The <see cref="ObjectId"/> of the given data.</returns>
         public ObjectId Write(Stream stream)
         {
-            if (backendWrite == null)
+            if (backendWrite is null)
                 throw new InvalidOperationException("Read-only object database.");
 
             return backendWrite.Write(ObjectId.Empty, stream, (int)stream.Length);
         }
 
         /// <summary>
-        /// Writes the specified data using the active <see cref="IOdbBackend"/> and a precomputer <see cref="ObjectId"/>.
+        ///   Writes the specified data using the active <see cref="IOdbBackend"/> and a pre-computed <see cref="ObjectId"/>.
         /// </summary>
         /// <param name="stream">The data stream.</param>
-        /// <param name="objectId">The precomputed objectId.</param>
-        /// <param name="forceWrite">Set to true to force writing the datastream even if a content is already stored with the same id. Default is false.</param>
-        /// <returns>The <see cref="ObjectId"/> of the given data, which is the same that the passed one.</returns>
+        /// <param name="objectId">The pre-computed <see cref="ObjectId"/>.</param>
+        /// <param name="forceWrite"><c>true</c> to force writing the data even if a content is already stored with the same id. Default is <c>false</c>.</param>
+        /// <returns>The <see cref="ObjectId"/> of the given data, which is the same as the passed one.</returns>
         public ObjectId Write(Stream stream, ObjectId objectId, bool forceWrite = false)
         {
-            if (backendWrite == null)
+            if (backendWrite is null)
                 throw new InvalidOperationException("Read-only object database.");
 
             return backendWrite.Write(objectId, stream, (int)stream.Length, forceWrite);
         }
 
         /// <summary>
-        /// Opens a stream for the specified <see cref="ObjectId"/>.
+        ///   Opens a stream for the specified <see cref="ObjectId"/>.
         /// </summary>
         /// <param name="objectId">The object identifier.</param>
         /// <param name="mode">The mode.</param>
         /// <param name="access">The access.</param>
         /// <param name="share">The share.</param>
         /// <returns>A Stream.</returns>
-        /// <exception cref="System.InvalidOperationException">Read-only object database.</exception>
+        /// <exception cref="InvalidOperationException">Read-only object database.</exception>
         public Stream OpenStream(ObjectId objectId, VirtualFileMode mode = VirtualFileMode.Open, VirtualFileAccess access = VirtualFileAccess.Read, VirtualFileShare share = VirtualFileShare.Read)
         {
             if (access == VirtualFileAccess.Read)
@@ -274,7 +279,7 @@ namespace Stride.Core.Storage
                 return OpenStreamForRead(objectId, mode, access, share);
             }
 
-            if (backendWrite == null)
+            if (backendWrite is null)
                 throw new InvalidOperationException("Read-only object database.");
 
             if (backendRead1 == backendWrite)
@@ -295,10 +300,10 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Returns a data stream of the data specified <see cref="ObjectId"/>.
+        ///   Returns a data stream of the data specified by its <see cref="ObjectId"/>.
         /// </summary>
         /// <param name="objectId">The <see cref="ObjectId"/>.</param>
-        /// <param name="checkCache">if set to <c>true</c> [check cache for existing blobs].</param>
+        /// <param name="checkCache"><c>true</c> to check the cache for existing blobs; <c>false</c> to bypass the cache.</param>
         /// <returns>A <see cref="NativeStream"/> of the requested data.</returns>
         public Stream Read(ObjectId objectId, bool checkCache = false)
         {
@@ -307,8 +312,7 @@ namespace Stride.Core.Storage
                 lock (LoadedBlobs)
                 {
                     // Check if there is already an in-memory blob that we can use.
-                    Blob blob;
-                    if (LoadedBlobs.TryGetValue(objectId, out blob))
+                    if (LoadedBlobs.TryGetValue(objectId, out Blob blob))
                     {
                         return new BlobStream(blob);
                     }
@@ -319,7 +323,7 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Creates a stream that can then be saved directly in the database using <see cref="SaveStream"/>.
+        ///   Creates a stream that can then be saved directly in the database using <see cref="SaveStream"/>.
         /// </summary>
         /// <returns>a stream writer that should be passed to <see cref="SaveStream"/> in order to be stored in the database</returns>
         public OdbStreamWriter CreateStream()
@@ -328,12 +332,12 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Creates a in-memory binary blob as a <see cref="Blob"/> that will also be stored using the active <see cref="IOdbBackend"/>.
-        /// Even if <see cref="Blob"/> is new (not in the ODB), memory will be copied.
+        ///   Creates a <see cref="Blob"/> (an in-memory binary blob) that will also be stored using the active <see cref="IOdbBackend"/>.
+        ///   Even if that blob is new (not in the Object Batabase), memory will be copied.
         /// </summary>
-        /// <param name="data">The data.</param>
-        /// <param name="size">The size.</param>
-        /// <returns>The <see cref="Blob"/> containing given data, with its reference count incremented.</returns>
+        /// <param name="data">Pointer to the data.</param>
+        /// <param name="size">The size of the data.</param>
+        /// <returns>The <see cref="Blob"/> containing the given data, with its reference count incremented.</returns>
         public Blob CreateBlob(IntPtr data, int size)
         {
             // Generate hash
@@ -351,17 +355,17 @@ namespace Stride.Core.Storage
                 var blob = Lookup(objectId);
 
                 // Blob doesn't exist yet, so let's create it and save it to ODB.
-                if (blob == null)
+                if (blob is null)
                 {
                     // Let's go back to beginning of stream after previous hash
                     nativeMemoryStream.Position = 0;
 
                     // Create blob
-                    blob = new Blob(this, objectId, data, size);
+                    blob = new Blob(objectDatabase: this, objectId, data, size);
                     blob.AddReference();
 
                     // Write to disk
-                    backendWrite.Write(objectId, nativeMemoryStream, size, false);
+                    backendWrite.Write(objectId, nativeMemoryStream, size);
 
                     // Add blob to cache
                     LoadedBlobs.Add(objectId, blob);
@@ -372,11 +376,14 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Lookups the <see cref="Blob"/> with the specified <see cref="ObjectId"/>.
-        /// Any object returned will have its reference count incremented.
+        ///   Looks for a <see cref="Blob"/> with the specified <see cref="ObjectId"/>.
+        ///   Any object returned will have its reference count incremented.
         /// </summary>
         /// <param name="objectId">The object id.</param>
-        /// <returns>The <see cref="Blob"/> matching this <see cref="ObjectId"/> with an incremented reference count if it exists; [null] otherwise.</returns>
+        /// <returns>
+        ///   The <see cref="Blob"/> matching this <see cref="ObjectId"/> with an incremented reference count;
+        ///   If it doesn't exist, returns <c>null</c>.
+        /// </returns>
         public Blob Lookup(ObjectId objectId)
         {
             Blob blob;

@@ -12,14 +12,14 @@ namespace CSharpBeginner.Code
     /// </summary>
     public class DeltaTimeDemo : SyncScript
     {
-        float rotationSpeed = 0.6f;
+        private float rotationSpeed = 0.6f;
 
         // In this variable we keep track of the total time the game runs
-        float totalTime = 0;
+        private float totalTime = 0;
 
         // We use these variable for creating a simple countdown timer
-        float countdownStartTime = 5.0f;
-        float countdownTime = 0;
+        private float countdownStartTime = 5.0f;
+        private float countdownTime = 0;
 
         public override void Start()
         {
@@ -38,7 +38,7 @@ namespace CSharpBeginner.Code
             // Since we have a countdown timer, we subtract the delta time from the count down time
             countdownTime -= deltaTime;
 
-            // If the repeatTimer, reaches 0, we reset the countDownTime back to the count down start time
+            // If the repeatTimer, reaches 0, we reset the countdownTime back to the count down start time
             if (countdownTime < 0)
             {
                 countdownTime = countdownStartTime;
@@ -46,7 +46,7 @@ namespace CSharpBeginner.Code
             }
 
             Entity.Transform.Rotation *= Quaternion.RotationY(deltaTime * rotationSpeed);
-             
+
             // We display the total time and the countdown time on screen
             DebugText.Print("Total time: " + totalTime, new Int2(480, 540));
             DebugText.Print("Countdown time: " + countdownTime, new Int2(480, 560));

@@ -2,13 +2,10 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-
 namespace Stride.LauncherApp
 {
     /// <summary>
-    /// An enum representing error codes returned by the launcher process.
+    ///   Defines error codes returned by the Launcher process.
     /// </summary>
     public enum LauncherErrorCode
     {
@@ -18,15 +15,15 @@ namespace Stride.LauncherApp
         ServerAlreadyRunning = 1,
 
         // RunServer errors: -1 to -100
-        ErrorWhileRunningServer = -1, // We don't have a more accurate error for the moment.
+        ErrorWhileRunningServer = -1,           // We don't have a more accurate error at the moment
         ErrorWhileInitializingServer = -2,
 
         // UpdateTargets errors: -101 to -200
-        ErrorUpdatingTargetFiles = -101, // We don't have a more accurate error for the moment.
-        
+        ErrorUpdatingTargetFiles = -101,        // We don't have a more accurate error at the moment
+
         // Uninstall errors: -201 to -300
         UninstallCancelled = -201,
-        ErrorWhileUninstalling = -202, // We don't have a more accurate error for the moment.
+        ErrorWhileUninstalling = -202,          // We don't have a more accurate error at the moment
 
         UnknownError = -10000
     }

@@ -2,17 +2,12 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.ServiceModel;
-
 using Stride.Core.Diagnostics;
 
 namespace Stride.Core.BuildEngine
 {
-    [ServiceContract]
     public interface IForwardSerializableLogRemote
     {
-        [OperationContract(IsOneWay = true)]
-        [UseStrideDataContractSerializer]
         void ForwardSerializableLog(SerializableLogMessage message);
     }
 }

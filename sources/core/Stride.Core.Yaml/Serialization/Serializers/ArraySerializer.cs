@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
@@ -38,7 +38,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
                     var node = reader.Peek<ParsingEvent>();
                     if (index >= arrayList.Count)
                     {
-                        throw new YamlException(node.Start, node.End, $"Unable to deserialize array. Current number of elements [{index}] exceeding array size [{arrayList.Count}]");
+                        throw new YamlException(node.Start, node.End, $"Unable to deserialize array. Current number of elements [{index}] exceeding array size [{arrayList.Count}].");
                     }
 
                     // Handle aliasing
@@ -73,7 +73,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             var valueType = value.GetType();
             var arrayList = (IList) value;
 
-            // Emit a Flow sequence or block sequence depending on settings 
+            // Emit a Flow sequence or block sequence depending on settings
             objectContext.Writer.Emit(new SequenceStartEventInfo(value, valueType)
             {
                 Tag = objectContext.Tag,
@@ -93,7 +93,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             try
             {
                 var objectContext = new ObjectContext(context, null, context.FindTypeDescriptor(expectedType));
-                // TODO: we should go through the ObjectSerializerBackend, not directly use the ObjectSerializer!
+                // TODO: We should go through the ObjectSerializerBackend, not directly use the ObjectSerializer!
                 return context.Serializer.ObjectSerializer.ReadYaml(ref objectContext);
             }
             catch (YamlException)
@@ -103,17 +103,15 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             catch (Exception ex)
             {
                 ex = ex.Unwrap();
-                throw new YamlException(node.Start, node.End, $"Error while deserializing node [{node}]:\n{ex.Message}", ex);
+                throw new YamlException(node, ex);
             }
         }
 
         private static void WriteYaml(SerializerContext context, object value, Type expectedType)
         {
             var objectContext = new ObjectContext(context, value, context.FindTypeDescriptor(expectedType));
-            // TODO: we should go through the ObjectSerializerBackend, not directly use the ObjectSerializer!
+            // TODO: We should go through the ObjectSerializerBackend, not directly use the ObjectSerializer!
             context.Serializer.ObjectSerializer.WriteYaml(ref objectContext);
         }
-
-
     }
 }

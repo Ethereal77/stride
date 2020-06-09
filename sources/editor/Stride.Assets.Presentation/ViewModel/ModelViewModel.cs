@@ -7,20 +7,16 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
+using Stride.Core.IO;
+using Stride.Core.Reflection;
 using Stride.Core.Assets;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
+using Stride.Core.Quantum;
+using Stride.Core.Presentation.Commands;
 using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel;
-using Stride.Core.Assets.Quantum;
 using Stride.Core.Assets.Templates;
-using Stride.Core.IO;
-using Stride.Core.Reflection;
 using Stride.Assets.Models;
-using Stride.Core.Presentation.Commands;
-using Stride.Core.Presentation.Quantum;
-using Stride.Core.Presentation.Quantum.ViewModels;
-using Stride.Core.Quantum;
 using Stride.Assets.Presentation.Templates;
 using Stride.Rendering;
 
@@ -34,7 +30,7 @@ namespace Stride.Assets.Presentation.ViewModel
         {
             CreateSkeletonCommand = new AnonymousCommand(ServiceProvider, CreateSkeleton);
 
-            // FIXME: tooltip, icons, etc. should not be created on the view model side (see PDX-2952)
+            // TODO: Tooltip, icons, etc. should not be created on the view model side (see PDX-2952)
             Dispatcher.Invoke(() => assetCommands.Add(new MenuCommandInfo(ServiceProvider, CreateSkeletonCommand)
             {
                 DisplayName = "Create Skeleton",
@@ -48,6 +44,12 @@ namespace Stride.Assets.Presentation.ViewModel
         protected override IAssetImporter GetImporter()
         {
             return AssetRegistry.FindImporterForFile(Asset.Source).OfType<ModelAssetImporter>().FirstOrDefault();
+        }
+
+        protected override void PrepareImporterInputParametersForUpdateFromSource(PropertyCollection importerInputParameters, ModelAsset asset)
+        {
+            // This setting will be ignored if it's the FBX importer
+            importerInputParameters.Set(ModelAssetImporter.DeduplicateMaterialsKey, asset.DeduplicateMaterials);
         }
 
         protected override void UpdateAssetFromSource(ModelAsset assetToMerge)
@@ -70,8 +72,7 @@ namespace Stride.Assets.Presentation.ViewModel
             for (var i = 0; i < assetToMerge.Materials.Count; ++i)
             {
                 // Retrieve or create an id for the material
-                ItemId id;
-                if (!ids.TryGetValue(assetToMerge.Materials[i].Name, out id))
+                if (!ids.TryGetValue(assetToMerge.Materials[i].Name, out ItemId id))
                     id = ItemId.New();
 
                 // Use Restore to allow to set manually the id.
@@ -92,7 +93,7 @@ namespace Stride.Assets.Presentation.ViewModel
                 {
                     var viewModel = new TemplateDescriptionViewModel(ServiceProvider, template);
                     var skeleton = (await Session.ActiveAssetView.RunAssetTemplate(viewModel, new[] { source })).SingleOrDefault();
-                    if (skeleton == null)
+                    if (skeleton is null)
                         return;
 
                     var skeletonNode = AssetRootNode[nameof(ModelAsset.Skeleton)];

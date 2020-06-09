@@ -14,20 +14,24 @@ using System.Text;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio.TextTemplating;
 
-using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
 
 namespace Stride.Core.ProjectTemplating
 {
-    internal class ProjectTemplatingHost : Microsoft.VisualStudio.TextTemplating.ITextTemplatingEngineHost, ITextTemplatingSessionHost
+    internal class ProjectTemplatingHost : ITextTemplatingEngineHost, ITextTemplatingSessionHost
     {
         public ProjectTemplatingHost(ILogger log, string templateFile, string rootDirectory, ExpandoObject expando, IEnumerable<string> assemblies)
         {
-            if (log == null) throw new ArgumentNullException("log");
-            if (templateFile == null) throw new ArgumentNullException("templateFile");
-            if (rootDirectory == null) throw new ArgumentNullException("rootDirectory");
-            if (expando == null) throw new ArgumentNullException("expando");
+            if (log is null)
+                throw new ArgumentNullException(nameof(log));
+            if (templateFile is null)
+                throw new ArgumentNullException(nameof(templateFile));
+            if (rootDirectory is null)
+                throw new ArgumentNullException(nameof(rootDirectory));
+            if (expando is null)
+                throw new ArgumentNullException(nameof(expando));
+
             this.log = log;
             this.TemplateFile = templateFile;
             this.rootDirectory = rootDirectory;
@@ -40,6 +44,7 @@ namespace Stride.Core.ProjectTemplating
                     "System.Core",
                     typeof(RuntimeBinderException).Assembly.FullName,
                     "Mono.TextTemplating",
+                    typeof(System.Dynamic.ExpandoObject).Assembly.FullName,
                     typeof(PlatformType).Assembly.FullName,
                     typeof(UPath).Assembly.FullName,
                     "Stride.Core.ProjectTemplating"
@@ -95,7 +100,7 @@ namespace Stride.Core.ProjectTemplating
             {
                 var error = errors[i];
                 // error.FileName can be null resulting in an exception in error.ToString()
-                var msg = error.FileName == null ? error.ErrorText : error.ToString();
+                var msg = error.FileName is null ? error.ErrorText : error.ToString();
                 log.Error(msg);
             }
         }
@@ -113,8 +118,6 @@ namespace Stride.Core.ProjectTemplating
 
             try
             {
-
-
                 Assembly assembly = Assembly.Load(assemblyReference);
                 if (assembly != null)
                 {

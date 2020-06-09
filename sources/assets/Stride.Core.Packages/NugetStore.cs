@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,9 +16,6 @@ using System.Threading.Tasks;
 using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
-using Stride.Core;
-using Stride.Core.Extensions;
-using Stride.Core.Windows;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.PackageManagement;
@@ -32,15 +28,17 @@ using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 using NuGet.Versioning;
 
+using Stride.Core.Extensions;
+using Stride.Core.Windows;
+
 using ISettings = NuGet.Configuration.ISettings;
 using PackageSource = NuGet.Configuration.PackageSource;
 using PackageSourceProvider = NuGet.Configuration.PackageSourceProvider;
-using Settings = NuGet.Configuration.Settings;
 
 namespace Stride.Core.Packages
 {
     /// <summary>
-    /// Abstraction to interact with a store backed by the NuGet infrastructure.
+    ///   Represents an abstraction of a store backed by the NuGet infrastructure.
     /// </summary>
     public class NugetStore : INugetDownloadProgress
     {
@@ -76,9 +74,11 @@ namespace Stride.Core.Packages
 
             settings = NuGet.Configuration.Settings.LoadDefaultSettings(null);
 
-            // Add dev source
-            RemoveDeletedSources(settings, "Xenko");
-            RemoveDeletedSources(settings, "Stride");
+            // Remove obsolete sources
+            RemoveDeletedSources(settings, "Xenko Dev");
+            // Note the space: we want to keep "Stride Dev" but not "Stride Dev {PATH}\bin\packages" anymore
+            RemoveSources(settings, "Stride Dev ");
+            // Add Stride package store (still used for Xenko up to 3.0)
             CheckPackageSource("Stride", DefaultPackageSource);
             settings.SaveToDisk();
 
@@ -95,6 +95,24 @@ namespace Stride.Core.Packages
 
             // Setup source provider as a V3 only.
             sourceRepositoryProvider = new NugetSourceRepositoryProvider(packageSourceProvider, this);
+        }
+
+        private static void RemoveSources(ISettings settings, string prefixName)
+        {
+            var packageSources = settings.GetSection("packageSources");
+            if (packageSources != null)
+            {
+                foreach (var packageSource in packageSources.Items.OfType<SourceItem>().ToList())
+                {
+                    var path = packageSource.GetValueAsPath();
+
+                    if (packageSource.Key.StartsWith(prefixName))
+                    {
+                        // Remove entry from packageSources
+                        settings.Remove("packageSources", packageSource);
+                    }
+                }
+            }
         }
 
         private static void RemoveDeletedSources(ISettings settings, string prefixName)

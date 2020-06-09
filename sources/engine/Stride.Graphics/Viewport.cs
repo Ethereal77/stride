@@ -11,7 +11,7 @@ using Stride.Core.Mathematics;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Defines the window dimensions of a render-target surface onto which a 3D volume projects.
+    ///   Defines the window dimensions of a render-target surface onto which a 3D volume is projected.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct Viewport : IEquatable<Viewport>

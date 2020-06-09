@@ -2,14 +2,13 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 
+using Stride.Core.IO;
+using Stride.Core.Serialization.Contents;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Compiler;
-using Stride.Core.IO;
-using Stride.Core.Serialization.Contents;
 using Stride.Assets.Materials;
 using Stride.Graphics;
 
@@ -34,7 +33,8 @@ namespace Stride.Assets.Models
 
         protected override void Prepare(AssetCompilerContext context, AssetItem assetItem, string targetUrlInStorage, AssetCompilerResult result)
         {
-            var asset = (ModelAsset)assetItem.Asset;
+            var asset = (ModelAsset) assetItem.Asset;
+
             // Get absolute path of asset source on disk
             var assetDirectory = assetItem.FullPath.GetParent();
             var assetSource = UPath.Combine(assetDirectory, asset.Source);
@@ -52,9 +52,9 @@ namespace Stride.Assets.Models
                 skeleton = assetItem.Package.FindAssetFromProxyObject(asset.Skeleton);
 
             var importModelCommand = ImportModelCommand.Create(extension);
-            if (importModelCommand == null)
+            if (importModelCommand is null)
             {
-                result.Error($"No importer found for model extension '{extension}. The model '{assetSource}' can't be imported.");
+                result.Error($"No importer found for model extension '{extension}'. The model '{assetSource}' can't be imported.");
                 return;
             }
 
@@ -69,12 +69,13 @@ namespace Stride.Assets.Models
             importModelCommand.ScaleImport = asset.ScaleImport;
             importModelCommand.PivotPosition = asset.PivotPosition;
             importModelCommand.MergeMeshes = asset.MergeMeshes;
+            importModelCommand.DeduplicateMaterials = asset.DeduplicateMaterials;
             importModelCommand.ModelModifiers = asset.Modifiers;
 
             if (skeleton != null)
             {
                 importModelCommand.SkeletonUrl = skeleton.Location;
-                // Note: skeleton override values
+                // NOTE: Skeleton override values
                 importModelCommand.ScaleImport = ((SkeletonAsset)skeleton.Asset).ScaleImport;
                 importModelCommand.PivotPosition = ((SkeletonAsset)skeleton.Asset).PivotPosition;
             }

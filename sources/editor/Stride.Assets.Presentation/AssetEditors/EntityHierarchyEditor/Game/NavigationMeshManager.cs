@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,20 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets;
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Quantum;
+using Stride.Core.Assets;
 using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.ViewModels;
 using Stride.Editor.EditorGame.ContentLoader;
 using Stride.Navigation;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
     /// <summary>
-    /// Used to always load the navigation meshes associated with a given scene by using <see cref="AddUnique"/> to add a navigation mesh to keep loaded.
-    /// When a registed navigation mesh is reloaded, <see cref="Changed"/> will get called
+    ///   Represents a manager that always loads the <see cref="NavigationMesh"/> associated with a given <see cref="Engine.Scene"/>.
     /// </summary>
     [DataContract]
     public class NavigationMeshManager : IAsyncDisposable
@@ -49,6 +47,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             await loader.Manager.RemoveReferencer(referencerId);
         }
 
+        /// <summary>
+        ///   Fired when a <see cref="NavigationMesh"/> has been reloaded.
+        /// </summary>
         public event EventHandler<ItemChangeEventArgs> Changed;
 
         public Task Initialize()
@@ -57,9 +58,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         }
 
         /// <summary>
-        /// Adds a reference to a navigation mesh if it doesn't already exist
+        ///   Adds a reference to a <see cref="NavigationMesh"/> if it doesn't already exist.
         /// </summary>
-        /// <param name="assetId"></param>
+        /// <param name="assetId"><see cref="AssetId"/> of the <see cref="Engine.Scene"/> for which the <see cref="NavigationMesh"/> is to be registered.</param>
         public Task AddUnique(AssetId assetId)
         {
             if (Meshes.ContainsKey(assetId))
@@ -70,9 +71,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         }
 
         /// <summary>
-        /// Removes a reference if it exists
+        ///   Removes a reference to a <see cref="NavigationMesh"/>.
         /// </summary>
-        /// <param name="assetId"></param>
+        /// <param name="assetId"><see cref="AssetId"/> of the <see cref="Engine.Scene"/> for which the <see cref="NavigationMesh"/> is to be removed.</param>
         public Task Remove(AssetId assetId)
         {
             if (!Meshes.ContainsKey(assetId))

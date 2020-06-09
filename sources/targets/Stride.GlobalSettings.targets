@@ -31,7 +31,7 @@
 
   <!-- Include platform dependent assembly when specified -->
   <PropertyGroup Condition="'$(StrideGraphicsApiDependent)' == 'true'">
-    <!-- Build list of Graphics API for platform that supports multiple -->
+    <!-- Build list of Graphics APIs for platforms that support multiple APIs -->
     <StrideGraphicsApisWindows Condition="'$(StrideGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12</StrideGraphicsApisWindows>
     <StrideGraphicsApisWindows Condition="'$(StrideGraphicsApisWindows)' == ''">Direct3D11</StrideGraphicsApisWindows>
     <_StrideGraphicsApisWindows>;$(StrideGraphicsApisWindows);</_StrideGraphicsApisWindows>
@@ -91,11 +91,6 @@
     <StrideEffectCompiler>true</StrideEffectCompiler>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(StrideNETRuntime)' == 'CoreCLR' ">
-    <StrideNETRuntimeDefines>STRIDE_RUNTIME_CORECLR</StrideNETRuntimeDefines>
-    <AutoIncludeSystemAssembly>true</AutoIncludeSystemAssembly>
-  </PropertyGroup>
-
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);$(StrideGraphicsApiDefines)</DefineConstants>
   </PropertyGroup>
@@ -113,7 +108,6 @@
     <StrideUIList Condition="'$(StrideUI)' == ''" Include="None" />
   </ItemGroup>
 
-
   <!--Building Stride SDK itself?-->
   <PropertyGroup Condition=" '$(StrideUserBuild)' != 'true' ">
     <!--Output All files in solution\Bin directory-->
@@ -123,13 +117,13 @@
   </PropertyGroup>
 
   <!-- Pack target -->
-  <!--<UsingTask TaskName="Stride.Core.Tasks.PackAssets" AssemblyFile="$(MSBuildThisFileDirectory)..\core\Stride.Core.Tasks\bin\$(Configuration)\net472\Stride.Core.Tasks.exe" />-->
+  <!--<UsingTask TaskName="Stride.Core.Tasks.PackAssets" AssemblyFile="$(MSBuildThisFileDirectory)..\core\Stride.Core.Tasks\bin\$(Configuration)\$(StrideEditorTargetFramework)\Stride.Core.Tasks.exe" />-->
   <Target Name="PrepareStrideAssetsForPack" BeforeTargets="_GetPackageFiles" Condition="'$(StridePackAssets)' == 'true'">
     <!-- We use exec version rather than task version, otherwise file will be locked during rebuild -->
     <!--<PackAssets ProjectFile="$(MSBuildProjectFile)" IntermediatePackagePath="$(IntermediateOutputPath)\stride">
       <Output TaskParameter="GeneratedItems" ItemName="None"/>
     </PackAssets>-->
-    <Exec Command="&quot;$(MSBuildThisFileDirectory)..\core\Stride.Core.Tasks\bin\$(Configuration)\net472\Stride.Core.Tasks.exe&quot; pack-assets &quot;$(MSBuildProjectFile)&quot; &quot;$(IntermediateOutputPath)\stride&quot;" ConsoleToMsBuild="true">
+    <Exec Command="&quot;$(MSBuildThisFileDirectory)..\core\Stride.Core.Tasks\bin\$(Configuration)\$(StrideEditorTargetFramework)\Stride.Core.Tasks.exe&quot; pack-assets &quot;$(MSBuildProjectFile)&quot; &quot;$(IntermediateOutputPath)\stride&quot;" ConsoleToMsBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="PackAssetsLine" />
     </Exec>
     <ItemGroup>

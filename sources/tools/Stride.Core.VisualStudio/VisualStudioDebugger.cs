@@ -3,24 +3,27 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
+
+#if STRIDE_RUNTIME_NETFW
 using EnvDTE;
+#endif
 
 namespace Stride.Core.VisualStudio
 {
     /// <summary>
-    /// Helper class to attach Visual Studio instances to a process for debugging.
+    ///   Helper class to attach Visual Studio instances to a process for debugging.
     /// </summary>
     internal class VisualStudioDebugger : IDisposable
     {
+#if STRIDE_RUNTIME_NETFW
         private readonly STAContext context;
         private readonly DTE dte;
+#endif
 
         public int ProcessId { get; private set; }
 
+#if STRIDE_RUNTIME_NETFW
         private VisualStudioDebugger(STAContext context, DTE dte, int processId)
         {
             this.context = context;
@@ -34,7 +37,7 @@ namespace Stride.Core.VisualStudio
 
             var instance = GetFirstOrDefaultDTE(context, x => x.ProcessId == processId);
 
-            if (instance.DTE == null)
+            if (instance.DTE is null)
             {
                 context.Dispose();
                 return null;
@@ -52,7 +55,7 @@ namespace Stride.Core.VisualStudio
 
             var instance = GetFirstOrDefaultDTE(context, x =>
             {
-                // Try multiple time, as DTE might report it is busy
+                // Try multiple times, as DTE might report it is busy
                 var debugger = x.DTE.Debugger;
                 if (debugger.DebuggedProcesses == null)
                     return false;
@@ -60,7 +63,7 @@ namespace Stride.Core.VisualStudio
                 return debugger.DebuggedProcesses.OfType<EnvDTE.Process>().Any(debuggedProcess => debuggedProcess.ProcessID == System.Diagnostics.Process.GetCurrentProcess().Id);
             });
 
-            if (instance.DTE == null)
+            if (instance.DTE is null)
             {
                 context.Dispose();
                 return null;
@@ -69,11 +72,11 @@ namespace Stride.Core.VisualStudio
             return new VisualStudioDebugger(context, instance.DTE, instance.ProcessId);
         }
 
+        // Make this DTE attach to the newly created process
         public void AttachToProcess(int processId)
         {
             context.Execute(() =>
             {
-                // Make this DTE attach the newly created process
                 MessageFilter.Register();
                 var processes = dte.Debugger.LocalProcesses.OfType<EnvDTE.Process>();
                 var process = processes.FirstOrDefault(x => x.ProcessID == processId);
@@ -82,11 +85,11 @@ namespace Stride.Core.VisualStudio
             });
         }
 
+        // Make this DTE detach from the process
         public void DetachFromProcess(int processId)
         {
             context.Execute(() =>
             {
-                // Make this DTE attach the newly created process
                 MessageFilter.Register();
                 var processes = dte.Debugger.LocalProcesses.OfType<EnvDTE.Process>();
                 var process = processes.FirstOrDefault(x => x.ProcessID == processId);
@@ -125,5 +128,36 @@ namespace Stride.Core.VisualStudio
                 return result;
             });
         }
+#else
+        public static VisualStudioDebugger GetByProcess(int processId)
+        {
+            return null;
+        }
+
+        public static VisualStudioDebugger GetAttached()
+        {
+            return null;
+        }
+
+        public void Attach()
+        {
+            throw new PlatformNotSupportedException("EnvDTE is not supported with this runtime");
+        }
+
+        public void Detach()
+        {
+            throw new PlatformNotSupportedException("EnvDTE is not supported with this runtime");
+        }
+
+        public void AttachToProcess(int processId)
+        {
+            throw new PlatformNotSupportedException("EnvDTE is not supported with this runtime");
+        }
+
+        public void Dispose()
+        {
+            throw new PlatformNotSupportedException("EnvDTE is not supported with this runtime");
+        }
+#endif
     }
 }

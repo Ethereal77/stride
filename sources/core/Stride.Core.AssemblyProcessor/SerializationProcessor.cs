@@ -39,7 +39,9 @@ namespace Stride.Core.AssemblyProcessor
             //var serializerGenerator = new ComplexSerializerCodeGenerator(registry);
             //sourceCodeRegisterAction(serializerGenerator.TransformText(), "DataSerializers");
 
-            GenerateSerializerCode(registry);
+            GenerateSerializerCode(registry, out var serializationHash);
+
+            context.SerializationHash = serializationHash;
 
             return true;
         }
@@ -47,9 +49,13 @@ namespace Stride.Core.AssemblyProcessor
         /// <summary>
         ///   Generates serializer code using Cecil.
         /// </summary>
-        private static void GenerateSerializerCode(ComplexSerializerRegistry registry)
+        /// <param name="registry"></param>
+        private static void GenerateSerializerCode(ComplexSerializerRegistry registry, out ObjectId serializationHash)
         {
-            // NOTE: We might want something more fluent? (probably lot of work to get the system working, but would make changes easier to do --not sure if worth it considering it didn't change much recently)
+            var hash = new ObjectIdBuilder();
+
+            // First, hash global binary format version, in case it gets bumped
+            hash.Write(DataSerializer.BinaryFormatVersion);
 
             var assembly = registry.Assembly;
             var strideCoreModule = assembly.GetStrideCoreModule();
@@ -71,12 +77,17 @@ namespace Stride.Core.AssemblyProcessor
                 var genericParameters = serializerType.GenericParameters.ToArray<TypeReference>();
                 var typeWithGenerics = type.MakeGenericType(genericParameters);
 
+                // Hash
+                hash.Write(typeWithGenerics.FullName);
+
                 TypeReference parentType = null;
                 FieldDefinition parentSerializerField = null;
                 if (complexType.Value.IsComplexSerializerProcessParentType)
                 {
                     parentType = ResolveGenericsVisitor.Process(serializerType, type.BaseType);
                     serializerType.Fields.Add(parentSerializerField = new FieldDefinition("parentSerializer", Mono.Cecil.FieldAttributes.Private, dataSerializerTypeRef.MakeGenericType(parentType)));
+
+                    hash.Write("parent");
                 }
 
                 var serializableItems = ComplexSerializerRegistry.GetSerializableItems(type).ToArray();
@@ -105,6 +116,10 @@ namespace Stride.Core.AssemblyProcessor
                     var fieldDefinition = new FieldDefinition($"{Utilities.BuildValidClassName(serializableItemType.FullName)}Serializer", Mono.Cecil.FieldAttributes.Private, dataSerializerTypeRef.MakeGenericType(serializableItemType));
                     serializableItemInfos.Add(serializableItem.Type, (fieldDefinition, serializableItemType));
                     serializerType.Fields.Add(fieldDefinition);
+
+                    hash.Write(serializableItem.Type.FullName);
+                    hash.Write(serializableItem.Name);
+                    hash.Write(serializableItem.AssignBack);
                 }
 
                 // Add constructor (call parent constructor)
@@ -282,6 +297,9 @@ namespace Stride.Core.AssemblyProcessor
             var mscorlibAssembly = CecilExtensions.FindCorlibAssembly(assembly);
             var reflectionAssembly = CecilExtensions.FindReflectionAssembly(assembly);
 
+            // String
+            var stringType = mscorlibAssembly.MainModule.GetTypeResolved(typeof(string).FullName);
+            var stringTypeRef = assembly.MainModule.ImportReference(stringType);
             // Type
             var typeType = mscorlibAssembly.MainModule.GetTypeResolved(typeof(Type).FullName);
             var typeTypeRef = assembly.MainModule.ImportReference(typeType);
@@ -504,9 +522,11 @@ namespace Stride.Core.AssemblyProcessor
             {
                 Fields =
                 {
-                    new CustomAttributeNamedArgument("Type", new CustomAttributeArgument(typeTypeRef, serializerFactoryType))
+                    new CustomAttributeNamedArgument("Type", new CustomAttributeArgument(typeTypeRef, serializerFactoryType)),
                 }
             });
+
+            serializationHash = hash.ComputeHash();
         }
 
         private static void RegisterDefaultSerializationProfile(IAssemblyResolver assemblyResolver, AssemblyDefinition assembly, ComplexSerializerRegistry registry, System.IO.TextWriter log)
@@ -534,10 +554,10 @@ namespace Stride.Core.AssemblyProcessor
             for (int i = 1; i <= 4; ++i)
             {
                 registry.SerializerDependencies.Add(new CecilSerializerDependency(
-                                                         string.Format("System.Tuple`{0}", i),
-                                                         coreSerializationAssembly.MainModule.GetTypeResolved(string.Format("Stride.Core.Serialization.Serializers.TupleSerializer`{0}", i))));
+                    $"System.Tuple`{i}",
+                    coreSerializationAssembly.MainModule.GetTypeResolved($"Stride.Core.Serialization.Serializers.TupleSerializer`{i}")));
 
-                registry.SerializerDependencies.Add(new CecilSerializerDependency(string.Format("Stride.Core.Serialization.Serializers.TupleSerializer`{0}", i)));
+                registry.SerializerDependencies.Add(new CecilSerializerDependency($"Stride.Core.Serialization.Serializers.TupleSerializer`{i}"));
             }
 
             // Register serializer dependencies (determine which serializer serializes which sub-type)
@@ -550,6 +570,19 @@ namespace Stride.Core.AssemblyProcessor
                                                                                mscorlibAssembly.MainModule.GetTypeResolved(typeof(KeyValuePair<,>).FullName)));
             registry.SerializerDependencies.Add(new CecilSerializerDependency("Stride.Core.Serialization.Serializers.DictionaryInterfaceSerializer`2",
                                                                                mscorlibAssembly.MainModule.GetTypeResolved(typeof(KeyValuePair<,>).FullName)));
+        }
+    }
+
+    public static class HashExtensions
+    {
+        public static unsafe void Write(this ObjectIdBuilder objectIdBuilder, int i)
+        {
+            objectIdBuilder.Write((byte*)&i, sizeof(int));
+        }
+
+        public static unsafe void Write(this ObjectIdBuilder objectIdBuilder, bool b)
+        {
+            objectIdBuilder.WriteByte((byte)(b ? 1 : 0));
         }
     }
 }

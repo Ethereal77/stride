@@ -27,7 +27,7 @@ using MessageBox = System.Windows.MessageBox;
 namespace Stride.LauncherApp
 {
     /// <summary>
-    /// Entry point class of the Launcher.
+    ///   Entry point class of the Launcher.
     /// </summary>
     public static class Launcher
     {
@@ -37,7 +37,7 @@ namespace Stride.LauncherApp
         public const string ApplicationName = "Stride Launcher";
 
         /// <summary>
-        /// The entry point function of the launcher.
+        ///   The main entry point of the launcher.
         /// </summary>
         /// <returns>The process error code to return.</returns>
         [STAThread]
@@ -52,7 +52,7 @@ namespace Stride.LauncherApp
         }
 
         /// <summary>
-        /// Initializes a <see cref="NugetStore"/> instance assuming the entry point assembly is located at the root of the store.
+        ///   Initializes a <see cref="NugetStore"/> instance assuming the entry point assembly is located at the root of the store.
         /// </summary>
         /// <returns>A new instance of <see cref="NugetStore"/>.</returns>
         [NotNull]
@@ -64,10 +64,10 @@ namespace Stride.LauncherApp
         }
 
         /// <summary>
-        /// Displays a message to the user with OK and Cancel buttons, and returns whether the user cancelled.
+        ///   Displays a message to the user with OK and Cancel buttons, and returns whether the user cancelled.
         /// </summary>
         /// <param name="message">The message to display.</param>
-        /// <returns>True if the user answered OK, False otherwise.</returns>
+        /// <returns><c>true</c> if the user answered OK; <c>false</c> otherwise.</returns>
         internal static bool DisplayMessage(string message)
         {
             var result = MessageBox.Show(message, "Stride", MessageBoxButton.YesNo, MessageBoxImage.Information);
@@ -75,7 +75,7 @@ namespace Stride.LauncherApp
         }
 
         /// <summary>
-        /// Displays an error message to the user with just an OK button.
+        ///   Displays an error message to the user with just an OK button.
         /// </summary>
         /// <param name="message">The message to display.</param>
         internal static void DisplayError(string message)
@@ -117,9 +117,11 @@ namespace Stride.LauncherApp
                     case LauncherArguments.ActionType.Run:
                         result = TryRun();
                         break;
+
                     case LauncherArguments.ActionType.Uninstall:
                         result = Uninstall();
                         break;
+
                     default:
                         // Unknown action
                         return LauncherErrorCode.UnknownError;
@@ -147,9 +149,9 @@ namespace Stride.LauncherApp
                     return LauncherErrorCode.ServerAlreadyRunning;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                DisplayError($"Cannot start the instance of the Stride Launcher due to the following exception:\n{e.Message}");
+                DisplayError($"Cannot start the instance of the Stride Launcher due to the following exception:\n{ex.Message}");
                 return LauncherErrorCode.UnknownError;
             }
         }
@@ -163,7 +165,7 @@ namespace Stride.LauncherApp
                 Environment.SetEnvironmentVariable("StrideDir", AppDomain.CurrentDomain.BaseDirectory);
 
                 // We need to do that before starting recording metrics
-                // TODO: we do not display Privacy Policy anymore from launcher, because it's either accepted from installer or shown again when a new version of GS with new Privacy Policy starts. Might want to reconsider that after the 2.0 free period
+                // TODO: We do not display Privacy Policy anymore from launcher, because it's either accepted from installer or shown again when a new version of GS with new Privacy Policy starts. Might want to reconsider that after the 2.0 free period
                 PrivacyPolicyHelper.RestartApplication = SelfUpdater.RestartApplication;
                 PrivacyPolicyHelper.EnsurePrivacyPolicyStride40();
 
@@ -218,7 +220,7 @@ namespace Stride.LauncherApp
 
                 return LauncherErrorCode.Success;
             }
-            catch (Exception)
+            catch
             {
                 return LauncherErrorCode.ErrorWhileUninstalling;
             }
@@ -226,9 +228,7 @@ namespace Stride.LauncherApp
 
         private static bool IsError(LauncherErrorCode errorCode)
         {
-            return (int)errorCode < 0;
+            return errorCode < 0;
         }
     }
 }
-    
-

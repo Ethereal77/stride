@@ -3,6 +3,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 
 using Stride.Core.Assets;
 using Stride.Core;
@@ -36,7 +37,12 @@ namespace Stride.Assets.Models
         public override EntityInfo GetEntityInfo(UFile localPath, Logger logger, AssetImporterParameters importParameters)
         {
             var meshConverter = new Importer.AssimpNET.MeshConverter(logger);
-            var entityInfo = meshConverter.ExtractEntity(localPath.FullPath, null, importParameters.IsTypeSelectedForOutput(typeof(TextureAsset)));
+
+            if (!importParameters.InputParameters.TryGet(DeduplicateMaterialsKey, out var deduplicateMaterials))
+                // Dedupe is the default value
+                deduplicateMaterials = true;
+
+            var entityInfo = meshConverter.ExtractEntity(localPath.FullPath, null, importParameters.IsTypeSelectedForOutput(typeof(TextureAsset)), deduplicateMaterials);
             return entityInfo;
         }
 
@@ -67,6 +73,25 @@ namespace Stride.Assets.Models
                 startTime = CompressedTimeSpan.Zero;
             if (endTime == CompressedTimeSpan.MinValue)
                 endTime = CompressedTimeSpan.Zero;
+        }
+
+        public override IEnumerable<AssetItem> Import(UFile localPath, AssetImporterParameters importParameters)
+        {
+            var assetItems = base.Import(localPath, importParameters);
+
+            // Need to remember the DeduplicateMaterials setting per ModelAsset since the importer may be rerun on this asset
+            if (!importParameters.InputParameters.TryGet(DeduplicateMaterialsKey, out var deduplicateMaterials))
+                // Dedupe is the default value
+                deduplicateMaterials = true;
+
+            foreach (var item in assetItems)
+            {
+                if (item.Asset is ModelAsset modelAsset)
+                {
+                    modelAsset.DeduplicateMaterials = deduplicateMaterials;
+                }
+            }
+            return assetItems;
         }
     }
 }

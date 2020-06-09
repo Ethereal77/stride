@@ -35,9 +35,6 @@ namespace Stride.Core.Assets
             Package.Container = this;
         }
 
-        /// <summary>
-        /// Gets the session.
-        /// </summary>
         [CanBeNull]
         public PackageSession Session { get; private set; }
 
@@ -49,19 +46,21 @@ namespace Stride.Core.Assets
         public ObservableCollection<Dependency> FlattenedDependencies { get; } = new ObservableCollection<Dependency>();
 
         /// <summary>
-        /// Saves this package and all dirty assets. See remarks.
+        ///   Saves this package and all dirty assets.
         /// </summary>
-        /// <param name="log">The log.</param>
-        /// <exception cref="System.ArgumentNullException">log</exception>
-        /// <remarks>When calling this method directly, it does not handle moving assets between packages.
-        /// Call <see cref="PackageSession.Save" /> instead.</remarks>
+        /// <exception cref="System.ArgumentNullException"><paramref name="log"/> is a <c>null</c> reference.</exception>
+        /// <remarks>
+        ///   When calling this method directly, it does not handle moving assets between packages.
+        ///   Call <see cref="PackageSession.Save" /> instead.
+        /// </remarks>
         public void Save(ILogger log, PackageSaveParameters saveParameters = null)
         {
-            if (log == null) throw new ArgumentNullException(nameof(log));
+            if (log is null)
+                throw new ArgumentNullException(nameof(log));
 
-            if (Package.FullPath == null)
+            if (Package.FullPath is null)
             {
-                log.Error(Package, null, AssetMessageCode.PackageCannotSave, "null");
+                log.Error(Package, assetReference: null, AssetMessageCode.PackageCannotSave, "null");
                 return;
             }
 
@@ -69,11 +68,11 @@ namespace Stride.Core.Assets
 
             // Use relative paths when saving
             var analysis = new PackageAnalysis(Package, new PackageAnalysisParameters()
-            {
-                SetDirtyFlagOnAssetWhenFixingUFile = false,
-                ConvertUPathTo = UPathType.Relative,
-                IsProcessingUPaths = true,
-            });
+                {
+                    SetDirtyFlagOnAssetWhenFixingUFile = false,
+                    ConvertUPathTo = UPathType.Relative,
+                    IsProcessingUPaths = true,
+                });
             analysis.Run(log);
 
             var assetsFiltered = false;
@@ -107,7 +106,7 @@ namespace Stride.Core.Assets
                     }
                     catch (Exception ex)
                     {
-                        log.Error(Package, null, AssetMessageCode.PackageCannotSave, ex, Package.FullPath);
+                        log.Error(Package, assetReference: null, AssetMessageCode.PackageCannotSave, ex, Package.FullPath);
                         return;
                     }
 
@@ -122,13 +121,13 @@ namespace Stride.Core.Assets
                             }
                             catch (Exception ex)
                             {
-                                log.Error(Package, null, AssetMessageCode.AssetCannotDelete, ex, file.FullPath);
+                                log.Error(Package, assetReference: null, AssetMessageCode.AssetCannotDelete, ex, file.FullPath);
                             }
                         }
                     }
                 }
 
-                //batch projects
+                // Batch projects
                 var vsProjs = new Dictionary<string, Microsoft.Build.Evaluation.Project>();
 
                 foreach (var asset in Package.Assets)
@@ -146,43 +145,40 @@ namespace Stride.Core.Assets
                     }
 
                     // Add new files to .csproj
-                    var projectAsset = asset.Asset as IProjectAsset;
-                    if (projectAsset != null)
+                    if (asset.Asset is IProjectAsset projectAsset)
                     {
                         var projectFullPath = (asset.Package.Container as SolutionProject)?.FullPath;
                         var projectInclude = asset.GetProjectInclude();
 
-                        Microsoft.Build.Evaluation.Project project;
-                        if (!vsProjs.TryGetValue(projectFullPath, out project))
+                        if (!vsProjs.TryGetValue(projectFullPath, out var project))
                         {
                             project = VSProjectHelper.LoadProject(projectFullPath);
                             vsProjs.Add(projectFullPath, project);
                         }
 
-                        //check if the item is already there, this is possible when saving the first time when creating from a template
-                        // Note: if project has auto items, no need to add it
-                        if (project.Items.All(x => x.EvaluatedInclude != projectInclude)
-                            && (string.Compare(project.GetPropertyValue("EnableDefaultCompileItems"), "true", true, CultureInfo.InvariantCulture) != 0))
+                        // Check if the item is already there. This is possible when saving the first time when creating from a template.
+                        // NOTE: If project has auto items, no need to add it.
+                        if (project.Items.All(x => x.EvaluatedInclude != projectInclude) &&
+                            string.Compare(project.GetPropertyValue("EnableDefaultCompileItems"), "true", ignoreCase: true, CultureInfo.InvariantCulture) != 0)
                         {
-                            var generatorAsset = projectAsset as IProjectFileGeneratorAsset;
-                            if (generatorAsset != null)
+                            if (projectAsset is IProjectFileGeneratorAsset generatorAsset)
                             {
                                 var generatedInclude = asset.GetGeneratedInclude();
 
                                 project.AddItem("None", projectInclude,
                                     new List<KeyValuePair<string, string>>
                                     {
-                                    new KeyValuePair<string, string>("Generator", generatorAsset.Generator),
-                                    new KeyValuePair<string, string>("LastGenOutput", new UFile(generatedInclude).GetFileName())
+                                        new KeyValuePair<string, string>("Generator", generatorAsset.Generator),
+                                        new KeyValuePair<string, string>("LastGenOutput", new UFile(generatedInclude).GetFileName())
                                     });
 
                                 project.AddItem("Compile", generatedInclude,
                                     new List<KeyValuePair<string, string>>
                                     {
-                                    new KeyValuePair<string, string>("AutoGen", "True"),
-                                    new KeyValuePair<string, string>("DesignTime", "True"),
-                                    new KeyValuePair<string, string>("DesignTimeSharedInput", "True"),
-                                    new KeyValuePair<string, string>("DependentUpon", new UFile(projectInclude).GetFileName())
+                                        new KeyValuePair<string, string>("AutoGen", "True"),
+                                        new KeyValuePair<string, string>("DesignTime", "True"),
+                                        new KeyValuePair<string, string>("DesignTimeSharedInput", "True"),
+                                        new KeyValuePair<string, string>("DependentUpon", new UFile(projectInclude).GetFileName())
                                     });
                             }
                             else
@@ -226,10 +222,12 @@ namespace Stride.Core.Assets
     {
         private readonly Package package;
 
-        public StandalonePackage([NotNull] Package package)
-            : base(package)
-        {
-        }
+        public StandalonePackage([NotNull] Package package) : base(package) { }
+
+        /// <summary>
+        ///   Optional list of assemblies to load, typically filled using NuGet.
+        /// </summary>
+        public List<string> Assemblies { get; } = new List<string>();
 
         public override string ToString() => $"Package: {package.Meta.Name}";
     }
@@ -237,7 +235,7 @@ namespace Stride.Core.Assets
     public enum DependencyType
     {
         Package,
-        Project,
+        Project
     }
 
     public class Dependency
@@ -263,6 +261,8 @@ namespace Stride.Core.Assets
         public DependencyType Type { get; set; }
 
         public Package Package { get; set; }
+
+        public List<string> Assemblies { get; } = new List<string>();
 
         public override string ToString()
         {
@@ -298,10 +298,14 @@ namespace Stride.Core.Assets
         public SolutionProject([NotNull] Package package, Guid projectGuid, string fullPath)
             : this(package)
         {
-            VSProject = new VisualStudio.Project(projectGuid, VisualStudio.KnownProjectTypeGuid.CSharp, Path.GetFileNameWithoutExtension(fullPath), fullPath, Guid.Empty,
-                Enumerable.Empty<VisualStudio.Section>(),
-                Enumerable.Empty<VisualStudio.PropertyItem>(),
-                Enumerable.Empty<VisualStudio.PropertyItem>());
+            VSProject = new VisualStudio.Project(
+                projectGuid,
+                VisualStudio.KnownProjectTypeGuid.CSharp,
+                name: Path.GetFileNameWithoutExtension(fullPath), fullPath: fullPath,
+                parentGuid: Guid.Empty,
+                projectSections: Enumerable.Empty<VisualStudio.Section>(),
+                versionControlLines: Enumerable.Empty<VisualStudio.PropertyItem>(),
+                projectConfigurationPlatformsLines: Enumerable.Empty<VisualStudio.PropertyItem>());
         }
 
         public SolutionProject([NotNull] Package package, VisualStudio.Project vsProject)
@@ -325,6 +329,8 @@ namespace Stride.Core.Assets
         public string Name => VSProject.Name;
 
         public string TargetPath { get; set; }
+
+        public string AssemblyProcessorSerializationHashFile { get; set; }
 
         public UFile FullPath => VSProject.FullPath;
 
@@ -353,7 +359,7 @@ namespace Stride.Core.Assets
                             }
                         case DependencyType.Project:
                             {
-                                var matchingReferences = msbuildProject.GetItems("ProjectReference").Where(projectReference => (UFile)projectReference.EvaluatedInclude == ((UFile)dependency.MSBuildProject).MakeRelative(projectFile.GetFullDirectory())).ToList();
+                                var matchingReferences = msbuildProject.GetItems("ProjectReference").Where(projectReference => (UFile)projectReference.EvaluatedInclude == ((UFile) dependency.MSBuildProject).MakeRelative(projectFile.GetFullDirectory())).ToList();
                                 isProjectDirty = matchingReferences.Count > 0;
                                 msbuildProject.RemoveItems(matchingReferences);
                                 break;
@@ -374,8 +380,9 @@ namespace Stride.Core.Assets
                                 .ForEach(packageReference => packageReference.Metadata.ForEach(metadata => metadata.Xml.ExpressedAsAttribute = true));
                             isProjectDirty = true;
                             break;
+
                         case DependencyType.Project:
-                            msbuildProject.AddItem("ProjectReference", ((UFile)dependency.MSBuildProject).MakeRelative(projectFile.GetFullDirectory()).ToWindowsPath());
+                            msbuildProject.AddItem("ProjectReference", ((UFile) dependency.MSBuildProject).MakeRelative(projectFile.GetFullDirectory()).ToWindowsPath());
                             isProjectDirty = true;
                             break;
                     }
@@ -391,8 +398,8 @@ namespace Stride.Core.Assets
 
         protected override void SavePackage()
         {
-            // Check if our project is still implicit one
-            // Note: we only allow transition from implicit to explicit (otherwise we would have to delete file, etc.)
+            // Check if our project is still an implicit one
+            // NOTE: We only allow transition from implicit to explicit (otherwise we would have to delete file, etc.)
             if (IsImplicitProject && Package.IsDirty && !Package.IsImplicitProject)
                 IsImplicitProject = false;
 
@@ -403,17 +410,15 @@ namespace Stride.Core.Assets
         public override string ToString() => $"Project: {Name}";
     }
 
-    public sealed class ProjectCollection : ObservableCollection<PackageContainer>
-    {
-    }
+    public sealed class ProjectCollection : ObservableCollection<PackageContainer> { }
 
     /// <summary>
-    /// A session for editing a package.
+    ///   A session for editing a <see cref="Package"/>.
     /// </summary>
     public sealed partial class PackageSession : IDisposable, IAssetFinder
     {
         /// <summary>
-        /// The Visual Studio version property used for newly created project solution files.
+        ///   The Visual Studio version property used for newly created project solution files.
         /// </summary>
         public static readonly Version DefaultVisualStudioVersion = new Version("16.0.0.0");
 
@@ -422,44 +427,21 @@ namespace Stride.Core.Assets
 VisualStudioVersion = {0}
 MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
-        private Dictionary<Package, List<PendingPackageUpgrade>> pendingPackageUpgradesPerPackage = new Dictionary<Package, List<PendingPackageUpgrade>>();
-        private readonly ConstraintProvider constraintProvider = new ConstraintProvider();
-        private readonly PackageCollection packages;
-        private readonly Dictionary<Package, Package> packagesCopy;
         private readonly object dependenciesLock = new object();
-        private SolutionProject currentProject;
-        private AssetDependencyManager dependencies;
-        private AssetSourceTracker sourceTracker;
-        private bool? packageUpgradeAllowed;
-        public event DirtyFlagChangedDelegate<AssetItem> AssetDirtyChanged;
-        private TaskCompletionSource<int> saveCompletion;
 
         internal VisualStudio.Solution VSSolution;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PackageSession"/> class.
-        /// </summary>
-        public PackageSession()
-        {
-            VSSolution = new VisualStudio.Solution();
-            VSSolution.Headers.Add(SolutionHeader);
+        private readonly Dictionary<Package, List<PendingPackageUpgrade>> pendingPackageUpgradesPerPackage = new Dictionary<Package, List<PendingPackageUpgrade>>();
+        private readonly ConstraintProvider constraintProvider = new ConstraintProvider();
 
-            Projects = new ProjectCollection();
-            Projects.CollectionChanged += ProjectsCollectionChanged;
+        private SolutionProject currentProject;
+        private AssetDependencyManager dependencies;
+        private AssetSourceTracker sourceTracker;
 
-            packages = new PackageCollection();
-            packagesCopy = new Dictionary<Package, Package>();
-            AssemblyContainer = new AssemblyContainer();
-            packages.CollectionChanged += PackagesCollectionChanged;
-        }
+        private bool? packageUpgradeAllowed;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PackageSession"/> class.
-        /// </summary>
-        public PackageSession(Package package) : this()
-        {
-            Projects.Add(new StandalonePackage(package));
-        }
+        public event DirtyFlagChangedDelegate<AssetItem> AssetDirtyChanged;
+
 
         public bool IsDirty { get; set; }
 
@@ -468,6 +450,8 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         /// </summary>
         /// <value>The packages.</value>
         public IReadOnlyPackageCollection Packages => packages;
+        private readonly PackageCollection packages;
+        private readonly Dictionary<Package, Package> packagesCopy;
 
         /// <summary>
         /// The projects referenced by the solution.
@@ -485,6 +469,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         /// </summary>
         [NotNull]
         public Task SaveCompletion => saveCompletion?.Task ?? Task.CompletedTask;
+        private TaskCompletionSource<int> saveCompletion;
 
         /// <summary>
         /// Gets or sets the solution path (sln) in case the session was loaded from a solution.
@@ -503,8 +488,34 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         /// </summary>
         public Version VisualStudioVersion { get; set; }
 
+
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///   Initializes a new instance of the <see cref="PackageSession"/> class.
+        /// </summary>
+        public PackageSession()
+        {
+            VSSolution = new VisualStudio.Solution();
+            VSSolution.Headers.Add(SolutionHeader);
+
+            Projects = new ProjectCollection();
+            Projects.CollectionChanged += ProjectsCollectionChanged;
+
+            packages = new PackageCollection();
+            packagesCopy = new Dictionary<Package, Package>();
+            AssemblyContainer = new AssemblyContainer();
+            packages.CollectionChanged += PackagesCollectionChanged;
+        }
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="PackageSession"/> class.
+        /// </summary>
+        public PackageSession(Package package) : this()
+        {
+            Projects.Add(new StandalonePackage(package));
+        }
+
+        /// <summary>
+        ///   Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
@@ -515,10 +526,10 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
             for (int index = loadedAssemblies.Count - 1; index >= 0; index--)
             {
                 var loadedAssembly = loadedAssemblies[index];
-                if (loadedAssembly == null)
+                if (loadedAssembly is null)
                     continue;
 
-                // Unregisters assemblies that have been registered in Package.Load => Package.LoadAssemblyReferencesForPackage
+                // Unregister assemblies that have been registered in Package.Load => Package.LoadAssemblyReferencesForPackage
                 AssemblyRegistry.Unregister(loadedAssembly.Assembly);
 
                 // Unload binary serialization
@@ -530,9 +541,9 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance has dependency manager.
+        ///   Gets a value indicating whether this instance has a dependency manager.
         /// </summary>
-        /// <value><c>true</c> if this instance has dependency manager; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if this instance has a dependency manager; otherwise, <c>false</c>.</value>
         public bool HasDependencyManager
         {
             get
@@ -545,55 +556,46 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Gets or sets the selected current package.
+        ///   Gets or sets the selected current package.
         /// </summary>
         /// <value>The selected current package.</value>
-        /// <exception cref="System.InvalidOperationException">Expecting a package that is already registered in this session</exception>
+        /// <exception cref="InvalidOperationException">Expecting a package that is already registered in this session.</exception>
         public SolutionProject CurrentProject
         {
-            get
-            {
-                return currentProject;
-            }
+            get => currentProject;
             set
             {
                 if (value != null)
                 {
                     if (!Projects.Contains(value))
-                    {
-                        throw new InvalidOperationException("Expecting a package that is already registered in this session");
-                    }
+                        throw new InvalidOperationException("Expecting a package that is already registered in this session.");
                 }
                 currentProject = value;
             }
         }
 
         /// <summary>
-        /// Gets the packages referenced by the current package.
+        ///   Gets the packages referenced by the current package.
         /// </summary>
-        /// <returns>IEnumerable&lt;Package&gt;.</returns>
+        /// <returns>Collection of <see cref="Package"/>s referenced by the current package.</returns>
         public IEnumerable<Package> GetPackagesFromCurrent()
         {
-            if (CurrentProject.Package == null)
-            {
+            if (CurrentProject.Package is null)
                 yield return CurrentProject.Package;
-            }
 
             foreach (var dependency in CurrentProject.FlattenedDependencies)
             {
                 var loadedPackage = packages.Find(dependency);
                 // In case the package is not found (when working with session not fully loaded/resolved with all deps)
-                if (loadedPackage == null)
-                {
+                if (loadedPackage is null)
                     yield return loadedPackage;
-                }
             }
         }
 
         /// <summary>
-        /// Gets the dependency manager.
+        ///   Gets the dependency manager for this package.
         /// </summary>
-        /// <value>AssetDependencyManager.</value>
+        /// <value>The <see cref="AssetDependencyManager"/> that manages the dependencies for this package.</value>
         public AssetDependencyManager DependencyManager
         {
             get
@@ -605,6 +607,10 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
             }
         }
 
+        /// <summary>
+        ///   Gets the source tracker for this package.
+        /// </summary>
+        /// <value>The <see cref="AssetSourceTracker"/> that tracks changes in the source assets for this package.</value>
         public AssetSourceTracker SourceTracker
         {
             get
@@ -617,47 +623,53 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Adds an existing package to the current session.
+        ///   Adds an existing package to the current session.
         /// </summary>
         /// <param name="projectPath">The project or package path.</param>
-        /// <param name="logger">The session result.</param>
-        /// <param name="loadParametersArg">The load parameters argument.</param>
-        /// <exception cref="System.ArgumentNullException">packagePath</exception>
-        /// <exception cref="System.ArgumentException">Invalid relative path. Expecting an absolute package path;packagePath</exception>
-        /// <exception cref="System.IO.FileNotFoundException">Unable to find package</exception>
-        public PackageContainer AddExistingProject(UFile projectPath, ILogger logger, PackageLoadParameters loadParametersArg = null)
+        /// <param name="log">The <see cref="ILogger"/> in which to report the result.</param>
+        /// <param name="loadParameters">The parameters to use for loading the package.</param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="projectPath"/> is a <c>null</c> reference.
+        ///   Or <paramref name="log"/> is a <c>null</c> reference.
+        /// </exception>
+        /// <exception cref="ArgumentException">Invalid relative path. Expected an absolute package path.</exception>
+        /// <exception cref="FileNotFoundException">Unable to find the package.</exception>
+        public PackageContainer AddExistingProject(UFile projectPath, ILogger log, PackageLoadParameters loadParameters = null)
         {
-            if (projectPath == null) throw new ArgumentNullException(nameof(projectPath));
-            if (logger == null) throw new ArgumentNullException(nameof(logger));
-            if (!projectPath.IsAbsolute) throw new ArgumentException(@"Invalid relative path. Expecting an absolute project path", nameof(projectPath));
-            if (!File.Exists(projectPath)) throw new FileNotFoundException("Unable to find project", projectPath);
+            if (projectPath is null)
+                throw new ArgumentNullException(nameof(projectPath));
+            if (log is null)
+                throw new ArgumentNullException(nameof(log));
+            if (!projectPath.IsAbsolute)
+                throw new ArgumentException(@"Invalid relative path. Expected an absolute project path.", nameof(projectPath));
+            if (!File.Exists(projectPath))
+                throw new FileNotFoundException("Unable to find project.", projectPath);
 
-            var loadParameters = loadParametersArg ?? PackageLoadParameters.Default();
+            var loadParams = loadParameters ?? PackageLoadParameters.Default();
 
-            Package package;
             PackageContainer project;
             try
             {
                 // Enable reference analysis caching during loading
                 AssetReferenceAnalysis.EnableCaching = true;
 
-                project = LoadProject(logger, projectPath.ToWindowsPath(), loadParametersArg);
+                project = LoadProject(log, projectPath.ToWindowsPath());
                 Projects.Add(project);
 
-                package = project.Package;
+                Package package = project.Package;
 
                 // Load all missing references/dependencies
-                LoadMissingDependencies(logger, loadParameters);
+                LoadMissingDependencies(log, loadParams);
 
                 // Process everything except current one (it needs different load parameters)
-                var dependencyLoadParameters = loadParameters.Clone();
+                var dependencyLoadParameters = loadParams.Clone();
                 dependencyLoadParameters.GenerateNewAssetIds = false;
-                LoadMissingAssets(logger, Packages.Where(x => x != package).ToList(), dependencyLoadParameters);
+                LoadMissingAssets(log, Packages.Where(pkg => pkg != package).ToList(), dependencyLoadParameters);
 
-                LoadMissingAssets(logger, new[] { package }, loadParameters);
+                LoadMissingAssets(log, new[] { package }, loadParams);
 
                 // Run analysis after
-                // TODO CSPROJ=XKPKG
+                // TODO: CSPROJ=SDPKG
                 //foreach (var packageToAdd in packagesLoaded)
                 //{
                 //    var analysis = new PackageAnalysis(packageToAdd, GetPackageAnalysisParametersForLoad());
@@ -673,52 +685,59 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Adds an existing package to the current session and runs the package analysis before adding it.
+        ///   Adds an existing <see cref="Package"/> to the current session and runs the package analysis on it.
         /// </summary>
-        /// <param name="package">The package to add</param>
-        /// <param name="logger">The logger</param>
-        public void AddExistingPackage(Package package, ILogger logger)
+        /// <param name="package">The package to add.</param>
+        /// <param name="log">The <see cref="ILogger"/> in which to report the result.</param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="package"/> is a <c>null</c> reference.
+        ///   Or <paramref name="log"/> is a <c>null</c> reference.
+        /// </exception>
+        public void AddExistingPackage(Package package, ILogger log)
         {
-            if (package == null) throw new ArgumentNullException(nameof(package));
-            if (logger == null) throw new ArgumentNullException(nameof(logger));
+            if (package is null)
+                throw new ArgumentNullException(nameof(package));
+            if (log is null)
+                throw new ArgumentNullException(nameof(log));
 
             if (Packages.Contains(package))
-            {
                 return;
-            }
 
             // Preset the session on the package to allow the session to look for existing asset
             packages.Add(package);
 
             // Run analysis after
             var analysis = new PackageAnalysis(package, GetPackageAnalysisParametersForLoad());
-            analysis.Run(logger);
+            analysis.Run(log);
 
         }
 
-        /// <inheritdoc />
-        /// <remarks>Looks for the asset amongst all the packages of this session.</remarks>
+        /// <summary>
+        ///   Finds an asset by its identifier amongst all the packages of this session.
+        /// </summary>
         public AssetItem FindAsset(AssetId assetId)
         {
             return Packages.Select(p => p.Assets.Find(assetId)).NotNull().FirstOrDefault();
         }
 
-        /// <inheritdoc />
-        /// <remarks>Looks for the asset amongst all the packages of this session.</remarks>
+        /// <summary>
+        ///   Finds an asset by its location amongst all the packages of this session.
+        /// </summary>
         public AssetItem FindAsset(UFile location)
         {
             return Packages.Select(p => p.Assets.Find(location)).NotNull().FirstOrDefault();
         }
 
-        /// <inheritdoc />
-        /// <remarks>Looks for the asset amongst all the packages of this session.</remarks>
+        /// <summary>
+        ///   Finds an asset from a proxy object amongst all the packages of this session.
+        /// </summary>
         public AssetItem FindAssetFromProxyObject(object proxyObject)
         {
             var reference = AttachedReferenceManager.GetAttachedReference(proxyObject);
             return reference != null ? (FindAsset(reference.Id) ?? FindAsset(reference.Url)) : null;
         }
 
-        private PackageContainer LoadProject(ILogger log, string filePath, PackageLoadParameters loadParameters = null)
+        private PackageContainer LoadProject(ILogger log, string filePath)
         {
             var project = Package.LoadProject(log, filePath);
 
@@ -741,7 +760,8 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
             var package = project.Package;
 
-            // If the package doesn't have a meta name, fix it here (This is supposed to be done in the above disabled analysis - but we still need to do it!)
+            // If the package doesn't have a meta name, fix it here
+            // (this is supposed to be done in the above disabled analysis - but we still need to do it!)
             if (string.IsNullOrWhiteSpace(package.Meta.Name) && package.FullPath != null)
             {
                 package.Meta.Name = package.FullPath.GetFileNameWithoutExtension();
@@ -758,17 +778,22 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Loads a package from specified file path.
+        ///   Loads a package from specified file path.
         /// </summary>
         /// <param name="filePath">The file path to a package file.</param>
         /// <param name="sessionResult">The session result.</param>
-        /// <param name="loadParameters">The load parameters.</param>
-        /// <exception cref="System.ArgumentNullException">filePath</exception>
-        /// <exception cref="System.ArgumentException">File [{0}] must exist.ToFormat(filePath);filePath</exception>
+        /// <param name="loadParameters">The parameters to use for loading the package.</param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="filePath"/> is a <c>null</c> reference.
+        ///   Or <paramref name="sessionResult"/> is a <c>null</c> reference.
+        /// </exception>
+        /// <exception cref="ArgumentException">The file specified by <paramref name="filePath"/> must exist.</exception>
         public static void Load(string filePath, PackageSessionResult sessionResult, PackageLoadParameters loadParameters = null)
         {
-            if (filePath == null) throw new ArgumentNullException(nameof(filePath));
-            if (sessionResult == null) throw new ArgumentNullException(nameof(sessionResult));
+            if (filePath is null)
+                throw new ArgumentNullException(nameof(filePath));
+            if (sessionResult is null)
+                throw new ArgumentNullException(nameof(sessionResult));
 
             // Make sure with have valid parameters
             loadParameters = loadParameters ?? PackageLoadParameters.Default();
@@ -776,7 +801,8 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
             // Make sure to use a full path.
             filePath = FileUtility.GetAbsolutePath(filePath);
 
-            if (!File.Exists(filePath)) throw new ArgumentException($@"File [{filePath}] must exist", nameof(filePath));
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException($"The file [{filePath}] must exist.", filePath);
 
             try
             {
@@ -801,48 +827,46 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
                         // Keep header
                         var versionHeader = solution.Properties.FirstOrDefault(x => x.Name == "VisualStudioVersion");
-                        Version version;
-                        if (versionHeader != null && Version.TryParse(versionHeader.Value, out version))
+                        if (versionHeader != null && Version.TryParse(versionHeader.Value, out Version version))
                             session.VisualStudioVersion = version;
                         else
                             session.VisualStudioVersion = null;
 
-                        // Note: using ToList() because upgrade from old package system might change Projects list
+                        // NOTE: Using ToList() because upgrade from old package system might change Projects list
                         foreach (var vsProject in solution.Projects.ToList())
                         {
-                            if (vsProject.TypeGuid == VisualStudio.KnownProjectTypeGuid.CSharp || vsProject.TypeGuid == VisualStudio.KnownProjectTypeGuid.CSharpNewSystem)
+                            if (vsProject.TypeGuid == VisualStudio.KnownProjectTypeGuid.CSharp ||
+                                vsProject.TypeGuid == VisualStudio.KnownProjectTypeGuid.CSharpNewSystem)
                             {
-                                var project = (SolutionProject)session.LoadProject(sessionResult, vsProject.FullPath, loadParameters);
+                                var project = (SolutionProject) session.LoadProject(sessionResult, vsProject.FullPath);
                                 project.VSProject = vsProject;
                                 session.Projects.Add(project);
 
-                                if (firstProject == null)
+                                if (firstProject is null)
                                     firstProject = project;
 
                                 // Output the session only if there is no cancellation
                                 if (cancelToken.HasValue && cancelToken.Value.IsCancellationRequested)
-                                {
                                     return;
-                                }
                             }
                         }
 
                         session.LoadMissingDependencies(sessionResult, loadParameters);
                     }
-                    else if (Path.GetExtension(filePath).ToLowerInvariant() == ".csproj"
-                        || Path.GetExtension(filePath).ToLowerInvariant() == Package.PackageFileExtension)
+                    else if (Path.GetExtension(filePath).ToLowerInvariant() == ".csproj" ||
+                             Path.GetExtension(filePath).ToLowerInvariant() == Package.PackageFileExtension)
                     {
-                        var project = session.LoadProject(sessionResult, filePath, loadParameters);
+                        var project = session.LoadProject(sessionResult, filePath);
                         session.Projects.Add(project);
                         firstProject = project as SolutionProject;
                     }
                     else
                     {
-                        sessionResult.Error($"Unsupported file extension (only .sln, .csproj and .sdpkg are supported)");
+                        sessionResult.Error($"Unsupported file extension (only .sln, .csproj and .sdpkg are supported).");
                         return;
                     }
 
-                    // Load all missing references/dependencies
+                    // Load all missing references / dependencies
                     session.LoadMissingReferences(sessionResult, loadParameters);
 
                     // Fix relative references
@@ -853,7 +877,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                     // Run custom package session analysis
                     foreach (var type in AssetRegistry.GetPackageSessionAnalysisTypes())
                     {
-                        var pkgAnalysis = (PackageSessionAnalysisBase)Activator.CreateInstance(type);
+                        var pkgAnalysis = (PackageSessionAnalysisBase) Activator.CreateInstance(type);
                         pkgAnalysis.Session = session;
                         var results = pkgAnalysis.Run();
                         results.CopyTo(sessionResult);
@@ -884,12 +908,12 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Loads a package from specified file path.
+        ///   Loads a package from specified file path.
         /// </summary>
         /// <param name="filePath">The file path to a package file.</param>
-        /// <param name="loadParameters">The load parameters.</param>
-        /// <returns>A package.</returns>
-        /// <exception cref="System.ArgumentNullException">filePath</exception>
+        /// <param name="loadParameters">The parameters to use for loading the package.</param>
+        /// <returns>The loaded package session and results.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="filePath"/> is a <c>null</c> reference.</exception>
         public static PackageSessionResult Load(string filePath, PackageLoadParameters loadParameters = null)
         {
             var result = new PackageSessionResult();
@@ -898,10 +922,10 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Make sure packages have their dependencies and assets loaded.
+        ///   Make sure packages have their dependencies and assets loaded.
         /// </summary>
-        /// <param name="log">The log.</param>
-        /// <param name="loadParameters">The load parameters.</param>
+        /// <param name="log">The <see cref="ILogger"/> in which to report the result.</param>
+        /// <param name="loadParameters">The parameters to use for loading the package.</param>
         public void LoadMissingReferences(ILogger log, PackageLoadParameters loadParameters = null)
         {
             LoadMissingDependencies(log, loadParameters);
@@ -909,15 +933,15 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Make sure packages have their dependencies loaded.
+        ///   Loads all the dependencies of the packages in this session.
         /// </summary>
-        /// <param name="log">The log.</param>
-        /// <param name="loadParametersArg">The load parameters argument.</param>
-        public void LoadMissingDependencies(ILogger log, PackageLoadParameters loadParametersArg = null)
+        /// <param name="log">The <see cref="ILogger"/> in which to report the result.</param>
+        /// <param name="loadParameters">The parameters to use for loading the package.</param>
+        public void LoadMissingDependencies(ILogger log, PackageLoadParameters loadParameters = null)
         {
-            var loadParameters = loadParametersArg ?? PackageLoadParameters.Default();
+            var loadParams = loadParameters ?? PackageLoadParameters.Default();
 
-            var cancelToken = loadParameters.CancelToken;
+            var cancelToken = loadParams.CancelToken;
 
             // Note: list can grow as dependencies get loaded
             for (int i = 0; i < Projects.Count; ++i)
@@ -926,23 +950,21 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
                 // Output the session only if there is no cancellation
                 if (cancelToken.HasValue && cancelToken.Value.IsCancellationRequested)
-                {
                     return;
-                }
 
                 if (project is SolutionProject solutionProject)
-                    PreLoadPackageDependencies(log, solutionProject, loadParameters).Wait();
-                else if (project.Package.State < PackageState.DependenciesReady) // not handling standalone packages yet
+                    PreLoadPackageDependencies(log, solutionProject, loadParams).Wait();
+                else if (project.Package.State < PackageState.DependenciesReady) // Not handling standalone packages yet
                     project.Package.State = PackageState.DependenciesReady;
             }
         }
 
         /// <summary>
-        /// Make sure packages have their assets loaded.
+        ///   Loads all the assets of the packages in this session.
         /// </summary>
-        /// <param name="log">The log.</param>
+        /// <param name="log">The <see cref="ILogger"/> in which to report the result.</param>
         /// <param name="packages">The packages to try to load missing assets from.</param>
-        /// <param name="loadParametersArg">The load parameters argument.</param>
+        /// <param name="loadParametersArg">The parameters to use for loading the package.</param>
         public void LoadMissingAssets(ILogger log, IEnumerable<Package> packages, PackageLoadParameters loadParametersArg = null)
         {
             var loadParameters = loadParametersArg ?? PackageLoadParameters.Default();
@@ -954,18 +976,16 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
             {
                 // Output the session only if there is no cancellation
                 if (cancelToken.HasValue && cancelToken.Value.IsCancellationRequested)
-                {
                     return;
-                }
 
                 TryLoadAssets(this, log, package, loadParameters);
             }
         }
 
         /// <summary>
-        /// Saves all packages and assets.
+        ///   Saves all the packages and assets in this session.
         /// </summary>
-        /// <param name="log">The <see cref="LoggerResult"/> in which to report result.</param>
+        /// <param name="log">The <see cref="ILogger"/> in which to report the result.</param>
         /// <param name="saveParameters">The parameters for the save operation.</param>
         public void Save(ILogger log, PackageSaveParameters saveParameters = null)
         {
@@ -993,44 +1013,39 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                     //    }
                     //}
 
-                    // If package are not modified, return immediately
+                    // If packages are not modified, return immediately
                     if (!CheckModifiedPackages() && assetsOrPackagesToRemove.Count == 0)
-                    {
                         return;
-                    }
 
-                    // Suspend tracking when saving as we don't want to receive
-                    // all notification events
+                    // Suspend tracking when saving as we don't want to receive all notification events
                     dependencies?.BeginSavingSession();
                     sourceTracker?.BeginSavingSession();
 
                     // Return immediately if there is any error
                     if (loggerResult.HasErrors)
                         return;
-       
-                    //batch projects
+
+                    // Batch projects
                     var vsProjs = new Dictionary<string, Microsoft.Build.Evaluation.Project>();
 
                     // Delete previous files
-                    foreach (var fileIt in assetsOrPackagesToRemove)
+                    foreach (var file in assetsOrPackagesToRemove)
                     {
-                        var assetPath = fileIt.Key;
-                        var assetItemOrPackage = fileIt.Value;
+                        var assetPath = file.Key;
+                        var assetItemOrPackage = file.Value;
 
                         var assetItem = assetItemOrPackage as AssetItem;
                         try
                         {
-                            //If we are within a csproj we need to remove the file from there as well
+                            // If we are within a .csproj we need to remove the file from there as well
                             var projectFullPath = (assetItem.Package.Container as SolutionProject)?.FullPath;
                             if (projectFullPath != null)
                             {
-                                var projectAsset = assetItem.Asset as IProjectAsset;
-                                if (projectAsset != null)
+                                if (assetItem.Asset is IProjectAsset projectAsset)
                                 {
                                     var projectInclude = assetItem.GetProjectInclude();
 
-                                    Microsoft.Build.Evaluation.Project project;
-                                    if (!vsProjs.TryGetValue(projectFullPath, out project))
+                                    if (!vsProjs.TryGetValue(projectFullPath, out Microsoft.Build.Evaluation.Project project))
                                     {
                                         project = VSProjectHelper.LoadProject(projectFullPath.ToWindowsPath());
                                         vsProjs.Add(projectFullPath, project);
@@ -1041,9 +1056,8 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                                         project.RemoveItem(projectItem);
                                     }
 
-                                    //delete any generated file as well
-                                    var generatorAsset = assetItem.Asset as IProjectFileGeneratorAsset;
-                                    if (generatorAsset != null)
+                                    // Delete any generated file as well
+                                    if (assetItem.Asset is IProjectFileGeneratorAsset generatorAsset)
                                     {
                                         var generatedAbsolutePath = assetItem.GetGeneratedAbsolutePath().ToWindowsPath();
 
@@ -1069,10 +1083,9 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                             }
                             else
                             {
-                                var package = assetItemOrPackage as Package;
-                                if (package != null)
+                                if (assetItemOrPackage is Package package)
                                 {
-                                    loggerResult.Error(package, null, AssetMessageCode.AssetCannotDelete, ex, assetPath);
+                                    loggerResult.Error(package, assetReference: null, AssetMessageCode.AssetCannotDelete, ex, assetPath);
                                 }
                             }
                         }
@@ -1108,8 +1121,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                     sourceTracker?.EndSavingSession();
                     dependencies?.EndSavingSession();
 
-                    // Once all packages and assets have been saved, we can save the solution (as we need to have fullpath to
-                    // be setup for the packages)
+                    // Once all packages and assets have been saved, we can save the solution (as we need to have fullpath to be setup for the packages)
                     if (packagesSaved)
                     {
                         VSSolution.Save();
@@ -1145,8 +1157,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
             {
                 var asset = assetIt.Value;
 
-                AssetItem newAsset;
-                if (!newAssets.TryGetValue(assetIt.Key, out newAsset) || newAsset.Location != asset.Location)
+                if (!newAssets.TryGetValue(assetIt.Key, out AssetItem newAsset) || newAsset.Location != asset.Location)
                 {
                     assetsOrPackagesToRemove[asset.FullPath] = asset;
                 }
@@ -1155,9 +1166,9 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Loads the assembly references that were not loaded before.
+        ///   Loads the assembly references that were not loaded before.
         /// </summary>
-        /// <param name="log">The log.</param>
+        /// <param name="log">The <see cref="LoggerResult"/> in which to report the result.</param>
         public void UpdateAssemblyReferences(LoggerResult log)
         {
             foreach (var package in LocalPackages)
@@ -1169,9 +1180,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         private bool CheckModifiedPackages()
         {
             if (IsDirty)
-            {
                 return true;
-            }
 
             foreach (var package in LocalPackages)
             {
@@ -1194,22 +1203,17 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                 case NotifyCollectionChangedAction.Add:
                     RegisterProject((PackageContainer)e.NewItems[0]);
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     UnRegisterProject((PackageContainer)e.OldItems[0]);
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
                     packagesCopy.Clear();
-
                     foreach (var oldProject in e.OldItems.OfType<PackageContainer>())
-                    {
                         UnRegisterProject(oldProject);
-                    }
-
                     foreach (var projectToCopy in Projects)
-                    {
                         RegisterProject(projectToCopy);
-                    }
                     break;
             }
         }
@@ -1217,16 +1221,14 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         private void RegisterProject(PackageContainer project)
         {
             if (project.Session != null)
-            {
-                throw new InvalidOperationException("Cannot attach a project to more than one session");
-            }
+                throw new InvalidOperationException("Cannot attach a project to more than one session.");
 
             project.SetSessionInternal(this);
 
             if (project is SolutionProject solutionProject)
             {
-                // Note: when loading, package might already be there
-                // TODO CSPROJ=XKPKG: skip it in a proper way? (context info)
+                // NOTE: When loading, package might already be there
+                // TODO: CSPROJ=SDPKG: skip it in a proper way? (context info)
                 if (!VSSolution.Projects.Contains(solutionProject.VSProject))
                 {
                     // Special case: let's put executable windows project first, so that Visual Studio use them as startup project (first project in .sln)
@@ -1243,16 +1245,12 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         private void UnRegisterProject(PackageContainer project)
         {
             if (project.Session != this)
-            {
                 throw new InvalidOperationException("Cannot detach a project that was not attached to this session");
-            }
 
             if (project.Package != null)
                 packages.Remove(project.Package);
             if (project is SolutionProject solutionProject)
-            {
                 VSSolution.Projects.Remove(solutionProject.VSProject);
-            }
 
             project.SetSessionInternal(null);
         }
@@ -1264,22 +1262,17 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                 case NotifyCollectionChangedAction.Add:
                     RegisterPackage((Package)e.NewItems[0]);
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     UnRegisterPackage((Package)e.OldItems[0]);
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
                     packagesCopy.Clear();
-
                     foreach (var oldPackage in e.OldItems.OfType<Package>())
-                    {
                         UnRegisterPackage(oldPackage);
-                    }
-
                     foreach (var packageToCopy in Packages)
-                    {
                         RegisterPackage(packageToCopy);
-                    }
                     break;
             }
         }
@@ -1288,6 +1281,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         {
             if (package.IsSystem)
                 return;
+
             package.AssetDirtyChanged += OnAssetDirtyChanged;
 
             // If the package doesn't have any temporary assets, we can freeze it
@@ -1300,7 +1294,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         }
 
         /// <summary>
-        /// Freeze a package once it is loaded with all its assets
+        ///   Freeze a package once it is loaded with all its assets.
         /// </summary>
         /// <param name="package">The package to freeze.</param>
         private void FreezePackage(Package package)
@@ -1321,6 +1315,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
         {
             if (package.IsSystem)
                 return;
+
             package.AssetDirtyChanged -= OnAssetDirtyChanged;
 
             packagesCopy.Remove(package);
@@ -1337,9 +1332,12 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
         private Package PreLoadPackage(ILogger log, string filePath, PackageLoadParameters loadParameters)
         {
-            if (log == null) throw new ArgumentNullException(nameof(log));
-            if (filePath == null) throw new ArgumentNullException(nameof(filePath));
-            if (loadParameters == null) throw new ArgumentNullException(nameof(loadParameters));
+            if (log is null)
+                throw new ArgumentNullException(nameof(log));
+            if (filePath is null)
+                throw new ArgumentNullException(nameof(filePath));
+            if (loadParameters is null)
+                throw new ArgumentNullException(nameof(loadParameters));
 
             try
             {
@@ -1359,6 +1357,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                 //    });
                 //    analysis.Run(log);
                 //}
+
                 // If the package doesn't have a meta name, fix it here (This is supposed to be done in the above disabled analysis - but we still need to do it!)
                 if (string.IsNullOrWhiteSpace(package.Meta.Name) && package.FullPath != null)
                 {
@@ -1376,7 +1375,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
             }
             catch (Exception ex)
             {
-                log.Error($"Error while pre-loading package [{filePath}]", ex);
+                log.Error($"Error while pre-loading package [{filePath}].", ex);
             }
 
             return null;
@@ -1414,8 +1413,8 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                     pendingPackageUpgrades = new List<PendingPackageUpgrade>();
                 pendingPackageUpgradesPerPackage.Remove(package);
 
-                // Note: Default state is upgrade failed (for early exit on error/exceptions)
-                // We will update to success as soon as loading is finished.
+                // NOTE: Default state is upgrade failed (for early exit on error/exceptions).
+                //       We will update to success as soon as loading is finished.
                 package.State = PackageState.UpgradeFailed;
 
                 // Prepare asset loading
@@ -1434,7 +1433,9 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
                 if (pendingPackageUpgrades.Count > 0)
                 {
-                    var upgradeAllowed = packageUpgradeAllowed != false ? PackageUpgradeRequestedAnswer.Upgrade : PackageUpgradeRequestedAnswer.DoNotUpgrade;
+                    var upgradeAllowed = packageUpgradeAllowed != false
+                        ? PackageUpgradeRequestedAnswer.Upgrade
+                        : PackageUpgradeRequestedAnswer.DoNotUpgrade;
 
                     // Need upgrades, let's ask user confirmation
                     if (loadParameters.PackageUpgradeRequested != null && !packageUpgradeAllowed.HasValue)
@@ -1448,7 +1449,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
                     if (!PackageLoadParameters.ShouldUpgrade(upgradeAllowed))
                     {
-                        log.Error($"Necessary package migration for [{package.Meta.Name}] has not been allowed");
+                        log.Error($"Necessary package migration for [{package.Meta.Name}] has not been allowed.");
                         return false;
                     }
 
@@ -1459,7 +1460,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                         var dependencyPackage = pendingPackageUpgrade.DependencyPackage;
                         if (!packageUpgrader.UpgradeBeforeAssembliesLoaded(loadParameters, session, log, package, pendingPackageUpgrade.Dependency, dependencyPackage))
                         {
-                            log.Error($"Error while upgrading package [{package.Meta.Name}] for [{dependencyPackage.Meta.Name}] from version [{pendingPackageUpgrade.Dependency.Version}] to [{dependencyPackage.Meta.Version}]");
+                            log.Error($"Error while upgrading package [{package.Meta.Name}] for [{dependencyPackage.Meta.Name}] from version [{pendingPackageUpgrade.Dependency.Version}] to [{dependencyPackage.Meta.Version}].");
                             return false;
                         }
                     }
@@ -1471,7 +1472,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                 package.LoadAssemblies(log, newLoadParameters);
 
                 // Load list of assets
-                newLoadParameters.AssetFiles = Package.ListAssetFiles(log, package, true, false, loadParameters.CancelToken);
+                newLoadParameters.AssetFiles = Package.ListAssetFiles(package, listAssetsInMsBuild: true, listUnregisteredAssets: false);
                 // Sort them by size (to improve concurrency during load)
                 newLoadParameters.AssetFiles.Sort(PackageLoadingAssetFile.FileSizeComparer.Default);
 
@@ -1484,7 +1485,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                         var dependencyPackage = pendingPackageUpgrade.DependencyPackage;
                         if (!packageUpgrader.Upgrade(loadParameters, session, log, package, pendingPackageUpgrade.Dependency, dependencyPackage, newLoadParameters.AssetFiles))
                         {
-                            log.Error($"Error while upgrading package [{package.Meta.Name}] for [{dependencyPackage.Meta.Name}] from version [{pendingPackageUpgrade.Dependency.Version}] to [{dependencyPackage.Meta.Version}]");
+                            log.Error($"Error while upgrading package [{package.Meta.Name}] for [{dependencyPackage.Meta.Name}] from version [{pendingPackageUpgrade.Dependency.Version}] to [{dependencyPackage.Meta.Version}].");
                             return false;
                         }
 
@@ -1511,7 +1512,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                         var dependencyPackage = pendingPackageUpgrade.DependencyPackage;
                         if (!packageUpgrader.UpgradeAfterAssetsLoaded(loadParameters, session, log, package, pendingPackageUpgrade.Dependency, dependencyPackage, pendingPackageUpgrade.DependencyVersionBeforeUpgrade))
                         {
-                            log.Error($"Error while upgrading package [{package.Meta.Name}] for [{dependencyPackage.Meta.Name}] from version [{pendingPackageUpgrade.Dependency.Version}] to [{dependencyPackage.Meta.Version}]");
+                            log.Error($"Error while upgrading package [{package.Meta.Name}] for [{dependencyPackage.Meta.Name}] from version [{pendingPackageUpgrade.Dependency.Version}] to [{dependencyPackage.Meta.Version}].");
                             return false;
                         }
                     }
@@ -1530,7 +1531,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
             }
             catch (Exception ex)
             {
-                log.Error($"Error while pre-loading package [{package}]", ex);
+                log.Error($"Error while pre-loading package [{package}].", ex);
                 return false;
             }
         }
@@ -1547,7 +1548,7 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
             if (dependentPackagePreviousMinimumVersion < dependencyPackage.Meta.Version)
             {
                 // Find upgrader for given package
-                // Note: If no upgrader is found, we assume it is still compatible with previous versions, so do nothing
+                // NOTE: If no upgrader is found, we assume it is still compatible with previous versions, so do nothing
                 var packageUpgrader = AssetRegistry.GetPackageUpgrader(dependencyPackage.Meta.Name);
                 if (packageUpgrader != null)
                 {
@@ -1561,10 +1562,10 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
                     if (dependency.Version.MinVersion < packageUpgrader.Attribute.PackageMinimumVersion)
                     {
                         // Throw an exception, because the package update is not allowed and can't be done
-                        throw new InvalidOperationException($"Upgrading package [{dependentPackage.Meta.Name}] to use [{dependencyPackage.Meta.Name}] from version [{dependentPackagePreviousMinimumVersion}] to [{dependencyPackage.Meta.Version}] is not supported");
+                        throw new InvalidOperationException($"Upgrading package [{dependentPackage.Meta.Name}] to use [{dependencyPackage.Meta.Name}] from version [{dependentPackagePreviousMinimumVersion}] to [{dependencyPackage.Meta.Version}] is not supported.");
                     }
 
-                    log.Info($"Upgrading package [{dependentPackage.Meta.Name}] to use [{dependencyPackage.Meta.Name}] from version [{dependentPackagePreviousMinimumVersion}] to [{dependencyPackage.Meta.Version}] will be required");
+                    log.Info($"Upgrading package [{dependentPackage.Meta.Name}] to use [{dependencyPackage.Meta.Name}] from version [{dependentPackagePreviousMinimumVersion}] to [{dependencyPackage.Meta.Version}] will be required.");
                     return packageUpgrader;
                 }
             }
@@ -1589,19 +1590,23 @@ MinimumVisualStudioVersion = {0}".ToFormat(DefaultVisualStudioVersion);
 
             public bool Equals(PendingPackageUpgrade other)
             {
-                if (ReferenceEquals(null, other)) return false;
-                if (ReferenceEquals(this, other)) return true;
-                return Equals(PackageUpgrader, other.PackageUpgrader)
-                    && Equals(Dependency, other.Dependency)
-                    && Equals(DependencyPackage, other.DependencyPackage)
-                    && Equals(DependencyVersionBeforeUpgrade, other.DependencyVersionBeforeUpgrade);
+                if (other is null)
+                    return false;
+                if (ReferenceEquals(this, other))
+                    return true;
+
+                return Equals(PackageUpgrader, other.PackageUpgrader) &&
+                       Equals(Dependency, other.Dependency) &&
+                       Equals(DependencyPackage, other.DependencyPackage) &&
+                       Equals(DependencyVersionBeforeUpgrade, other.DependencyVersionBeforeUpgrade);
             }
 
             public override bool Equals(object obj)
             {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                return Equals(obj as PendingPackageUpgrade);
+                if(obj is PendingPackageUpgrade other)
+                    return Equals(other);
+
+                return false;
             }
 
             public PendingPackageUpgrade Clone()

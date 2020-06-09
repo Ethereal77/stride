@@ -14,7 +14,7 @@ using Stride.Core.Yaml;
 namespace Stride.Core.Assets
 {
     /// <summary>
-    /// Represents an asset before being loaded. Used mostly for asset upgrading.
+    ///   Represents an asset before being loaded. Used mostly for asset upgrading.
     /// </summary>
     public class PackageLoadingAssetFile
     {
@@ -30,13 +30,15 @@ namespace Stride.Core.Assets
 
         public bool Deleted;
 
-        public UFile AssetLocation => FilePath.MakeRelative(SourceFolder).GetDirectoryAndFileNameWithoutExtension();
+        public UFile AssetLocation => (Link ?? FilePath).MakeRelative(SourceFolder).GetDirectoryAndFileNameWithoutExtension();
+
+        public UFile Link { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PackageLoadingAssetFile"/> class.
+        ///   Initializes a new instance of the <see cref="PackageLoadingAssetFile"/> class.
         /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="sourceFolder">The source folder.</param>
+        /// <param name="filePath">The asset file path.</param>
+        /// <param name="sourceFolder">The asset source folder.</param>
         public PackageLoadingAssetFile([NotNull] UFile filePath, UDirectory sourceFolder)
         {
             FilePath = filePath;
@@ -45,12 +47,12 @@ namespace Stride.Core.Assets
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PackageLoadingAssetFile" /> class.
+        ///   Initializes a new instance of the <see cref="PackageLoadingAssetFile" /> class.
         /// </summary>
         /// <param name="package">The package this asset will be part of.</param>
-        /// <param name="filePath">The relative file path (from default asset folder).</param>
-        /// <param name="sourceFolder">The source folder (optional, can be null).</param>
-        /// <exception cref="System.ArgumentException">filePath must be relative</exception>
+        /// <param name="filePath">The relative file path of the asset (from default asset folder).</param>
+        /// <param name="sourceFolder">The asset source folder (optional, can be null).</param>
+        /// <exception cref="ArgumentException"><paramref name="filePath"/> must be a relative path.</exception>
         public PackageLoadingAssetFile(Package package, [NotNull] UFile filePath, UDirectory sourceFolder)
         {
             if (filePath.IsAbsolute)
@@ -61,14 +63,11 @@ namespace Stride.Core.Assets
             OriginalFilePath = FilePath;
         }
 
-        public IReference ToReference()
-        {
-            return new AssetReference(AssetId.Empty, AssetLocation);
-        }
+        public IReference ToReference() => new AssetReference(AssetId.Empty, AssetLocation);
 
         public YamlAsset AsYamlAsset()
         {
-            // The asset file might have been been marked as deleted during the run of asset upgrader. In this case let's just return null.
+            // The asset file might have been been marked as deleted during the run of asset upgrader. In this case, just return null
             if (Deleted)
                 return null;
 
@@ -111,14 +110,13 @@ namespace Stride.Core.Assets
 
         public class YamlAsset : DynamicYaml, IDisposable
         {
-            private readonly PackageLoadingAssetFile packageLoadingAssetFile;
+            public PackageLoadingAssetFile Asset { get; }
 
-            public YamlAsset(PackageLoadingAssetFile packageLoadingAssetFile) : base(GetSafeStream(packageLoadingAssetFile))
+            public YamlAsset(PackageLoadingAssetFile packageLoadingAssetFile)
+                : base(GetSafeStream(packageLoadingAssetFile))
             {
-                this.packageLoadingAssetFile = packageLoadingAssetFile;
+                Asset = packageLoadingAssetFile;
             }
-
-            public PackageLoadingAssetFile Asset => packageLoadingAssetFile;
 
             public void Dispose()
             {
@@ -126,13 +124,15 @@ namespace Stride.Core.Assets
                 using (var memoryStream = new MemoryStream())
                 {
                     WriteTo(memoryStream, AssetYamlSerializer.Default.GetSerializerSettings());
-                    packageLoadingAssetFile.AssetContent = memoryStream.ToArray();
+                    Asset.AssetContent = memoryStream.ToArray();
                 }
             }
 
             private static Stream GetSafeStream(PackageLoadingAssetFile packageLoadingAssetFile)
             {
-                if (packageLoadingAssetFile == null) throw new ArgumentNullException(nameof(packageLoadingAssetFile));
+                if (packageLoadingAssetFile is null)
+                    throw new ArgumentNullException(nameof(packageLoadingAssetFile));
+
                 return packageLoadingAssetFile.OpenStream();
             }
         }

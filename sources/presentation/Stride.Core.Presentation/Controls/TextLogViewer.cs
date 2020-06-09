@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -21,7 +22,7 @@ using Stride.Core.Presentation.Internal;
 namespace Stride.Core.Presentation.Controls
 {
     /// <summary>
-    /// This control displays a collection of <see cref="ILogMessage"/>.
+    ///   Represents a text control that displays a collection of <see cref="ILogMessage"/>s.
     /// </summary>
     [TemplatePart(Name = "PART_LogTextBox", Type = typeof(RichTextBox))]
     [TemplatePart(Name = "PART_ClearLog", Type = typeof(ButtonBase))]
@@ -29,131 +30,253 @@ namespace Stride.Core.Presentation.Controls
     [TemplatePart(Name = "PART_NextResult", Type = typeof(ButtonBase))]
     public class TextLogViewer : Control
     {
-        private readonly List<TextRange> searchMatches = new List<TextRange>();
-        private int currentResult;
+        #region Dependency properties
 
         /// <summary>
-        /// The <see cref="RichTextBox"/> in which the log messages are actually displayed.
-        /// </summary>
-        private RichTextBox logTextBox;
-
-        /// <summary>
-        /// Identifies the <see cref="LogMessages"/> dependency property.
+        ///   Identifies the <see cref="LogMessages"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty LogMessagesProperty = DependencyProperty.Register("LogMessages", typeof(ICollection<ILogMessage>), typeof(TextLogViewer), new PropertyMetadata(null, LogMessagesPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="AutoScroll"/> dependency property.
+        ///   Identifies the <see cref="AutoScroll"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty AutoScrollProperty = DependencyProperty.Register("AutoScroll", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
-        /// Identifies the <see cref="IsToolBarVisible"/> dependency property.
+        ///   Identifies the <see cref="IsToolBarVisible"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty IsToolBarVisibleProperty = DependencyProperty.Register("IsToolBarVisible", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
-        /// Identifies the <see cref="CanClearLog"/> dependency property.
+        ///   Identifies the <see cref="CanClearLog"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty CanClearLogProperty = DependencyProperty.Register("CanClearLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
-        /// Identifies the <see cref="CanFilterLog"/> dependency property.
+        ///   Identifies the <see cref="CanFilterLog"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty CanFilterLogProperty = DependencyProperty.Register("CanFilterLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
-        /// Identifies the <see cref="CanSearchLog"/> dependency property.
+        ///   Identifies the <see cref="CanSearchLog"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty CanSearchLogProperty = DependencyProperty.Register("CanSearchLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
-        /// Identifies the <see cref="SearchToken"/> dependency property.
+        ///   Identifies the <see cref="SearchToken"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SearchTokenProperty = DependencyProperty.Register("SearchToken", typeof(string), typeof(TextLogViewer), new PropertyMetadata("", SearchTokenChanged));
 
         /// <summary>
-        /// Identifies the <see cref="SearchMatchCase"/> dependency property.
+        ///   Identifies the <see cref="SearchMatchCase"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SearchMatchCaseProperty = DependencyProperty.Register("SearchMatchCase", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, SearchTokenChanged));
 
         /// <summary>
-        /// Identifies the <see cref="SearchMatchWord"/> dependency property.
+        ///   Identifies the <see cref="SearchMatchWord"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SearchMatchWordProperty = DependencyProperty.Register("SearchMatchWord", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, SearchTokenChanged));
 
         /// <summary>
-        /// Identifies the <see cref="SearchMatchBrush"/> dependency property.
+        ///   Identifies the <see cref="SearchMatchBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SearchMatchBrushProperty = DependencyProperty.Register("SearchMatchBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.LightSteelBlue, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="DebugBrush"/> dependency property.
+        ///   Identifies the <see cref="DebugBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty DebugBrushProperty = DependencyProperty.Register("DebugBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="VerboseBrush"/> dependency property.
+        ///   Identifies the <see cref="VerboseBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty VerboseBrushProperty = DependencyProperty.Register("VerboseBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="InfoBrush"/> dependency property.
+        ///   Identifies the <see cref="InfoBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty InfoBrushProperty = DependencyProperty.Register("InfoBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="WarningBrush"/> dependency property.
+        ///   Identifies the <see cref="WarningBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty WarningBrushProperty = DependencyProperty.Register("WarningBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="ErrorBrush"/> dependency property.
+        ///   Identifies the <see cref="ErrorBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ErrorBrushProperty = DependencyProperty.Register("ErrorBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="FatalBrush"/> dependency property.
+        ///   Identifies the <see cref="FatalBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty FatalBrushProperty = DependencyProperty.Register("FatalBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="ShowDebugMessages"/> dependency property.
+        ///   Identifies the <see cref="ShowDebugMessages"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowDebugMessagesProperty = DependencyProperty.Register("ShowDebugMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="ShowVerboseMessages"/> dependency property.
+        ///   Identifies the <see cref="ShowVerboseMessages"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowVerboseMessagesProperty = DependencyProperty.Register("ShowVerboseMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="ShowInfoMessages"/> dependency property.
+        ///   Identifies the <see cref="ShowInfoMessages"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowInfoMessagesProperty = DependencyProperty.Register("ShowInfoMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="ShowWarningMessages"/> dependency property.
+        ///   Identifies the <see cref="ShowWarningMessages"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowWarningMessagesProperty = DependencyProperty.Register("ShowWarningMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="ShowErrorMessages"/> dependency property.
+        ///   Identifies the <see cref="ShowErrorMessages"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowErrorMessagesProperty = DependencyProperty.Register("ShowErrorMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="ShowFatalMessages"/> dependency property.
+        ///   Identifies the <see cref="ShowFatalMessages"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowFatalMessagesProperty = DependencyProperty.Register("ShowFatalMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
-        /// Identifies the <see cref="ShowStacktrace"/> dependency property.
+        ///   Identifies the <see cref="ShowStacktrace"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowStacktraceProperty = DependencyProperty.Register("ShowStacktrace", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, TextPropertyChanged));
 
+        #endregion
+
+        private readonly List<TextRange> searchMatches = new List<TextRange>();
+        private int currentResult;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextLogViewer"/> class.
+        ///   The <see cref="RichTextBox"/> in which the log messages are actually displayed.
+        /// </summary>
+        private RichTextBox logTextBox;
+
+
+        /// <summary>
+        ///   Gets or sets the collection of <see cref="ILogMessage"/>s to display.
+        /// </summary>
+        public ICollection<ILogMessage> LogMessages { get { return (ICollection<ILogMessage>)GetValue(LogMessagesProperty); } set { SetValue(LogMessagesProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the control should automatically scroll when new lines are added
+        ///   when the scrollbar is already at the bottom.
+        /// </summary>
+        public bool AutoScroll { get { return (bool) GetValue(AutoScrollProperty); } set { SetValue(AutoScrollProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the tool bar should be visible.
+        /// </summary>
+        public bool IsToolBarVisible { get { return (bool) GetValue(IsToolBarVisibleProperty); } set { SetValue(IsToolBarVisibleProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether it is possible to clear the log text.
+        /// </summary>
+        public bool CanClearLog { get { return (bool) GetValue(CanClearLogProperty); } set { SetValue(CanClearLogProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether it is possible to filter the log text.
+        /// </summary>
+        public bool CanFilterLog { get { return (bool) GetValue(CanFilterLogProperty); } set { SetValue(CanFilterLogProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether it is possible to search in the log text.
+        /// </summary>
+        public bool CanSearchLog { get { return (bool) GetValue(CanSearchLogProperty); } set { SetValue(CanSearchLogProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets the current search token.
+        /// </summary>
+        public string SearchToken { get { return (string) GetValue(SearchTokenProperty); } set { SetValue(SearchTokenProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the search result should match the case.
+        /// </summary>
+        public bool SearchMatchCase { get { return (bool) GetValue(SearchMatchCaseProperty); } set { SetValue(SearchMatchCaseProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the search result should match whole words only.
+        /// </summary>
+        public bool SearchMatchWord { get { return (bool) GetValue(SearchMatchWordProperty); } set { SetValue(SearchMatchWordProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets the brush used to emphasize search results.
+        /// </summary>
+        public Brush SearchMatchBrush { get { return (Brush) GetValue(SearchMatchBrushProperty); } set { SetValue(SearchMatchBrushProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets the brush used to emphasize debug messages.
+        /// </summary>
+        public Brush DebugBrush { get { return (Brush) GetValue(DebugBrushProperty); } set { SetValue(DebugBrushProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets the brush used to emphasize verbose messages.
+        /// </summary>
+        public Brush VerboseBrush { get { return (Brush) GetValue(VerboseBrushProperty); } set { SetValue(VerboseBrushProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets the brush used to emphasize info messages.
+        /// </summary>
+        public Brush InfoBrush { get { return (Brush) GetValue(InfoBrushProperty); } set { SetValue(InfoBrushProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets the brush used to emphasize warning messages.
+        /// </summary>
+        public Brush WarningBrush { get { return (Brush) GetValue(WarningBrushProperty); } set { SetValue(WarningBrushProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets the brush used to emphasize error messages.
+        /// </summary>
+        public Brush ErrorBrush { get { return (Brush) GetValue(ErrorBrushProperty); } set { SetValue(ErrorBrushProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets the brush used to emphasize fatal messages.
+        /// </summary>
+        public Brush FatalBrush { get { return (Brush) GetValue(FatalBrushProperty); } set { SetValue(FatalBrushProperty, value); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the log viewer should display debug messages.
+        /// </summary>
+        public bool ShowDebugMessages { get { return (bool) GetValue(ShowDebugMessagesProperty); } set { SetValue(ShowDebugMessagesProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the log viewer should display verbose messages.
+        /// </summary>
+        public bool ShowVerboseMessages { get { return (bool) GetValue(ShowVerboseMessagesProperty); } set { SetValue(ShowVerboseMessagesProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the log viewer should display info messages.
+        /// </summary>
+        public bool ShowInfoMessages { get { return (bool) GetValue(ShowInfoMessagesProperty); } set { SetValue(ShowInfoMessagesProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the log viewer should display warning messages.
+        /// </summary>
+        public bool ShowWarningMessages { get { return (bool) GetValue(ShowWarningMessagesProperty); } set { SetValue(ShowWarningMessagesProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the log viewer should display error messages.
+        /// </summary>
+        public bool ShowErrorMessages { get { return (bool) GetValue(ShowErrorMessagesProperty); } set { SetValue(ShowErrorMessagesProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the log viewer should display fatal messages.
+        /// </summary>
+        public bool ShowFatalMessages { get { return (bool) GetValue(ShowFatalMessagesProperty); } set { SetValue(ShowFatalMessagesProperty, value.Box()); } }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether the log viewer should display fatal messages.
+        /// </summary>
+        public bool ShowStacktrace { get { return (bool) GetValue(ShowStacktraceProperty); } set { SetValue(ShowStacktraceProperty, value.Box()); } }
+
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="TextLogViewer"/> class.
         /// </summary>
         public TextLogViewer()
         {
@@ -173,120 +296,6 @@ namespace Stride.Core.Presentation.Controls
             };
         }
 
-        /// <summary>
-        /// Gets or sets the collection of <see cref="ILogMessage"/> to display.
-        /// </summary>
-        public ICollection<ILogMessage> LogMessages { get { return (ICollection<ILogMessage>)GetValue(LogMessagesProperty); } set { SetValue(LogMessagesProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets whether the control should automatically scroll when new lines are added when the scrollbar is already at the bottom.
-        /// </summary>
-        public bool AutoScroll { get { return (bool)GetValue(AutoScrollProperty); } set { SetValue(AutoScrollProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether the tool bar should be visible.
-        /// </summary>
-        public bool IsToolBarVisible { get { return (bool)GetValue(IsToolBarVisibleProperty); } set { SetValue(IsToolBarVisibleProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether it is possible to clear the log text.
-        /// </summary>
-        public bool CanClearLog { get { return (bool)GetValue(CanClearLogProperty); } set { SetValue(CanClearLogProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether it is possible to filter the log text.
-        /// </summary>
-        public bool CanFilterLog { get { return (bool)GetValue(CanFilterLogProperty); } set { SetValue(CanFilterLogProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether it is possible to search the log text.
-        /// </summary>
-        public bool CanSearchLog { get { return (bool)GetValue(CanSearchLogProperty); } set { SetValue(CanSearchLogProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets the current search token.
-        /// </summary>
-        public string SearchToken { get { return (string)GetValue(SearchTokenProperty); } set { SetValue(SearchTokenProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets whether the search result should match the case.
-        /// </summary>
-        public bool SearchMatchCase { get { return (bool)GetValue(SearchMatchCaseProperty); } set { SetValue(SearchMatchCaseProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets whether the search result should match whole words only.
-        /// </summary>
-        public bool SearchMatchWord { get { return (bool)GetValue(SearchMatchWordProperty); } set { SetValue(SearchMatchWordProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets the brush used to emphasize search results.
-        /// </summary>
-        public Brush SearchMatchBrush { get { return (Brush)GetValue(SearchMatchBrushProperty); } set { SetValue(SearchMatchBrushProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets the brush used to emphasize debug messages.
-        /// </summary>
-        public Brush DebugBrush { get { return (Brush)GetValue(DebugBrushProperty); } set { SetValue(DebugBrushProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets the brush used to emphasize verbose messages.
-        /// </summary>
-        public Brush VerboseBrush { get { return (Brush)GetValue(VerboseBrushProperty); } set { SetValue(VerboseBrushProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets the brush used to emphasize info messages.
-        /// </summary>
-        public Brush InfoBrush { get { return (Brush)GetValue(InfoBrushProperty); } set { SetValue(InfoBrushProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets the brush used to emphasize warning messages.
-        /// </summary>
-        public Brush WarningBrush { get { return (Brush)GetValue(WarningBrushProperty); } set { SetValue(WarningBrushProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets the brush used to emphasize error messages.
-        /// </summary>
-        public Brush ErrorBrush { get { return (Brush)GetValue(ErrorBrushProperty); } set { SetValue(ErrorBrushProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets the brush used to emphasize fatal messages.
-        /// </summary>
-        public Brush FatalBrush { get { return (Brush)GetValue(FatalBrushProperty); } set { SetValue(FatalBrushProperty, value); } }
-
-        /// <summary>
-        /// Gets or sets whether the log viewer should display debug messages.
-        /// </summary>
-        public bool ShowDebugMessages { get { return (bool)GetValue(ShowDebugMessagesProperty); } set { SetValue(ShowDebugMessagesProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether the log viewer should display verbose messages.
-        /// </summary>
-        public bool ShowVerboseMessages { get { return (bool)GetValue(ShowVerboseMessagesProperty); } set { SetValue(ShowVerboseMessagesProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether the log viewer should display info messages.
-        /// </summary>
-        public bool ShowInfoMessages { get { return (bool)GetValue(ShowInfoMessagesProperty); } set { SetValue(ShowInfoMessagesProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether the log viewer should display warning messages.
-        /// </summary>
-        public bool ShowWarningMessages { get { return (bool)GetValue(ShowWarningMessagesProperty); } set { SetValue(ShowWarningMessagesProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether the log viewer should display error messages.
-        /// </summary>
-        public bool ShowErrorMessages { get { return (bool)GetValue(ShowErrorMessagesProperty); } set { SetValue(ShowErrorMessagesProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether the log viewer should display fatal messages.
-        /// </summary>
-        public bool ShowFatalMessages { get { return (bool)GetValue(ShowFatalMessagesProperty); } set { SetValue(ShowFatalMessagesProperty, value.Box()); } }
-
-        /// <summary>
-        /// Gets or sets whether the log viewer should display fatal messages.
-        /// </summary>
-        public bool ShowStacktrace { get { return (bool)GetValue(ShowStacktraceProperty); } set { SetValue(ShowStacktraceProperty, value.Box()); } }
 
         /// <inheritdoc/>
         public override void OnApplyTemplate()
@@ -294,22 +303,20 @@ namespace Stride.Core.Presentation.Controls
             base.OnApplyTemplate();
 
             logTextBox = GetTemplateChild("PART_LogTextBox") as RichTextBox;
-            if (logTextBox == null)
+            if (logTextBox is null)
                 throw new InvalidOperationException("A part named 'PART_LogTextBox' must be present in the ControlTemplate, and must be of type 'RichTextBox'.");
 
-            var clearLogButton = GetTemplateChild("PART_ClearLog") as ButtonBase;
-            if (clearLogButton != null)
+            if (GetTemplateChild("PART_ClearLog") is ButtonBase clearLogButton)
             {
                 clearLogButton.Click += ClearLog;
             }
 
-            var previousResultButton = GetTemplateChild("PART_PreviousResult") as ButtonBase;
-            if (previousResultButton != null)
+            if (GetTemplateChild("PART_PreviousResult") is ButtonBase previousResultButton)
             {
                 previousResultButton.Click += PreviousResultClicked;
             }
-            var nextResultButton = GetTemplateChild("PART_NextResult") as ButtonBase;
-            if (nextResultButton != null)
+
+            if (GetTemplateChild("PART_NextResult") is ButtonBase nextResultButton)
             {
                 nextResultButton.Click += NextResultClicked;
             }
@@ -339,20 +346,44 @@ namespace Stride.Core.Presentation.Controls
 
         private void AppendText([NotNull] FlowDocument document, [NotNull] IEnumerable<ILogMessage> logMessages)
         {
-            if (document == null) throw new ArgumentNullException(nameof(document));
-            if (logMessages == null) throw new ArgumentNullException(nameof(logMessages));
+            if (document is null)
+                throw new ArgumentNullException(nameof(document));
+            if (logMessages is null)
+                throw new ArgumentNullException(nameof(logMessages));
+
             if (logTextBox != null)
             {
-                var paragraph = (Paragraph)document.Blocks.AsEnumerable().First();
+                var paragraph = (Paragraph) document.Blocks.AsEnumerable().First();
                 var stringComparison = SearchMatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
                 var searchToken = SearchToken;
+                var sb = new StringBuilder();
                 foreach (var message in logMessages.Where(x => ShouldDisplayMessage(x.Type)))
                 {
-                    string content = message.Text;
+                    sb.Clear();
+
+                    if (message.Module != null)
+                    {
+                        sb.AppendFormat("[{0}]: ", message.Module);
+                    }
+
+                    sb.AppendFormat("{0}: {1}", message.Type, message.Text);
+
                     var ex = message.ExceptionInfo;
-                    if (ShowStacktrace && ex != null)
-                        content = $"{content}{Environment.NewLine}{ex}";
-                    var lineText = $"{(message.Module != null ? $"[{message.Module}]: " : string.Empty)}{message.Type}:{content}{Environment.NewLine}";
+                    if (ex != null)
+                    {
+                        if (ShowStacktrace)
+                        {
+                            sb.AppendFormat("{0}{1}{0}", Environment.NewLine, ex);
+                        }
+                        else
+                        {
+                            sb.Append(" (...)");
+                        }
+                    }
+
+                    sb.AppendLine();
+
+                    var lineText = sb.ToString();
 
                     var logColor = GetLogColor(message.Type);
                     if (string.IsNullOrEmpty(searchToken))
@@ -397,12 +428,12 @@ namespace Stride.Core.Presentation.Controls
                                 searchMatches.Add(tokenRange);
                                 lineText = lineText.Substring(tokenIndex + searchToken.Length);
                             }
+
                         } while (lineText.Length > 0);
                     }
                 }
             }
         }
-
 
         private void ClearSearchResults()
         {
@@ -445,7 +476,6 @@ namespace Stride.Core.Presentation.Controls
             logTextBox.BringIntoView();
             currentResult = resultIndex;
         }
-
         private bool ShouldDisplayMessage(LogMessageType type)
         {
             switch (type)
@@ -462,6 +492,7 @@ namespace Stride.Core.Presentation.Controls
                     return ShowErrorMessages;
                 case LogMessageType.Fatal:
                     return ShowFatalMessages;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }
@@ -483,6 +514,7 @@ namespace Stride.Core.Presentation.Controls
                     return ErrorBrush;
                 case LogMessageType.Fatal:
                     return FatalBrush;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }
@@ -490,35 +522,28 @@ namespace Stride.Core.Presentation.Controls
 
         private static void TextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var logViewer = (TextLogViewer)d;
+            var logViewer = (TextLogViewer) d;
             logViewer.ResetText();
             logViewer.logTextBox?.ScrollToEnd();
         }
 
         /// <summary>
-        /// Raised when the <see cref="LogMessages"/> dependency property is changed.
+        ///   Raised when the <see cref="LogMessages"/> dependency property is changed.
         /// </summary>
         private static void LogMessagesPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var logViewer = (TextLogViewer)d;
-            var oldValue = e.OldValue as ICollection<ILogMessage>;
-            var newValue = e.NewValue as ICollection<ILogMessage>;
-            if (oldValue != null)
+            var logViewer = (TextLogViewer) d;
+            if (e.OldValue is ICollection<ILogMessage> oldValue)
             {
-                // ReSharper disable SuspiciousTypeConversion.Global - go home resharper, you're drunk
-                var notifyCollectionChanged = oldValue as INotifyCollectionChanged;
-                // ReSharper restore SuspiciousTypeConversion.Global
-                if (notifyCollectionChanged != null)
+                if (oldValue is INotifyCollectionChanged notifyCollectionChanged)
                 {
                     notifyCollectionChanged.CollectionChanged -= logViewer.LogMessagesCollectionChanged;
                 }
             }
+            var newValue = e.NewValue as ICollection<ILogMessage>;
             if (e.NewValue != null)
             {
-                // ReSharper disable SuspiciousTypeConversion.Global - go home resharper, you're drunk
-                var notifyCollectionChanged = newValue as INotifyCollectionChanged;
-                // ReSharper restore SuspiciousTypeConversion.Global
-                if (notifyCollectionChanged != null)
+                if (newValue is INotifyCollectionChanged notifyCollectionChanged)
                 {
                     notifyCollectionChanged.CollectionChanged += logViewer.LogMessagesCollectionChanged;
                 }
@@ -527,21 +552,22 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <summary>
-        /// Raised when the <see cref="SearchToken"/> property is changed.
+        ///   Raised when the <see cref="SearchToken"/> property is changed.
         /// </summary>
         private static void SearchTokenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var logViewer = (TextLogViewer)d;
+            var logViewer = (TextLogViewer) d;
             logViewer.ResetText();
             logViewer.SelectFirstOccurrence();
         }
 
         /// <summary>
-        /// Raised when the collection of log messages is observable and changes.
+        ///   Raised when the collection of log messages is observable and changes.
         /// </summary>
         private void LogMessagesCollectionChanged(object sender, [NotNull] NotifyCollectionChangedEventArgs e)
         {
-            var shouldScroll = AutoScroll && logTextBox != null && logTextBox.ExtentHeight - logTextBox.ViewportHeight - logTextBox.VerticalOffset < 1.0;
+            var shouldScroll = AutoScroll && logTextBox != null &&
+                               logTextBox.ExtentHeight - logTextBox.ViewportHeight - logTextBox.VerticalOffset < 1.0;
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -549,7 +575,7 @@ namespace Stride.Core.Presentation.Controls
                 {
                     if (logTextBox != null)
                     {
-                        if (logTextBox.Document == null)
+                        if (logTextBox.Document is null)
                         {
                             logTextBox.Document = new FlowDocument(new Paragraph());
                         }
@@ -565,7 +591,7 @@ namespace Stride.Core.Presentation.Controls
             if (shouldScroll)
             {
                 // Sometimes crashing with ExecutionEngineException in Window.GetWindowMinMax() if not ran with a dispatcher low priority.
-                // Note: priority should still be higher than DispatcherPriority.Input so that user input have a chance to scroll.
+                // NOTE: Priority should still be higher than DispatcherPriority.Input so that user input have a chance to scroll.
                 Dispatcher.InvokeAsync(() => logTextBox.ScrollToEnd(), DispatcherPriority.DataBind);
             }
         }

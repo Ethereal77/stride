@@ -9,20 +9,23 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks.Dataflow;
 
-using Stride.Core.Assets.Analysis;
-using Stride.Core.Diagnostics;
 using Stride.Core.IO;
 using Stride.Core.Storage;
+using Stride.Core.Diagnostics;
+using Stride.Core.Assets.Analysis;
 
 namespace Stride.Core.Assets.Tracking
 {
     // TODO: Inherit from AssetTracker
     public sealed class AssetSourceTracker : IDisposable
     {
-        private readonly PackageSession session;
         internal readonly object ThisLock = new object();
+
+        private readonly PackageSession session;
+
         internal readonly HashSet<Package> Packages;
         private readonly Dictionary<AssetId, TrackedAsset> trackedAssets = new Dictionary<AssetId, TrackedAsset>();
+
         // Objects used to track directories
         internal DirectoryWatcher DirectoryWatcher;
         private readonly Dictionary<string, HashSet<AssetId>> mapSourceFilesToAssets = new Dictionary<string, HashSet<AssetId>>(StringComparer.OrdinalIgnoreCase);
@@ -32,22 +35,26 @@ namespace Stride.Core.Assets.Tracking
         private readonly CancellationTokenSource tokenSourceForImportHash;
         private Thread fileEventThreadHandler;
         private int trackingSleepTime;
+
         private bool isDisposed;
         private bool isDisposing;
         private bool isTrackingPaused;
         private bool isSaving;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AssetDependencyManager" /> class.
+        ///   Initializes a new instance of the <see cref="AssetDependencyManager" /> class.
         /// </summary>
-        /// <param name="session">The session.</param>
-        /// <exception cref="System.ArgumentNullException">session</exception>
+        /// <param name="session">The session for which to track assets.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="session"/> is a <c>null</c> reference.</exception>
         internal AssetSourceTracker(PackageSession session)
         {
-            if (session == null) throw new ArgumentNullException(nameof(session));
+            if (session is null)
+                throw new ArgumentNullException(nameof(session));
+
             this.session = session;
             this.session.Packages.CollectionChanged += Packages_CollectionChanged;
             session.AssetDirtyChanged += Session_AssetDirtyChanged;
+
             Packages = new HashSet<Package>();
             TrackingSleepTime = 100;
             tokenSourceForImportHash = new CancellationTokenSource();
@@ -55,42 +62,38 @@ namespace Stride.Core.Assets.Tracking
         }
 
         /// <summary>
-        /// Gets a source dataflow block in which notifications that a source file has changed are pushed.
+        ///   Gets a source dataflow block in which notifications that a source file has changed are pushed.
         /// </summary>
         public BroadcastBlock<IReadOnlyList<SourceFileChangedData>> SourceFileChanged { get; } = new BroadcastBlock<IReadOnlyList<SourceFileChangedData>>(null);
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance should track file disk changed events. Default is <c>false</c>
+        ///   Gets or sets a value indicating whether this instance should track file disk changed events. Default is <c>false</c>.
         /// </summary>
         /// <value><c>true</c> if this instance should track file disk changed events; otherwise, <c>false</c>.</value>
+        /// <exception cref="InvalidOperationException">This instance is disposed.</exception>
         public bool EnableTracking
         {
-            get
-            {
-                return fileEventThreadHandler != null;
-            }
+            get => fileEventThreadHandler != null;
             set
             {
                 if (isDisposed)
-                {
-                    throw new InvalidOperationException("Cannot enable tracking when this instance is disposed");
-                }
+                    throw new InvalidOperationException("Cannot enable tracking when this instance is disposed.");
 
                 lock (ThisLock)
                 {
                     if (value)
                     {
                         bool activateTracking = false;
-                        if (DirectoryWatcher == null)
+                        if (DirectoryWatcher is null)
                         {
                             DirectoryWatcher = new DirectoryWatcher();
                             DirectoryWatcher.Modified += directoryWatcher_Modified;
                             activateTracking = true;
                         }
 
-                        if (fileEventThreadHandler == null)
+                        if (fileEventThreadHandler is null)
                         {
-                            fileEventThreadHandler = new Thread(SafeAction.Wrap(RunChangeWatcher)) { IsBackground = true, Name = "RunChangeWatcher thread" };
+                            fileEventThreadHandler = new Thread(SafeAction.Wrap(RunChangeWatcher)) { IsBackground = true, Name = "Asset Source Change Watcher thread" };
                             fileEventThreadHandler.Start();
                         }
 
@@ -129,15 +132,12 @@ namespace Stride.Core.Assets.Tracking
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is processing tracking events or it is paused. Default is <c>false</c>.
+        ///   Gets or sets a value indicating whether this instance is processing tracking events or it is paused. Default is <c>false</c>.
         /// </summary>
-        /// <value><c>true</c> if this instance is tracking paused; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if tracking is paused; otherwise, <c>false</c>.</value>
         public bool IsTrackingPaused
         {
-            get
-            {
-                return isTrackingPaused;
-            }
+            get => isTrackingPaused;
             set
             {
                 if (!EnableTracking)
@@ -148,27 +148,24 @@ namespace Stride.Core.Assets.Tracking
         }
 
         /// <summary>
-        /// Gets or sets the number of ms the file tracker should sleep before checking changes. Default is 1000ms.
+        ///   Gets or sets the number of milliseconds the file tracker should sleep before looking for changes. Default is 1000ms.
         /// </summary>
-        /// <value>The tracking sleep time.</value>
+        /// <value>The tracking sleep time, in milliseconds.</value>
+        /// <exception cref="ArgumentOutOfRangeException"><see cref="TrackingSleepTime"/> must be greater than 0.</exception>
         public int TrackingSleepTime
         {
-            get
-            {
-                return trackingSleepTime;
-            }
+            get => trackingSleepTime;
             set
             {
                 if (value <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value), @"TrackingSleepTime must be > 0");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(value), @"TrackingSleepTime must be greater than 0.");
+
                 trackingSleepTime = value;
             }
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///   Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
@@ -195,13 +192,12 @@ namespace Stride.Core.Assets.Tracking
 
         public ObjectId GetCurrentHash(UFile file)
         {
-            ObjectId result;
-            currentHashes.TryGetValue(file, out result);
+            currentHashes.TryGetValue(file, out ObjectId result);
             return result;
         }
 
         /// <summary>
-        /// This method is called when a package needs to be tracked
+        ///   This method is called when a <see cref="Package"/> needs to be tracked.
         /// </summary>
         /// <param name="package">The package to track.</param>
         private void TrackPackage(Package package)
@@ -218,9 +214,7 @@ namespace Stride.Core.Assets.Tracking
                     // If the package is cancelled, don't try to do anything
                     // A cancellation means that the package session will be destroyed
                     if (isDisposing)
-                    {
                         return;
-                    }
 
                     TrackAsset(asset.Id);
                 }
@@ -230,7 +224,7 @@ namespace Stride.Core.Assets.Tracking
         }
 
         /// <summary>
-        /// This method is called when a package needs to be un-tracked
+        ///   This method is called when a <see cref="Package"/> needs not to be no tracked anymore.
         /// </summary>
         /// <param name="package">The package to un-track.</param>
         private void UnTrackPackage(Package package)
@@ -252,9 +246,9 @@ namespace Stride.Core.Assets.Tracking
         }
 
         /// <summary>
-        /// This method is called when an asset needs to be tracked
+        /// This method is called when an <see cref="AssetId"/> needs to be tracked
         /// </summary>
-        /// <returns>AssetDependencies.</returns>
+        /// <param name="assetId">The <see cref="AssetId"/> of the asset to track.</param>
         private void TrackAsset(AssetId assetId)
         {
             lock (ThisLock)
@@ -262,18 +256,15 @@ namespace Stride.Core.Assets.Tracking
                 if (trackedAssets.ContainsKey(assetId))
                     return;
 
-                // TODO provide an optimized version of TrackAsset method
-                // taking directly a well known asset (loaded from a Package...etc.)
-                // to avoid session.FindAsset 
+                // TODO: Provide an optimized version of TrackAsset method taking directly a well known asset (loaded from a Package, etc) to avoid session.FindAsset
                 var assetItem = session.FindAsset(assetId);
-                if (assetItem == null)
+                if (assetItem is null)
                     return;
 
-                // Clone the asset before using it in this instance to make sure that
-                // we have some kind of immutable state
+                // Clone the asset before using it in this instance to make sure that we have some kind of immutable state
                 // TODO: This is not handling shadow registry
 
-                // No need to clone assets from readonly package 
+                // No need to clone assets from readonly package
                 var clonedAsset = assetItem.Package.IsSystem ? assetItem.Asset : AssetCloner.Clone(assetItem.Asset);
                 var trackedAsset = new TrackedAsset(this, assetItem.Asset, clonedAsset);
 
@@ -282,12 +273,15 @@ namespace Stride.Core.Assets.Tracking
             }
         }
 
+        /// <summary>
+        ///   This method is called when an <see cref="AssetId"/> needs not to be no tracked anymore.
+        /// </summary>
+        /// <param name="assetId">The <see cref="AssetId"/> of the asset to un-track.</param>
         private void UnTrackAsset(AssetId assetId)
         {
             lock (ThisLock)
             {
-                TrackedAsset trackedAsset;
-                if (!trackedAssets.TryGetValue(assetId, out trackedAsset))
+                if (!trackedAssets.TryGetValue(assetId, out TrackedAsset trackedAsset))
                     return;
 
                 trackedAsset.Dispose();
@@ -301,8 +295,7 @@ namespace Stride.Core.Assets.Tracking
         {
             lock (ThisLock)
             {
-                HashSet<AssetId> assetsTrackedByPath;
-                if (!mapSourceFilesToAssets.TryGetValue(inputPath, out assetsTrackedByPath))
+                if (!mapSourceFilesToAssets.TryGetValue(inputPath, out HashSet<AssetId> assetsTrackedByPath))
                 {
                     assetsTrackedByPath = new HashSet<AssetId>();
                     mapSourceFilesToAssets.Add(inputPath, assetsTrackedByPath);
@@ -319,8 +312,7 @@ namespace Stride.Core.Assets.Tracking
         {
             lock (ThisLock)
             {
-                HashSet<AssetId> assetsTrackedByPath;
-                if (mapSourceFilesToAssets.TryGetValue(inputPath, out assetsTrackedByPath))
+                if (mapSourceFilesToAssets.TryGetValue(inputPath, out HashSet<AssetId> assetsTrackedByPath))
                 {
                     assetsTrackedByPath.Remove(assetId);
                     if (assetsTrackedByPath.Count == 0)
@@ -339,6 +331,7 @@ namespace Stride.Core.Assets.Tracking
             {
                 files = mapSourceFilesToAssets.Keys.ToList();
             }
+
             foreach (var inputPath in files)
             {
                 DirectoryWatcher.Track(inputPath);
@@ -353,8 +346,7 @@ namespace Stride.Core.Assets.Tracking
             {
                 lock (ThisLock)
                 {
-                    TrackedAsset trackedAsset;
-                    if (trackedAssets.TryGetValue(asset.Id, out trackedAsset))
+                    if (trackedAssets.TryGetValue(asset.Id, out TrackedAsset trackedAsset))
                     {
                         trackedAsset.NotifyAssetChanged();
                     }
@@ -373,20 +365,16 @@ namespace Stride.Core.Assets.Tracking
                         case NotifyCollectionChangedAction.Add:
                             TrackPackage((Package)e.NewItems[0]);
                             break;
+
                         case NotifyCollectionChangedAction.Remove:
                             UnTrackPackage((Package)e.OldItems[0]);
                             break;
 
                         case NotifyCollectionChangedAction.Replace:
                             foreach (var oldPackage in e.OldItems.OfType<Package>())
-                            {
                                 UnTrackPackage(oldPackage);
-                            }
-
                             foreach (var package in session.Packages)
-                            {
                                 TrackPackage(package);
-                            }
                             break;
                     }
                 }
@@ -403,16 +391,14 @@ namespace Stride.Core.Assets.Tracking
                     {
                         case NotifyCollectionChangedAction.Add:
                             foreach (AssetItem assetItem in e.NewItems)
-                            {
                                 TrackAsset(assetItem.Id);
-                            }
                             break;
+
                         case NotifyCollectionChangedAction.Remove:
                             foreach (AssetItem assetItem in e.OldItems)
-                            {
                                 UnTrackAsset(assetItem.Id);
-                            }
                             break;
+
                         case NotifyCollectionChangedAction.Reset:
                             {
                                 //var assets = (PackageAssetCollection)sender;
@@ -436,6 +422,7 @@ namespace Stride.Core.Assets.Tracking
                                 }
                             }
                             break;
+
                         default:
                             throw new NotSupportedException("This operation is not supported by the source tracker.");
                     }
@@ -457,8 +444,8 @@ namespace Stride.Core.Assets.Tracking
         }
 
         /// <summary>
-        /// This method is running in a separate thread and process file events received from <see cref="Core.IO.DirectoryWatcher"/>
-        /// in order to generate the appropriate list of <see cref="AssetFileChangedEvent"/>.
+        ///   This method is running in a separate thread. It processes file events received from a <see cref="Core.IO.DirectoryWatcher"/>
+        ///   in order to generate the appropriate stream of <see cref="AssetFileChangedEvent"/> events.
         /// </summary>
         private void RunChangeWatcher()
         {
@@ -476,7 +463,7 @@ namespace Stride.Core.Assets.Tracking
                 if (fileEventsWorkingCopy.Count == 0 || isTrackingPaused || isSaving)
                     continue;
 
-                // If this an asset belonging to a package
+                // If this is an asset belonging to a package
                 lock (ThisLock)
                 {
                     // File event
@@ -494,8 +481,8 @@ namespace Stride.Core.Assets.Tracking
         }
 
         /// <summary>
-        /// This callback is receiving hash calculated from asset source file. If the source hash is changing from what
-        /// we had previously stored, we can emit a <see cref="AssetFileChangedType.SourceUpdated" /> event.
+        ///   This callback is receiving a hash calculated from an asset source file. If the source hash is changing from what
+        ///   we had previously stored, we can emit an event of type <see cref="AssetFileChangedType.SourceUpdated"/>.
         /// </summary>
         /// <param name="sourceFile">The source file.</param>
         /// <param name="hash">The object identifier hash calculated from this source file.</param>
@@ -503,8 +490,7 @@ namespace Stride.Core.Assets.Tracking
         {
             lock (ThisLock)
             {
-                HashSet<AssetId> items;
-                if (!mapSourceFilesToAssets.TryGetValue(sourceFile, out items))
+                if (!mapSourceFilesToAssets.TryGetValue(sourceFile, out HashSet<AssetId> items))
                     return;
 
                 currentHashes[sourceFile] = hash;
@@ -512,8 +498,7 @@ namespace Stride.Core.Assets.Tracking
                 var message = new List<SourceFileChangedData>();
                 foreach (var itemId in items)
                 {
-                    TrackedAsset trackedAsset;
-                    if (trackedAssets.TryGetValue(itemId, out trackedAsset))
+                    if (trackedAssets.TryGetValue(itemId, out TrackedAsset trackedAsset))
                     {
                         bool needUpdate = trackedAsset.DependsOnSource(sourceFile);
                         var data = new SourceFileChangedData(SourceFileChangeType.SourceFile, trackedAsset.AssetId, new[] { sourceFile }, needUpdate);

@@ -12,9 +12,9 @@ namespace CSharpBeginner.Code
     /// </summary>
     public class AddingAComponentDemo : SyncScript
     {
-        AmmoComponent ammoComponent1;
-        AmmoComponent ammoComponent2;
-        AmmoComponent ammoComponent3;
+        private AmmoComponent ammoComponent1;
+        private AmmoComponent ammoComponent2;
+        private AmmoComponent ammoComponent3;
 
         public override void Start()
         {

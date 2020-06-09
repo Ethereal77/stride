@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -10,7 +10,7 @@ using Stride.Core.Reflection;
 namespace Stride.Core.Yaml.Serialization.Serializers
 {
     /// <summary>
-    /// Default implementation for <see cref="IObjectSerializerBackend"/>
+    ///   Represents the default implementation of <see cref="IObjectSerializerBackend"/>.
     /// </summary>
     public class DefaultObjectSerializerBackend : IObjectSerializerBackend
     {
@@ -35,25 +35,25 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             // Apply this only for primitives
             if (style == DataStyle.Any)
             {
-                bool isPrimitiveElementType = false;
-                var collectionDescriptor = objectContext.Descriptor as CollectionDescriptor;
                 int count = 0;
-                if (collectionDescriptor != null)
+                bool isPrimitiveElementType = false;
+                if (objectContext.Descriptor is CollectionDescriptor collectionDescriptor)
                 {
                     isPrimitiveElementType = PrimitiveDescriptor.IsPrimitive(collectionDescriptor.ElementType);
                     count = collectionDescriptor.GetCollectionCount(objectContext.Instance);
                 }
                 else
                 {
-                    var arrayDescriptor = objectContext.Descriptor as ArrayDescriptor;
-                    if (arrayDescriptor != null)
+                    if (objectContext.Descriptor is ArrayDescriptor arrayDescriptor)
                     {
                         isPrimitiveElementType = PrimitiveDescriptor.IsPrimitive(arrayDescriptor.ElementType);
                         count = ((Array)objectContext.Instance)?.Length ?? -1;
                     }
                 }
 
-                style = objectContext.Instance == null || count >= objectContext.SerializerContext.Settings.LimitPrimitiveFlowSequence || !isPrimitiveElementType
+                style = objectContext.Instance == null ||
+                        count >= objectContext.SerializerContext.Settings.LimitPrimitiveFlowSequence ||
+                        !isPrimitiveElementType
                     ? DataStyle.Normal
                     : DataStyle.Compact;
             }
@@ -81,8 +81,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <inheritdoc/>
-        public virtual object ReadMemberValue(ref ObjectContext objectContext, IMemberDescriptor memberDescriptor, object memberValue,
-            Type memberType)
+        public virtual object ReadMemberValue(ref ObjectContext objectContext, IMemberDescriptor memberDescriptor, object memberValue, Type memberType)
         {
             var memberObjectContext = new ObjectContext(objectContext.SerializerContext, memberValue, objectContext.SerializerContext.FindTypeDescriptor(memberType));
             return ReadYaml(ref memberObjectContext);
@@ -108,6 +107,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             var valueObjectContext = new ObjectContext(objectContext.SerializerContext, null, objectContext.SerializerContext.FindTypeDescriptor(valueType));
             return ReadYaml(ref valueObjectContext);
         }
+
 
         /// <inheritdoc/>
         public virtual void WriteMemberName(ref ObjectContext objectContext, IMemberDescriptor member, string name)
@@ -154,8 +154,10 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             WriteYaml(ref itemObjectcontext);
         }
 
+
         /// <inheritdoc/>
         public virtual bool ShouldSerialize(IMemberDescriptor member, ref ObjectContext objectContext) => member.ShouldSerialize(objectContext.Instance, objectContext.ParentTypeMemberDescriptor);
+
 
         protected object ReadYaml(ref ObjectContext objectContext)
         {
@@ -171,7 +173,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             catch (Exception ex)
             {
                 ex = ex.Unwrap();
-                throw new YamlException(node.Start, node.End, $"Error while deserializing node [{node}]:\n{ex.Message}", ex);
+                throw new YamlException(node, ex);
             }
         }
 

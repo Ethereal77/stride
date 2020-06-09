@@ -18,8 +18,8 @@ namespace Stride.Particles.Spawners
         /// <summary>
         /// For positive values, shows if the condition was met and how much is the magnitude
         /// </summary>
-        /// <param name="parentParticle">Parent particle which attributes are used for testing</param>
-        /// <returns>0f if it hasn't triggered, positive value otherwise, which also indicates the magnitude of the trigger</returns>
+        /// <param name="parentParticle">Parent particle whose attributes are used for testing</param>
+        /// <returns>Zero if it hasn't been triggered, a positive value otherwise, which also indicates the magnitude of the trigger</returns>
         public abstract float HasTriggered(Particle parentParticle);
 
         /// <summary>
@@ -33,7 +33,6 @@ namespace Stride.Particles.Spawners
         /// </summary>
         /// <param name="parentEmitter">Parent emitter from which required fields should be removed</param>
         public virtual void RemoveRequiredParentFields(ParticleEmitter parentEmitter) { }
-
     }
 
     /// <inheritdoc/>

@@ -7,24 +7,23 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-using Stride.Core.Assets;
 using Stride.Core;
+using Stride.Core.Mathematics;
 using Stride.Core.Annotations;
 using Stride.Core.Reflection;
-using Stride.Core.Serialization.Contents;
-using Stride.Core.Yaml;
 using Stride.Core.Yaml.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Assets;
 using Stride.Data;
 using Stride.Engine;
 using Stride.Engine.Design;
-using Stride.Rendering.Compositing;
-using Stride.Core.Mathematics;
 using Stride.Graphics;
+using Stride.Rendering.Compositing;
 
 namespace Stride.Assets
 {
     /// <summary>
-    /// Settings for a game with the default scene, resolution, graphics profile...
+    ///   Represents a collection of settings for a game, like the default scene, resolution, graphics profile, etc.
     /// </summary>
     [DataContract("GameSettingsAsset")]
     [AssetDescription(FileExtension, AlwaysMarkAsRoot = true, AllowArchetype = false)]
@@ -32,13 +31,14 @@ namespace Stride.Assets
     [AssetContentType(typeof(GameSettings))]
     [CategoryOrder(4050, "Splash screen")]
     [NonIdentifiableCollectionItems]
-    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "3.1.0.1")]
+    [AssetFormatVersion(StrideConfig.PackageName, CurrentVersion, "2.1.0.3")]
+    [AssetUpgrader(StrideConfig.PackageName, "2.1.0.3", "3.1.0.1", typeof(RenderingSplitUpgrader))]
     public partial class GameSettingsAsset : Asset
     {
         private const string CurrentVersion = "3.1.0.1";
 
         /// <summary>
-        /// The default file extension used by the <see cref="GameSettingsAsset"/>.
+        ///   The default file extension used by the <see cref="GameSettingsAsset"/>.
         /// </summary>
         public const string FileExtension = ".sdgamesettings";
 
@@ -47,9 +47,9 @@ namespace Stride.Assets
         public const string DefaultSceneLocation = "MainScene";
 
         /// <summary>
-        /// Gets or sets the default scene
+        ///   Gets or sets the default <see cref="Scene"/>.
         /// </summary>
-        /// <userdoc>The default scene loaded when the game starts</userdoc>
+        /// <userdoc>The default <see cref="Scene"/> loaded when the game starts.</userdoc>
         [DataMember(1000)]
         public Scene DefaultScene { get; set; }
 
@@ -57,14 +57,14 @@ namespace Stride.Assets
         public GraphicsCompositor GraphicsCompositor { get; set; }
 
         /// <userdoc>
-        /// The image (eg company logo) displayed as the splash screen
+        ///   Gets or sets the image (for example, with a logo) displayed as the splash screen when the game starts.
         /// </userdoc>
         [Display("Texture", "Splash screen")]
         [DataMember(5000)]
         public Texture SplashScreenTexture { get; set; }
 
         /// <userdoc>
-        /// The color the splash screen fades in on top of
+        ///   Gets or sets the color the splash screen fades out to.
         /// </userdoc>
         [Display("Color", "Splash screen")]
         [DataMember(5050)]
@@ -83,11 +83,10 @@ namespace Stride.Assets
         public List<string> PlatformFilters { get; } = new List<string>();
 
         /// <summary>
-        /// Tries to get the requested <see cref="Configuration"/>, returns null if it doesn't exist
+        ///   Tries to get the requested <see cref="Configuration"/>.
         /// </summary>
-        /// <typeparam name="T">The <see cref="Configuration"/> to get</typeparam>
-        /// <param name="profile">If not null, will filter the results by profile first</param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of <see cref="Configuration"/> to get.</typeparam>
+        /// <returns>The configuration object as requested by <typeparamref name="T"/>, or <c>null</c> if it doesn't exist.</returns>
         public T TryGet<T>() where T : Configuration
         {
             foreach (var x in Defaults)
@@ -134,6 +133,7 @@ namespace Stride.Assets
                 default:
                     throw new ArgumentOutOfRangeException(nameof(platform), platform, null);
             }
+
             var platVersion = Overrides.FirstOrDefault(x => x != null && x.Platforms.HasFlag(configPlatform) && x.Configuration is T);
             if (platVersion != null)
             {
@@ -141,6 +141,22 @@ namespace Stride.Assets
             }
 
             return GetOrCreate<T>();
+        }
+
+        // In 3.1, Stride.Engine was splitted into a sub-assembly Stride.Rendering
+        private class RenderingSplitUpgrader : AssetUpgraderBase
+        {
+            protected override void UpgradeAsset(AssetMigrationContext context, PackageVersion currentVersion, PackageVersion targetVersion, dynamic asset, PackageLoadingAssetFile assetFile, OverrideUpgraderHint overrideHint)
+            {
+                YamlNode assetNode = asset.Node;
+                foreach (var node in assetNode.AllNodes)
+                {
+                    if (node.Tag == "!Stride.Streaming.StreamingSettings,Stride.Engine")
+                    {
+                        node.Tag = node.Tag.Replace(",Stride.Engine", ",Stride.Rendering");
+                    }
+                }
+            }
         }
     }
 }

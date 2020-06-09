@@ -13,46 +13,49 @@ using Stride.Core.Reflection;
 namespace Stride.Core.Yaml.Serialization
 {
     /// <summary>
-    /// Creates objects using Activator.CreateInstance.
+    ///   Represents the default <see cref="IObjectFactory"/> implementation that creates objects using
+    ///   <see cref="Activator.CreateInstance"/>.
     /// </summary>
     public sealed class DefaultObjectFactory : IObjectFactory
     {
-        private static readonly Type[] EmptyTypes = new Type[0];
+        private static readonly Type[] EmptyTypes = Array.Empty<Type>();
 
         private static readonly Dictionary<Type, Type> DefaultInterfaceImplementations = new Dictionary<Type, Type>
         {
-            {typeof(IList), typeof(List<object>)},
-            {typeof(IDictionary), typeof(Dictionary<object, object>)},
-            {typeof(IEnumerable<>), typeof(List<>)},
-            {typeof(ICollection<>), typeof(List<>)},
-            {typeof(IList<>), typeof(List<>)},
-            {typeof(IDictionary<,>), typeof(Dictionary<,>)},
+            {typeof(IList),           typeof(List<object>)},
+            {typeof(IDictionary),     typeof(Dictionary<object, object>)},
+            {typeof(IEnumerable<>),   typeof(List<>)},
+            {typeof(ICollection<>),   typeof(List<>)},
+            {typeof(IList<>),         typeof(List<>)},
+            {typeof(IDictionary<,>),  typeof(Dictionary<,>)}
         };
 
         /// <summary>
-        /// Gets the default implementation for a type.
+        ///   Gets the default implementation for a type.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <returns>The type of the implem or the same type as input if there is no default implementation</returns>
+        /// <returns>
+        ///   The <see cref="Type"/> of the implementation for the specified <paramref name="type"/>;
+        ///   or the same type as input if there is no default implementation.
+        /// </returns>
         public static Type GetDefaultImplementation(Type type)
         {
-            if (type == null)
+            if (type is null)
                 return null;
 
             // TODO change this code. Make it configurable?
             if (type.IsInterface)
             {
-                Type implementationType;
                 if (type.IsGenericType)
                 {
-                    if (DefaultInterfaceImplementations.TryGetValue(type.GetGenericTypeDefinition(), out implementationType))
+                    if (DefaultInterfaceImplementations.TryGetValue(type.GetGenericTypeDefinition(), out Type implementationType))
                     {
                         type = implementationType.MakeGenericType(type.GetGenericArguments());
                     }
                 }
                 else
                 {
-                    if (DefaultInterfaceImplementations.TryGetValue(type, out implementationType))
+                    if (DefaultInterfaceImplementations.TryGetValue(type, out Type implementationType))
                     {
                         type = implementationType;
                     }
@@ -75,10 +78,9 @@ namespace Stride.Core.Yaml.Serialization
                 {
                     return Activator.CreateInstance(type);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    //return System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
-                    throw new InstanceCreationException($"'{typeof(Activator)}' failed to create instance of type '{type}', see inner exception.", e);
+                    throw new InstanceCreationException($"'{typeof(Activator)}' failed to create instance of type '{type}'.", ex);
                 }
             }
 

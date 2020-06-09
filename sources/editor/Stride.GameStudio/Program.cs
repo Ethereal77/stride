@@ -11,52 +11,51 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Editor;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions.Views;
-using Stride.Core.Assets.Editor.Services;
-using Stride.Core.Assets.Editor.Settings;
-using Stride.Core.Assets.Editor.ViewModel;
-using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
-using Stride.Core.MostRecentlyUsedFiles;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.Settings;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions.Views;
 using Stride.Core.Presentation.Interop;
 using Stride.Core.Presentation.View;
 using Stride.Core.Presentation.ViewModel;
 using Stride.Core.Presentation.Windows;
 using Stride.Core.Translation;
 using Stride.Core.Translation.Providers;
+using Stride.Core.MostRecentlyUsedFiles;
 using Stride.Core.VisualStudio;
 using Stride.Assets.Presentation;
+using Stride.Graphics;
 using Stride.Editor.Build;
 using Stride.Editor.Engine;
 using Stride.Editor.Preview;
 using Stride.GameStudio.View;
-using Stride.Graphics;
 using Stride.Metrics;
 using Stride.PrivacyPolicy;
-using EditorSettings = Stride.Core.Assets.Editor.Settings.EditorSettings;
+
 using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;
+
+using EditorSettings = Stride.Core.Assets.Editor.Settings.EditorSettings;
 
 namespace Stride.GameStudio
 {
     public static class Program
     {
         private static App app;
-        private static IntPtr windowHandle;
+        private static IntPtr launcherHwnd;
         private static bool terminating;
         private static Dispatcher mainDispatcher;
         private static RenderDocManager renderDocManager;
@@ -70,7 +69,7 @@ namespace Stride.GameStudio
 
             if (IntPtr.Size == 4)
             {
-                MessageBox.Show("Stride GameStudio requires a 64bit OS to run.", "Stride", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Stride Game Studio requires a 64-bit OS to run.", "Stride", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(1);
             }
 
@@ -89,7 +88,7 @@ namespace Stride.GameStudio
             {
                 try
                 {
-                    // Environment.GetCommandLineArgs correctly process arguments regarding the presence of '\' and '"'
+                    // Environment.GetCommandLineArgs correctly processes arguments regarding the presence of '\' and '"'
                     var args = Environment.GetCommandLineArgs().Skip(1).ToList();
                     var startupSessionPath = StrideEditorSettings.StartupSession.GetValue();
                     var lastSessionPath = EditorSettings.ReloadLastSession.GetValue() ? mru.MostRecentlyUsedFiles.FirstOrDefault() : null;
@@ -100,7 +99,7 @@ namespace Stride.GameStudio
                     {
                         if (args[i] == "/LauncherWindowHandle")
                         {
-                            windowHandle = new IntPtr(long.Parse(args[++i]));
+                            launcherHwnd = new IntPtr(long.Parse(args[++i]));
                         }
                         else if (args[i] == "/NewProject")
                         {
@@ -139,7 +138,7 @@ namespace Stride.GameStudio
                     }
                     RuntimeHelpers.RunModuleConstructor(typeof(Asset).Module.ModuleHandle);
 
-                    //listen to logger for crash report
+                    // Listen to logger in case of crash for crash report
                     GlobalLogger.GlobalMessageLogged += GlobalLoggerOnGlobalMessageLogged;
 
                     mainDispatcher = Dispatcher.CurrentDispatcher;
@@ -163,22 +162,22 @@ namespace Stride.GameStudio
 
                     renderDocManager?.Shutdown();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    HandleException(e, 0);
+                    HandleException(ex, location: 0);
                 }
             }
         }
 
         private static void GlobalLoggerOnGlobalMessageLogged(ILogMessage logMessage)
         {
-            if (logMessage.Type <= LogMessageType.Warning) return;
+            if (logMessage.Type <= LogMessageType.Warning)
+                return;
 
             LogRingbuffer.Enqueue(logMessage.ToString());
             while (LogRingbuffer.Count > 5)
             {
-                string msg;
-                LogRingbuffer.TryDequeue(out msg);
+                LogRingbuffer.TryDequeue(out _);
             }
         }
 
@@ -192,23 +191,25 @@ namespace Stride.GameStudio
 
         private static void CrashReport(object data)
         {
-            var args = (CrashReportArgs)data;
+            var args = (CrashReportArgs) data;
 
-            //Stop the game studio rendering thread
+            // Stop the Game Studio rendering thread
             mainDispatcher?.InvokeAsync(() => Thread.CurrentThread.Join());
 
             CrashReportHelper.SendReport(args.Exception.FormatFull(), args.Location, args.Log, args.ThreadName);
 
-            //Make sure we stop now.. more exceptions might come but we just grab the first one
+            // Make sure we stop now. More exceptions might come but we just grab the first one
             Environment.Exit(0);
         }
 
         private static void HandleException(Exception exception, int location)
         {
-            if (exception == null) return;
+            if (exception is null)
+                return;
 
-            //prevent multiple crash reports
-            if (terminating) return;
+            // Prevent multiple crash reports
+            if (terminating)
+                return;
             terminating = true;
 
             // In case assembly resolve was not done yet, disable it altogether
@@ -227,7 +228,7 @@ namespace Stride.GameStudio
         {
             if (e.IsTerminating)
             {
-                HandleException(e.ExceptionObject as Exception, 1);
+                HandleException(e.ExceptionObject as Exception, location: 1);
             }
         }
 
@@ -242,11 +243,11 @@ namespace Stride.GameStudio
                 {
                     PackageSessionPublicHelper.FindAndSetMSBuildVersion();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     var message = "Could not find a compatible version of MSBuild.\r\n\r\n" +
                                   "Check that you have a valid installation with the required workloads, or go to [www.visualstudio.com/downloads](https://www.visualstudio.com/downloads) to install a new one.\r\n\r\n" +
-                                  e;
+                                  ex;
                     await serviceProvider.Get<IEditorDialogService>().MessageBox(message, Core.Presentation.Services.MessageBoxButton.OK, Core.Presentation.Services.MessageBoxImage.Error);
                     app.Shutdown();
                     return;
@@ -413,9 +414,9 @@ namespace Stride.GameStudio
 
         internal static void NotifyGameStudioStarted()
         {
-            if (windowHandle != IntPtr.Zero)
+            if (launcherHwnd != IntPtr.Zero)
             {
-                NativeHelper.SendMessage(windowHandle, NativeHelper.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                NativeHelper.SendMessage(launcherHwnd, NativeHelper.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
             }
         }
     }

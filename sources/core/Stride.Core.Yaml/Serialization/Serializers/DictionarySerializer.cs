@@ -17,7 +17,8 @@ using Scalar = Stride.Core.Yaml.Events.Scalar;
 namespace Stride.Core.Yaml.Serialization.Serializers
 {
     /// <summary>
-    /// Class for serializing a <see cref="IDictionary{TKey,TValue}"/> or <see cref="System.Collections.IDictionary"/>
+    ///   Represents an <see cref="ObjectSerializer"/> specialized in serializing and deserializing a <see cref="IDictionary{TKey,TValue}"/>
+    ///   or <see cref="System.Collections.IDictionary"/>.
     /// </summary>
     [YamlSerializerFactory(YamlSerializerFactoryAttribute.Default)]
     public class DictionarySerializer : ObjectSerializer
@@ -39,8 +40,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             else if (objectContext.Settings.SerializeDictionaryItemsAsMembers && dictionaryDescriptor.KeyType == typeof(string))
             {
                 // Read dictionaries that can be serialized as items
-                string memberName;
-                if (!TryReadMember(ref objectContext, out memberName))
+                if (!TryReadMember(ref objectContext, out string memberName))
                 {
                     var value = ReadMemberValue(ref objectContext, null, null, dictionaryDescriptor.ValueType);
                     dictionaryDescriptor.AddToDictionary(objectContext.Instance, memberName, value);
@@ -97,12 +97,12 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Reads the dictionary items key-values.
+        ///   Reads the dictionary items key-values.
         /// </summary>
-        /// <param name="objectContext"></param>
+        /// <param name="objectContext">The object context.</param>
         protected virtual void ReadDictionaryItems(ref ObjectContext objectContext)
         {
-            var dictionaryDescriptor = (DictionaryDescriptor)objectContext.Descriptor;
+            var dictionaryDescriptor = (DictionaryDescriptor) objectContext.Descriptor;
 
             var reader = objectContext.Reader;
             while (!reader.Accept<MappingEnd>())
@@ -121,7 +121,8 @@ namespace Stride.Core.Yaml.Serialization.Serializers
                     catch (Exception ex)
                     {
                         ex = ex.Unwrap();
-                        throw new YamlException(reader.Parser.Current.Start, reader.Parser.Current.End, $"Cannot add item with key [{keyValue.Key}] to dictionary of type [{objectContext.Descriptor}]:\n{ex.Message}", ex);
+                        throw new YamlException(reader.Parser.Current.Start, reader.Parser.Current.End,
+                                                $"Cannot add item with key [{keyValue.Key}] to dictionary of type [{objectContext.Descriptor}]:\n{ex.Message}", ex);
                     }
                 }
                 catch (YamlException ex)
@@ -129,7 +130,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
                     if (objectContext.SerializerContext.AllowErrors)
                     {
                         var logger = objectContext.SerializerContext.Logger;
-                        logger?.Warning($"Ignored dictionary item that could not be deserialized:\n{ex.Message}", ex);
+                        logger?.Warning($"{ex.Message}, this dictionary item will be ignored", ex);
                         objectContext.Reader.Skip(currentDepth, startParsingEvent == objectContext.Reader.Parser.Current);
                     }
                     else throw;
@@ -138,7 +139,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Reads a dictionary item key-value.
+        ///   Reads a dictionary item key-value.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="keyValueTypes">The types corresponding to the key and the value.</param>
@@ -151,7 +152,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Writes the dictionary items keys-values.
+        ///   Writes the dictionary items keys-values.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         protected virtual void WriteDictionaryItems(ref ObjectContext objectContext)
@@ -175,7 +176,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Writes the dictionary item key-value.
+        ///   Writes the dictionary item key-value.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="keyValue">The key value.</param>

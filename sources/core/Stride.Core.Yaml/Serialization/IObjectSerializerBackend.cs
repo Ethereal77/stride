@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -11,56 +11,55 @@ using Stride.Core.Yaml.Serialization.Serializers;
 namespace Stride.Core.Yaml.Serialization
 {
     /// <summary>
-    /// This interface is used by <see cref="ObjectSerializer"/>, <see cref="DictionarySerializer"/> and <see cref="CollectionSerializer"/>
-    /// as a backend interface for serializing/deserializing member name, member values, collection and dictionary items. The default
-    /// implementation is <see cref="DefaultObjectSerializerBackend"/> that can be subclassed to provide aditionnal behavior.
+    ///   Provides methods for serializing and deserializing member names and values, collection and dictionary items for
+    ///   <see cref="ObjectSerializer"/>, <see cref="DictionarySerializer"/> and <see cref="CollectionSerializer"/>.
     /// </summary>
     /// <remarks>
-    /// TODO: Explain why this interface is used and how it can be extended for specific scenarios.
+    ///   The default implementation of this interface is <see cref="DefaultObjectSerializerBackend"/>. It can be derived
+    ///   to provide aditionnal behavior.
     /// </remarks>
+    // TODO: Explain why this interface is used and how it can be extended for specific scenarios.
     public interface IObjectSerializerBackend
     {
         /// <summary>
-        /// Gets the style that will be used to serialize the object provided by <see cref="ObjectContext.Instance"/>.
+        ///   Gets the style that will be used to serialize the object provided by <see cref="ObjectContext.Instance"/>.
         /// </summary>
         /// <param name="objectContext">The object context which contains the object instance to serialize.</param>
         /// <returns>The <see cref="DataStyle"/> to use when serializing the object instance.</returns>
         DataStyle GetStyle(ref ObjectContext objectContext);
 
         /// <summary>
-        /// Allows to transform the name of the member while reading for the specified object context.
+        ///   Allows to transform the name of the member while reading for the specified object context.
         /// </summary>
-        /// <param name="objectContext">The object context to which the member name.</param>
-        /// <param name="memberName">Name of the member read from the current yaml stream.</param>
-        /// <param name="skipMember"></param>
+        /// <param name="objectContext">The object context to which the member name belongs.</param>
+        /// <param name="memberName">Name of the member read from the current YAML stream.</param>
+        /// <param name="skipMember">Value indicating whether to skip this member.</param>
         /// <returns>The name that will be used to get the <see cref="IMemberDescriptor"/> from the current object context.</returns>
         string ReadMemberName(ref ObjectContext objectContext, string memberName, out bool skipMember);
 
         /// <summary>
-        /// Reads the value for the specified member from the current YAML stream.
+        ///   Reads the value for the specified member from the current YAML stream.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="member">The member.</param>
-        /// <param name="memberValue">The member value. See remarks</param>
+        /// <param name="memberValue">The member value.</param>
         /// <param name="memberType">Type of the member.</param>
         /// <returns>The value read from YAML stream.</returns>
-        /// <remarks>
-        /// TODO: Explain memberValue when can be not null
-        /// </remarks>
+        // TODO: Explain memberValue when can be not null
         object ReadMemberValue(ref ObjectContext objectContext, IMemberDescriptor member, object memberValue, Type memberType);
 
         /// <summary>
-        /// Reads the collection item from the current YAML stream.
+        ///   Reads the collection item from the current YAML stream.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="value">The value.</param>
         /// <param name="itemType">Type of the item.</param>
-        /// <param name="index"></param>
+        /// <param name="index">The current item index in the collection.</param>
         /// <returns>The collection item read from YAML stream.</returns>
         object ReadCollectionItem(ref ObjectContext objectContext, object value, Type itemType, int index);
 
         /// <summary>
-        /// Reads the key of the dictionary item from the current YAML stream.
+        ///   Reads the key of the dictionary item from the current YAML stream.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="keyType">Type of the key.</param>
@@ -68,7 +67,7 @@ namespace Stride.Core.Yaml.Serialization
         object ReadDictionaryKey(ref ObjectContext objectContext, Type keyType);
 
         /// <summary>
-        /// Reads the value of the dictionary item from the current YAML stream.
+        ///   Reads the value of the dictionary item from the current YAML stream.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="valueType">Type of the value.</param>
@@ -76,8 +75,9 @@ namespace Stride.Core.Yaml.Serialization
         /// <returns>The value of the dictionary item read from YAML stream.</returns>
         object ReadDictionaryValue(ref ObjectContext objectContext, Type valueType, object key);
 
+
         /// <summary>
-        /// Writes the name of the member.
+        ///   Writes the name of the member.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="member">The member.</param>
@@ -85,7 +85,7 @@ namespace Stride.Core.Yaml.Serialization
         void WriteMemberName(ref ObjectContext objectContext, IMemberDescriptor member, string memberName);
 
         /// <summary>
-        /// Writes the member value.
+        ///   Writes the member value.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="member">The member.</param>
@@ -94,16 +94,16 @@ namespace Stride.Core.Yaml.Serialization
         void WriteMemberValue(ref ObjectContext objectContext, IMemberDescriptor member, object memberValue, Type memberType);
 
         /// <summary>
-        /// Writes the collection item.
+        ///   Writes the collection item.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="item">The item.</param>
         /// <param name="itemType">Type of the item.</param>
-        /// <param name="index"></param>
+        /// <param name="index">The current index of the item in the collection.</param>
         void WriteCollectionItem(ref ObjectContext objectContext, object item, Type itemType, int index);
 
         /// <summary>
-        /// Writes the key of the dictionary item.
+        ///   Writes the key of the dictionary item.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="key">The key of the dictionary item.</param>
@@ -111,7 +111,7 @@ namespace Stride.Core.Yaml.Serialization
         void WriteDictionaryKey(ref ObjectContext objectContext, object key, Type keyType);
 
         /// <summary>
-        /// Writes the value of the dictionary item.
+        ///   Writes the value of the dictionary item.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="key"></param>
@@ -119,12 +119,13 @@ namespace Stride.Core.Yaml.Serialization
         /// <param name="valueType">Type of the value.</param>
         void WriteDictionaryValue(ref ObjectContext objectContext, object key, object value, Type valueType);
 
+
         /// <summary>
-        /// Indicates if the given member should be serialized.
+        ///   Determines if the given member should be serialized.
         /// </summary>
         /// <param name="member">The member to evaluate.</param>
         /// <param name="objectContext">The object context.</param>
-        /// <returns>True if the member should be serialized, False otherwise.</returns>
+        /// <returns><c>true</c> if the member should be serialized; <c>false</c> otherwise.</returns>
         bool ShouldSerialize(IMemberDescriptor member, ref ObjectContext objectContext);
     }
 }

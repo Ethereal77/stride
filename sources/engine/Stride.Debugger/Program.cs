@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.ServiceModel;
+using ServiceWire.NamedPipes;
 using System.Threading;
 
 using Mono.Options;
@@ -30,14 +30,12 @@ namespace Stride
             {
                 "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
                 "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
-                "Stride Debugger Host tool - Version: "
-                +
-                String.Format(
-                    "{0}.{1}.{2}",
+                "Stride Debugger Host tool - Version: " + string.Format("{0}.{1}.{2}",
                     typeof(Program).Assembly.GetName().Version.Major,
                     typeof(Program).Assembly.GetName().Version.Minor,
-                    typeof(Program).Assembly.GetName().Version.Build) + string.Empty,
-                string.Format("Usage: {0} --host=[hostpipe]", exeName),
+                    typeof(Program).Assembly.GetName().Version.Build),
+                string.Empty,
+                $"Usage: {exeName} --host=[hostpipe]",
                 string.Empty,
                 "=== Options ===",
                 string.Empty,
@@ -68,18 +66,19 @@ namespace Stride
                     }
                 }
 
-                if (hostPipe == null)
+                if (hostPipe is null)
                 {
                     throw new OptionException("Host pipe not specified", "host");
                 }
 
-                // Open WCF channel with master builder
-                var namedPipeBinding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None) { SendTimeout = TimeSpan.FromSeconds(300.0), MaxReceivedMessageSize = int.MaxValue };
+                // Open ServiceWire channel with master builder
                 try
                 {
-                    var gameDebuggerTarget = new GameDebuggerTarget();
-                    var gameDebuggerHost = DuplexChannelFactory<IGameDebuggerHost>.CreateChannel(new InstanceContext(gameDebuggerTarget), namedPipeBinding, new EndpointAddress(hostPipe));
-                    gameDebuggerTarget.MainLoop(gameDebuggerHost);
+                    using (var channel = new NpClient<IGameDebuggerHost>(new NpEndPoint(hostPipe)))
+                    {
+                        var gameDebuggerTarget = new GameDebuggerTarget();
+                        gameDebuggerTarget.MainLoop(channel.Proxy);
+                    }
                 }
                 catch (Exception)
                 {

@@ -85,9 +85,9 @@ namespace Stride.Core.Assets.CompilerApp.Tasks
 
                         RegisterItem(targetFilePath);
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        logger.Error($"Could not copy resource file from [{resourceFilePath.ToWindowsPath()}] to [{targetFilePath.MakeRelative(resourceOutputPath)}]", e);
+                        logger.Error($"Could not copy resource file from [{resourceFilePath.ToWindowsPath()}] to [{targetFilePath.MakeRelative(resourceOutputPath)}].", ex);
                     }
                 }
             }
@@ -101,7 +101,7 @@ namespace Stride.Core.Assets.CompilerApp.Tasks
             }
 
             var assetOutputPath = UPath.Combine(outputPath, (UDirectory)"Assets");
-            var assets = Package.ListAssetFiles(logger, package, true, true, null);
+            var assets = Package.ListAssetFiles(package, listAssetsInMsBuild: true, listUnregisteredAssets: true);
             if (assets.Count > 0)
             {
                 newPackage.AssetFolders.Add(new AssetFolder(assetOutputPath));
@@ -174,15 +174,15 @@ namespace Stride.Core.Assets.CompilerApp.Tasks
                             RegisterItem(outputFile);
                         }
                     }
-                    catch (YamlException e)
+                    catch (YamlException)
                     {
                         // Not a Yaml asset? Process it as binary (copy)
-                        File.Copy(asset.FilePath, outputFile, true);
+                        File.Copy(asset.FilePath, outputFile, overwrite: true);
                         RegisterItem(outputFile);
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        logger.Error($"Could not process asset [{asset.FilePath}]", e);
+                        logger.Error($"Could not process asset [{asset.FilePath}].", ex);
                     }
                 }
             }
@@ -268,7 +268,7 @@ namespace Stride.Core.Assets.CompilerApp.Tasks
 
         class RedirectLog : Core.Diagnostics.Logger
         {
-            TaskLoggingHelper log;
+            readonly TaskLoggingHelper log;
 
             public RedirectLog(TaskLoggingHelper log)
             {

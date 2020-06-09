@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 
-using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
 
@@ -102,13 +101,11 @@ namespace Stride.Core.Assets.Templates
     }
 
     /// <summary>
-    /// Parameters used by <see cref="ITemplateGenerator{TParameters}"/>
+    ///   Represents a set of parameters used by a <see cref="ITemplateGenerator{TParameters}"/> to generate a template.
     /// </summary>
     public abstract class TemplateGeneratorParameters
     {
-        protected TemplateGeneratorParameters()
-        {
-        }
+        protected TemplateGeneratorParameters() { }
 
         protected TemplateGeneratorParameters(TemplateGeneratorParameters parameters)
         {
@@ -122,52 +119,48 @@ namespace Stride.Core.Assets.Templates
         }
 
         /// <summary>
-        /// Gets or sets the project name used to generate the template.
+        ///   Gets or sets the project name used to generate the template.
         /// </summary>
-        /// <value>The name.</value>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the project ID used to generate the template.
+        ///   Gets or sets the project's unique identifier used to generate the template.
         /// </summary>
-        /// <value>The ID</value>
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the default namespace of this project.
+        ///   Gets or sets the default namespace of this project.
         /// </summary>
-        /// <value> The namespace. </value>
         public string Namespace { get; set; }
 
         /// <summary>
-        /// Gets or sets the output directory.
+        ///   Gets or sets the output directory for the template generator.
         /// </summary>
-        /// <value>The output directory.</value>
         public UDirectory OutputDirectory { get; set; }
 
         /// <summary>
-        /// The actual template description.
+        ///   Gets or sets the description of the template to generate.
         /// </summary>
         public TemplateDescription Description { get; set; }
 
         /// <summary>
-        /// Specifies if the template generator should run in unattended mode (no UI).
+        ///   Gets or sets a value that specifies if the template generator should run in unattended mode (with no UI).
         /// </summary>
         public bool Unattended { get; set; }
 
         /// <summary>
-        /// Gets or sets the logger.
+        ///   Gets or sets the logger to use to log the result of the generation.
         /// </summary>
-        /// <value>The logger.</value>
         public LoggerResult Logger { get; set; }
 
         /// <summary>
-        /// Contains extra properties that can be consumed by template generators.
+        ///   Contains extra properties that can be consumed by a template generator.
         /// </summary>
         public PropertyContainer Tags;
 
+
         /// <summary>
-        /// Validates this instance (all fields must be setup)
+        ///   Validates this parameters.
         /// </summary>
         public void Validate()
         {
@@ -175,7 +168,7 @@ namespace Stride.Core.Assets.Templates
         }
 
         /// <summary>
-        /// Gets the tag corresponding to the given property key. This will fail if key doesn't exist.
+        ///   Gets the tag corresponding to the given property key.
         /// </summary>
         /// <typeparam name="T">The generic type of the property key.</typeparam>
         /// <param name="key">The property key for which to retrieve the value.</param>
@@ -183,36 +176,43 @@ namespace Stride.Core.Assets.Templates
         /// <exception cref="KeyNotFoundException">Tag not found in template generator parameters.</exception>
         public T GetTag<T>(PropertyKey<T> key)
         {
-            T result;
-            if (!Tags.TryGetValue(key, out result))
-            {
-                throw new KeyNotFoundException("Tag not found in template generator parameters");
-            }
+            if (!Tags.TryGetValue(key, out T result))
+                throw new KeyNotFoundException("Tag not found in template generator parameters.");
+
             return result;
         }
 
         /// <summary>
-        /// Gets the tag corresponding to the given property key if available, otherwise returns default value.
+        ///   Gets the tag corresponding to the given property key if available, otherwise returns a default value.
         /// </summary>
         /// <typeparam name="T">The generic type of the property key.</typeparam>
         /// <param name="key">The property key for which to retrieve the value.</param>
-        /// <returns>The value of the tag corresponding to the given property key if available, the default value of the property key otherwise.</returns>
+        /// <returns>
+        ///   The value of the tag corresponding to the given property key if available, or the default value of the
+        ///   property key otherwise.
+        /// </returns>
         public T TryGetTag<T>(PropertyKey<T> key)
         {
             return Tags.Get(key);
         }
 
         /// <summary>
-        /// 
+        ///   Determines if a tag corresponding to the given property key exists.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The generic type of the property key.</typeparam>
+        /// <param name="key">The property key for which to check its existence.</param>
+        /// <returns><c>true</c> if the template parameters have the specified tag; <c>fañse</c> otherwise.</returns>
         public bool HasTag<T>(PropertyKey<T> key)
         {
             return Tags.ContainsKey(key);
         }
 
+        /// <summary>
+        ///   Sets a tag for a given property key.
+        /// </summary>
+        /// <typeparam name="T">The generic type of the property key.</typeparam>
+        /// <param name="key">The property key for which to set the value.</param>
+        /// <param name="value">Value for the tag.</param>
         public void SetTag<T>(PropertyKey<T> key, T value)
         {
             Tags[key] = value;
@@ -220,22 +220,17 @@ namespace Stride.Core.Assets.Templates
 
         protected virtual void ValidateParameters()
         {
-            if (Name == null)
-            {
-                throw new InvalidOperationException($"[{nameof(Name)}] cannot be null in {GetType().Name}");
-            }
-            if (OutputDirectory == null && Description.Scope == TemplateScope.Session)
-            {
-                throw new InvalidOperationException($"[{nameof(OutputDirectory)}] cannot be null in {GetType().Name}");
-            }
-            if (Description == null)
-            {
-                throw new InvalidOperationException($"[{nameof(Description)}] cannot be null in {GetType().Name}");
-            }
-            if (Logger == null)
-            {
-                throw new InvalidOperationException($"[{nameof(Logger)}] cannot be null in {GetType().Name}");
-            }
+            if (Name is null)
+                throw new InvalidOperationException($"[{nameof(Name)}] cannot be null in {GetType().Name}.");
+
+            if (OutputDirectory is null && Description.Scope == TemplateScope.Session)
+                throw new InvalidOperationException($"[{nameof(OutputDirectory)}] cannot be null in {GetType().Name}.");
+
+            if (Description is null)
+                throw new InvalidOperationException($"[{nameof(Description)}] cannot be null in {GetType().Name}.");
+
+            if (Logger is null)
+                throw new InvalidOperationException($"[{nameof(Logger)}] cannot be null in {GetType().Name}.");
         }
     }
 }

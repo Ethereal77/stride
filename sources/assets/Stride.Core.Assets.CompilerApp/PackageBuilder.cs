@@ -5,26 +5,25 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.ServiceModel;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using ServiceWire.NamedPipes;
+
+using Stride.Core.IO;
+using Stride.Core.Diagnostics;
+using Stride.Core.MicroThreading;
+using Stride.Core.Reflection;
+using Stride.Core.BuildEngine;
+using Stride.Core.VisualStudio;
+using Stride.Core.Serialization.Contents;
 using Stride.Core.Assets.Compiler;
 using Stride.Core.Assets.Diagnostics;
-using Stride.Core.BuildEngine;
-using Stride.Core;
-using Stride.Core.Diagnostics;
-using Stride.Core.IO;
-using Stride.Core.MicroThreading;
 using Stride.Core.Assets.Analysis;
-using Stride.Core.Reflection;
-using Stride.Core.Serialization.Contents;
-using Stride;
 using Stride.Assets;
-using Stride.Graphics;
-using Stride.Core.VisualStudio;
 
 namespace Stride.Core.Assets.CompilerApp
 {
@@ -160,7 +159,11 @@ namespace Stride.Core.Assets.CompilerApp
 
                 // Fill list of bundles
                 var bundlePacker = new BundlePacker();
-                bundlePacker.Build(builderOptions.Logger, projectSession, indexName, outputDirectory, builder.DisableCompressionIds, context.GetCompilationMode() != CompilationMode.AppStore);
+                var bundleFiles = new List<string>();
+                bundlePacker.Build(builderOptions.Logger, projectSession, indexName, outputDirectory, builder.DisableCompressionIds, context.GetCompilationMode() != CompilationMode.AppStore, bundleFiles);
+
+                if (builderOptions.MSBuildUpToDateCheckFileBase != null)
+                    SaveBuildUpToDateFile(builderOptions.MSBuildUpToDateCheckFileBase, package, bundleFiles);
 
                 return result;
             }
@@ -176,9 +179,78 @@ namespace Stride.Core.Assets.CompilerApp
             }
         }
 
+        private void SaveBuildUpToDateFile(string msbuildUpToDateCheckFileBase, Package rootPackage, List<string> bundleFiles)
+        {
+            var inputs = new List<string>();
+            var outputs = new List<string>();
+
+            // List asset folders from projects
+            foreach (var package in rootPackage.Session.Packages)
+            {
+                // NOTE: Check if file exists (since it could be an "implicit package" from csproj)
+                if (File.Exists(package.FullPath))
+                    inputs.Add(package.FullPath.ToWindowsPath());
+
+                // TODO: Optimization: For NuGet packages, directly use SHA512 file rather than individual assets for faster checking
+
+                // List assets
+                foreach (var assetFolder in package.AssetFolders)
+                {
+                    if (Directory.Exists(assetFolder.Path))
+                        inputs.Add(assetFolder.Path.ToWindowsPath() + @"\**\*.*");
+                }
+
+                // List project assets
+                foreach (var assetItem in package.Assets)
+                {
+                    // NOTE: We skip .cs files, only serialization code hash should hopefully be enough (otherwise it would skip fast path at each code change)
+                    // Let's see if it's robust enough or if some more data need to be hashed or files added
+                    if (assetItem.Asset is IProjectAsset && !(assetItem.Asset is Stride.Assets.Scripts.ScriptSourceFileAsset))
+                    {
+                        // Make sure it is not already covered by one of the previously registered asset folders
+                        if (!package.AssetFolders.Any(assetFolder => assetFolder.Path.Contains(assetItem.FullPath)))
+                            inputs.Add(assetItem.FullPath.ToWindowsPath());
+                    }
+                }
+
+                // Hash serialization code
+                if (package.Container is SolutionProject project &&
+                    project.AssemblyProcessorSerializationHashFile != null &&
+                    File.Exists(project.AssemblyProcessorSerializationHashFile))
+                {
+                    inputs.Add(project.AssemblyProcessorSerializationHashFile);
+                }
+            }
+
+            // List input files
+            foreach (var inputObject in builder.Root.InputObjects)
+            {
+                if (inputObject.Key.Type == UrlType.File)
+                {
+                    inputs.Add(new UFile(inputObject.Key.Path).ToWindowsPath());
+                }
+            }
+
+            foreach (var bundleFile in bundleFiles)
+            {
+                outputs.Add(bundleFile);
+            }
+
+            // Generate MSBuild up-to-date check property files
+            File.WriteAllLines(msbuildUpToDateCheckFileBase + ".inputs", inputs, Encoding.UTF8);
+            File.WriteAllLines(msbuildUpToDateCheckFileBase + ".outputs", outputs, Encoding.UTF8);
+
+            // Touch bundle files so that up-to-date check can work
+            // We do that after touching the msbuildUpToDateCheckFile
+            foreach (var bundleFile in bundleFiles)
+            {
+                File.SetLastWriteTimeUtc(bundleFile, DateTime.UtcNow);
+            }
+        }
+
         private void RegisterBuildStepProcessedHandler(object sender, AssetCompiledArgs e)
         {
-            if (e.Result.BuildSteps == null)
+            if (e.Result.BuildSteps is null)
                 return;
 
             foreach (var buildStep in e.Result.BuildSteps.EnumerateRecursively())
@@ -193,8 +265,9 @@ namespace Stride.Core.Assets.CompilerApp
             var assetItem = (AssetItem)e.Step.Tag;
             var assetRef = assetItem.ToReference();
             var project = assetItem.Package;
-            var stepLogger = e.Step.Logger;
+
             // TODO: Big review of the log infrastructure of CompilerApp & BuildEngine!
+            var stepLogger = e.Step.Logger;
             if (stepLogger != null)
             {
                 foreach (var message in stepLogger.Messages.Where(x => x.IsAtLeast(LogMessageType.Warning)))
@@ -202,34 +275,41 @@ namespace Stride.Core.Assets.CompilerApp
                     builderOptions.Logger.Log(message);
                 }
             }
+
             switch (e.Step.Status)
             {
                 // This case should never happen
                 case ResultStatus.NotProcessed:
                     builderOptions.Logger.Log(new AssetLogMessage(project, assetRef, LogMessageType.Fatal, AssetMessageCode.InternalCompilerError, assetRef.Location));
                     break;
+
                 case ResultStatus.Successful:
                     builderOptions.Logger.Log(new AssetLogMessage(project, assetRef, LogMessageType.Verbose, AssetMessageCode.CompilationSucceeded, assetRef.Location));
                     break;
+
                 case ResultStatus.Failed:
                     builderOptions.Logger.Log(new AssetLogMessage(project, assetRef, LogMessageType.Error, AssetMessageCode.CompilationFailed, assetRef.Location));
                     break;
+
                 case ResultStatus.Cancelled:
                     builderOptions.Logger.Log(new AssetLogMessage(project, assetRef, LogMessageType.Verbose, AssetMessageCode.CompilationCancelled, assetRef.Location));
                     break;
+
                 case ResultStatus.NotTriggeredWasSuccessful:
                     builderOptions.Logger.Log(new AssetLogMessage(project, assetRef, LogMessageType.Verbose, AssetMessageCode.AssetUpToDate, assetRef.Location));
                     break;
+
                 case ResultStatus.NotTriggeredPrerequisiteFailed:
                     builderOptions.Logger.Log(new AssetLogMessage(project, assetRef, LogMessageType.Error, AssetMessageCode.PrerequisiteFailed, assetRef.Location));
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
             e.Step.StepProcessed -= BuildStepProcessed;
         }
 
-        private static void RegisterRemoteLogger(IProcessBuilderRemote processBuilderRemote)
+        private static void RegisterRemoteLogger(NpClient<IProcessBuilderRemote> processBuilderRemote)
         {
             // The pipe might be broken while we try to output log, so let's try/catch the call to prevent program for crashing here (it should crash at a proper location anyway if the pipe is broken/closed)
             // ReSharper disable EmptyGeneralCatchClause
@@ -240,7 +320,7 @@ namespace Stride.Core.Assets.CompilerApp
                     var assetMessage = logMessage as AssetLogMessage;
                     var message = assetMessage != null ? new AssetSerializableLogMessage(assetMessage) : new SerializableLogMessage((LogMessage)logMessage);
 
-                    processBuilderRemote.ForwardLog(message);
+                    processBuilderRemote.Proxy.ForwardLog(message);
                 }
                 catch
                 {
@@ -252,21 +332,18 @@ namespace Stride.Core.Assets.CompilerApp
         private BuildResultCode BuildSlave()
         {
             // Mount build path
-            ((FileSystemProvider)VirtualFileSystem.ApplicationData).ChangeBasePath(builderOptions.BuildDirectory);
+            ((FileSystemProvider) VirtualFileSystem.ApplicationData).ChangeBasePath(builderOptions.BuildDirectory);
 
             VirtualFileSystem.CreateDirectory(VirtualFileSystem.ApplicationDatabasePath);
 
-            // Open WCF channel with master builder
-            var namedPipeBinding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None) { SendTimeout = TimeSpan.FromSeconds(300.0), MaxReceivedMessageSize = int.MaxValue };
-            var processBuilderRemote = ChannelFactory<IProcessBuilderRemote>.CreateChannel(namedPipeBinding, new EndpointAddress(builderOptions.SlavePipe));
-
-            try
+            // Open ServiceWire Client Channel
+            using (var client = new NpClient<IProcessBuilderRemote>(new NpEndPoint(builderOptions.SlavePipe), new StrideServiceWireSerializer()))
             {
-                RegisterRemoteLogger(processBuilderRemote);
+                RegisterRemoteLogger(client);
 
                 // Make sure to laod all assemblies containing serializers
                 // TODO: Review how costly it is to do so, and possibily find a way to restrict what needs to be loaded (i.e. only app plugins?)
-                foreach (var assemblyLocation in processBuilderRemote.GetAssemblyContainerLoadedAssemblies())
+                foreach (var assemblyLocation in client.Proxy.GetAssemblyContainerLoadedAssemblies())
                 {
                     AssemblyContainer.Default.LoadAssemblyFromPath(assemblyLocation, builderOptions.Logger);
                 }
@@ -285,20 +362,20 @@ namespace Stride.Core.Assets.CompilerApp
                 MicroThread microthread = scheduler.Add(async () =>
                 {
                     // Deserialize command and parameters
-                    Command command = processBuilderRemote.GetCommandToExecute();
+                    Command command = client.Proxy.GetCommandToExecute();
 
                     // Run command
                     var inputHashes = FileVersionTracker.GetDefault();
                     var builderContext = new BuilderContext(inputHashes, null);
 
-                    var commandContext = new RemoteCommandContext(processBuilderRemote, command, builderContext, logger);
+                    var commandContext = new RemoteCommandContext(client.Proxy, command, builderContext, logger);
                     MicrothreadLocalDatabases.MountDatabase(commandContext.GetOutputObjectsGroups());
                     command.PreCommand(commandContext);
                     status = await command.DoCommand(commandContext);
                     command.PostCommand(commandContext, status);
 
                     // Returns result to master builder
-                    processBuilderRemote.RegisterResult(commandContext.ResultEntry);
+                    client.Proxy.RegisterResult(commandContext.ResultEntry);
                 });
 
                 while (true)
@@ -326,13 +403,6 @@ namespace Stride.Core.Assets.CompilerApp
                     return BuildResultCode.Successful;
 
                 return BuildResultCode.BuildError;
-            }
-            finally
-            {
-                // Close WCF channel
-                // ReSharper disable SuspiciousTypeConversion.Global
-                ((IClientChannel)processBuilderRemote).Close();
-                // ReSharper restore SuspiciousTypeConversion.Global
             }
         }
 
@@ -370,7 +440,7 @@ namespace Stride.Core.Assets.CompilerApp
                 await Task.Delay(1, command.CancellationToken);
             }
 
-            var address = "net.pipe://localhost/" + Guid.NewGuid();
+            var address = "Stride/CompilerApp/PackageBuilderApp/" + Guid.NewGuid();
             var arguments = $"--slave=\"{address}\" --build-path=\"{builderOptions.BuildDirectory}\"";
 
             using (var debugger = VisualStudioDebugger.GetAttached())
@@ -381,10 +451,10 @@ namespace Stride.Core.Assets.CompilerApp
                 }
             }
 
-            // Start WCF pipe for communication with process
+            // Start ServiceWire pipe for communication with process
             var processBuilderRemote = new ProcessBuilderRemote(assemblyContainer, commandContext, command);
-            var host = new ServiceHost(processBuilderRemote);
-            host.AddServiceEndpoint(typeof(IProcessBuilderRemote), new NetNamedPipeBinding(NetNamedPipeSecurityMode.None) { MaxReceivedMessageSize = int.MaxValue }, address);
+            var host = new NpHost(address,null,null, new StrideServiceWireSerializer());
+            host.AddService<IProcessBuilderRemote>(processBuilderRemote);
 
             var startInfo = new ProcessStartInfo
             {

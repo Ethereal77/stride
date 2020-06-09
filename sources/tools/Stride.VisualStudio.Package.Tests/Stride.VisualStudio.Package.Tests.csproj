@@ -3,18 +3,14 @@
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
   <PropertyGroup>
     <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
-    <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
     <StrideOutputFolder>Tests\$(AssemblyName)</StrideOutputFolder>
     <StrideCompilerTargetsEnable Condition="'$(StridePackageBuild)' == 'true'">false</StrideCompilerTargetsEnable>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="EnvDTE" Version="8.0.2">
@@ -67,7 +63,7 @@
   <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
   <Target Name="LocateDevenv" AfterTargets="PrepareForBuild">
     <!-- Compute and save VisualStudio path to a file so that it can be used when running the test. Note: ideally we should use a Task, but Visual Studio lock the files -->
-    <Exec Command="&quot;..\..\core\Stride.Core.Tasks\bin\$(Configuration)\$(TargetFrameworkTool)\Stride.Core.Tasks.exe&quot; locate-devenv &quot;$(MSBuildBinPath)&quot;" ConsoleToMsBuild="true">
+    <Exec Command="&quot;..\..\core\Stride.Core.Tasks\bin\$(Configuration)\$(StrideEditorTargetFramework)\Stride.Core.Tasks.exe&quot; locate-devenv &quot;$(MSBuildBinPath)&quot;" ConsoleToMsBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="DevenvPath" />
     </Exec>
     <WriteLinesToFile File="$(OutputPath)\devenvpath.txt" Lines="$(DevenvPath)" Overwrite="true" />

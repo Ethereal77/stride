@@ -1,15 +1,13 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 using Stride.Core;
 using Stride.Core.Reflection;
-using Stride.Core.Serialization;
 using Stride.Core.Yaml;
 using Stride.Core.Yaml.Events;
 using Stride.Core.Yaml.Serialization;
@@ -32,7 +30,7 @@ namespace Stride.Debugger
             var loadedAssembliesSet = new HashSet<Assembly>(assembliesToUnregister);
             var reloadedComponents = new List<ReloadedComponentEntryLive>();
 
-            throw new NotImplementedException("Need to reimplement this to use IUnloadable");
+            throw new NotImplementedException("Need to reimplement this to use IUnloadable.");
 #if FALSE
             foreach (var assembly in assembliesToUnregister)
             {

@@ -15,13 +15,9 @@ namespace Stride.VisualStudio
 {
     public class BuildLogPipeGenerator
     {
-        private string logPipeUrl = "net.pipe://localhost/Stride.BuildEngine.Monitor." + Guid.NewGuid();
-        private SolutionEventsListener solutionEventsListener;
+        private readonly SolutionEventsListener solutionEventsListener;
 
-        public string LogPipeUrl
-        {
-            get { return logPipeUrl; }
-        }
+        public string LogPipeUrl { get; } = "Stride/BuildEngine/Monitor/" + Guid.NewGuid();
 
         public BuildLogPipeGenerator(IServiceProvider serviceProvider)
         {
@@ -33,12 +29,11 @@ namespace Stride.VisualStudio
             var solution = serviceProvider.GetService(typeof(SVsSolution)) as IVsSolution;
             if (solution != null)
             {
-                IEnumHierarchies enumerator;
                 var guid = Guid.Empty;
                 var hierarchy = new IVsHierarchy[1] { null };
                 uint fetched = 0;
 
-                solution.GetProjectEnum((uint)__VSENUMPROJFLAGS.EPF_LOADEDINSOLUTION, ref guid, out enumerator);
+                solution.GetProjectEnum((uint)__VSENUMPROJFLAGS.EPF_LOADEDINSOLUTION, ref guid, out IEnumHierarchies enumerator);
                 for (enumerator.Reset(); enumerator.Next(1, hierarchy, out fetched) == VSConstants.S_OK && fetched == 1; )
                 {
                     OnProjectOpened(hierarchy[0]);
@@ -49,8 +44,7 @@ namespace Stride.VisualStudio
         private void OnProjectOpened(IVsHierarchy vsHierarchy)
         {
             // Register pipe url so that MSBuild can transfer it
-            var vsProject = vsHierarchy as IVsProject;
-            if (vsProject != null)
+            if (vsHierarchy is IVsProject vsProject)
             {
                 var dteProject = VsHelper.ToDteProject(vsProject);
 
@@ -61,7 +55,7 @@ namespace Stride.VisualStudio
 
                 // Find current project active configuration
                 var configManager = dteProject.ConfigurationManager;
-                if (configManager == null)
+                if (configManager is null)
                     return;
 
                 EnvDTE.Configuration activeConfig;
@@ -69,7 +63,7 @@ namespace Stride.VisualStudio
                 {
                     activeConfig = configManager.ActiveConfiguration;
                 }
-                catch (Exception)
+                catch
                 {
                     if (configManager.Count == 0)
                         return;
@@ -92,7 +86,7 @@ namespace Stride.VisualStudio
                 var buildProjects = ProjectCollection.GlobalProjectCollection.GetLoadedProjects(dteProject.FileName);
                 foreach (var buildProject in buildProjects)
                 {
-                    buildProject.SetGlobalProperty("StrideBuildEngineLogPipeUrl", logPipeUrl);
+                    buildProject.SetGlobalProperty("StrideBuildEngineLogPipeUrl", LogPipeUrl);
                 }
             }
         }

@@ -7,12 +7,12 @@ using System;
 namespace Stride.Debugger.Target
 {
     /// <summary>
-    /// Represents a loaded assembly in the debug process.
+    ///   Represents a loaded assembly in the debug process.
     /// </summary>
     [Serializable]
     public struct DebugAssembly : IEquatable<DebugAssembly>
     {
-        private int id;
+        private readonly int id;
 
         public static readonly DebugAssembly Empty = new DebugAssembly(0);
 
@@ -28,8 +28,10 @@ namespace Stride.Debugger.Target
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is DebugAssembly && Equals((DebugAssembly)obj);
+            if (obj is null)
+                return false;
+
+            return obj is DebugAssembly assembly && Equals(assembly);
         }
 
         public override int GetHashCode()

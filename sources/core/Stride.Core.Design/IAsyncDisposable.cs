@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace Stride.Core
 {
     /// <summary>
-    /// An interface allowing to dispose an object asynchronously.
+    ///   Provides a mechanism to free unmanaged resources asynchronously.
     /// </summary>
     public interface IAsyncDisposable
     {
         /// <summary>
-        /// Disposes the given instance asynchronously.
+        ///   Does asynchronously application-specific tasks to free or reset unmanaged resources.
         /// </summary>
-        /// <returns>A task that completes when this instance has been disposed.</returns>
+        /// <returns>A <see cref="Task"/> that completes when this instance has been disposed.</returns>
         Task DisposeAsync();
     }
 }

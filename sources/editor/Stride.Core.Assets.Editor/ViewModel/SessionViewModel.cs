@@ -14,23 +14,23 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Stride.Core;
+using Stride.Core.IO;
+using Stride.Core.Annotations;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.Packages;
+using Stride.Core.Assets.Quantum;
 using Stride.Core.Assets.Analysis;
-using Stride.Core.Assets.Editor.Components.Properties;
-using Stride.Core.Assets.Editor.Components.Transactions;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
+using Stride.Core.Assets.Templates;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.Settings;
 using Stride.Core.Assets.Editor.ViewModel.Logs;
 using Stride.Core.Assets.Editor.ViewModel.Progress;
-using Stride.Core.Assets.Quantum;
-using Stride.Core.Assets.Templates;
-using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
-using Stride.Core.IO;
-using Stride.Core.VisualStudio;
+using Stride.Core.Assets.Editor.Components.Properties;
+using Stride.Core.Assets.Editor.Components.Transactions;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Dirtiables;
@@ -38,8 +38,8 @@ using Stride.Core.Presentation.Quantum.ViewModels;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
 using Stride.Core.Presentation.Windows;
+using Stride.Core.VisualStudio;
 using Stride.Core.Translation;
-using Stride.Core.Packages;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
@@ -60,7 +60,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private readonly PackageSession session;
 
         /// <summary>
-        /// Gets the current instance of <see cref="SessionViewModel"/>.
+        ///   Gets the current instance of <see cref="SessionViewModel"/>.
         /// </summary>
         /// <remarks>Accessing this property is allowed only from View-side code (WPF).</remarks>
         public static SessionViewModel Instance { get; private set; }
@@ -88,11 +88,12 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public AssetCollectionViewModel ActiveAssetView { get; }
 
         /// <summary>
-        /// Gets all assets contained in this session.
+        ///   Gets all the assets contained in this session.
         /// </summary>
         /// <remarks>
-        /// Some assets in the session might not be accessible to some other assets/packages if they are located in another package that is not a dependency
-        /// to the asset/package. To safely retrieve all assets accessible from a specific package, use <see cref="PackageViewModel.AllAssets"/>.
+        ///   Some assets in the session might not be accessible to some other assets/packages if they are located in another
+        ///   package that is not a dependency to the asset/package.
+        ///   To safely retrieve all assets accessible from a specific package, use <see cref="PackageViewModel.AllAssets"/>.
         /// </remarks>
         [NotNull]
         public IEnumerable<AssetViewModel> AllAssets { get { return AllPackages.SelectMany(x => x.Assets); } }
@@ -110,17 +111,17 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public ReferencesViewModel References { get; }
 
         // TODO: Properly temporary, until unification of AssemblyContainer and AssemblyRegistry since we now have only a single session at a time
-        public Core.Reflection.AssemblyContainer AssemblyContainer => session.AssemblyContainer;
+        public Reflection.AssemblyContainer AssemblyContainer => session.AssemblyContainer;
 
         /// <summary>
-        /// Gets the <see cref="SessionObjectViewModel"/> associated to the current selection in the <see cref="ActiveAssetView"/> collection.
+        ///   Gets the <see cref="SessionObjectViewModel"/> associated to the current selection in the <see cref="ActiveAssetView"/> collection.
         /// </summary>
         // TODO: Move this in AssetCollectionViewModel
         [NotNull]
         public SessionObjectPropertiesViewModel AssetViewProperties { get; }
 
         /// <summary>
-        /// Gets the currently active <see cref="SessionObjectPropertiesViewModel"/>.
+        ///   Gets the currently active <see cref="SessionObjectPropertiesViewModel"/>.
         /// </summary>
         public SessionObjectPropertiesViewModel ActiveProperties
         {
@@ -135,22 +136,42 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Gets the current active project for build/startup operations.
+        ///   Gets the current active project for building and running operations.
         /// </summary>
-        // TODO: this property should become cancellable to maintain action stack consistency! Undoing a "mark as root" operation after changing the current package wouldn't work.
-        public ProjectViewModel CurrentProject { get => currentProject; private set { var oldValue = currentProject;  SetValueUncancellable(ref currentProject, value, () => UpdateCurrentProject(oldValue, value)); } }
+        // TODO: This property should become cancellable to maintain action stack consistency! Undoing a "mark as root" operation after changing the current package wouldn't work.
+        public ProjectViewModel CurrentProject
+        {
+            get => currentProject;
+            private set
+            {
+                var oldValue = currentProject;
+                SetValueUncancellable(ref currentProject, value, () => UpdateCurrentProject(oldValue, value));
+            }
+        }
 
         [NotNull]
         public ThumbnailsViewModel Thumbnails { get; }
 
-        public int ImportEffectLogPendingCount { get => importEffectLogPendingCount; set => SetValueUncancellable(ref importEffectLogPendingCount, value); }
+        public int ImportEffectLogPendingCount
+        {
+            get => importEffectLogPendingCount;
+            set => SetValueUncancellable(ref importEffectLogPendingCount, value);
+        }
 
         public IEditorDialogService Dialogs => ServiceProvider.Get<IEditorDialogService>();
 
         [NotNull]
         public AssetPropertyGraphContainer GraphContainer { get; }
 
-        public bool SelectionIsRoot { get => selectionIsRoot; internal set { SetValueUncancellable(ref selectionIsRoot, value); UpdateSessionState(); } }
+        public bool SelectionIsRoot
+        {
+            get => selectionIsRoot;
+            internal set
+            {
+                SetValueUncancellable(ref selectionIsRoot, value);
+                UpdateSessionState();
+            }
+        }
 
         [NotNull]
         public SessionNodeContainer AssetNodeContainer { get; }
@@ -190,7 +211,11 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public ICommandBase ToggleIsRootOnSelectedAssetCommand { get; }
 
-        public ICommandBase ImportEffectLogCommand { get => importEffectLogCommand; set => SetValueUncancellable(ref importEffectLogCommand, value); }
+        public ICommandBase ImportEffectLogCommand
+        {
+            get => importEffectLogCommand;
+            set => SetValueUncancellable(ref importEffectLogCommand, value);
+        }
 
         public ICommandBase NextSelectionCommand { get; }
 
@@ -199,34 +224,34 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public bool IsUpdatePackageEnabled { get; private set; }
 
         /// <summary>
-        /// Gets the dependency manager associated to this session.
+        ///   Gets the dependency manager associated to this session.
         /// </summary>
         public IAssetDependencyManager DependencyManager => session.DependencyManager;
 
         /// <summary>
-        /// Raised when some assets are modified.
+        ///   Raised when any asset is modified.
         /// </summary>
         public event EventHandler<AssetChangedEventArgs> AssetPropertiesChanged;
 
         /// <summary>
-        /// Raised when some assets are deleted or undeleted.
+        ///   Raised when any asset is deleted or undeleted.
         /// </summary>
         public event EventHandler<NotifyCollectionChangedEventArgs> DeletedAssetsChanged;
 
         /// <summary>
-        /// Raised when the session state changed (e.g. current package).
+        ///   Raised when the session state changed (e.g. current package).
         /// </summary>
         public event EventHandler<SessionStateChangedEventArgs> SessionStateChanged;
 
         /// <summary>
-        /// Raised when the active assets collection changed.
+        ///   Raised when the active assets collection has changed.
         /// </summary>
         public event EventHandler<ActiveAssetsChangedArgs> ActiveAssetsChanged;
 
         internal readonly IDictionary<Type, Type> AssetViewModelTypes = new Dictionary<Type, Type>();
 
         /// <summary>
-        /// Gets whether the session is currently in a special context to fix up assets.
+        ///   Gets whether the session is currently in a special context to fix up assets.
         /// </summary>
         /// <seealso cref="CreateAssetFixupContext"/>
         public bool IsInFixupAssetContext
@@ -282,7 +307,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             };
 
             var generator = TemplateManager.FindTemplateGenerator(parameters);
-            if (generator == null)
+            if (generator is null)
             {
                 await serviceProvider.Get<IDialogService>().MessageBox(Tr._p("Message", "Unable to retrieve template generator for the selected template. Aborting."), MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
@@ -351,7 +376,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public static async Task<SessionViewModel> OpenSession(string path, IViewModelServiceProvider serviceProvider, EditorViewModel editor, PackageSessionResult sessionResult)
         {
-            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (path is null)
+                throw new ArgumentNullException(nameof(path));
 
             // Create the service that handles property documentation
             serviceProvider.RegisterService(new UserDocumentationService());
@@ -400,9 +426,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
                         result.LoadAssetsFromPackages(sessionResult, workProgress, cancellationSource.Token);
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    sessionResult.Error(string.Format(Tr._p("Log", "There was a problem opening the solution.")), e);
+                    sessionResult.Error(string.Format(Tr._p("Log", "There was a problem opening the solution.")), ex);
                     result = null;
                 }
                 return result;
@@ -489,6 +515,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             EditorDebugTools.UnregisterDebugPage(undoRedoStackPage);
             EditorDebugTools.UnregisterDebugPage(assetNodesDebugPage);
             EditorDebugTools.UnregisterDebugPage(quantumDebugPage);
+
             // Unregister collection
             ServiceProvider.Get<SelectionService>().UnregisterSelectionScope(ActiveAssetView.SelectedContent);
             ActiveAssetView.SelectedAssets.CollectionChanged -= SelectedAssetsCollectionChanged;
@@ -508,8 +535,10 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private SessionViewModel(IViewModelServiceProvider serviceProvider, ILogger logger, [NotNull] PackageSession session, [NotNull] EditorViewModel editor)
             : base(serviceProvider)
         {
-            if (editor == null) throw new ArgumentNullException(nameof(editor));
-            if (editor.Session != null) throw new InvalidOperationException("Unable to have two sessions at the same time");
+            if (editor is null)
+                throw new ArgumentNullException(nameof(editor));
+            if (editor.Session != null)
+                throw new InvalidOperationException("Unable to have two sessions at the same time.");
 
             Editor = editor;
             this.session = session;
@@ -546,8 +575,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             ActiveAssetView = new AssetCollectionViewModel(ServiceProvider, this, AssetCollectionViewModel.AllFilterCategories, AssetViewProperties);
             ServiceProvider.Get<SelectionService>().RegisterSelectionScope(id => GetAssetById(id.AssetId), o =>
             {
-                var asset = o as AssetViewModel;
-                if (asset != null)
+                if (o is AssetViewModel asset)
                 {
                     return new AbsoluteId(asset.Id, Guid.Empty);
                 }
@@ -561,7 +589,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             AssetLog = new AssetLogViewModel(ServiceProvider, this);
 
             // Initialize the tag view model of the the asset view
-            // TODO: can we merge this in the AssetPropertiesViewModel?
+            // TODO: Can we merge this in the AssetPropertiesViewModel?
             AssetTags = new TagsViewModel(ActiveAssetView);
 
             // Initialize the reference view model related to the main asset view
@@ -615,7 +643,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private void EditSelectedAsset()
         {
             // Cannot edit multi-selection
-            if (ActiveAssetView.SingleSelectedContent == null)
+            if (ActiveAssetView.SingleSelectedContent is null)
                 return;
 
             // Asset
@@ -633,8 +661,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             }
 
             // Folder
-            var folder = ActiveAssetView.SingleSelectedContent as DirectoryViewModel;
-            if (folder != null)
+            if (ActiveAssetView.SingleSelectedContent is DirectoryViewModel folder)
             {
                 ActiveAssetView.SelectedLocations.Clear();
                 ActiveAssetView.SelectedLocations.Add(folder);
@@ -688,8 +715,10 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private async Task OpenWithTextEditor(AssetViewModel asset, string editorPath)
         {
-            if (editorPath == null) throw new ArgumentNullException(nameof(editorPath));
-            if (asset?.Directory?.Package == null)
+            if (editorPath is null)
+                throw new ArgumentNullException(nameof(editorPath));
+
+            if (asset?.Directory?.Package is null)
                 return;
 
             if (asset.IsDirty)
@@ -728,7 +757,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private async Task OpenAssetFile(AssetViewModel asset)
         {
-            if (asset?.Directory?.Package == null)
+            if (asset?.Directory?.Package is null)
                 return;
 
             if (asset.IsDirty)
@@ -751,11 +780,11 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private async Task OpenSourceFile(AssetViewModel asset)
         {
-            if (asset?.Directory?.Package == null)
+            if (asset?.Directory?.Package is null)
                 return;
 
             var fileToOpen = asset.Asset.MainSource;
-            if (fileToOpen == null)
+            if (fileToOpen is null)
             {
                 await Dialogs.MessageBox(Tr._p("Message", "This asset doesn't have a source file to open."), MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
@@ -766,20 +795,17 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private async Task Explore(object param)
         {
-            if (param is IEnumerable)
-                param = ((IEnumerable)param).Cast<object>().LastOrDefault();
-            if (param == null)
+            if (param is IEnumerable enumerable)
+                param = enumerable.Cast<object>().LastOrDefault();
+            if (param is null)
                 param = ActiveAssetView.SelectedLocations.LastOrDefault();
 
-            var solution = param as PackageCategoryViewModel;
             var package = GetContainerPackage(param);
             var asset = param as AssetViewModel;
-            var folder = param as DirectoryViewModel;
-            var project = param as ProjectViewModel;
             bool fileSelection = false;
 
             UPath path;
-            if (project != null)
+            if (param is ProjectViewModel project)
             {
                 path = project.ProjectPath;
                 fileSelection = true;
@@ -793,7 +819,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             {
                 path = package.Package.GetDefaultAssetFolder();
 
-                if (folder != null)
+                if (param is DirectoryViewModel folder)
                 {
                     var dir = folder.Root is AssetMountPointViewModel ? new UDirectory(path.FullPath) : package.Package.RootDirectory;
                     path = UPath.Combine(dir, new UDirectory(folder.Path));
@@ -808,7 +834,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                     }
                 }
             }
-            else if (solution != null && solution.Content == LocalPackages && !string.IsNullOrEmpty(SolutionPath))
+            else if (param is PackageCategoryViewModel solution && solution.Content == LocalPackages && !string.IsNullOrEmpty(SolutionPath))
             {
                 path = SolutionPath;
                 fileSelection = true;
@@ -831,7 +857,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 var explorer = new Process { StartInfo = startInfo };
                 explorer.Start();
             }
-            catch (Exception)
+            catch
             {
                 await Dialogs.MessageBox(Tr._p("Message", "There was a problem starting the file explorer."), MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -840,7 +866,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private async Task ExploreSourceFile(AssetViewModel asset)
         {
             var filePathToOpen = asset?.Asset?.MainSource;
-            if (filePathToOpen == null)
+            if (filePathToOpen is null)
             {
                 await Dialogs.MessageBox(Tr._p("Message", "This asset doesn't have a source file."), MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
@@ -867,7 +893,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 var explorer = new Process { StartInfo = startInfo };
                 explorer.Start();
             }
-            catch (Exception)
+            catch
             {
                 await Dialogs.MessageBox(Tr._p("Message", "There was a problem starting the file explorer."), MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -914,9 +940,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
                     success = true;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    sessionResult.Error(string.Format(Tr._p("Log", "There was a problem saving the solution. {0}"), e.Message), e);
+                    sessionResult.Error(string.Format(Tr._p("Log", "There was a problem saving the solution. {0}"), ex.Message), ex);
                 }
             });
 
@@ -944,7 +970,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
                 // Add entry to MRU: priority to the sln, then the first local package
                 var mruPath = session.SolutionPath;
-                if (mruPath == null && session.LocalPackages.Any())
+                if (mruPath is null && session.LocalPackages.Any())
                 {
                     mruPath = session.LocalPackages.First().FullPath;
                 }
@@ -967,11 +993,11 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Notifies the session that a property of some assets has been changed.
+        ///   Notifies the session that a property of some asset has been changed.
         /// </summary>
         /// <remarks>
-        /// Since notifications will be raised asynchronously, <paramref name="assets"/> collection should not be modified after it has been passed to this method.
-        /// If necessary, caller must provide a copy.
+        ///   Since notifications will be raised asynchronously, <paramref name="assets"/> collection should not be modified
+        ///   after it has been passed to this method. If necessary, caller must provide a copy.
         /// </remarks>
         public async void NotifyAssetPropertiesChanged([ItemNotNull, NotNull]  IReadOnlyCollection<AssetViewModel> assets)
         {
@@ -987,31 +1013,35 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Gets an <see cref="AssetViewModel"/> instance of the asset which as the given identifier, if available.
+        ///   Gets an <see cref="AssetViewModel"/> instance of the asset with the given identifier, if available.
         /// </summary>
         /// <param name="id">The identifier of the asset to look for.</param>
         /// <returns>An <see cref="AssetViewModel"/> that matches the given identifier if available. Otherwise, <c>null</c>.</returns>
         [CanBeNull]
         public AssetViewModel GetAssetById(AssetId id)
         {
-            AssetViewModel result;
-            assetIdMap.TryGetValue(id, out result);
+            assetIdMap.TryGetValue(id, out AssetViewModel result);
             return result;
         }
 
         /// <summary>
-        /// Creates a <see cref="IDisposable"/> object that represents a context where most of the standard mechanisms relying on property changes are disabled, such as
-        /// property changes notifications, creation of <see cref="ActionItem"/>, andpropagation of properties between a base and a derived asset.
+        ///   Creates an <see cref="IDisposable"/> object that represents a context where most of the standard mechanisms relying on
+        ///   property changes are disabled, such as property change notifications, and propagation of properties between a base and
+        ///   a derived asset.
         /// </summary>
         /// <returns>A disposable object disabling normal mechanisms relying on property change.</returns>
-        /// <remarks>This method should be used only for advanced modifications of assets such as global fixups, that still need to reky on undo/redo.</remarks>
+        /// <remarks>
+        ///   This method should be used only for advanced modifications of assets such as global fixups, that still need to rely
+        ///   on undo/redo.
+        /// </remarks>
         public IDisposable CreateAssetFixupContext()
         {
             return new FixupAssetContext(this);
         }
 
         /// <summary>
-        /// Register an asset so it can be found using the <see cref="GetAssetById"/> method. This method is intended to be invoked only by <see cref="AssetViewModel"/>.
+        ///   Registers an asset so it can be found using the <see cref="GetAssetById"/> method. This method is intended to be invoked
+        ///   only by <see cref="AssetViewModel"/>.
         /// </summary>
         /// <param name="asset">The asset to register.</param>
         internal void RegisterAsset(AssetViewModel asset)
@@ -1020,16 +1050,17 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Unregister an asset previously registered with <see cref="RegisterAsset"/>. This method is intended to be invoked only by <see cref="AssetViewModel"/>.
+        ///   Unregisters an asset previously registered with <see cref="RegisterAsset"/>. This method is intended to be invoked only
+        ///   by <see cref="AssetViewModel"/>.
         /// </summary>
-        /// <param name="asset">The asset to register.</param>
+        /// <param name="asset">The asset to unregister.</param>
         internal void UnregisterAsset(AssetViewModel asset)
         {
             ((IDictionary<AssetId, AssetViewModel>)assetIdMap).Remove(asset.Id);
         }
 
         /// <summary>
-        /// Attempts to close the session. If the session has unsaved changes, ask the user whether to save it or not. If the user cancels
+        ///   Attempts to close the session. If the session has unsaved changes, the user will be asked whether to save it or not.
         /// </summary>
         public async Task<bool> Close()
         {
@@ -1052,7 +1083,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
                     case 1:
                         await SaveSession();
-                        // session saving has been cancelled, aborting
+                        // Session saving has been cancelled, aborting
                         if (HasUnsavedAssets())
                         {
                             ServiceProvider.Get<IEditorDialogService>().BlockingMessageBox(Tr._p("Message", "Some assets couldn't be saved. Check the assets and try again."), MessageBoxButton.OK,
@@ -1098,8 +1129,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private void SetCurrentProject(object selectedItem)
         {
-            var project = selectedItem as ProjectViewModel;
-            if (project == null)
+            if (!(selectedItem is ProjectViewModel project))
             {
                 // Editor.MessageBox(Resources.Strings.SessionViewModel.SelectExecutableAsCurrentProject, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
@@ -1175,7 +1205,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             };
 
             var generator = TemplateManager.FindTemplateGenerator(parameters);
-            if (generator == null)
+            if (generator is null)
             {
                 await Dialogs.MessageBox(Tr._p("Message", "Unable to retrieve template generator for the selected template. Aborting."), MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -1223,7 +1253,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 IsCancellable = false
             };
             workProgress.RegisterProgressStatus(loggerResult, true);
-            // Note: this task is note safely cancellable
+            // NOTE: This task is not safely cancellable
             // TODO: Remove the cancellation token if possible.
             var cancellationSource = new CancellationTokenSource();
 
@@ -1236,9 +1266,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 {
                     package = session.AddExistingProject(projectPath, loggerResult, CreatePackageLoadParameters(workProgress, cancellationSource)).Package;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    loggerResult.Error(Tr._p("Log", "There was a problem importing the package."), e);
+                    loggerResult.Error(Tr._p("Log", "There was a problem importing the package."), ex);
                 }
 
             }, cancellationSource.Token);
@@ -1299,7 +1329,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             }
 
             PackageViewModel selectedPackage = GetContainerPackage(ActiveAssetView.SelectedLocations[0]);
-            if (selectedPackage == null)
+            if (selectedPackage is null)
             {
                 await Dialogs.MessageBox(message, MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -1310,7 +1340,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public async Task UpdatePackageTemplate(TemplateDescription templateDescription)
         {
             var selectedPackage = await RequestSingleSelectedPackage();
-            if (selectedPackage == null)
+            if (selectedPackage is null)
                 return;
 
             await selectedPackage.UpdatePackageTemplate(templateDescription);
@@ -1319,7 +1349,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private async Task AddDependency()
         {
             var selectedPackage = await RequestSingleSelectedPackage();
-            if (selectedPackage == null)
+            if (selectedPackage is null)
                 return;
 
             var packagePicker = Dialogs.CreatePackagePickerDialog(this);
@@ -1361,9 +1391,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
             {
                 using (var transaction = UndoRedoService.CreateTransaction())
                 {
-                    var selectedDirectory = selectedItem as DirectoryBaseViewModel;
                     var selectedPackage = GetContainerPackage(selectedItem);
-                    if (selectedDirectory != null)
+                    if (selectedItem is DirectoryBaseViewModel selectedDirectory)
                     {
                         if (selectedDirectory.Package.IsEditable)
                         {
@@ -1425,20 +1454,17 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private static PackageViewModel GetContainerPackage(object item)
         {
-            var package = item as PackageViewModel;
-            if (package != null)
+            if (item is PackageViewModel package)
                 return package;
 
-            var asset = item as AssetViewModel;
             var directory = item as DirectoryBaseViewModel;
-            if (asset != null)
+            if (item is AssetViewModel asset)
                 directory = asset.Directory;
 
             if (directory != null)
                 return directory.Package;
 
-            var depsCategory = item as DependencyCategoryViewModel;
-            if (depsCategory != null)
+            if (item is DependencyCategoryViewModel depsCategory)
                 return depsCategory.Parent;
 
             var reference = item as PackageReferenceViewModel;
@@ -1449,6 +1475,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         {
             var package = selectedDirectoryOrPackage as PackageViewModel;
             var directory = selectedDirectoryOrPackage as DirectoryViewModel;
+
             package?.RenameCommand.Execute();
             directory?.RenameCommand.Execute();
         }
@@ -1571,8 +1598,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             // Check deletion
             foreach (var asset in allAssetsToDelete)
             {
-                string error;
-                if (!asset.CanDelete(out error))
+                if (!asset.CanDelete(out string error))
                 {
                     error = string.Format(Tr._p("Message", "Stride can't delete the {0} asset. {1}{2}"), asset.Url, Environment.NewLine, error);
                     await Dialogs.MessageBox(error, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -1581,8 +1607,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             }
             foreach (var directory in directoriesToDelete)
             {
-                string error;
-                if (!directory.CanDelete(out error))
+                if (!directory.CanDelete(out string error))
                 {
                     error = string.Format(Tr._p("Message", "Stride can't delete the {0} folder. {1}{2}"), directory.Name, Environment.NewLine, error);
                     await Dialogs.MessageBox(error, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -1610,7 +1635,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                     hashIds.AddRange(allAssetsToDelete.Select(x => x.Id));
                     var hasReferencesToFix =
                         allAssetsToDelete
-                            .SelectMany(x => DependencyManager.ComputeDependencies(x.AssetItem.Id, AssetDependencySearchOptions.In, ContentLinkType.Reference)?.LinksIn ?? new AssetLink[0])
+                            .SelectMany(x => DependencyManager.ComputeDependencies(x.AssetItem.Id, AssetDependencySearchOptions.In, ContentLinkType.Reference)?.LinksIn ?? Array.Empty<AssetLink>())
                             .Where(x => !hashIds.Contains(x.Item.Id))
                             .Any(x => GetAssetById(x.Item.Id) != null);
                     if (hasReferencesToFix)
@@ -1627,7 +1652,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 // Delete selected packages
                 foreach (var selectedPackage in packagesToDelete)
                 {
-                    // Note: this should never happen. UI rules should ensure that the user cannot attempt a system package deletion.
+                    // NOTE: This should never happen. UI rules should ensure that the user cannot attempt a system package deletion.
                     if (selectedPackage.Package.IsSystem && !systemPackageWarningDisplayed)
                     {
                         await Dialogs.MessageBox(Tr._p("Message", "Stride can't delete the system package."), MessageBoxButton.OK, MessageBoxImage.Information);
@@ -1779,7 +1804,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private void ToggleIsRootOnSelectedAsset()
         {
-            if (CurrentProject?.Package == null)
+            if (CurrentProject?.Package is null)
                 return;
 
             var currentValue = ActiveAssetView.SelectedAssets.All(x => x.Dependencies.IsRoot);

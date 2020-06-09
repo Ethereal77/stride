@@ -8,17 +8,17 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.ServiceModel;
 using System.Threading;
+
+using ServiceWire.NamedPipes;
 
 using Stride.Core.VisualStudio;
 
 namespace Stride.ExecServer
 {
     /// <summary>
-    /// Remote implementation of the server
+    ///   Represents a remote execution server implemented using ServiceWire.
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode=ConcurrencyMode.Multiple)]
     internal class ExecServerRemote : IExecServerRemote
     {
         public const int BusyReturnCode = -8000;
@@ -42,7 +42,7 @@ namespace Stride.ExecServer
 
         public ExecServerRemote(string entryAssemblyPath, string executablePath, bool trackingServer, bool cachingAppDomain, bool isMainDomain)
         {
-            // TODO: List of native dll directory is hardcoded here. Instead, it should be extracted from .exe.config file for example
+            // TODO: List of native DLL directory is hardcoded here. Instead, it should be extracted from .exe.config file for example
             shadowManager = new AppDomainShadowManager(entryAssemblyPath, executablePath, new[] { IntPtr.Size == 8 ? "x64" : "x86" })
             {
                 IsCachingAppDomain = cachingAppDomain
@@ -63,11 +63,9 @@ namespace Stride.ExecServer
             }
         }
 
-        public void Check()
-        {
-        }
+        public void Check() { }
 
-        public int Run(string currentDirectory, Dictionary<string, string> environmentVariables, string[] args, bool shadowCache, int? debuggerProcessId)
+        public int Run(string currentDirectory, Dictionary<string, string> environmentVariables, string[] args, bool shadowCache, int? debuggerProcessId, string callbackAddress)
         {
             bool lockTaken = false;
             try
@@ -91,10 +89,11 @@ namespace Stride.ExecServer
                         debugger?.Attach();
                     }
                 }
-
-                var logger = OperationContext.Current.GetCallbackChannel<IServerLogger>();
-                var result = shadowManager.Run(currentDirectory, environmentVariables, args, shadowCache, logger);
-                return result;
+                using (var callbackChannel = new NpClient<IServerLogger>(new NpEndPoint(callbackAddress)))
+                {
+                    var result = shadowManager.Run(currentDirectory, environmentVariables, args, shadowCache, callbackChannel);
+                    return result;
+                }
             }
             finally
             {
@@ -133,15 +132,14 @@ namespace Stride.ExecServer
                     var localUpTime = GetUpTime();
                     if (localUpTime > TimeSpan.FromSeconds(shutdownExecServerAfterSeconds))
                     {
-                        Console.WriteLine("Shutdown server after {0}s of inactivity", shutdownExecServerAfterSeconds);
+                        Console.WriteLine("Shutting down server after {0}s of inactivity.", shutdownExecServerAfterSeconds);
                         break;
                     }
-
 
                     // If this exec server is no longer up-to-date with its original exe, we can close it
                     if (!File.Exists(originalAssemblyPath) || File.GetLastWriteTimeUtc(originalAssemblyPath) != thisAssemblyTime)
                     {
-                        Console.WriteLine("Shutdown server as original exe [{0}] has changed", originalAssemblyPath);
+                        Console.WriteLine("Shutting down server as original executable [{0}] has changed.", originalAssemblyPath);
                         break;
                     }
 
@@ -150,7 +148,6 @@ namespace Stride.ExecServer
             }
             finally
             {
-
                 OnShuttingDown();
             }
         }

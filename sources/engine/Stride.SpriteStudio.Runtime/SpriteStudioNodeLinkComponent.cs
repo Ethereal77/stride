@@ -21,7 +21,7 @@ namespace Stride.SpriteStudio.Runtime
         /// <value>
         /// The model which contains the hierarchy to use.
         /// </value>
-        /// <userdoc>The reference to the target entity to which attach the current entity. If null, parent will be used.</userdoc>
+        /// <userdoc>The reference to the target entity to attach the current entity to. If null, parent will be used.</userdoc>
         [Display("Target (Parent if not set)")]
         public SpriteStudioComponent Target { get; set; }
 
@@ -31,7 +31,7 @@ namespace Stride.SpriteStudio.Runtime
         /// <value>
         /// The name of the node.
         /// </value>
-        /// <userdoc>The name of node of the model of the target entity to which attach the current entity.</userdoc>
+        /// <userdoc>The name of node of the model of the target entity to attach the current entity to.</userdoc>
         public string NodeName { get; set; }
     }
 }

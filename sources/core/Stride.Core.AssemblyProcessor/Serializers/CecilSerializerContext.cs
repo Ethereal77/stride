@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -60,8 +59,8 @@ namespace Stride.Core.AssemblyProcessor.Serializers
         public Dictionary<TypeDefinition, SerializableTypeInfo> ComplexTypes { get; private set; }
 
         /// <summary>
-        /// Ensure the following type can be serialized. If not, try to register appropriate serializer.
-        /// This method can be recursive.
+        ///   Ensures the following type can be serialized. If not, tries to register appropriate serializer.
+        ///   This method can be recursive.
         /// </summary>
         /// <param name="type">The type.</param>
         public SerializableTypeInfo GenerateSerializer(TypeReference type, bool force = true, string profile = "Default", bool isGenericType = false)
@@ -403,8 +402,6 @@ namespace Stride.Core.AssemblyProcessor.Serializers
         private SerializableTypeInfo CreateComplexSerializer(TypeReference type)
         {
             var isLocal = type.Resolve().Module.Assembly == Assembly;
-
-            //Debugger.Launch();
 
             // Create a fake TypeReference (even though it doesn't really exist yet, but at least ConvertCSharp to get its name will work).
             var className = ComplexSerializerRegistry.GetSerializerTypeName(type, appendGenerics: false, appendSerializer: true);

@@ -18,12 +18,11 @@ using Stride.Assets.Scripts;
 namespace Stride.Assets.Presentation.ViewModel
 {
     /// <summary>
-    /// View model for a <see cref="Method"/> inside a <see cref="VisualScriptAsset"/>.
+    ///   View model for a <see cref="Scripts.Method"/> inside a <see cref="VisualScriptAsset"/>.
     /// </summary>
     public class VisualScriptMethodViewModel : DispatcherViewModel
     {
         private readonly VisualScriptViewModel visualScript;
-        private readonly Method method;
         private readonly IObjectNode blocksContent;
         private readonly IObjectNode linksContent;
         private readonly IObjectNode parametersContent;
@@ -33,17 +32,31 @@ namespace Stride.Assets.Presentation.ViewModel
         private readonly MemberGraphNodeBinding<string> nameNodeBinding;
         private readonly MemberGraphNodeBinding<string> returnTypeNodeBinding;
 
-        public VisualScriptMethodViewModel(VisualScriptViewModel visualScript, Method method) : base(visualScript.ServiceProvider)
+        public Method Method { get; }
+
+        public Accessibility Accessibility { get { return accessibilityNodeBinding.Value; } set { accessibilityNodeBinding.Value = value; } }
+
+        public VirtualModifier VirtualModifier { get { return virtualModifierNodeBinding.Value; } set { virtualModifierNodeBinding.Value = value; } }
+
+        public bool IsStatic { get { return isStaticNodeBinding.Value; } set { isStaticNodeBinding.Value = value; } }
+
+        public string Name { get { return nameNodeBinding.Value; } set { nameNodeBinding.Value = value; } }
+
+        public string ReturnType { get { return returnTypeNodeBinding.Value; } set { returnTypeNodeBinding.Value = value; } }
+
+
+        public VisualScriptMethodViewModel(VisualScriptViewModel visualScript, Method method)
+            : base(visualScript.ServiceProvider)
         {
             this.visualScript = visualScript;
-            this.method = method;
+            this.Method = method;
             var methodNode = visualScript.Session.AssetNodeContainer.GetOrCreateNode(method);
             blocksContent = methodNode[nameof(method.Blocks)].Target;
             linksContent = methodNode[nameof(method.Links)].Target;
             parametersContent = methodNode[nameof(method.Parameters)].Target;
 
             // Create bindings
-            accessibilityNodeBinding = new MemberGraphNodeBinding<Accessibility>(methodNode[nameof(method.Accessibility)], nameof(Accessibility), OnPropertyChanging, OnPropertyChanged, visualScript.UndoRedoService);
+            accessibilityNodeBinding = new MemberGraphNodeBinding<Scripts.Accessibility>(methodNode[nameof(method.Accessibility)], nameof(Scripts.Accessibility), OnPropertyChanging, OnPropertyChanged, visualScript.UndoRedoService);
             virtualModifierNodeBinding = new MemberGraphNodeBinding<VirtualModifier>(methodNode[nameof(method.VirtualModifier)], nameof(VirtualModifier), OnPropertyChanging, OnPropertyChanged, visualScript.UndoRedoService);
             isStaticNodeBinding = new MemberGraphNodeBinding<bool>(methodNode[nameof(method.IsStatic)], nameof(IsStatic), OnPropertyChanging, OnPropertyChanged, visualScript.UndoRedoService);
             nameNodeBinding = new MemberGraphNodeBinding<string>(methodNode[nameof(method.Name)], nameof(Name), OnPropertyChanging, OnPropertyChanged, visualScript.UndoRedoService);
@@ -61,17 +74,6 @@ namespace Stride.Assets.Presentation.ViewModel
             base.Destroy();
         }
 
-        public Accessibility Accessibility { get { return accessibilityNodeBinding.Value; } set { accessibilityNodeBinding.Value = value; } }
-
-        public VirtualModifier VirtualModifier { get { return virtualModifierNodeBinding.Value; } set { virtualModifierNodeBinding.Value = value; } }
-
-        public bool IsStatic { get { return isStaticNodeBinding.Value; } set { isStaticNodeBinding.Value = value; } }
-
-        public string Name { get { return nameNodeBinding.Value; } set { nameNodeBinding.Value = value; } }
-
-        public string ReturnType { get { return returnTypeNodeBinding.Value; } set { returnTypeNodeBinding.Value = value; } }
-
-        public Method Method => method;
 
         public void AddParameter(Parameter parameter)
         {
@@ -81,7 +83,7 @@ namespace Stride.Assets.Presentation.ViewModel
         public void RemoveParameter(Parameter parameter)
         {
             // Find index
-            var index = method.Parameters.IndexOf(parameter);
+            var index = Method.Parameters.IndexOf(parameter);
             if (index < 0)
                 return;
 
@@ -101,7 +103,7 @@ namespace Stride.Assets.Presentation.ViewModel
         {
             // First, remove all links this block uses
             var i = 0;
-            foreach (var link in method.Links.Values)
+            foreach (var link in Method.Links.Values)
             {
                 if (link.Source.Owner == block || link.Target.Owner == block)
                 {
@@ -132,16 +134,16 @@ namespace Stride.Assets.Presentation.ViewModel
 
         public async Task RegenerateSlots()
         {
-            foreach (var block in method.Blocks.Values)
+            foreach (var block in Method.Blocks.Values)
             {
                 await RegenerateSlots(block);
             }
         }
 
         /// <summary>
-        /// Regenerates slot for a given <see cref="Block"/>.
+        ///   Regenerates the slots for a given <see cref="Block"/>.
         /// </summary>
-        /// <param name="block">The block which slots should be regenerated. It must be part of the asset.</param>
+        /// <param name="block">The block whose slots should be regenerated. It must be part of the asset.</param>
         /// <returns></returns>
         public async Task RegenerateSlots(Block block, ILogger log = null)
         {
@@ -187,10 +189,10 @@ namespace Stride.Assets.Presentation.ViewModel
                     var oldSlot = block.Slots[j];
 
                     // We detect similar slot with kind, direction and name
-                    // We ignore other attributes such as value, type, flags, etc...
-                    if (oldSlot.Kind == newSlot.Kind
-                        && oldSlot.Direction == newSlot.Direction
-                        && oldSlot.Name == newSlot.Name)
+                    // We ignore other attributes such as value, type, flags, etc.
+                    if (oldSlot.Kind == newSlot.Kind &&
+                        oldSlot.Direction == newSlot.Direction &&
+                        oldSlot.Name == newSlot.Name)
                     {
                         matchingOldSlot = oldSlot;
                         matchingOldSlotIndex = j;
@@ -250,9 +252,9 @@ namespace Stride.Assets.Presentation.ViewModel
                 var blockSlots = blockNode[nameof(Block.Slots)].Target;
 
                 // Remove all links used by previous slots
-                // Note: we completetly remove them before updating, since we regenerates new VisualScriptSlotViewModel, so we need updated VisualScriptLinkViewModel
+                // NOTE: We completetly remove them before updating, since we regenerates new VisualScriptSlotViewModel, so we need updated VisualScriptLinkViewModel
                 var linksToAdd = new List<Link>();
-                foreach (var link in method.Links.Values.ToArray())
+                foreach (var link in Method.Links.Values.ToArray())
                 {
                     Slot newSlot;
                     var linkRemoved = false;
@@ -297,7 +299,7 @@ namespace Stride.Assets.Presentation.ViewModel
                 }
 
                 // Remove all slots
-                // TODO: we could use diff to minimize changes, but probably not worth the effort
+                // TODO: We could use diff to minimize changes, but probably not worth the effort
                 // Note that we can't simply overwrite slots, since the Slot.Owner would become invalid if added before it is removed at another index
                 for (int i = block.Slots.Count - 1; i >= 0; --i)
                     blockSlots.Remove(block.Slots[i], new NodeIndex(i));

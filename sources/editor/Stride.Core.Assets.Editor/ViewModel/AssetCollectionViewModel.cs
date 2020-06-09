@@ -11,7 +11,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
 using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Assets.Tracking;
 using Stride.Core.Assets.Editor.Components.AddAssets;
 using Stride.Core.Assets.Editor.Components.Properties;
 using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
@@ -20,13 +27,6 @@ using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.Settings;
 using Stride.Core.Assets.Editor.View.Behaviors;
 using Stride.Core.Assets.Editor.ViewModel.Progress;
-using Stride.Core.Assets.Templates;
-using Stride.Core.Assets.Tracking;
-using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
-using Stride.Core.IO;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Core;
@@ -35,6 +35,7 @@ using Stride.Core.Presentation.Interop;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
 using Stride.Core.Translation;
+
 using MessageBoxButton = Stride.Core.Presentation.Services.MessageBoxButton;
 using MessageBoxImage = Stride.Core.Presentation.Services.MessageBoxImage;
 
@@ -44,14 +45,14 @@ namespace Stride.Core.Assets.Editor.ViewModel
     {
         AssetInSelectedFolderOnly,
         AssetInSelectedFolderAndSubFolder,
-        AssetAndFolderInSelectedFolder,
+        AssetAndFolderInSelectedFolder
     }
 
     public enum FilterCategory
     {
         AssetName,
         AssetTag,
-        AssetType,
+        AssetType
     }
 
     public enum SortRule
@@ -59,7 +60,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         Name,
         TypeOrderThenName,
         DirtyThenName,
-        ModificationDateThenName,
+        ModificationDateThenName
     }
 
     public sealed class AssetCollectionViewModel : DispatcherViewModel, IAddChildViewModel
@@ -89,7 +90,11 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
             public string Filter { get; }
 
-            public bool IsActive { get => isActive; set => SetValue(ref isActive, value, collection.RefreshFilters); }
+            public bool IsActive
+            {
+                get => isActive;
+                set => SetValue(ref isActive, value, collection.RefreshFilters);
+            }
 
             public bool IsReadOnly
             {
@@ -121,20 +126,27 @@ namespace Stride.Core.Assets.Editor.ViewModel
                     case FilterCategory.AssetType:
                         return string.Equals(asset.AssetType.FullName, Filter);
                 }
+
                 return false;
             }
 
             public bool Equals(AssetFilterViewModel other)
             {
-                if (ReferenceEquals(null, other)) return false;
-                if (ReferenceEquals(this, other)) return true;
-                return Category == other.Category && string.Equals(Filter, other.Filter, StringComparison.OrdinalIgnoreCase);
+                if (other is null)
+                    return false;
+                if (ReferenceEquals(this, other))
+                    return true;
+
+                return Category == other.Category &&
+                       string.Equals(Filter, other.Filter, StringComparison.OrdinalIgnoreCase);
             }
 
             public override bool Equals(object obj)
             {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
+                if (obj is null)
+                    return false;
+                if (ReferenceEquals(this, obj))
+                    return true;
 
                 return Equals(obj as AssetFilterViewModel);
             }
@@ -162,17 +174,18 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private readonly ObservableSet<AssetViewModel> assets = new ObservableSet<AssetViewModel>();
 
-        // /!\ FIXME: we need to rework that as we probably don't need that many lists
+        // TODO: We need to rework that as we probably don't need that many lists
         private readonly ObservableList<AssetViewModel> filteredAssets = new ObservableList<AssetViewModel>();
         private readonly ObservableList<object> filteredContent = new ObservableList<object>();
 
         /// <remarks>
-        /// <see cref="selectedAssets"/> is a sub-collection of <see cref="selectedContent"/>. It should always be read from and never directly updated, except in <see cref="SelectedContentCollectionChanged"/>.
+        ///   Sub-collection of <see cref="selectedContent"/>. It should always be read from and never directly updated,
+        ///   except in <see cref="SelectedContentCollectionChanged"/>.
         /// </remarks>
         private readonly ObservableList<AssetViewModel> selectedAssets = new ObservableList<AssetViewModel>();
 
         /// <summary>
-        /// List of all selected items (e.g. in the asset view).
+        ///   List of all selected items (e.g. in the asset view).
         /// </summary>
         private readonly ObservableList<object> selectedContent = new ObservableList<object>();
 
@@ -247,7 +260,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public int AssetCount => assets.Count;
 
-        // FIXME: this property was added because for some reason DataGridEx has a lot of issues when displaying both assets and folders
+        // TODO: This property was added because for some reason DataGridEx has a lot of issues when displaying both assets and folders
         [Obsolete("Should not be used except by AssetViewUserControl GridView")]
         public IReadOnlyObservableCollection<AssetViewModel> FilteredAssets => filteredAssets;
 
@@ -274,7 +287,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public PackageViewModel SelectedAssetsPackage { get { var p = SelectedAssets.Select(x => x.Directory.Package).Distinct().ToArray(); return p.Length == 1 ? p[0] : null; } }
 
         /// <summary>
-        /// List of selected locations (in the solution explorer).
+        ///   List of selected locations (in the solution explorer).
         /// </summary>
         [NotNull]
         public ObservableList<object> SelectedLocations { get; } = new ObservableList<object>();
@@ -381,18 +394,15 @@ namespace Stride.Core.Assets.Editor.ViewModel
             var selectedDirectories = new List<DirectoryBaseViewModel>();
             foreach (var location in SelectedLocations)
             {
-                var packageCategory = location as PackageCategoryViewModel;
-                var package = location as PackageViewModel;
-                var directory = location as DirectoryBaseViewModel;
-                if (packageCategory != null && includeSubDirectoriesOfSelected)
+                if (location is PackageCategoryViewModel packageCategory && includeSubDirectoriesOfSelected)
                 {
                     selectedDirectories.AddRange(packageCategory.Content.Select(x => x.AssetMountPoint).NotNull());
                 }
-                if (package != null)
+                if (location is PackageViewModel package)
                 {
                     selectedDirectories.Add(package.AssetMountPoint);
                 }
-                if (directory != null)
+                if (location is DirectoryBaseViewModel directory)
                 {
                     selectedDirectories.Add(directory);
                 }
@@ -422,11 +432,14 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Deletes the given assets in a single transaction without asking for confirmation nor fixing broken references.
-        /// Assets whose <see cref="AssetViewModel.CanDelete()"/> method returns <c>false</c> won't be deleted, unless <paramref name="forceDelete"/> is <c>true</c>.
+        ///   Deletes the given assets in a single transaction without asking for confirmation nor fixing broken references.
+        ///   Assets whose <see cref="AssetViewModel.CanDelete()"/> method returns <c>false</c> won't be deleted, unless
+        ///   <paramref name="forceDelete"/> is <c>true</c>.
         /// </summary>
         /// <param name="assetsToDelete">The list of assets to delete.</param>
-        /// <param name="forceDelete">If <c>true</c> the asset whose <see cref="AssetViewModel.CanDelete()"/> method returns <c>false</c> will still be deleted</param>
+        /// <param name="forceDelete">
+        ///   If <c>true</c> the asset whose <see cref="AssetViewModel.CanDelete()"/> method returns <c>false</c> will still be deleted.
+        /// </param>
         /// <returns>The number of assets that have been successfully deleted.</returns>
         internal int DeleteAssets(IEnumerable<AssetViewModel> assetsToDelete, bool forceDelete = false)
         {
@@ -435,7 +448,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 var deletedAssets = new List<AssetViewModel>();
                 foreach (var asset in assetsToDelete.Where(x => forceDelete || x.CanDelete()))
                 {
-                    if (asset.Directory == null)
+                    if (asset.Directory is null)
                         throw new InvalidOperationException("The asset directory cannot be null before deleting an asset.");
 
                     if (!forceDelete && !asset.CanDelete())
@@ -478,17 +491,16 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public async Task<List<AssetViewModel>> RunAssetTemplate(ITemplateDescriptionViewModel template, IEnumerable<UFile> files, PropertyContainer? customParameters = null)
         {
-            if (template == null)
+            if (template is null)
                 return new List<AssetViewModel>();
 
             var loggerResult = new LoggerResult();
 
             var directory = await GetAssetCreationTargetFolder();
-            if (directory == null)
+            if (directory is null)
                 return new List<AssetViewModel>();
 
-            var templateDescription = template.GetTemplate() as TemplateAssetDescription;
-            if (templateDescription == null)
+            if (!(template.GetTemplate() is TemplateAssetDescription templateDescription))
             {
                 await Dialogs.MessageBox(Tr._p("Message", "Unable to use the selected template because it is not an asset template."), MessageBoxButton.OK, MessageBoxImage.Warning);
                 return new List<AssetViewModel>();
@@ -497,7 +509,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             // If the mount point of the current folder does not support this type of asset, try to select the first mount point that support it.
             directory = AssetViewModel.FindValidCreationLocation(assetType, directory, Session.CurrentProject);
 
-            if (directory == null)
+            if (directory is null)
                 return new List<AssetViewModel>();
 
             string name = string.Empty;
@@ -512,7 +524,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private async Task ShowAddAssetDialog()
         {
             var directory = await GetAssetCreationTargetFolder();
-            if (directory == null)
+            if (directory is null)
                 return;
 
             var templateDialog = ServiceProvider.Get<IEditorDialogService>().CreateAddAssetDialog(Session, directory);
@@ -533,8 +545,10 @@ namespace Stride.Core.Assets.Editor.ViewModel
             {
                 case ProjectCodeViewModel projectCode:
                     return projectCode.Project.RootNamespace;
+
                 case var directoryWithParent when directoryWithParent.Parent != null:
                     return $"{ComputeNamespace(directoryWithParent.Parent)}.{directoryWithParent.Name}";
+
                 default:
                     return directory.Name;
             }
@@ -562,7 +576,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             }
 
             var generator = TemplateManager.FindTemplateGenerator(parameters);
-            if (generator == null)
+            if (generator is null)
             {
                 await Dialogs.MessageBox(Tr._p("Message", "Unable to retrieve template generator for the selected template. Aborting."), MessageBoxButton.OK, MessageBoxImage.Error);
                 return newAssets;
@@ -573,7 +587,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 Title = Tr._p("Title", "Add asset…"),
                 KeepOpen = KeepOpen.OnWarningsOrErrors,
                 IsIndeterminate = true,
-                IsCancellable = false, // The process is not cancellable at the beginning.
+                // The process is not cancellable at the beginning.
+                IsCancellable = false
             };
             workProgress.RegisterProgressStatus(logger, true);
 
@@ -681,9 +696,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 SelectAssets(newAssets);
                 return newAssets;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("There was a problem generating the asset", e);
+                logger.Error("There was a problem generating the asset", ex);
                 return newAssets;
             }
             finally
@@ -718,8 +733,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private async Task CutSelectedLocations()
         {
-            var directories = GetSelectedDirectories(false);
-            await CutSelection(directories, null);
+            var directories = GetSelectedDirectories(includeSubDirectoriesOfSelected: false);
+            await CutSelection(directories, assetsToCut: null);
             UpdateCommands();
         }
 
@@ -730,24 +745,24 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private void CopyAssetUrl()
         {
-            if (SingleSelectedAsset == null)
+            if (SingleSelectedAsset is null)
                 return;
 
             try
             {
                 SafeClipboard.SetText(SingleSelectedAsset.Url);
             }
-            catch (SystemException e)
+            catch (SystemException ex)
             {
                 // We don't provide feedback when copying fails.
-                e.Ignore();
+                ex.Ignore();
             }
         }
 
         private async Task CopySelectedLocations()
         {
-            var directories = GetSelectedDirectories(false);
-            await CopySelection(directories, null);
+            var directories = GetSelectedDirectories(includeSubDirectoriesOfSelected: false);
+            await CopySelection(directories, assetsToCopy: null);
             UpdateCommands();
         }
 
@@ -774,7 +789,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 assetsToCopy.AddRange(asset.Dependencies.RecursiveReferencedAssets.Where(a => a.IsEditable));
             }
 
-            await CopySelection(null, assetsToCopy);
+            await CopySelection(directories: null, assetsToCopy);
             UpdateCommands();
         }
 
@@ -787,7 +802,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 return;
             }
             var assetsToWrite = await GetCopyCollection(directories, assetsToCut);
-            if (assetsToWrite == null || assetsToWrite.Count == 0)
+            if (assetsToWrite is null || assetsToWrite.Count == 0)
             {
                 return;
             }
@@ -795,8 +810,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             var assetList = assetsToWrite.SelectMany(x => x).ToList();
             foreach (var asset in assetList)
             {
-                string error;
-                if (!asset.CanDelete(out error))
+                if (!asset.CanDelete(out string error))
                 {
                     error = string.Format(Tr._p("Message", "The asset {0} can't be deleted. {1}{2}"), asset.Url, Environment.NewLine, error);
                     await Dialogs.MessageBox(error, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -824,9 +838,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
                     // Delete the directories
                     foreach (var directory in directories)
                     {
-                        string error;
                         // Last-chance check (note that we already checked that the directories are not read-only)
-                        if (!directory.CanDelete(out error))
+                        if (!directory.CanDelete(out string error))
                         {
                             error = string.Format(Tr._p("Message", "{0} can't be deleted. {1}{2}"), directory.Name, Environment.NewLine, error);
                             await Dialogs.MessageBox(error, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -843,7 +856,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private async Task CopySelection(IReadOnlyCollection<DirectoryBaseViewModel> directories, IEnumerable<AssetViewModel> assetsToCopy)
         {
             var assetsToWrite = await GetCopyCollection(directories, assetsToCopy);
-            if (assetsToWrite == null || assetsToWrite.Count == 0)
+            if (assetsToWrite is null || assetsToWrite.Count == 0)
             {
                 return;
             }
@@ -851,12 +864,12 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Gets the whole collection of assets to be copied.
+        ///   Gets the whole collection of assets to be copied.
         /// </summary>
         /// <param name="directories">The collection of separate directories of assets.</param>
         /// <param name="assetsToCopy">The collection of assets in the current directory.</param>
         /// <remarks>Directories cannot be in the same hierarchy of one another.</remarks>
-        /// <returns>The collection of assets to be copied, or null if the selection cannot be copied.</returns>
+        /// <returns>The collection of assets to be copied, or <c>null</c> if the selection cannot be copied.</returns>
         private async Task<ICollection<IGrouping<string, AssetViewModel>>> GetCopyCollection(IReadOnlyCollection<DirectoryBaseViewModel> directories, IEnumerable<AssetViewModel> assetsToCopy)
         {
             var collection = new List<IGrouping<string, AssetViewModel>>();
@@ -899,15 +912,13 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Consistency check. Makes sure <paramref name="assets"/> are indeed inside the given <paramref name="directory"/>.
+        ///   Consistency check. Makes sure <paramref name="assets"/> are indeed inside the given <paramref name="directory"/>.
         /// </summary>
-        /// <param name="assets"></param>
-        /// <param name="directory"></param>
         private static void EnsureDirectoryHierarchy(IEnumerable<AssetViewModel> assets, DirectoryBaseViewModel directory)
         {
             foreach (var asset in assets)
             {
-                if (asset.AssetItem.Location.HasDirectory && (directory.Parent == null || !asset.Url.StartsWith(directory.Parent.Path)))
+                if (asset.AssetItem.Location.HasDirectory && (directory.Parent is null || !asset.Url.StartsWith(directory.Parent.Path)))
                 {
                     throw new InvalidOperationException("One of the asset does not match the directory hierarchy.");
                 }
@@ -915,10 +926,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Actually writes the assets to the clipboard.
+        ///   Actually writes the assets to the clipboard.
         /// </summary>
-        /// <param name="assetsToWrite"></param>
-        /// <returns></returns>
         private bool WriteToClipboard(IEnumerable<IGrouping<string, AssetViewModel>> assetsToWrite)
         {
             var assetCollection = new List<AssetItem>();
@@ -933,10 +942,10 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 SafeClipboard.SetText(text);
                 return true;
             }
-            catch (SystemException e)
+            catch (SystemException ex)
             {
                 // We don't provide feedback when copying fails.
-                e.Ignore();
+                ex.Ignore();
                 return false;
             }
         }
@@ -1031,7 +1040,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public void AddAssetFilter(AssetFilterViewModel filter)
         {
-            if (filter == null)
+            if (filter is null)
                 return;
 
             filter.IsActive = true;
@@ -1059,7 +1068,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public void RemoveAssetFilter(AssetFilterViewModel filter)
         {
-            if (filter == null)
+            if (filter is null)
                 return;
 
             filter.IsActive = false;
@@ -1125,7 +1134,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             }
             UpdateAssetsCollection(newAssets, false);
 
-            // TODO: we use assetProperties value to determine if it's the main asset collection view model. A proper boolean would be better
+            // TODO: We use assetProperties value to determine if it's the main asset collection view model. A proper boolean would be better
             if (assetProperties != null)
             {
                 InternalSettings.AssetViewDisplayMode.SetValue(DisplayAssetMode);
@@ -1216,7 +1225,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private static string[] ComputeTokens(string pattern)
         {
-            return pattern?.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
+            return pattern?.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
         }
 
         private void UpdateAvailableAssetFilters(string filterText)
@@ -1265,9 +1274,11 @@ namespace Stride.Core.Assets.Editor.ViewModel
                     case SortRule.TypeOrderThenName:
                         comparer = new AnonymousComparer<AssetViewModel>((x, y) => { var r = -(DisplayAttribute.GetOrder(x.AssetType) ?? 0).CompareTo(DisplayAttribute.GetOrder(y.AssetType) ?? 0); return r == 0 ? assetNameComparer.Compare(x, y) : r; });
                         break;
+
                     case SortRule.DirtyThenName:
                         comparer = new AnonymousComparer<AssetViewModel>((x, y) => { var r = -x.IsDirty.CompareTo(y.IsDirty); return r == 0 ? assetNameComparer.Compare(x, y) : r; });
                         break;
+
                     case SortRule.ModificationDateThenName:
                         comparer = new AnonymousComparer<AssetViewModel>((x, y) => { var r = -x.AssetItem.ModifiedTime.CompareTo(y.AssetItem.ModifiedTime); return r == 0 ? assetNameComparer.Compare(x, y) : r; });
                         break;
@@ -1285,7 +1296,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 UpdateFilteredContent();
             }
 
-            // TODO: we use assetProperties value to determine if it's the main asset collection view model. A proper boolean would be better
+            // TODO: We use assetProperties value to determine if it's the main asset collection view model. A proper boolean would be better
             if (assetProperties != null)
             {
                 InternalSettings.AssetViewSortRule.SetValue(SortRule);
@@ -1555,9 +1566,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
                     fileList.Add(file);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                e.Ignore();
+                ex.Ignore();
             }
         }
     }

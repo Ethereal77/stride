@@ -14,45 +14,57 @@ using Stride.Core.Collections;
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// A logger that stores messages locally useful for internal log scenarios.
+    ///   A logger that stores messages locally useful for internal log scenarios.
     /// </summary>
-    [DebuggerDisplay("HasErrors: {HasErrors} Messages: [{Messages.Count}]")]
+    [DebuggerDisplay("HasErrors: {HasErrors}, Messages: [{Messages.Count}]")]
     public class LoggerResult : Logger, IProgressStatus
     {
         private readonly object loggerLock = new object();
 
         /// <summary>
-        /// Occurs when the progress changed for this logger.
-        /// </summary>
-        public event EventHandler<ProgressStatusEventArgs> ProgressChanged;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LoggerResult" /> class.
-        /// </summary>
-        public LoggerResult(string moduleName = null)
-        {
-            Module = moduleName;
-            Messages = new TrackingCollection<ILogMessage>();
-            IsLoggingProgressAsInfo = false;
-            // By default, all logs are enabled for a local logger.
-            ActivateLog(LogMessageType.Debug);
-        }
-
-        /// <summary>
-        /// Gets the module name. read-write.
+        ///   Gets or sets the module name for this logger.
         /// </summary>
         /// <value>The module name.</value>
         public new string Module
         {
-            get
-            {
-                return base.Module;
-            }
-            set
-            {
-                base.Module = value;
-            }
+            get => base.Module;
+            set => base.Module = value;
         }
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether this instance is logging progress as information. Default is <c>true</c>.
+        /// </summary>
+        /// <value><c>true</c> if this instance is logging progress as information; otherwise, <c>false</c>.</value>
+        public bool IsLoggingProgressAsInfo { get; set; }
+
+        /// <summary>
+        ///   Gets the messages logged to this instance.
+        /// </summary>
+        /// <value>Collection of log messages.</value>
+        public TrackingCollection<ILogMessage> Messages { get; }
+
+
+        /// <summary>
+        ///   Occurs when the progress changed for this logger.
+        /// </summary>
+        public event EventHandler<ProgressStatusEventArgs> ProgressChanged;
+
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="LoggerResult" /> class.
+        /// </summary>
+        /// <param name="moduleName">Module name.</param>
+        public LoggerResult(string moduleName = null)
+        {
+            Module = moduleName;
+
+            Messages = new TrackingCollection<ILogMessage>();
+            IsLoggingProgressAsInfo = false;
+
+            // By default, all logs are enabled for a local logger.
+            ActivateLog(LogMessageType.Debug);
+        }
+
 
         /// <summary>
         /// Clears all messages.
@@ -63,13 +75,7 @@ namespace Stride.Core.Diagnostics
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is logging progress as information. Default is true.
-        /// </summary>
-        /// <value><c>true</c> if this instance is logging progress as information; otherwise, <c>false</c>.</value>
-        public bool IsLoggingProgressAsInfo { get; set; }
-
-        /// <summary>
-        /// Notifies progress on this instance.
+        ///   Notifies progress on this instance.
         /// </summary>
         /// <param name="message">The message.</param>
         public void Progress([NotNull] string message)
@@ -78,7 +84,7 @@ namespace Stride.Core.Diagnostics
         }
 
         /// <summary>
-        /// Notifies progress on this instance.
+        ///   Notifies progress on this instance.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="currentStep">The current step.</param>
@@ -87,12 +93,6 @@ namespace Stride.Core.Diagnostics
         {
             OnProgressChanged(new ProgressStatusEventArgs(message, currentStep, stepCount));
         }
-
-        /// <summary>
-        /// Gets the messages logged to this instance.
-        /// </summary>
-        /// <value>The messages.</value>
-        public TrackingCollection<ILogMessage> Messages { get; }
 
         protected override void LogRaw(ILogMessage logMessage)
         {
@@ -103,21 +103,21 @@ namespace Stride.Core.Diagnostics
         }
 
         /// <summary>
-        /// Copies all messages to another instance.
+        ///   Copies all the messages in the current logger to another instance.
         /// </summary>
-        /// <param name="results">The results.</param>
-        public void CopyTo(ILogger results)
+        /// <param name="otherLog">An <see cref="ILogger"/> in which to copy the messages in this instance.</param>
+        public void CopyTo(ILogger otherLog)
         {
             foreach (var reportMessage in Messages)
             {
-                results.Log(reportMessage);
+                otherLog.Log(reportMessage);
             }
         }
 
         /// <summary>
-        /// Returns a string representation of this 
+        ///   Returns a string representation of this logger.
         /// </summary>
-        /// <returns>System.String.</returns>
+        /// <returns>String representation of the messages in this logger.</returns>
         [NotNull]
         public string ToText()
         {
@@ -146,17 +146,16 @@ namespace Stride.Core.Diagnostics
     }
 
     /// <summary>
-    /// A <see cref="LoggerResult"/> with an associated value;
+    ///   Represents a <see cref="LoggerResult"/> with an associated value.
     /// </summary>
     public class LoggerValueResult<T> : LoggerResult
     {
         public LoggerValueResult(string moduleName = null)
             : base(moduleName)
-        {
-        }
+        { }
 
         /// <summary>
-        /// Gets or sets the value associated with this log.
+        ///   Gets or sets the value associated with this log.
         /// </summary>
         /// <value>The value.</value>
         public T Value { get; set; }

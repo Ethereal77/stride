@@ -9,211 +9,253 @@ namespace Stride.Core
 {
     public class ThreadThrottler
     {
-        /// <summary>
-        /// Minimum time allowed between each call
-        /// </summary>
-        public TimeSpan MinimumElapsedTime { get; set; }
+        private static readonly double ONE_MILLISECOND = Stopwatch.Frequency / 1000.0;
+
+        private long timestamp;
+        private long minElapsedTicks;
+        private long elapsedTicksError;
+        private double spinwaitWindow;
 
         /// <summary>
-        /// The type of throttler used, call 
+        ///   Gets or sets the minimum amount of time allowed between update (logic) ticks.
         /// </summary>
+        /// <value>
+        ///   Minimum allowed time between ticks. Set to zero to disable throttling.
+        /// </value>
+        /// <remarks>
+        ///   Conversion is lossy, getting this value back might not return the same value you set it to.
+        /// </remarks>
+        public TimeSpan MinimumElapsedTime
+        {
+            get => ToSpan(minElapsedTicks);
+            set => minElapsedTicks = (long) ((double) Stopwatch.Frequency / TimeSpan.TicksPerSecond * value.Ticks);
+        }
+
+        /// <summary>
+        ///   Gets the type of throttler used.
+        /// </summary>
+        /// <value>
+        ///   Type of throttling. Default is <see cref="ThrottlerType.Standard"/>.
+        /// </value>
         public ThrottlerType Type { get; private set; }
 
-        Stopwatch callWatch;
-        TimeSpan fractionalSleep;
-        long spinwaitWindow;
 
         /// <summary>
-        /// Create an instance of this class set to <see cref="ThrottlerType.Standard"/> mode.
-        /// See <see cref="SetToPreciseAuto"/> and <see cref="SetToPreciseManual"/> to set it to other modes.
+        ///   Initializes a new instance of the <see cref="ThreadThrottler"/> class.
         /// </summary>
-        /// <param name="MinimumElapsedTimeParam">Minimum time allowed between each call</param>
-        public ThreadThrottler(TimeSpan MinimumElapsedTimeParam)
+        public ThreadThrottler()
         {
-            callWatch = Stopwatch.StartNew();
-            MinimumElapsedTime = MinimumElapsedTimeParam;
+            timestamp = Stopwatch.GetTimestamp();
+
             SetToStandard();
         }
-        
+
         /// <summary>
-        /// Use this mode when you want to lock your loops to a precise mean maximum rate.
-        /// <para/>
-        /// Lighter than <see cref="SetToPreciseAuto"/> and <see cref="SetToPreciseManual"/> but is only precise on average.
-        /// <para/>
-        /// If you aren't sure, use this one !
+        ///   Initializes a new instance of the <see cref="ThreadThrottler"/> class.
+        /// </summary>
+        /// <param name="minimumElapsedTime">Minimum time allowed between ticks.</param>
+        public ThreadThrottler(TimeSpan minimumElapsedTime) : this()
+        {
+            MinimumElapsedTime = minimumElapsedTime;
+        }
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="ThreadThrottler"/> class.
+        /// </summary>
+        /// <param name="maxFrequency">The maximum frequency (ticks per second) to allow.</param>
+        public ThreadThrottler(int maxFrequency) : this()
+        {
+            SetMaxFrequency(maxFrequency);
+        }
+
+
+        /// <summary>
+        ///   Sets the max allowed frequency (ticks per second) this throttler will allow.
+        /// </summary>
+        /// <remarks>
+        ///   This method effectively transforms the <paramref name="frequencyMax"/> parameter from ticks per second
+        ///   to the closest seconds per frame equivalent for it.
+        /// </remarks>
+        /// <exception cref="ArgumentOutOfRangeException">The frequency must be positive and greater than zero.</exception>
+        public void SetMaxFrequency(int frequencyMax)
+        {
+            if (frequencyMax <= 0)
+                throw new ArgumentOutOfRangeException(nameof(frequencyMax), "The frequency must be positive and greater than zero.");
+
+            minElapsedTicks = (long) (Stopwatch.Frequency / (double) frequencyMax);
+        }
+
+        /// <summary>
+        ///   Sets this throttler to "standard mode", in which it saves CPU cycles while waiting. This is the least precise mode but
+        ///   also the lightest. This is the default mode.
         /// </summary>
         public void SetToStandard()
         {
             Type = ThrottlerType.Standard;
+            spinwaitWindow = 0;
         }
 
         /// <summary>
-        /// Use this mode when you want to force your loops to run on a very precise timing at the cost of higher CPU usage.
-        /// <para/>
-        /// Heavier than <see cref="SetToStandard"/> but generates very precise per call timings.
-        /// This mode automatically scales the spinwait window automatically based on system responsiveness to find the optimal
-        /// value to spinwait for to stay as close as possible to the specified <see cref="MinimumElapsedTime"/>, this mode
-        /// will force the use of more performance when the system is under load to stay as precise as possible.
-        /// <para/>
-        /// If you aren't sure, use <see cref="SetToStandard"/> instead.
+        ///   Sets this throttler to "automatic precise mode", in which most of the timings will be perfectly precise to the system
+        ///   timer at the cost of higher CPU usage.
         /// </summary>
+        /// <remarks>
+        ///   This mode uses and automatically scales a spin-waiting window based on system responsiveness to find the right balance
+        ///   between <see cref="System.Threading.Thread.Sleep"/> calls and spin-waiting.
+        /// </remarks>
         public void SetToPreciseAuto()
         {
             // Avoid window reset if already precise auto
             if (Type == ThrottlerType.PreciseAuto)
                 return;
+
             Type = ThrottlerType.PreciseAuto;
             spinwaitWindow = 0;
         }
 
         /// <summary>
-        /// Use this mode when you want to force your loops to run on a very precise timing at the cost of a higher CPU usage.
-        /// <para/>
-        /// Heavier than <see cref="SetToStandard"/> but generates very precise per call timings, 
-        /// This mode uses your specified spinwait window to keep the performance cost to a maximum, it won't be able to guarantee precision if the system is under load.
-        /// <para/>
-        /// If you aren't sure, use <see cref="SetToStandard"/> instead.
+        ///   Sets this throttler to "manual precise mode", in which depending on the provided value, timings will be perfectly precise
+        ///   to the system timer at the cost of higher CPU usage.
         /// </summary>
-        /// <param name="spinwaitWindowParam">
-        /// The maximum additional ticks to spinwait for, the larger this is the more CPU is wasted on spinwaiting but if it's too small 
-        /// we won't spinwait at all and the precision won't be guaranteed.
-        /// </param>
-        public void SetToPreciseManual(long spinwaitWindowParam)
+        /// <param name="spinwaitTicks">Duration of the spin-waiting window.</param>
+        /// <remarks>
+        ///   This mode uses the <paramref name="spinwaitTicks"/> value as the duration of the spin-waiting window.
+        ///   The format of this value is based on <see cref="Stopwatch.Frequency"/>.
+        /// </remarks>
+        public void SetToPreciseManual(long spinwaitTicks)
         {
             Type = ThrottlerType.PreciseManual;
-            spinwaitWindow = spinwaitWindowParam;
+            spinwaitWindow = spinwaitTicks;
         }
-        
+
         /// <summary>
-        /// Forces the thread to sleep when the time elapsed since last call is lower than <see cref="MinimumElapsedTime"/>,
-        /// it will sleep for the time remaining to reach <see cref="MinimumElapsedTime"/>.
-        /// <para/> 
-        /// Use this function inside a loop when you want to lock it to a specific rate.
+        ///   Forces this thread to sleep when the time elapsed since the last call is lower than <see cref="MinimumElapsedTime"/>.
+        ///   It will sleep for the time remaining to reach <see cref="MinimumElapsedTime"/>.
+        ///   Use this function inside a loop when you want to lock to a specific rate.
         /// </summary>
-        /// <param name="finalElapsedTime">
-        /// The actual elapsed time since the last call, returns a value close to <see cref="MinimumElapsedTime"/>, 
-        /// use this value as your delta time.
+        /// <param name="elapsedTime">
+        ///   After this method returns, contains the time since the last call.
+        ///   You can use it as your "delta time".
         /// </param>
-        /// <returns><c>True</c> if we slept, <c>false</c> otherwise</returns>
-        public bool Throttle(out TimeSpan finalElapsedTime)
+        /// <returns><c>true</c> if the thread had to throttle; <c>false</c> otherwise.</returns>
+        public bool Throttle(out TimeSpan elapsedTime)
         {
-            switch (Type)
-            {
-                case ThrottlerType.Standard:
-                    return ThrottleThreadStandard(out finalElapsedTime);
-                case ThrottlerType.PreciseAuto:
-                case ThrottlerType.PreciseManual:
-                    return ThrottleThreadPrecise(out finalElapsedTime);
-                default:
-                    throw new NotImplementedException(Type.ToString());
-            }
+            var throttled = Throttle(out long stamp);
+            elapsedTime = ToSpan(stamp);
+            return throttled;
         }
 
-        bool ThrottleThreadStandard(out TimeSpan finalElapsedTime)
+        /// <summary>
+        ///   Forces this thread to sleep when the time elapsed since the last call is lower than <see cref="MinimumElapsedTime"/>.
+        ///   It will sleep for the time remaining to reach <see cref="MinimumElapsedTime"/>.
+        ///   Use this function inside a loop when you want to lock to a specific rate.
+        /// </summary>
+        /// <param name="elapsedSeconds">
+        ///   After this method returns, contains the time since the last call in seconds.
+        ///   You can use it as your "delta time".
+        /// </param>
+        /// <returns><c>true</c> if the thread had to throttle; <c>false</c> otherwise.</returns>
+        public bool Throttle(out double elapsedSeconds)
         {
-            // Compare the time elapsed between our previous run and now 
-            // to the minimum time allowed between two updates
-            var freeTime = MinimumElapsedTime - callWatch.Elapsed;
-
-            // Throttle only when we are too fast
-            if (freeTime < TimeSpan.Zero)
-            {
-                finalElapsedTime = callWatch.Elapsed;
-                callWatch.Restart();
-                return false;
-            }
-
-            // Sleep only deals with ints
-            int sleepMinDuration = (int)Math.Floor(freeTime.TotalMilliseconds);
-            // Store the fractional part that we can't include
-            fractionalSleep += freeTime - TimeSpan.FromMilliseconds(sleepMinDuration);
-
-            double msToCatchup = fractionalSleep.TotalMilliseconds;
-            // If we have at least one full MS, either to catchup or to sleep longer
-            // modify current duration to include that.
-            if (Math.Abs(msToCatchup) >= 1d)
-            {
-                // Get closest whole unit towards zero
-                int fractionalOverflow = msToCatchup > 0 ? (int)Math.Floor(msToCatchup) : (int)Math.Ceiling(msToCatchup);
-                // include it in the sleep duration
-                sleepMinDuration += fractionalOverflow;
-                // discard what we just applied
-                fractionalSleep -= TimeSpan.FromMilliseconds(fractionalOverflow);
-            }
-
-            if (sleepMinDuration >= 1)
-            {
-                long sleepStart = Stopwatch.GetTimestamp();
-                // Not sure about the use of Utilities here, what are the differences between it and Threads',
-                // that should be specified into Utilities.Sleep's summary.
-                Utilities.Sleep(sleepMinDuration);
-                var sleepElapsed = Utilities.ConvertRawToTimestamp(Stopwatch.GetTimestamp() - sleepStart);
-                // Decrease next sleep duration since we slept too much this time, always happens
-                fractionalSleep -= sleepElapsed - TimeSpan.FromMilliseconds(sleepMinDuration);
-
-                finalElapsedTime = callWatch.Elapsed;
-                callWatch.Restart();
-                return true;
-            }
-
-            finalElapsedTime = callWatch.Elapsed;
-            callWatch.Restart();
-            return false;
+            var throttled = Throttle(out long outTimestamp);
+            elapsedSeconds = (double) outTimestamp / Stopwatch.Frequency;
+            return throttled;
         }
 
-        bool ThrottleThreadPrecise(out TimeSpan finalElapsedTime)
+        /// <summary>
+        ///   Forces this thread to sleep when the time elapsed since the last call is lower than <see cref="MinimumElapsedTime"/>.
+        ///   It will sleep for the time remaining to reach <see cref="MinimumElapsedTime"/>.
+        ///   Use this function inside a loop when you want to lock to a specific rate.
+        /// </summary>
+        /// <param name="elapsedTicks">
+        ///   After this method returns, contains the time since the last call in ticks (see <see cref="TimeSpan.Ticks"/>).
+        ///   You can use it as your "delta time".
+        /// </param>
+        /// <returns><c>true</c> if the thread had to throttle; <c>false</c> otherwise.</returns>
+        public bool Throttle(out long elapsedTicks)
         {
-            if (callWatch == null)
-                callWatch = Stopwatch.StartNew();
+            bool throttled = false;
 
-            // Throttle only when we are too fast
-            if (callWatch.Elapsed > MinimumElapsedTime)
+            try
             {
-                finalElapsedTime = callWatch.Elapsed;
-                callWatch.Restart();
-                return false;
-            }
-
-            bool looped = false;
-            var oneMs = TimeSpan.FromMilliseconds(1);
-            while (MinimumElapsedTime - callWatch.Elapsed > oneMs + Utilities.ConvertRawToTimestamp(spinwaitWindow))
-            {
+                // Reduce window to account for extreme cases
                 if (Type == ThrottlerType.PreciseAuto)
                 {
-                    long sleepStart = Stopwatch.GetTimestamp();
-                    Utilities.Sleep(1);
-                    // Include excessive time sleep took on top of the time we specified
-                    spinwaitWindow += (Stopwatch.GetTimestamp() - sleepStart);
-                    // Average to account for general system responsiveness
-                    spinwaitWindow = spinwaitWindow == 0 ? 0 : spinwaitWindow / 2;
+                    spinwaitWindow -= spinwaitWindow / 10;
+                }
+
+                while (true)
+                {
+                    // If < 1 ms, exit sleep loop
+                    var idleDuration = minElapsedTicks - (Stopwatch.GetTimestamp() - timestamp - elapsedTicksError + spinwaitWindow);
+                    if (idleDuration < ONE_MILLISECOND)
+                    {
+                        if (Type == ThrottlerType.Standard)
+                            return false;
+
+                        break;
+                    }
+
+                    throttled = true;
+                    if (Type == ThrottlerType.PreciseAuto)
+                    {
+                        var sleepStart = Stopwatch.GetTimestamp();
+                        Utilities.Sleep(1);
+
+                        // Include excessive time sleep took on top of the time we specified
+                        spinwaitWindow += Stopwatch.GetTimestamp() - sleepStart - ONE_MILLISECOND;
+                        // Average to account for general system responsiveness
+                        spinwaitWindow /= 2.0;
+                    }
+                    else if (Type == ThrottlerType.PreciseManual)
+                    {
+                        Utilities.Sleep(1);
+                    }
+                    else
+                    {
+                        // Don't let standard spinwait
+                        Utilities.Sleep((int)(idleDuration / ONE_MILLISECOND));
+                        return true;
+                    }
+                }
+
+                var goalTimestamp = timestamp + minElapsedTicks + elapsedTicksError;
+                if (Stopwatch.GetTimestamp() < goalTimestamp)
+                {
+                    // Spinwait for the rest of the duration
+                    throttled = true;
+                    while (Stopwatch.GetTimestamp() < goalTimestamp) { }
+                }
+
+                return throttled;
+            }
+            finally
+            {
+                var newStamp = Stopwatch.GetTimestamp();
+                elapsedTicks = newStamp - timestamp;
+                timestamp = newStamp;
+                if (throttled)
+                {
+                    // Include time to catch-up or loose when our waiting method is lossy
+                    elapsedTicksError += minElapsedTicks - elapsedTicks;
                 }
                 else
                 {
-                    Utilities.Sleep(1);
+                    elapsedTicksError = 0;
                 }
-                looped = true;
             }
-
-            // We skipped the loop, probably because the system is/was extremely busy, 
-            // reduce delay slowly to force loop re-entry and re-evaluation of the current averageSleepDelay
-            if (looped == false && Type == ThrottlerType.PreciseAuto)
-                spinwaitWindow = spinwaitWindow == 0 ? 0 : spinwaitWindow - spinwaitWindow / 10;
-
-            // prefer one tick too soon than two ticks too late
-            var epsilon = TimeSpan.FromTicks(1);
-            // 'spinwait' for the rest of the duration, that duration should take close to threadSleepDurationMs
-            while (MinimumElapsedTime - callWatch.Elapsed > epsilon) { }
-
-            finalElapsedTime = callWatch.Elapsed;
-            callWatch.Restart();
-            return true;
         }
 
-        public enum ThrottlerType
+        private static TimeSpan ToSpan(long timestamp)
         {
-            Standard,
-            PreciseManual,
-            PreciseAuto,
+            return new TimeSpan(timestamp == 0 ? 0 : (long) (timestamp * TimeSpan.TicksPerSecond / (double) Stopwatch.Frequency));
         }
+    }
+
+    public enum ThrottlerType
+    {
+        Standard,
+        PreciseManual,
+        PreciseAuto,
     }
 }

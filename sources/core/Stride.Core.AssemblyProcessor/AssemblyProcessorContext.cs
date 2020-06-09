@@ -6,6 +6,8 @@ using System.IO;
 
 using Mono.Cecil;
 
+using Stride.Core.Storage;
+
 namespace Stride.Core.AssemblyProcessor
 {
     internal class AssemblyProcessorContext
@@ -13,6 +15,8 @@ namespace Stride.Core.AssemblyProcessor
         public CustomAssemblyResolver AssemblyResolver { get; private set; }
         public AssemblyDefinition Assembly { get; set; }
         public TextWriter Log { get; private set; }
+
+        public ObjectId? SerializationHash { get; set; }
 
         public AssemblyProcessorContext(CustomAssemblyResolver assemblyResolver, AssemblyDefinition assembly, TextWriter log)
         {

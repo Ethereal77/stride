@@ -15,6 +15,7 @@
         Title="{Binding EditorTitle, RelativeSource={RelativeSource Self}}" Width="1280" Height="900" Style="{DynamicResource WindowChromeStyle}"
         PreviewMouseDown="EditorWindowPreviewMouseDown"
         d:DataContext="{d:DesignInstance gs:GameStudioViewModel}" x:Name="EditorWindow">
+
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>

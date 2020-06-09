@@ -12,6 +12,7 @@ namespace CSharpBeginner.Code
     public class RemoveEntitiesDemo : SyncScript
     {
         public Entity EntityToClone;
+
         private Entity clonedEntity1;
         private float cloneCounter = 0;
         private float timer = 0;

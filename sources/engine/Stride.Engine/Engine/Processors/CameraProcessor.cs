@@ -4,7 +4,6 @@
 
 using System;
 
-using Stride.Core;
 using Stride.Core.Collections;
 using Stride.Rendering;
 using Stride.Rendering.Compositing;
@@ -17,6 +16,7 @@ namespace Stride.Engine.Processors
     public class CameraProcessor : EntityProcessor<CameraComponent>
     {
         private GraphicsCompositor currentCompositor;
+
         private bool cameraSlotsDirty = true;
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Stride.Engine.Processors
 
         public override void Draw(RenderContext context)
         {
-            var graphicsCompositor = Services.GetService<SceneSystem>()?.GraphicsCompositor;
+            var graphicsCompositor = context.Tags.Get(SceneSystem.Current)?.GraphicsCompositor;
 
             // Monitor changes in the camera slots of the current compositor
             if (graphicsCompositor != currentCompositor)
@@ -104,7 +104,7 @@ namespace Stride.Engine.Processors
                     if (camera.Enabled && camera.Slot.AttachedCompositor == null)
                     {
                         // Attach to the new slot
-                        AttachCameraToSlot(camera);
+                        AttachCameraToSlot(graphicsCompositor, camera);
                     }
                 }
 
@@ -128,34 +128,32 @@ namespace Stride.Engine.Processors
             cameraSlotsDirty = true;
         }
 
-        private void AttachCameraToSlot(CameraComponent camera)
+        private void AttachCameraToSlot(GraphicsCompositor graphicsCompositor, CameraComponent camera)
         {
-            if (!camera.Enabled) throw new InvalidOperationException($"The camera [{camera.Entity.Name}] is disabled and can't be attached");
-            if (camera.Slot.AttachedCompositor != null) throw new InvalidOperationException($"The camera [{camera.Entity.Name}] is already attached");
+            if (!camera.Enabled)
+                throw new InvalidOperationException($"The camera [{camera.Entity.Name}] is disabled and can't be attached.");
+            if (camera.Slot.AttachedCompositor != null)
+                throw new InvalidOperationException($"The camera [{camera.Entity.Name}] is already attached.");
 
-            var graphicsCompositor = Services.GetService<SceneSystem>()?.GraphicsCompositor;
-            if (graphicsCompositor != null)
+            for (var i = 0; i < graphicsCompositor.Cameras.Count; ++i)
             {
-                for (var i = 0; i < graphicsCompositor.Cameras.Count; ++i)
+                var slot = graphicsCompositor.Cameras[i];
+                if (slot.Id == camera.Slot.Id)
                 {
-                    var slot = graphicsCompositor.Cameras[i];
-                    if (slot.Id == camera.Slot.Id)
-                    {
-                        if (slot.Camera != null)
-                            throw new InvalidOperationException($"Unable to attach camera [{camera.Entity.Name}] to the graphics compositor. Another camera, [{slot.Camera.Entity.Name}], is enabled and already attached to this slot.");
+                    if (slot.Camera != null)
+                        throw new InvalidOperationException($"Unable to attach camera [{camera.Entity.Name}] to the graphics compositor. Another camera, [{slot.Camera.Entity.Name}], is enabled and already attached to this slot.");
 
-                        slot.Camera = camera;
-                        camera.Slot.AttachedCompositor = graphicsCompositor;
-                        break;
-                    }
+                    slot.Camera = camera;
+                    camera.Slot.AttachedCompositor = graphicsCompositor;
+                    break;
                 }
             }
         }
 
         private static void DetachCameraFromSlot(CameraComponent camera)
         {
-            if (camera.Slot.AttachedCompositor == null)
-                throw new InvalidOperationException($"The camera [{camera.Entity.Name}] isn't attached");
+            if (camera.Slot.AttachedCompositor is null)
+                throw new InvalidOperationException($"The camera [{camera.Entity.Name}] isn't attached.");
 
             for (var i = 0; i < camera.Slot.AttachedCompositor.Cameras.Count; ++i)
             {

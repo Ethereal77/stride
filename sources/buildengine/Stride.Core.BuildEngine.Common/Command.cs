@@ -2,9 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Stride.Core;
-using Stride.Core.Storage;
-using Stride.Core.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,52 +10,54 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Stride.Core.Storage;
+using Stride.Core.Serialization;
 using Stride.Core.Serialization.Contents;
 
 namespace Stride.Core.BuildEngine
 {
-    [DataContract(Inherited = true)]
+    [DataContract(Inherited = true), Serializable]
     public abstract class Command
     {
         /// <summary>
-        /// The command cache version, should be bumped when binary serialization format changes (so that cache gets invalidated)
+        ///   The command cache version, should be bumped when binary serialization format changes (so that cache gets invalidated).
         /// </summary>
         protected const int CommandCacheVersion = 1;
 
         /// <summary>
-        /// Title (short description) of the command
+        ///   Gets the title (a short description) of the command.
         /// </summary>
         public abstract string Title { get; }
 
         /// <summary>
-        /// The object this command writes (if any).
+        ///   Gets the object this command writes (if any).
         /// </summary>
         public virtual string OutputLocation => null;
 
         /// <summary>
-        /// Safeguard to ensure inheritance will always call base.PreCommand
+        ///   Safeguard to ensure inheritance will always call base.<see cref="PreCommand"/>.
         /// </summary>
         internal bool BasePreCommandCalled;
-
         /// <summary>
-        /// Safeguard to ensure inheritance will always call base.PostCommand
+        /// Safeguard to ensure inheritance will always call base.<see cref="PostCommand"/>.
         /// </summary>
         internal bool BasePostCommandCalled;
 
         /// <summary>
-        /// Cancellation Token. Must be checked frequently by the <see cref="DoCommandOverride"/> implementation in order to interrupt the command while running
+        ///   Cancellation Token. Must be checked frequently by the <see cref="DoCommandOverride"/> implementation in
+        ///   order to verify whether the command should continue or it is cancelled.
         /// </summary>
         public CancellationToken CancellationToken;
 
         /// <summary>
-        /// The method to override containing the actual command code. It is called by the <see cref="DoCommand"/> function
+        ///   The method to override containing the actual command code. It is called by the <see cref="DoCommand"/> function
         /// </summary>
         /// <param name="commandContext"></param>
         protected abstract Task<ResultStatus> DoCommandOverride(ICommandContext commandContext);
 
         /// <summary>
-        /// The method that indirectly call <see cref="DoCommandOverride"/> to execute the actual command code. 
-        /// It is called by the current <see cref="Builder"/> when the command is triggered
+        ///   The method that indirectly call <see cref="DoCommandOverride"/> to execute the actual command code.
+        ///   It is called by the current <see cref="Builder"/> when the command is triggered.
         /// </summary>
         /// <param name="commandContext"></param>
         public Task<ResultStatus> DoCommand(ICommandContext commandContext)
@@ -101,7 +100,7 @@ namespace Stride.Core.BuildEngine
         public abstract override string ToString();
 
         /// <summary>
-        /// Gets the list of input files (that can be deduced without running the command, only from command parameters).
+        ///   Gets the list of input files (that can be deduced without running the command, only from command parameters).
         /// </summary>
         /// <returns></returns>
         public virtual IEnumerable<ObjectUrl> GetInputFiles()
@@ -112,9 +111,10 @@ namespace Stride.Core.BuildEngine
         public Func<IEnumerable<ObjectUrl>> InputFilesGetter;
 
         /// <summary>
-        /// Check some conditions that determine if the command should be executed. This method may not be called if some previous check determinated that it already needs to be executed.
+        ///   Check some conditions that determine if the command should be executed. This method may not be called if some previous
+        ///   check determinated that it already needs to be executed.
         /// </summary>
-        /// <returns>true if the command should be executed</returns>
+        /// <returns><c>true</c> if the command should be executed; <c>false</c> otherwise.</returns>
         public virtual bool ShouldForceExecution()
         {
             return false;
@@ -126,7 +126,7 @@ namespace Stride.Core.BuildEngine
         }
 
         /// <summary>
-        /// Callback called by <see cref="Builder.CancelBuild"/>. It can be useful for commands in a blocking call that can be unblocked from here.
+        ///   Callback called by <see cref="Builder.CancelBuild"/>. It can be useful for commands in a blocking call that can be unblocked from here.
         /// </summary>
         public virtual void Cancel()
         {
@@ -141,7 +141,7 @@ namespace Stride.Core.BuildEngine
         protected void ComputeInputFilesHash(BinarySerializationWriter writer, IPrepareContext prepareContext)
         {
             var inputFiles = GetInputFiles();
-            if (inputFiles == null)
+            if (inputFiles is null)
                 return;
 
             foreach (var inputFile in inputFiles)
@@ -153,7 +153,7 @@ namespace Stride.Core.BuildEngine
                 }
                 else
                 {
-                    writer.NativeStream.Write((byte[])hash, 0, ObjectId.HashSize);
+                    writer.NativeStream.Write((byte[]) hash, 0, ObjectId.HashSize);
                 }
             }
         }
@@ -184,7 +184,7 @@ namespace Stride.Core.BuildEngine
         }
 
         /// <summary>
-        /// Computes the command hash. If an error occurred, the hash is <see cref="ObjectId.Empty"/>
+        ///   Computes the command hash. If an error occurred, the hash is <see cref="ObjectId.Empty"/>
         /// </summary>
         /// <param name="prepareContext">The prepare context.</param>
         /// <returns>Hash of the command.</returns>

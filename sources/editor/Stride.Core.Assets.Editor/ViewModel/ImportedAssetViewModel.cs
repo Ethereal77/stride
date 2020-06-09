@@ -10,15 +10,16 @@ using Stride.Core.Diagnostics;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
-    public class ImportedAssetViewModel<TAsset> : AssetViewModel<TAsset> where TAsset : Asset
+    public class ImportedAssetViewModel<TAsset> : AssetViewModel<TAsset>
+        where TAsset : Asset
     {
-        public ImportedAssetViewModel(AssetViewModelConstructionParameters parameters) : base(parameters)
-        {
-        }
+        public ImportedAssetViewModel(AssetViewModelConstructionParameters parameters) : base(parameters) { }
 
-        protected virtual IAssetImporter GetImporter()
+        protected virtual IAssetImporter GetImporter() => null;
+
+        protected virtual void PrepareImporterInputParametersForUpdateFromSource(PropertyCollection importerInputParameters, TAsset asset)
         {
-            return null;
+            // Do nothing by default
         }
 
         protected virtual void UpdateAssetFromSource(TAsset assetToMerge)
@@ -32,6 +33,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             if (importer != null)
             {
                 var importParameters = new AssetImporterParameters { Logger = logger };
+                PrepareImporterInputParametersForUpdateFromSource(importParameters.InputParameters, Asset);
                 importParameters.SelectedOutputTypes.Add(AssetType, true);
                 try
                 {
@@ -43,7 +45,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 }
                 catch (Exception e)
                 {
-                    logger.Error($"An exception occurred while updating asset [{Url}] from its source(s).", e);
+                    logger.Error($"An exception occurred while updating Asset [{Url}] from its source(s).", e);
                 }
             }
         }

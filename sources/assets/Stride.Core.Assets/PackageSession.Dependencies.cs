@@ -6,82 +6,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-using NuGet.Commands;
-using NuGet.DependencyResolver;
-using NuGet.LibraryModel;
 using NuGet.ProjectModel;
-using NuGet.Protocol.Core.Types;
-using NuGet.RuntimeModel;
 
-using Stride.Core.Diagnostics;
 using Stride.Core.IO;
+using Stride.Core.Diagnostics;
 using Stride.Core.Packages;
 
 namespace Stride.Core.Assets
 {
     partial class PackageSession
     {
-        private async Task<RestoreTargetGraph> GenerateRestoreGraph(ILogger log, string projectName, string projectPath)
-        {
-            var dgFile = await VSProjectHelper.GenerateRestoreGraphFile(log, projectPath);
-            var dgProvider = new DependencyGraphSpecRequestProvider(new RestoreCommandProvidersCache(), dgFile);
-
-            using (var cacheContext = new SourceCacheContext())
-            {
-                var restoreContext = new RestoreArgs();
-                restoreContext.CacheContext = cacheContext;
-                restoreContext.Log = new NuGet.Common.NullLogger();
-                restoreContext.PreLoadedRequestProviders.Add(dgProvider);
-
-                var request = (await dgProvider.CreateRequests(restoreContext)).Single();
-
-                var restoreRequest = request.Request;
-                var collectorLogger = new RestoreCollectorLogger(restoreRequest.Log, false);
-                var contextForProject = CreateRemoteWalkContext(restoreRequest, collectorLogger);
-
-                // Get external project references
-                // If the top level project already exists, update the package spec provided
-                // with the RestoreRequest spec.
-                var updatedExternalProjects = GetProjectReferences(restoreRequest, contextForProject);
-
-                // Load repositories
-                // the external project provider is specific to the current restore project
-                contextForProject.ProjectLibraryProviders.Add(new PackageSpecReferenceDependencyProvider(updatedExternalProjects, restoreRequest.Log));
-
-
-                var walker = new RemoteDependencyWalker(contextForProject);
-
-                var requestProject = request.Request.Project;
-
-                var projectRange = new LibraryRange()
-                {
-                    Name = projectName,
-                    VersionRange = new NuGet.Versioning.VersionRange(requestProject.Version),
-                    TypeConstraint = LibraryDependencyTarget.Project | LibraryDependencyTarget.ExternalProject
-                };
-
-                var framework = requestProject.TargetFrameworks.First();
-                var graphs = new List<GraphNode<RemoteResolveResult>>
-                {
-                    await walker.WalkAsync(
-                    projectRange,
-                    framework.FrameworkName,
-                    null,
-                    RuntimeGraph.Empty,
-                    recursive: true)
-                };
-                return RestoreTargetGraph.Create(graphs, contextForProject, restoreRequest.Log, framework.FrameworkName);
-            }
-        }
-
         private async Task PreLoadPackageDependencies(ILogger log, SolutionProject project, PackageLoadParameters loadParameters)
         {
-            if (log == null) throw new ArgumentNullException(nameof(log));
-            if (project == null) throw new ArgumentNullException(nameof(project));
-            if (loadParameters == null) throw new ArgumentNullException(nameof(loadParameters));
+            if (log is null)
+                throw new ArgumentNullException(nameof(log));
+            if (project is null)
+                throw new ArgumentNullException(nameof(project));
+            if (loadParameters is null)
+                throw new ArgumentNullException(nameof(loadParameters));
 
             bool packageDependencyErrors = false;
 
@@ -91,7 +35,7 @@ namespace Stride.Core.Assets
             if (package.State >= PackageState.DependenciesReady)
                 return;
 
-            log.Verbose($"Process dependencies for {project.Name}...");
+            log.Verbose($"Processing dependencies for {project.Name}...");
 
             var packageReferences = new Dictionary<string, PackageVersionRange>();
 
@@ -99,10 +43,11 @@ namespace Stride.Core.Assets
             var pendingPackageUpgrades = new List<PendingPackageUpgrade>();
             pendingPackageUpgradesPerPackage.Add(package, pendingPackageUpgrades);
 
-            // Load some informations about the project
+            // Load some information about the project
             try
             {
                 var msProject = VSProjectHelper.LoadProject(project.FullPath, loadParameters.BuildConfiguration, extraProperties: new Dictionary<string, string> { { "SkipInvalidConfigurations", "true" } });
+
                 try
                 {
                     var packageVersion = msProject.GetPropertyValue("PackageVersion");
@@ -110,10 +55,13 @@ namespace Stride.Core.Assets
                         package.Meta.Version = new PackageVersion(packageVersion);
 
                     project.TargetPath = msProject.GetPropertyValue("TargetPath");
+                    project.AssemblyProcessorSerializationHashFile = msProject.GetProperty("StrideAssemblyProcessorSerializationHashFile")?.EvaluatedValue;
+                    if (project.AssemblyProcessorSerializationHashFile != null)
+                        project.AssemblyProcessorSerializationHashFile = Path.Combine(Path.GetDirectoryName(project.FullPath), project.AssemblyProcessorSerializationHashFile);
                     package.Meta.Name = (msProject.GetProperty("PackageId") ?? msProject.GetProperty("AssemblyName"))?.EvaluatedValue ?? package.Meta.Name;
 
-                    var outputType = msProject.GetPropertyValue("OutputType");
-                    project.Type = outputType.ToLowerInvariant() == "winexe" || outputType.ToLowerInvariant() == "exe"
+                    var outputType = msProject.GetPropertyValue("OutputType").ToLowerInvariant();
+                    project.Type = outputType == "winexe" || outputType == "exe"
                         ? ProjectType.Executable
                         : ProjectType.Library;
 
@@ -124,7 +72,8 @@ namespace Stride.Core.Assets
 
                     foreach (var packageReference in msProject.GetItems("PackageReference").ToList())
                     {
-                        if (packageReference.HasMetadata("Version") && PackageVersionRange.TryParse(packageReference.GetMetadataValue("Version"), out var packageRange))
+                        if (packageReference.HasMetadata("Version") &&
+                            PackageVersionRange.TryParse(packageReference.GetMetadataValue("Version"), out var packageRange))
                             packageReferences[packageReference.EvaluatedInclude] = packageRange;
                     }
 
@@ -134,13 +83,13 @@ namespace Stride.Core.Assets
                         var projectFile = new UFile(Path.Combine(Path.GetDirectoryName(project.FullPath), projectReference.EvaluatedInclude));
                         if (File.Exists(projectFile))
                         {
-                            var referencedProject = Projects.OfType<SolutionProject>().FirstOrDefault(x => x.FullPath == new UFile(projectFile));
+                            var referencedProject = Projects.OfType<SolutionProject>().FirstOrDefault(prj => prj.FullPath == new UFile(projectFile));
                             if (referencedProject != null)
                             {
                                 await PreLoadPackageDependencies(log, referencedProject, loadParameters);
 
-                                // Get package upgrader from dependency (a project might depend on another project rather than referencing Stride directly)
-                                // A better system would be to evaluate nuget flattened dependencies WITHOUT doing the actual restore (dry-run).
+                                // Get package upgrader from dependency (a project might depend on another project rather than referencing Stride directly).
+                                // A better system would be to evaluate NuGet flattened dependencies WITHOUT doing the actual restore (dry-run).
                                 // However I am not sure it's easy/possible to do it (using API) without doing a full restore/download, which we don't want to do
                                 // with old version (it might be uninstalled already and we want to avoid re-downloading it again)
                                 if (pendingPackageUpgradesPerPackage.TryGetValue(referencedProject.Package, out var dependencyPackageUpgraders))
@@ -167,7 +116,7 @@ namespace Stride.Core.Assets
             }
             catch (Exception ex)
             {
-                log.Error($"Unexpected exception while loading project [{project.FullPath.ToWindowsPath()}]", ex);
+                log.Error($"Unexpected exception while loading project [{project.FullPath.ToWindowsPath()}].", ex);
             }
 
             foreach (var packageReference in packageReferences)
@@ -184,26 +133,24 @@ namespace Stride.Core.Assets
 
                     // Check if upgrade is necessary
                     if (dependencyVersion.MinVersion >= packageUpgrader.Attribute.UpdatedVersionRange.MinVersion)
-                    {
                         continue;
-                    }
 
                     // Check if upgrade is allowed
                     if (dependencyVersion.MinVersion < packageUpgrader.Attribute.PackageMinimumVersion)
-                    {
                         // Throw an exception, because the package update is not allowed and can't be done
-                        throw new InvalidOperationException($"Upgrading project [{project.Name}] to use [{dependencyName}] from version [{dependencyVersion}] to [{packageUpgrader.Attribute.UpdatedVersionRange.MinVersion}] is not supported (supported only from version [{packageUpgrader.Attribute.PackageMinimumVersion}]");
-                    }
+                        throw new InvalidOperationException($"Upgrading project [{project.Name}] to use [{dependencyName}] from version [{dependencyVersion}] to [{packageUpgrader.Attribute.UpdatedVersionRange.MinVersion}] is not supported (supported only from version [{packageUpgrader.Attribute.PackageMinimumVersion}].");
 
-                    log.Info($"Upgrading project [{project.Name}] to use [{dependencyName}] from version [{dependencyVersion}] to [{packageUpgrader.Attribute.UpdatedVersionRange.MinVersion}] will be required");
+                    log.Info($"Upgrading project [{project.Name}] to use [{dependencyName}] from version [{dependencyVersion}] to [{packageUpgrader.Attribute.UpdatedVersionRange.MinVersion}] will be required.");
 
-                    pendingPackageUpgrades.Add(new PendingPackageUpgrade(packageUpgrader, new PackageDependency(dependencyName, dependencyVersion), null));
+                    pendingPackageUpgrades.Add(new PendingPackageUpgrade(packageUpgrader, new PackageDependency(dependencyName, dependencyVersion), dependencyPackage: null));
                 }
             }
 
             if (pendingPackageUpgrades.Count > 0)
             {
-                var upgradeAllowed = packageUpgradeAllowed != false ? PackageUpgradeRequestedAnswer.Upgrade : PackageUpgradeRequestedAnswer.DoNotUpgrade;
+                var upgradeAllowed = packageUpgradeAllowed != false
+                    ? PackageUpgradeRequestedAnswer.Upgrade
+                    : PackageUpgradeRequestedAnswer.DoNotUpgrade;
 
                 // Need upgrades, let's ask user confirmation
                 if (loadParameters.PackageUpgradeRequested != null && !packageUpgradeAllowed.HasValue)
@@ -217,7 +164,7 @@ namespace Stride.Core.Assets
 
                 if (!PackageLoadParameters.ShouldUpgrade(upgradeAllowed))
                 {
-                    log.Error($"Necessary package migration for [{package.Meta.Name}] has not been allowed");
+                    log.Error($"Necessary package migration for [{package.Meta.Name}] has not been allowed.");
                     return;
                 }
 
@@ -235,7 +182,8 @@ namespace Stride.Core.Assets
 
                         foreach (var packageReference in msbuildProject.GetItems("PackageReference").ToList())
                         {
-                            if (packageReference.EvaluatedInclude == pendingPackageUpgrade.Dependency.Name && packageReference.GetMetadataValue("Version") != expectedVersion)
+                            if (packageReference.EvaluatedInclude == pendingPackageUpgrade.Dependency.Name &&
+                                packageReference.GetMetadataValue("Version") != expectedVersion)
                             {
                                 packageReference.SetMetadataValue("Version", expectedVersion);
                                 isProjectDirty = true;
@@ -248,23 +196,23 @@ namespace Stride.Core.Assets
                         msbuildProject.ProjectCollection.UnloadAllProjects();
                         msbuildProject.ProjectCollection.Dispose();
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        log.Warning($"Unable to load project [{project.FullPath.GetFileName()}]", e);
+                        log.Warning($"Unable to load project [{project.FullPath.GetFileName()}].", ex);
                     }
 
                     var packageUpgrader = pendingPackageUpgrade.PackageUpgrader;
                     var dependencyPackage = pendingPackageUpgrade.DependencyPackage;
                     if (!packageUpgrader.UpgradeBeforeAssembliesLoaded(loadParameters, package.Session, log, package, pendingPackageUpgrade.Dependency, dependencyPackage))
                     {
-                        log.Error($"Error while upgrading package [{package.Meta.Name}] for [{dependencyPackage.Meta.Name}] from version [{pendingPackageUpgrade.Dependency.Version}] to [{dependencyPackage.Meta.Version}]");
+                        log.Error($"Error while upgrading package [{package.Meta.Name}] for [{dependencyPackage.Meta.Name}] from version [{pendingPackageUpgrade.Dependency.Version}] to [{dependencyPackage.Meta.Version}].");
                         return;
                     }
                 }
             }
 
             // Now that our references are upgraded, let's do a real NuGet restore (download files)
-            log.Verbose($"Restore NuGet packages for {project.Name}...");
+            log.Verbose($"Restoring NuGet packages for {project.Name}...");
             if (loadParameters.AutoCompileProjects)
                 await VSProjectHelper.RestoreNugetPackages(log, project.FullPath);
 
@@ -286,25 +234,26 @@ namespace Stride.Core.Assets
                 }
                 catch (Exception ex)
                 {
-                    log.Error($"Unexpected exception while loading project [{project.FullPath.ToWindowsPath()}]", ex);
+                    log.Error($"Unexpected exception while loading project [{project.FullPath.ToWindowsPath()}].", ex);
                 }
             }
 
-            UpdateDependencies(project, true, true);
+            UpdateDependencies(project, directDependencies: true, flattenedDependencies: true);
 
             // 1. Load store package
             foreach (var projectDependency in project.FlattenedDependencies)
             {
                 var loadedPackage = packages.Find(projectDependency);
-                if (loadedPackage == null)
+                if (loadedPackage is null)
                 {
                     string file = null;
                     switch (projectDependency.Type)
                     {
                         case DependencyType.Project:
                             if (Path.GetExtension(projectDependency.MSBuildProject).ToLowerInvariant() == ".csproj")
-                                file = UPath.Combine(project.FullPath.GetFullDirectory(), (UFile)projectDependency.MSBuildProject);
+                                file = UPath.Combine(project.FullPath.GetFullDirectory(), (UFile) projectDependency.MSBuildProject);
                             break;
+
                         case DependencyType.Package:
                             file = PackageStore.Instance.GetPackageFileName(projectDependency.Name, new PackageVersionRange(projectDependency.Version), constraintProvider);
                             break;
@@ -313,10 +262,15 @@ namespace Stride.Core.Assets
                     if (file != null && File.Exists(file))
                     {
                         // Load package
-                        var loadedProject = LoadProject(log, file, loadParameters);
+                        var loadedProject = LoadProject(log, file);
                         loadedProject.Package.Meta.Name = projectDependency.Name;
                         loadedProject.Package.Meta.Version = projectDependency.Version;
                         Projects.Add(loadedProject);
+
+                        if (loadedProject is StandalonePackage standalonePackage)
+                        {
+                            standalonePackage.Assemblies.AddRange(projectDependency.Assemblies);
+                        }
 
                         loadedPackage = loadedProject.Package;
                     }
@@ -360,7 +314,8 @@ namespace Stride.Core.Assets
                 project.FlattenedDependencies.Clear();
             if (directDependencies)
                 project.DirectDependencies.Clear();
-            var projectAssetsJsonPath = Path.Combine(project.FullPath.GetFullDirectory(), @"obj", LockFileFormat.AssetsFileName);
+
+            var projectAssetsJsonPath = Path.Combine(project.FullPath.GetFullDirectory(), "obj", LockFileFormat.AssetsFileName);
             if (File.Exists(projectAssetsJsonPath))
             {
                 var format = new LockFileFormat();
@@ -369,9 +324,46 @@ namespace Stride.Core.Assets
                 // Update dependencies
                 if (flattenedDependencies)
                 {
-                    foreach (var library in projectAssets.Libraries)
+                    var libPaths = new Dictionary<ValueTuple<string, NuGet.Versioning.NuGetVersion>, LockFileLibrary>();
+                    foreach (var lib in projectAssets.Libraries)
                     {
-                        var projectDependency = new Dependency(library.Name, library.Version.ToPackageVersion(), library.Type == "project" ? DependencyType.Project : DependencyType.Package) { MSBuildProject = library.Type == "project" ? library.MSBuildProject : null };
+                        libPaths.Add(ValueTuple.Create(lib.Name, lib.Version), lib);
+                    }
+
+                    foreach (var targetLibrary in projectAssets.Targets.Last().Libraries)
+                    {
+                        if (!libPaths.TryGetValue(ValueTuple.Create(targetLibrary.Name, targetLibrary.Version), out var library))
+                            continue;
+
+                        var projectDependency = new Dependency(library.Name, library.Version.ToPackageVersion(),
+                            library.Type == "project" ? DependencyType.Project : DependencyType.Package)
+                            {
+                                MSBuildProject = library.Type == "project" ? library.MSBuildProject : null
+                            };
+
+                        if (library.Type == "package")
+                        {
+                            // Find library path by testing with each PackageFolders
+                            var libraryPath = projectAssets.PackageFolders
+                                .Select(packageFolder => Path.Combine(packageFolder.Path, library.Path.Replace('/', Path.DirectorySeparatorChar)))
+                                .FirstOrDefault(x => Directory.Exists(x));
+
+                            if (libraryPath != null)
+                            {
+                                // Build list of assemblies
+                                foreach (var a in targetLibrary.RuntimeAssemblies)
+                                {
+                                    var assemblyFile = Path.Combine(libraryPath, a.Path.Replace('/', Path.DirectorySeparatorChar));
+                                    projectDependency.Assemblies.Add(assemblyFile);
+                                }
+                                foreach (var a in targetLibrary.RuntimeTargets)
+                                {
+                                    var assemblyFile = Path.Combine(libraryPath, a.Path.Replace('/', Path.DirectorySeparatorChar));
+                                    projectDependency.Assemblies.Add(assemblyFile);
+                                }
+                            }
+                        }
+
                         project.FlattenedDependencies.Add(projectDependency);
                         // Try to resolve package if already loaded
                         projectDependency.Package = project.Session.Packages.Find(projectDependency);
@@ -396,25 +388,6 @@ namespace Stride.Core.Assets
             }
         }
 
-        private static RemoteWalkContext CreateRemoteWalkContext(RestoreRequest request, RestoreCollectorLogger logger)
-        {
-            var context = new RemoteWalkContext(
-                request.CacheContext,
-                logger);
-
-            foreach (var provider in request.DependencyProviders.LocalProviders)
-            {
-                context.LocalLibraryProviders.Add(provider);
-            }
-
-            foreach (var provider in request.DependencyProviders.RemoteProviders)
-            {
-                context.RemoteLibraryProviders.Add(provider);
-            }
-
-            return context;
-        }
-
         private static ExternalProjectReference ToExternalProjectReference(PackageSpec project)
         {
             return new ExternalProjectReference(
@@ -422,63 +395,6 @@ namespace Stride.Core.Assets
                 project,
                 msbuildProjectPath: null,
                 projectReferences: Enumerable.Empty<string>());
-        }
-
-        private static List<ExternalProjectReference> GetProjectReferences(RestoreRequest _request, RemoteWalkContext context)
-        {
-            // External references
-            var updatedExternalProjects = new List<ExternalProjectReference>();
-
-            if (_request.ExternalProjects.Count == 0)
-            {
-                // If no projects exist add the current project.json file to the project
-                // list so that it can be resolved.
-                updatedExternalProjects.Add(ToExternalProjectReference(_request.Project));
-            }
-            else if (_request.ExternalProjects.Count > 0)
-            {
-                // There should be at most one match in the external projects.
-                var rootProjectMatches = _request.ExternalProjects.Where(proj =>
-                        string.Equals(
-                            _request.Project.Name,
-                            proj.PackageSpecProjectName,
-                            StringComparison.OrdinalIgnoreCase))
-                        .ToList();
-
-                if (rootProjectMatches.Count > 1)
-                {
-                    throw new InvalidOperationException($"Ambiguous project name '{_request.Project.Name}'.");
-                }
-
-                var rootProject = rootProjectMatches.SingleOrDefault();
-
-                if (rootProject != null)
-                {
-                    // Replace the project spec with the passed in package spec,
-                    // for installs which are done in memory first this will be
-                    // different from the one on disk
-                    updatedExternalProjects.AddRange(_request.ExternalProjects
-                        .Where(project =>
-                            !project.UniqueName.Equals(rootProject.UniqueName, StringComparison.Ordinal)));
-
-                    var updatedReference = new ExternalProjectReference(
-                        rootProject.UniqueName,
-                        _request.Project,
-                        rootProject.MSBuildProjectPath,
-                        rootProject.ExternalProjectReferences);
-
-                    updatedExternalProjects.Add(updatedReference);
-                }
-            }
-            else
-            {
-                // External references were passed, but the top level project wasn't found.
-                // This is always due to an internal issue and typically caused by errors
-                // building the project closure.
-                throw new InvalidOperationException($"Missing external reference metadata for {_request.Project.Name}");
-            }
-
-            return updatedExternalProjects;
         }
     }
 }

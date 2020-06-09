@@ -5,17 +5,17 @@
 namespace Stride.Core.Reflection
 {
     /// <summary>
-    /// Common categories that can be used with <see cref="AssemblyRegistry"/>
+    ///   Common categories that can be used with <see cref="AssemblyRegistry"/>.
     /// </summary>
     public static class AssemblyCommonCategories
     {
         /// <summary>
-        /// The assembly is containing engine data.
+        ///   The assembly is containing engine data.
         /// </summary>
         public const string Engine = "engine";
 
         /// <summary>
-        /// The assembly is containing assets data.
+        ///   The assembly is containing assets data.
         /// </summary>
         public const string Assets = "assets";
     }

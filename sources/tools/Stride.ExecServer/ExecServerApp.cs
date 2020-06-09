@@ -9,24 +9,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
+
+using ServiceWire.NamedPipes;
 
 using Stride.Core.VisualStudio;
-using Binding = System.ServiceModel.Channels.Binding;
 
 namespace Stride.ExecServer
 {
     /// <summary>
-    /// ExecServer allows to keep in memory an exec loaded into an AppDomain with the benefits that JIT
-    /// has been ran already once and the code will run quicker on next run. This is more convenient 
-    /// alternative than using NGEN, as we have the benefit of a better code gen while still having the 
-    /// benefits of fast startup.
-    /// Also the server doesn't lock original assemblies but it shadows copy them (including native dlls
-    /// from DllImport), and tracks if original assemblies changed (in this case it will automatically
-    /// shutdown).
+    ///   Represents a remote execution server that allows to keep in memory an executable loaded into an <see cref="AppDomain"/>
+    ///   so that the JIT has been ran already once and the code will run quicker on next run. This is a more convenient approach
+    ///   than using NGEN, as we have the benefit of a better code gen while still having the benefits of fast startup.
+    ///   Also the server doesn't lock original assemblies. It creates a shadow copy of them (including native DLLs from
+    ///   <see cref="DllImportAttribute"/>), and tracks if the original assemblies changed. If that is the case, it will
+    ///   automatically shutdown.
     /// </summary>
     public class ExecServerApp
     {
@@ -40,39 +38,41 @@ namespace Stride.ExecServer
         private const int RetryWait = 1000; // in ms
 
         /// <summary>
-        /// Runs the specified arguments copy.
+        ///   Runs the application.
         /// </summary>
-        /// <param name="argsCopy">The arguments copy.</param>
-        /// <returns>System.Int32.</returns>
-        public int Run(string[] argsCopy)
+        /// <param name="args">The arguments for starting the server.</param>
+        /// <returns>Result code.</returns>
+        public int Run(string[] args)
         {
-            if (argsCopy.Length == 0)
+            if (args.Length == 0)
             {
-                Console.WriteLine("Usage ExecServer.exe [/direct executablePath|/server entryAssemblyPath executablePath CPUindex] /shadow [executableArguments]");
+                Console.WriteLine("Usage: ExecServer.exe [/direct executablePath|/server entryAssemblyPath executablePath CPUindex] /shadow [executableArguments]");
                 return 0;
             }
-            var args = new List<string>(argsCopy);
 
-            if (args[0] == "/direct")
+            var argsList = new List<string>(args);
+
+            if (argsList[0] == "/direct")
             {
-                args.RemoveAt(0);
-                var executablePath = ExtractPath(args, "executable");
-                var execServerApp = new ExecServerRemote(executablePath, executablePath, false, false, true);
-                int result = execServerApp.Run(Environment.CurrentDirectory, new Dictionary<string, string>(), args.ToArray(), false, null);
+                argsList.RemoveAt(0);
+
+                var executablePath = ExtractPath(argsList, "executable");
+                var execServerApp = new ExecServerRemote(executablePath, executablePath, trackingServer: false, cachingAppDomain: false, isMainDomain: true);
+                int result = execServerApp.Run(Environment.CurrentDirectory, new Dictionary<string, string>(), argsList.ToArray(), shadowCache: false, debuggerProcessId: null, callbackAddress: null);
                 return result;
             }
 
-            if (args[0] == "/server")
+            if (argsList[0] == "/server")
             {
-                args.RemoveAt(0);
-                var entryAssemblyPath = ExtractPath(args, "entryAssembly");
-                var executablePath = ExtractPath(args, "executable");
-                var cpu = int.Parse(args[0]);
-                args.RemoveAt(0);
-                int result = 0;
+                argsList.RemoveAt(0);
+                var entryAssemblyPath = ExtractPath(argsList, "entryAssembly");
+                var executablePath = ExtractPath(argsList, "executable");
+                var cpu = int.Parse(argsList[0]);
+                argsList.RemoveAt(0);
+
                 try
                 {
-                    result = RunServer(entryAssemblyPath, executablePath, cpu);
+                    return RunServer(entryAssemblyPath, executablePath, cpu);
                 }
                 catch (Exception ex)
                 {
@@ -86,21 +86,21 @@ namespace Stride.ExecServer
                     {
                         // Don't try to log an error
                     }
-                    result = 1;
+
+                    return 1;
                 }
-                return result;
             }
             else
             {
                 bool useShadowCache = false;
-                if (args[0] == "/shadow")
+                if (argsList[0] == "/shadow")
                 {
-                    args.RemoveAt(0);
+                    argsList.RemoveAt(0);
                     useShadowCache = true;
                 }
 
-                var executablePath = ExtractPath(args, "executable");
-                var workingDirectory = ExtractPath(args, "working directory");
+                var executablePath = ExtractPath(argsList, "executable");
+                var workingDirectory = ExtractPath(argsList, "working directory");
 
                 // Collect environment variables
                 var environmentVariables = new Dictionary<string, string>();
@@ -116,7 +116,7 @@ namespace Stride.ExecServer
                     }
                 }
 
-                var result = RunClient(executablePath, workingDirectory, environmentVariables, args, useShadowCache, debuggerProcessId);
+                var result = RunClient(executablePath, workingDirectory, environmentVariables, argsList, useShadowCache, debuggerProcessId);
                 return result;
             }
         }
@@ -127,7 +127,7 @@ namespace Stride.ExecServer
         }
 
         /// <summary>
-        /// Runs ExecServer in server mode (waiting for connection from ExecServer clients)
+        ///   Runs ExecServer in server mode (waiting for connection from ExecServer clients).
         /// </summary>
         /// <param name="entryAssemblyPath">Path to the client assembly in case we need to start another instance of same process.</param>
         /// <param name="executablePath">Path of the executable to run from this ExecServer instance</param>
@@ -138,21 +138,16 @@ namespace Stride.ExecServer
             // TODO: The setting of disabling caching should be done per EXE (via config file) instead of global settings for ExecServer
             var useAppDomainCaching = Environment.GetEnvironmentVariable(DisableExecServerAppDomainCaching) != "true";
 
-            // Start WCF pipe for communication with process
-            var execServerApp = new ExecServerRemote(entryAssemblyPath, executablePath, true, useAppDomainCaching, serverInstanceIndex == 0);
-            var host = new ServiceHost(execServerApp);
-            host.AddServiceEndpoint(typeof(IExecServerRemote), new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
-            {
-                MaxReceivedMessageSize = int.MaxValue,
-                SendTimeout = TimeSpan.FromHours(1),
-                ReceiveTimeout = TimeSpan.FromHours(1),
-            }, address);
+            // Start ServiceWire pipe for communication with process
+            var execServerApp = new ExecServerRemote(entryAssemblyPath, executablePath, trackingServer: true, useAppDomainCaching, serverInstanceIndex == 0);
+            var host = new NpHost(address);
+            host.AddService<IExecServerRemote>(execServerApp);
 
             try
             {
                 host.Open();
             }
-            catch (AddressAlreadyInUseException)
+            catch
             {
                 // Uncomment the following line to see which process got a ExitCodeServerAlreadyInUse
                 // File.WriteAllText(Path.Combine(Environment.CurrentDirectory, $"test_ExecServer{Process.GetCurrentProcess().Id}.log"), $"Exit code: {ExitCodeServerAlreadyInUse}\r\n");
@@ -173,24 +168,16 @@ namespace Stride.ExecServer
         }
 
         /// <summary>
-        /// Runs the client side by calling ExecServer remote server and passing arguments. If ExecServer remote is not running,
-        /// it will start it automatically.
+        ///   Runs the client side by calling ExecServer remote server and passing arguments. If ExecServer remote is not running,
+        ///   it will start it automatically.
         /// </summary>
         /// <param name="executablePath">The executable path.</param>
         /// <param name="workingDirectory">The working directory.</param>
         /// <param name="args">The arguments.</param>
-        /// <param name="shadowCache">If [true], use shadow cache.</param>
-        /// <returns>Return status.</returns>
+        /// <param name="shadowCache">Whether to use shadow cache.</param>
+        /// <returns>Return code.</returns>
         private int RunClient(string executablePath, string workingDirectory, Dictionary<string, string> environmentVariables, List<string> args, bool shadowCache, int? debuggerProcessId)
         {
-            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
-            {
-                MaxReceivedMessageSize = int.MaxValue,
-                OpenTimeout = TimeSpan.FromMilliseconds(100),
-                SendTimeout = TimeSpan.FromHours(1),
-                ReceiveTimeout = TimeSpan.FromHours(1),
-            };
-
             // Number of concurrent processes: use number of CPU, but no more than 8
             int maxServerInstanceIndex = Math.Max(Environment.ProcessorCount, 8);
 
@@ -212,10 +199,10 @@ namespace Stride.ExecServer
 
                     TrySameConnectionAgain:
                         var redirectLog = new RedirectLogger();
-                        var client = clients[serverInstanceIndex] ?? new ExecServerRemoteClient(redirectLog, binding, new EndpointAddress(address));
+                        var client = clients[serverInstanceIndex] ?? new ExecServerRemoteClient(address, redirectLog);
                         // Console.WriteLine("{0}: ExecServer Try to connect", DateTime.Now);
 
-                        var service = client.ChannelFactory.CreateChannel();
+                        var service = client.Proxy;
                         try
                         {
                             service.Check();
@@ -223,62 +210,51 @@ namespace Stride.ExecServer
                             // Keep this connection
                             clients[serverInstanceIndex] = client;
 
-                            //Console.WriteLine("{0}: ExecServer - running start", DateTime.Now);
-                            try
+                            var result = service.Run(workingDirectory, environmentVariables, args.ToArray(), shadowCache, debuggerProcessId, client.CallbackAddress);
+                            if (result == ExecServerRemote.BusyReturnCode)
                             {
-                                var result = service.Run(workingDirectory, environmentVariables, args.ToArray(), shadowCache, debuggerProcessId);
-                                if (result == ExecServerRemote.BusyReturnCode)
-                                {
-                                    // Try next server
-                                    continue;
-                                }
-                                //Console.WriteLine("{0}: ExecServer - running end", DateTime.Now);
-                                return result;
+                                // Try next server
+                                continue;
                             }
-                            finally
-                            {
-                                CloseService(ref service);
-                            }
+                            return result;
                         }
-                        catch (EndpointNotFoundException)
+                        catch (Exception ex)
                         {
-                            CloseService(ref service);
+                            Console.WriteLine("Error: {0}", ex);
 
                             // Close and uncache client connection (server is not started yet)
                             clients[serverInstanceIndex] = null;
                             CloseClient(ref client);
-                            string finalExecServerPath;
 
                             if (numberTriesAfterRunProcess++ == 0)
                             {
                                 // The server is not running, we need to run it
-                                if (!RunServerProcess(executablePath, serverInstanceIndex, out processHandle, out processId, out finalExecServerPath))
+                                if (!RunServerProcess(executablePath, serverInstanceIndex, out processHandle, out processId, out string finalExecServerPath))
                                 {
-                                    Console.WriteLine($"Cannot launch exec server for [{finalExecServerPath}]. Trying next one");
+                                    Console.WriteLine($"Cannot launch ExecServer for [{finalExecServerPath}]. Trying next one.");
                                     continue;
                                 }
                             }
 
                             if (numberTriesAfterRunProcess > MaxRetryStartedProcess)
                             {
-                                Console.WriteLine("ERROR cannot connect to newly started proxy server for: {0} {1}", executablePath, string.Join(" ", args));
+                                Console.WriteLine("Error: Cannot connect to a newly started proxy server for: {0} {1}.", executablePath, string.Join(" ", args));
                                 continue;
                             }
 
                             // Wait for the process to startup before trying again
-                            Console.WriteLine("Waiting {0}ms for the proxy server to start and connect to it", RetryStartedProcessWait);
+                            Console.WriteLine("Waiting {0}ms for the proxy server to start and connect to it.", RetryStartedProcessWait);
 
                             Thread.Sleep(RetryStartedProcessWait);
 
                             // Check that the sever we tried to launch is still running, if not we have a severe error
                             if (processHandle != IntPtr.Zero)
                             {
-                                int exitCode;
-                                if (GetExitCodeProcess(processHandle, out exitCode))
+                                if (GetExitCodeProcess(processHandle, out int exitCode))
                                 {
                                     if (exitCode != ExitCodeServerAlreadyInUse && exitCode != PROCESS_STILL_ACTIVE)
                                     {
-                                        Console.WriteLine($"Unexpected error: ExecServerApp has exited with the return code: {exitCode}");
+                                        Console.WriteLine($"Unexpected error: ExecServerApp has exited with the return code: {exitCode}.");
 
                                         var logPath = GetExecServerErrorLogFilePath(executablePath, processId);
                                         if (File.Exists(logPath))
@@ -292,11 +268,6 @@ namespace Stride.ExecServer
                             }
 
                             goto TrySameConnectionAgain;
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("Error {0}", e);
-                            return -300;
                         }
                     }
 
@@ -317,52 +288,15 @@ namespace Stride.ExecServer
             }
         }
 
-        /// <summary>
-        /// Closes a WCF service.
-        /// </summary>
-        /// <param name="service">The service.</param>
-        private static void CloseService(ref IExecServerRemote service)
-        {
-            if (service != null)
-            {
-                try
-                {
-                    var clientChannel = ((IClientChannel)service);
-                    if (clientChannel.State == CommunicationState.Faulted)
-                    {
-                        clientChannel.Abort();
-                    }
-                    else
-                    {
-                        clientChannel.Close();
-                    }
-
-                    clientChannel.Dispose();
-                    //Console.WriteLine("ExecServer - Close connection - Client channel state: {0}", clientChannel.State);
-                }
-                catch (Exception)
-                {
-                    //Console.WriteLine("Exception while closing connection {0}", ex);
-                }
-                service = null;
-            }
-        }
-
         private static void CloseClient(ref ExecServerRemoteClient client)
         {
-            if (client != null)
+            try
             {
-                try
-                {
-                    //Console.WriteLine("Closing client");
-                    client.Close();
-                }
-                catch (Exception)
-                {
-                    //Console.WriteLine("Exception while closing {0}", client);
-                }
-                client = null;
+                client?.Dispose();
             }
+            catch { }
+
+            client = null;
         }
 
         private static void CloseClients(ExecServerRemoteClient[] clients)
@@ -374,7 +308,7 @@ namespace Stride.ExecServer
         }
 
         /// <summary>
-        /// Runs the server process when it does not exist.
+        ///   Runs the server process when it does not exist.
         /// </summary>
         /// <param name="executablePath">The executable path.</param>
         /// <param name="serverInstanceIndex">The server instance index.</param>
@@ -382,19 +316,19 @@ namespace Stride.ExecServer
         {
             processHandle = IntPtr.Zero;
             processId = 0;
+
             var originalExecServerAppPath = typeof(ExecServerApp).Assembly.Location;
             var originalTime = File.GetLastWriteTimeUtc(originalExecServerAppPath);
-
 
             finalExecServerPath = Path.Combine(Path.GetDirectoryName(executablePath),
                 Path.GetFileNameWithoutExtension(executablePath) + "_ExecServer" + (serverInstanceIndex > 0 ? "" + serverInstanceIndex : string.Empty) + ".exe");
 
             // Avoid locking ExecServer.exe original file, so we are using the name of the executable path and append _ExecServer.exe
-            var copyExecFile = false;
+            bool copyExecFile;
             if (File.Exists(finalExecServerPath))
             {
                 var copyExecServerTime = File.GetLastWriteTimeUtc(finalExecServerPath);
-                // If exec server has changed, we need to copy the new version to it
+                // If ExecServer has changed, we need to copy the new version to it
                 copyExecFile = originalTime != copyExecServerTime;
             }
             else
@@ -431,7 +365,7 @@ namespace Stride.ExecServer
         private static string GetEndpointAddress(string executablePath, int serverInstanceIndex)
         {
             var executableKey = Regex.Replace(executablePath, "[:\\/#]", "_");
-            var address = "net.pipe://localhost/" + executableKey + "_" + serverInstanceIndex;
+            var address = "ExecServerApp/" + executableKey + "_" + serverInstanceIndex;
             return address;
         }
 
@@ -448,21 +382,58 @@ namespace Stride.ExecServer
             return path;
         }
 
-        private class ExecServerRemoteClient : DuplexClientBase<IExecServerRemote>
+        private class ExecServerRemoteClient : IDisposable
         {
-            public ExecServerRemoteClient(IServerLogger logger, Binding binding, EndpointAddress remoteAddress)
-                : base(logger, binding, remoteAddress) { }
+            private readonly NpClient<IExecServerRemote> client;
+            private readonly NpHost callbackChannel;
+
+            public IExecServerRemote Proxy { get { return client.Proxy; } }
+            public string CallbackAddress { get; set; }
+            public ExecServerRemoteClient(string remoteAddress, RedirectLogger logger)
+            {
+                client = new NpClient<IExecServerRemote>(new NpEndPoint(remoteAddress));
+
+                //Create callback channel
+                this.CallbackAddress = remoteAddress + "_callback";
+                callbackChannel= new NpHost(this.CallbackAddress, null, null);
+                callbackChannel.AddService<IServerLogger>(logger);
+            }
+
+            #region IDisposable Support
+
+            private bool isDisposed = false;
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!isDisposed)
+                {
+                    if (disposing)
+                    {
+                        client.Dispose();
+                        callbackChannel.Close();
+                        callbackChannel.Dispose();
+                    }
+                    isDisposed = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(true);
+            }
+
+            #endregion
         }
 
         /// <summary>
-        /// Loggers that receive logs from the exec server for the running app.
+        ///   Loggers that receive logs from the ExecServer for the running app.
         /// </summary>
-        [CallbackBehavior(UseSynchronizationContext = false, AutomaticSessionShutdown = true)]
-        private class RedirectLogger : IServerLogger
+        public class RedirectLogger : IServerLogger
         {
             public void OnLog(string text, ConsoleColor color)
             {
                 var backupColor = Console.ForegroundColor;
+
                 Console.ForegroundColor = color;
                 Console.Out.WriteLine(text);
                 Console.ForegroundColor = backupColor;

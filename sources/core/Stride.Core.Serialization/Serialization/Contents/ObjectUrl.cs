@@ -6,7 +6,7 @@ using System;
 
 namespace Stride.Core.Serialization.Contents
 {
-    [DataContract]
+    [DataContract, Serializable]
     [DataSerializer(typeof(Serializer))]
     public struct ObjectUrl : IEquatable<ObjectUrl>
     {
@@ -17,8 +17,8 @@ namespace Stride.Core.Serialization.Contents
 
         public ObjectUrl(UrlType type, string path)
         {
-            if (path == null)
-                throw new ArgumentException("path");
+            if (path is null)
+                throw new ArgumentException(nameof(path));
 
             Type = type;
             Path = path;
@@ -31,15 +31,17 @@ namespace Stride.Core.Serialization.Contents
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is ObjectUrl && Equals((ObjectUrl)obj);
+            if (obj is null)
+                return false;
+
+            return obj is ObjectUrl url && Equals(url);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((int)Type * 397) ^ Path.GetHashCode();
+                return ((int) Type * 397) ^ Path.GetHashCode();
             }
         }
 

@@ -4,9 +4,10 @@
 
 using System;
 
-// Deliberate copy to make the type private
 namespace Stride.Core.Annotations
 {
+    // Deliberate copy to make the type private
+
     /// <summary>
     ///   Indicates that the value of the marked element could never be <c>null</c>.
     /// </summary>

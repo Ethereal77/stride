@@ -18,14 +18,13 @@ namespace Stride.Editor.Build
     public class StrideShaderImporter
     {
         /// <summary>
-        /// The current session being processed
+        ///   The current session being processed.
         /// </summary>
         private readonly HashSet<string> systemProjectsLoaded = new HashSet<string>();
 
         private class UpdateImportShaderCacheBuildStep : BuildStep
         {
             private readonly HashSet<string> cachedProject;
-
             private readonly List<string> importedProjectIds;
 
             public UpdateImportShaderCacheBuildStep(HashSet<string> cachedProject, List<string> importedProjectIds)
@@ -34,15 +33,12 @@ namespace Stride.Editor.Build
                 this.importedProjectIds = importedProjectIds;
             }
 
-            public override string Title
-            {
-                get { return "UpdateImportShaderCacheBuildStep"; }
-            }
+            public override string Title => "UpdateImportShaderCacheBuildStep";
 
             public override Task<ResultStatus> Execute(IExecuteContext executeContext, BuilderContext builderContext)
             {
-                // check the status of the import build steps
-                if (((ListBuildStep)Parent).Steps.Any(s => s.Failed))
+                // Check the status of the import build steps
+                if (((ListBuildStep) Parent).Steps.Any(s => s.Failed))
                     return Task.FromResult(ResultStatus.Successful);
 
                 // Mark System projects as loaded
@@ -52,20 +48,20 @@ namespace Stride.Editor.Build
                 return Task.FromResult(ResultStatus.Successful);
             }
 
-            public override string ToString()
-            {
-                return Title;
-            }
+            public override string ToString() => Title;
         }
 
         /// <summary>
-        /// Creates a build step that will build all shaders from system packages.
+        ///   Creates a build step that will build all shaders from system packages.
         /// </summary>
         /// <param name="session">The session used to retrieve currently used system packages.</param>
         /// <returns>A <see cref="ListBuildStep"/> containing the steps to build all shaders from system packages.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="session"/> is a <c>null</c> reference.</exception>
         public ListBuildStep CreateSystemShaderBuildSteps(SessionViewModel session)
         {
-            if (session == null) throw new ArgumentNullException(nameof(session));
+            if (session is null)
+                throw new ArgumentNullException(nameof(session));
+
             // Check if there are any new system projects to preload
             // TODO: PDX-1251: For now, allow non-system project as well (which means they will be loaded only once at startup)
             // Later, they should be imported depending on what project the currently previewed/built asset is
@@ -83,14 +79,14 @@ namespace Stride.Editor.Build
                 foreach (var asset in package.Assets)
                 {
                     if (typeof(EffectShaderAsset).IsAssignableFrom(asset.AssetType))
-                        mapPackage.Assets.Add(new AssetItem(asset.Url, asset.Asset) { SourceFolder = asset.AssetItem.SourceFolder });
+                        mapPackage.Assets.Add(new AssetItem(asset.Url, asset.Asset) { SourceFolder = asset.AssetItem.SourceFolder, AlternativePath = asset.AssetItem.AlternativePath });
                 }
 
                 importShadersProjectSession.Projects.Add(new StandalonePackage(mapPackage));
                 importShadersRootProject.FlattenedDependencies.Add(new Dependency(mapPackage));
             }
 
-            // compile the fake project (create the build steps)
+            // Compile the fake project (create the build steps)
             var assetProjectCompiler = new PackageCompiler(new PackageAssetEnumerator(importShadersRootProject.Package));
             var context = new AssetCompilerContext { CompilationContext = typeof(AssetCompilationContext) };
             var dependenciesCompileResult = assetProjectCompiler.Prepare(context);
@@ -119,7 +115,7 @@ namespace Stride.Editor.Build
                 {
                     if (typeof(EffectShaderAsset).IsAssignableFrom(asset.AssetType))
                     {
-                        mapPackage.Assets.Add(new AssetItem(asset.Url, asset.Asset) { SourceFolder = asset.AssetItem.SourceFolder });
+                        mapPackage.Assets.Add(new AssetItem(asset.Url, asset.Asset) { SourceFolder = asset.AssetItem.SourceFolder, AlternativePath = asset.AssetItem.AlternativePath });
                     }
                 }
 

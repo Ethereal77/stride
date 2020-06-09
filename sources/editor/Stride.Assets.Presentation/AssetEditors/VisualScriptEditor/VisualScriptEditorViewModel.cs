@@ -5,35 +5,25 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
-using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Extensions;
-using Stride.Core.Mathematics;
-using Stride.Core.Transactions;
+using Stride.Core.Quantum;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Presentation.Collections;
-using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Quantum.ViewModels;
+using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.ViewModel;
-using Stride.Core.Quantum;
-using Stride.Core.Quantum.References;
-using Stride.Assets.Presentation.ViewModel;
 using Stride.Assets.Scripts;
-using Stride.Assets.Rendering;
+using Stride.Assets.Presentation.ViewModel;
 
-using Accessibility = Stride.Assets.Scripts.Accessibility;
 using RoslynAccessibility = Microsoft.CodeAnalysis.Accessibility;
 
 namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
@@ -95,7 +85,8 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
             {
                 // Wait for initial compilation to be done before continuing initialization
                 var compilationReady = new TaskCompletionSource<bool>();
-                EventHandler compilationChange = (sender, args) => compilationReady.TrySetResult(true);
+
+                void compilationChange(object sender, EventArgs args) => compilationReady.TrySetResult(true);
 
                 sourceResolver.LatestCompilationChanged += compilationChange;
                 await compilationReady.Task;
@@ -142,17 +133,17 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
         public IVisualScriptViewModelService VisualScriptViewModelService { get; }
 
         /// <summary>
-        /// List of all methods defined in this class, corresponding to <see cref="VisualScriptAsset.Methods"/>.
+        ///   Gets a list of all the methods defined in this <see cref="VisualScriptAsset"/>.
         /// </summary>
         public ObservableList<VisualScriptMethodViewModel> Methods => Asset.Methods;
 
         public SemanticModel SemanticModel { get { return semanticModel; } set { SetValue(ref semanticModel, value); } }
 
         /// <summary>
-        /// List of all methods that could be overriden.
+        ///   Gets a List of all the methods that can be overriden.
         /// </summary>
         /// <remarks>
-        /// First value will always be null (to add a new method).
+        ///   First value will always be null (to add a new method).
         /// </remarks>
         public ObservableList<object> OverridableMethods { get; } = new ObservableList<object> { NewMethodSymbol };
 
@@ -180,7 +171,7 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
 
         public BlockTemplateDescriptionCollectionViewModel BlockTemplateDescriptionCollection => blockTemplateDescriptionCollection.Value;
 
-        public new VisualScriptViewModel Asset => (VisualScriptViewModel)base.Asset;
+        public new VisualScriptViewModel Asset => (VisualScriptViewModel) base.Asset;
 
         public string BaseType { get { return baseTypeNodeBinding.Value; } set { baseTypeNodeBinding.Value = value; } }
 
@@ -189,7 +180,7 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
         public ObservableList<object> SelectedProperties { get; } = new ObservableList<object>();
 
         /// <summary>
-        /// The function selected by the user. It might still be initializing.
+        ///   Gets the function selected by the user. It might still be initializing.
         /// </summary>
         public VisualScriptMethodViewModel SelectedMethod
         {
@@ -205,7 +196,7 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
         }
 
         /// <summary>
-        /// The function visible for editing. It follows SelectedFunction changes.
+        ///   Gets the function currently visible for editing. It follows SelectedFunction changes.
         /// </summary>
         public VisualScriptMethodEditorViewModel VisibleMethod { get { return visibleMethod; } private set { SetValue(ref visibleMethod, value); } }
 
@@ -255,8 +246,7 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
         {
             Method method;
 
-            var methodSymbol = methodSymbolObject as IMethodSymbol;
-            if (methodSymbol == null)
+            if (!(methodSymbolObject is IMethodSymbol methodSymbol))
             {
                 // New method
                 method = new Method($"Method{Methods.Count}");
@@ -287,12 +277,15 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
                     {
                         case RefKind.None:
                             break;
+
                         case RefKind.Out:
                             parameter.RefKind = ParameterRefKind.Out;
                             break;
+
                         case RefKind.Ref:
                             parameter.RefKind = ParameterRefKind.Ref;
                             break;
+
                         default:
                             throw new NotImplementedException();
                     }
@@ -304,20 +297,24 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
                 switch (methodSymbol.DeclaredAccessibility)
                 {
                     case RoslynAccessibility.Protected:
-                        method.Accessibility = Accessibility.Protected;
+                        method.Accessibility = Scripts.Accessibility.Protected;
                         break;
+
                     case RoslynAccessibility.Internal:
-                        method.Accessibility = Accessibility.Internal;
+                        method.Accessibility = Scripts.Accessibility.Internal;
                         break;
+
                     case RoslynAccessibility.ProtectedOrInternal:
-                        method.Accessibility = Accessibility.ProtectedOrInternal;
+                        method.Accessibility = Scripts.Accessibility.ProtectedOrInternal;
                         break;
+
                     case RoslynAccessibility.Public:
-                        method.Accessibility = Accessibility.Public;
+                        method.Accessibility = Scripts.Accessibility.Public;
                         break;
+
                     default:
                         // Default to protected if we are not sure
-                        method.Accessibility = Accessibility.Protected;
+                        method.Accessibility = Scripts.Accessibility.Protected;
                         break;
                 }
 
@@ -335,7 +332,7 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
 
         private void RemoveSelectedFunction()
         {
-            if (SelectedMethod == null)
+            if (SelectedMethod is null)
                 return;
 
             using (var transaction = UndoRedoService.CreateTransaction())
@@ -380,11 +377,12 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
             {
                 // Wait for user to close the symbol search popup
                 var userClosed = new TaskCompletionSource<bool>();
-                PropertyChangedEventHandler propertyChanged = (sender, e) =>
+
+                void propertyChanged(object sender, PropertyChangedEventArgs e)
                 {
                     if (e.PropertyName == nameof(SymbolSearchOpen) && SymbolSearchOpen == false)
                         userClosed.TrySetResult(true);
-                };
+                }
 
                 PropertyChanged += propertyChanged;
                 await userClosed.Task;
@@ -492,10 +490,10 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
                                 .Where(member => member.DeclaredAccessibility != RoslynAccessibility.Private || type.ContainingAssembly == latestCompilation.Assembly))
                             {
                                 // Ignore .ctor, property getter/setter, events, etc...
-                                if (method.MethodKind != MethodKind.Ordinary
-                                    && method.MethodKind != MethodKind.UserDefinedOperator
-                                    && method.MethodKind != MethodKind.BuiltinOperator
-                                    && method.MethodKind != MethodKind.Conversion)
+                                if (method.MethodKind != MethodKind.Ordinary &&
+                                    method.MethodKind != MethodKind.UserDefinedOperator &&
+                                    method.MethodKind != MethodKind.BuiltinOperator &&
+                                    method.MethodKind != MethodKind.Conversion)
                                     continue;
 
                                 // Filter text
@@ -573,8 +571,7 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     var current = stack.Pop();
-                    var currentNs = current as INamespaceSymbol;
-                    if (currentNs != null)
+                    if (current is INamespaceSymbol currentNs)
                     {
                         foreach (var member in currentNs.GetMembers())
                             stack.Push(member);

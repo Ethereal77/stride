@@ -11,19 +11,20 @@ using System.Linq;
 using Stride.Core.BuildEngine;
 using Stride.Core.Serialization.Contents;
 using Stride.Animations;
-using Stride.Importer.Common;
 using Stride.Rendering;
-using Stride.Rendering.Data;
 
 namespace Stride.Assets.Models
 {
     [Description("Import Assimp")]
     public class ImportAssimpCommand : ImportModelCommand
     {
-        private static string[] supportedExtensions = AssimpAssetImporter.FileExtensions.Split(';');
+        private static readonly string[] supportedExtensions = AssimpAssetImporter.FileExtensions.Split(';');
 
         /// <inheritdoc/>
-        public override string Title { get { string title = "Import Assimp "; try { title += Path.GetFileName(SourcePath) ?? "[File]"; } catch { title += "[INVALID PATH]"; } return title; } }
+        public override string Title
+        {
+            get { string title = "Import Assimp "; try { title += Path.GetFileName(SourcePath) ?? "[File]"; } catch { title += "[INVALID PATH]"; } return title; }
+        }
 
         public static bool IsSupportingExtensions(string ext)
         {
@@ -35,11 +36,11 @@ namespace Stride.Assets.Models
             return supportedExtensions.Any(supExt => supExt.Equals(extToLower));
         }
 
-        private Stride.Importer.AssimpNET.MeshConverter CreateMeshConverter(ICommandContext commandContext)
+        private Importer.AssimpNET.MeshConverter CreateMeshConverter(ICommandContext commandContext)
         {
-            return new Stride.Importer.AssimpNET.MeshConverter(commandContext.Logger)
+            return new Importer.AssimpNET.MeshConverter(commandContext.Logger)
             {
-                AllowUnsignedBlendIndices = this.AllowUnsignedBlendIndices,
+                AllowUnsignedBlendIndices = AllowUnsignedBlendIndices
             };
         }
 
@@ -47,10 +48,10 @@ namespace Stride.Assets.Models
         {
             var converter = CreateMeshConverter(commandContext);
 
-            // Note: FBX exporter uses Materials for the mapping, but Assimp already uses indices so we can reuse them
+            // NOTE: FBX exporter uses Materials for the mapping, but Assimp already uses indices so we can reuse them
             // We should still unify the behavior to be more consistent at some point (i.e. if model was changed on the HDD but not in the asset).
             // This should probably be better done during a large-scale FBX/Assimp refactoring.
-            var sceneData = converter.Convert(SourcePath, Location);
+            var sceneData = converter.Convert(SourcePath, Location, DeduplicateMaterials);
             return sceneData;
         }
 

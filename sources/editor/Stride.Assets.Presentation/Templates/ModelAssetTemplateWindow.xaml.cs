@@ -2,17 +2,15 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
-using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core;
 using Stride.Core.Extensions;
+using Stride.Core.Quantum;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Quantum.ViewModels;
 using Stride.Core.Presentation.ViewModel;
-using Stride.Core.Quantum;
 using Stride.Rendering;
 
 namespace Stride.Assets.Presentation.Templates
@@ -43,6 +41,9 @@ namespace Stride.Assets.Presentation.Templates
         private readonly DummyReferenceContainer referenceContainer = new DummyReferenceContainer();
 
         private bool importMaterials = true;
+        private bool showDeduplicateMaterialsCheckBox = true;
+        private bool showFbxDedupeNotSupportedWarning = false;
+        private bool deduplicateMaterials = true;
         private bool importTextures = true;
         private bool importSkeleton = true;
         private bool dontImportSkeleton;
@@ -56,6 +57,10 @@ namespace Stride.Assets.Presentation.Templates
 
         public bool ImportMaterials { get { return importMaterials; } set { SetValue(ref importMaterials, value); } }
 
+        public bool ShowDeduplicateMaterialsCheckBox { get { return showDeduplicateMaterialsCheckBox; } set { SetValue(ref showDeduplicateMaterialsCheckBox, value); } }
+        public bool ShowFbxDedupeNotSupportedWarning { get { return showFbxDedupeNotSupportedWarning; } set { SetValue(ref showFbxDedupeNotSupportedWarning, value); } }
+        public bool DeduplicateMaterials { get { return deduplicateMaterials; } set { SetValue(ref deduplicateMaterials, value); } }
+
         public bool ImportTextures { get { return importTextures; } set { SetValue(ref importTextures, value); } }
 
         public bool ImportSkeleton { get { return importSkeleton; } set { SetValue(ref importSkeleton, value); } }
@@ -68,8 +73,9 @@ namespace Stride.Assets.Presentation.Templates
 
         public GraphViewModel ReferenceViewModel { get; }
     }
+
     /// <summary>
-    /// Interaction logic for ModelAssetTemplateWindow.xaml
+    ///   Interaction logic for ModelAssetTemplateWindow.xaml.
     /// </summary>
     public partial class ModelAssetTemplateWindow
     {
@@ -78,6 +84,7 @@ namespace Stride.Assets.Presentation.Templates
             var viewModelService = new GraphViewModelService(SessionViewModel.Instance.AssetNodeContainer);
             var services = new ViewModelServiceProvider(SessionViewModel.Instance.ServiceProvider, viewModelService.Yield());
             Parameters = new ImportModelFromFileViewModel(services);
+
             InitializeComponent();
         }
 
@@ -85,13 +92,13 @@ namespace Stride.Assets.Presentation.Templates
 
         private void ButtonOk(object sender, RoutedEventArgs e)
         {
-            Result = Stride.Core.Presentation.Services.DialogResult.Ok;
+            Result = Core.Presentation.Services.DialogResult.Ok;
             Close();
         }
 
         private void ButtonCancel(object sender, RoutedEventArgs e)
         {
-            Result = Stride.Core.Presentation.Services.DialogResult.Cancel;
+            Result = Core.Presentation.Services.DialogResult.Cancel;
             Close();
         }
     }

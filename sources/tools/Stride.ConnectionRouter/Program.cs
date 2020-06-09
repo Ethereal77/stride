@@ -6,8 +6,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Mono.Options;
 
@@ -32,14 +30,13 @@ namespace Stride.ConnectionRouter
                 {
                     "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
                     "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
-                    "Stride Router Server - Version: "
-                    +
-                    String.Format(
-                        "{0}.{1}.{2}",
+                    "Stride Router Server - Version: " +
+                    string.Format("{0}.{1}.{2}",
                         typeof(Program).Assembly.GetName().Version.Major,
                         typeof(Program).Assembly.GetName().Version.Minor,
-                        typeof(Program).Assembly.GetName().Version.Build) + string.Empty,
-                    string.Format("Usage: {0} command [options]*", exeName),
+                        typeof(Program).Assembly.GetName().Version.Build),
+                    string.Empty,
+                    $"Usage: {exeName} command [options]*",
                     string.Empty,
                     "=== Options ===",
                     string.Empty,
@@ -58,7 +55,7 @@ namespace Stride.ConnectionRouter
 
                 // Make sure path exists
                 if (commandArgs.Count > 0)
-                    throw new OptionException("This command expect no additional arguments", "");
+                    throw new OptionException("This command expect no additional arguments.", "");
 
                 SetupTrayIcon(logFileName);
 
@@ -72,9 +69,9 @@ namespace Stride.ConnectionRouter
                 // TODO: Lock will be only for this folder but it should be shared across OS
                 using (var mutex = FileLock.TryLock("connectionrouter.lock"))
                 {
-                    if (mutex == null)
+                    if (mutex is null)
                     {
-                        Console.WriteLine("Another instance of Stride Router is already running");
+                        Console.WriteLine("Another instance of Stride Router is already running.");
                         return -1;
                     }
 
@@ -118,24 +115,26 @@ namespace Stride.ConnectionRouter
             notifyIcon.Text = "Stride Connection Router";
             notifyIcon.Icon = Properties.Resources.Logo;
             notifyIcon.Visible = true;
-            notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu();
+            var contextMenu = new System.Windows.Forms.ContextMenuStrip(components);
 
             if (!string.IsNullOrEmpty(logFileName))
             {
-                var showLogMenuItem = new System.Windows.Forms.MenuItem("Show &Log");
+                var showLogMenuItem = new System.Windows.Forms.ToolStripMenuItem("Show &Log");
                 showLogMenuItem.Click += (sender, args) => OnShowLogClick(logFileName);
-                notifyIcon.ContextMenu.MenuItems.Add(showLogMenuItem);
+                contextMenu.Items.Add(showLogMenuItem);
 
                 notifyIcon.BalloonTipClicked += (sender, args) => OnShowLogClick(logFileName);
             }
 
-            var openConsoleMenuItem = new System.Windows.Forms.MenuItem("Open Console");
-            openConsoleMenuItem.Click += (sender, args) => OnOpenConsoleClick((System.Windows.Forms.MenuItem)sender);
-            notifyIcon.ContextMenu.MenuItems.Add(openConsoleMenuItem);
+            var openConsoleMenuItem = new System.Windows.Forms.ToolStripMenuItem("Open Console");
+            openConsoleMenuItem.Click += (sender, args) => OnOpenConsoleClick((System.Windows.Forms.ToolStripMenuItem)sender);
+            contextMenu.Items.Add(openConsoleMenuItem);
 
-            var exitMenuItem = new System.Windows.Forms.MenuItem("E&xit");
+            var exitMenuItem = new System.Windows.Forms.ToolStripMenuItem("E&xit");
             exitMenuItem.Click += (sender, args) => OnExitClick();
-            notifyIcon.ContextMenu.MenuItems.Add(exitMenuItem);
+            contextMenu.Items.Add(exitMenuItem);
+
+            notifyIcon.ContextMenuStrip = contextMenu;
 
             GlobalLogger.GlobalMessageLogged += (logMessage) =>
             {
@@ -157,7 +156,7 @@ namespace Stride.ConnectionRouter
             };
         }
 
-        private static void OnOpenConsoleClick(System.Windows.Forms.MenuItem menuItem)
+        private static void OnOpenConsoleClick(System.Windows.Forms.ToolStripMenuItem menuItem)
         {
             menuItem.Enabled = false;
 

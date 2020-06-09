@@ -13,9 +13,9 @@ namespace CSharpBeginner.Code
     public class CloneEntityDemo : SyncScript
     {
         public Entity MasterSword;
-        Entity clone0;
-        Entity clone1;
-        Entity clone2;
+        private Entity clone0;
+        private Entity clone1;
+        private Entity clone2;
 
         public override void Start()
         {
@@ -34,7 +34,7 @@ namespace CSharpBeginner.Code
 
             // The cloned entity will be at the same worldposition as the original Sword entity
             // Move it to the right so that we can see it
-            clone1.Transform.Position += new Vector3(-1, 0, 0); 
+            clone1.Transform.Position += new Vector3(-1, 0, 0);
             clone1.Transform.Scale = new Vector3(1.3f);
 
 

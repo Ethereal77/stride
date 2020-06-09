@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using Stride.Core;
 using Stride.Core.Diagnostics;
 
 namespace Stride.Core.Assets.CompilerApp
@@ -17,7 +16,18 @@ namespace Stride.Core.Assets.CompilerApp
 
         public bool Verbose = false;
         public bool Debug = false;
-        // This should not be a list
+
+        public List<string> LogPipeNames = new List<string>();
+        public List<string> MonitorPipeNames = new List<string>();
+        public bool EnableFileLogging;
+        public string CustomLogFileName;
+        public string SlavePipe;
+        public Dictionary<string, string> Properties = new Dictionary<string, string>();
+        public Dictionary<string, string> ExtraCompileProperties;
+        public int ThreadCount = Environment.ProcessorCount;
+
+        public string TestName;
+
         public bool DisableAutoCompileProjects { get; set; }
         public string ProjectConfiguration { get; set; }
         public string OutputDirectory { get; set; }
@@ -26,52 +36,40 @@ namespace Stride.Core.Assets.CompilerApp
         public Guid PackageId { get; set; }
         public PlatformType Platform { get; set; }
         public string PackageFile { get; set; }
-        public List<string> LogPipeNames = new List<string>();
-        public List<string> MonitorPipeNames = new List<string>();
-        public bool EnableFileLogging;
-        public string CustomLogFileName;
-        public string SlavePipe;
-        public Dictionary<string, string> Properties = new Dictionary<string, string>();
-        public Dictionary<string, string> ExtraCompileProperties;
+        public string MSBuildUpToDateCheckFileBase { get; set; }
 
-
-        public int ThreadCount = Environment.ProcessorCount;
-
-        public string TestName;
 
         public PackageBuilderOptions(LoggerResult logger)
         {
-            if (logger == null) throw new ArgumentNullException("logger");
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+
             Logger = logger;
         }
 
         /// <summary>
-        /// Gets the logger messages type depending on the current options
+        ///   Gets the log message types to log depending on the current options.
         /// </summary>
-        public LogMessageType LoggerType
-        {
-            get { return Debug ? LogMessageType.Debug : (Verbose ? LogMessageType.Verbose : LogMessageType.Info); }
-        }
+        public LogMessageType LoggerType => Debug ? LogMessageType.Debug : (Verbose ? LogMessageType.Verbose : LogMessageType.Info);
 
         /// <summary>
-        /// This function indicate if the current builder options mean to execute a slave session
+        ///   Determines whether the current builder options are valid for the execution of a slave session.
         /// </summary>
-        /// <returns>true if the options mean to execute a slave session</returns>
-        public bool IsValidForSlave()
-        {
-            return !string.IsNullOrEmpty(SlavePipe) && !string.IsNullOrEmpty(BuildDirectory);
-        }
+        /// <returns><c>true</c> if the options are valid for a slave session.</returns>
+        public bool IsValidForSlave() => !string.IsNullOrEmpty(SlavePipe) &&
+                                         !string.IsNullOrEmpty(BuildDirectory);
 
         /// <summary>
-        /// Ensure every parameter is correct for a master execution. Throw an OptionException if a parameter is wrong
+        ///   Validates the options to ensure that every parameter is correct for a master execution.
         /// </summary>
-        /// <exception cref="Mono.Options.OptionException">This tool requires one input file.;filename
-        /// or
-        /// The given working directory \ + workingDir + \ does not exist.;workingdir</exception>
+        /// <exception cref="ArgumentException">This tool requires one input file.</exception>
+        /// <exception cref="ArgumentException">The given working directory does not exist.</exception>
+        /// <exception cref="ArgumentException">This tool requires either a --package-file, or a --solution-file and --package-id..</exception>
+        /// <exception cref="ArgumentException">The specified package file doesn't exist.</exception>
         public void ValidateOptions()
         {
             if (string.IsNullOrWhiteSpace(BuildDirectory))
-                throw new ArgumentException("This tool requires a build path.", "build-path");
+                throw new ArgumentException("This tool requires a build path.");
 
             try
             {
@@ -79,22 +77,18 @@ namespace Stride.Core.Assets.CompilerApp
             }
             catch (Exception)
             {
-                throw new ArgumentException("The provided path is not a valid path name.", "build-path");
+                throw new ArgumentException("The provided path is not a valid path name.");
             }
 
-            if (SlavePipe == null)
+            if (SlavePipe is null)
             {
                 if (string.IsNullOrWhiteSpace(PackageFile))
                 {
                     if (string.IsNullOrWhiteSpace(SolutionFile) || PackageId == Guid.Empty)
-                    {
-                        throw new ArgumentException("This tool requires either a --package-file, or a --solution-file and --package-id.", "inputPackageFile");
-                    }
+                        throw new ArgumentException("This tool requires either a --package-file, or a --solution-file and --package-id.");
                 }
                 else if (!File.Exists(PackageFile))
-                {
-                    throw new ArgumentException("Package file [{0}] doesn't exist".ToFormat(PackageFile), "inputPackageFile");
-                }
+                    throw new ArgumentException($"Package file [{PackageFile}] doesn't exist.");
             }
         }
     }

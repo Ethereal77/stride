@@ -9,91 +9,66 @@ using System;
 namespace Stride.Core.IO
 {
     /// <summary>
-    /// � file event used notified by <see cref="DirectoryWatcher"/>
+    ///   Contains event data about file events notified by a <see cref="DirectoryWatcher"/>.
     /// </summary>
     public class FileEvent : EventArgs
     {
-        private readonly FileEventChangeType changeType;
-        private readonly string name;
-        private readonly string fullPath;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileEvent"/> class.
+        ///   Initializes a new instance of the <see cref="FileEvent"/> class.
         /// </summary>
         /// <param name="changeType">Type of the change.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="fullPath">The full path.</param>
+        /// <param name="name">The name of the file.</param>
+        /// <param name="fullPath">The full path of the file.</param>
         public FileEvent(FileEventChangeType changeType, string name, string fullPath)
         {
-            this.changeType = changeType;
-            this.name = name;
-            this.fullPath = fullPath;
+            ChangeType = changeType;
+            Name = name;
+            FullPath = fullPath;
         }
 
         /// <summary>
-        /// Gets the type of the change.
+        ///   Gets the type of the change.
         /// </summary>
         /// <value>The type of the change.</value>
-        public FileEventChangeType ChangeType
-        {
-            get
-            {
-                return changeType;
-            }
-        }
+        public FileEventChangeType ChangeType { get; }
 
         /// <summary>
-        /// Gets the name.
+        ///   Gets the name of the file.
         /// </summary>
-        /// <value>The name.</value>
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        /// <value>The file name.</value>
+        public string Name { get; }
 
         /// <summary>
-        /// Gets the full path.
+        ///   Gets the full path of the file.
         /// </summary>
-        /// <value>The full path.</value>
-        public string FullPath
-        {
-            get
-            {
-                return fullPath;
-            }
-        }
+        /// <value>The full path of the file.</value>
+        public string FullPath { get; }
     }
 
     /// <summary>
-    /// � file rename event used notified by <see cref="DirectoryWatcher"/>
+    ///   Contains event data about file renaming events notified by a <see cref="DirectoryWatcher"/>.
     /// </summary>
     public class FileRenameEvent : FileEvent
     {
-        private readonly string oldFullPath;
+        /// <summary>
+        ///   Gets the full path (in case of rename).
+        /// </summary>
+        /// <value>The full path (in case of rename).</value>
+        public string OldFullPath { get; }
+
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileRenameEvent"/> class.
+        ///   Initializes a new instance of the <see cref="FileRenameEvent"/> class.
         /// </summary>
-        /// <param name="changeType">Type of the change.</param>
         /// <param name="name">The name.</param>
-        /// <param name="fullPath">The full path.</param>
-        /// <param name="oldFullPath">The old full path. (before rename) </param>
-        public FileRenameEvent(string name, string fullPath, string oldFullPath) : base(FileEventChangeType.Renamed, name, fullPath)
+        /// <param name="fullPath">The full path of the file.</param>
+        /// <param name="oldFullPath">The old full path (before rename).</param>
+        public FileRenameEvent(string name, string fullPath, string oldFullPath)
+            : base(FileEventChangeType.Renamed, name, fullPath)
         {
-            this.oldFullPath = oldFullPath;
+            OldFullPath = oldFullPath;
         }
 
-        /// <summary>
-        /// Gets the full path. (in case of rename)
-        /// </summary>
-        /// <value>The full path. (in case of rename)</value>
-        public string OldFullPath
-        {
-            get { return oldFullPath; }
-        }
 
         public override string ToString()
         {

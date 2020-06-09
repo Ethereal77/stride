@@ -9,6 +9,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
+using ServiceWire.NamedPipes;
+
 using Stride.Core.Diagnostics;
 using Stride.Core.MicroThreading;
 using Stride.Core.Reflection;
@@ -22,24 +24,26 @@ namespace Stride.Debugger.Target
         private static readonly Logger Log = GlobalLogger.GetLogger("GameDebuggerSession");
 
         /// <summary>
-        /// The assembly container, to load assembly without locking main files.
+        ///   The assembly container, to load assemblies without locking main files.
         /// </summary>
-        // For now, it uses default one, but later we should probably have one per game debugger session
+        // For now, it uses default one, but later we should probably have one per game debugger session.
         private readonly AssemblyContainer assemblyContainer = AssemblyContainer.Default;
 
-        private string projectName = String.Empty;
         private readonly Dictionary<DebugAssembly, Assembly> loadedAssemblies = new Dictionary<DebugAssembly, Assembly>();
         private int currentDebugAssemblyIndex;
+
+        private readonly string projectName = string.Empty;
         private Game game;
 
         private readonly ManualResetEvent gameFinished = new ManualResetEvent(true);
         private IGameDebuggerHost host;
 
         /// <summary>
-        /// Flag if exit was requested.
+        ///   Flag to indicate if exit was requested.
         /// </summary>
         /// <remarks>Field is volatile to avoid compiler optimization that would prevent MainLoop from exiting.</remarks>
         private volatile bool requestedExit;
+
 
         public GameDebuggerTarget()
         {
@@ -49,6 +53,7 @@ namespace Stride.Debugger.Target
             // Note: this assembly should not be registered when run by Game Studio
             AssemblyRegistry.Register(typeof(Program).GetTypeInfo().Assembly, AssemblyCommonCategories.Assets);
         }
+
 
         Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
@@ -70,9 +75,9 @@ namespace Stride.Debugger.Target
             try
             {
                 var assembly = assemblyContainer.LoadAssemblyFromPath(assemblyPath);
-                if (assembly == null)
+                if (assembly is null)
                 {
-                    Log.Error($"Unexpected error while loading assembly reference [{assemblyPath}] in project [{projectName}]");
+                    Log.Error($"Unexpected error while loading assembly reference [{assemblyPath}] in project [{projectName}].");
                     return DebugAssembly.Empty;
                 }
 
@@ -80,7 +85,7 @@ namespace Stride.Debugger.Target
             }
             catch (Exception ex)
             {
-                Log.Error($"Unexpected error while loading assembly reference [{assemblyPath}] in project [{projectName}]", ex);
+                Log.Error($"Unexpected error while loading assembly reference [{assemblyPath}] in project [{projectName}].", ex);
                 return DebugAssembly.Empty;
             }
         }
@@ -98,7 +103,7 @@ namespace Stride.Debugger.Target
             }
             catch (Exception ex)
             {
-                Log.Error($"Unexpected error while loading assembly reference in project [{projectName}]", ex);
+                Log.Error($"Unexpected error while loading assembly reference in project [{projectName}].", ex);
                 return DebugAssembly.Empty;
             }
         }
@@ -106,9 +111,9 @@ namespace Stride.Debugger.Target
         /// <inheritdoc/>
         public bool AssemblyUpdate(List<DebugAssembly> assembliesToUnregister, List<DebugAssembly> assembliesToRegister)
         {
-            Log.Info("Reloading assemblies and updating scripts");
+            Log.Info("Reloading assemblies and updating scripts.");
 
-            // Unload and load assemblies in assemblyContainer, serialization, etc...
+            // Unload and load assemblies in assemblyContainer, serialization, etc.
             lock (loadedAssemblies)
             {
                 if (game != null)
@@ -144,7 +149,7 @@ namespace Stride.Debugger.Target
         {
             try
             {
-                Log.Info($"Running game with type {gameTypeName}");
+                Log.Info($"Running game with type {gameTypeName}.");
 
                 Type gameType;
                 lock (loadedAssemblies)
@@ -152,8 +157,8 @@ namespace Stride.Debugger.Target
                     gameType = GameEnumerateTypesHelper().FirstOrDefault(x => x.FullName == gameTypeName);
                 }
 
-                if (gameType == null)
-                    throw new InvalidOperationException($"Could not find type [{gameTypeName}] in project [{projectName}]");
+                if (gameType is null)
+                    throw new InvalidOperationException($"Could not find type [{gameTypeName}] in project [{projectName}].");
 
                 game = (Game)Activator.CreateInstance(gameType);
 
@@ -172,7 +177,7 @@ namespace Stride.Debugger.Target
                     }
                     catch (Exception e)
                     {
-                        Log.Error("Exception while running game", e);
+                        Log.Error("Exception while running game.", e);
                     }
 
                     host.OnGameExited();
@@ -183,14 +188,14 @@ namespace Stride.Debugger.Target
             }
             catch (Exception ex)
             {
-                Log.Error($"Game [{gameTypeName}] from project [{projectName}] failed to run", ex);
+                Log.Error($"Game [{gameTypeName}] from project [{projectName}] failed to run.", ex);
             }
         }
 
         /// <inheritdoc/>
         public void GameStop()
         {
-            if (game == null)
+            if (game is null)
                 return;
 
             game.Exit();
@@ -204,7 +209,9 @@ namespace Stride.Debugger.Target
         private IEnumerable<Type> GameEnumerateTypesHelper()
         {
             // We enumerate custom games, and then typeof(Game) as fallback
-            return loadedAssemblies.SelectMany(assembly => assembly.Value.GetTypes().Where(x => typeof(Game).IsAssignableFrom(x)))
+            return loadedAssemblies
+                .SelectMany(assembly => assembly.Value.GetTypes()
+                    .Where(x => typeof(Game).IsAssignableFrom(x)))
                 .Concat(Enumerable.Repeat(typeof(Game), 1));
         }
 
@@ -218,19 +225,24 @@ namespace Stride.Debugger.Target
         public void MainLoop(IGameDebuggerHost gameDebuggerHost)
         {
             host = gameDebuggerHost;
-            host.RegisterTarget();
-
-            Log.MessageLogged += Log_MessageLogged;
-
-            // Log suppressed exceptions in scripts
-            ScriptSystem.Log.MessageLogged += Log_MessageLogged;
-            Scheduler.Log.MessageLogged += Log_MessageLogged;
-
-            Log.Info("Starting debugging session");
-
-            while (!requestedExit)
+            string callbackChannelEndpoint = "Stride/Debugger/GameDebuggerTarget/CallbackChannel";
+            using (var callbackHost = new NpHost(callbackChannelEndpoint, null, null))
             {
-                Thread.Sleep(10);
+                callbackHost.AddService<IGameDebuggerTarget>(this);
+                host.RegisterTarget(callbackChannelEndpoint);
+
+                Log.MessageLogged += Log_MessageLogged;
+
+                // Log suppressed exceptions in scripts
+                ScriptSystem.Log.MessageLogged += Log_MessageLogged;
+                Scheduler.Log.MessageLogged += Log_MessageLogged;
+
+                Log.Info("Starting debugging session...");
+
+                while (!requestedExit)
+                {
+                    Thread.Sleep(10);
+                }
             }
         }
 
@@ -239,16 +251,15 @@ namespace Stride.Debugger.Target
             var message = e.Message;
 
             var serializableMessage = message as SerializableLogMessage;
-            if (serializableMessage == null)
+            if (serializableMessage is null)
             {
-                var logMessage = message as LogMessage;
-                if (logMessage != null)
+                if (message is LogMessage logMessage)
                 {
                     serializableMessage = new SerializableLogMessage(logMessage);
                 }
             }
 
-            if (serializableMessage == null)
+            if (serializableMessage is null)
             {
                 throw new InvalidOperationException(@"Unable to process the given log message.");
             }

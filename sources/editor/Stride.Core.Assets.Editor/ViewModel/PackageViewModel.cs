@@ -5,37 +5,33 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets.Analysis;
+using Stride.Core.Annotations;
+using Stride.Core.Diagnostics;
+using Stride.Core.IO;
+using Stride.Core.Extensions;
+using Stride.Core.Quantum;
+using Stride.Core.Packages;
+using Stride.Core.Translation;
 using Stride.Core.Assets.Diagnostics;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Templates;
 using Stride.Core.Assets.Editor.Components.Properties;
 using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
-using Stride.Core.Assets.Editor.Extensions;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel.Logs;
 using Stride.Core.Assets.Editor.ViewModel.Progress;
-using Stride.Core.Assets.Templates;
-using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
-using Stride.Core.IO;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Presentation.Quantum;
-using Stride.Core.Presentation.Quantum.Presenters;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
-using Stride.Core.Quantum;
-using Stride.Core.Quantum.References;
-using Stride.Core.Translation;
-using System.IO;
-using Stride.Core.Packages;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
@@ -68,102 +64,108 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Gets or sets the name of this package.
+        ///   Gets or sets the name of this package.
         /// </summary>
-        /// <remarks>Modifying this property also modify the <see cref="PackagePath"/> property if the package has already been saved once.</remarks>
-        public override string Name { get { return PackagePath.GetFileNameWithoutExtension(); } set { Rename(value); } }
+        /// <remarks>Modifying this property also modify the <see cref="PackagePath"/> property if the package has already been saved.</remarks>
+        public override string Name
+        {
+            get => PackagePath.GetFileNameWithoutExtension();
+            set => Rename(value);
+        }
 
         public bool IsLoaded { get; }
 
         public PackageContainer PackageContainer { get; }
 
         /// <summary>
-        /// Gets the underlying <see cref="Package"/> used as a model for this view.
+        ///   Gets the underlying <see cref="Assets.Package"/> used as a model for this view.
         /// </summary>
         public Package Package { get; }
 
         /// <summary>
-        /// Gets or sets the path of this package.
+        ///   Gets or sets the path of this package.
         /// </summary>
         /// <remarks>Modifying this property also modify the <see cref="Name"/> property.</remarks>
-        public UFile PackagePath { get { return Package.FullPath; } set { SetValue(() => Package.FullPath = value); } }
+        public UFile PackagePath
+        {
+            get => Package.FullPath;
+            set => SetValue(() => Package.FullPath = value);
+        }
 
         public UDirectory RootDirectory => Package.RootDirectory;
 
         /// <summary>
-        /// Gets all assets contained in this package.
+        ///   Gets all the assets contained in this package.
         /// </summary>
-        public IEnumerable<AssetViewModel> Assets
-        {
-            get
-            {
-                return MountPoints.SelectMany(x => x.GetDirectoryHierarchy().SelectMany(y => y.Assets));
-            }
-        }
+        public IEnumerable<AssetViewModel> Assets => MountPoints.SelectMany(x => x.GetDirectoryHierarchy().SelectMany(y => y.Assets));
 
         /// <summary>
-        /// Gets all assets contained in this package, and the asset contained in packages referenced by this package.
+        ///   Gets all assets contained in this package, and the asset contained in packages referenced by this package.
         /// </summary>
-        // TODO: we MUST guarantee that whatever the user do, the assets in this enumeration all have DIFFERENT urls!
-        public IEnumerable<AssetViewModel> AllAssets { get { return Assets.Concat(Dependencies.Content.Select(x => x.Target).NotNull().SelectMany(x => x.Assets)); } }
+        // TODO: We MUST guarantee that whatever the user does, the assets in this enumeration all have DIFFERENT URLs!
+        public IEnumerable<AssetViewModel> AllAssets => Assets.Concat(Dependencies.Content.Select(x => x.Target).NotNull().SelectMany(x => x.Assets));
 
         /// <summary>
-        /// Gets the properties of the package.
+        ///   Gets the properties of the package.
         /// </summary>
         public SessionObjectPropertiesViewModel Properties => Session.AssetViewProperties;
 
         /// <summary>
-        /// Gets whether this package is editable.
+        ///   Gets a value indicating whether this package can be edited.
         /// </summary>
         public override bool IsEditable => !Package.IsSystem && IsLoaded;
 
         /// <inheritdoc/>
-        public override bool IsEditing { get { return false; } set { base.IsEditing = value; } }
+        public override bool IsEditing
+        {
+            get => false;
+            set => base.IsEditing = value;
+        }
 
         /// <summary>
-        /// Gets the root directory of this package.
+        ///   Gets the root directory of this package.
         /// </summary>
         public AssetMountPointViewModel AssetMountPoint { get; }
 
         /// <summary>
-        /// Gets all the mount points in this package.
+        ///   Gets all the mount points in this package.
         /// </summary>
         public IEnumerable<MountPointViewModel> MountPoints => Content.OfType<MountPointViewModel>();
 
         /// <summary>
-        /// Gets the command that initiates the renaming of this package.
+        ///   Gets the command that initiates the renaming of this package.
         /// </summary>
         [NotNull]
         public ICommandBase RenameCommand { get; }
 
         /// <summary>
-        /// Gets the list of child item to be used to display in a hierachical view.
+        ///   Gets the list of child items to be used to display in a hierachical view.
         /// </summary>
         /// <remarks>This collection usually contains categories and root folders.</remarks>
         public IReadOnlyObservableCollection<DirtiableEditableViewModel> Content => content;
 
         /// <summary>
-        /// Gets the container category for dependencies referenced in this package.
+        ///   Gets the container category for dependencies referenced in this package.
         /// </summary>
         public DependencyCategoryViewModel Dependencies { get; }
 
         /// <summary>
-        /// Gets the collection of root assets for this package.
+        ///   Gets the collection of root assets for this package.
         /// </summary>
         public ObservableSet<AssetViewModel> RootAssets { get; } = new ObservableSet<AssetViewModel>();
 
         /// <summary>
-        /// Gets the <see cref="PackageUserSettings"/> of this package.
+        ///   Gets the <see cref="PackageUserSettings"/> of this package.
         /// </summary>
         public PackageUserSettings UserSettings => Package.UserSettings;
 
         /// <summary>
-        /// Gets whether this package has been upgraded while being loaded.
+        ///   Gets whether this package has been upgraded while being loaded.
         /// </summary>
         public bool HasBeenUpgraded { get; private set; }
 
         /// <summary>
-        /// Gets the list of assets that have been deleted by the user since the beginning of the session.
+        ///   Gets the list of assets that have been deleted by the user since the beginning of the session.
         /// </summary>
         public IReadOnlyObservableList<AssetViewModel> DeletedAssets => DeletedAssetsList;
 
@@ -184,29 +186,31 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Indicates whether the given asset in within the scope of this package, either by being part of this package or part of
-        /// one of its dependencies.
+        ///   Determines whether the given asset in within the scope of this package, either by being part of this
+        ///   package or part of one of its dependencies.
         /// </summary>
-        /// <param name="asset">The asset for which to check if it's in the scope of this package</param>
-        /// <returns><c>True</c> if the asset is in scope, <c>False</c> otherwise.</returns>
+        /// <param name="asset">The asset for which to check if it's in the scope of this package.</param>
+        /// <returns><c>true</c> if the asset is in scope; <c>false</c> otherwise.</returns>
         public bool IsInScope(AssetViewModel asset)
         {
             var assetPackage = asset.Directory.Package;
-            // Note: Would be better to switch to Dependencies view model as soon as we have FlattenedDependencies in those
+            // NOTE: Would be better to switch to Dependencies view model as soon as we have FlattenedDependencies in those
             return assetPackage == this || Package.Container.FlattenedDependencies.Any(x => x.Package == assetPackage.Package);
         }
 
         /// <summary>
-        /// Creates the view models for each asset, directory, profile, project and reference of this package.
+        ///   Creates the view models for each asset, directory, profile, project and reference of this package.
         /// </summary>
         /// <param name="loggerResult">The logger result of the current operation.</param>
-        /// <param name="workProgress">A <see cref="WorkProgressViewModel"/> instance to update on progresses. Can be <c>null</c>.</param>
-        /// <param name="cancellationToken">A cancellation token to cancel the load process. Can be <c>null</c>.</param>
+        /// <param name="workProgress">A <see cref="WorkProgressViewModel"/> instance to update on the progress of the operation. Can be <c>null</c>.</param>
+        /// <param name="cancellationToken">A token that can be used to cancel the loading process. Can be <c>null</c>.</param>
         internal void LoadPackageInformation(LoggerResult loggerResult, WorkProgressViewModel workProgress, CancellationToken? cancellationToken = null)
         {
-            if (workProgress == null) throw new ArgumentNullException(nameof(workProgress));
+            if (workProgress is null)
+                throw new ArgumentNullException(nameof(workProgress));
+
             var progress = workProgress.ProgressValue;
-            workProgress.UpdateProgressAsync($"Processing asset {progress + 1}/{workProgress.Maximum}...", progress);
+            workProgress.UpdateProgressAsync($"Processing asset {progress + 1} of {workProgress.Maximum}...", progress);
 
             if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
                 return;
@@ -221,14 +225,13 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
                     return;
 
-                var message = $"Processing asset {progress + 1}/{workProgress.Maximum}...";
+                var message = $"Processing asset {progress + 1} of {workProgress.Maximum}...";
                 workProgress.UpdateProgressAsync(message, progress);
 
                 var url = asset.Location;
                 DirectoryBaseViewModel directory;
-                var projectSourceCodeAsset = asset.Asset as IProjectAsset;
-                // TODO CSPROJ=XKPKG override rather than cast to subclass
-                if (projectSourceCodeAsset != null && this is ProjectViewModel project)
+                // TODO: CSPROJ=XKPKG override rather than cast to subclass
+                if (asset.Asset is IProjectAsset projectSourceCodeAsset && this is ProjectViewModel project)
                 {
                     directory = project.GetOrCreateProjectDirectory(url.GetFullDirectory() ?? "", false);
                 }
@@ -299,6 +302,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                         newItem.Dependencies.NotifyRootAssetChange(true);
                     }
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     foreach (var oldItem in e.OldItems.Cast<AssetViewModel>())
                     {
@@ -307,6 +311,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                         oldItem.Dependencies.NotifyRootAssetChange(true);
                     }
                     break;
+
                 case NotifyCollectionChangedAction.Replace:
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Reset:
@@ -318,6 +323,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                         x.Dependencies.NotifyRootAssetChange(false);
                     });
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -331,9 +337,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private AssetViewModel CreateAsset(DirectoryBaseViewModel directory, AssetItem assetItem, bool canUndoRedoCreation, LoggerResult loggerResult, bool isLoading)
         {
-            if (directory == null)
+            if (directory is null)
                 throw new ArgumentNullException(nameof(directory));
-            if (assetItem == null)
+            if (assetItem is null)
                 throw new ArgumentNullException(nameof(assetItem));
 
             AssetCollectionItemIdHelper.GenerateMissingItemIds(assetItem.Asset);
@@ -367,10 +373,10 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Checks whether this package has a direct or indirect dependency on the given other package.
+        ///   Checks whether this package has a direct or indirect dependency on another package.
         /// </summary>
         /// <param name="otherPackage">The target package of the dependency check.</param>
-        /// <returns><c>true</c> if this package depends on the given package, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if this package depends on the given package; <c>false</c> otherwise.</returns>
         public bool DependsOn(PackageViewModel otherPackage)
         {
             var visitedPackages = new List<PackageViewModel>();
@@ -392,7 +398,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         {
             if (Package.IsSystem)
             {
-                // Note: this should never happen (see comments in method SessionViewModel.DeleteSelectedSolutionItems)
+                // NOTE: This should never happen (see comments in method SessionViewModel.DeleteSelectedSolutionItems)
                 throw new InvalidOperationException("System packages cannot be deleted.");
             }
             using (var transaction = UndoRedoService.CreateTransaction())
@@ -450,7 +456,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             };
 
             var generator = TemplateManager.FindTemplateGenerator(parameters);
-            if (generator == null)
+            if (generator is null)
             {
                 await ServiceProvider.Get<IDialogService>().MessageBox(Tr._p("Message", "Unable to retrieve template generator for the selected template. Aborting."), MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -497,9 +503,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
                         {
                             Package.AddExistingProject(projectPath, loggerResult);
                         }
-                        catch (Exception e)
+                        catch (Exception ex)
                         {
-                            loggerResult.Error("An exception occurred while importing the project", e);
+                            loggerResult.Error("An exception occurred while importing the project", ex);
                         }
 
                     }, cancellationSource.Token);
@@ -602,7 +608,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             deletedAssetsSinceLastSave.Clear();
         }
 
-        // TODO: Move this in an utility class
+        // TODO: Move this to an utility class
         internal static List<AssetViewModel> GetReferencers(IAssetDependencyManager dependencyManager, SessionViewModel session, IEnumerable<AssetItem> assets)
         {
             var result = new List<AssetViewModel>();
@@ -628,7 +634,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         }
 
         /// <summary>
-        /// Updates dirty flags on package and asset collection according to the actual dirty state of objects.
+        ///   Updates dirty flags on package and asset collection according to the actual dirty state of objects.
         /// </summary>
         internal void PreparePackageForSaving()
         {
@@ -657,8 +663,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private void Rename(string newName)
         {
-            string error;
-            if (!IsValidName(newName, out error))
+            if (!IsValidName(newName, out string error))
             {
                 ServiceProvider.Get<IDialogService>().BlockingMessageBox(string.Format(Tr._p("Message", "This package couldn't be renamed. {0}"), error), MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
@@ -709,16 +714,16 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private bool RefreshPackageReferences()
         {
-            // TODO CSPROJ=XKPKG
+            // TODO: CSPROJ=XKPKG
             return false;
         }
 
         /// <summary>
-        /// Gets asset directory view model for a given path and creates all missing parts.
+        ///   Gets the asset directory view model for a given path and creates all missing parts.
         /// </summary>
         /// <param name="assetDirectory">Asset directory path.</param>
-        /// <param name="canUndoRedoCreation">True if register UndoRedo operation for missing path parts.</param>
-        /// <returns>Given directory view model.</returns>
+        /// <param name="canUndoRedoCreation"><c>true</c> to register an Undo/Redo operation for the missing path parts.</param>
+        /// <returns>Directory view model for the given path.</returns>
         [NotNull]
         public DirectoryBaseViewModel GetOrCreateAssetDirectory(string assetDirectory, bool canUndoRedoCreation)
         {
@@ -763,42 +768,37 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         private static int ComparePackageContent(DirtiableEditableViewModel x, DirtiableEditableViewModel y)
         {
-            var xAssets = x as AssetMountPointViewModel;
-            var yAssets = y as AssetMountPointViewModel;
-            var xProject = x as ProjectViewModel;
-            var yProject = y as ProjectViewModel;
-            var xDependencies = x as DependencyCategoryViewModel;
-            var yDependencies = y as DependencyCategoryViewModel;
-
-            if (xAssets != null)
+            if (x is AssetMountPointViewModel xAssets)
             {
-                if (yAssets != null)
+                if (y is AssetMountPointViewModel yAssets)
                     return string.Compare(xAssets.Name, yAssets.Name, StringComparison.InvariantCultureIgnoreCase);
                 return -1;
             }
-            if (xProject != null)
+            if (x is ProjectViewModel xProject)
             {
-                if (yProject != null)
+                if (y is ProjectViewModel yProject)
                 {
                     return xProject.CompareTo(yProject);
                 }
-                return yAssets != null ? 1 : -1;
+                return y is AssetMountPointViewModel ? 1 : -1;
             }
-            if (xDependencies != null)
+            if (x is DependencyCategoryViewModel)
             {
-                if (yDependencies != null)
-                    throw new InvalidOperationException("A PackageViewModel cannot contain two isntances of DependencyCategoryViewModel");
+                if (y is DependencyCategoryViewModel)
+                    throw new InvalidOperationException("A PackageViewModel cannot contain two isntances of DependencyCategoryViewModel.");
+
                 return 1;
             }
-            throw new InvalidOperationException("Unable to sort the given items for the Content collection of PackageViewModel");
+
+            throw new InvalidOperationException("Unable to sort the given items for the Content collection of PackageViewModel.");
         }
     }
+
     public abstract class PickablePackageViewModel : DispatcherViewModel
     {
         protected PickablePackageViewModel([NotNull] IViewModelServiceProvider serviceProvider)
             : base(serviceProvider)
-        {
-        }
+        { }
 
         public abstract string Name { get; }
 
@@ -819,9 +819,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
         public override DependencyRange DependencyRange =>
             (Package.Package.Container is SolutionProject project)
                 ? new DependencyRange(Package.Name, new PackageVersionRange(Package.Package.Meta.Version, true), DependencyType.Project)
-                {
-                    MSBuildProject = project.FullPath,
-                }
+                    {
+                        MSBuildProject = project.FullPath
+                    }
                 : new DependencyRange(Package.Name, new PackageVersionRange(Package.Package.Meta.Version, true), DependencyType.Package);
     }
 

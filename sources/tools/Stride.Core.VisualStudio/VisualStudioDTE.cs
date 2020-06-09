@@ -7,16 +7,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+
+#if STRIDE_RUNTIME_NETFW
 using EnvDTE;
+#endif
+
 using Process = System.Diagnostics.Process;
 
 namespace Stride.Core.VisualStudio
 {
     /// <summary>
-    /// Helper class to locate Visual Studio instances.
+    ///   Helper class to locate Visual Studio instances.
     /// </summary>
     class VisualStudioDTE
     {
+#if STRIDE_RUNTIME_NETFW
         public static IEnumerable<Process> GetActiveInstances()
         {
             return GetActiveDTEs().Select(x => x.ProcessId).Select(Process.GetProcessById);
@@ -28,34 +33,27 @@ namespace Stride.Core.VisualStudio
         }
 
         /// <summary>
-        /// Gets the instances of active <see cref="EnvDTE.DTE"/>.
+        ///   Gets the instances of active <see cref="DTE"/>s.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A collection of the active <see cref="DTE"/>s.</returns>
         internal static IEnumerable<Instance> GetActiveDTEs()
         {
-            IRunningObjectTable rot;
-            if (GetRunningObjectTable(0, out rot) == 0)
+            if (GetRunningObjectTable(0, out IRunningObjectTable rot) == 0)
             {
-                IEnumMoniker enumMoniker;
-                rot.EnumRunning(out enumMoniker);
+                rot.EnumRunning(out IEnumMoniker enumMoniker);
 
                 var moniker = new IMoniker[1];
                 while (enumMoniker.Next(1, moniker, IntPtr.Zero) == 0)
                 {
-                    IBindCtx bindCtx;
-                    CreateBindCtx(0, out bindCtx);
-                    string displayName;
-                    moniker[0].GetDisplayName(bindCtx, null, out displayName);
+                    CreateBindCtx(0, out IBindCtx bindCtx);
+                    moniker[0].GetDisplayName(bindCtx, null, out string displayName);
 
                     // Check if it's Visual Studio
                     if (displayName.StartsWith("!VisualStudio"))
                     {
-                        object obj;
-                        rot.GetObject(moniker[0], out obj);
+                        rot.GetObject(moniker[0], out object obj);
 
-                        // Cast as DTE
-                        var dte = obj as DTE;
-                        if (dte != null)
+                        if (obj is DTE dte)
                         {
                             yield return new Instance
                             {
@@ -71,7 +69,6 @@ namespace Stride.Core.VisualStudio
         public struct Instance
         {
             public DTE DTE;
-
             public int ProcessId;
         }
 
@@ -80,5 +77,11 @@ namespace Stride.Core.VisualStudio
 
         [DllImport("ole32.dll")]
         private static extern int GetRunningObjectTable(int reserved, out IRunningObjectTable prot);
+#else
+        public static IEnumerable<Process> GetActiveInstances()
+        {
+            return new Process[0];
+        }
+#endif
     }
 }

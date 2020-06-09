@@ -13,7 +13,7 @@
 
   <Import Project="$(MSBuildThisFileDirectory)Stride.PackageVersion.targets"/>
 
-  <!-- Sdk settings -->
+  <!-- SDK settings -->
   <PropertyGroup>
     <!-- If we don't set it, default targets will add PlatformName in some cases -->
     <BaseOutputPath>bin\</BaseOutputPath>
@@ -51,8 +51,11 @@
   <!--
     Settings StrideNETRuntime specific
   -->
-  <PropertyGroup Condition=" '$(StrideNETRuntime)' == 'CoreCLR' ">
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp'))">
+    <StrideNETRuntimeDefines>STRIDE_RUNTIME_CORECLR</StrideNETRuntimeDefines>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <StrideNETRuntimeDefines>STRIDE_RUNTIME_NETFW</StrideNETRuntimeDefines>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -65,7 +68,7 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Condition="'$(StrideProjectType)' == 'CSharp'" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
 
-  <!-- Used by Stride.build to detect if unit tests prefer to run in 32 or 64 bits (note: it's a copy of Stride.UnitTests.targets one because some unit tests import Stride.Core.PreSettings.targets rather than Stride.UnitTests.targets) -->
+  <!-- Used by Stride.build to detect if unit tests prefer to run in 32 or 64 bits (NOTE: It's a copy of Stride.UnitTests.targets one because some unit tests import Stride.Core.PreSettings.targets rather than Stride.UnitTests.targets) -->
   <Target Name="_StrideAfterGetTargetPathWithTargetPlatformMoniker" AfterTargets="GetTargetPathWithTargetPlatformMoniker">
     <ItemGroup>
       <TargetPathWithTargetPlatformMoniker Update="$(TargetPath)">

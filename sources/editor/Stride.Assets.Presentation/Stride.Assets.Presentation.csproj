@@ -5,17 +5,17 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <StridePackAssets>true</StridePackAssets>
     <StrideLocalized>true</StrideLocalized>
-    <TargetFramework>$(TargetFrameworkTool)</TargetFramework>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <TargetFrameworks>$(StrideEditorTargetFrameworks)</TargetFrameworks>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <StridePackAssets>true</StridePackAssets>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization --parameter-key</StrideAssemblyProcessorOptions>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\build\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>x64</PlatformTarget>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <StrideRoslynPadTargetFramework Condition="$(TargetFramework.StartsWith('net4'))">net462</StrideRoslynPadTargetFramework>
+    <StrideRoslynPadTargetFramework Condition="$(TargetFramework.StartsWith('netcoreapp'))">netcoreapp3.1</StrideRoslynPadTargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" Version="16.5.0" ExcludeAssets="runtime" />
@@ -24,13 +24,13 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="3.4.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.4.0" />
     <Reference Include="RoslynPad.Editor.Windows">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net462\RoslynPad.Editor.Windows.dll</HintPath>
+      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\$(StrideRoslynPadTargetFramework)\RoslynPad.Editor.Windows.dll</HintPath>
     </Reference>
     <Reference Include="RoslynPad.Roslyn.Windows">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net462\RoslynPad.Roslyn.Windows.dll</HintPath>
+      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\$(StrideRoslynPadTargetFramework)\RoslynPad.Roslyn.Windows.dll</HintPath>
     </Reference>
     <Reference Include="RoslynPad.Roslyn">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net462\RoslynPad.Roslyn.dll</HintPath>
+      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\$(StrideRoslynPadTargetFramework)\RoslynPad.Roslyn.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Windows.Forms" />

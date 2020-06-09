@@ -15,31 +15,29 @@ using System.Threading.Tasks.Dataflow;
 using Microsoft.Build.Execution;
 using Microsoft.CodeAnalysis;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Editor.Components.Status;
-using Stride.Core.Assets.Editor.Settings;
-using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core;
+using Stride.Core.IO;
+using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
-using Stride.Core.IO;
-using Stride.GameStudio.Logs;
-using Stride.GameStudio.Debugging;
+using Stride.Core.Assets;
+using Stride.Core.Translation;
+using Stride.Core.Assets.Editor.Components.Status;
+using Stride.Core.Assets.Editor.Settings;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
-using Stride.Assets.Presentation.AssemblyReloading;
-using Stride.Core.Assets.Editor.Services;
-using Stride.Core.Annotations;
-using Stride.Core.Translation;
 using Stride.Assets.Presentation.AssetEditors;
-using Stride.GameStudio.Services;
+using Stride.Assets.Presentation.AssemblyReloading;
+using Stride.GameStudio.Logs;
+using Stride.GameStudio.Debugging;
 
 namespace Stride.GameStudio
 {
     public class DebuggingViewModel : DispatcherViewModel, IDisposable
     {
-
         private readonly IDebugService debugService;
         private readonly GameStudioViewModel editor;
         private readonly Dictionary<PackageLoadedAssembly, ModifiedAssembly> modifiedAssemblies;
@@ -92,30 +90,30 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Gets the current session.
+        ///   Gets the current session.
         /// </summary>
         public SessionViewModel Session => editor.Session;
 
         /// <summary>
-        /// Gets the build log.
+        ///   Gets the build log.
         /// </summary>
         [NotNull]
         public BuildLogViewModel BuildLog { get; }
 
         /// <summary>
-        /// Gets the live-scripting log.
+        ///   Gets the live-scripting log.
         /// </summary>
         [NotNull]
         public LoggerViewModel LiveScriptingLog { get; }
 
         /// <summary>
-        /// Gets the title of the output pane, including an asterisk if new logs have arrived.
+        ///   Gets the title of the output pane, including an asterisk if new logs have arrived.
         /// </summary>
         // We need to manage dirtiness of the output title directly in the string because the rad pane requires a single string as title
         public string OutputTitle { get => outputTitle; private set => SetValue(ref outputTitle, value); }
 
         /// <summary>
-        /// Gets whether there is a build currently in progress.
+        ///   Gets whether there is a build currently in progress.
         /// </summary>
         public bool BuildInProgress { get => buildInProgress; private set => SetValue(ref buildInProgress, value, UpdateCommands); }
 
@@ -247,7 +245,7 @@ namespace Stride.GameStudio
                 {
                     assembliesToReload.Add(modifiedAssembly.Value);
                 }
-                else
+                else if (modifiedAssembly.Key.ProjectReference != null)
                 {
                     // If source code has changed, rebuild. If the build is successfull, reload the assembly.
                     // Otherwise add the assembly back to the list of modified ones.

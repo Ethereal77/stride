@@ -2,13 +2,13 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Stride.Core.Serialization.Contents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Stride.Core.Storage;
+using Stride.Core.Serialization.Contents;
 
 namespace Stride.Core.BuildEngine
 {
@@ -23,10 +23,13 @@ namespace Stride.Core.BuildEngine
         /// <inheritdoc />
         public override string Title => ToString();
 
+        public IReadOnlyDictionary<ObjectUrl, InputObject> InputObjects => inputObjects;
+
         public IReadOnlyDictionary<ObjectUrl, OutputObject> OutputObjects => outputObjects;
 
         /// <inheritdoc/>
-        public override IEnumerable<KeyValuePair<ObjectUrl, ObjectId>> OutputObjectIds => outputObjects.Select(x => new KeyValuePair<ObjectUrl, ObjectId>(x.Key, x.Value.ObjectId));
+        public override IEnumerable<KeyValuePair<ObjectUrl, ObjectId>> OutputObjectIds =>
+            outputObjects.Select(x => new KeyValuePair<ObjectUrl, ObjectId>(x.Key, x.Value.ObjectId));
 
         public IEnumerable<BuildStep> Steps => steps;
 
@@ -35,12 +38,11 @@ namespace Stride.Core.BuildEngine
 
         public override async Task<ResultStatus> Execute(IExecuteContext executeContext, BuilderContext builderContext)
         {
-            var buildStepsToWait = new List<BuildStep>();
-
             // Process prerequisites build steps first
             if (PrerequisiteSteps.Count > 0)
                 await CompleteCommands(executeContext, PrerequisiteSteps.ToList());
 
+            var buildStepsToWait = new List<BuildStep>();
             foreach (var child in Steps)
             {
                 executeContext.ScheduleBuildStep(child);
@@ -55,7 +57,7 @@ namespace Stride.Core.BuildEngine
         }
 
         /// <summary>
-        /// Determine the result status of an execution of enumeration of build steps.
+        ///   Determine the result status of the execution of a collection of build steps.
         /// </summary>
         /// <returns>The result status of the execution.</returns>
         protected ResultStatus ComputeResultStatusFromExecutedSteps()
@@ -63,11 +65,11 @@ namespace Stride.Core.BuildEngine
             if (executedSteps.Count == 0)
                 return ResultStatus.Successful;
 
-            // determine the result status of the list based on the children executed steps
-            // -> One or more children canceled => canceled
-            // -> One or more children failed (Prerequisite or Command) and none canceled => failed
-            // -> One or more children succeeded and none canceled nor failed => succeeded
-            // -> All the children were successful without triggering => not triggered was successful
+            // Determine the result status of the list based on the children executed steps
+            // - One or more children canceled --> Canceled
+            // - One or more children failed (Prerequisite or Command) and none canceled --> Failed
+            // - One or more children succeeded and none canceled nor failed --> Succeeded
+            // - All the children were successful without triggering --> Not triggered was successful
             var result = executedSteps[0].Status;
             foreach (var executedStep in executedSteps)
             {
@@ -87,11 +89,11 @@ namespace Stride.Core.BuildEngine
         }
 
         /// <summary>
-        /// Wait for given build steps to finish, then processes their inputs and outputs.
+        ///   Wait for the given build steps to finish, then processes their inputs and outputs.
         /// </summary>
         /// <param name="executeContext">The execute context.</param>
         /// <param name="buildStepsToWait">The build steps to wait.</param>
-        /// <returns></returns>
+        /// <returns><see cref="Task"/> wrapping the operation.</returns>
         protected async Task CompleteCommands(IExecuteContext executeContext, List<BuildStep> buildStepsToWait)
         {
             await WaitCommands(buildStepsToWait);
@@ -104,7 +106,7 @@ namespace Stride.Core.BuildEngine
                 {
                     // Merge results from sub list
 
-                    // Step1: Check inputs/outputs conflicts
+                    // Step 1: Check inputs/outputs conflicts
                     foreach (var inputObject in enumerableBuildStep.inputObjects)
                     {
                         CheckInputObject(executeContext, inputObject.Key, inputObject.Value.Command);
@@ -115,7 +117,7 @@ namespace Stride.Core.BuildEngine
                         CheckOutputObject(executeContext, outputObject.Key, outputObject.Value.Command);
                     }
 
-                    // Step2: Add inputs/outputs
+                    // Step 2: Add inputs/outputs
                     foreach (var inputObject in enumerableBuildStep.inputObjects)
                     {
                         AddInputObject(inputObject.Key, inputObject.Value.Command);
@@ -133,8 +135,7 @@ namespace Stride.Core.BuildEngine
                     }
                 }
 
-                var commandBuildStep = buildStep as CommandBuildStep;
-                if (commandBuildStep != null)
+                if (buildStep is CommandBuildStep commandBuildStep)
                 {
                     // Merge results from spawned step
                     ProcessCommandBuildStepResult(executeContext, commandBuildStep);
@@ -153,7 +154,7 @@ namespace Stride.Core.BuildEngine
         }
 
         /// <summary>
-        /// Processes the results from a <see cref="CommandBuildStep"/>.
+        ///   Processes the results from a <see cref="CommandBuildStep"/>.
         /// </summary>
         /// <param name="executeContext">The execute context.</param>
         /// <param name="buildStep">The build step.</param>
@@ -166,7 +167,7 @@ namespace Stride.Core.BuildEngine
 
             if (buildStep.Result != null)
             {
-                // Step1: Check inputs/outputs conflicts
+                // Step 1: Check inputs/outputs conflicts
                 foreach (var resultInputObject in buildStep.Result.InputDependencyVersions)
                 {
                     CheckInputObject(executeContext, resultInputObject.Key, buildStep.Command);
@@ -177,7 +178,7 @@ namespace Stride.Core.BuildEngine
                     CheckOutputObject(executeContext, resultOutputObject.Key, buildStep.Command);
                 }
 
-                // Step2: Add inputs/outputs
+                // Step 2: Add inputs/outputs
                 foreach (var resultInputObject in buildStep.Result.InputDependencyVersions)
                 {
                     AddInputObject(resultInputObject.Key, buildStep.Command);
@@ -210,20 +211,19 @@ namespace Stride.Core.BuildEngine
         }
 
         /// <summary>
-        /// Adds the input object. Will try to detect input/output conflicts.
+        ///   Adds the input object. Will try to detect input/output conflicts.
         /// </summary>
         /// <param name="executeContext">The execute context.</param>
         /// <param name="inputObjectUrl">The input object URL.</param>
         /// <param name="command">The command.</param>
-        /// <exception cref="System.InvalidOperationException"></exception>
+        /// <exception cref="InvalidOperationException">A command is writing an object while another command is reading it.</exception>
         private void CheckInputObject(IExecuteContext executeContext, ObjectUrl inputObjectUrl, Command command)
         {
-            OutputObject outputObject;
-            if (outputObjects.TryGetValue(inputObjectUrl, out outputObject)
-                && outputObject.Command != command
-                && outputObject.Counter == mergeCounter)
+            if (outputObjects.TryGetValue(inputObjectUrl, out OutputObject outputObject) &&
+                outputObject.Command != command &&
+                outputObject.Counter == mergeCounter)
             {
-                var error = $"Command {outputObject.Command} is writing {inputObjectUrl} while command {command} is reading it";
+                var error = $"Command {outputObject.Command} is writing {inputObjectUrl} while command {command} is reading it.";
                 executeContext.Logger.Error(error);
                 throw new InvalidOperationException(error);
             }
@@ -231,11 +231,10 @@ namespace Stride.Core.BuildEngine
 
         private void AddInputObject(ObjectUrl inputObjectUrl, Command command)
         {
-            OutputObject outputObject;
-            if (outputObjects.TryGetValue(inputObjectUrl, out outputObject)
-                && mergeCounter > outputObject.Counter)
+            if (outputObjects.TryGetValue(inputObjectUrl, out OutputObject outputObject) &&
+                mergeCounter > outputObject.Counter)
             {
-                // Object was outputed by ourself, so reading it as input should be ignored.
+                // Object was output by ourselves, so reading it as input should be ignored
                 return;
             }
 
@@ -243,20 +242,19 @@ namespace Stride.Core.BuildEngine
         }
 
         /// <summary>
-        /// Adds the output object. Will try to detect input/output conflicts, and output with different <see cref="ObjectId" /> conflicts.
+        ///   Adds the output object. Will try to detect input/output conflicts, and output with different <see cref="ObjectId" /> conflicts.
         /// </summary>
         /// <param name="executeContext">The execute context.</param>
         /// <param name="outputObjectUrl">The output object URL.</param>
         /// <param name="command">The command that produced the output object.</param>
-        /// <exception cref="System.InvalidOperationException">Two CommandBuildStep with same inputs did output different results.</exception>
+        /// <exception cref="InvalidOperationException">Two <see cref="CommandBuildStep"/> with the same inputs did output different results.</exception>
         private void CheckOutputObject(IExecuteContext executeContext, ObjectUrl outputObjectUrl, Command command)
         {
-            InputObject inputObject;
-            if (inputObjects.TryGetValue(outputObjectUrl, out inputObject)
-                && inputObject.Command != command
-                && inputObject.Counter == mergeCounter)
+            if (inputObjects.TryGetValue(outputObjectUrl, out InputObject inputObject) &&
+                inputObject.Command != command &&
+                inputObject.Counter == mergeCounter)
             {
-                var error = $"Command {command} is writing {outputObjectUrl} while command {inputObject.Command} is reading it";
+                var error = $"Command {command} is writing {outputObjectUrl} while command {inputObject.Command} is reading it.";
                 executeContext.Logger.Error(error);
                 throw new InvalidOperationException(error);
             }
@@ -264,9 +262,7 @@ namespace Stride.Core.BuildEngine
 
         private OutputObject AddOutputObject(IExecuteContext executeContext, ObjectUrl outputObjectUrl, ObjectId outputObjectId, Command command)
         {
-            OutputObject outputObject;
-
-            if (!outputObjects.TryGetValue(outputObjectUrl, out outputObject))
+            if (!outputObjects.TryGetValue(outputObjectUrl, out OutputObject outputObject))
             {
                 // New item?
                 outputObject = new OutputObject(outputObjectUrl, outputObjectId);
@@ -275,9 +271,10 @@ namespace Stride.Core.BuildEngine
             else
             {
                 // ObjectId should be similar (if no Wait happened), otherwise two tasks spawned with same parameters did output different results
-                if (outputObject.ObjectId != outputObjectId && outputObject.Counter == mergeCounter)
+                if (outputObject.ObjectId != outputObjectId &&
+                    outputObject.Counter == mergeCounter)
                 {
-                    var error = $"Commands {command} and {outputObject.Command} are both writing {outputObjectUrl} at the same time";
+                    var error = $"Commands {command} and {outputObject.Command} are both writing {outputObjectUrl} at the same time.";
                     executeContext.Logger.Error(error);
                     throw new InvalidOperationException(error);
                 }
@@ -293,12 +290,12 @@ namespace Stride.Core.BuildEngine
             return outputObject;
         }
 
-        protected struct InputObject
+        public struct InputObject
         {
             public Command Command;
             public int Counter;
         }
-        
+
         /// <inheritdoc/>
         public int Count => steps.Count;
 

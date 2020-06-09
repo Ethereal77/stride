@@ -5,40 +5,37 @@
 namespace Stride.Core
 {
     /// <summary>
-    /// <para>Specify the way to store a property or field of some class or structure.</para>
+    ///   Specify the way to store a property or field of some class or structure.
     /// </summary>
     public enum DataMemberMode
     {
         /// <summary>
-        /// Use the default mode depending on the type of the field/property.
+        ///   Use the default mode depending on the type of the field / property.
         /// </summary>
         Default,
 
         /// <summary>
-        /// When restored, new object is created by using the parameters in
-        /// the YAML data and assigned to the property / field. When the
-        /// property / filed is writeable, this is the default.
+        ///   When restored, a new object is created by using the parameters in the YAML data and assigned to the field / property.
+        ///   When the field / property is writeable, this is the default.
         /// </summary>
         Assign,
 
         /// <summary>
-        ///  Only valid for a property / field that has a class or struct type.
-        ///  When restored, instead of recreating the whole class or struct,
-        ///  the members are independently restored. When the property / field
-        ///  is not writeable this is the default.
+        ///  Only valid for a field / property that has a class or struct type.
+        ///  When restored, instead of recreating the whole class or struct, the members are independently restored. When the
+        ///  field / property is not writeable this is the default.
         /// </summary>
         Content,
 
         /// <summary>
-        ///  Only valid for a property / field that has an  array type of a 
-        ///  some value type. The content of the array is stored in a binary
-        ///  format encoded in base64 style.
+        ///  Only valid for a a field / property that has an array type of some value type. The content of the array is stored in
+        ///  a binary format encoded in base-64.
         /// </summary>
         Binary,
 
         /// <summary>
-        /// The property / field will not be stored.
+        /// The field / property will not be stored.
         /// </summary>
-        Never,
+        Never
     }
 }

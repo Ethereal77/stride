@@ -9,18 +9,9 @@ namespace Stride.Core.Serialization
         /// <inheritdoc/>
         public override void PreSerialize(ref T obj, ArchiveMode mode, SerializationStream stream)
         {
-            if (mode == ArchiveMode.Deserialize && obj == null)
+            if (mode == ArchiveMode.Deserialize && obj is null)
             {
-                try
-                {
-                    obj = new T();
-                }
-                catch (System.Exception)
-                {
-                    //obj = (T)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(T));
-                    //return;
-                    throw;
-                }
+                obj = new T();
             }
         }
     }

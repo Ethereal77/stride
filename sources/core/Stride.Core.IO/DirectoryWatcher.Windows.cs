@@ -19,7 +19,7 @@ namespace Stride.Core.IO
 
         private void InitializeInternal()
         {
-            watcherCheckThread = new Thread(SafeAction.Wrap(RunCheckWatcher)) { IsBackground = true, Name = "RunCheckWatcher thread" };
+            watcherCheckThread = new Thread(SafeAction.Wrap(RunCheckWatcher)) { IsBackground = true, Name = "Directory Watcher thread" };
             watcherCheckThread.Start();
         }
 
@@ -50,10 +50,8 @@ namespace Stride.Core.IO
         private void TrackInternal(string path)
         {
             var info = GetDirectoryInfoFromPath(path);
-            if (info == null)
-            {
+            if (info is null)
                 return;
-            }
 
             lock (watchers)
             {
@@ -64,18 +62,13 @@ namespace Stride.Core.IO
         private void UnTrackInternal(string path)
         {
             var info = GetDirectoryInfoFromPath(path);
-            if (info == null)
-            {
+            if (info is null)
                 return;
-            }
 
             lock (watchers)
             {
-                DirectoryWatcherItem watcher;
-                if (!watchers.TryGetValue(info.FullName, out watcher))
-                {
+                if (!watchers.TryGetValue(info.FullName, out DirectoryWatcherItem watcher))
                     return;
-                }
 
                 UnTrack(watcher, true);
             }
@@ -87,7 +80,7 @@ namespace Stride.Core.IO
             {
                 while (!exitThread)
                 {
-                    // TODO should use a wait on an event in order to cancel it more quickly instead of a blocking Thread.Sleep
+                    // TODO: Should use a wait on an event in order to cancel it more quickly instead of a blocking Thread.Sleep
                     Thread.Sleep(SleepBetweenWatcherCheck);
 
                     lock (watchers)
@@ -95,10 +88,12 @@ namespace Stride.Core.IO
                         var list = ListTrackedDirectories().ToList();
                         foreach (var watcherKeyPath in list)
                         {
-                            if (!watcherKeyPath.Value.IsPathExist())
+                            if (!watcherKeyPath.Value.PathExists)
                             {
-                                UnTrack(watcherKeyPath.Value, true);
-                                OnModified(this, new FileEvent(FileEventChangeType.Deleted, Path.GetFileName(watcherKeyPath.Value.Path), watcherKeyPath.Value.Path));
+                                UnTrack(watcherKeyPath.Value, removeWatcherFromGlobals: true);
+                                OnModified(
+                                    sender: this,
+                                    new FileEvent(FileEventChangeType.Deleted, Path.GetFileName(watcherKeyPath.Value.Path), watcherKeyPath.Value.Path));
                             }
                         }
 
@@ -112,8 +107,7 @@ namespace Stride.Core.IO
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(string.Format("Unexpected end of thread {0}", ex));
-                //Console.WriteLine("Unexpected exception {0}", ex);
+                Trace.WriteLine($"Unexpected end of DirectoryWatcher thread. {ex}");
             }
         }
 
@@ -124,35 +118,28 @@ namespace Stride.Core.IO
 
         private DirectoryInfo GetDirectoryInfoFromPath(string path)
         {
-            if (path == null) throw new ArgumentNullException("path");
+            if (path is null)
+                throw new ArgumentNullException(nameof(path));
 
             path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), path));
 
-            // 1) Extract directory information from path
-            DirectoryInfo info;
+            // Extract directory information from path
             if (File.Exists(path))
             {
                 path = Path.GetDirectoryName(path);
             }
 
             if (path != null && Directory.Exists(path))
-            {
-                info = new DirectoryInfo(path.ToLowerInvariant());
-            }
+                return new DirectoryInfo(path.ToLowerInvariant());
             else
-            {
                 return null;
-            }
-
-            return info;
         }
 
         private IEnumerable<DirectoryWatcherItem> ListTracked(IEnumerable<DirectoryInfo> directories)
         {
             foreach (var directoryInfo in directories)
             {
-                DirectoryWatcherItem watcher;
-                if (watchers.TryGetValue(directoryInfo.FullName, out watcher))
+                if (watchers.TryGetValue(directoryInfo.FullName, out DirectoryWatcherItem watcher))
                 {
                     yield return watcher;
                 }
@@ -171,14 +158,14 @@ namespace Stride.Core.IO
 
         private DirectoryWatcherItem Track(DirectoryInfo info, bool watcherNode)
         {
-            DirectoryWatcherItem watcher;
-            if (watchers.TryGetValue(info.FullName, out watcher))
+            if (watchers.TryGetValue(info.FullName, out DirectoryWatcherItem watcher))
             {
-                if (watcher.Watcher == null && watcherNode)
+                if (watcher.Watcher is null && watcherNode)
                 {
                     watcher.Watcher = CreateFileSystemWatcher(watcher.Path);
                 }
                 watcher.TrackCount++;
+
                 return watcher;
             }
 
@@ -301,8 +288,7 @@ namespace Stride.Core.IO
         {
             lock (watchers)
             {
-                DirectoryWatcherItem watcher;
-                if (e.ChangeType == WatcherChangeTypes.Deleted && watchers.TryGetValue(e.FullPath, out watcher))
+                if (e.ChangeType == WatcherChangeTypes.Deleted && watchers.TryGetValue(e.FullPath, out DirectoryWatcherItem watcher))
                 {
                     UnTrack(watcher, true);
                 }
@@ -326,23 +312,19 @@ namespace Stride.Core.IO
         [DebuggerDisplay("Active: {IsActive}, Path: {Path}")]
         private sealed class DirectoryWatcherItem
         {
+            public DirectoryWatcherItem Parent;
+            public string Path { get; private set; }
+            public bool PathExists => Directory.Exists(Path);
+            public int TrackCount { get; set; }
+            public FileSystemWatcher Watcher { get; set; }
+            private bool IsActive => Watcher != null;
+
+
             public DirectoryWatcherItem(DirectoryInfo path)
             {
                 Path = path.FullName.ToLowerInvariant();
             }
 
-            public DirectoryWatcherItem Parent;
-
-            public string Path { get; private set; }
-
-            public bool IsPathExist()
-            {
-                return Directory.Exists(Path);
-            }
-
-            public int TrackCount { get; set; }
-
-            public FileSystemWatcher Watcher { get; set; }
 
             public IEnumerable<DirectoryInfo> ListChildrenDirectories()
             {
@@ -358,15 +340,8 @@ namespace Stride.Core.IO
                 {
                     // An exception can occur if the file is being removed
                 }
-                return Enumerable.Empty<DirectoryInfo>();
-            }
 
-            private bool IsActive
-            {
-                get
-                {
-                    return Watcher != null;
-                }
+                return Enumerable.Empty<DirectoryInfo>();
             }
         }
     }

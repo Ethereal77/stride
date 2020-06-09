@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
@@ -14,7 +14,7 @@ using Stride.Core.Yaml.Serialization.Serializers;
 namespace Stride.Core.Yaml.Serialization
 {
     /// <summary>
-    /// Serializes and deserializes objects into and from YAML documents.
+    ///   Represents an object that can serialize and deserialize other objects into and from YAML documents.
     /// </summary>
     public sealed class Serializer
     {
@@ -28,84 +28,87 @@ namespace Stride.Core.Yaml.Serialization
             new DictionarySerializer(),
             new CollectionSerializer(),
             new ArraySerializer(),
-            new ObjectSerializer(),
+            new ObjectSerializer()
         };
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Serializer"/> class.
+        ///   Gets the settings for configuring this serializer.
         /// </summary>
-        public Serializer() : this(null)
-        {
-        }
+        /// <value>The settings for this serializer.</value>
+        public SerializerSettings Settings { get; }
+
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Serializer"/> class.
+        ///   Initializes a new instance of the <see cref="Serializer"/> class.
         /// </summary>
-        /// <param name="settings">The settings.</param>
+        public Serializer() : this(null) { }
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="Serializer"/> class.
+        /// </summary>
+        /// <param name="settings">The settings for the serializer.</param>
         public Serializer(SerializerSettings settings)
         {
             Settings = settings ?? new SerializerSettings();
             TypeDescriptorFactory = CreateTypeDescriptorFactory();
-            RoutingSerializer routingSerializer;
+
             RegisterSerializerFactories();
-            ObjectSerializer = CreateProcessor(out routingSerializer);
+
+            ObjectSerializer = CreateProcessor(out RoutingSerializer routingSerializer);
             RoutingSerializer = routingSerializer;
         }
 
-        /// <summary>
-        /// Gets the settings.
-        /// </summary>
-        /// <value>The settings.</value>
-        public SerializerSettings Settings { get; }
 
         /// <summary>
-        /// Serializes the specified object to a string.
+        ///   Serializes the specified object to a <see cref="string"/>.
         /// </summary>
-        /// <param name="graph">The graph.</param>
-        /// <returns>A YAML string of the object.</returns>
-        public string Serialize(object graph)
+        /// <param name="obj">The object to serialize.</param>
+        /// <returns>A YAML <see cref="string"/> of the whole object graph.</returns>
+        public string Serialize(object obj)
         {
             var stringWriter = new StringWriter();
-            Serialize(stringWriter, graph);
+            Serialize(stringWriter, obj);
             return stringWriter.ToString();
         }
 
         /// <summary>
-        /// Serializes the specified object to a string.
+        ///   Serializes the specified object to a <see cref="string"/>.
         /// </summary>
-        /// <param name="graph">The graph.</param>
+        /// <param name="obj">The object to serialize.</param>
         /// <param name="expectedType">The expected type.</param>
-        /// <param name="contextSettings">The context settings.</param>
-        /// <returns>A YAML string of the object.</returns>
-        public string Serialize(object graph, Type expectedType, SerializerContextSettings contextSettings = null)
+        /// <param name="contextSettings">The context settings. Specify <c>null</c> to use the defailt settings.</param>
+        /// <returns>A YAML <see cref="string"/> of the whole object graph.</returns>
+        public string Serialize(object obj, Type expectedType, SerializerContextSettings contextSettings = null)
         {
             var stringWriter = new StringWriter();
-            Serialize(stringWriter, graph, expectedType, contextSettings);
+            Serialize(stringWriter, obj, expectedType, contextSettings);
             return stringWriter.ToString();
         }
 
         /// <summary>
-        /// Serializes the specified object.
+        ///   Serializes the specified object.
         /// </summary>
-        /// <param name="stream">The stream.</param>
-        /// <param name="graph">The object to serialize.</param>
-        public void Serialize(Stream stream, object graph)
+        /// <param name="stream">The stream to which to serialize the object.</param>
+        /// <param name="obj">The object to serialize.</param>
+        public void Serialize(Stream stream, object obj)
         {
-            Serialize(stream, graph, null);
+            Serialize(stream, obj, expectedType: null);
         }
 
         /// <summary>
-        /// Serializes the specified object.
+        ///   Serializes the specified object.
         /// </summary>
-        /// <param name="stream">The stream.</param>
-        /// <param name="graph">The object to serialize.</param>
-        /// <param name="contextSettings">The context settings.</param>
-        public void Serialize(Stream stream, object graph, Type expectedType, SerializerContextSettings contextSettings = null)
+        /// <param name="stream">The stream to which to serialize the object.</param>
+        /// <param name="expectedType">The expected type.</param>
+        /// <param name="obj">The object to serialize.</param>
+        /// <param name="contextSettings">The context settings. Specify <c>null</c> to use the defailt settings.</param>
+        public void Serialize(Stream stream, object obj, Type expectedType, SerializerContextSettings contextSettings = null)
         {
             var writer = new StreamWriter(stream);
+
             try
             {
-                Serialize(writer, graph, expectedType, contextSettings);
+                Serialize(writer, obj, expectedType, contextSettings);
             }
             finally
             {
@@ -113,62 +116,65 @@ namespace Stride.Core.Yaml.Serialization
                 {
                     writer.Flush();
                 }
-                catch (Exception)
-                {
-                }
+                catch { }
             }
         }
 
         /// <summary>
-        /// Serializes the specified object.
+        ///   Serializes the specified object.
         /// </summary>
         /// <param name="writer">The <see cref="TextWriter" /> where to serialize the object.</param>
-        /// <param name="graph">The object to serialize.</param>
-        public void Serialize(TextWriter writer, object graph)
+        /// <param name="obj">The object to serialize.</param>
+        public void Serialize(TextWriter writer, object obj)
         {
-            Serialize(new Emitter(writer, Settings.PreferredIndent), graph);
+            Serialize(new Emitter(writer, Settings.PreferredIndent), obj);
         }
 
         /// <summary>
-        /// Serializes the specified object.
+        ///   Serializes the specified object.
         /// </summary>
         /// <param name="writer">The <see cref="TextWriter" /> where to serialize the object.</param>
-        /// <param name="graph">The object to serialize.</param>
+        /// <param name="obj">The object to serialize.</param>
         /// <param name="type">The static type of the object to serialize.</param>
         /// <param name="contextSettings">The context settings.</param>
-        public void Serialize(TextWriter writer, object graph, Type type, SerializerContextSettings contextSettings = null)
+        public void Serialize(TextWriter writer, object obj, Type type, SerializerContextSettings contextSettings = null)
         {
-            Serialize(new Emitter(writer, Settings.PreferredIndent), graph, type, contextSettings);
+            Serialize(new Emitter(writer, Settings.PreferredIndent), obj, type, contextSettings);
         }
 
         /// <summary>
-        /// Serializes the specified object.
+        ///   Serializes the specified object.
         /// </summary>
         /// <param name="emitter">The <see cref="IEmitter" /> where to serialize the object.</param>
-        /// <param name="graph">The object to serialize.</param>
-        public void Serialize(IEmitter emitter, object graph)
+        /// <param name="obj">The object to serialize.</param>
+        public void Serialize(IEmitter emitter, object obj)
         {
-            Serialize(emitter, graph, graph == null ? typeof(object) : null);
+            Serialize(emitter, obj, obj is null ? typeof(object) : null);
         }
 
         /// <summary>
-        /// Serializes the specified object.
+        ///   Serializes the specified object.
         /// </summary>
         /// <param name="emitter">The <see cref="IEmitter" /> where to serialize the object.</param>
-        /// <param name="graph">The object to serialize.</param>
+        /// <param name="obj">The object to serialize.</param>
         /// <param name="type">The static type of the object to serialize.</param>
         /// <param name="contextSettings">The context settings.</param>
-        public void Serialize(IEmitter emitter, object graph, Type type, SerializerContextSettings contextSettings = null)
+        /// <exception cref="ArgumentNullException"><paramref name="emitter"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="type"/> is a <c>null</c> reference and does not specify the type for <paramref name="obj"/>
+        ///   which is also a <c>null</c> reference.
+        /// </exception>
+        public void Serialize(IEmitter emitter, object obj, Type type, SerializerContextSettings contextSettings = null)
         {
-            if (emitter == null) throw new ArgumentNullException(nameof(emitter));
+            if (emitter is null)
+                throw new ArgumentNullException(nameof(emitter));
 
-            if (graph == null && type == null) throw new ArgumentNullException(nameof(type));
+            if (obj is null && type is null)
+                throw new ArgumentNullException(nameof(type));
 
             // Configure the emitter
-            // TODO the current emitter is not enough configurable to format its output
-            // This should be improved
-            var defaultEmitter = emitter as Emitter;
-            if (defaultEmitter != null)
+            // TODO: The current emitter is not enough configurable to format its output. This should be improved
+            if (emitter is Emitter defaultEmitter)
             {
                 defaultEmitter.ForceIndentLess = Settings.IndentLess;
             }
@@ -178,124 +184,131 @@ namespace Stride.Core.Yaml.Serialization
             // Serialize the document
             context.Writer.StreamStart();
             context.Writer.DocumentStart();
-            var objectContext = new ObjectContext(context, graph, context.FindTypeDescriptor(type)) { Style = DataStyle.Any };
+            var objectContext = new ObjectContext(context, obj, context.FindTypeDescriptor(type)) { Style = DataStyle.Any };
             context.Serializer.ObjectSerializer.WriteYaml(ref objectContext);
             context.Writer.DocumentEnd();
             context.Writer.StreamEnd();
         }
 
+
         /// <summary>
-        /// Deserializes an object from the specified <see cref="Stream"/>.
+        ///   Deserializes an object from the specified <see cref="Stream"/>.
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <returns>A deserialized object.</returns>
         public object Deserialize(Stream stream)
         {
-            return Deserialize(stream, null);
+            return Deserialize(stream, expectedType: null);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="TextReader"/>.
+        ///   Deserializes an object from the specified <see cref="TextReader"/>.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <returns>A deserialized object.</returns>
         public object Deserialize(TextReader reader)
         {
-            return Deserialize(reader, null);
+            return Deserialize(reader, expectedType: null);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="Stream" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="Stream" /> with an expected specific type.
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <param name="expectedType">The expected type.</param>
         /// <param name="contextSettings">The context settings.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is a <c>null</c> reference.</exception>
         public object Deserialize(Stream stream, Type expectedType, SerializerContextSettings contextSettings = null)
         {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
 
-            return Deserialize(new StreamReader(stream), expectedType, null, contextSettings);
+            return Deserialize(new StreamReader(stream), expectedType, existingObject: null, contextSettings);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="Stream" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="Stream" /> with an expected specific type.
         /// </summary>
         /// <param name="stream">The stream.</param>
         /// <param name="expectedType">The expected type.</param>
         /// <param name="contextSettings">The context settings.</param>
         /// <param name="context">The context used to deserialize this object.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is a <c>null</c> reference.</exception>
         public object Deserialize(Stream stream, Type expectedType, SerializerContextSettings contextSettings, out SerializerContext context)
         {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
 
-            return Deserialize(new StreamReader(stream), expectedType, null, contextSettings, out context);
+            return Deserialize(new StreamReader(stream), expectedType, existingObject: null, contextSettings, out context);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="Stream" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="Stream" /> with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
         /// <param name="stream">The stream.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="stream"/> is a <c>null</c> reference.</exception>
         public T Deserialize<T>(Stream stream)
         {
             return (T) Deserialize(stream, typeof(T));
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="TextReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="TextReader" /> with an expected specific type.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="expectedType">The expected type.</param>
-        /// <param name="existingObject">The object to deserialize into. If null (the default) then a new object will be created</param>
+        /// <param name="existingObject">The object to deserialize into. If <c>null</c> is specified (the default), a new object will be created.</param>
         /// <param name="contextSettings">The context settings.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public object Deserialize(TextReader reader, Type expectedType, object existingObject = null, SerializerContextSettings contextSettings = null)
         {
-            if (reader == null) throw new ArgumentNullException(nameof(reader));
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
             return Deserialize(new EventReader(new Parser(reader)), expectedType, existingObject, contextSettings);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="TextReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="TextReader" /> with an expected specific type.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="expectedType">The expected type.</param>
-        /// <param name="existingObject">The object to deserialize into. If null (the default) then a new object will be created</param>
+        /// <param name="existingObject">The object to deserialize into. If <c>null</c> is specified (the default), a new object will be created.</param>
         /// <param name="contextSettings">The context settings.</param>
         /// <param name="context">The context used to deserialize this object.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public object Deserialize(TextReader reader, Type expectedType, object existingObject, SerializerContextSettings contextSettings, out SerializerContext context)
         {
-            if (reader == null) throw new ArgumentNullException(nameof(reader));
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
             return Deserialize(new EventReader(new Parser(reader)), expectedType, existingObject, contextSettings, out context);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="TextReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="TextReader" /> with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
         /// <param name="reader">The reader.</param>
-        /// <param name="existingObject">The object to deserialize into. If null (the default) then a new object will be created</param>
+        /// <param name="existingObject">The object to deserialize into. If <c>null</c> is specified (the default), a new object will be created.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public T Deserialize<T>(TextReader reader, object existingObject = null)
         {
             return (T) Deserialize(reader, typeof(T), existingObject);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified string.
+        ///   Deserializes an object from the specified <see cref="string"/>.
         /// </summary>
-        /// <param name="fromText">The text.</param>
-        /// <param name="existingObject">The object to deserialize into. If null (the default) then a new object will be created</param>
+        /// <param name="fromText">Text string to deserialize into an object.</param>
+        /// <param name="existingObject">The object to deserialize into. If <c>null</c> is specified (the default), a new object will be created.</param>
         /// <returns>A deserialized object.</returns>
         public object Deserialize(string fromText, object existingObject = null)
         {
@@ -303,67 +316,70 @@ namespace Stride.Core.Yaml.Serialization
         }
 
         /// <summary>
-        /// Deserializes an object from the specified string. with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="string"/> with an expected specific type.
         /// </summary>
-        /// <param name="fromText">From text.</param>
+        /// <param name="fromText">Text string to deserialize into an object.</param>
         /// <param name="expectedType">The expected type.</param>
-        /// <param name="existingObject">The object to deserialize into. If null (the default) then a new object will be created</param>
+        /// <param name="existingObject">The object to deserialize into. If <c>null</c> is specified (the default), a new object will be created.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="fromText"/> is a <c>null</c> reference.</exception>
         public object Deserialize(string fromText, Type expectedType, object existingObject = null)
         {
-            if (fromText == null) throw new ArgumentNullException(nameof(fromText));
+            if (fromText is null)
+                throw new ArgumentNullException(nameof(fromText));
+
             return Deserialize(new StringReader(fromText), expectedType, existingObject);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified string. with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="string"/> with an expected specific type.
         /// </summary>
-        /// <param name="fromText">From text.</param>
+        /// <param name="fromText">Text string to deserialize into an object.</param>
         /// <param name="expectedType">The expected type.</param>
-        /// <param name="existingObject">The object to deserialize into. If null (the default) then a new object will be created</param>
+        /// <param name="existingObject">The object to deserialize into. If <c>null</c> is specified (the default), a new object will be created.</param>
         /// <param name="context">The context used to deserialize this object.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="fromText"/> is a <c>null</c> reference.</exception>
         public object Deserialize(string fromText, Type expectedType, object existingObject, out SerializerContext context)
         {
-            if (fromText == null) throw new ArgumentNullException(nameof(fromText));
+            if (fromText is null)
+                throw new ArgumentNullException(nameof(fromText));
+
             return Deserialize(new StringReader(fromText), expectedType, existingObject, null, out context);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified string. with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="string"/> with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
-        /// <param name="fromText">From text.</param>
+        /// <param name="fromText">Text string to deserialize into an object.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
         public T Deserialize<T>(string fromText)
         {
             return (T) Deserialize(fromText, typeof(T));
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
         /// <param name="reader">The reader.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public T Deserialize<T>(EventReader reader)
         {
             return (T) Deserialize(reader, typeof(T));
         }
 
         /// <summary>
-        /// Deserializes an object from the specified string. with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="string"/>. with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
-        /// <param name="fromText">From text.</param>
+        /// <param name="fromText">Text string to deserialize into an object.</param>
         /// <param name="existingObject">The object to deserialize into.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
-        /// 
+        /// <exception cref="ArgumentNullException"><paramref name="fromText"/> is a <c>null</c> reference.</exception>
+        ///
         /// Note: These need a different name, because otherwise they will conflict with existing Deserialize(string,Type). They are new so the difference should not matter
         public T DeserializeInto<T>(string fromText, T existingObject)
         {
@@ -371,101 +387,100 @@ namespace Stride.Core.Yaml.Serialization
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
         /// <param name="reader">The reader.</param>
         /// <param name="existingObject">The object to deserialize into.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public T DeserializeInto<T>(EventReader reader, T existingObject)
         {
             return (T) Deserialize(reader, typeof(T), existingObject);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified string. with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="string"/>. with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
-        /// <param name="fromText">From text.</param>
+        /// <param name="fromText">Text string to deserialize into an object.</param>
         /// <param name="context">The context.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="fromText"/> is a <c>null</c> reference.</exception>
         public T Deserialize<T>(string fromText, out SerializerContext context)
         {
-            return (T) Deserialize(fromText, typeof(T), null, out context);
+            return (T) Deserialize(fromText, typeof(T), existingObject: null, out context);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
         /// <param name="reader">The reader.</param>
         /// <param name="context">The context used to deserialize this object.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public T Deserialize<T>(EventReader reader, out SerializerContext context)
         {
-            return (T) Deserialize(reader, typeof(T), null, null, out context);
+            return (T) Deserialize(reader, typeof(T), existingObject: null, contextSettings: null, out context);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified string. with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="string"/>. with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
-        /// <param name="fromText">From text.</param>
+        /// <param name="fromText">Text string to deserialize into an object.</param>
         /// <param name="existingObject">The object to deserialize into.</param>
         /// <param name="context">The context used to deserialize this object.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">stream</exception>
-        /// Note: These need a different name, because otherwise they will conflict with existing Deserialize(string,Type). They are new so the difference should not matter
+        /// <exception cref="ArgumentNullException"><paramref name="fromText"/> is a <c>null</c> reference.</exception>
+        // NOTE: These need a different name, because otherwise they will conflict with existing Deserialize(string,Type). They are new so the difference should not matter
         public T DeserializeInto<T>(string fromText, T existingObject, out SerializerContext context)
         {
             return (T) Deserialize(fromText, typeof(T), existingObject, out context);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
         /// </summary>
         /// <typeparam name="T">The expected type</typeparam>
         /// <param name="reader">The reader.</param>
         /// <param name="existingObject">The object to deserialize into.</param>
         /// <param name="context">The context used to deserialize this object.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public T DeserializeInto<T>(EventReader reader, T existingObject, out SerializerContext context)
         {
             return (T) Deserialize(reader, typeof(T), existingObject, null, out context);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="expectedType">The expected type, maybe null.</param>
-        /// <param name="existingObject">An existing object, may be null.</param>
+        /// <param name="existingObject">An existing object. May be <c>null</c>.</param>
         /// <param name="contextSettings">The context settings.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public object Deserialize(EventReader reader, Type expectedType, object existingObject = null, SerializerContextSettings contextSettings = null)
         {
-            SerializerContext context;
-            return Deserialize(reader, expectedType, existingObject, contextSettings, out context);
+            return Deserialize(reader, expectedType, existingObject, contextSettings, out _);
         }
 
         /// <summary>
-        /// Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
+        ///   Deserializes an object from the specified <see cref="EventReader" /> with an expected specific type.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="expectedType">The expected type, maybe null.</param>
-        /// <param name="existingObject">An existing object, may be null.</param>
+        /// <param name="existingObject">An existing object. May be <c>null</c>.</param>
         /// <param name="contextSettings">The context settings.</param>
         /// <param name="context">The context used to deserialize the object.</param>
         /// <returns>A deserialized object.</returns>
-        /// <exception cref="System.ArgumentNullException">reader</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is a <c>null</c> reference.</exception>
         public object Deserialize(EventReader reader, Type expectedType, object existingObject, SerializerContextSettings contextSettings, out SerializerContext context)
         {
-            if (reader == null)
+            if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
 
             var hasStreamStart = reader.Allow<StreamStart>() != null;
@@ -475,7 +490,7 @@ namespace Stride.Core.Yaml.Serialization
             object result = null;
             if (!reader.Accept<DocumentEnd>() && !reader.Accept<StreamEnd>())
             {
-                context = new SerializerContext(this, contextSettings) {Reader = reader};
+                context = new SerializerContext(this, contextSettings) { Reader = reader };
                 var node = context.Reader.Parser.Current;
                 try
                 {
@@ -489,7 +504,7 @@ namespace Stride.Core.Yaml.Serialization
                 catch (Exception ex)
                 {
                     ex = ex.Unwrap();
-                    throw new YamlException(node.Start, node.End, $"Error while deserializing node [{node}]:\n{ex.Message}", ex);
+                    throw new YamlException(node, ex);
                 }
             }
 

@@ -9,6 +9,15 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
+using Stride.Core;
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Diagnostics;
+using Stride.Core.Reflection;
+using Stride.Core.Yaml;
+using Stride.Core.Yaml.Events;
+using Stride.Core.Yaml.Serialization;
+using Stride.Core.Quantum;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Editor.Quantum;
 using Stride.Core.Assets.Editor.ViewModel;
@@ -17,22 +26,13 @@ using Stride.Core.Assets.Quantum.Visitors;
 using Stride.Core.Assets.Serializers;
 using Stride.Core.Assets.Visitors;
 using Stride.Core.Assets.Yaml;
-using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
-using Stride.Core.Reflection;
-using Stride.Core.Yaml;
-using Stride.Core.Yaml.Events;
-using Stride.Core.Yaml.Serialization;
 using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Presentation.Services;
-using Stride.Core.Quantum;
 
 namespace Stride.Assets.Presentation.AssemblyReloading
 {
     /// <summary>
-    /// Helper to reload game assemblies within the editor.
+    ///   Helper class to reload game assemblies within the editor.
     /// </summary>
     public static class GameStudioAssemblyReloader
     {
@@ -49,7 +49,16 @@ namespace Stride.Assets.Presentation.AssemblyReloading
 
                 // Serialize types from unloaded assemblies as Yaml, and unset them
                 var unloadingVisitor = new UnloadingVisitor(log, loadedAssembliesSet);
-                var assetItemsToReload = PrepareAssemblyReloading(session, unloadingVisitor, session.UndoRedoService);
+                Dictionary<AssetViewModel, List<ItemToReload>> assetItemsToReload;
+                try
+                {
+                    assetItemsToReload = PrepareAssemblyReloading(session, unloadingVisitor, session.UndoRedoService);
+                }
+                catch (Exception e)
+                {
+                    log.Error( "Could not prepare asset for assembly reload.", e);
+                    throw;
+                }
 
                 var reloadOperation = new ReloadAssembliesOperation(assemblyContainer, modifiedAssemblies, Enumerable.Empty<IDirtiable>());
                 session.UndoRedoService.SetName(reloadOperation, "Reload assemblies");
@@ -65,7 +74,15 @@ namespace Stride.Assets.Presentation.AssemblyReloading
 
                 // Restore deserialized objects (or IUnloadable if it didn't work)
                 var reloadingVisitor = new ReloadingVisitor(log, loadedAssembliesSet);
-                PostAssemblyReloading(session.UndoRedoService, session.AssetNodeContainer, reloadingVisitor, log, assetItemsToReload);
+                try
+                {
+                    PostAssemblyReloading(session.UndoRedoService, session.AssetNodeContainer, reloadingVisitor, log, assetItemsToReload);
+                }
+                catch (Exception e)
+                {
+                    log.Error("Could not restore asset after assembly reload.", e);
+                    throw;
+                }
 
                 var undoOperation = new AnonymousDirtyingOperation(Enumerable.Empty<IDirtiable>(), undoAction, null);
                 session.UndoRedoService.PushOperation(undoOperation);
@@ -119,7 +136,7 @@ namespace Stride.Assets.Presentation.AssemblyReloading
 
         private static void PostAssemblyReloading(IUndoRedoService actionService, SessionNodeContainer nodeContainer, ReloadingVisitor reloaderVisitor, ILogger log, Dictionary<AssetViewModel, List<ItemToReload>> assetItemsToReload)
         {
-            log?.Info("Updating components with newly loaded assemblies");
+            log?.Info("Updating components with newly loaded assemblies.");
 
             // Recreate new objects from Yaml streams
             foreach (var asset in assetItemsToReload)
@@ -151,7 +168,7 @@ namespace Stride.Assets.Presentation.AssemblyReloading
 
                 FixupObjectReferences.RunFixupPass(asset.Key.Asset, reloaderVisitor.ObjectReferences, true, false, log);
 
-                var rootNode = (IAssetNode)nodeContainer.GetNode(asset.Key.Asset);            
+                var rootNode = (IAssetNode)nodeContainer.GetNode(asset.Key.Asset);
                 AssetPropertyGraph.ApplyOverrides(rootNode, overrides);
             }
         }
@@ -169,8 +186,7 @@ namespace Stride.Assets.Presentation.AssemblyReloading
             ContentChangeType operationType;
             if (index != NodeIndex.Empty)
             {
-                CollectionItemIdentifiers ids;
-                if (CollectionItemIdHelper.TryGetCollectionItemIds(node.Retrieve(), out ids))
+                if (CollectionItemIdHelper.TryGetCollectionItemIds(node.Retrieve(), out CollectionItemIdentifiers ids))
                 {
                     itemToReload.ItemId = ids[index.Value];
                 }
@@ -220,7 +236,7 @@ namespace Stride.Assets.Presentation.AssemblyReloading
         }
 
         /// <summary>
-        /// Serializes and deserializes part of assets that needs reloading.
+        ///   Serializes and deserializes part of assets that needs reloading.
         /// </summary>
         private abstract class ReloaderVisitorBase : AssetVisitorBase
         {
@@ -259,7 +275,8 @@ namespace Stride.Assets.Presentation.AssemblyReloading
             {
                 // TODO: CurrentPath is valid only for value, not key
                 //if (ProcessObject(key, keyDescriptor.Type)) key = null;
-                if (ProcessObject(value, valueDescriptor.Type)) return;
+                if (ProcessObject(value, valueDescriptor.Type))
+                    return;
 
                 Visit(value, valueDescriptor);
                 //base.VisitDictionaryKeyValue(dictionary, descriptor, key, keyDescriptor, value, valueDescriptor);
@@ -274,13 +291,14 @@ namespace Stride.Assets.Presentation.AssemblyReloading
 
             public UnloadingVisitor(ILogger log, HashSet<Assembly> unloadedAssemblies)
                 : base(log, unloadedAssemblies)
-            {
-            }
+            { }
 
             [NotNull]
             public List<ItemToReload> Run([NotNull] AssetPropertyGraph assetPropertyGraph)
             {
-                if (assetPropertyGraph == null) throw new ArgumentNullException(nameof(assetPropertyGraph));
+                if (assetPropertyGraph is null)
+                    throw new ArgumentNullException(nameof(assetPropertyGraph));
+
                 Reset();
                 propertyGraph = assetPropertyGraph;
                 var result = ItemsToReload = new List<ItemToReload>();
@@ -294,9 +312,8 @@ namespace Stride.Assets.Presentation.AssemblyReloading
                 // TODO: More advanced checks if IUnloadable is supposed to be a type from the unloaded assembly (this would avoid processing unecessary IUnloadable)
                 if (obj != null && (UnloadedAssemblies.Contains(obj.GetType().Assembly) || obj is IUnloadable))
                 {
-                    NodeIndex index;
                     var settings = new SerializerContextSettings(Log);
-                    var path = GraphNodePath.From(propertyGraph.RootNode, CurrentPath, out index);
+                    var path = GraphNodePath.From(propertyGraph.RootNode, CurrentPath, out NodeIndex index);
 
                     var overrides = AssetPropertyGraph.GenerateOverridesForSerialization(path.GetNode());
                     overrides = RemoveFirstIndexInYamlPath(overrides, index);
@@ -351,8 +368,7 @@ namespace Stride.Assets.Presentation.AssemblyReloading
 
             public ReloadingVisitor(ILogger log, HashSet<Assembly> unloadedAssemblies)
                 : base(log, unloadedAssemblies)
-            {
-            }
+            { }
 
             public void Run(Asset asset, List<ItemToReload> itemsToReload)
             {
@@ -377,8 +393,7 @@ namespace Stride.Assets.Presentation.AssemblyReloading
                     {
                         var eventReader = new EventReader(new MemoryParser(unloadedObject.ParsingEvents));
                         var settings = Log != null ? new SerializerContextSettings { Logger = Log } : null;
-                        PropertyContainer properties;
-                        unloadedObject.UpdatedObject = AssetYamlSerializer.Default.Deserialize(eventReader, null, unloadedObject.ExpectedType, out properties, settings);
+                        unloadedObject.UpdatedObject = AssetYamlSerializer.Default.Deserialize(eventReader, null, unloadedObject.ExpectedType, out PropertyContainer properties, settings);
                         // We will have broken references here because we are deserializing objects individually, so we don't pass any logger to discard warnings
                         var metadata = YamlAssetSerializer.CreateAndProcessMetadata(properties, unloadedObject.UpdatedObject, false);
 
@@ -410,47 +425,47 @@ namespace Stride.Assets.Presentation.AssemblyReloading
         }
 
         /// <summary>
-        /// Part of an asset to reload.
+        ///   Part of an asset to reload.
         /// </summary>
         private class ItemToReload
         {
             /// <summary>
-            /// Path of the node containing the item.
+            ///   Path of the node containing the item.
             /// </summary>
             public readonly MemberPath ParentPath;
 
             /// <summary>
-            /// Path of the item.
+            ///   Path of the item.
             /// </summary>
             public readonly MemberPath Path;
 
             /// <summary>
-            /// The Yaml events.
+            ///   The Yaml events.
             /// </summary>
             public readonly List<ParsingEvent> ParsingEvents;
 
             /// <summary>
-            /// The expected type of the item (i.e. parent collection type or member type).
+            ///   The expected type of the item (i.e. parent collection type or member type).
             /// </summary>
             public readonly Type ExpectedType;
 
             /// <summary>
-            /// The converted graph path.
+            ///   The converted graph path.
             /// </summary>
             public GraphNodePath GraphPath;
 
             /// <summary>
-            /// The additional index to apply on the graph path to reach the item.
+            ///   The additional index to apply on the graph path to reach the item.
             /// </summary>
             public NodeIndex GraphPathIndex;
 
             /// <summary>
-            /// The identifier of the item to reload, if relevant.
+            ///   The identifier of the item to reload, if relevant.
             /// </summary>
             public ItemId ItemId;
 
             /// <summary>
-            /// The newly deserialized object with updated assemblies.
+            ///   The newly deserialized object with updated assemblies.
             /// </summary>
             public object UpdatedObject;
 

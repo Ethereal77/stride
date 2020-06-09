@@ -2,27 +2,22 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Editor;
 using Stride.Core.Extensions;
-using Stride.LauncherApp.Views;
 using Stride.Core.Packages;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.View;
 using Stride.Core.Presentation.Windows;
+using Stride.LauncherApp.Views;
 
 namespace Stride.LauncherApp
 {
     /// <summary>
-    /// A class that manages a launcher instance, which must be single per user. It manages to show and hide windows, and keep the services alive
+    ///   Represents an instance of the Launcher, which must be a single one per user. Allows this instance to show
+    ///   and hide windows, and keep the services alive.
     /// </summary>
     internal class LauncherInstance
     {
@@ -56,14 +51,14 @@ namespace Stride.LauncherApp
             // This method can be invoked only from the dispatcher thread.
             dispatcher.EnsureAccess();
 
-            if (launcherWindow == null)
+            if (launcherWindow is null)
             {
                 // Create the window if we don't have it yet.
                 launcherWindow = new LauncherWindow();
                 launcherWindow.Initialize(store);
                 launcherWindow.Closed += (s, e) => launcherWindow = null;
             }
-            if (WindowManager.MainWindow == null)
+            if (WindowManager.MainWindow is null)
             {
                 // Show it if it's currently not visible
                 WindowManager.ShowMainWindow(launcherWindow);
@@ -94,7 +89,7 @@ namespace Stride.LauncherApp
         }
 
         /// <summary>
-        /// Setup the Launcher's service interface to handle IPC communications.
+        ///   Initializes the Launcher's service interface to handle inter-process communications.
         /// </summary>
         private bool Initialize()
         {
@@ -128,9 +123,9 @@ namespace Stride.LauncherApp
         }
 
         /// <summary>
-        /// Ask users for his/her credentials if no session is authenticated or has expired.
+        ///   Asks the user for his/her credentials if no session is authenticated or has expired.
         /// </summary>
-        /// <returns><c>true</c> if session was validated, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if session was validated; <c>false</c> otherwise.</returns>
         private async Task<bool> CheckAndPromptCredentials()
         {
             // This method can be invoked only from the dispatcher thread.

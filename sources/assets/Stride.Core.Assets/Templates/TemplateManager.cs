@@ -9,11 +9,13 @@ using System.Linq;
 namespace Stride.Core.Assets.Templates
 {
     /// <summary>
-    /// Handle templates for creating <see cref="Package"/>, <see cref="ProjectReference"/>
+    ///   Provides methods to register templates that can be used for the creation of new <see cref="Package"/>s and
+    ///   projects (see <see cref="ProjectReference"/>).
     /// </summary>
-    public class TemplateManager
+    public static class TemplateManager
     {
         private static readonly object ThisLock = new object();
+
         private static readonly List<ITemplateGenerator> Generators = new List<ITemplateGenerator>();
         private static readonly PackageCollection ExtraPackages = new PackageCollection();
 
@@ -23,13 +25,14 @@ namespace Stride.Core.Assets.Templates
         }
 
         /// <summary>
-        /// Registers the specified factory.
+        ///   Registers the specified template generator.
         /// </summary>
-        /// <param name="generator">The factory.</param>
-        /// <exception cref="System.ArgumentNullException">factory</exception>
+        /// <param name="generator">An <see cref="ITemplateGenerator"/> that can be used to create a package.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="generator"/> is a <c>null</c> reference.</exception>
         public static void Register(ITemplateGenerator generator)
         {
-            if (generator == null) throw new ArgumentNullException(nameof(generator));
+            if (generator is null)
+                throw new ArgumentNullException(nameof(generator));
 
             lock (ThisLock)
             {
@@ -41,13 +44,14 @@ namespace Stride.Core.Assets.Templates
         }
 
         /// <summary>
-        /// Unregisters the specified factory.
+        ///   Unregisters the specified template generator.
         /// </summary>
-        /// <param name="generator">The factory.</param>
-        /// <exception cref="System.ArgumentNullException">factory</exception>
+        /// <param name="generator">The <see cref="ITemplateGenerator"/> to unregister.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="generator"/> is a <c>null</c> reference.</exception>
         public static void Unregister(ITemplateGenerator generator)
         {
-            if (generator == null) throw new ArgumentNullException(nameof(generator));
+            if (generator is null)
+                throw new ArgumentNullException(nameof(generator));
 
             lock (ThisLock)
             {
@@ -56,70 +60,91 @@ namespace Stride.Core.Assets.Templates
         }
 
         /// <summary>
-        /// Finds all template descriptions.
+        ///   Finds all the template descriptions.
         /// </summary>
-        /// <returns>A sequence containing all registered template descriptions.</returns>
+        /// <param name="session">The session for which to find template descriptions.</param>
+        /// <returns>An enumeration of all the registered template descriptions.</returns>
         public static IEnumerable<TemplateDescription> FindTemplates(PackageSession session = null)
         {
-            var packages = session?.Packages.Concat(ExtraPackages).Distinct(DistinctPackagePathComparer.Default) ?? ExtraPackages;
-            // TODO this will not work if the same package has different versions
-            return packages.SelectMany(package => package.Templates).OrderBy(tpl => tpl.Order).ThenBy(tpl => tpl.Name).ToList();
+            var packages = session?.Packages.Concat(ExtraPackages)
+                                            .Distinct(DistinctPackagePathComparer.Default) ?? ExtraPackages;
+
+            // TODO: This will not work if the same package has different versions
+            return packages.SelectMany(package => package.Templates)
+                           .OrderBy(template => template.Order)
+                           .ThenBy(template => template.Name)
+                           .ToList();
         }
 
         /// <summary>
-        /// Finds template descriptions that match the given scope.
+        ///   Finds all the template descriptions that match the given scope.
         /// </summary>
-        /// <returns>A sequence containing all registered template descriptions that match the given scope.</returns>
+        /// <param name="scope">The scope that describes the context for the templates.</param>
+        /// <param name="session">The session for which to find template descriptions.</param>
+        /// <returns>An enumeration of all the registered template descriptions that match the given scope.</returns>
         public static IEnumerable<TemplateDescription> FindTemplates(TemplateScope scope, PackageSession session = null)
         {
-
-            return FindTemplates(session).Where(x => x.Scope == scope);
+            return FindTemplates(session).Where(template => template.Scope == scope);
         }
 
         /// <summary>
-        /// Finds a template generator supporting the specified template description
+        ///   Finds a template generator supporting the specified template description.
         /// </summary>
-        /// <param name="description">The description.</param>
-        /// <returns>A template generator supporting the specified description or null if not found.</returns>
-        public static ITemplateGenerator<TParameters> FindTemplateGenerator<TParameters>(TemplateDescription description) where TParameters : TemplateGeneratorParameters
+        /// <typeparam name="TParameters">The type of <see cref="TemplateGeneratorParameters"/> of a template generator.</typeparam>
+        /// <param name="description">The description of a template generator.</param>
+        /// <returns>A template generator supporting the specified description; or <c>null</c> if not found.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="description"/> is a <c>null</c> reference.</exception>
+        public static ITemplateGenerator<TParameters> FindTemplateGenerator<TParameters>(TemplateDescription description)
+            where TParameters : TemplateGeneratorParameters
         {
-            if (description == null) throw new ArgumentNullException(nameof(description));
+            if (description is null)
+                throw new ArgumentNullException(nameof(description));
+
             lock (ThisLock)
             {
                 // From most recently registered to older
                 for (int i = Generators.Count - 1; i >= 0; i--)
                 {
-                    var generator = Generators[i] as ITemplateGenerator<TParameters>;
-                    if (generator != null && generator.IsSupportingTemplate(description))
+                    if (Generators[i] is ITemplateGenerator<TParameters> generator &&
+                        generator.IsSupportingTemplate(description))
                     {
                         return generator;
                     }
                 }
             }
+
             return null;
         }
         /// <summary>
-        /// Finds a template generator supporting the specified template description
+        ///   Finds a template generator supporting the specified template description
         /// </summary>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>A template generator supporting the specified description or null if not found.</returns>
-        public static ITemplateGenerator<TParameters> FindTemplateGenerator<TParameters>(TParameters parameters) where TParameters : TemplateGeneratorParameters
+        /// <typeparam name="TParameters">The type of <see cref="TemplateGeneratorParameters"/> of a template generator.</typeparam>
+        /// <param name="parameters">The parameters of a template generator.</param>
+        /// <returns>A template generator supporting the specified parameters; or <c>null</c> if not found.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="parameters"/> is a <c>null</c> reference.</exception>
+        public static ITemplateGenerator<TParameters> FindTemplateGenerator<TParameters>(TParameters parameters)
+            where TParameters : TemplateGeneratorParameters
         {
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            if (parameters is null)
+                throw new ArgumentNullException(nameof(parameters));
+
             lock (ThisLock)
             {
                 // From most recently registered to older
                 for (int i = Generators.Count - 1; i >= 0; i--)
                 {
-                    var generator = Generators[i] as ITemplateGenerator<TParameters>;
-                    if (generator != null && generator.IsSupportingTemplate(parameters.Description))
+                    if (Generators[i] is ITemplateGenerator<TParameters> generator &&
+                        generator.IsSupportingTemplate(parameters.Description))
                     {
                         return generator;
                     }
                 }
             }
+
             return null;
         }
+
+        #region Equality Comparer: DistinctPackagePathComparer
 
         private class DistinctPackagePathComparer : IEqualityComparer<Package>
         {
@@ -128,7 +153,7 @@ namespace Stride.Core.Assets.Templates
             {
                 get
                 {
-                    if (defaultInstance == null)
+                    if (defaultInstance is null)
                         defaultInstance = new DistinctPackagePathComparer();
                     return defaultInstance;
                 }
@@ -144,5 +169,7 @@ namespace Stride.Core.Assets.Templates
                 return obj.FullPath.GetHashCode();
             }
         }
+
+        #endregion
     }
 }

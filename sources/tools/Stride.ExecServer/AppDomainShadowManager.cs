@@ -7,10 +7,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
+using ServiceWire.NamedPipes;
+
 namespace Stride.ExecServer
 {
     /// <summary>
-    /// Manages <see cref="AppDomainShadow"/>.
+    ///   Manages <see cref="AppDomainShadow"/>.
     /// </summary>
     internal class AppDomainShadowManager : IDisposable
     {
@@ -26,55 +28,57 @@ namespace Stride.ExecServer
         private bool isDisposed = false;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AppDomainShadowManager" /> class.
+        ///   Gets or sets a value indicating whether this instance is caching application domain.
+        /// </summary>
+        /// <value><c>true</c> if this instance is caching application domain; otherwise, <c>false</c>.</value>
+        public bool IsCachingAppDomain { get; set; }
+
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="AppDomainShadowManager" /> class.
         /// </summary>
         /// <param name="entryAssemblyPath">Path to the client assembly in case we need to start another instance of same process.</param>
         /// <param name="mainAssemblyPath">The main assembly path.</param>
-        /// <param name="maximumConcurrentAppDomain">The maximum concurrent application domain.</param>
         /// <param name="nativeDllsPathOrFolderList">An array of folders path (containing only native dlls) or directly a specific path to a dll.</param>
-        /// <exception cref="System.ArgumentNullException">mainAssemblyPath</exception>
-        /// <exception cref="System.InvalidOperationException">If the assembly does not exist</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="mainAssemblyPath"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="FileNotFoundException">The assembly specified by <paramref name="mainAssemblyPath"/> does not exist.</exception>
         public AppDomainShadowManager(string entryAssemblyPath, string mainAssemblyPath, IEnumerable<string> nativeDllsPathOrFolderList)
         {
-            if (mainAssemblyPath == null) throw new ArgumentNullException("mainAssemblyPath");
-            if (!File.Exists(mainAssemblyPath)) throw new InvalidOperationException(string.Format("Assembly [{0}] does not exist", mainAssemblyPath));
+            if (mainAssemblyPath is null)
+                throw new ArgumentNullException(nameof(mainAssemblyPath));
+            if (!File.Exists(mainAssemblyPath))
+                throw new FileNotFoundException($"Assembly [{mainAssemblyPath}] does not exist.");
+
             this.entryAssemblyPath = entryAssemblyPath;
             this.mainAssemblyPath = mainAssemblyPath;
             this.nativeDllsPathOrFolderList = new List<string>(nativeDllsPathOrFolderList);
         }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether this instance is caching application domain.
-        /// </summary>
-        /// <value><c>true</c> if this instance is caching application domain; otherwise, <c>false</c>.</value>
-        public bool IsCachingAppDomain { get; set; }
 
         /// <summary>
-        /// Runs the assembly with the specified arguments.xit
+        ///   Runs the assembly with the specified arguments.
         /// </summary>
-        /// <param name="workingDirectory">The working directory.</param>
+        /// <param name="workingDirectory">The working directory on which to execute the assembly.</param>
         /// <param name="environmentVariables">The environment variables.</param>
         /// <param name="args">The main arguments.</param>
-        /// <param name="shadowCache">If [true], use shadow cache.</param>
-        /// <param name="logger">The logger.</param>
-        /// <returns>System.Int32.</returns>
-        public int Run(string workingDirectory, Dictionary<string, string> environmentVariables, string[] args, bool shadowCache, IServerLogger logger)
+        /// <param name="shadowCache">Whether to use shadow cache.</param>
+        /// <returns>Return code.</returns>
+        public int Run(string workingDirectory, Dictionary<string, string> environmentVariables, string[] args, bool shadowCache, NpClient<IServerLogger> callbackChannel)
         {
             lock (disposingLock)
             {
                 if (isDisposed)
                 {
-                    logger.OnLog("Error, server is being shutdown, cannot run Compiler", ConsoleColor.Red);
+                    callbackChannel.Proxy.OnLog("Error: Server is being shutdown. Cannot run Compiler.", ConsoleColor.Red);
                     return 1;
                 }
             }
-
 
             AppDomainShadow shadowDomain = null;
             try
             {
                 shadowDomain = GetOrNew(shadowCache, IsCachingAppDomain);
-                return shadowDomain.Run(workingDirectory, environmentVariables, args, logger);
+                return shadowDomain.Run(workingDirectory, environmentVariables, args, callbackChannel);
             }
             finally
             {
@@ -90,7 +94,7 @@ namespace Stride.ExecServer
         }
 
         /// <summary>
-        /// Recycles any instance that are no longer in sync with original dlls
+        ///   Recycles any instance that are no longer in sync with the original DLLs.
         /// </summary>
         public void Recycle(TimeSpan limitTimeAlive)
         {
@@ -112,10 +116,10 @@ namespace Stride.ExecServer
                         {
                             var reason =
                                 isAppDomainExpired
-                                    ? string.Format("Not used after {0}s", (int)deltaTime.TotalSeconds)
+                                    ? $"Not used after {(int)deltaTime.TotalSeconds}s"
                                     : "Assembly files changed";
 
-                            Console.WriteLine("Recycling AppDomain {0} (Reason: {1})", appDomainShadow.Name, reason);
+                            Console.WriteLine("Recycling AppDomain {0} (Reason: {1}).", appDomainShadow.Name, reason);
                             appDomainShadow.Dispose();
                             appDomainShadows.RemoveAt(i);
                             hasDisposed = true;
@@ -132,9 +136,9 @@ namespace Stride.ExecServer
         }
 
         /// <summary>
-        /// Get or create a new <see cref="AppDomainShadow"/>.
+        ///   Get or create a new <see cref="AppDomainShadow"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A newly created or recycled <see cref="AppDomainShadow"/>.</returns>
         private AppDomainShadow GetOrNew(bool shadowCache, bool appdomainCache)
         {
             lock (appDomainShadows)
@@ -162,7 +166,7 @@ namespace Stride.ExecServer
         }
 
         /// <summary>
-        /// Dispose the manager and wait that all app domain are finished.
+        ///   Dispose the manager and wait for all application domains to finish.
         /// </summary>
         public void Dispose()
         {

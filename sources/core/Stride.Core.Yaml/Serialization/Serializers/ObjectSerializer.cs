@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
 // Copyright (c) 2008-2012 YamlDotNet - Antoine Aubry
@@ -13,7 +13,7 @@ using Stride.Core.Yaml.Events;
 namespace Stride.Core.Yaml.Serialization.Serializers
 {
     /// <summary>
-    /// Base class for serializing an object that can be a Yaml !!map or !!seq.
+    ///   Represents the base functionality for serializing an object that can be a Yaml <c>!!map</c> or <c>!!seq</c>.
     /// </summary>
     [YamlSerializerFactory(YamlSerializerFactoryAttribute.Default)]
     public class ObjectSerializer : IYamlSerializable, IYamlSerializableFactory
@@ -21,14 +21,14 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         /// <inheritdoc/>
         public virtual IYamlSerializable TryCreate(SerializerContext context, ITypeDescriptor typeDescriptor)
         {
-            // always accept
+            // Always accept
             return this;
         }
 
         /// <summary>
-        /// Checks if a type is a sequence.
+        ///   Determines if a type is a sequence.
         /// </summary>
-        /// <param name="objectContext"></param>
+        /// <param name="objectContext">Object serialization context.</param>
         /// <returns><c>true</c> if a type is a sequence, <c>false</c> otherwise.</returns>
         protected virtual bool CheckIsSequence(ref ObjectContext objectContext)
         {
@@ -37,10 +37,10 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Gets the style that will be used to serialized the object.
+        ///   Returns the style that will be used when serializing an object.
         /// </summary>
-        /// <param name="objectContext"></param>
-        /// <returns>The <see cref="DataStyle"/> to use. Default is <see cref="IYamlTypeDescriptor.Style"/>.</returns>
+        /// <param name="objectContext">Object serialization context.</param>
+        /// <returns>The <see cref="DataStyle"/> to use. Default is <see cref="ITypeDescriptor.Style"/>.</returns>
         protected virtual DataStyle GetStyle(ref ObjectContext objectContext)
         {
             return objectContext.ObjectSerializerBackend.GetStyle(ref objectContext);
@@ -87,42 +87,40 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Overrides this method when deserializing/serializing an object that needs a special instantiation or transformation. By default, this is calling
-        /// <see cref="IObjectFactory.Create" /> if the <see cref="ObjectContext.Instance" /> is null or returning <see cref="ObjectContext.Instance" />.
+        ///   Creates a new object by calling <see cref="IObjectFactory.Create"/> if the <see cref="ObjectContext.Instance" />
+        ///   is <c>null</c> or returning <see cref="ObjectContext.Instance"/> otherwise. Override this method in a derived class
+        ///   to use custom logic when serializing or deserializing an object that needs special instantiation or transformation.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
-        /// <returns>A new instance of the object or <see cref="ObjectContext.Instance" /> if not null</returns>
+        /// <returns>A new instance of the object; or <see cref="ObjectContext.Instance" /> if it is not <c>null</c>.</returns>
         protected virtual void CreateOrTransformObject(ref ObjectContext objectContext)
         {
-            if (objectContext.Instance == null)
+            if (objectContext.Instance is null)
             {
                 objectContext.Instance = objectContext.SerializerContext.ObjectFactory.Create(objectContext.Descriptor.Type);
             }
         }
 
         /// <summary>
-        /// Transforms the object after it has been read. This method is called after an object has been read and before returning the object to
-        /// the deserialization process. See remarks for usage.
+        ///   Transforms the object after it has been read.
         /// </summary>
-        /// <param name="objectContext"></param>
-        /// <returns>The actual object deserialized. By default same as <see cref="ObjectContext.Instance"/>.</returns>
+        /// <param name="objectContext">The object context.</param>
+        /// <returns>The actual object deserialized. By default, returns <see cref="ObjectContext.Instance"/>.</returns>
         /// <remarks>
-        /// This method is usefull in conjunction with <see cref="CreateOrTransformObject"/>.
-        /// For example, in the case of deserializing to an immutable member, where we need to call the constructor of a type instead of setting each of 
-        /// its member, we can instantiate a mutable object in <see cref="CreateOrTransformObject"/>, receive the mutable object filled in 
-        /// <see cref="TransformObjectAfterRead"/> and transform it back to an immutable object.
+        ///   This method is called after an object has been read but before returning the object to the deserialization process.
+        ///   This is usefull in conjunction with <see cref="CreateOrTransformObject"/>. For example, in the case of deserializing
+        ///   to an immutable member, where we need to call the constructor of a type instead of setting each of its member, we
+        ///   can instantiate a mutable object in <see cref="CreateOrTransformObject"/>, receive the mutable object filled in
+        ///   <see cref="TransformObjectAfterRead"/> and transform it back to an immutable object.
         /// </remarks>
-        protected virtual void TransformObjectAfterRead(ref ObjectContext objectContext)
-        {
-        }
+        protected virtual void TransformObjectAfterRead(ref ObjectContext objectContext) { }
 
         /// <summary>
-        /// Reads the members from the current stream.
+        ///   Reads the members from the current stream.
         /// </summary>
-        /// <typeparam name="TStart">The type of the t start.</typeparam>
-        /// <typeparam name="TEnd">The type of the t end.</typeparam>
-        /// <param name="objectContext"></param>
-        /// <returns>Return the object being read, by default thisObject passed by argument.</returns>
+        /// <typeparam name="TStart">The type of the <see cref="NodeEvent"/> that marks the start.</typeparam>
+        /// <typeparam name="TEnd">The type of the <see cref="ParsingEvent"/> that marks the end.</typeparam>
+        /// <param name="objectContext">The object context.</param>
         protected virtual void ReadMembers<TStart, TEnd>(ref ObjectContext objectContext)
             where TStart : NodeEvent
             where TEnd : ParsingEvent
@@ -131,10 +129,8 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             var start = reader.Expect<TStart>();
 
             // throws an exception while deserializing
-            if (objectContext.Instance == null)
-            {
-                throw new YamlException(start.Start, start.End, $"Cannot instantiate an object for type [{objectContext.Descriptor}]");
-            }
+            if (objectContext.Instance is null)
+                throw new YamlException(start.Start, start.End, $"Cannot instantiate an object of type [{objectContext.Descriptor}].");
 
             while (!reader.Accept<TEnd>())
             {
@@ -144,43 +140,36 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Reads an item of the object from the YAML flow (either a sequence item or mapping key/value item).
+        ///   Reads an item of the object from the YAML flow, either a sequence item or a mapping key-value item.
         /// </summary>
-        /// <param name="objectContext"></param>
-        /// <exception cref="YamlException">Unable to deserialize property [{0}] not found in type [{1}].DoFormat(propertyName, typeDescriptor)</exception>
+        /// <param name="objectContext">The object context.</param>
+        /// <exception cref="YamlException">Unable to deserialize a property because it is not part of the deserializing type.</exception>
         protected virtual void ReadMember(ref ObjectContext objectContext)
         {
-            Scalar memberScalar;
-            string memberName;
-            if (!TryReadMember(ref objectContext, out memberScalar, out memberName))
-            {
-                throw new YamlException(memberScalar.Start, memberScalar.End, $"Unable to deserialize property [{memberName}] not found in type [{objectContext.Descriptor}]");
-            }
+            if (!TryReadMember(ref objectContext, out Scalar memberScalar, out string memberName))
+                throw new YamlException(memberScalar.Start, memberScalar.End, $"Unable to deserialize property [{memberName}] not found in type [{objectContext.Descriptor}].");
         }
 
         /// <summary>
-        /// Tries to read a member.
+        ///   Tries to read a member.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="memberName">Name of the member.</param>
-        /// <returns><c>true</c> if the member was successfully read, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if the member was successfully read; <c>false</c> otherwise.</returns>
         protected bool TryReadMember(ref ObjectContext objectContext, out string memberName)
         {
-            Scalar scalar;
-            return TryReadMember(ref objectContext, out scalar, out memberName);
+            return TryReadMember(ref objectContext, out _, out memberName);
         }
 
         /// <summary>
-        /// Tries to read an item of the object from the YAML flow (either a sequence item or mapping key/value item).
+        ///   Tries to read an item of the object from the YAML flow, either a sequence item or mapping key-value item.
         /// </summary>
         /// <param name="objectContext">The object context.</param>
         /// <param name="memberScalar">The member scalar.</param>
         /// <param name="memberName">Name of the member.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        /// <exception cref="YamlException">Unable to deserialize property [{0}] not found in type [{1}].DoFormat(propertyName, typeDescriptor)</exception>
+        /// <returns><c>true</c> if the member was read succesfully; <c>false</c> otherwise.</returns>
         public virtual bool TryReadMember(ref ObjectContext objectContext, out Scalar memberScalar, out string memberName)
         {
-            memberScalar = null;
             memberName = null;
 
             var currentDepth = objectContext.Reader.CurrentDepth;
@@ -189,12 +178,10 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             memberScalar = objectContext.Reader.Expect<Scalar>();
 
             var currentEvent = objectContext.Reader.Parser.Current;
-            bool result = true;
 
             bool skipMember = false;
             try
             {
-
                 var memberResult = TryReadMemberCore(ref objectContext, memberScalar, out memberName);
                 if (memberResult == ReadMemberState.Skip)
                 {
@@ -208,7 +195,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
                     }
                     else
                     {
-                        result = false;
+                        return false;
                     }
                 }
             }
@@ -228,9 +215,8 @@ namespace Stride.Core.Yaml.Serialization.Serializers
                 objectContext.Reader.Skip(currentDepth, currentEvent == objectContext.Reader.Parser.Current);
             }
 
-            return result;
+            return true;
         }
-
 
         private enum ReadMemberState
         {
@@ -241,14 +227,11 @@ namespace Stride.Core.Yaml.Serialization.Serializers
 
         private ReadMemberState TryReadMemberCore(ref ObjectContext objectContext, Scalar memberScalar, out string memberName)
         {
-            bool skipMember;
-            memberName = ReadMemberName(ref objectContext, memberScalar.Value, out skipMember);
+            memberName = ReadMemberName(ref objectContext, memberScalar.Value, out bool skipMember);
 
             // Do we want to skip this member?
             if (skipMember)
-            {
                 return ReadMemberState.Skip;
-            }
 
             var memberAccessor = objectContext.Descriptor.TryGetMember(memberName);
 
@@ -259,18 +242,15 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             }
 
             // Check that property exist before trying to access the descriptor
-            if (memberAccessor == null)
-            {
+            if (memberAccessor is null)
                 return ReadMemberState.Error;
-            }
 
             // Read the value according to the type
             var memberValue = memberAccessor.Mode == DataMemberMode.Content ? memberAccessor.Get(objectContext.Instance) : null;
             var memberType = memberAccessor.Type;
 
-            // In case of serializing a property/field which is not writeable
-            // we need to change the expected type to the actual type of the 
-            // content value
+            // In case of serializing a property/field which is not writeable we need to change the expected type
+            // to the actual type of the content value
             if (memberValue != null)
                 memberType = memberValue.GetType();
 
@@ -279,7 +259,8 @@ namespace Stride.Core.Yaml.Serialization.Serializers
 
             // Handle late binding
             // Value types need to be reassigned even if it was a Content
-            if (memberAccessor.HasSet && (memberAccessor.Mode != DataMemberMode.Content || memberAccessor.Type.IsValueType || memberValue != oldMemberValue))
+            if (memberAccessor.HasSet &&
+                (memberAccessor.Mode != DataMemberMode.Content || memberAccessor.Type.IsValueType || memberValue != oldMemberValue))
             {
                 try
                 {
@@ -300,9 +281,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             return objectContext.ObjectSerializerBackend.ReadMemberName(ref objectContext, memberName, out skipMember);
         }
 
-        protected virtual object ReadMemberValue(ref ObjectContext objectContext, IMemberDescriptor member,
-            object memberValue,
-            Type memberType)
+        protected virtual object ReadMemberValue(ref ObjectContext objectContext, IMemberDescriptor member, object memberValue, Type memberType)
         {
             return objectContext.ObjectSerializerBackend.ReadMemberValue(ref objectContext, member, memberValue, memberType);
         }
@@ -342,10 +321,11 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Writes the members of the object to serialize. By default this method is iterating on the <see cref="IYamlTypeDescriptor.Members"/> and
-        /// calling <see cref="WriteMember"/> on each member.
+        ///   Writes the members of the object to serialize by iterating on the <see cref="IYamlTypeDescriptor.Members"/> and
+        ///   calling <see cref="WriteMember"/> on each member. Override this method in a derived class to specify custom
+        ///   logic for writing the members of an object.
         /// </summary>
-        /// <param name="objectContext"></param>
+        /// <param name="objectContext">The object context.</param>
         protected virtual void WriteMembers(ref ObjectContext objectContext)
         {
             foreach (var member in objectContext.Descriptor.Members)
@@ -355,9 +335,9 @@ namespace Stride.Core.Yaml.Serialization.Serializers
         }
 
         /// <summary>
-        /// Writes a member.
+        ///   Writes a member.
         /// </summary>
-        /// <param name="objectContext"></param>
+        /// <param name="objectContext">The object context.</param>
         /// <param name="member">The member.</param>
         protected virtual void WriteMember(ref ObjectContext objectContext, IMemberDescriptor member)
         {
@@ -375,9 +355,8 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             var memberValue = member.Get(objectContext.Instance);
             var memberType = member.Type;
 
-            // In case of serializing a property/field which is not writeable
-            // we need to change the expected type to the actual type of the 
-            // content value
+            // In case of serializing a property/field which is not writeable we need to change the expected type
+            // to the actual type of the content value
             if (member.Mode == DataMemberMode.Content && !member.HasSet)
             {
                 if (memberValue != null)
@@ -395,8 +374,7 @@ namespace Stride.Core.Yaml.Serialization.Serializers
             objectContext.ObjectSerializerBackend.WriteMemberName(ref objectContext, member, name);
         }
 
-        protected virtual void WriteMemberValue(ref ObjectContext objectContext, IMemberDescriptor member, object memberValue,
-            Type memberType)
+        protected virtual void WriteMemberValue(ref ObjectContext objectContext, IMemberDescriptor member, object memberValue, Type memberType)
         {
             objectContext.ObjectSerializerBackend.WriteMemberValue(ref objectContext, member, memberValue, memberType);
         }

@@ -12,22 +12,17 @@ using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json.Linq;
-
-using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
-using NuGet.LibraryModel;
-using NuGet.ProjectModel;
-using NuGet.Protocol;
-using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 
 namespace Stride.Core.Assets
 {
     class NuGetAssemblyResolver
     {
+        public const string DevSource = @"%LocalAppData%\Stride\NugetDev";
+
         static bool assembliesResolved;
         static object assembliesLock = new object();
         static List<string> assemblies;
@@ -40,11 +35,12 @@ namespace Stride.Core.Assets
         [ModuleInitializer(-100000)]
         internal static void __Initialize__()
         {
-            // Only perform this for entry assembly (which is null during module .ctor)
-            if (Assembly.GetEntryAssembly() != null)
+            // Only perform this for entry assembly
+            if (!(Assembly.GetEntryAssembly() is null ||                        // .NET FW: null during module .ctor
+                Assembly.GetEntryAssembly() == Assembly.GetCallingAssembly()))  // .NET Core: Check against calling assembly
                 return;
 
-            // Make sure our nuget local store is added to nuget config
+            // Make sure our NuGet local store is added to NuGet config
             var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string strideFolder = null;
             while (folder != null)
@@ -53,23 +49,24 @@ namespace Stride.Core.Assets
                 {
                     strideFolder = folder;
                     var settings = NuGet.Configuration.Settings.LoadDefaultSettings(null);
-                    // Remove non-existing sources: https://github.com/stride3d/stride/issues/338
-                    RemoveDeletedSources(settings, "Stride");
-                    CheckPackageSource(settings, $"Stride Dev {strideFolder}", Path.Combine(strideFolder, @"bin\packages"));
+
+                    Directory.CreateDirectory(Environment.ExpandEnvironmentVariables(DevSource));
+                    CheckPackageSource(settings, "Stride Dev", NuGet.Configuration.Settings.ApplyEnvironmentTransform(DevSource));
+
                     settings.SaveToDisk();
                     break;
                 }
                 folder = Path.GetDirectoryName(folder);
             }
 
-            // Note: we perform nuget restore inside the assembly resolver rather than top level module ctor (otherwise it freezes)
+            // NOTE: We perform NuGet restore inside the assembly resolver rather than top level module ctor (otherwise it freezes)
             AppDomain.CurrentDomain.AssemblyResolve += (sender, eventArgs) =>
             {
                 if (!assembliesResolved)
                 {
                     lock (assembliesLock)
                     {
-                        // Note: using NuGet will try to recursively resolve NuGet.*.resources.dll, so set assembliesResolved right away so that it bypasses everything
+                        // NOTE: Using NuGet will try to recursively resolve NuGet.*.resources.dll, so set assembliesResolved right away so that it bypasses everything
                         assembliesResolved = true;
 
                         var logger = new Logger();
@@ -94,7 +91,7 @@ namespace Stride.Core.Assets
                                 throw new InvalidOperationException($"Could not restore NuGet packages");
                             }
 
-                            assemblies = RestoreHelper.ListAssemblies(request, result);
+                            assemblies = RestoreHelper.ListAssemblies(result.LockFile);
                         }
                         catch (Exception e)
                         {
@@ -142,7 +139,7 @@ namespace Stride.Core.Assets
             };
         }
 
-        private static void RemoveDeletedSources(ISettings settings, string prefixName)
+        private static void RemoveSources(ISettings settings, string prefixName)
         {
             var packageSources = settings.GetSection("packageSources");
             if (packageSources != null)
@@ -151,9 +148,7 @@ namespace Stride.Core.Assets
                 {
                     var path = packageSource.GetValueAsPath();
 
-                    if (packageSource.Key.StartsWith(prefixName)
-                        && Uri.TryCreate(path, UriKind.Absolute, out var uri) && uri.IsFile // make sure it's a valid file URI
-                        && !Directory.Exists(path)) // detect if directory has been deleted
+                    if (packageSource.Key.StartsWith(prefixName))
                     {
                         // Remove entry from packageSources
                         settings.Remove("packageSources", packageSource);

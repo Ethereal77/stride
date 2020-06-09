@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Stride.Core.Diagnostics;
 using Stride.Core.Yaml.Events;
@@ -14,7 +13,7 @@ using Stride.Core.Yaml.Serialization.Serializers;
 namespace Stride.Core.Yaml
 {
     /// <summary>
-    /// Objects that can't be loaded as valid Yaml will be converted to a proxy object implementing <see cref="IUnloadable"/>.
+    ///   A serializer where objects that can't be loaded as valid Yaml will be converted to a proxy object implementing <see cref="IUnloadable"/>.
     /// </summary>
     class ErrorRecoverySerializer : ChainedSerializer
     {
@@ -39,7 +38,7 @@ namespace Stride.Core.Yaml
             }
 
             // Get start position in case we need to recover
-            var memoryParser = (MemoryParser)reader.Parser;
+            var memoryParser = (MemoryParser) reader.Parser;
             var startDepth = reader.CurrentDepth;
             var startPosition = memoryParser.Position;
 
@@ -52,7 +51,8 @@ namespace Stride.Core.Yaml
                 // Deserialize normally
                 return base.ReadYaml(ref objectContext);
             }
-            catch (YamlException ex) // TODO: Filter only TagTypeSerializer TypeFromTag decoding errors? or more?
+            // TODO: Filter only TagTypeSerializer TypeFromTag decoding errors? or more?
+            catch (Exception ex) when (ex is YamlException || ex is DefaultObjectFactory.InstanceCreationException)
             {
                 // Find the parsing range for this object
                 // Skipping is also important to make sure the depth is properly updated
@@ -77,25 +77,21 @@ namespace Stride.Core.Yaml
                             tag = firstNode.Tag;
 
                         // Temporarily recreate the node without its tag, so that we can try deserializing as many members as possible still
-                        // TODO: Replace this with switch pattern matching (C# 7.0)
-                        var mappingStart = firstNode as MappingStart;
-                        var sequenceStart = firstNode as SequenceStart;
-                        var scalar = firstNode as Scalar;
-                        if (mappingStart != null)
+                        if (firstNode is MappingStart mappingStart)
                         {
                             memoryParser.ParsingEvents[startPosition] = new MappingStart(mappingStart.Anchor, null, mappingStart.IsImplicit, mappingStart.Style, mappingStart.Start, mappingStart.End);
                         }
-                        else if (sequenceStart != null)
+                        else if (firstNode is SequenceStart sequenceStart)
                         {
                             memoryParser.ParsingEvents[startPosition] = new SequenceStart(sequenceStart.Anchor, null, sequenceStart.IsImplicit, sequenceStart.Style, sequenceStart.Start, sequenceStart.End);
                         }
-                        else if (scalar != null)
+                        else if (firstNode is Scalar scalar)
                         {
                             memoryParser.ParsingEvents[startPosition] = new Scalar(scalar.Anchor, null, scalar.Value, scalar.Style, scalar.IsPlainImplicit, scalar.IsQuotedImplicit, scalar.Start, scalar.End);
                         }
                         else
                         {
-                            throw new NotImplementedException("Unknown node type");
+                            throw new NotImplementedException("Unknown node type.");
                         }
                     }
 
@@ -108,7 +104,7 @@ namespace Stride.Core.Yaml
                     }
 
                     var log = objectContext.SerializerContext.Logger;
-                    log?.Warning($"Could not deserialize object of type {tag}; replacing it with an object implementing {nameof(IUnloadable)}:\n{ex.Message}", ex);
+                    log?.Warning($"Could not deserialize object of type '{typeName ?? tag}'; replacing it with an object implementing {nameof(IUnloadable)}.", ex);
 
                     var unloadableObject = UnloadableObjectInstantiator.CreateUnloadableObject(type, typeName, assemblyName, ex.Message, parsingEvents);
                     objectContext.Instance = unloadableObject;
@@ -122,7 +118,7 @@ namespace Stride.Core.Yaml
                     {
                         // Here, we try again to deserialize the object in the proxy
                         // Since we erase the tag, it shouldn't try to resolve the unknown type anymore (it will deserialize properties that exist in the base type)
-                        unloadableObject = (IUnloadable)base.ReadYaml(ref objectContext);
+                        unloadableObject = (IUnloadable) base.ReadYaml(ref objectContext);
                     }
                     catch (YamlException)
                     {
@@ -155,9 +151,8 @@ namespace Stride.Core.Yaml
 
         public override void WriteYaml(ref ObjectContext objectContext)
         {
-            // If it's a IUnloadable, serialize the yaml events as is
-            var proxy = objectContext.Instance as IUnloadable;
-            if (proxy != null)
+            // If it's an IUnloadable, serialize the Yaml events as is
+            if (objectContext.Instance is IUnloadable proxy)
             {
                 // TODO: Do we want to save values on the base type that might have changed?
                 foreach (var parsingEvent in proxy.ParsingEvents)

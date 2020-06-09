@@ -5,11 +5,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using Stride.Core.Assets;
 using Stride.Core;
-using Stride.Core.Annotations;
 using Stride.Core.IO;
+using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
+using Stride.Core.Assets;
 using Stride.Rendering;
 
 namespace Stride.Assets.Models
@@ -24,16 +24,16 @@ namespace Stride.Assets.Models
         private const string CurrentVersion = "2.0.0.0";
 
         /// <summary>
-        /// The default file extension used by the <see cref="ModelAsset"/>.
+        ///   The default file extension used by the <see cref="ModelAsset"/>.
         /// </summary>
         public const string FileExtension = ".sdm3d;pdxm3d";
 
         /// <summary>
-        /// Gets or sets the source file of this asset.
+        ///   Gets or sets the source file of this asset.
         /// </summary>
         /// <value>The source.</value>
         /// <userdoc>
-        /// The source file of this asset.
+        ///   The source file of this asset.
         /// </userdoc>
         [DataMember(-50)]
         [DefaultValue(null)]
@@ -41,38 +41,38 @@ namespace Stride.Assets.Models
         public UFile Source { get; set; } = new UFile("");
 
         /// <summary>
-        /// Gets or sets the Skeleton.
+        ///   Gets or sets the <see cref="Stride.Rendering.Skeleton"/> for this <see cref="ModelAsset"/>.
         /// </summary>
         /// <userdoc>
-        /// Describes the node hierarchy that will be active at runtime.
+        ///   Describes the node hierarchy that will be active at runtime.
         /// </userdoc>
         [DataMember(10)]
         public Skeleton Skeleton { get; set; }
 
         /// <summary>
-        /// Gets or sets the pivot position, that will be used as center of object. If a Skeleton is set, its value will be used instead.
+        ///   Gets or sets the pivot position used as center of the model. If the model has a <see cref="Skeleton"/> set,
+        ///   its value will be used instead.
         /// </summary>
         /// <userdoc>
-        /// The root (pivot) of the animation will be offset by this distance. If a Skeleton is set, its value will be used instead.
+        ///   The root (pivot) of the animation will be offset by this distance. If a Skeleton is set, its value will be used instead.
         /// </userdoc>
         [DataMember(20)]
         public Vector3 PivotPosition { get; set; }
 
         /// <summary>
-        /// Gets or sets the scale import. If a Skeleton is set, its value will be used instead.
+        ///   Gets or sets the scale import. If a Skeleton is set, its value will be used instead.
         /// </summary>
         /// <userdoc>The scale applied when importing a model. If a Skeleton is set, its value will be used instead.</userdoc>
         [DataMember(30)]
         [DefaultValue(1.0f)]
         public float ScaleImport { get; set; } = 1.0f;
 
-
         /// <summary>
-        /// Gets or sets the model meshe merge property. When set to true to a model without skeleton, the meshes of the model are merged together by material.
+        ///   Gets or sets the model meshes merge property. When set to true to a model without skeleton, the meshes of the model are merged together by material.
         /// </summary>
         /// <userdoc>
-        /// When checked and the model has no skeleton, the meshes of the model are merged together by material. 
-        /// In most cases this improves the performances but prevents the meshes to be culled independently.
+        ///   When checked and the model has no skeleton, the meshes of the model are merged together by material.
+        ///   In most cases this improves the performances but prevents the meshes to be culled independently.
         /// </userdoc>
         [DataMember(35)]
         [DefaultValue(true)]
@@ -83,6 +83,11 @@ namespace Stride.Assets.Models
         [MemberCollection(ReadOnly = true)]
         [Category]
         public List<ModelMaterial> Materials { get; } = new List<ModelMaterial>();
+
+        [DataMember(45)]
+        [DefaultValue(true)]
+        [Display(Browsable = false)]
+        public bool DeduplicateMaterials { get; set; } = true;
 
         [DataMember(50)]
         [Category]

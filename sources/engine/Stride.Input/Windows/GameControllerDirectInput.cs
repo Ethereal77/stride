@@ -28,7 +28,7 @@ namespace Stride.Input
         private readonly List<GameControllerButtonInfo> buttonInfos = new List<GameControllerButtonInfo>();
         private readonly List<DirectInputAxisInfo> axisInfos = new List<DirectInputAxisInfo>();
         private readonly List<GameControllerDirectionInfo> directionInfos = new List<GameControllerDirectionInfo>();
-        
+
         //private DirectInputGameController gamepad;
         private readonly DirectInputJoystick joystick;
         private DirectInputState state = new DirectInputState();
@@ -47,7 +47,7 @@ namespace Stride.Input
             {
                 var objectId = obj.ObjectId;
                 string objectName = obj.Name.TrimEnd('\0');
-                
+
                 GameControllerObjectInfo objectInfo = null;
                 if (objectId.HasAnyFlag(DeviceObjectTypeFlags.Button | DeviceObjectTypeFlags.PushButton | DeviceObjectTypeFlags.ToggleButton))
                 {
@@ -68,7 +68,7 @@ namespace Stride.Input
                     // All objects after x/y/z and x/y/z rotation are sliders
                     if (obj.ObjectType == ObjectGuid.Slider)
                         axis.Offset += sliderCount++;
-                    
+
                     objectInfo = axis;
                     axisInfos.Add(axis);
                 }
@@ -84,7 +84,7 @@ namespace Stride.Input
                     objectInfo.Name = objectName;
                 }
             }
-            
+
             // Sort axes, buttons and hats do not need to be sorted
             axisInfos.Sort((a, b) => a.Offset.CompareTo(b.Offset));
 
@@ -111,7 +111,7 @@ namespace Stride.Input
         public override IInputSource Source { get; }
 
         public event EventHandler Disconnected;
-        
+
         /// <summary>
         /// Applies a deadzone to an axis input value
         /// </summary>
@@ -150,17 +150,26 @@ namespace Stride.Input
                 joystick.Poll();
                 joystick.GetCurrentState(ref state);
 
-                for (int i = 0; i < buttonInfos.Count; i++)
+                // Some device might report (perhaps erroneously) more than 128 buttons, which DirectInputState doesn't support
+                // Should be investigated with such a device at hand for proper testing
+                var buttonCount = buttonInfos.Count < state.Buttons.Length ? buttonInfos.Count : state.Buttons.Length;
+                for (int i = 0; i < buttonCount; i++)
                 {
                     HandleButton(i, state.Buttons[i]);
                 }
 
                 for (int i = 0; i < axisInfos.Count; i++)
                 {
-                    HandleAxis(i, ClampDeadZone(state.Axes[axisInfos[i].Offset] * 2.0f - 1.0f, InputManager.GameControllerAxisDeadZone));
+                    int axisMemIndex = axisInfos[i].Offset;
+                    // See previous comment
+                    if(axisMemIndex >= state.Axes.Length)
+                        continue;
+                    HandleAxis(i, ClampDeadZone(state.Axes[axisMemIndex] * 2.0f - 1.0f, InputManager.GameControllerAxisDeadZone));
                 }
 
-                for (int i = 0; i < directionInfos.Count; i++)
+                // See previous comment
+                var dirCount = state.PovControllers.Length < directionInfos.Count ? state.PovControllers.Length : directionInfos.Count;
+                for (int i = 0; i < dirCount; i++)
                 {
                     int povController = state.PovControllers[i];
                     HandleDirection(i, povController >= 0 ? Direction.FromTicks(povController, 36000) : Direction.None);

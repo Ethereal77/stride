@@ -5,34 +5,34 @@
 namespace Stride.Core.Serialization
 {
     /// <summary>
-    /// Defines what generic parameters to pass to the serializer.
+    ///   Defines what generic parameters to pass to a serializer.
     /// </summary>
     public enum DataSerializerGenericMode
     {
-        // ***************************************************************
+        // **************************************************************************************
         // NOTE: This file is shared with the AssemblyProcessor.
-        // If this file is modified, the AssemblyProcessor has to be
-        // recompiled separately. See build\Stride-AssemblyProcessor.sln
-        // ***************************************************************
+        //       If this file is modified, the AssemblyProcessor has to be recompiled separately.
+        //       See build\Stride-AssemblyProcessor.sln
+        // **************************************************************************************
 
         None = 0,
 
         /// <summary>
-        /// The type of the serialized type will be passed as a generic arguments of the serializer.
-        /// Example: serializer of A becomes instantiated as Serializer{A}.
+        ///   The type of the serialized type will be passed as a generic argument of the serializer.
+        ///   For example, a serializer of <c>A</c> will be instantiated as a <c>Serializer{A}</c>.
         /// </summary>
         Type = 1,
 
         /// <summary>
-        /// The generic arguments of the serialized type will be passed as a generic arguments of the serializer.
-        /// Example: serializer of A{T1, T2} becomes instantiated as Serializer{T1, T2}.
+        ///   The generic arguments of the serialized type will be passed as generic arguments of the serializer.
+        ///   For example, a serializer of <c>A{T1, T2}</c> will be instantiated as a <c>Serializer{T1, T2}</c>.
         /// </summary>
         GenericArguments = 2,
 
         /// <summary>
-        /// Combinations of both <see cref="Type"/> and <see cref="GenericArguments"/>.
-        /// Example: serializer of A{T1, T2} becomes instantiated as Serializer{A, T1, T2}.
+        ///   A combination of both <see cref="Type"/> and <see cref="GenericArguments"/>.
+        ///   For example, a serializer of <c>A{T1, T2}</c> will be instantiated as a <c>Serializer{A, T1, T2}</c>.
         /// </summary>
-        TypeAndGenericArguments = 3,
+        TypeAndGenericArguments = 3
     }
 }

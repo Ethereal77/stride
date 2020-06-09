@@ -8,14 +8,15 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
+
+using ServiceWire.NamedPipes;
 
 using Stride.Core;
 
 namespace Stride.ExecServer
 {
     /// <summary>
-    /// A AppDomain container for managing shadow copy AppDomain that is working with native dlls.
+    ///   An container for managing shadow copy <see cref="AppDomain"/>s and also native DLLs.
     /// </summary>
     internal class AppDomainShadow : MarshalByRefObject, IDisposable
     {
@@ -30,97 +31,71 @@ namespace Stride.ExecServer
         private readonly string applicationPath;
 
         private readonly string[] nativeDllsPathOrFolderList;
-
-        private readonly string appDomainName;
-
         private readonly string entryAssemblyPath;
         private readonly string mainAssemblyPath;
-
-        private readonly bool shadowCache;
-
         private bool isDllImportShadowCopy;
-
-        private AppDomain appDomain;
 
         private AssemblyLoaderCallback appDomainCallback;
 
         private readonly List<FileLoaded> filesLoaded;
 
         private bool isRunning;
-
         private bool isUpToDate = true;
 
-        private DateTime lastRunTime;
+        /// <summary>
+        ///   Gets the name of the <see cref="AppDomain"/>.
+        /// </summary>
+        /// <value>The name of the application domain managed by this container.</value>
+        public string Name { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AppDomainShadow" /> class.
+        ///   Gets the application domain managed by this container.
+        /// </summary>
+        /// <value>The application domain.</value>
+        public AppDomain AppDomain { get; private set; }
+
+        public bool ShadowCache { get; }
+
+        public DateTime LastRunTime { get; private set; }
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="AppDomainShadow" /> class.
         /// </summary>
         /// <param name="appDomainName">Name of the application domain.</param>
         /// <param name="entryAssemblyPath">Path to the client assembly in case we need to start another instance of same process.</param>
         /// <param name="mainAssemblyPath">The main assembly path.</param>
-        /// <param name="shadowCache">If [true], use shadow cache.</param>
-        /// <param name="nativeDllsPathOrFolderList">An array of folders path (containing only native dlls) or directly a specific path to a dll.</param>
-        /// <exception cref="System.ArgumentNullException">mainAssemblyPath</exception>
-        /// <exception cref="System.InvalidOperationException">If the assembly does not exist</exception>
+        /// <param name="shadowCache">Whether to use shadow cache.</param>
+        /// <param name="nativeDllsPathOrFolderList">An array of folders path (containing only native DLLs) or directly a specific path to a DLL.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="mainAssemblyPath"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="nativeDllsPathOrFolderList"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="FileNotFoundException">The assembly specified by <paramref name="mainAssemblyPath"/> does not exist.</exception>
         public AppDomainShadow(string appDomainName, string entryAssemblyPath, string mainAssemblyPath, bool shadowCache, params string[] nativeDllsPathOrFolderList)
         {
-            if (mainAssemblyPath == null) throw new ArgumentNullException("mainAssemblyPath");
-            if (nativeDllsPathOrFolderList == null) throw new ArgumentNullException("nativeDllsPathOrFolderList");
-            if (!File.Exists(mainAssemblyPath)) throw new InvalidOperationException(string.Format("Assembly [{0}] does not exist", mainAssemblyPath));
+            if (mainAssemblyPath is null)
+                throw new ArgumentNullException(nameof(mainAssemblyPath));
+            if (nativeDllsPathOrFolderList is null)
+                throw new ArgumentNullException(nameof(nativeDllsPathOrFolderList));
+            if (!File.Exists(mainAssemblyPath))
+                throw new FileNotFoundException($"Assembly [{mainAssemblyPath}] does not exist.");
 
-            this.appDomainName = appDomainName;
+            this.Name = appDomainName;
             this.entryAssemblyPath = entryAssemblyPath;
             this.mainAssemblyPath = mainAssemblyPath;
             this.nativeDllsPathOrFolderList = nativeDllsPathOrFolderList;
-            this.shadowCache = shadowCache;
+            this.ShadowCache = shadowCache;
+
             applicationPath = Path.GetDirectoryName(mainAssemblyPath);
             filesLoaded = new List<FileLoaded>();
+
             CreateAppDomain();
-            lastRunTime = DateTime.Now;
+
+            LastRunTime = DateTime.Now;
         }
 
         /// <summary>
-        /// Gets the name.
+        ///   Tries to take ownership of this container to run an executable/method from the application domain.
         /// </summary>
-        /// <value>The name.</value>
-        public string Name
-        {
-            get
-            {
-                return appDomainName;
-            }
-        }
-
-
-        /// <summary>
-        /// Gets the application domain managed by this container.
-        /// </summary>
-        /// <value>The application domain.</value>
-        public AppDomain AppDomain
-        {
-            get
-            {
-                return appDomain;
-            }
-        }
-
-        public bool ShadowCache
-        {
-            get { return shadowCache; }
-        }
-
-        public DateTime LastRunTime
-        {
-            get
-            {
-                return lastRunTime;
-            }
-        }
-
-        /// <summary>
-        /// Tries to take the ownership of this container to run an exe/method from the app domain.
-        /// </summary>
-        /// <returns><c>true</c> if ownership was successfull (you can then use <see cref="Run"/> method), <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c> if ownership was successfully taken and you can then use <see cref="Run"/>; <c>false</c> otherwise.</returns>
         public bool TryLock()
         {
             lock (singletonLock)
@@ -135,9 +110,9 @@ namespace Stride.ExecServer
         }
 
         /// <summary>
-        /// Determines whether all assemblies and native dlls have not changed.
+        ///   Determines whether all assemblies and native DLLs are unmodified.
         /// </summary>
-        /// <returns><c>true</c> if the appdomain is up-to-date; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the application domain is up-to-date; otherwise, <c>false</c>.</returns>
         public bool IsUpToDate()
         {
             if (isUpToDate)
@@ -152,7 +127,7 @@ namespace Stride.ExecServer
                 {
                     if (!fileLoaded.IsUpToDate())
                     {
-                        Console.WriteLine("Dll File changed: {0}", fileLoaded.FilePath);
+                        Console.WriteLine("DLL file changed: {0}", fileLoaded.FilePath);
 
                         isUpToDate = false;
                         break;
@@ -164,46 +139,41 @@ namespace Stride.ExecServer
         }
 
         /// <summary>
-        /// Runs the main entry point method passing arguments to it
+        ///   Runs the main entry point method passing arguments to it.
         /// </summary>
-        /// <param name="workingDirectory"></param>
+        /// <param name="workingDirectory">The working directory on which to start the executable.</param>
         /// <param name="environmentVariables">The environment variables.</param>
-        /// <param name="args">The arguments.</param>
+        /// <param name="args">The arguments for the entry point.</param>
         /// <param name="logger">The logger.</param>
-        /// <returns>System.Int32.</returns>
-        /// <exception cref="System.InvalidOperationException">Must call TryLock before calling this method</exception>
-        public int Run(string workingDirectory, Dictionary<string, string> environmentVariables, string[] args, IServerLogger logger)
+        /// <returns>Return code.</returns>
+        /// <exception cref="InvalidOperationException">Must call <see cref="TryLock"/> before calling this method.</exception>
+        public int Run(string workingDirectory, Dictionary<string, string> environmentVariables, string[] args, NpClient<IServerLogger> callbackChannel)
         {
             if (!isRunning)
-            {
                 throw new InvalidOperationException("Must call TryLock before calling this method");
-            }
 
             try
             {
-                lastRunTime = DateTime.Now;
-                using (var appDomainRedirectLogger = new AppDomainRedirectLogger(logger))
-                {
-                    appDomainCallback.Logger = appDomainRedirectLogger;
-                    appDomainCallback.CurrentDirectory = workingDirectory;
-                    appDomainCallback.EnvironmentVariables = environmentVariables;
-                    appDomainCallback.Arguments = args;
-                    appDomain.DoCallBack(appDomainCallback.Run);
-                    var result = appDomain.GetData("Result") as int?;
+                LastRunTime = DateTime.Now;
+                appDomainCallback.CallbackChannel = callbackChannel;
+                appDomainCallback.CurrentDirectory = workingDirectory;
+                appDomainCallback.EnvironmentVariables = environmentVariables;
+                appDomainCallback.Arguments = args;
+                AppDomain.DoCallBack(appDomainCallback.Run);
+                var result = AppDomain.GetData("Result") as int?;
 
-                    //var result = appDomain.ExecuteAssembly(mainAssemblyPath, args);
-                    Console.WriteLine("Return result: {0}", result);
-                    return result ?? -1;
-                }
+                //var result = appDomain.ExecuteAssembly(mainAssemblyPath, args);
+                Console.WriteLine("Return result: {0}", result);
+                return result ?? -1;
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                logger.OnLog(string.Format("Unexpected exception: {0}", exception), ConsoleColor.Red);
+                callbackChannel.Proxy.OnLog(string.Format("Unexpected exception: {0}", ex), ConsoleColor.Red);
                 return 1;
             }
             finally
             {
-                lastRunTime = DateTime.Now;
+                LastRunTime = DateTime.Now;
             }
         }
 
@@ -222,7 +192,7 @@ namespace Stride.ExecServer
                 return;
             }
 
-            if (shadowCache && !isDllImportShadowCopy)
+            if (ShadowCache && !isDllImportShadowCopy)
             {
                 var cachePath = GetRootCachePath(location);
                 if (cachePath != null)
@@ -237,29 +207,27 @@ namespace Stride.ExecServer
             RegisterFileLoaded(new FileInfo(Path.Combine(applicationPath, assemblyFileName)));
         }
 
+        // In this method, we copy all native DLLs to a subfolder under the shadow cache.
+        // Each DLL has a hash computed from its name and last timestamp. This hash is used to create a directory in
+        // which the DLLs will be stored.
+        // Later when the AppDomain is running, using NativeLibrary.PreLoadLibrary() will use the DLL that have been copied by this instance.
         private void ShadowCopyNativeDlls(string cachePath)
         {
-            // In this method, we copy all native dlls to a subfolder under the shadow cache
-            // Each dll has a hash computed from its name and last timestamp
-            // This hash is used to create a directory from which the dlls will be stored
-            // Later in the AppDomain running and use the NativeLibrary.PreLoadLibrary()
-            // The method in PreLoadLibrary will use the dll that have been copied by this instance
-
-            // Get the shadow folder for native dlls
+            // Get the shadow folder for native DLLs
             var nativeDllShadowRootFolder = Path.Combine(cachePath, "native");
             Directory.CreateDirectory(nativeDllShadowRootFolder);
 
-            // Copy check any new native dlls
+            // Copy check any new native DLLs
             var appPath = Path.GetDirectoryName(mainAssemblyPath);
 
             foreach (var nativeDllFolderOrPath in nativeDllsPathOrFolderList)
             {
                 var absolutePathOrFolder = Path.Combine(appPath, nativeDllFolderOrPath);
 
-                // Native dll files to load
-                var files = File.Exists(absolutePathOrFolder) ? 
-                    new[] { new FileInfo(absolutePathOrFolder) } : 
-                    new DirectoryInfo(absolutePathOrFolder).EnumerateFiles("*.dll");
+                // Native DLL files to load
+                var files = File.Exists(absolutePathOrFolder)
+                    ? new[] { new FileInfo(absolutePathOrFolder) }
+                    : new DirectoryInfo(absolutePathOrFolder).EnumerateFiles("*.dll");
 
                 var hashBuffer = new MemoryStream(new byte[1024]);
                 foreach (var file in files)
@@ -272,9 +240,9 @@ namespace Stride.ExecServer
                     }
 
                     // Register our native path
-                    NativeLibraryInternal.SetShadowPathForNativeDll(appDomain, file.Name, Path.GetDirectoryName(shadowDllPath));
+                    NativeLibraryInternal.SetShadowPathForNativeDll(AppDomain, file.Name, Path.GetDirectoryName(shadowDllPath));
 
-                    // Register this dll 
+                    // Register this DLL
                     RegisterFileLoaded(file);
                 }
             }
@@ -285,7 +253,7 @@ namespace Stride.ExecServer
             var info = new DirectoryInfo(currentPath);
             while (info != null)
             {
-                if (String.Compare(info.Name, "dl3", StringComparison.InvariantCultureIgnoreCase) == 0)
+                if (string.Compare(info.Name, "dl3", StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     return info;
                 }
@@ -299,8 +267,8 @@ namespace Stride.ExecServer
             uint hash = 2166136261;
             for (int i = 0; i < buffer.Length; i++)
             {
-                hash = hash ^ buffer[i];
-                hash = hash * 16777619;
+                hash ^= buffer[i];
+                hash *= 16777619;
             }
             return hash.ToString("x");
         }
@@ -349,21 +317,13 @@ namespace Stride.ExecServer
             try
             {
                 File.Copy(sourceFilePath, Path.Combine(destinationTempDirectory, fileName), true);
-                try
+                if (!Directory.Exists(destinationDirectory))
                 {
-                    if (!Directory.Exists(destinationDirectory))
-                    {
-                        Directory.Move(destinationTempDirectory, destinationDirectory);
-                        tempDirDeleted = true;
-                    }
-                }
-                catch (IOException)
-                {
+                    Directory.Move(destinationTempDirectory, destinationDirectory);
+                    tempDirDeleted = true;
                 }
             }
-            catch (IOException)
-            {
-            }
+            catch (IOException) { }
             finally
             {
                 if (!tempDirDeleted)
@@ -372,9 +332,7 @@ namespace Stride.ExecServer
                     {
                         Directory.Delete(destinationTempDirectory, true);
                     }
-                    catch (Exception)
-                    {
-                    }
+                    catch { }
                 }
             }
         }
@@ -389,10 +347,10 @@ namespace Stride.ExecServer
             if (!appDomainSetup.ApplicationBase.EndsWith("\\"))
                 appDomainSetup.ApplicationBase += "\\";
 
-            if (shadowCache)
+            if (ShadowCache)
             {
-                // Note: disabled until https://developercommunity.visualstudio.com/content/problem/214568/when-using-loaderoptimizationmultidomain-assemblyr.html is fixed
-                // this seems not necessary if we reuse same appdomain
+                // NOTE: disabled until https://developercommunity.visualstudio.com/content/problem/214568/when-using-loaderoptimizationmultidomain-assemblyr.html is fixed
+                // This seems not necessary if we reuse same AppDomain
                 //appDomainSetup.LoaderOptimization = LoaderOptimization.MultiDomain;
                 appDomainSetup.ShadowCopyFiles = "true";
                 appDomainSetup.ShadowCopyDirectories = applicationPath;
@@ -400,14 +358,14 @@ namespace Stride.ExecServer
             }
 
             // Create AppDomain
-            appDomain = AppDomain.CreateDomain(appDomainName, AppDomain.CurrentDomain.Evidence, appDomainSetup);
-            appDomain.SetData("RealEntryAssemblyFile", entryAssemblyPath);
+            AppDomain = AppDomain.CreateDomain(Name, AppDomain.CurrentDomain.Evidence, appDomainSetup);
+            AppDomain.SetData("RealEntryAssemblyFile", entryAssemblyPath);
 
             // Create appDomain Callback
             appDomainCallback = new AssemblyLoaderCallback(AssemblyLoaded, mainAssemblyPath);
 
             // Install the appDomainCallback to prepare the new app domain
-            appDomain.DoCallBack(appDomainCallback.RegisterAssemblyLoad);
+            AppDomain.DoCallBack(appDomainCallback.RegisterAssemblyLoad);
         }
 
         private struct FileLoaded
@@ -425,18 +383,15 @@ namespace Stride.ExecServer
             public bool IsUpToDate()
             {
                 if (!File.Exists(FilePath))
-                {
                     return false;
-                }
 
                 try
                 {
                     var currentTime = new FileInfo(FilePath).LastWriteTimeUtc;
                     return currentTime == lastWriteTime;
                 }
-                catch (IOException)
-                {
-                }
+                catch (IOException) { }
+
                 return false;
             }
         }
@@ -455,7 +410,7 @@ namespace Stride.ExecServer
                 this.executablePath = executablePath;
             }
 
-            public IServerLogger Logger { get; set; }
+            public NpClient<IServerLogger> CallbackChannel { get; set; }
 
             public string CurrentDirectory { get; set; }
 
@@ -467,7 +422,7 @@ namespace Stride.ExecServer
             {
                 var currentDomain = AppDomain.CurrentDomain;
 
-                // NOTE: This part is important to have native dlls resolved correctly by Mixed Assemblies
+                // NOTE: This part is important to have native DLLs resolved correctly by Mixed Assemblies
                 var path = Environment.GetEnvironmentVariable("PATH");
                 if (!path.Contains(currentDomain.BaseDirectory))
                 {
@@ -494,8 +449,8 @@ namespace Stride.ExecServer
                 foreach (var environmentVariable in EnvironmentVariables)
                     Environment.SetEnvironmentVariable(environmentVariable.Key, environmentVariable.Value);
 
-                currentDomain.SetData(AppDomainLogToActionKey, new Action<string, ConsoleColor>((text, color) => Logger.OnLog(text, color)));
-                var assembly = (Assembly)currentDomain.GetData(AppDomainExecServerEntryAssemblyKey);
+                currentDomain.SetData(AppDomainLogToActionKey, new Action<string, ConsoleColor>((text, color) => CallbackChannel.Proxy.OnLog(text, color)));
+                var assembly = (Assembly) currentDomain.GetData(AppDomainExecServerEntryAssemblyKey);
                 AppDomain.CurrentDomain.SetData("Result", currentDomain.ExecuteAssemblyByName(assembly.FullName, Arguments));
                 //AppDomain.CurrentDomain.SetData("Result", Convert.ToInt32(assembly.EntryPoint.Invoke(null, new object[] { Arguments })));
 
@@ -514,34 +469,10 @@ namespace Stride.ExecServer
             }
         }
 
-        private sealed class AppDomainRedirectLogger : MarshalByRefObject, IServerLogger, IDisposable
-        {
-            private IServerLogger logger;
-
-            public AppDomainRedirectLogger(IServerLogger logger)
-            {
-                this.logger = logger;
-            }
-
-            public void OnLog(string text, ConsoleColor color)
-            {
-                var localLogger = logger;
-                if (localLogger != null)
-                {
-                    Task.Factory.StartNew(() => localLogger.OnLog(text, color));
-                }
-            }
-
-            public void Dispose()
-            {
-                logger = null;
-            }
-        }
-
         public void Dispose()
         {
-            System.AppDomain.Unload(appDomain);
-            Console.WriteLine("AppDomain {0} Disposed", appDomainName);
+            System.AppDomain.Unload(AppDomain);
+            Console.WriteLine("AppDomain {0} Disposed", Name);
         }
     }
 }

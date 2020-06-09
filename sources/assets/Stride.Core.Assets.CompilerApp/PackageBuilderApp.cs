@@ -9,29 +9,25 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.ServiceModel;
 using System.Text;
 
 using Mono.Options;
 
-using Stride.Core;
-using Stride.Core.Diagnostics;
 using Stride.Core.Yaml;
+using Stride.Core.Diagnostics;
+using Stride.Core.BuildEngine;
 using Stride.Core.Assets.Diagnostics;
 using Stride.Core.Assets.CompilerApp.Tasks;
-using Stride.Core.BuildEngine;
 using Stride.Core.VisualStudio;
 using Stride.Assets.Models;
 using Stride.Assets.SpriteFont;
-using Stride.Graphics;
-using Stride.Particles;
 using Stride.Rendering.Materials;
 using Stride.Rendering.ProceduralModels;
+using Stride.Particles;
 using Stride.SpriteStudio.Offline;
 
 namespace Stride.Core.Assets.CompilerApp
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, UseSynchronizationContext = false)]
     class PackageBuilderApp : IPackageBuilderApp
     {
         private static Stopwatch clock;
@@ -50,7 +46,7 @@ namespace Stride.Core.Assets.CompilerApp
 
             clock = Stopwatch.StartNew();
 
-            // TODO this is hardcoded. Check how to make this dynamic instead.
+            // TODO: This is hardcoded. Check how to make this dynamic instead.
             RuntimeHelpers.RunModuleConstructor(typeof(IProceduralModel).Module.ModuleHandle);
             RuntimeHelpers.RunModuleConstructor(typeof(MaterialKeys).Module.ModuleHandle);
             RuntimeHelpers.RunModuleConstructor(typeof(SpriteFontAsset).Module.ModuleHandle);
@@ -98,6 +94,7 @@ namespace Stride.Core.Assets.CompilerApp
                 { "solution-file=", "Solution File Name", v => options.SolutionFile = v },
                 { "package-id=", "Package Id from the solution file", v => options.PackageId = Guid.Parse(v) },
                 { "package-file=", "Input Package File Name", v => options.PackageFile = v },
+                { "msbuild-uptodatecheck-filebase=", "BuildUpToDate File base for MSBuild; it will create one .inputs and one .outputs files", v => options.MSBuildUpToDateCheckFileBase = v },
                 { "o|output-path=", "Output path", v => options.OutputDirectory = v },
                 { "b|build-path=", "Build path", v => options.BuildDirectory = v },
                 { "log-file=", "Log build in a custom file.", v =>
@@ -139,7 +136,7 @@ namespace Stride.Core.Assets.CompilerApp
                 {
                     if (!string.IsNullOrEmpty(v))
                     {
-                        if (options.ExtraCompileProperties == null)
+                        if (options.ExtraCompileProperties is null)
                             options.ExtraCompileProperties = new Dictionary<string, string>();
 
                         foreach (var nameValue in v.Split(new [] { ';' }, StringSplitOptions.RemoveEmptyEntries))
@@ -156,8 +153,7 @@ namespace Stride.Core.Assets.CompilerApp
                 {
                     "reattach-debugger=", "Reattach to a Visual Studio debugger", v =>
                     {
-                        int debuggerProcessId;
-                        if (!string.IsNullOrEmpty(v) && int.TryParse(v, out debuggerProcessId))
+                        if (!string.IsNullOrEmpty(v) && int.TryParse(v, out var debuggerProcessId))
                         {
                             if (!Debugger.IsAttached)
                             {
@@ -189,7 +185,7 @@ namespace Stride.Core.Assets.CompilerApp
                 buildEngineLogger.ActivateLog(options.LoggerType);
 
                 // Output logs to the console with colored messages
-                if (options.SlavePipe == null && !options.LogPipeNames.Any())
+                if (options.SlavePipe is null && !options.LogPipeNames.Any())
                 {
                     if (redirectLogToAppDomainAction != null)
                     {
@@ -338,10 +334,11 @@ namespace Stride.Core.Assets.CompilerApp
         {
             //$filename($row,$column): $error_type $error_code: $error_message
             //C:\Code\Stride\sources\assets\Stride.Core.Assets.CompilerApp\PackageBuilder.cs(89,13,89,70): warning CS1717: Assignment made to same variable; did you mean to assign something else?
+
             var builder = new StringBuilder();
-            var assetLogMessage = message as AssetLogMessage;
+
             // Location
-            if (assetLogMessage != null)
+            if (message is AssetLogMessage assetLogMessage)
                 builder.Append($"{assetLogMessage.File}({assetLogMessage.Line + 1},{assetLogMessage.Character + 1}): ");
             // Message type
             builder.Append(message.Type.ToString().ToLowerInvariant()).Append(" ");

@@ -5,22 +5,20 @@
 using System;
 using System.Collections.Generic;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Serializers;
-using Stride.Core;
 using Stride.Core.Reflection;
-using Stride.Core.Serialization;
-using Stride.Core.Serialization.Contents;
-using Stride.Core.Yaml;
 using Stride.Core.Yaml.Serialization;
 using Stride.Core.Yaml.Serialization.Serializers;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Serializers;
 using Stride.Engine;
+
 using SerializerContext = Stride.Core.Yaml.Serialization.SerializerContext;
 
 namespace Stride.Debugger.Target
 {
     /// <summary>
-    /// When serializing/deserializing Yaml for live objects, this serializer will handle those objects as reference (similar to Clone serializer).
+    ///   Represents an object serializer that will handle live objects as references (similar to Clone serializer) when
+    ///   serializing or deserializing Yaml for live objects.
     /// </summary>
     [YamlSerializerFactory(YamlAssetProfile.Name)]
     public class CloneReferenceSerializer : ObjectSerializer
@@ -31,9 +29,10 @@ namespace Stride.Debugger.Target
         private static int recursionLevel;
 
         /// <summary>
-        /// The list of live references during that serialization/deserialization cycle.
+        ///   The list of live references during that serialization/deserialization cycle.
         /// </summary>
-        [ThreadStatic] internal static List<object> References;
+        [ThreadStatic]
+        internal static List<object> References;
 
         public override IYamlSerializable TryCreate(SerializerContext context, ITypeDescriptor typeDescriptor)
         {
@@ -46,8 +45,10 @@ namespace Stride.Debugger.Target
         private bool CanVisit(Type type)
         {
             // Also handles Entity, EntityComponent and Script
-            return AssetRegistry.IsContentType(type)
-                   || type == typeof(Entity) || typeof(Entity).IsAssignableFrom(type) || typeof(EntityComponent).IsAssignableFrom(type);
+            return AssetRegistry.IsContentType(type) ||
+                   type == typeof(Entity) ||
+                   typeof(Entity).IsAssignableFrom(type) ||
+                   typeof(EntityComponent).IsAssignableFrom(type);
         }
 
         /// <inheritdoc/>
@@ -81,9 +82,9 @@ namespace Stride.Debugger.Target
                 // We are inside a Script
                 if (!objectContext.SerializerContext.IsSerializing)
                 {
-                    if (objectContext.Instance is CloneReference)
+                    if (objectContext.Instance is CloneReference reference)
                     {
-                        objectContext.Instance = References[((CloneReference)objectContext.Instance).Id];
+                        objectContext.Instance = References[reference.Id];
                         return;
                     }
                 }
@@ -123,7 +124,7 @@ namespace Stride.Debugger.Target
         }
 
         /// <summary>
-        /// Helper class used by CloneReferenceSerializer
+        ///   Helper class used by <see cref="CloneReferenceSerializer"/>.
         /// </summary>
         internal class CloneReference
         {

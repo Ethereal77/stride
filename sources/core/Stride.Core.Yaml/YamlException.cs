@@ -9,49 +9,32 @@ using System;
 namespace Stride.Core.Yaml
 {
     /// <summary>
-    /// Base exception that is thrown when the a problem occurs in the SharpYaml library.
+    ///   Base exception that is thrown when the a problem occurs in the parsing of Yaml.
     /// </summary>
     public class YamlException : Exception
     {
         /// <summary>
-        /// Gets the position in the input stream where the event that originated the exception starts.
+        ///   Gets the position in the input stream where the event that originated the exception starts.
         /// </summary>
         public Mark Start { get; private set; }
 
         /// <summary>
-        /// Gets the position in the input stream where the event that originated the exception ends.
+        ///   Gets the position in the input stream where the event that originated the exception ends.
         /// </summary>
         public Mark End { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="YamlException"/> class.
+        ///   Initializes a new instance of the <see cref="YamlException"/> class.
         /// </summary>
-        public YamlException()
-        {
-        }
+        public YamlException(string message = null, Exception inner = null)
+            : base(message, inner)
+        { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="YamlException"/> class.
+        ///   Initializes a new instance of the <see cref="YamlException"/> class.
         /// </summary>
-        /// <param name="message">The message.</param>
-        public YamlException(string message)
-            : base(message)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="YamlException"/> class.
-        /// </summary>
-        public YamlException(Mark start, Mark end, string message)
-            : this(start, end, message, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="YamlException"/> class.
-        /// </summary>
-        public YamlException(Mark start, Mark end, string message, Exception innerException)
-            : base(string.Format("({0}) - ({1}): {2}", start, end, message), innerException)
+        public YamlException(Mark start, Mark end, string message, Exception innerException = null)
+            : base($"{message} (({start}) -> ({end}))", innerException)
         {
             Start = start;
             End = end;
@@ -60,11 +43,8 @@ namespace Stride.Core.Yaml
         /// <summary>
         /// Initializes a new instance of the <see cref="YamlException"/> class.
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="inner">The inner.</param>
-        public YamlException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
+        public YamlException(Events.ParsingEvent node, Exception innerException) :
+            this(node.Start, node.End, $"An exception occured while deserializing node [{node}].", innerException)
+        { }
     }
 }

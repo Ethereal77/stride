@@ -13,14 +13,13 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 
-using Stride.Core.Assets.Editor.Extensions;
-using Stride.Core.Assets.Editor.Services;
-using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.Mathematics;
 using Stride.Core.Threading;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Animations;
 using Stride.Assets.Presentation.CurveEditor.ViewModels;
 using Stride.Assets.Presentation.CurveEditor.Views;
@@ -42,9 +41,9 @@ namespace Stride.GameStudio
 
         public AssetEditorsManager([NotNull] DockingLayoutManager dockingLayoutManager, [NotNull] SessionViewModel session)
         {
-            if (dockingLayoutManager == null)
+            if (dockingLayoutManager is null)
                 throw new ArgumentNullException(nameof(dockingLayoutManager));
-            if (session == null)
+            if (session is null)
                 throw new ArgumentNullException(nameof(session));
 
             this.dockingLayoutManager = dockingLayoutManager;
@@ -53,10 +52,10 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Gets the list of assets that are currently opened in an editor.
+        ///   Gets a list of the assets that are currently opened in an editor.
         /// </summary>
         /// <remarks>
-        /// This does not include all assets in <see cref="IMultipleAssetEditorViewModel"/> but rather those that were explicitly opened.
+        ///   This does not include all assets in <see cref="IMultipleAssetEditorViewModel"/> but rather those that were explicitly opened.
         /// </remarks>
         public IReadOnlyCollection<AssetViewModel> OpenedAssets => openedAssets;
 
@@ -69,9 +68,9 @@ namespace Stride.GameStudio
         /// <inheritdoc/>
         public void OpenCurveEditorWindow([NotNull] object curve, string name)
         {
-            if (curve == null)
+            if (curve is null)
                 throw new ArgumentNullException(nameof(curve));
-            if (dockingLayoutManager == null)
+            if (dockingLayoutManager is null)
                 throw new InvalidOperationException("This method can only be invoked on the IEditorDialogService that has the editor main window as parent.");
 
             CurveEditorViewModel editorViewModel = null;
@@ -85,41 +84,41 @@ namespace Stride.GameStudio
             }
 
             // Create the editor view model if needed
-            if (editorViewModel == null)
+            if (editorViewModel is null)
             {
                 editorViewModel = new CurveEditorViewModel(session.ServiceProvider, session);
             }
 
             // Populate the editor view model
-            if (curve is IComputeCurve<Color4>)
+            if (curve is IComputeCurve<Color4> color4Curve)
             {
-                editorViewModel.AddCurve((IComputeCurve<Color4>)curve, name);
+                editorViewModel.AddCurve(color4Curve, name);
             }
-            else if (curve is IComputeCurve<float>)
+            else if (curve is IComputeCurve<float> floatCurve)
             {
-                editorViewModel.AddCurve((IComputeCurve<float>)curve, name);
+                editorViewModel.AddCurve(floatCurve, name);
             }
-            else if (curve is IComputeCurve<Quaternion>)
+            else if (curve is IComputeCurve<Quaternion> quaternionCurve)
             {
-                editorViewModel.AddCurve((IComputeCurve<Quaternion>)curve, name);
+                editorViewModel.AddCurve(quaternionCurve, name);
             }
-            else if (curve is IComputeCurve<Vector2>)
+            else if (curve is IComputeCurve<Vector2> vector2Curve)
             {
-                editorViewModel.AddCurve((IComputeCurve<Vector2>)curve, name);
+                editorViewModel.AddCurve(vector2Curve, name);
             }
-            else if (curve is IComputeCurve<Vector3>)
+            else if (curve is IComputeCurve<Vector3> vector3Curve)
             {
-                editorViewModel.AddCurve((IComputeCurve<Vector3>)curve, name);
+                editorViewModel.AddCurve(vector3Curve, name);
             }
-            else if (curve is IComputeCurve<Vector4>)
+            else if (curve is IComputeCurve<Vector4> vector4Curve)
             {
-                editorViewModel.AddCurve((IComputeCurve<Vector4>)curve, name);
+                editorViewModel.AddCurve(vector4Curve, name);
             }
 
             editorViewModel.Focus();
 
             // Create the editor pane if needed
-            if (editorPane == null)
+            if (editorPane is null)
             {
                 editorPane = new LayoutAnchorable
                 {
@@ -154,7 +153,7 @@ namespace Stride.GameStudio
 
         private void RemoveCurveEditor(bool removePane)
         {
-            if (curveEditor == null)
+            if (curveEditor is null)
                 return;
 
             var editor = curveEditor.Item1;
@@ -172,10 +171,6 @@ namespace Stride.GameStudio
 
         private void CurveEditorClosed(object sender, EventArgs eventArgs)
         {
-            var editorPane = (LayoutAnchorable)sender;
-            if (editorPane.IsVisible)
-                return;
-
             RemoveCurveEditor(true);
         }
 
@@ -239,11 +234,11 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Retrieves the list of all assets that are currently opened in an editor.
+        ///   Retrieves the list of all assets that are currently opened in an editor.
         /// </summary>
         /// <returns>A list of all assets currently opened.</returns>
         /// <remarks>
-        /// This includes all assets in <see cref="IMultipleAssetEditorViewModel"/> even those that were not explicitly opened.
+        ///   This includes all assets in <see cref="IMultipleAssetEditorViewModel"/> even those that were not explicitly opened.
         /// </remarks>
         /// <seealso cref="OpenedAssets"/>
         [NotNull]
@@ -256,16 +251,19 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Opens (and activates) an editor window for the given asset. If an editor window for this asset already exists, simply activates it.
+        ///   Opens (and activates) an editor window for the given asset. If an editor window for this asset already exists, simply activates it.
         /// </summary>
         /// <param name="asset">The asset for which to show an editor window.</param>
-        /// <param name="saveSettings">True if <see cref="MRUAdditionalData.OpenedAssets"/> should be updated, false otherwise. Note that if the editor fail to load it will not be updated.</param>
-        /// <returns></returns>
+        /// <param name="saveSettings">
+        ///   <c>true</c> if <see cref="MRUAdditionalData.OpenedAssets"/> should be updated; <c>false</c> otherwise. Note that if the
+        ///   editor fails to load it will not be updated.
+        /// </param>
+        /// <returns>A <see cref="Task"/> that can be awaited.</returns>
         internal async Task OpenAssetEditorWindow([NotNull] AssetViewModel asset, bool saveSettings)
         {
-            if (asset == null)
+            if (asset is null)
                 throw new ArgumentNullException(nameof(asset));
-            if (dockingLayoutManager == null)
+            if (dockingLayoutManager is null)
                 throw new InvalidOperationException("This method can only be invoked on the IEditorDialogService that has the editor main window as parent.");
 
             // Switch to the editor layout before adding any Pane
@@ -317,7 +315,7 @@ namespace Stride.GameStudio
                 {
                     // Pane may already exists (e.g. created from layout saving)
                     editorPane = AvalonDockHelper.GetAllAnchorables(dockingLayoutManager.DockingManager).FirstOrDefault(p => p.Title == asset.Url);
-                    if (editorPane == null)
+                    if (editorPane is null)
                     {
                         editorPane = new LayoutAnchorable { CanClose = true };
                         // Stack the asset in the dictionary of editor to prevent double-opening while double-clicking twice on the asset, since the initialization is async
@@ -338,7 +336,7 @@ namespace Stride.GameStudio
                     BindingOperations.SetBinding(editorPane, LayoutContent.TitleProperty, binding);
 
                     var viewModel = await view.InitializeEditor(asset);
-                    if (viewModel == null)
+                    if (viewModel is null)
                     {
                         // Could not initialize editor
                         CleanEditorPane(editorPane);
@@ -348,8 +346,7 @@ namespace Stride.GameStudio
                     {
                         assetEditors[viewModel] = editorPane;
                         openedAssets.Add(asset);
-                        var multiEditor = viewModel as IMultipleAssetEditorViewModel;
-                        if (multiEditor != null)
+                        if (viewModel is IMultipleAssetEditorViewModel multiEditor)
                         {
                             foreach (var item in multiEditor.OpenedAssets)
                             {
@@ -436,7 +433,7 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Removes the editor for the given <paramref name="asset"/>.
+        ///   Removes the editor for the given asset.
         /// </summary>
         /// <param name="asset">The asset.</param>
         private void RemoveAssetEditor([NotNull] AssetViewModel asset)
@@ -444,7 +441,7 @@ namespace Stride.GameStudio
             openedAssets.Remove(asset);
 
             var editor = asset.Editor;
-            if (editor == null)
+            if (editor is null)
                 return;
 
             asset.Editor = null;
@@ -453,11 +450,9 @@ namespace Stride.GameStudio
 
         private void RemoveEditor([NotNull] IAssetEditorViewModel editor)
         {
-            LayoutAnchorable editorPane;
-            assetEditors.TryGetValue(editor, out editorPane);
+            assetEditors.TryGetValue(editor, out LayoutAnchorable editorPane);
 
-            var multiEditor = editor as IMultipleAssetEditorViewModel;
-            if (multiEditor != null)
+            if (editor is IMultipleAssetEditorViewModel multiEditor)
             {
                 multiEditor.OpenedAssets.CollectionChanged -= (_, e) => MultiEditorOpenAssetsChanged(multiEditor, e);
                 // Clean asset view models
@@ -473,9 +468,8 @@ namespace Stride.GameStudio
             {
                 editor.Destroy();
             }
-            catch (ObjectDisposedException)
-            {
-            }
+            catch (ObjectDisposedException) { }
+
             // Clean and remove editor pane
             if (editorPane != null)
             {
@@ -490,7 +484,7 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Cleans the editor pane.
+        ///   Cleans the editor pane.
         /// </summary>
         /// <param name="editorPane">The editor pane.</param>
         /// <seealso cref="RemoveEditorPane"/>
@@ -503,7 +497,7 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Removes the editor pane.
+        ///   Removes the editor pane.
         /// </summary>
         /// <param name="editorPane">The editor pane.</param>
         /// <seealso cref="CleanEditorPane"/>
@@ -521,7 +515,7 @@ namespace Stride.GameStudio
 
         private static void EditorPaneClosing(object sender, CancelEventArgs e)
         {
-            var editorPane = (LayoutAnchorable)sender;
+            var editorPane = (LayoutAnchorable) sender;
 
             var element = editorPane.Content as FrameworkElement;
             var asset = element?.DataContext as AssetViewModel;
@@ -536,12 +530,9 @@ namespace Stride.GameStudio
         private void EditorPaneClosed(object sender, EventArgs eventArgs)
         {
             var editorPane = (LayoutAnchorable)sender;
-            if (editorPane.IsVisible)
-                return;
 
             var element = editorPane.Content as FrameworkElement;
-            var asset = element?.DataContext as AssetViewModel;
-            if (asset != null)
+            if (element?.DataContext is AssetViewModel asset)
             {
                 CloseEditorWindow(asset);
             }
@@ -550,17 +541,16 @@ namespace Stride.GameStudio
         private static void EditorPaneContentLoaded(object sender, RoutedEventArgs e)
         {
             // Give focus to element
-            var element = (FrameworkElement)sender;
+            var element = (FrameworkElement) sender;
             if (!element.IsKeyboardFocusWithin)
                 Keyboard.Focus(element);
         }
 
         private static void EditorPaneIsActiveChanged(object sender, EventArgs e)
         {
-            var editorPane = (LayoutAnchorable)sender;
-            var element = editorPane.Content as FrameworkElement;
+            var editorPane = (LayoutAnchorable) sender;
 
-            if (element != null)
+            if (editorPane.Content is FrameworkElement element)
             {
                 if (editorPane.IsActive)
                 {
@@ -585,10 +575,9 @@ namespace Stride.GameStudio
 
         private static void EditorPaneIsSelectedChanged(object sender, EventArgs e)
         {
-            var editorPane = (LayoutAnchorable)sender;
-            var element = editorPane.Content as FrameworkElement;
+            var editorPane = (LayoutAnchorable) sender;
 
-            if (element != null)
+            if (editorPane.Content is FrameworkElement element)
             {
                 var assetViewModel = element?.DataContext as AssetViewModel;
                 if (assetViewModel?.Editor is Assets.Presentation.AssetEditors.GameEditor.ViewModels.GameEditorViewModel gameEditor)
@@ -607,9 +596,9 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Makes the editor pane active and visible.
+        ///   Makes an editor pane active and visible.
         /// </summary>
-        /// <param name="editorPane"></param>
+        /// <param name="editorPane">Editor pane.</param>
         private static void MakeActiveVisible([NotNull] LayoutAnchorable editorPane)
         {
             editorPane.IsActive = true;

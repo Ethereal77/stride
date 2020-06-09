@@ -16,46 +16,46 @@ using Stride.Core.Yaml.Serialization.Serializers;
 namespace Stride.Core.Yaml
 {
     /// <summary>
-    /// A base class to serialize collections with unique identifiers for each item.
+    ///   Base class for serializers of collections with unique identifiers for each item.
     /// </summary>
     [YamlSerializerFactory("Assets")]
     public abstract class CollectionWithIdsSerializerBase : DictionarySerializer
     {
         /// <summary>
-        /// A string token to identify deleted items in a collection.
+        ///   String token to identify deleted items in a collection.
         /// </summary>
         public const string YamlDeletedKey = "~(Deleted)";
         /// <summary>
-        /// A property key to indicate whether a collection has non-identifiable items
+        ///   Property key to indicate whether a collection has non-identifiable items
         /// </summary>
         public static readonly PropertyKey<bool> NonIdentifiableCollectionItemsKey = new PropertyKey<bool>("NonIdentifiableCollectionItems", typeof(CollectionWithIdsSerializer));
         /// <summary>
-        /// A key that identifies the information about the instance that we need the store in the <see cref="ObjectContext.Properties"/> dictionary.
+        ///   Property key that identifies the information about the instance that we need the store in the <see cref="ObjectContext.Properties"/> dictionary.
         /// </summary>
         protected static readonly PropertyKey<InstanceInfo> InstanceInfoKey = new PropertyKey<InstanceInfo>("InstanceInfo", typeof(CollectionWithIdsSerializer));
         /// <summary>
-        /// A key that identifies deleted items during deserialization.
+        ///   Property key that identifies deleted items during deserialization.
         /// </summary>
         protected static readonly PropertyKey<ICollection<ItemId>> DeletedItemsKey = new PropertyKey<ICollection<ItemId>>("DeletedItems", typeof(CollectionWithIdsSerializer));
 
         /// <summary>
-        /// A structure containing the information about the instance that we need the store in the <see cref="ObjectContext.Properties"/> dictionary. 
+        ///   A class containing information about the instance that we need the store in the <see cref="ObjectContext.Properties"/> dictionary.
         /// </summary>
         protected internal class InstanceInfo
         {
             public InstanceInfo(object instance, ITypeDescriptor typeDescriptor)
-            {               
+            {
                 Instance = instance;
                 Descriptor = typeDescriptor;
             }
+
             public readonly object Instance;
             public readonly ITypeDescriptor Descriptor;
         }
 
         public override object ReadYaml(ref ObjectContext objectContext)
         {
-            // Create or transform the value to deserialize
-            // If the new value to serialize is not the same as the one we were expecting to serialize
+            // Create or transform the value to deserialize if the new value to serialize is not the same as the one we were expecting to serialize
             CreateOrTransformObject(ref objectContext);
             var newValue = objectContext.Instance;
 
@@ -76,10 +76,10 @@ namespace Stride.Core.Yaml
 
         public override void WriteYaml(ref ObjectContext objectContext)
         {
-            // TODO: the API could be changed at the ObjectSerializer level so we can, through override:
-            // TODO: - customize what to do -if- the object got transformed (currently: ObjectSerializer = routing, here = keep same serializer)
-            // TODO: - override WriteYamlAfterTransform without overriding WriteYaml
-            // TODO: - and similar with reading
+            // TODO: The API could be changed at the ObjectSerializer level so we can, through override:
+            // TODO: - Customize what to do -if- the object got transformed (currently: ObjectSerializer = routing, here = keep same serializer)
+            // TODO: - Override WriteYamlAfterTransform without overriding WriteYaml
+            // TODO: - And similar with reading
 
             CreateOrTransformObject(ref objectContext);
             var newValue = objectContext.Instance;
@@ -100,7 +100,8 @@ namespace Stride.Core.Yaml
             base.CreateOrTransformObject(ref objectContext);
 
             // Allow to deserialize the old way
-            if (!objectContext.SerializerContext.IsSerializing && objectContext.Reader.Accept<SequenceStart>())
+            if (!objectContext.SerializerContext.IsSerializing &&
+                objectContext.Reader.Accept<SequenceStart>())
                 return;
 
             // Ignore collections flagged as having non-identifiable items
@@ -114,8 +115,7 @@ namespace Stride.Core.Yaml
             if (objectContext.SerializerContext.IsSerializing && objectContext.Instance != null)
             {
                 // Store deleted items in the context
-                CollectionItemIdentifiers identifier;
-                if (CollectionItemIdHelper.TryGetCollectionItemIds(objectContext.Instance, out identifier))
+                if (CollectionItemIdHelper.TryGetCollectionItemIds(objectContext.Instance, out CollectionItemIdentifiers identifier))
                 {
                     var deletedItems = identifier.DeletedItems.ToList();
                     deletedItems.Sort();
@@ -132,12 +132,12 @@ namespace Stride.Core.Yaml
         }
 
         /// <summary>
-        /// Reads the dictionary items key-values.
+        ///   Reads the key-value items of a dictionary.
         /// </summary>
-        /// <param name="objectContext"></param>
+        /// <param name="objectContext">The object serialization context.</param>
         protected override void ReadDictionaryItems(ref ObjectContext objectContext)
         {
-            var dictionaryDescriptor = (DictionaryDescriptor)objectContext.Descriptor;
+            var dictionaryDescriptor = (DictionaryDescriptor) objectContext.Descriptor;
 
             var deletedItems = new HashSet<ItemId>();
 
@@ -165,10 +165,7 @@ namespace Stride.Core.Yaml
                     if (objectContext.SerializerContext.AllowErrors)
                     {
                         var logger = objectContext.SerializerContext.Logger;
-                        if(ex.InnerException is DefaultObjectFactory.InstanceCreationException ice)
-                            logger?.Warning($"Ignored dictionary item that could not be deserialized:\n{ice.Message}", ex);
-                        else
-                            logger?.Warning($"Ignored dictionary item that could not be deserialized:\n{ex.Message}", ex);
+                        logger?.Warning($"{ex.Message}. This dictionary item will be ignored.", ex);
                         objectContext.Reader.Skip(currentDepth, objectContext.Reader.Parser.Current == startParsingEvent);
                     }
                     else throw;
@@ -180,11 +177,12 @@ namespace Stride.Core.Yaml
 
         protected override void WriteDictionaryItems(ref ObjectContext objectContext)
         {
-            var dictionaryDescriptor = (DictionaryDescriptor)objectContext.Descriptor;
+            var dictionaryDescriptor = (DictionaryDescriptor) objectContext.Descriptor;
             var keyValues = dictionaryDescriptor.GetEnumerator(objectContext.Instance).ToList();
 
             // Not sorting the keys here, they should be already properly sorted when we arrive here
-            // TODO: Allow to disable sorting externally, to avoid overriding this method. NOTE: tampering with Settings.SortKeyForMapping is not an option, it is not local but applied to all children. (ParameterKeyDictionarySerializer is doing that and is buggy)
+            // TODO: Allow to disable sorting externally, to avoid overriding this method.
+            // NOTE: Tampering with Settings.SortKeyForMapping is not an option. It is not local but applied to all children. (ParameterKeyDictionarySerializer is doing that and is buggy)
 
             var keyValueType = new KeyValuePair<Type, Type>(dictionaryDescriptor.KeyType, dictionaryDescriptor.ValueType);
 
@@ -213,10 +211,8 @@ namespace Stride.Core.Yaml
 
         protected override bool CheckIsSequence(ref ObjectContext objectContext)
         {
-            var collectionDescriptor = objectContext.Descriptor as CollectionDescriptor;
-
             // If the dictionary is pure, we can directly output a sequence instead of a mapping
-            return collectionDescriptor != null && collectionDescriptor.IsPureCollection;
+            return objectContext.Descriptor is CollectionDescriptor collectionDescriptor && collectionDescriptor.IsPureCollection;
         }
 
         protected virtual void ReadYamlAfterTransform(ref ObjectContext objectContext, bool transformed)
@@ -239,7 +235,7 @@ namespace Stride.Core.Yaml
         }
 
         /// <summary>
-        /// Transforms the given collection or dictionary into a dictionary of (ids, items) or a dictionary of (ids & keys, items).
+        ///   Transforms the given collection or dictionary into a dictionary of (ids, items) or a dictionary of (ids & keys, items).
         /// </summary>
         /// <param name="descriptor">The type descriptor of the collection.</param>
         /// <param name="collection">The collection for which to create the mapping dictionary.</param>
@@ -247,14 +243,14 @@ namespace Stride.Core.Yaml
         protected abstract object TransformForSerialization(ITypeDescriptor descriptor, object collection);
 
         /// <summary>
-        /// Creates an empty dictionary that can store the mapping of ids to items of the collection.
+        ///   Creates an empty dictionary that can store the mapping of ids to items of the collection.
         /// </summary>
         /// <param name="descriptor">The type descriptor of the collection for which to create the dictionary.</param>
         /// <returns>An empty dictionary for mapping ids to elements.</returns>
         protected abstract IDictionary CreatEmptyContainer(ITypeDescriptor descriptor);
 
         /// <summary>
-        /// Transforms a dictionary containing the mapping of ids to items into the actual collection, and store the ids in the <see cref="Reflection.ShadowObject"/>.
+        ///   Transforms a dictionary containing the mapping of ids to items into the actual collection, and store the ids in the <see cref="ShadowObject"/>.
         /// </summary>
         /// <param name="container">The dictionary mapping ids to item.</param>
         /// <param name="targetDescriptor">The type descriptor of the actual collection to fill.</param>
@@ -266,10 +262,8 @@ namespace Stride.Core.Yaml
 
         protected static bool AreCollectionItemsIdentifiable(ref ObjectContext objectContext)
         {
-            bool nonIdentifiableItems;
-
             // Check in the serializer context first, for disabling of item identifiers at parent type level
-            if (objectContext.SerializerContext.Properties.TryGetValue(NonIdentifiableCollectionItemsKey, out nonIdentifiableItems) && nonIdentifiableItems)
+            if (objectContext.SerializerContext.Properties.TryGetValue(NonIdentifiableCollectionItemsKey, out var nonIdentifiableItems) && nonIdentifiableItems)
                 return false;
 
             // Then check locally for disabling of item identifiers at member level

@@ -55,10 +55,9 @@ namespace Stride.Assets.Presentation.AssetEditors
 
         public Project Project { get; set; }
     }
-    
+
     public class ProjectWatcher : IDisposable
     {
-        private readonly TrackingCollection<TrackedAssembly> trackedAssemblies;
         private readonly BufferBlock<FileEvent> fileChanged = new BufferBlock<FileEvent>();
         private readonly IDisposable fileChangedLink1;
         private readonly IDisposable fileChangedLink2;
@@ -66,18 +65,37 @@ namespace Stride.Assets.Presentation.AssetEditors
         private readonly SessionViewModel session;
         private readonly bool trackBinaries;
         private TaskCompletionSource<bool> initializedTaskSource;
-        private Project gameExecutable;
-
-        private CancellationTokenSource batchChangesCancellationTokenSource = new CancellationTokenSource();
-        private Task batchChangesTask;
+        private readonly CancellationTokenSource batchChangesCancellationTokenSource = new CancellationTokenSource();
+        private readonly Task batchChangesTask;
 
         private MSBuildWorkspace msbuildWorkspace;
 
-        private Lazy<Task<RoslynHost>> roslynHost = new Lazy<Task<RoslynHost>>(() => Task.Factory.StartNew(() => new RoslynHost()));
+        private readonly Lazy<Task<RoslynHost>> roslynHost = new Lazy<Task<RoslynHost>>(() => Task.Factory.StartNew(() => new RoslynHost()));
+
+        public BroadcastBlock<AssemblyChangedEvent> AssemblyChangedBroadcast { get; } = new BroadcastBlock<AssemblyChangedEvent>(null);
+        public BroadcastBlock<List<AssemblyChangedEvent>> AssembliesChangedBroadcast { get; } = new BroadcastBlock<List<AssemblyChangedEvent>>(null);
+
+        public Project CurrentGameLibrary
+        {
+            get
+            {
+                if (!(session.CurrentProject is ProjectViewModel project) || project.Type != ProjectType.Library)
+                    return null;
+
+                return TrackedAssemblies.FirstOrDefault(x => new UFile(x.Project.FilePath) == project.ProjectPath)?.Project;
+            }
+        }
+
+        public Task<RoslynHost> RoslynHost => roslynHost.Value;
+
+        public Project CurrentGameExecutable { get; private set; }
+
+        public TrackingCollection<TrackedAssembly> TrackedAssemblies { get; }
+
 
         public ProjectWatcher(SessionViewModel session, bool trackBinaries = true)
         {
-            trackedAssemblies = new TrackingCollection<TrackedAssembly>();
+            TrackedAssemblies = new TrackingCollection<TrackedAssembly>();
 
             this.trackBinaries = trackBinaries;
             this.session = session;
@@ -92,6 +110,7 @@ namespace Stride.Assets.Presentation.AssetEditors
 
             batchChangesTask = BatchChanges();
         }
+
 
         private async Task BatchChanges()
         {
@@ -125,27 +144,6 @@ namespace Stride.Assets.Presentation.AssetEditors
             }
         }
 
-        public BroadcastBlock<AssemblyChangedEvent> AssemblyChangedBroadcast { get; } = new BroadcastBlock<AssemblyChangedEvent>(null);
-        public BroadcastBlock<List<AssemblyChangedEvent>> AssembliesChangedBroadcast { get; } = new BroadcastBlock<List<AssemblyChangedEvent>>(null);
-
-        public Project CurrentGameLibrary
-        {
-            get
-            {
-                var project = session.CurrentProject as ProjectViewModel;
-                if (project == null || project.Type != ProjectType.Library)
-                    return null;
-
-                return TrackedAssemblies.FirstOrDefault(x => new UFile(x.Project.FilePath) == project.ProjectPath)?.Project;
-            }
-        }
-
-        public Task<RoslynHost> RoslynHost => roslynHost.Value;
-
-        public Project CurrentGameExecutable => gameExecutable;
-
-        public TrackingCollection<TrackedAssembly> TrackedAssemblies => trackedAssemblies;
-
         public void Dispose()
         {
             batchChangesCancellationTokenSource.Cancel();
@@ -158,7 +156,7 @@ namespace Stride.Assets.Presentation.AssetEditors
 
         public async Task Initialize()
         {
-            if (initializedTaskSource == null)
+            if (initializedTaskSource is null)
             {
                 initializedTaskSource = new TaskCompletionSource<bool>();
 
@@ -168,9 +166,9 @@ namespace Stride.Assets.Presentation.AssetEditors
 
                 // Locate current package's game executable
                 // TODO: Handle current package changes. Detect this as part of the package solution.
-                var gameExecutableViewModel = (session.CurrentProject as ProjectViewModel)?.Type == ProjectType.Executable ? session.CurrentProject : null;
+                var gameExecutableViewModel = session.CurrentProject?.Type == ProjectType.Executable ? session.CurrentProject : null;
                 if (gameExecutableViewModel != null && gameExecutableViewModel.IsLoaded)
-                    gameExecutable = await OpenProject(gameExecutableViewModel.ProjectPath);
+                    CurrentGameExecutable = await OpenProject(gameExecutableViewModel.ProjectPath);
 
                 initializedTaskSource.SetResult(true);
             }
@@ -207,7 +205,7 @@ namespace Stride.Assets.Presentation.AssetEditors
             var renameEvent = e as FileRenameEvent;
             changedFile = renameEvent?.OldFullPath ?? e.FullPath;
 
-            foreach (var trackedAssembly in trackedAssemblies)
+            foreach (var trackedAssembly in TrackedAssemblies)
             {
                 // Report change of the assembly binary
                 if (string.Equals(trackedAssembly.LoadedAssembly.Path, changedFile, StringComparison.OrdinalIgnoreCase))
@@ -217,10 +215,10 @@ namespace Stride.Assets.Presentation.AssetEditors
 
                 // Also check for .cs file changes (DefaultItems auto import *.cs, with some excludes such as obj subfolder)
                 // TODO: Check actual unevaluated .csproj to get the auto includes/excludes?
-                if (needProjectReload == false
-                    && (e.ChangeType == FileEventChangeType.Deleted || e.ChangeType == FileEventChangeType.Renamed || e.ChangeType == FileEventChangeType.Created)
-                    && Path.GetExtension(changedFile)?.ToLowerInvariant() == ".cs"
-                    && !UPath.Combine(new UFile(trackedAssembly.Project.FilePath).GetFullDirectory(), new UDirectory("obj")).Contains(new UFile(changedFile)))
+                if (needProjectReload == false &&
+                    (e.ChangeType == FileEventChangeType.Deleted || e.ChangeType == FileEventChangeType.Renamed || e.ChangeType == FileEventChangeType.Created) &&
+                    Path.GetExtension(changedFile)?.ToLowerInvariant() == ".cs" &&
+                    !UPath.Combine(new UFile(trackedAssembly.Project.FilePath).GetFullDirectory(), new UDirectory("obj")).Contains(new UFile(changedFile)))
                 {
                     needProjectReload = true;
                 }
@@ -254,9 +252,8 @@ namespace Stride.Assets.Presentation.AssetEditors
                         }
                         break;
                     }
-                    catch (IOException)
-                    {
-                    }
+                    catch (IOException) { }
+
                     await Task.Delay(1);
                 }
 
@@ -295,7 +292,7 @@ namespace Stride.Assets.Presentation.AssetEditors
         private void UntrackPackage(PackageViewModel package)
         {
             // TODO: Properly untrack all files
-            trackedAssemblies.RemoveWhere(trackedAssembly => trackedAssembly.Package == package);
+            TrackedAssemblies.RemoveWhere(trackedAssembly => trackedAssembly.Package == package);
         }
 
         private async Task TrackPackage(PackageViewModel package)
@@ -310,13 +307,16 @@ namespace Stride.Assets.Presentation.AssetEditors
                     directoryWatcher.Track(loadedAssembly.Path);
 
                 // Track the project file
+                if (loadedAssembly.ProjectReference == null)
+                    continue;
+
                 directoryWatcher.Track(loadedAssembly.ProjectReference.Location);
 
                 var trackedAssembly = new TrackedAssembly { Package = package, LoadedAssembly = loadedAssembly };
-                
+
                 // Track project source code
                 if (await UpdateProject(trackedAssembly))
-                    trackedAssemblies.Add(trackedAssembly);
+                    TrackedAssemblies.Add(trackedAssembly);
             }
 
             // TODO: Detect changes to loaded assemblies?
@@ -342,8 +342,8 @@ namespace Stride.Assets.Presentation.AssetEditors
             foreach (var document in project.Documents)
             {
                 // Limit ourselves to our package subfolders or project folders
-                if (!packageDirectory.Contains(new UFile(document.FilePath))
-                    && !projectDirectory.Contains(new UFile(document.FilePath)))
+                if (!packageDirectory.Contains(new UFile(document.FilePath)) &&
+                    !projectDirectory.Contains(new UFile(document.FilePath)))
                     continue;
 
                 directoryWatcher.Track(document.FilePath);
@@ -363,7 +363,7 @@ namespace Stride.Assets.Presentation.AssetEditors
             }
 
             msbuildWorkspace.CloseSolution();
-            
+
             // Try up to 10 times (1 second)
             const int retryCount = 10;
             for (var i = retryCount - 1; i >= 0; --i)
@@ -373,7 +373,7 @@ namespace Stride.Assets.Presentation.AssetEditors
                     var project = await msbuildWorkspace.OpenProjectAsync(projectPath.ToWindowsPath());
 
                     // Change the default CSharp language version to match the supported version for a specific Visual Studio version or MSBuild version
-                    //  this is because roslyn  will always resolve Default to Latest which might not match the 
+                    //  this is because roslyn  will always resolve Default to Latest which might not match the
                     //  latest version supported by the build tools installed on the machine
                     var csharpParseOptions = project.ParseOptions as CSharpParseOptions;
                     if (csharpParseOptions != null)
@@ -393,13 +393,12 @@ namespace Stride.Assets.Presentation.AssetEditors
                                 }
 
                             }
-                            else 
+                            else
                             {
-                                // Fallback to checking the tools version on the csproj 
+                                // Fallback to checking the tools version on the csproj
                                 //  this happens when you open an sdpkg instead of a sln file as a project
                                 ProjectRootElement xml = ProjectRootElement.Open(projectPath);
-                                Version toolsVersion;
-                                if (Version.TryParse(xml.ToolsVersion, out toolsVersion))
+                                if (Version.TryParse(xml.ToolsVersion, out Version toolsVersion))
                                 {
                                     if (toolsVersion.Major <= 14)
                                     {

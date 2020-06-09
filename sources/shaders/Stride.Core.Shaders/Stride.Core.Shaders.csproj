@@ -11,22 +11,6 @@
     <StrideAssemblyProcessorOptions>--serialization</StrideAssemblyProcessorOptions>
     <StrideBuildTags>*</StrideBuildTags>
   </PropertyGroup>
-  <Choose>
-    <When Condition="'$(StrideNETRuntime)' != ''">
-      <ItemGroup>
-        <Reference Include="CppNet">
-          <HintPath>..\..\..\deps\CppNet\$(StrideNETRuntime)\CppNet.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <Reference Include="CppNet">
-          <HintPath>..\..\..\deps\CppNet\CppNet.dll</HintPath>
-        </Reference>
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
 
   <PropertyGroup>
     <AssemblyTitle>Stride Shading Language Syntax Parsing and Analysis</AssemblyTitle>
@@ -59,6 +43,9 @@
     <None Include="Analysis\Hlsl\HlslDeclarations.h" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CppNet">
+      <HintPath>..\..\..\deps\CppNet\netstandard1.3\CppNet.dll</HintPath>
+    </Reference>
     <ProjectReference Include="..\..\core\Stride.Core\Stride.Core.csproj" />
     <ProjectReference Include="..\Irony\Stride.Irony.csproj" />
   </ItemGroup>

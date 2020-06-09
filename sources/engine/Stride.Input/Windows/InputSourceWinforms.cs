@@ -10,6 +10,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+#if STRIDE_INPUT_RAWINPUT
+using SharpDX.RawInput;
+#endif
+
 using Stride.Games;
 
 using WinFormsKeys = System.Windows.Forms.Keys;
@@ -17,7 +21,7 @@ using WinFormsKeys = System.Windows.Forms.Keys;
 namespace Stride.Input
 {
     /// <summary>
-    /// Provides support for mouse and keyboard input on windows forms
+    ///   Provides support for mouse and keyboard input on Windows Forms.
     /// </summary>
     internal class InputSourceWinforms : InputSourceBase
     {
@@ -36,7 +40,7 @@ namespace Stride.Input
         private InputManager input;
 
         /// <summary>
-        /// Gets the value indicating if the mouse position is currently locked or not.
+        ///   Gets the value indicating if the mouse position is currently locked or not.
         /// </summary>
         public bool IsMousePositionLocked { get; protected set; }
 
@@ -46,7 +50,7 @@ namespace Stride.Input
             gameContext = inputManager.Game.Context as GameContext<Control>;
             uiControl = gameContext.Control;
             uiControl.LostFocus += UIControlOnLostFocus;
-            MissingInputHack(uiControl);
+            MissingInputHack();
 
             // Hook window proc
             defaultWndProc = Win32Native.GetWindowLong(uiControl.Handle, Win32Native.WindowLongType.WndProc);
@@ -64,28 +68,36 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// This function houses a hack to fix the window missing some input events,
-        /// see Stride pull #181 for more information (https://github.com/stride3d/stride/pull/181).
-        /// TODO: Find a proper solution to replace this workaround.
+        ///   This function houses a hack to fix the window missing some input events.
+        ///   See Stride PR #181 for more information (https://github.com/stride3d/stride/pull/181).
         /// </summary>
-        /// <param name="winformControl"></param>
-        private void MissingInputHack(Control winformControl)
+        // TODO: Find a proper solution to replace this workaround.
+        private void MissingInputHack()
         {
 #if STRIDE_INPUT_RAWINPUT
-            if (winformControl.Handle == IntPtr.Zero)
+            Device.RegisterDevice(SharpDX.Multimedia.UsagePage.Generic, SharpDX.Multimedia.UsageId.GenericKeyboard, DeviceFlags.None);
+            Device.KeyboardInput += (sender, args) =>
             {
-                winformControl.HandleCreated += (sender, args) =>
+                switch (args.State)
                 {
-                    if (winformControl.Handle != IntPtr.Zero)
+                    case KeyState.SystemKeyDown:
+                    case KeyState.ImeKeyDown:
+                    case KeyState.KeyDown:
                     {
-                        MissingInputHack(winformControl);
+                        keyboard?.HandleKeyUp(args.Key);
+                        heldKeys.Add(args.Key);
+                        break;
                     }
-                };
-            }
-            else
-            {
-                SharpDX.RawInput.Device.RegisterDevice(SharpDX.Multimedia.UsagePage.Generic, SharpDX.Multimedia.UsageId.GenericKeyboard, SharpDX.RawInput.DeviceFlags.None, winformControl.Handle, SharpDX.RawInput.RegisterDeviceOptions.NoFiltering);
-            }
+                    case KeyState.SystemKeyUp:
+                    case KeyState.ImeKeyUp:
+                    case KeyState.KeyUp:
+                    {
+                        heldKeys.Remove(args.Key);
+                        keyboard?.HandleKeyDown(args.Key);
+                        break;
+                    }
+                }
+            };
 #endif
         }
 
@@ -202,11 +214,11 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Windows keeps sending KEYDOWN messages while the user holds down the key.
-        /// <br/>This function is used to find out if the received message is a repeated KEYDOWN.
+        ///   Windows keeps sending KEYDOWN messages while the user holds down the key.
+        ///   This function is used to find out if the received message is a repeated KEYDOWN.
         /// </summary>
         /// <param name="lParam">lParam of the KEYDOWN message</param>
-        /// <returns><c>True</c> if this message is a repeated KeyDown, <c>false</c> if it's an actual keydown</returns>
+        /// <returns><c>true</c> if this message is a repeated KeyDown, <c>false</c> if it's an actual keydown.</returns>
         private static bool MessageIsDownAutoRepeat(long lParam)
         {
             // According to the microsoft docs on WM_KEYDOWN

@@ -28,7 +28,7 @@ using Stride.Metrics;
 namespace Stride.LauncherApp.ViewModels
 {
     /// <summary>
-    /// This class represents the root view model of the launcher.
+    ///   Represents the root view model of the launcher.
     /// </summary>
     internal class LauncherViewModel : DispatcherViewModel, IPackagesLogger, IDisposable
     {
@@ -59,7 +59,8 @@ namespace Stride.LauncherApp.ViewModels
 
             DisplayReleaseAnnouncement();
 
-            VsixPackage = new VsixVersionViewModel(this, store);
+            VsixPackage = new VsixVersionViewModel(this, store, store.VsixPluginId);
+            VsixPackageXenko = new VsixVersionViewModel(this, store, store.VsixPluginId.Replace("Stride", "Xenko"));
             // Commands
             InstallLatestVersionCommand = new AnonymousTaskCommand(ServiceProvider, InstallLatestVersion) { IsEnabled = false };
             OpenUrlCommand = new AnonymousTaskCommand<string>(ServiceProvider, OpenUrl);
@@ -95,6 +96,8 @@ namespace Stride.LauncherApp.ViewModels
 
         public VsixVersionViewModel VsixPackage { get; }
 
+        public VsixVersionViewModel VsixPackageXenko { get; }
+
         public StrideVersionViewModel ActiveVersion { get { return activeVersion; } set { SetValue(ref activeVersion, value); Dispatcher.InvokeAsync(() => StartStudioCommand.IsEnabled = (value != null) && value.CanStart); } }
 
         public ObservableList<RecentProjectViewModel> RecentProjects { get; } = new ObservableList<RecentProjectViewModel>();
@@ -129,7 +132,7 @@ namespace Stride.LauncherApp.ViewModels
         public bool AutoCloseLauncher { get { return autoCloseLauncher; } set { SetValue(ref autoCloseLauncher, value, () => LauncherSettings.CloseLauncherAutomatically = value); } }
 
         /// <summary>
-        /// Gets or Sets the visibility status of this instance.
+        ///   Gets or sets the visibility status of the launcher.
         /// </summary>
         public bool IsVisible { get { return isVisible; } set { SetValue(ref isVisible, value); } }
 
@@ -171,10 +174,15 @@ namespace Stride.LauncherApp.ViewModels
                         Environment.Exit(1);
                     }
                 });
+                // Run news task early so that it can run while we fetch package versions
+                var newsTask = FetchNewsPages();
+
                 await RetrieveServerStrideVersions();
                 await VsixPackage.UpdateFromStore();
                 await CheckForFirstInstall();
-                await FetchNewsPages();
+                await VsixPackageXenko.UpdateFromStore();
+
+                await newsTask;
             });
             IsSynchronizing = false;
         }
@@ -457,9 +465,9 @@ namespace Stride.LauncherApp.ViewModels
         }
 
         /// <summary>
-        /// Execute action <paramref name="action"/> under the exclusive lock <see cref="objectLock"/>.
+        ///   Executes an action under the exclusive lock <see cref="objectLock"/>.
         /// </summary>
-        /// <typeparam name="T">Return type of action.</typeparam>
+        /// <typeparam name="T">Return type of the action.</typeparam>
         /// <param name="action">Action to be executed.</param>
         /// <returns>Result of executing <paramref name="action"/>.</returns>
         internal Task<T> RunLockTask<T>(Func<T> action)
@@ -480,8 +488,9 @@ namespace Stride.LauncherApp.ViewModels
 
         public async Task StartStudio(string argument)
         {
-            if (argument == null) throw new ArgumentNullException(nameof(argument));
-            if (ActiveVersion == null)
+            if (argument is null)
+                throw new ArgumentNullException(nameof(argument));
+            if (ActiveVersion is null)
                 return;
 
             if (AutoCloseLauncher)
@@ -546,7 +555,7 @@ namespace Stride.LauncherApp.ViewModels
             {
                 Process.Start(url);
             }
-            // FIXME: catch only specific exceptions?
+            // TODO: Catch only specific exceptions?
             catch (Exception)
             {
                 await ServiceProvider.Get<IDialogService>().MessageBox(Strings.ErrorOpeningBrowser, MessageBoxButton.OK, MessageBoxImage.Error);

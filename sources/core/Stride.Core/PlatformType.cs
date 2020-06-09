@@ -18,11 +18,11 @@ namespace Stride.Core
     public enum PlatformType
 #endif
     {
-        // ***************************************************************
+        // **************************************************************************************
         // NOTE: This file is shared with the AssemblyProcessor.
-        // If this file is modified, the AssemblyProcessor has to be
-        // recompiled separately. See build\Stride-AssemblyProcessor.sln
-        // ***************************************************************
+        //       If this file is modified, the AssemblyProcessor has to be recompiled separately.
+        //       See build\Stride-AssemblyProcessor.sln
+        // **************************************************************************************
 
         /// <summary>
         /// This is shared across platforms

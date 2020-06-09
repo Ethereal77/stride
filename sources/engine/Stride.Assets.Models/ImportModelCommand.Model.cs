@@ -30,13 +30,14 @@ namespace Stride.Assets.Models
         public bool Allow32BitIndex { get; set; }
         public int MaxInputSlots { get; set; }
         public bool AllowUnsignedBlendIndices { get; set; }
+        public bool DeduplicateMaterials { get; set; }
         public List<ModelMaterial> Materials { get; set; }
         public string EffectName { get; set; }
 
         public List<IModelModifier> ModelModifiers { get; set; }
-        
+
         /// <summary>
-        /// Checks if the vertex buffer input slots for the model are supported by the target graphics profile level
+        ///   Checks if the vertex buffer input slots for the model are supported by the target graphics profile level.
         /// </summary>
         /// <param name="commandContext">The context for this command, used to access the logger and parameters</param>
         /// <param name="model">The model to be verified</param>
@@ -48,8 +49,9 @@ namespace Stride.Assets.Models
                 {
                     if (vertexBufferBinding.Declaration.VertexElements.Length > MaxInputSlots)
                     {
-                        commandContext.Logger.Error($"The number of input vertex elements ({vertexBufferBinding.Declaration.VertexElements.Length}) " +
-                                                    $"is more than the maximum supported slots for this graphics level ({MaxInputSlots}).");
+                        commandContext.Logger.Error(
+                            $"The number of input vertex elements ({vertexBufferBinding.Declaration.VertexElements.Length}) " +
+                            $"is more than the maximum supported slots for this graphics level ({MaxInputSlots}).");
                         return false;
                     }
                 }
@@ -61,7 +63,8 @@ namespace Stride.Assets.Models
         private object ExportModel(ICommandContext commandContext, ContentManager contentManager)
         {
             // Read from model file
-            var modelSkeleton = LoadSkeleton(commandContext, contentManager); // we get model skeleton to compare it to real skeleton we need to map to
+            // We get model skeleton to compare it to real skeleton we need to map to
+            var modelSkeleton = LoadSkeleton(commandContext, contentManager);
             AdjustSkeleton(modelSkeleton);
             var model = LoadModel(commandContext, contentManager);
             if (!CheckInputSlots(commandContext, model))
@@ -86,7 +89,7 @@ namespace Stride.Assets.Models
             {
                 if (SkeletonUrl != null)
                 {
-                    // Load the skeleton 
+                    // Load the skeleton
                     skeleton = contentManager.Load<Skeleton>(SkeletonUrl);
                 }
                 else
@@ -177,10 +180,8 @@ namespace Stride.Assets.Models
                     if (mesh.Draw.IndexBuffer == null)
                         throw new InvalidOperationException();
 
-                    Matrix rotation;
-                    Vector3 scale, translation;
-                    if (transformationMatrix.Decompose(out scale, out rotation, out translation)
-                        && scale.X * scale.Y * scale.Z < 0)
+                    if (transformationMatrix.Decompose(out Vector3 scale, out Matrix rotation, out Vector3 translation) &&
+                        scale.X * scale.Y * scale.Z < 0)
                     {
                         mesh.Draw.ReverseWindingOrder();
                     }
@@ -205,13 +206,12 @@ namespace Stride.Assets.Models
             foreach (var meshesByNode in meshesByNodes)
             {
                 // This logic to detect similar material is kept from old code; this should be reviewed/improved at some point
-                foreach (var meshesPerDrawCall in meshesByNode.GroupBy(x => x,
-                    new AnonymousEqualityComparer<Mesh>((x, y) =>
-                    x.MaterialIndex == y.MaterialIndex // Same material
-                    && ArrayExtensions.ArraysEqual(x.Skinning?.Bones, y.Skinning?.Bones) // Same bones
-                    && CompareParameters(model, x, y) // Same parameters
-                    && CompareShadowOptions(model, x, y), // Same shadow parameters
-                    x => 0)).ToList())
+                foreach (var meshesPerDrawCall in meshesByNode.GroupBy(x => x, new AnonymousEqualityComparer<Mesh>((x, y) =>
+                    x.MaterialIndex == y.MaterialIndex &&                                   // Same material
+                    ArrayExtensions.ArraysEqual(x.Skinning?.Bones, y.Skinning?.Bones) &&    // Same bones
+                    CompareParameters(model, x, y) &&                                       // Same parameters
+                    CompareShadowOptions(model, x, y),                                      // Same shadow parameters
+                    getHashCode: x => 0)).ToList())
                 {
                     if (meshesPerDrawCall.Count() == 1)
                     {
@@ -270,7 +270,7 @@ namespace Stride.Assets.Models
                     BoundingSphere.Merge(ref modelBoundingSphere, ref meshBoundingSphere, out modelBoundingSphere);
                 }
 
-                // TODO: temporary Always try to compact
+                // TODO: Temporary Always try to compact
                 mesh.Draw.CompactIndexBuffer();
             }
             model.BoundingBox = modelBoundingBox;

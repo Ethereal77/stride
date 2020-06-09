@@ -2,31 +2,24 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Stride.Core;
-
 namespace Stride.Core.Assets
 {
-    // REMARK: Beware of the order of values in this enum, it is used for sorting.
+    // NOTE: Beware of the order of values in this enum, it is used for sorting.
 
     /// <summary>
-    /// Type of the project.
+    ///   Type of the project.
     /// </summary>
     [DataContract("ProjectType")]
     public enum ProjectType
     {
         /// <summary>
-        /// A library.
+        ///   The project is compiled as a library.
         /// </summary>
         Library,
 
         /// <summary>
-        /// An executable.
+        ///   The project is compiled as an executable.
         /// </summary>
-        Executable,
-
-        /// <summary>
-        /// A plugin.
-        /// </summary>
-        Plugin,
+        Executable
     }
 }

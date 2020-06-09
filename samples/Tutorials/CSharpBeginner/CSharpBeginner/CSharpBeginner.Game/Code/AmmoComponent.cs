@@ -10,12 +10,10 @@ namespace CSharpBeginner.Code
     /// </summary>
     public class AmmoComponent : StartupScript
     {
-        private int clips = 4;
-        private int bullets = 6;
+        private readonly int clips = 4;
+        private readonly int bullets = 6;
 
-        public override void Start()
-        {
-        }
+        public override void Start() { }
 
         // This method return the total amount of ammo
         public int GetTotalAmmo()

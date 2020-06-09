@@ -1067,7 +1067,7 @@ namespace Stride.UI
         /// <summary>
         /// Propagate the collapsing to a child element <paramref name="element"/>.
         /// </summary>
-        /// <param name="element">A child element to which propagate the collapse.</param>
+        /// <param name="element">The child element to propagate the collapse to.</param>
         /// <exception cref="InvalidOperationException"><paramref name="element"/> is not a child of this element.</exception>
         protected void PropagateCollapseToChild(UIElement element)
         {
@@ -1095,7 +1095,7 @@ namespace Stride.UI
         /// <summary>
         /// Set the parent to a child.
         /// </summary>
-        /// <param name="child">The child to which set the parent.</param>
+        /// <param name="child">The child on which to set the parent.</param>
         /// <param name="parent">The parent of the child.</param>
         protected static void SetParent([NotNull] UIElement child, [CanBeNull] UIElement parent)
         {
@@ -1108,7 +1108,7 @@ namespace Stride.UI
         /// <summary>
         /// Set the visual parent to a child.
         /// </summary>
-        /// <param name="child">The child to which set the visual parent.</param>
+        /// <param name="child">The child on which to set the visual parent.</param>
         /// <param name="parent">The parent of the child.</param>
         protected static void SetVisualParent([NotNull] UIElement child, [CanBeNull] UIElement parent)
         {

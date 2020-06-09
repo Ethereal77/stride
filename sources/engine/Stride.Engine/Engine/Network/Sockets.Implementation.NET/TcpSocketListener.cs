@@ -91,7 +91,7 @@ namespace Sockets.Plugin
         }
 
         /// <summary>
-        ///     The port to which the TcpSocketListener is currently bound
+        ///   The port to which the TcpSocketListener is currently bound
         /// </summary>
         public int LocalPort
         {

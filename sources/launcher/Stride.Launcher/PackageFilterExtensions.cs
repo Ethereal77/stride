@@ -2,11 +2,8 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Stride.Core;
 using Stride.Core.Packages;
@@ -18,9 +15,9 @@ namespace Stride.LauncherApp
         public static IEnumerable<T> FilterStrideMainPackages<T>(this IEnumerable<T> packages) where T : NugetPackage
         {
             // Stride up to 3.0 package is Xenko, 3.x is Xenko.GameStudio, then Stride.GameStudio
-            return packages.Where(x => (x.Id == "Xenko" && x.Version < new PackageVersion(3, 1, 0, 0))
-                                    || (x.Id == "Xenko.GameStudio" && x.Version < new PackageVersion(4, 0, 0, 0))
-                                    || (x.Id == "Stride.GameStudio"));
+            return packages.Where(package => (package.Id == "Xenko" && package.Version < new PackageVersion(3, 1, 0, 0)) ||
+                                             (package.Id == "Xenko.GameStudio" && package.Version < new PackageVersion(4, 0, 0, 0)) ||
+                                             (package.Id == "Stride.GameStudio"));
         }
     }
 }

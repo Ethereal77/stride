@@ -5,22 +5,22 @@
 namespace Stride.Core.Assets.Templates
 {
     /// <summary>
-    /// Status of the template
+    ///   Defines the possible status of a template.
     /// </summary>
     public enum TemplateStatus
     {
         /// <summary>
-        /// Nothing particular.
+        ///   Nothing particular.
         /// </summary>
         None,
 
         /// <summary>
-        /// The template is new
+        ///   The template is new.
         /// </summary>
         New,
 
         /// <summary>
-        /// The template has been updated
+        ///   The template has been updated.
         /// </summary>
         Updated
     }

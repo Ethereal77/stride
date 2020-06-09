@@ -5,33 +5,34 @@
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// The base interface for log messages used by the logging infrastructure.
+    ///   The base interface for log messages used by the logging infrastructure.
     /// </summary>
     public interface ILogMessage
     {
         /// <summary>
-        /// Gets or sets the module.
+        ///   Gets or sets the module specified in the message.
         /// </summary>
         /// <value>The module.</value>
         /// <remarks>
-        /// The module is an identifier for a logical part of the system. It can be a class name, a namespace or a regular string not linked to a code hierarchy.
+        ///   The module is an identifier for a logical part of the system. It can be a class name, a namespace or a regular string
+        ///   not linked to a code hierarchy.
         /// </remarks>
         string Module { get; set; }
 
         /// <summary>
-        /// Gets or sets the type of this message.
+        ///   Gets or sets the type of this message.
         /// </summary>
-        /// <value>The type.</value>
+        /// <value>The type of the message.</value>
         LogMessageType Type { get; set; }
 
         /// <summary>
-        /// Gets or sets the text.
+        ///   Gets or sets the text of the message.
         /// </summary>
         /// <value>The text.</value>
         string Text { get; set; }
 
         /// <summary>
-        /// Gets or sets the exception info.
+        ///   Gets or sets the exception info, in case this message represents an error or exception.
         /// </summary>
         ExceptionInfo ExceptionInfo { get; }
     }

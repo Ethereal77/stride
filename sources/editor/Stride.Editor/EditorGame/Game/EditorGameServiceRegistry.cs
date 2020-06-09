@@ -26,17 +26,19 @@ namespace Stride.Editor.EditorGame.Game
         [CanBeNull]
         public IEditorGameService Get([NotNull] Type serviceType)
         {
-            if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
+            if (serviceType is null)
+                throw new ArgumentNullException(nameof(serviceType));
             if (!serviceType.HasInterface(typeof(IEditorGameService)))
                 throw new ArgumentException($@"The given type must be a type that implement {nameof(IEditorGameService)}", nameof(serviceType));
 
             return Services.FirstOrDefault(serviceType.IsInstanceOfType);
         }
 
-        public void Add<T>([NotNull] T service)
-            where T : IEditorGameService
+        public void Add<T>([NotNull] T service) where T : IEditorGameService
         {
-            if (service == null) throw new ArgumentNullException(nameof(service));
+            if (service == null)
+                throw new ArgumentNullException(nameof(service));
+
             Services.Add(service);
         }
 

@@ -9,17 +9,17 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.LZ4;
+using Stride.Core.Extensions;
 using Stride.Core.Serialization;
 using Stride.Core.Serialization.Contents;
-using Stride.Core.Serialization.Serializers;
 
 namespace Stride.Core.Storage
 {
     /// <summary>
-    /// Object Database Backend (ODB) implementation that bundles multiple chunks into a .bundle files, optionally compressed with LZ4.
+    ///   Represents a implementation of a Object Database Backend (ODB) that can bundle multiple chunks into <c>.bundle</c>
+    ///   files with optional compression.
     /// </summary>
     [DataSerializerGlobal(null, typeof(List<string>))]
     [DataSerializerGlobal(null, typeof(List<ObjectId>))]
@@ -28,52 +28,42 @@ namespace Stride.Core.Storage
     public class BundleOdbBackend : IOdbBackend
     {
         /// <summary>
-        /// The bundle file extension.
+        ///   The bundle file extension.
         /// </summary>
         public const string BundleExtension = ".bundle";
 
-        /// <summary>
-        /// The default directory where bundle are stored.
-        /// </summary>
-        private readonly string vfsBundleDirectory;
+        public string BundleDirectory { get; }
 
         private readonly Dictionary<ObjectId, ObjectLocation> objects = new Dictionary<ObjectId, ObjectLocation>();
 
         // Bundle name => Bundle VFS URL
         private readonly Dictionary<string, string> resolvedBundles = new Dictionary<string, string>();
 
-        private readonly List<LoadedBundle> loadedBundles = new List<LoadedBundle>(); 
+        private readonly List<LoadedBundle> loadedBundles = new List<LoadedBundle>();
 
+        /// <inheritdoc/>
+        public IContentIndexMap ContentIndexMap => contentIndexMap;
         private readonly ObjectDatabaseContentIndexMap contentIndexMap = new ObjectDatabaseContentIndexMap();
 
         public delegate Task<string> BundleResolveDelegate(string bundleName);
 
         /// <summary>
-        /// Bundle resolve event asynchronous handler.
+        ///   Gets or sets the bundle resolve event asynchronous handler.
         /// </summary>
         public BundleResolveDelegate BundleResolve { get; set; }
 
-        /// <inheritdoc/>
-        public IContentIndexMap ContentIndexMap
-        {
-            get { return contentIndexMap; }
-        }
-
-        public string BundleDirectory { get { return vfsBundleDirectory; } }
 
         public BundleOdbBackend(string vfsRootUrl)
         {
-            vfsBundleDirectory = vfsRootUrl + "/bundles/";
+            BundleDirectory = vfsRootUrl + "/bundles/";
 
-            if (!VirtualFileSystem.DirectoryExists(vfsBundleDirectory))
-                VirtualFileSystem.CreateDirectory(vfsBundleDirectory);
+            if (!VirtualFileSystem.DirectoryExists(BundleDirectory))
+                VirtualFileSystem.CreateDirectory(BundleDirectory);
 
             BundleResolve += DefaultBundleResolve;
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         public Dictionary<ObjectId, ObjectInfo> GetObjectInfos()
         {
@@ -86,7 +76,7 @@ namespace Stride.Core.Storage
         private Task<string> DefaultBundleResolve(string bundleName)
         {
             // Try to find [bundleName].bundle
-            var bundleFile = VirtualFileSystem.Combine(vfsBundleDirectory, bundleName + BundleExtension);
+            var bundleFile = VirtualFileSystem.Combine(BundleDirectory, bundleName + BundleExtension);
             if (VirtualFileSystem.FileExists(bundleFile))
                 return Task.FromResult(bundleFile);
 
@@ -101,8 +91,9 @@ namespace Stride.Core.Storage
             {
                 if (resolvedBundles.TryGetValue(bundleName, out bundleUrl))
                 {
-                    if (bundleUrl == null)
-                        throw new InvalidOperationException(string.Format("Bundle {0} is being loaded twice (either cyclic dependency or concurrency issue)", bundleName));
+                    if (bundleUrl is null)
+                        throw new InvalidOperationException($"Bundle '{bundleName}' is being loaded twice (can be a cyclic dependency or a concurrency issue).");
+
                     return bundleUrl;
                 }
 
@@ -123,7 +114,7 @@ namespace Stride.Core.Storage
             }
 
             // Check if it has been properly resolved
-            if (bundleUrl == null)
+            if (bundleUrl is null)
             {
                 // Remove from resolved bundles
                 lock (resolvedBundles)
@@ -134,7 +125,7 @@ namespace Stride.Core.Storage
                 if (!throwExceptionIfNotFound)
                     return null;
 
-                throw new FileNotFoundException(string.Format("Bundle {0} could not be resolved", bundleName));
+                throw new FileNotFoundException($"Bundle {bundleName} could not be resolved.");
             }
 
             // Register resolved package
@@ -147,14 +138,16 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Loads the specified bundle.
+        ///   Loads the specified bundle.
         /// </summary>
         /// <param name="bundleName">Name of the bundle.</param>
-        /// <param name="objectDatabaseContentIndexMap">The object database asset index map, where newly loaded assets will be merged (ignored if null).</param>
-        /// <returns>Task that will complete when bundle is loaded.</returns>
+        /// <param name="objectDatabaseContentIndexMap">The object database index map, where newly loaded assets will be merged.</param>
+        /// <returns><see cref="Task"/> that will complete when the bundle is loaded.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="bundleName"/> is a <c>null</c> reference.</exception>
         public async Task LoadBundle(string bundleName, ObjectDatabaseContentIndexMap objectDatabaseContentIndexMap)
         {
-            if (bundleName == null) throw new ArgumentNullException("bundleName");
+            if (bundleName is null)
+                throw new ArgumentNullException(nameof(bundleName));
 
             // Check loaded bundles
             lock (loadedBundles)
@@ -177,22 +170,10 @@ namespace Stride.Core.Storage
 
         public async Task LoadBundleFromUrl(string bundleName, ObjectDatabaseContentIndexMap objectDatabaseContentIndexMap, string bundleUrl, bool ignoreDependencies = false)
         {
-            BundleDescription bundle = null;
+            var bundle = ReadBundleHeader(bundleUrl, out List<string> files);
 
-            // If there is a .bundle, add incremental id before it
-            var currentBundleExtensionUrl = bundleUrl.Length - (bundleUrl.EndsWith(BundleExtension) ? BundleExtension.Length : 0);
-
-            // Process incremental bundles one by one
-            using (var packStream = VirtualFileSystem.OpenStream(bundleUrl, VirtualFileMode.Open, VirtualFileAccess.Read))
-            {
-                bundle = ReadBundleDescription(packStream);
-            }
-
-            var files = new List<string> { bundleUrl };
-            files.AddRange(bundle.IncrementalBundles.Select(x => bundleUrl.Insert(currentBundleExtensionUrl, "." + x)));
-
-            if (bundle == null)
-                throw new FileNotFoundException("Could not find bundle", bundleUrl);
+            if (bundle is null)
+                throw new FileNotFoundException("Could not find bundle.", bundleUrl);
 
             // Read and resolve dependencies
             if (!ignoreDependencies)
@@ -225,7 +206,7 @@ namespace Stride.Core.Storage
                         Description = bundle,
                         ReferenceCount = 1,
                         Files = files,
-                        Streams = new List<Stream>(files.Select(x => (Stream)null)),
+                        Streams = new List<Stream>(files.Select(x => (Stream) null)),
                     };
 
                     loadedBundles.Add(loadedBundle);
@@ -252,11 +233,29 @@ namespace Stride.Core.Storage
             objectDatabaseContentIndexMap.Merge(bundle.Assets);
         }
 
+        public static BundleDescription ReadBundleHeader(string bundleUrl, out List<string> bundleUrls)
+        {
+            // If there is a .bundle, add incremental id before it
+            var currentBundleExtensionUrl = bundleUrl.Length - (bundleUrl.EndsWith(BundleExtension) ? BundleExtension.Length : 0);
+
+            // Process incremental bundles one by one
+            BundleDescription bundle;
+            using (var packStream = VirtualFileSystem.OpenStream(bundleUrl, VirtualFileMode.Open, VirtualFileAccess.Read))
+            {
+                bundle = ReadBundleDescription(packStream);
+            }
+
+            bundleUrls = new List<string> { bundleUrl };
+            bundleUrls.AddRange(bundle.IncrementalBundles.Select(x => bundleUrl.Insert(currentBundleExtensionUrl, "." + x)));
+
+            return bundle;
+        }
+
         /// <summary>
-        /// Unload the specified bundle.
+        ///   Unloads the specified bundle.
         /// </summary>
         /// <param name="bundleName">Name of the bundle.</param>
-        /// <param name="objectDatabaseContentIndexMap">The object database asset index map, where newly loaded assets will be merged (ignored if null).</param>
+        /// <param name="objectDatabaseContentIndexMap">The object database index map from which to unload the package.</param>
         public void UnloadBundle(string bundleName, ObjectDatabaseContentIndexMap objectDatabaseContentIndexMap)
         {
             lock (loadedBundles)
@@ -284,7 +283,8 @@ namespace Stride.Core.Storage
 
         private void UnloadBundleRecursive(string bundleName, ObjectDatabaseContentIndexMap objectDatabaseContentIndexMap)
         {
-            if (bundleName == null) throw new ArgumentNullException("bundleName");
+            if (bundleName is null)
+                throw new ArgumentNullException(nameof(bundleName));
 
             lock (loadedBundles)
             {
@@ -370,52 +370,61 @@ namespace Stride.Core.Storage
         }
 
         /// <summary>
-        /// Reads the bundle description.
+        ///   Reads the bundle description from a <see cref="Stream"/>.
         /// </summary>
         /// <param name="stream">The stream.</param>
-        /// <returns>The bundle description.</returns>
-        /// <exception cref="System.InvalidOperationException">
-        /// Invalid bundle header
-        /// or
-        /// Bundle has not been properly written
-        /// </exception>
+        /// <returns>A <see cref="BundleDescription"/> representing a description of the bundle.</returns>
+        /// <exception cref="InvalidDataException">Invalid bundle header.</exception>
+        /// <exception cref="InvalidDataException">The bundle has not been properly written.</exception>
         public static BundleDescription ReadBundleDescription(Stream stream)
         {
             var binaryReader = new BinarySerializationReader(stream);
 
             // Read header
-            var header = binaryReader.Read<Header>();
+            Header header;
+            try
+            {
+                header = binaryReader.Read<Header>();
+            }
+            catch(InvalidOperationException ex)
+            {
+                throw new InvalidDataException("Invalid bundle header.", ex);
+            }
 
-            var result = new BundleDescription();
-            result.Header = header;
+            var result = new BundleDescription { Header = header };
 
             // Check magic header
             if (header.MagicHeader != Header.MagicHeaderValid)
-            {
-                throw new InvalidOperationException("Invalid bundle header");
-            }
+                throw new InvalidDataException("Invalid bundle header.");
 
             // Ensure size has properly been set
             if (header.Size != stream.Length)
             {
-                throw new InvalidOperationException("Bundle has not been properly written");
+                throw new InvalidDataException("Bundle has not been properly written.");
             }
 
-            // Read dependencies
-            var dependencies = result.Dependencies;
-            binaryReader.Serialize(ref dependencies, ArchiveMode.Deserialize);
+            try
+            {
+                // Read dependencies
+                var dependencies = result.Dependencies;
+                binaryReader.Serialize(ref dependencies, ArchiveMode.Deserialize);
 
-            // Read incremental bundles
-            var incrementalBundles = result.IncrementalBundles;
-            binaryReader.Serialize(ref incrementalBundles, ArchiveMode.Deserialize);
+                // Read incremental bundles
+                var incrementalBundles = result.IncrementalBundles;
+                binaryReader.Serialize(ref incrementalBundles, ArchiveMode.Deserialize);
 
-            // Read objects
-            var objects = result.Objects;
-            binaryReader.Serialize(ref objects, ArchiveMode.Deserialize);
+                // Read objects
+                var objects = result.Objects;
+                binaryReader.Serialize(ref objects, ArchiveMode.Deserialize);
 
-            // Read assets
-            var assets = result.Assets;
-            binaryReader.Serialize(ref assets, ArchiveMode.Deserialize);
+                // Read assets
+                var assets = result.Assets;
+                binaryReader.Serialize(ref assets, ArchiveMode.Deserialize);
+            }
+            catch(InvalidOperationException ex)
+            {
+                throw new InvalidDataException("Bundle has not been properly written.", ex);
+            }
 
             return result;
         }
@@ -449,20 +458,23 @@ namespace Stride.Core.Storage
                         var bundle = ReadBundleDescription(packStream);
 
                         // If package didn't change since last time, early exit!
-                        if (ArrayExtensions.ArraysEqual(bundle.Dependencies, dependencies)
-                            && ArrayExtensions.ArraysEqual(bundle.Assets.OrderBy(x => x.Key).ToList(), indexMap.OrderBy(x => x.Key).ToList())
-                            && ArrayExtensions.ArraysEqual(bundle.Objects.Select(x => x.Key).OrderBy(x => x).ToList(), objectIds.OrderBy(x => x).ToList()))
+                        if (ArrayExtensions.ArraysEqual(bundle.Dependencies, dependencies) &&
+                            ArrayExtensions.ArraysEqual(bundle.Assets.OrderBy(x => x.Key).ToList(), indexMap.OrderBy(x => x.Key).ToList()) &&
+                            ArrayExtensions.ArraysEqual(bundle.Objects.Select(x => x.Key).OrderBy(x => x).ToList(), objectIds.OrderBy(x => x).ToList()))
                         {
                             // Make sure all incremental bundles exist
                             // Also, if we don't want incremental bundles but we have some (or vice-versa), let's force a regeneration
-                            if ((useIncrementalBundle == (bundle.IncrementalBundles.Count > 0))
-                                && bundle.IncrementalBundles.Select(x => bundleUrl.Insert(bundleUrl.Length - bundleExtensionLength, "." + x)).All(x =>
-                            {
-                                if (!VirtualFileSystem.FileExists(x))
-                                    return false;
-                                using (var incrementalStream = VirtualFileSystem.OpenStream(x, VirtualFileMode.Open, VirtualFileAccess.Read))
-                                    return ValidateHeader(incrementalStream);
-                            }))
+                            if ((useIncrementalBundle == (bundle.IncrementalBundles.Count > 0)) &&
+                                bundle.IncrementalBundles
+                                    .Select(x => bundleUrl.Insert(bundleUrl.Length - bundleExtensionLength, "." + x))
+                                    .All(x =>
+                                         {
+                                             if (!VirtualFileSystem.FileExists(x))
+                                                 return false;
+
+                                             using (var incrementalStream = VirtualFileSystem.OpenStream(x, VirtualFileMode.Open, VirtualFileAccess.Read))
+                                                 return ValidateHeader(incrementalStream);
+                                         }))
                             {
                                 return;
                             }
@@ -477,8 +489,7 @@ namespace Stride.Core.Storage
                     foreach (var incrementalBundleUrl in VirtualFileSystem.ListFiles(directory, filename.Insert(filename.Length - bundleExtensionLength, ".*"), VirtualSearchOption.TopDirectoryOnly).Result)
                     {
                         var incrementalIdString = incrementalBundleUrl.Substring(incrementalBundleUrl.Length - bundleExtensionLength - ObjectId.HashStringLength, ObjectId.HashStringLength);
-                        ObjectId incrementalId;
-                        if (!ObjectId.TryParse(incrementalIdString, out incrementalId))
+                        if (!ObjectId.TryParse(incrementalIdString, out var incrementalId))
                             continue;
 
                         // If we don't want incremental bundles, delete old ones from previous build
@@ -535,7 +546,7 @@ namespace Stride.Core.Storage
                                 incrementalBundles.Add(incrementalId);
                             }
                         }
-                        catch (Exception)
+                        catch
                         {
                             // Could not read incremental bundle (format changed?)
                             // Let's delete it
@@ -543,7 +554,7 @@ namespace Stride.Core.Storage
                         }
                     }
                 }
-                catch (Exception)
+                catch
                 {
                     // Could not read previous bundle (format changed?)
                     // Let's just mute this error as new bundle will overwrite it anyway
@@ -572,8 +583,7 @@ namespace Stride.Core.Storage
 
             using (var packStream = VirtualFileSystem.OpenStream(bundleUrl, VirtualFileMode.Create, VirtualFileAccess.Write))
             {
-                var header = new Header();
-                header.MagicHeader = Header.MagicHeaderValid;
+                var header = new Header { MagicHeader = Header.MagicHeaderValid };
 
                 var packBinaryWriter = new BinarySerializationWriter(packStream);
                 packBinaryWriter.Write(header);
@@ -591,7 +601,8 @@ namespace Stride.Core.Storage
                 // Write index
                 packBinaryWriter.Write(indexMap.ToList());
 
-                using (var incrementalStream = incrementalObjects.Count > 0 ? VirtualFileSystem.OpenStream(bundleUrl.Insert(bundleUrl.Length - bundleExtensionLength, "." + newIncrementalId), VirtualFileMode.Create, VirtualFileAccess.Write) : null)
+                using (var incrementalStream = incrementalObjects.Count > 0
+                        ? VirtualFileSystem.OpenStream(bundleUrl.Insert(bundleUrl.Length - bundleExtensionLength, "." + newIncrementalId), VirtualFileMode.Create, VirtualFileAccess.Write) : null)
                 {
                     var incrementalBinaryWriter = incrementalStream != null ? new BinarySerializationWriter(incrementalStream) : null;
                     long incrementalObjectIdPosition = 0;
@@ -626,42 +637,42 @@ namespace Stride.Core.Storage
                             // Prepare object info
                             var objectInfo = new ObjectInfo { StartOffset = objectOutputStream.Position, SizeNotCompressed = objectStream.Length };
 
-                            // re-order the file content so that it is not necessary to seek while reading the input stream (header/object/refs -> header/refs/object)
+                            // Re-order the file content so that it is not necessary to seek while reading the input stream (header/object/refs -> header/refs/object)
                             var inputStream = objectStream;
                             var originalStreamLength = objectStream.Length;
                             var streamReader = new BinarySerializationReader(inputStream);
                             var chunkHeader = ChunkHeader.Read(streamReader);
                             if (chunkHeader != null)
                             {
-                                // create the reordered stream
+                                // Create the reordered stream
                                 var reorderedStream = new MemoryStream((int)originalStreamLength);
 
-                                // copy the header
+                                // Copy the header
                                 var streamWriter = new BinarySerializationWriter(reorderedStream);
                                 chunkHeader.Write(streamWriter);
 
-                                // copy the references
+                                // Copy the references
                                 var newOffsetReferences = reorderedStream.Position;
                                 inputStream.Position = chunkHeader.OffsetToReferences;
                                 inputStream.CopyTo(reorderedStream);
 
-                                // copy the object
+                                // Copy the object
                                 var newOffsetObject = reorderedStream.Position;
                                 inputStream.Position = chunkHeader.OffsetToObject;
                                 inputStream.CopyTo(reorderedStream, chunkHeader.OffsetToReferences - chunkHeader.OffsetToObject);
 
-                                // rewrite the chunk header with correct offsets
+                                // Rewrite the chunk header with correct offsets
                                 chunkHeader.OffsetToObject = (int)newOffsetObject;
                                 chunkHeader.OffsetToReferences = (int)newOffsetReferences;
                                 reorderedStream.Position = 0;
                                 chunkHeader.Write(streamWriter);
 
-                                // change the input stream to use reordered stream
+                                // Change the input stream to use reordered stream
                                 inputStream = reorderedStream;
                                 inputStream.Position = 0;
                             }
 
-                            // compress the stream
+                            // Compress the stream
                             if (!disableCompressionIds.Contains(objectIds[i]))
                             {
                                 objectInfo.IsCompressed = true;
@@ -670,27 +681,27 @@ namespace Stride.Core.Storage
                                 inputStream.CopyTo(lz4OutputStream);
                                 lz4OutputStream.Flush();
                             }
-                            // copy the stream "as is"
+                            // Copy the stream "as is"
                             else
                             {
                                 // Write stream
                                 inputStream.CopyTo(objectOutputStream);
                             }
 
-                            // release the reordered created stream
+                            // Release the reordered created stream
                             if (chunkHeader != null)
                                 inputStream.Dispose();
 
                             // Add updated object info
                             objectInfo.EndOffset = objectOutputStream.Position;
-                            // Note: we add 1 because 0 is reserved for self; first incremental bundle starts at 1
+                            // NOTE: We add 1 because 0 is reserved for self; first incremental bundle starts at 1
                             objectInfo.IncrementalBundleIndex = objectOutputStream == incrementalStream ? incrementalBundleIndex + 1 : 0;
                             objects[i] = new KeyValuePair<ObjectId, ObjectInfo>(objectIds[i], objectInfo);
 
                             if (useIncrementalBundle)
                             {
                                 // Also update incremental bundle object info
-                                objectInfo.IncrementalBundleIndex = 0; // stored in same bundle
+                                objectInfo.IncrementalBundleIndex = 0; // Stored in same bundle
                                 incrementalObjects[incrementalObjectIndex++] = new KeyValuePair<ObjectId, ObjectInfo>(objectIds[i], objectInfo);
                             }
                         }
@@ -872,7 +883,7 @@ namespace Stride.Core.Storage
             public long SizeNotCompressed;
             public bool IsCompressed;
 
-            // Note: 0 means self, remove 1 to get index in BundleDescription.IncrementalBundles
+            // NOTE: 0 means self, remove 1 to get index in BundleDescription.IncrementalBundles
             public int IncrementalBundleIndex;
 
             internal class Serializer : DataSerializer<ObjectInfo>
@@ -955,7 +966,7 @@ namespace Stride.Core.Storage
 
         public void DeleteBundles(Func<string, bool> bundleFileDeletePredicate)
         {
-            var bundleFiles = VirtualFileSystem.ListFiles(vfsBundleDirectory, "*" + BundleExtension, VirtualSearchOption.TopDirectoryOnly).Result;
+            var bundleFiles = VirtualFileSystem.ListFiles(BundleDirectory, "*" + BundleExtension, VirtualSearchOption.TopDirectoryOnly).Result;
 
             // Group incremental bundles together
             var bundleFilesGroups = bundleFiles.GroupBy(bundleUrl =>

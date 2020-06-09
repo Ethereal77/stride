@@ -3,35 +3,36 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.ServiceModel;
 using System.Threading.Tasks;
+
+using ServiceWire.NamedPipes;
 
 using Stride.Core.Diagnostics;
 
 namespace Stride.Debugger.Target
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class GameDebuggerHost : IGameDebuggerHost
     {
-        private TaskCompletionSource<IGameDebuggerTarget> target = new TaskCompletionSource<IGameDebuggerTarget>();
+        private readonly TaskCompletionSource<IGameDebuggerTarget> target = new TaskCompletionSource<IGameDebuggerTarget>();
+
+        private NpClient<IGameDebuggerTarget> callbackChannel;
+        public LoggerResult Log { get; private set; }
+
+        public Task<IGameDebuggerTarget> Target => target.Task;
 
         public event Action GameExited;
 
-        public LoggerResult Log { get; private set; }
 
         public GameDebuggerHost(LoggerResult logger)
         {
             Log = logger;
         }
 
-        public Task<IGameDebuggerTarget> Target
-        {
-            get { return target.Task; }
-        }
 
-        public void RegisterTarget()
+        public void RegisterTarget(string callbackAddress)
         {
-            target.TrySetResult(OperationContext.Current.GetCallbackChannel<IGameDebuggerTarget>());
+            callbackChannel = new NpClient<IGameDebuggerTarget>(new NpEndPoint(callbackAddress));
+            target.TrySetResult(callbackChannel.Proxy);
         }
 
         public void OnGameExited()
@@ -42,6 +43,11 @@ namespace Stride.Debugger.Target
         public void OnLogMessage(SerializableLogMessage logMessage)
         {
             Log.Log(logMessage);
+        }
+
+        public void Dispose()
+        {
+            callbackChannel.Dispose();
         }
     }
 }

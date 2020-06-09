@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.Windows.Documents;
@@ -15,61 +14,87 @@ using System.Windows.Media;
 
 using Microsoft.CodeAnalysis;
 
-using RoslynPad.Roslyn;
-
-using Stride.Core.Assets.Editor.Services;
+using Stride.Core.IO;
 using Stride.Core.Extensions;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
+using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Editor.ViewModel;
-using Stride.Core.IO;
-using Stride.Core.Presentation.Dirtiables;
 using Stride.Core.Translation;
+using Stride.Assets.Scripts;
 using Stride.Assets.Presentation.AssetEditors;
 using Stride.Assets.Presentation.AssetEditors.ScriptEditor;
-using Stride.Assets.Scripts;
 
 using RoslynWorkspace = Stride.Assets.Presentation.AssetEditors.ScriptEditor.RoslynWorkspace;
 
 namespace Stride.Assets.Presentation.ViewModel
 {
     /// <summary>
-    /// Manages source code project and files, including change tracking, Roslyn workspace updates, etc...
+    ///   View model for source code project and files, including change tracking, Roslyn workspace updates, etc.
     /// </summary>
     public class CodeViewModel : DispatcherViewModel, IDisposable
     {
         /// <summary>
-        /// The editor minimum font size.
+        ///   Minimum font size for the code editor.
         /// </summary>
         public const int MinimumEditorFontSize = 8;
 
         /// <summary>
-        /// The editor maximum font size.
+        ///   Maximum font size for the code editor.
         /// </summary>
         public const int MaximumEditorFontSize = 72;
 
-        private readonly Task<ProjectWatcher> projectWatcherTask;
-        private readonly Task<RoslynWorkspace> workspaceTask;
-        private int editorFontSize = ScriptEditorSettings.FontSize.GetValue(); // default size
+        private int editorFontSize = ScriptEditorSettings.FontSize.GetValue();   // Default size
 
-        private Brush keywordBrush;
-        private Brush typeBrush;
+        private readonly Brush keywordBrush;
+        private readonly Brush typeBrush;
 
-        public CodeViewModel(StrideAssetsViewModel strideAssetsViewModel) : base(strideAssetsViewModel.SafeArgument(nameof(strideAssetsViewModel)).ServiceProvider)
+        /// <summary>
+        ///   Gets the project watcher which tracks source code changes on the disk. It is created asychronously.
+        /// </summary>
+        public Task<ProjectWatcher> ProjectWatcher { get; }
+
+        /// <summary>
+        ///   Gets the Roslyn workspace. It is created asynchronously.
+        /// </summary>
+        public Task<RoslynWorkspace> Workspace { get; }
+
+        /// <summary>
+        ///   Gets or sets the current font size for the code editor. It will be saved in the settings.
+        /// </summary>
+        public int EditorFontSize
         {
-            projectWatcherTask = Task.Run(async () =>
+            get => editorFontSize;
+            set
+            {
+                if (value < MinimumEditorFontSize || value > MaximumEditorFontSize)
+                    return;
+
+                if (SetValue(ref editorFontSize, value))
+                {
+                    ScriptEditorSettings.FontSize.SetValue(editorFontSize);
+                    ScriptEditorSettings.Save();
+                }
+            }
+        }
+
+
+        public CodeViewModel(StrideAssetsViewModel strideAssetsViewModel)
+            : base(strideAssetsViewModel.SafeArgument(nameof(strideAssetsViewModel)).ServiceProvider)
+        {
+            ProjectWatcher = Task.Run(async () =>
             {
                 var result = new ProjectWatcher(strideAssetsViewModel.Session);
                 await result.Initialize();
                 return result;
             });
 
-            workspaceTask = projectWatcherTask.Result.RoslynHost.ContinueWith(roslynHost => roslynHost.Result.Workspace);
+            Workspace = ProjectWatcher.Result.RoslynHost.ContinueWith(roslynHost => roslynHost.Result.Workspace);
 
-            workspaceTask = workspaceTask.ContinueWith(workspaceTask =>
+            Workspace = Workspace.ContinueWith(workspaceTask =>
             {
-                var projectWatcher = projectWatcherTask.Result;
+                var projectWatcher = ProjectWatcher.Result;
                 var workspace = workspaceTask.Result;
 
                 // Load and update roslyn workspace with latest compiled version
@@ -146,33 +171,7 @@ namespace Stride.Assets.Presentation.ViewModel
             //SymbolDisplayPartExtensions.StyleRunFromTextTag = StyleRunFromTextTag;
         }
 
-        /// <summary>
-        /// Gets the project watcher which tracks source code changes on the disk; it is created asychronously.
-        /// </summary>
-        public Task<ProjectWatcher> ProjectWatcher => projectWatcherTask;
 
-        /// <summary>
-        /// Gets the roslyn workspace; it is created asynchronously.
-        /// </summary>
-        public Task<RoslynWorkspace> Workspace => workspaceTask;
-
-        /// <summary>
-        /// The editor current font size. It will be saved in the settings.
-        /// </summary>
-        public int EditorFontSize
-        {
-            get { return editorFontSize; }
-            set
-            {
-                if (value < MinimumEditorFontSize || value > MaximumEditorFontSize) return;
-
-                if (SetValue(ref editorFontSize, value))
-                {
-                    ScriptEditorSettings.FontSize.SetValue(editorFontSize);
-                    ScriptEditorSettings.Save();
-                }
-            }
-        }
 
         /// <inheritdoc/>
         public override void Destroy()
@@ -183,10 +182,10 @@ namespace Stride.Assets.Presentation.ViewModel
         }
 
         /// <summary>
-        /// Reloads a project when a .csproj files changes on the hard drive.
+        ///   Reloads a project when a <c>.csproj</c> file changes on disk.
         /// </summary>
         /// <remarks>
-        /// In case of destructive changes (i.e. dirty files that disappeared), user confirmation will be asked to proceed.
+        ///   In case of destructive changes (i.e. dirty files that disappeared), user confirmation will be asked to proceed.
         /// </remarks>
         private async Task ReloadProject(SessionViewModel session, Project project)
         {
@@ -195,12 +194,10 @@ namespace Stride.Assets.Presentation.ViewModel
             // Get assets and namespace from csproj
             // TODO: Use roslyn list of files? not sure we could have non .cs files easily though
             // However, if we load from file, it might not be in sync with Roslyn state
-            string projectNamespace;
-            var projectFiles = Package.FindAssetsInProject(project.FilePath, out projectNamespace);
+            var projectFiles = Package.FindAssetsInProject(project.FilePath, out string projectNamespace);
 
             // Find associated ProjectViewModel
-            var projectViewModel = session.LocalPackages.FirstOrDefault(y => y.Name == project.Name) as ProjectViewModel;
-            if (projectViewModel == null)
+            if (!(session.LocalPackages.FirstOrDefault(y => y.Name == project.Name) is ProjectViewModel projectViewModel))
                 return;
 
             // List current assets
@@ -235,10 +232,10 @@ namespace Stride.Assets.Presentation.ViewModel
         }
 
         /// <summary>
-        /// // Handle Script asset deletion (from Visual Studio/HDD external changes to Game Studio).
+        ///   Handles Script asset deletion (from Visual Studio/HDD external changes to Game Studio).
         /// </summary>
-        /// <returns>False if user refused to continue (in case deleted assets were dirty).</returns>
-        private static async Task<bool> DeleteRemovedProjectAssets(ProjectViewModel projectViewModel, List<AssetViewModel> projectAssets, Project project, List<UFile> projectFiles)
+        /// <returns><c>false</c> if the user refused to continue (in case the deleted assets were dirty).</returns>
+        private static async Task<bool> DeleteRemovedProjectAssets(ProjectViewModel projectViewModel, List<AssetViewModel> projectAssets, Project project, List<(UFile FilePath, UFile Link)> projectFiles)
         {
             // List IProjectAsset
             var currentProjectAssets = projectAssets.Where(x => x.AssetItem.Asset is IProjectAsset);
@@ -246,8 +243,8 @@ namespace Stride.Assets.Presentation.ViewModel
             var assetsToDelete = new List<AssetViewModel>();
             foreach (var asset in currentProjectAssets)
             {
-                // Note: if file doesn't exist on HDD anymore (i.e. automatic csproj tracking for *.cs), no need to delete it anymore
-                bool isDeleted = !projectFiles.Contains(asset.AssetItem.FullPath);
+                // NOTE: If file doesn't exist on HDD anymore (i.e. automatic csproj tracking for *.cs), no need to delete it anymore
+                bool isDeleted = !projectFiles.Any(x => x.FilePath == asset.AssetItem.FullPath);
                 if (isDeleted)
                 {
                     assetsToDelete.Add(asset);
@@ -267,10 +264,10 @@ namespace Stride.Assets.Presentation.ViewModel
                     return false;
             }
 
-            // delete this asset
+            // Delete this asset
             if (assetsToDelete.Count > 0)
             {
-                // TODO: this action (it should occur only during assembly releoad) will be undoable (undoing reload restores deleted script)
+                // TODO: This action (it should occur only during assembly releoad) will be undoable (undoing reload restores deleted script)
                 if (!await projectViewModel.Session.ActiveAssetView.DeleteContent(assetsToDelete, true))
                     return false;
             }
@@ -279,9 +276,9 @@ namespace Stride.Assets.Presentation.ViewModel
         }
 
         /// <summary>
-        /// Handles project asset addition (from Visual Studio/HDD external changes to Game Studio).
+        ///   Handles project asset addition (from Visual Studio/HDD external changes to Game Studio).
         /// </summary>
-        private static void AddNewProjectAssets(ProjectViewModel projectViewModel, List<AssetViewModel> projectAssets, Project project, List<UFile> projectFiles)
+        private static void AddNewProjectAssets(ProjectViewModel projectViewModel, List<AssetViewModel> projectAssets, Project project, List<(UFile FilePath, UFile Link)> projectFiles)
         {
             // Nothing to add?
             if (projectFiles.Count == 0)
@@ -291,12 +288,12 @@ namespace Stride.Assets.Presentation.ViewModel
 
             var documentsToIgnore = (from scriptAsset in scriptAssets
                                      from document in projectFiles
-                                     let ufileDoc = new UFile(document)
+                                     let ufileDoc = document.FilePath
                                      where ufileDoc == scriptAsset.FullPath
                                      select document).ToList();
 
             //remove what we have already
-            var documentsCopy = new List<UFile>(projectFiles);
+            var documentsCopy = new List<(UFile FilePath, UFile Link)>(projectFiles);
             foreach (var document in documentsToIgnore)
             {
                 documentsCopy.Remove(document);
@@ -308,7 +305,7 @@ namespace Stride.Assets.Presentation.ViewModel
                 var newScriptAssets = new List<AssetViewModel>();
                 foreach (var document in documentsCopy)
                 {
-                    var docFile = new UFile(document);
+                    var docFile = new UFile(document.FilePath);
                     var projFile = new UFile(project.FilePath);
 
                     var assetName = docFile.MakeRelative(projectViewModel.Package.RootDirectory).GetDirectoryAndFileNameWithoutExtension();
@@ -331,10 +328,10 @@ namespace Stride.Assets.Presentation.ViewModel
         }
 
         /// <summary>
-        /// Enumerate assets.
+        ///   Finds the assets in a directory and adds them to a list.
         /// </summary>
-        /// <param name="dir"></param>
-        /// <param name="list"></param>
+        /// <param name="dir">Directory.</param>
+        /// <param name="list">List in which to add the assets.</param>
         /// <returns>Returns true if any of the (sub)directories is dirty.</returns>
         private static bool GetAssets(DirectoryBaseViewModel dir, List<AssetViewModel> list)
         {
@@ -370,7 +367,7 @@ namespace Stride.Assets.Presentation.ViewModel
 
         private void Cleanup()
         {
-            projectWatcherTask.Dispose();
+            ProjectWatcher.Dispose();
         }
 
         private void StyleRunFromSymbolDisplayPartKind(SymbolDisplayPartKind partKind, Run run)
@@ -380,6 +377,7 @@ namespace Stride.Assets.Presentation.ViewModel
                 case SymbolDisplayPartKind.Keyword:
                     run.Foreground = keywordBrush;
                     return;
+
                 case SymbolDisplayPartKind.StructName:
                 case SymbolDisplayPartKind.EnumName:
                 case SymbolDisplayPartKind.TypeParameterName:
@@ -398,6 +396,7 @@ namespace Stride.Assets.Presentation.ViewModel
                 case TextTags.Keyword:
                     run.Foreground = keywordBrush;
                     break;
+
                 case TextTags.Struct:
                 case TextTags.Enum:
                 case TextTags.TypeParameter:

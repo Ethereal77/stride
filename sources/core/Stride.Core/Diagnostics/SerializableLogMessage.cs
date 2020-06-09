@@ -9,20 +9,46 @@ using Stride.Core.Annotations;
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// A class that represents a copy of a <see cref="LogMessage"/> that can be serialized.
+    ///   Represents a copy of a <see cref="LogMessage"/> that can be serialized.
     /// </summary>
-    [DataContract]
+    [DataContract, Serializable]
     public class SerializableLogMessage : ILogMessage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SerializableLogMessage"/> class with default values for its properties.
+        ///   Gets or sets the module specified in the message.
         /// </summary>
-        public SerializableLogMessage()
-        {
-        }
+        /// <value>The module.</value>
+        /// <remarks>
+        ///   The module is an identifier for a logical part of the system. It can be a class name, a namespace or a regular string
+        ///   not linked to a code hierarchy.
+        /// </remarks>
+        public string Module { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SerializableLogMessage"/> class from a <see cref="LogMessage"/> instance.
+        ///   Gets or sets the type of this message.
+        /// </summary>
+        /// <value>The type of the message.</value>
+        public LogMessageType Type { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the text of the message.
+        /// </summary>
+        /// <value>The text.</value>
+        public string Text { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the exception info, in case this message represents an error or exception.
+        /// </summary>
+        public ExceptionInfo ExceptionInfo { get; set; }
+
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="SerializableLogMessage"/> class with default values for its properties.
+        /// </summary>
+        public SerializableLogMessage() { }
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="SerializableLogMessage"/> class from a <see cref="LogMessage"/> instance.
         /// </summary>
         /// <param name="message">The <see cref="LogMessage"/> instance to use to initialize properties.</param>
         public SerializableLogMessage([NotNull] LogMessage message)
@@ -34,44 +60,25 @@ namespace Stride.Core.Diagnostics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SerializableLogMessage"/> class using the given parameters to set its properties.
+        ///   Initializes a new instance of the <see cref="SerializableLogMessage"/> class using the given parameters to set its properties.
         /// </summary>
         /// <param name="module">The module name.</param>
         /// <param name="type">The type.</param>
         /// <param name="text">The text.</param>
-        /// <param name="exceptionInfo">The exception information. This parameter can be null.</param>
+        /// <param name="exceptionInfo">The exception information. This parameter can be <c>null</c>.</param>
         public SerializableLogMessage([NotNull] string module, LogMessageType type, [NotNull] string text, ExceptionInfo exceptionInfo = null)
         {
-            if (module == null) throw new ArgumentNullException(nameof(module));
-            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (module is null)
+                throw new ArgumentNullException(nameof(module));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
             Module = module;
             Type = type;
             Text = text;
             ExceptionInfo = exceptionInfo;
         }
 
-        /// <summary>
-        /// Gets or sets the module.
-        /// </summary>
-        /// <remarks>
-        /// The module is an identifier for a logical part of the system. It can be a class name, a namespace or a regular string not linked to a code hierarchy.
-        /// </remarks>
-        public string Module { get; set; }
-
-        /// <summary>
-        /// Gets or sets the type of this message.
-        /// </summary>
-        public LogMessageType Type { get; set; }
-
-        /// <summary>
-        /// Gets or sets the text.
-        /// </summary>
-        public string Text { get; set; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="ExceptionInfo"/> of this message.
-        /// </summary>
-        public ExceptionInfo ExceptionInfo { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()

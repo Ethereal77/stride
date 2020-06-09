@@ -7,17 +7,17 @@ using System;
 namespace Stride.Core.IO
 {
     /// <summary>
-    /// Change type of file used by <see cref="FileEvent"/> and <see cref="DirectoryWatcher"/>.
+    ///   Defines the type of changes a <see cref="DirectoryWatcher"/> may detect on a file.
     /// </summary>
     [Flags]
     public enum FileEventChangeType
     {
-        // This enum must match exactly the System.IO.WatcherChangeTypes
+        // NOTE: This must match exactly the System.IO.WatcherChangeTypes
 
         Created = 1,
         Deleted = 2,
         Changed = 4,
         Renamed = 8,
-        All = Renamed | Changed | Deleted | Created,
+        All = Renamed | Changed | Deleted | Created
     }
 }

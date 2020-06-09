@@ -5,39 +5,39 @@
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// Type of a <see cref="LogMessage" />.
+    ///   Defines the different types of messages that can represent a <see cref="ILogMessage"/>.
     /// </summary>
     [DataContract]
     public enum LogMessageType
     {
         /// <summary>
-        /// A debug message (level 0).
+        ///   The message is intended for debugging information (level 0).
         /// </summary>
         Debug = 0,
 
         /// <summary>
-        /// A verbose message (level 1).
+        ///   The message is for informational verbose purposes (level 1).
         /// </summary>
         Verbose = 1,
 
         /// <summary>
-        /// An regular info message (level 2).
+        ///   The message is a regular informational message (level 2).
         /// </summary>
         Info = 2,
 
         /// <summary>
-        /// A warning message (level 3).
+        ///   The message is a warning (level 3).
         /// </summary>
         Warning = 3,
 
         /// <summary>
-        /// An error message (level 4).
+        ///   The message informs of a recoverable error that has occurred (level 4).
         /// </summary>
         Error = 4,
 
         /// <summary>
-        /// A Fatal error message (level 5).
+        ///   The message reports a fatal unrecoverable error (level 5).
         /// </summary>
-        Fatal = 5,
+        Fatal = 5
     }
 }

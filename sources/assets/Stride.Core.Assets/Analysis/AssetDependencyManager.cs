@@ -7,77 +7,79 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-using Stride.Core.Assets.Visitors;
-using Stride.Core.Extensions;
 using Stride.Core.Reflection;
 using Stride.Core.Serialization;
 using Stride.Core.Serialization.Contents;
+using Stride.Core.Assets.Visitors;
 
 namespace Stride.Core.Assets.Analysis
 {
     /// <summary>
-    /// A class responsible for providing asset dependencies for a <see cref="PackageSession"/> and file tracking dependency.
+    ///   A class responsible for providing asset dependencies for a <see cref="PackageSession"/> and file tracking dependency.
     /// </summary>
     /// <remarks>
-    /// This class provides methods to:
-    /// <ul>
-    /// <li>Find assets referencing a particular asset (recursively or not)</li>
-    /// <li>Find assets referenced by a particular asset (recursively or not)</li>
-    /// <li>Find missing references</li>
-    /// <li>Find missing references for a particular asset</li>
-    /// <li>Find assets file changed events that have changed on the disk</li>
-    /// </ul>
+    ///   This class provides methods to:
+    ///   <list type="bullet">
+    ///     <item><description>Find assets referencing a particular asset (recursively or not).</description></item>
+    ///     <item><description>Find assets referenced by a particular asset (recursively or not).</description></item>
+    ///     <item><description>Find missing references.</description></item>
+    ///     <item><description>Find missing references for a particular asset.</description></item>
+    ///     <item><description>Find assets file changed events that have changed on the disk.</description></item>
+    ///   </list>
     /// </remarks>
     public sealed class AssetDependencyManager : IAssetDependencyManager, IDisposable
     {
-        private readonly PackageSession session;
         internal readonly object ThisLock = new object();
+
+        private readonly PackageSession session;
         internal readonly HashSet<Package> Packages;
         internal readonly Dictionary<AssetId, AssetDependencies> Dependencies;
         internal readonly Dictionary<AssetId, AssetDependencies> AssetsWithMissingReferences;
         internal readonly Dictionary<AssetId, HashSet<AssetDependencies>> MissingReferencesToParent;
+
         private bool isDisposed;
         private bool isSessionSaving;
         private bool isInitialized;
 
         /// <summary>
-        /// Occurs when a asset changed. This event is called in the critical section of the dependency manager,
-        /// meaning that dependencies can be safely computed via <see cref="ComputeDependencies"/> method from this callback.
-        /// </summary>
-        public event DirtyFlagChangedDelegate<AssetItem> AssetChanged;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AssetDependencyManager" /> class.
-        /// </summary>
-        /// <param name="session">The session.</param>
-        /// <exception cref="System.ArgumentNullException">session</exception>
-        internal AssetDependencyManager(PackageSession session)
-        {
-            this.session = session ?? throw new ArgumentNullException(nameof(session));
-            this.session.Packages.CollectionChanged += Packages_CollectionChanged;
-            session.AssetDirtyChanged += Session_AssetDirtyChanged;
-            AssetsWithMissingReferences = new Dictionary<AssetId, AssetDependencies>();
-            MissingReferencesToParent = new Dictionary<AssetId, HashSet<AssetDependencies>>();
-            Packages = new HashSet<Package>();
-            Dependencies = new Dictionary<AssetId, AssetDependencies>();
-            // If the session has already a root package, then initialize the dependency manager directly
-            if (session.LocalPackages.Any())
-            {
-                Initialize();
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is initialized. See remarks.
+        ///   Gets a value indicating whether this instance is initialized.
         /// </summary>
         /// <value><c>true</c> if this instance is initialized; otherwise, <c>false</c>.</value>
         /// <remarks>
-        /// If this instance is not initialized, all public methods may block until the full initialization of this instance.
+        ///   If this instance is not initialized, all public methods may block until the full initialization happens with <see cref="Initialize"/>.
         /// </remarks>
         public bool IsInitialized => isInitialized;
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///   Occurs when an asset has changed. This event is called in the critical section of the dependency manager,
+        ///   meaning that dependencies can be safely computed via <see cref="ComputeDependencies"/> method from this callback.
+        /// </summary>
+        public event DirtyFlagChangedDelegate<AssetItem> AssetChanged;
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="AssetDependencyManager"/> class.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <exception cref="System.ArgumentNullException"><paramref name="session"/> is a <c>null</c> reference.</exception>
+        internal AssetDependencyManager(PackageSession session)
+        {
+            this.session = session ?? throw new ArgumentNullException(nameof(session));
+
+            this.session.Packages.CollectionChanged += Packages_CollectionChanged;
+            session.AssetDirtyChanged += Session_AssetDirtyChanged;
+
+            Packages = new HashSet<Package>();
+            Dependencies = new Dictionary<AssetId, AssetDependencies>();
+            AssetsWithMissingReferences = new Dictionary<AssetId, AssetDependencies>();
+            MissingReferencesToParent = new Dictionary<AssetId, HashSet<AssetDependencies>>();
+
+            // If the session has already a root package, then initialize the dependency manager directly
+            if (session.LocalPackages.Any())
+                Initialize();
+        }
+
+        /// <summary>
+        ///   Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
@@ -86,32 +88,32 @@ namespace Stride.Core.Assets.Analysis
 
             isDisposed = true;
         }
-        
+
         /// <inheritdoc />
-        public AssetDependencies ComputeDependencies(AssetId assetId, AssetDependencySearchOptions dependenciesOptions = AssetDependencySearchOptions.All, ContentLinkType linkTypes = ContentLinkType.Reference, HashSet<AssetId> visited = null)
+        public AssetDependencies ComputeDependencies(AssetId assetId, AssetDependencySearchOptions dependenciesOptions = AssetDependencySearchOptions.All,
+                                                     ContentLinkType linkTypes = ContentLinkType.Reference, HashSet<AssetId> visited = null)
         {
-            bool recursive = (dependenciesOptions & AssetDependencySearchOptions.Recursive) != 0;
-            if (visited == null && recursive)
+            bool recursive = dependenciesOptions.HasFlag(AssetDependencySearchOptions.Recursive);
+            if (visited is null && recursive)
                 visited = new HashSet<AssetId>();
 
             //var clock = Stopwatch.StartNew();
 
             lock (Initialize())
             {
-                AssetDependencies dependencies;
-                if (!Dependencies.TryGetValue(assetId, out dependencies))
+                if (!Dependencies.TryGetValue(assetId, out AssetDependencies dependencies))
                     return null;
 
                 dependencies = new AssetDependencies(dependencies.Item);
 
                 int inCount = 0, outCount = 0;
 
-                if ((dependenciesOptions & AssetDependencySearchOptions.In) != 0)
+                if (dependenciesOptions.HasFlag(AssetDependencySearchOptions.In))
                 {
                     CollectInputReferences(dependencies, assetId, visited, recursive, linkTypes, ref inCount);
                 }
 
-                if ((dependenciesOptions & AssetDependencySearchOptions.Out) != 0)
+                if (dependenciesOptions.HasFlag(AssetDependencySearchOptions.Out))
                 {
                     visited?.Clear();
                     CollectOutputReferences(dependencies, assetId, visited, recursive, linkTypes, ref outCount);
@@ -121,25 +123,25 @@ namespace Stride.Core.Assets.Analysis
 
                 return dependencies;
             }
-
         }
 
-
+        /// <summary>
+        ///   Initializes this instance of <see cref="AssetDependencyManager"/> to analyze and track the packages of a session.
+        /// </summary>
+        /// <remarks>
+        ///   Until this method is call to initialize the <see cref="AssetDependencyManager"/>, all public methods may block.
+        /// </remarks>
         private object Initialize()
         {
             lock (ThisLock)
             {
                 if (isInitialized)
-                {
                     return ThisLock;
-                }
 
                 // If the package is cancelled, don't try to do anything
                 // A cancellation means that the package session will be destroyed
                 if (isDisposed)
-                {
                     return ThisLock;
-                }
 
                 // Initialize with the list of packages
                 foreach (var package in session.Packages)
@@ -147,45 +149,46 @@ namespace Stride.Core.Assets.Analysis
                     // If the package is cancelled, don't try to do anything
                     // A cancellation means that the package session will be destroyed
                     if (isDisposed)
-                    {
                         return ThisLock;
-                    }
 
                     TrackPackage(package);
                 }
 
                 isInitialized = true;
             }
+
             return ThisLock;
         }
 
         /// <summary>
-        /// Collects all references of an asset dynamically.
+        ///   Collects all references of an asset dynamically.
         /// </summary>
-        /// <param name="result">The result.</param>
-        /// <param name="assetResolver">The asset resolver.</param>
-        /// <param name="isRecursive">if set to <c>true</c> collects references recursively.</param>
-        /// <param name="keepParents">Indicate if the parent of the provided <paramref name="result"/> should be kept or not</param>
+        /// <param name="result">The resulting <see cref="AssetDependencies"/>.</param>
+        /// <param name="assetResolver">The asset resolver, a function to resolve an asset from its <see cref="AssetId"/>.</param>
+        /// <param name="isRecursive">If set to <c>true</c>, collects references recursively.</param>
+        /// <param name="keepParents">Indicates if the parent of the provided <paramref name="result"/> should be kept or not.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// result
-        /// or
-        /// assetResolver
+        ///   <paramref name="result"/> is a <c>null</c> reference,
+        ///   or
+        ///   <paramref name="assetResolver"/> is a <c>null</c> reference.
         /// </exception>
         private static void CollectDynamicOutReferences(AssetDependencies result, Func<AssetId, AssetItem> assetResolver, bool isRecursive, bool keepParents)
         {
-            if (result == null) throw new ArgumentNullException(nameof(result));
-            if (assetResolver == null) throw new ArgumentNullException(nameof(assetResolver));
+            if (result is null)
+                throw new ArgumentNullException(nameof(result));
+            if (assetResolver is null)
+                throw new ArgumentNullException(nameof(assetResolver));
 
             var addedReferences = new HashSet<AssetId>();
             var itemsToAnalyze = new Queue<AssetItem>();
             var referenceCollector = new DependenciesCollector();
 
-            // Reset the dependencies/parts.
+            // Reset the dependencies / parts
             result.Reset(keepParents);
 
             var assetItem = result.Item;
 
-            // marked as processed to not add it again
+            // Mark as processed to not add it again
             addedReferences.Add(assetItem.Id);
             itemsToAnalyze.Enqueue(assetItem);
 
@@ -198,20 +201,18 @@ namespace Stride.Core.Assets.Analysis
                     if (addedReferences.Contains(link.Element.Id))
                         continue;
 
-                    // marked as processed to not add it again
+                    // Mark as processed to not add it again
                     addedReferences.Add(link.Element.Id);
 
-                    // add the location to the reference location list
+                    // Add the location to the reference location list
                     var nextItem = assetResolver(link.Element.Id);
                     if (nextItem != null)
                     {
                         result.AddLinkOut(nextItem, link.Type);
 
-                        // add current element to analyze list, to analyze dependencies recursively
+                        // Add current element to analyze list, to analyze dependencies recursively
                         if (isRecursive)
-                        {
                             itemsToAnalyze.Enqueue(nextItem);
-                        }
                     }
                     else
                     {
@@ -220,27 +221,25 @@ namespace Stride.Core.Assets.Analysis
                 }
 
                 if (!isRecursive)
-                {
                     break;
-                }
             }
         }
 
         private AssetItem FindAssetFromDependencyOrSession(AssetId assetId)
         {
-            // We cannot return the item from the session but we can only return assets currently tracked by the dependency 
-            // manager
+            // We cannot return the item from the session. We can only return assets currently tracked by the dependency manager
             var item = session.FindAsset(assetId);
             if (item != null)
             {
                 var dependencies = TrackAsset(assetId);
                 return dependencies.Item;
             }
+
             return null;
         }
 
         /// <summary>
-        /// This methods is called when a session is about to being saved.
+        ///   This methods is called when a session is about to being saved.
         /// </summary>
         public void BeginSavingSession()
         {
@@ -248,28 +247,27 @@ namespace Stride.Core.Assets.Analysis
         }
 
         /// <summary>
-        /// This methods is called when a session has been saved.
+        ///   This methods is called when a session has been saved.
         /// </summary>
         public void EndSavingSession()
         {
             isSessionSaving = false;
         }
-        
+
         /// <summary>
-        /// Calculate the dependencies for the specified asset either by using the internal cache if the asset is already in the session
-        /// or by calculating 
+        ///   Calculate the dependencies for the specified asset either by using the internal cache if the asset is already in the session
+        ///   or by computing its dependencies.
         /// </summary>
         /// <param name="assetId">The asset id.</param>
-        /// <returns>The dependencies.</returns>
+        /// <returns><see cref="AssetDependencies"/> for the specified asset.</returns>
         private AssetDependencies CalculateDependencies(AssetId assetId)
         {
-            AssetDependencies dependencies;
-            Dependencies.TryGetValue(assetId, out dependencies);
+            Dependencies.TryGetValue(assetId, out AssetDependencies dependencies);
             return dependencies;
         }
 
         /// <summary>
-        /// This method is called when a package needs to be tracked
+        ///   This method is called when a <see cref="Package"/> needs to be tracked.
         /// </summary>
         /// <param name="package">The package to track.</param>
         private void TrackPackage(Package package)
@@ -286,9 +284,7 @@ namespace Stride.Core.Assets.Analysis
                     // If the package is cancelled, don't try to do anything
                     // A cancellation means that the package session will be destroyed
                     if (isDisposed)
-                    {
                         return;
-                    }
 
                     TrackAsset(asset);
                 }
@@ -298,7 +294,7 @@ namespace Stride.Core.Assets.Analysis
         }
 
         /// <summary>
-        /// This method is called when a package needs to be un-tracked
+        ///   This method is called when a <see cref="Package"/> does not need to be tracked anymore.
         /// </summary>
         /// <param name="package">The package to un-track.</param>
         private void UnTrackPackage(Package package)
@@ -320,48 +316,43 @@ namespace Stride.Core.Assets.Analysis
         }
 
         /// <summary>
-        /// This method is called when an asset needs to be tracked
+        ///   This method is called when a <see cref="AssetItem"/> needs to be tracked.
         /// </summary>
-        /// <param name="assetItemSource">The asset item source.</param>
-        /// <returns>AssetDependencies.</returns>
+        /// <param name="assetItemSource">The asset item to track.</param>
+        /// <returns><see cref="AssetDependencies"/> for the specified asset.</returns>
         private AssetDependencies TrackAsset(AssetItem assetItemSource)
         {
             return TrackAsset(assetItemSource.Id);
         }
 
         /// <summary>
-        /// This method is called when an asset needs to be tracked
+        ///   This method is called when a <see cref="AssetId"/> needs to be tracked.
         /// </summary>
-        /// <returns>AssetDependencies.</returns>
+        /// <returns><see cref="AssetDependencies"/> for the specified asset.</returns>
         private AssetDependencies TrackAsset(AssetId assetId)
         {
             lock (ThisLock)
             {
-                AssetDependencies dependencies;
-                if (Dependencies.TryGetValue(assetId, out dependencies))
+                if (Dependencies.TryGetValue(assetId, out AssetDependencies dependencies))
                     return dependencies;
 
-                // TODO provide an optimized version of TrackAsset method
-                // taking directly a well known asset (loaded from a Package...etc.)
-                // to avoid session.FindAsset 
+                // TODO: Provide an optimized version of TrackAsset method, taking directly a well known asset (loaded from a Package, etc.) to avoid session.FindAsset
                 var assetItem = session.FindAsset(assetId);
-                if (assetItem == null)
-                {
+                if (assetItem is null)
                     return null;
-                }
 
-                // Clone the asset before using it in this instance to make sure that
-                // we have some kind of immutable state
+                // Clone the asset before using it in this instance to make sure that we have some kind of immutable state
                 // TODO: This is not handling shadow registry
 
-                // No need to clone assets from readonly package 
+                // No need to clone assets from readonly package
                 var assetItemCloned = assetItem.Package.IsSystem
                     ? assetItem
                     : new AssetItem(assetItem.Location, AssetCloner.Clone(assetItem.Asset), assetItem.Package)
                         {
                             SourceFolder = assetItem.SourceFolder,
+                            AlternativePath = assetItem.AlternativePath,
                         };
-                
+
                 dependencies = new AssetDependencies(assetItemCloned);
 
                 // Adds to global list
@@ -390,7 +381,7 @@ namespace Stride.Core.Assets.Analysis
         }
 
         /// <summary>
-        /// This method is called when an asset needs to be un-tracked
+        ///   This method is called when an <see cref="AssetItem"/> does not need to be tracked anymore.
         /// </summary>
         /// <param name="assetItemSource">The asset item source.</param>
         private void UnTrackAsset(AssetItem assetItemSource)
@@ -398,8 +389,7 @@ namespace Stride.Core.Assets.Analysis
             lock (ThisLock)
             {
                 var assetId = assetItemSource.Id;
-                AssetDependencies dependencies;
-                if (!Dependencies.TryGetValue(assetId, out dependencies))
+                if (!Dependencies.TryGetValue(assetId, out AssetDependencies dependencies))
                     return;
 
                 // Remove from global list
@@ -411,8 +401,7 @@ namespace Stride.Core.Assets.Analysis
                 // Update [In] dependencies for children
                 foreach (var childItem in dependencies.LinksOut)
                 {
-                    AssetDependencies childDependencyItem;
-                    if (Dependencies.TryGetValue(childItem.Item.Id, out childDependencyItem))
+                    if (Dependencies.TryGetValue(childItem.Item.Id, out AssetDependencies childDependencyItem))
                     {
                         childDependencyItem.RemoveLinkIn(dependencies.Item);
                     }
@@ -447,7 +436,7 @@ namespace Stride.Core.Assets.Analysis
                 }
 
                 // Recalculate [Out] dependencies
-                CollectDynamicOutReferences(dependencies, FindAssetFromDependencyOrSession, false, true);
+                CollectDynamicOutReferences(dependencies, FindAssetFromDependencyOrSession, isRecursive: false, keepParents: true);
 
                 // Add [In] dependencies to new children
                 foreach (var assetLink in dependencies.LinksOut)
@@ -481,6 +470,7 @@ namespace Stride.Core.Assets.Analysis
         private void UpdateMissingDependencies(AssetDependencies dependencies)
         {
             HashSet<AssetDependencies> parentDependencyItems;
+
             // If the asset has any missing dependencies, update the fast lookup tables
             if (dependencies.HasMissingDependencies)
             {
@@ -531,8 +521,7 @@ namespace Stride.Core.Assets.Analysis
             {
                 lock (ThisLock)
                 {
-                    AssetDependencies dependencies;
-                    if (Dependencies.TryGetValue(asset.Id, out dependencies))
+                    if (Dependencies.TryGetValue(asset.Id, out AssetDependencies dependencies))
                     {
                         dependencies.Item.Asset = AssetCloner.Clone(asset.Asset);
                         dependencies.Item.Version = asset.Version;
@@ -554,24 +543,20 @@ namespace Stride.Core.Assets.Analysis
                 case NotifyCollectionChangedAction.Add:
                     TrackPackage((Package)e.NewItems[0]);
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     UnTrackPackage((Package)e.OldItems[0]);
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
                     foreach (var oldPackage in e.OldItems.OfType<Package>())
-                    {
                         UnTrackPackage(oldPackage);
-                    }
-
                     foreach (var packageToCopy in session.Packages)
-                    {
                         TrackPackage(packageToCopy);
-                    }
                     break;
             }
         }
-        
+
         private void Assets_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -579,22 +564,19 @@ namespace Stride.Core.Assets.Analysis
                 case NotifyCollectionChangedAction.Add:
                     TrackAsset(((AssetItem)e.NewItems[0]));
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     UnTrackAsset(((AssetItem)e.OldItems[0]));
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
-                    var collection = (PackageAssetCollection)sender;
+                    var collection = (PackageAssetCollection) sender;
 
                     var items = Dependencies.Values.Where(item => ReferenceEquals(item.Item.Package, collection.Package)).ToList();
                     foreach (var assetItem in items)
-                    {
                         UnTrackAsset(assetItem.Item);
-                    }
                     foreach (var assetItem in collection)
-                    {
                         TrackAsset(assetItem);
-                    }
                     break;
             }
         }
@@ -611,13 +593,12 @@ namespace Stride.Core.Assets.Analysis
 
             count++;
 
-            AssetDependencies dependencies;
-            Dependencies.TryGetValue(assetId, out dependencies);
+            Dependencies.TryGetValue(assetId, out AssetDependencies dependencies);
             if (dependencies != null)
             {
                 foreach (var pair in dependencies.LinksIn)
                 {
-                    if ((linkTypes & pair.Type) != 0)
+                    if (linkTypes.HasFlag(pair.Type))
                     {
                         dependencyRoot.AddLinkIn(pair);
 
@@ -643,7 +624,7 @@ namespace Stride.Core.Assets.Analysis
             count++;
 
             var dependencies = CalculateDependencies(assetId);
-            if (dependencies == null)
+            if (dependencies is null)
                 return;
 
             // Add missing references
@@ -655,7 +636,7 @@ namespace Stride.Core.Assets.Analysis
             // Add output references
             foreach (var child in dependencies.LinksOut)
             {
-                if ((linkTypes & child.Type) != 0)
+                if (linkTypes.HasFlag(child.Type))
                 {
                     dependencyRoot.AddLinkOut(child);
 
@@ -668,28 +649,27 @@ namespace Stride.Core.Assets.Analysis
         }
 
         /// <summary>
-        /// An interface providing methods to collect of asset references from an <see cref="AssetItem"/>.
+        ///   An interface providing methods to collect of asset references from an <see cref="AssetItem"/>.
         /// </summary>
         private interface IDependenciesCollector
         {
             /// <summary>
-            /// Get the asset references of an <see cref="AssetItem"/>. This function is not recursive.
+            ///   Get the asset references of an <see cref="AssetItem"/>. This function is not recursive.
             /// </summary>
-            /// <param name="item">The item we when the references of</param>
-            /// <returns></returns>
+            /// <param name="item">The asset whose references we want to get.</param>
+            /// <returns>A collection of <see cref="IContentLink"/> that represents the references to the specified asset.</returns>
             IEnumerable<IContentLink> GetDependencies(AssetItem item);
         }
 
-        private void OnAssetChanged(AssetItem obj, bool oldValue, bool newValue)
+        private void OnAssetChanged(AssetItem asset, bool oldValue, bool newValue)
         {
             // Make sure we clone the item here only if it is necessary
-            // Cloning the AssetItem is mandatory in order to make sure
-            // the asset item won't change
-            AssetChanged?.Invoke(obj.Clone(true), oldValue, newValue);
+            // Cloning the AssetItem is mandatory in order to make sure the asset item won't change
+            AssetChanged?.Invoke(asset.Clone(keepPackage: true), oldValue, newValue);
         }
 
         /// <summary>
-        /// Visitor that collect all asset references.
+        ///   Visitor that collect all asset references.
         /// </summary>
         private class DependenciesCollector : AssetVisitorBase, IDependenciesCollector
         {
@@ -699,14 +679,15 @@ namespace Stride.Core.Assets.Analysis
             {
                 dependencies = new AssetDependencies(item);
                 Visit(item.Asset);
+
                 return dependencies.BrokenLinksOut;
             }
 
             public override void VisitObject(object obj, ObjectDescriptor descriptor, bool visitMembers)
             {
-                // references and base
+                // References and base
                 var reference = obj as IReference;
-                if (reference == null)
+                if (reference is null)
                 {
                     var attachedReference = AttachedReferenceManager.GetAttachedReference(obj);
                     if (attachedReference != null && attachedReference.IsProxy)
@@ -725,7 +706,9 @@ namespace Stride.Core.Assets.Analysis
 
             public override void VisitObjectMember(object container, ObjectDescriptor containerDescriptor, IMemberDescriptor member, object value)
             {
-                if (typeof(Asset).IsAssignableFrom(member.DeclaringType) && member.Name == nameof(Asset.Archetype) && value != null)
+                if (typeof(Asset).IsAssignableFrom(member.DeclaringType) &&
+                    member.Name == nameof(Asset.Archetype) &&
+                    value != null)
                 {
                     dependencies.AddBrokenLinkOut((AssetReference)value, ContentLinkType.Reference);
                     return;

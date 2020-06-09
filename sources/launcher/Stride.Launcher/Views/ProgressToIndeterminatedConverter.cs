@@ -13,7 +13,7 @@ namespace Stride.LauncherApp.Views
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var progress = (int)System.Convert.ChangeType(value, typeof(int));
+            var progress = (int) System.Convert.ChangeType(value, typeof(int));
             return progress <= 0;
         }
     }

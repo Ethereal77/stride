@@ -5,86 +5,90 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Stride.Core;
 using Stride.Core.IO;
 
 namespace Stride.Core.Storage
 {
     /// <summary>
-    /// Stores immutable binary content.
+    ///   Represents an immutable binary content data object.
     /// </summary>
     public class Blob : ReferenceBase
     {
-        private readonly ObjectDatabase objectDatabase;
-        private readonly IntPtr content;
-        private readonly int size;
-        private readonly ObjectId objectId;
+        /// <summary>
+        ///   Gets the size of the data blob.
+        /// </summary>
+        /// <value>Size of the data blob, in bytes.</value>
+        public int Size { get; }
 
+        /// <summary>
+        ///   Gets an <see cref="IntPtr"/> pointing to the blob data.
+        /// </summary>
+        /// <value>The pointer to the content.</value>
+        public IntPtr Content { get; }
+
+        /// <summary>
+        ///   Gets the <see cref="Storage.ObjectId"/> that uniquely identifies this blob.
+        /// </summary>
+        /// <value>The <see cref="Storage.ObjectId"/> of this blob.</value>
+        public ObjectId ObjectId { get; }
+
+        /// <summary>
+        ///   Gets the object database where this blob is stored.
+        /// </summary>
+        /// <value>The <see cref="Storage.ObjectDatabase"/> where the blob is stored.</value>
+        internal ObjectDatabase ObjectDatabase { get; }
+
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="Blob"/> class.
+        /// </summary>
+        /// <param name="objectDatabase">Object database that stores this blob.</param>
+        /// <param name="objectId">Hash that identifies the data.</param>
         protected Blob(ObjectDatabase objectDatabase, ObjectId objectId)
         {
-            this.objectDatabase = objectDatabase;
-            this.objectId = objectId;
+            ObjectDatabase = objectDatabase;
+            ObjectId = objectId;
         }
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="Blob"/> class.
+        /// </summary>
+        /// <param name="objectDatabase">Object database that stores this blob.</param>
+        /// <param name="objectId">Hash that identifies the data.</param>
+        /// <param name="content">Pointer to the data to store.</param>
+        /// <param name="size">Size of the data, in bytes.</param>
         internal Blob(ObjectDatabase objectDatabase, ObjectId objectId, IntPtr content, int size)
             : this(objectDatabase, objectId)
         {
-            this.size = size;
-            this.content = Marshal.AllocHGlobal(size);
-            Utilities.CopyMemory(this.content, content, size);
+            Size = size;
+            Content = Marshal.AllocHGlobal(size);
+
+            Utilities.CopyMemory(dest: Content, content, size);
         }
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="Blob"/> class.
+        /// </summary>
+        /// <param name="objectDatabase">Object database that stores this blob.</param>
+        /// <param name="objectId">Hash that identifies the data.</param>
+        /// <param name="stream">A <see cref="NativeStream"/> with the data to store.</param>
         internal Blob(ObjectDatabase objectDatabase, ObjectId objectId, NativeStream stream)
             : this(objectDatabase, objectId)
         {
-            this.size = (int)stream.Length;
-            this.content = Marshal.AllocHGlobal(this.size);
-            stream.Read(this.content, this.size);
+            Size = (int) stream.Length;
+            Content = Marshal.AllocHGlobal(Size);
+
+            stream.Read(Content, Size);
         }
+
 
         /// <summary>
-        /// Gets the size.
+        ///   Returns a <see cref="NativeStream"/> that gives access to the <see cref="Content"/>.
         /// </summary>
-        /// <value>
-        /// The size.
-        /// </value>
-        public int Size
-        {
-            get { return size; }
-        }
-
-        /// <summary>
-        /// Gets the content.
-        /// </summary>
-        /// <value>
-        /// The content.
-        /// </value>
-        public IntPtr Content
-        {
-            get { return content; }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="ObjectId"/>.
-        /// </summary>
-        /// <value>
-        /// The <see cref="ObjectId"/>.
-        /// </value>
-        public ObjectId ObjectId
-        {
-            get { return objectId; }
-        }
-
-        internal ObjectDatabase ObjectDatabase
-        {
-            get { return objectDatabase; }
-        }
-
-        /// <summary>
-        /// Gets a <see cref="NativeStream"/> over the <see cref="Content"/>.
-        /// </summary>
-        /// It will keeps a reference to the <see cref="Blob"/> until disposed.
-        /// <returns>A <see cref="NativeStream"/> over the <see cref="Content"/>.</returns>
+        /// <returns>
+        ///   A <see cref="NativeStream"/> over the <see cref="Content"/> data. Note that the returned stream will keep a
+        ///   reference to the <see cref="Blob"/> until disposed.
+        /// </returns>
         public NativeStream GetContentStream()
         {
             return new BlobStream(this);
@@ -93,8 +97,8 @@ namespace Stride.Core.Storage
         /// <inheritdoc/>
         protected override void Destroy()
         {
-            objectDatabase.DestroyBlob(this);
-            Marshal.FreeHGlobal(this.content);
+            ObjectDatabase.DestroyBlob(this);
+            Marshal.FreeHGlobal(Content);
         }
     }
 }
