@@ -46,7 +46,14 @@ namespace Stride.Core.Assets
             // Load some information about the project
             try
             {
-                var msProject = VSProjectHelper.LoadProject(project.FullPath, loadParameters.BuildConfiguration, extraProperties: new Dictionary<string, string> { { "SkipInvalidConfigurations", "true" } });
+                var extraProperties = new Dictionary<string, string>();
+                if (loadParameters.ExtraCompileProperties != null)
+                {
+                    foreach (var extraProperty in loadParameters.ExtraCompileProperties)
+                        extraProperties.Add(extraProperty.Key, extraProperty.Value);
+                }
+                extraProperties.Add("SkipInvalidConfigurations", "true");
+                var msProject = VSProjectHelper.LoadProject(project.FullPath, loadParameters.BuildConfiguration, extraProperties: extraProperties);
 
                 try
                 {
@@ -353,13 +360,19 @@ namespace Stride.Core.Assets
                                 // Build list of assemblies
                                 foreach (var a in targetLibrary.RuntimeAssemblies)
                                 {
-                                    var assemblyFile = Path.Combine(libraryPath, a.Path.Replace('/', Path.DirectorySeparatorChar));
-                                    projectDependency.Assemblies.Add(assemblyFile);
+                                    if (!a.Path.EndsWith("_._"))
+                                    {
+                                        var assemblyFile = Path.Combine(libraryPath, a.Path.Replace('/', Path.DirectorySeparatorChar));
+                                        projectDependency.Assemblies.Add(assemblyFile);
+                                    }
                                 }
                                 foreach (var a in targetLibrary.RuntimeTargets)
                                 {
-                                    var assemblyFile = Path.Combine(libraryPath, a.Path.Replace('/', Path.DirectorySeparatorChar));
-                                    projectDependency.Assemblies.Add(assemblyFile);
+                                    if (!a.Path.EndsWith("_._"))
+                                    {
+                                        var assemblyFile = Path.Combine(libraryPath, a.Path.Replace('/', Path.DirectorySeparatorChar));
+                                        projectDependency.Assemblies.Add(assemblyFile);
+                                    }
                                 }
                             }
                         }

@@ -16,12 +16,10 @@ using Stride.Graphics.Regression;
 namespace Stride.Physics.Tests
 {
     /// <summary>
-    /// Game class for test on the Input sensors.
+    ///   Game class for the tests on the Physics system.
     /// </summary>
     public class GameTest : GameTestBase
     {
-        const int PhysicsTestVersion = 1; // NUnit3 switch
-
         /// <summary>
         ///  The <see cref="IndividualTestVersion"/> can be defined per test when only one of them is affected
         /// </summary>
@@ -41,18 +39,20 @@ namespace Stride.Physics.Tests
             testName = name;
             assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
-            //  SaveScreenshot is only defined for windows
+            // SaveScreenshot is only defined for Windows
             platformName = "Windows";
             Directory.CreateDirectory("screenshots\\");
 
-            AutoLoadDefaultSettings = true; // Note! This will override the preferred graphics profile so save it for later
+            // NOTE: This will override the preferred graphics profile so save it for later
+            AutoLoadDefaultSettings = true;
             overrideGraphicsProfile = profile;
-            
+
             IsFixedTimeStep = true;
             ForceOneUpdatePerDraw = true;
             IsDrawDesynchronized = false;
+
             // This still doesn't work IsDrawDesynchronized = false; // Double negation!
-            TargetElapsedTime = TimeSpan.FromTicks(10000000 / 60); // target elapsed time is by default 60Hz
+            TargetElapsedTime = TimeSpan.FromTicks(10000000 / 60); // Default 60Hz
         }
 
         protected override void PrepareContext()
@@ -74,10 +74,10 @@ namespace Stride.Physics.Tests
             var assetManager = Services.GetSafeServiceAs<ContentManager>();
 
             // Make sure you have created a Scene with the same name (testName) in your StrideGameStudio project.
-            // The scene should be included in the build as Root and copied together with the other 
-            //  assets to the /GameAssets directory contained in this assembly's directory
-            // Finally, make sure the scene is also added to the Stride.Physics.Tests.sdpkg
-            //  and it has a proper uid. Example (for the VisualTestSpawners scene):
+            // The scene should be included in the build as Root and copied together with the other
+            // assets to the /GameAssets directory contained in this assembly's directory.
+            // Finally, make sure the scene is also added to the Stride.Physics.Tests.sdpkg and it has a proper
+            // uid. Example (for the VisualTestSpawners scene):
             //     - a9ba28ad-d83b-4957-8ed6-42863c1d903c:VisualTestSpawners
             SceneSystem.SceneInstance = new SceneInstance(Services, assetManager.Load<Scene>(testName));
         }
@@ -134,16 +134,5 @@ namespace Stride.Physics.Tests
             SaveCurrentFrameBufferToHdd();
             ScreenshotRequested = false;
         }
-
-        /// <summary>
-        /// This is useful if you want to run all the tests on your own machine and compare images
-        /// </summary>
-        public static void Main()
-        {
-            using (var game = new ColliderShapesTest()) { game.ColliderShapesTest1(); }
-            using (var game = new CharacterTest()) { game.CharacterTest1(); }
-            using (var game = new SkinnedTest()) { game.SkinnedTest1(); }
-        }
     }
 }
-

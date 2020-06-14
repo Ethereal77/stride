@@ -4,8 +4,6 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Engine;
 using Stride.Games;
@@ -13,6 +11,8 @@ using Stride.Rendering.Compositing;
 using Stride.UI;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -22,9 +22,7 @@ namespace Stride.Graphics.Tests
         private SpriteFont arial16;
 
 
-        public TestFixedSizeUI()
-        {
-        }
+        public TestFixedSizeUI() { }
 
         protected override void RegisterTests()
         {
@@ -138,13 +136,6 @@ namespace Stride.Graphics.Tests
 
             // Create a scene instance
             SceneSystem.SceneInstance = new SceneInstance(Services, scene);
-        }
-
-
-        internal static void Main()
-        {
-            using (var game = new TestFixedSizeUI())
-                game.Run();
         }
 
         /// <summary>

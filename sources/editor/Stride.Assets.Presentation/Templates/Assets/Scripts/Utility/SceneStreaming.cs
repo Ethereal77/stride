@@ -21,36 +21,36 @@ namespace ##Namespace##
         private CancellationTokenSource loadCancellation;
 
         /// <summary>
-        /// The loaded scene
+        ///   The loaded scene.
         /// </summary>
         [DataMemberIgnore]
         public Scene Instance { get; private set; }
 
         /// <summary>
-        /// The url of the scene to load
+        ///   The URL of the scene to load.
         /// </summary>
         public UrlReference<Scene> Url { get; set; }
 
         /// <summary>
-        /// The trigger volume. This should be a static collider, set to be a trigger
+        ///   The trigger volume. This should be a static collider, set to be a trigger.
         /// </summary>
         public PhysicsComponent Trigger { get; set; }
 
         /// <summary>
-        /// The distance a collider has to enter the trigger before the scene starts loading asynchronously
+        ///   The distance a collider has to enter the trigger before the scene starts loading asynchronously.
         /// </summary>
         [DefaultValue(0.25f)]
         public float PreLoadDepth { get; set; } = 0.25f;
 
         /// <summary>
-        /// The distance a collider has to enter the trigger before the scene starts loading synchronously
+        ///   The distance a collider has to enter the trigger before the scene starts loading synchronously.
         /// </summary>
         [DefaultValue(0.5f)]
         public float LoadDepth { get; set; } = 0.5f;
 
         public override void Update()
         {
-            if (Trigger == null)
+            if (Trigger is null)
                 return;
 
             bool shouldLoad = false;
@@ -60,8 +60,8 @@ namespace ##Namespace##
             foreach (var collision in Trigger.Collisions)
             {
                 // Check all colliders that can collide with the trigger volume
-                if ((collision.ColliderA.CanCollideWith & (CollisionFilterGroupFlags)collision.ColliderB.CollisionGroup) == 0 ||
-                    (collision.ColliderB.CanCollideWith & (CollisionFilterGroupFlags)collision.ColliderA.CollisionGroup) == 0)
+                if ((collision.ColliderA.CanCollideWith & (CollisionFilterGroupFlags) collision.ColliderB.CollisionGroup) == 0 ||
+                    (collision.ColliderB.CanCollideWith & (CollisionFilterGroupFlags) collision.ColliderA.CollisionGroup) == 0)
                     continue;
 
                 foreach (var contact in collision.Contacts)
@@ -94,11 +94,11 @@ namespace ##Namespace##
             if (!shouldUnload)
             {
                 // Loading is already in progress, or even finished
-                if (loadingTask == null)
+                if (loadingTask is null)
                 {
                     if (shouldLoad)
                     {
-                        // If we should load syncrhonously, just create a completed task and load 
+                        // If we should load syncrhonously, just create a completed task and load
                         Instance = Content.Load(Url);
                         loadingTask = Task.FromResult(Instance);
                     }

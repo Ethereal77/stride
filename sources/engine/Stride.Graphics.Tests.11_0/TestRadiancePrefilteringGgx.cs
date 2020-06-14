@@ -3,10 +3,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
-
-using Xunit;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -14,6 +11,8 @@ using Stride.Rendering;
 using Stride.Rendering.ComputeEffect.GGXPrefiltering;
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -49,10 +48,7 @@ namespace Stride.Graphics.Tests
         private bool useComputeShader;
         private bool showOutput = true;
 
-        public TestRadiancePrefilteringGgx() : this(false)
-        {
-
-        }
+        public TestRadiancePrefilteringGgx() : this(false) { }
 
         protected TestRadiancePrefilteringGgx(bool filterAtEachFrame)
         {
@@ -241,12 +237,6 @@ namespace Stride.Graphics.Tests
         public void RunTest()
         {
             RunGameTest(new TestRadiancePrefilteringGgx());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestRadiancePrefilteringGgx(true))
-                game.Run();
         }
     }
 }

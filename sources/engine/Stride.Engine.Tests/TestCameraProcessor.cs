@@ -3,29 +3,27 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
-using Xunit;
-
 using Stride.Core;
-using Stride.Core.Mathematics;
-using Stride.Core.Serialization.Contents;
-using Stride.Engine.Design;
 using Stride.Engine.Processors;
 using Stride.Rendering;
 using Stride.Rendering.Compositing;
+using Stride.Graphics;
+
+using Xunit;
 
 namespace Stride.Engine.Tests
 {
     /// <summary>
-    /// Tests for <see cref="TransformComponent"/>.
+    ///   Tests for <see cref="CameraProcessor"/>.
     /// </summary>
     public class TestCameraProcessor
     {
         private CustomEntityManager entityManager;
         private GraphicsCompositor graphicsCompositor;
         private SceneSystem sceneSystem;
+        private RenderContext context;
 
         public TestCameraProcessor()
         {
@@ -38,6 +36,12 @@ namespace Stride.Engine.Tests
             graphicsCompositor = new GraphicsCompositor();
             sceneSystem = new SceneSystem(services) { GraphicsCompositor = graphicsCompositor };
             services.AddService(sceneSystem);
+            var graphicsDevice = GraphicsDevice.New(DeviceCreationFlags.Debug);
+            services.AddService<IGraphicsDeviceService>(new GraphicsDeviceServiceLocal(graphicsDevice));
+            services.AddService(new EffectSystem(services));
+            services.AddService(new GraphicsContext(graphicsDevice));
+            context = RenderContext.GetShared(services);
+            context.PushTagAndRestore(SceneSystem.Current, sceneSystem);
         }
 
         private CameraComponent AddCamera(bool enabled, SceneCameraSlotId slot)
@@ -56,7 +60,7 @@ namespace Stride.Engine.Tests
 
             // Run camera processor
             var cameraProcessor = entityManager.Processors.OfType<CameraProcessor>().Single();
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if attached
             Assert.Equal(graphicsCompositor, camera.Slot.AttachedCompositor);
@@ -64,7 +68,7 @@ namespace Stride.Engine.Tests
 
             // Disable camera
             camera.Enabled = false;
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if detached
             Assert.Null(camera.Slot.AttachedCompositor);
@@ -72,7 +76,7 @@ namespace Stride.Engine.Tests
 
             // Enable again
             camera.Enabled = true;
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if attached
             Assert.Equal(graphicsCompositor, camera.Slot.AttachedCompositor);
@@ -89,7 +93,7 @@ namespace Stride.Engine.Tests
 
             // Run camera processor
             var cameraProcessor = entityManager.Processors.OfType<CameraProcessor>().Single();
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if attached to slot 0
             Assert.Equal(graphicsCompositor, camera.Slot.AttachedCompositor);
@@ -98,7 +102,7 @@ namespace Stride.Engine.Tests
 
             // Disable camera
             camera.Slot = graphicsCompositor.Cameras[1].ToSlotId();
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if attached to slot 1
             Assert.Equal(graphicsCompositor, camera.Slot.AttachedCompositor);
@@ -115,13 +119,13 @@ namespace Stride.Engine.Tests
 
             // Run camera processor
             var cameraProcessor = entityManager.Processors.OfType<CameraProcessor>().Single();
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if detached
             Assert.Null(camera.Slot.AttachedCompositor);
 
             graphicsCompositor.Cameras.Add(sceneCameraSlot);
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if attached
             Assert.Equal(graphicsCompositor, camera.Slot.AttachedCompositor);
@@ -129,9 +133,9 @@ namespace Stride.Engine.Tests
 
             // Remove and add new slot with same GUID
             graphicsCompositor.Cameras.Clear();
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
             graphicsCompositor.Cameras.Add(new SceneCameraSlot { Id = sceneCameraSlot.Id });
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if attached
             Assert.Equal(graphicsCompositor, camera.Slot.AttachedCompositor);
@@ -150,7 +154,7 @@ namespace Stride.Engine.Tests
 
                 // Run camera processor
                 var cameraProcessor = entityManager.Processors.OfType<CameraProcessor>().Single();
-                cameraProcessor.Draw(null);
+                cameraProcessor.Draw(context);
             });
         }
 
@@ -164,7 +168,7 @@ namespace Stride.Engine.Tests
 
             // Run camera processor
             var cameraProcessor = entityManager.Processors.OfType<CameraProcessor>().Single();
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
         }
 
         [Fact]
@@ -176,7 +180,7 @@ namespace Stride.Engine.Tests
 
             // Run camera processor
             var cameraProcessor = entityManager.Processors.OfType<CameraProcessor>().Single();
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if attached to slot 0
             Assert.Equal(graphicsCompositor, camera.Slot.AttachedCompositor);
@@ -186,7 +190,7 @@ namespace Stride.Engine.Tests
             var newGraphicsCompositor = new GraphicsCompositor();
             sceneSystem.GraphicsCompositor = newGraphicsCompositor;
 
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if detached
             Assert.Null(camera.Slot.AttachedCompositor);
@@ -195,7 +199,7 @@ namespace Stride.Engine.Tests
             // Add slot to new graphics compositor and check if attached
             newGraphicsCompositor.Cameras.Add(new SceneCameraSlot { Id = camera.Slot.Id });
 
-            cameraProcessor.Draw(null);
+            cameraProcessor.Draw(context);
 
             // Check if attached to slot 0
             Assert.Equal(newGraphicsCompositor, camera.Slot.AttachedCompositor);

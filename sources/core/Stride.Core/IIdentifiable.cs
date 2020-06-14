@@ -9,12 +9,12 @@ using Stride.Core.Annotations;
 namespace Stride.Core
 {
     /// <summary>
-    /// Base interface for all identifiable instances.
+    ///   Defines the means to identify an object with a <see cref="Guid"/>.
     /// </summary>
     public interface IIdentifiable
     {
         /// <summary>
-        /// Gets the id of this instance
+        ///   Gets or sets the unique identifier of this instance.
         /// </summary>
         [NonOverridable]
         Guid Id { get; set; }

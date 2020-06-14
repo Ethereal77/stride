@@ -3,7 +3,6 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -100,7 +99,7 @@ namespace Stride.Core.Assets.Tests
             var folder = project.AssetFolders.FirstOrDefault();
             Assert.NotNull(folder);
             Assert.NotNull(folder.Path);
-            Assert.NotNull(folder.Path.IsAbsolute);
+            Assert.True(folder.Path.IsAbsolute);
 
             // Save project back to disk on a different location
             project.FullPath = Path.Combine(DirectoryTestBase, @"TestPackage2\TestPackage2.sdpkg");
@@ -204,17 +203,6 @@ namespace Stride.Core.Assets.Tests
                 Console.WriteLine(logMessage);
             }
             Assert.False(log.HasErrors);
-        }
-
-        static void Main()
-        {
-            var clock = Stopwatch.StartNew();
-            for (int i = 0; i < 10; i++)
-            {
-                var session = PackageSession.Load(@"E:\Code\SengokuRun\SengokuRun\WindowsLauncher\GameAssets\Assets.sdpkg");
-            }
-            var elapsed = clock.ElapsedMilliseconds;
-            Console.WriteLine("{0}ms", elapsed);
         }
     }
 }

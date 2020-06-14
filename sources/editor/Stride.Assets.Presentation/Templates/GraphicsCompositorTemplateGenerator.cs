@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Stride.Core.Assets;
 using Stride.Core.Assets.Templates;
@@ -18,12 +17,14 @@ namespace Stride.Assets.Presentation.Templates
         public static readonly Dictionary<Guid, string> SupportedTemplatesToUrl = new Dictionary<Guid, string>
         {
             { new Guid("D4EE3BD3-9B06-460E-9175-D6AFB2459463"), StridePackageUpgrader.DefaultGraphicsCompositorLevel10Url },
-            { new Guid("4BC182D7-69D5-4BE2-9AF3-1C82F67B629D"), "GraphicsCompositor/DefaultGraphicsCompositorVoxels" },
+            { new Guid("4BC182D7-69D5-4BE2-9AF3-1C82F67B629D"), "GraphicsCompositor/DefaultGraphicsCompositorVoxels" }
         };
 
         public override bool IsSupportingTemplate(TemplateDescription templateDescription)
         {
-            if (templateDescription == null) throw new ArgumentNullException(nameof(templateDescription));
+            if (templateDescription is null)
+                throw new ArgumentNullException(nameof(templateDescription));
+
             return SupportedTemplatesToUrl.ContainsKey(templateDescription.Id);
         }
 
@@ -33,7 +34,7 @@ namespace Stride.Assets.Presentation.Templates
             var graphicsCompositor = SupportedTemplatesToUrl.TryGetValue(parameters.Description.Id, out var graphicsCompositorUrl) ? parameters.Package.FindAsset(graphicsCompositorUrl) : null;
 
             // Something went wrong, create an empty asset
-            if (graphicsCompositor == null)
+            if (graphicsCompositor is null)
                 return base.CreateAssets(parameters);
 
             // Create derived asset

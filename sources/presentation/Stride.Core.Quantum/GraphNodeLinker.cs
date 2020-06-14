@@ -11,12 +11,12 @@ using Stride.Core.Quantum.References;
 namespace Stride.Core.Quantum
 {
     /// <summary>
-    /// A class that is capable of visiting two object hierarchies and "link" corresponding nodes together.
+    ///   Represents a class that is capable of visiting two object hierarchies and "link" corresponding nodes together.
     /// </summary>
     /// <remarks>
-    /// One of the two hierarchies is considered to be the "source" for the linker. This hierarchy is visited by the <see cref="GraphNodeLinker"/>,
-    /// and for each node, it will try to find a corresponding node in the other "target" hierarchy.
-    /// By deriving this class, the way this correspondance between two nodes is established can be customized.
+    ///   One of the two hierarchies is considered the "source" by the linker. This hierarchy is visited by the <see cref="GraphNodeLinker"/>,
+    ///   and for each node, it will try to find a corresponding node in the other "target" hierarchy.
+    ///   By deriving this class, the way this correspondance between two nodes is established can be customized.
     /// </remarks>
     public class GraphNodeLinker
     {
@@ -49,10 +49,28 @@ namespace Stride.Core.Quantum
             {
                 if (VisitedLinks.TryGetValue(node, out IGraphNode targetNodeParent))
                 {
-                    foreach (var child in node.Members)
+                    var objNode = targetNodeParent as IObjectNode;
+                    var members = node.Members;
+                    if (members is List<IMemberNode> asList)
                     {
-                        string name = child.Name;
-                        VisitedLinks.Add(child, ((IObjectNode)targetNodeParent)?.TryGetChild(name));
+                        foreach (var child in asList)
+                        {
+                            VisitedLinks.Add(child, objNode?.TryGetChild(child.Name));
+                        }
+                    }
+                    else if(members is Dictionary<string, IMemberNode>.ValueCollection asVCol)
+                    {
+                        foreach (var child in asVCol)
+                        {
+                            VisitedLinks.Add(child, objNode?.TryGetChild(child.Name));
+                        }
+                    }
+                    else
+                    {
+                        foreach (var child in members)
+                        {
+                            VisitedLinks.Add(child, objNode?.TryGetChild(child.Name));
+                        }
                     }
                 }
                 base.VisitChildren(node);

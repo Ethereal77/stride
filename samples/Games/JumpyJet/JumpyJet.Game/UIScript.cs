@@ -111,7 +111,7 @@ namespace JumpyJet
             startButton.SetCanvasRelativePosition(new Vector3(0.5f, 0.7f, 0f));
             startButton.Click += (sender, args) =>
             {
-                GameGlobals.GameStartedventKey.Broadcast();
+                GameGlobals.GameStartedEventKey.Broadcast();
                 StartGameMode();
             };
 
@@ -185,7 +185,7 @@ namespace JumpyJet
             retryButton.Click += (sender, args) =>
             {
                 GameGlobals.GameResetEventKey.Broadcast();
-                GameGlobals.GameStartedventKey.Broadcast();
+                GameGlobals.GameStartedEventKey.Broadcast();
                 StartGameMode();
             };
 

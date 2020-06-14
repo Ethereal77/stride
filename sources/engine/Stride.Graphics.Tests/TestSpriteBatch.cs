@@ -5,10 +5,10 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -163,12 +163,6 @@ namespace Stride.Graphics.Tests
             int sphereX = sphereIndex % SphereCountPerRow;
             int sphereY = sphereIndex / SphereCountPerRow;
             return new Rectangle(sphereX * (SphereWidth + SphereSpace), sphereY * (SphereHeight + SphereSpace), SphereWidth, SphereHeight);
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestSpriteBatch())
-                game.Run();
         }
 
         /// <summary>

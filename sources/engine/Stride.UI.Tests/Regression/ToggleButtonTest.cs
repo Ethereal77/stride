@@ -4,18 +4,18 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.UI.Controls;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="Button"/> 
+    ///   Test class for rendering tests on the <see cref="ToggleButton"/>.
     /// </summary>
     public class ToggleButtonTest : UITestGameBase
     {
@@ -29,7 +29,7 @@ namespace Stride.UI.Tests.Regression
         {
             await base.LoadContent();
 
-            toggle = new ToggleButton 
+            toggle = new ToggleButton
             {
                 IsThreeState = true,
                 Content = new TextBlock { TextColor = Color.Black, Text = "Toggle button test", Font = Content.Load<SpriteFont>("MicrosoftSansSerif15"), VerticalAlignment = VerticalAlignment.Center },
@@ -71,15 +71,6 @@ namespace Stride.UI.Tests.Regression
         public void RunToggleButtonTest()
         {
             RunGameTest(new ToggleButtonTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ToggleButtonTest())
-                game.Run();
         }
     }
 }

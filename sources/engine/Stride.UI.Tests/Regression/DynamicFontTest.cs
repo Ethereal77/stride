@@ -4,8 +4,6 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -13,19 +11,19 @@ using Stride.Input;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for dynamic sized text rendering tests.
+    ///   Test class for dynamic sized text rendering tests.
     /// </summary>
     public class DynamicFontTest : UITestGameBase
     {
         private ContentDecorator decorator;
         private TextBlock textBlock;
 
-        public DynamicFontTest()
-        {
-        }
+        public DynamicFontTest() { }
 
         protected override async Task LoadContent()
         {
@@ -33,8 +31,8 @@ namespace Stride.UI.Tests.Regression
 
             textBlock = new TextBlock
                 {
-                    Font = Content.Load<SpriteFont>("HanSans13"), 
-                    Text = "Simple Text - 簡単な文章。", 
+                    Font = Content.Load<SpriteFont>("HanSans13"),
+                    Text = "Simple Text - 簡単な文章。",
                     TextColor = Color.Black,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
@@ -141,15 +139,6 @@ namespace Stride.UI.Tests.Regression
         public void RunDynamicFontTest()
         {
             RunGameTest(new DynamicFontTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new DynamicFontTest())
-                game.Run();
         }
     }
 }

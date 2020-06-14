@@ -7,7 +7,7 @@ using Stride.Core;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// An entity group.
+    ///   Defines the different groups a renderable object should be rendered to.
     /// </summary>
     [DataContract]
     public enum RenderGroup : uint
@@ -44,6 +44,6 @@ namespace Stride.Rendering
         Group28 = 28,
         Group29 = 29,
         Group30 = 30,
-        Group31 = 31,
+        Group31 = 31
     }
 }

@@ -5,8 +5,6 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -15,10 +13,12 @@ using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests to test batching ordering for transparency.
+    ///   Test class for rendering tests on batching and ordering for transparency.
     /// </summary>
     public class TransparencyTest : UITestGameBase
     {
@@ -28,11 +28,7 @@ namespace Stride.UI.Tests.Regression
 
         private float zValue;
 
-        public bool IsAutomatic;
-
-        public TransparencyTest()
-        {
-        }
+        public TransparencyTest() { }
 
         protected override async Task LoadContent()
         {
@@ -42,10 +38,10 @@ namespace Stride.UI.Tests.Regression
             element1 = new Button { Name = "1", Width = 300, Height = 150 };
             element1.PressedImage = SpriteFromSheet.Create(sprites, "Logo");
             element1.NotPressedImage = SpriteFromSheet.Create(sprites, "BorderButton");
-            element1.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(350, 300, 0));
+            element1.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(350, 400, 0));
             element1.DependencyProperties.Set(Panel.ZIndexPropertyKey, 1);
 
-            element2 = new Button { Name = "2", Width = 600, Height = 300 };
+            element2 = new Button { Name = "2", Width = 600, Height = 400 };
             element2.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(200, 100, -50));
             element2.DependencyProperties.Set(Panel.ZIndexPropertyKey, 0);
             element2.PressedImage = (SpriteFromTexture)new Sprite(Content.Load<Texture>("ImageButtonPressed"));
@@ -62,7 +58,7 @@ namespace Stride.UI.Tests.Regression
         {
             base.Update(gameTime);
 
-            if (IsAutomatic)
+            if (ForceInteractiveMode)
             {
                 zValue = 100 * (1 + (float)Math.Sin(gameTime.Total.TotalSeconds));
 
@@ -107,23 +103,11 @@ namespace Stride.UI.Tests.Regression
             Input.Update(new GameTime());
             UI.Update(new GameTime());
         }
-        
+
         [Fact]
         public void RunTransparencyUnitTest()
         {
             RunGameTest(new TransparencyTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new TransparencyTest())
-            {
-                game.IsAutomatic = true;
-                game.Run();
-            }
         }
     }
 }

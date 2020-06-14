@@ -8,35 +8,37 @@ using System.IO;
 using System.Runtime.InteropServices;
 
 using Stride.Core.Annotations;
+
 using Microsoft.Win32.SafeHandles;
 
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// A <see cref="LogListener"/> implementation redirecting its output to the default OS console. If console is not supported message are output to <see cref="Debug"/>
+    ///   Represents a <see cref="LogListener"/> implementation that redirects its output to the default console.
+    ///   If this is not supported, the messages are output to <see cref="Debug"/>.
     /// </summary>
     public class ConsoleLogListener : LogListener
     {
         private bool isConsoleActive;
 
         /// <summary>
-        /// Gets or sets the minimum log level handled by this listener.
+        ///   Gets or sets the minimum log level handled by this listener.
         /// </summary>
         /// <value>The minimum log level.</value>
         public LogMessageType LogLevel { get; set; }
 
         /// <summary>
-        /// Gets or sets the log mode.
+        ///   Gets or sets the log mode.
         /// </summary>
         /// <value>The log mode.</value>
         public ConsoleLogMode LogMode { get; set; }
 
         protected override void OnLog([NotNull] ILogMessage logMessage)
         {
-            // filter logs with lower level
+            // Filter logs with lower level
             if (!Debugger.IsAttached && // Always log when debugger is attached
-                (logMessage.Type < LogLevel || LogMode == ConsoleLogMode.None
-                || (!(LogMode == ConsoleLogMode.Auto && Platform.IsRunningDebugAssembly) && LogMode != ConsoleLogMode.Always)))
+                (logMessage.Type < LogLevel || LogMode == ConsoleLogMode.None ||
+                (!(LogMode == ConsoleLogMode.Auto && Platform.IsRunningDebugAssembly) && LogMode != ConsoleLogMode.Always)))
             {
                 return;
             }
@@ -55,15 +57,19 @@ namespace Stride.Core.Diagnostics
                 case LogMessageType.Debug:
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     break;
+
                 case LogMessageType.Verbose:
                     Console.ForegroundColor = ConsoleColor.Gray;
                     break;
+
                 case LogMessageType.Info:
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
+
                 case LogMessageType.Warning:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
+
                 case LogMessageType.Error:
                 case LogMessageType.Fatal:
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -76,7 +82,7 @@ namespace Stride.Core.Diagnostics
                 Debug.WriteLine(GetDefaultText(logMessage));
                 if (!string.IsNullOrEmpty(exceptionMsg))
                 {
-                    Debug.WriteLine(logMessage);
+                    Debug.WriteLine(exceptionMsg);
                 }
             }
 
@@ -87,7 +93,7 @@ namespace Stride.Core.Diagnostics
                 Console.WriteLine(exceptionMsg);
             }
 
-            // revert console initial color
+            // Revert console initial color
             Console.ForegroundColor = initialColor;
         }
 
@@ -96,11 +102,9 @@ namespace Stride.Core.Diagnostics
         private void EnsureConsole()
         {
             if (isConsoleActive)
-            {
                 return;
-            }
 
-            // try to attach to the parent console, if the program is run directly from a console
+            // Try to attach to the parent console, if the program is run directly from a console
             var attachedToConsole = AttachConsole(-1);
             if (!attachedToConsole)
             {
@@ -115,7 +119,7 @@ namespace Stride.Core.Diagnostics
         {
             var handle = GetConsoleWindow();
 
-            var outputRedirected = IsHandleRedirected((IntPtr)StdOutConsoleHandle);
+            var outputRedirected = IsHandleRedirected((IntPtr) StdOutConsoleHandle);
 
             // If we are outputting somewhere unexpected, add an additional console window
             if (outputRedirected)
@@ -159,20 +163,11 @@ namespace Stride.Core.Diagnostics
                 stream2.Flush();
             }
 
-            public override long Seek(long offset, SeekOrigin origin)
-            {
-                throw new NotImplementedException();
-            }
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
 
-            public override void SetLength(long value)
-            {
-                throw new NotImplementedException();
-            }
+            public override void SetLength(long value) => throw new NotImplementedException();
 
-            public override int Read(byte[] buffer, int offset, int count)
-            {
-                throw new NotImplementedException();
-            }
+            public override int Read(byte[] buffer, int offset, int count) => throw new NotImplementedException();
 
             public override void Write(byte[] buffer, int offset, int count)
             {
@@ -186,13 +181,7 @@ namespace Stride.Core.Diagnostics
 
             public override bool CanWrite => true;
 
-            public override long Length
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
+            public override long Length => throw new NotImplementedException();
 
             public override long Position { get; set; }
         }
@@ -222,23 +211,12 @@ namespace Stride.Core.Diagnostics
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("kernel32.dll")]
-        private static extern IntPtr GetStdHandle(uint nStdHandle);
-
-        [DllImport("kernel32.dll")]
-        private static extern void SetStdHandle(uint nStdHandle, IntPtr handle);
-
-        [DllImport("kernel32.dll")]
         private static extern int GetFileType(SafeFileHandle handle);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out int mode);
 
         private static bool IsHandleRedirected(IntPtr ioHandle)
         {
-            if ((GetFileType(new SafeFileHandle(ioHandle, false)) & 2) != 2)
-            {
+            if ((GetFileType(new SafeFileHandle(ioHandle, ownsHandle: false)) & 2) != 2)
                 return true;
-            }
 
             // We are fine with being attached to non-consoles
             return false;

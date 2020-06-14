@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 
 using Stride.Core;
+using Stride.Core.Mathematics;
 using Stride.Graphics;
 
 namespace Stride.Games
@@ -34,7 +35,7 @@ namespace Stride.Games
         public static GamePlatform Create(GameBase game)
         {
             // Here we cover all Desktop variants: WinForms, WPF,...
-            return new GamePlatformWindows(game);
+            return new GamePlatformDesktop(game);
         }
 
         public abstract string DefaultAppDirectory { get; }
@@ -55,13 +56,7 @@ namespace Stride.Games
 
         public event EventHandler<EventArgs> WindowCreated;
 
-        public GameWindow MainWindow
-        {
-            get
-            {
-                return gameWindow;
-            }
-        }
+        public GameWindow MainWindow => gameWindow;
 
         internal abstract GameWindow GetSupportedGameWindow(AppContextType type);
 
@@ -71,6 +66,12 @@ namespace Stride.Games
             if (window != null)
             {
                 window.Services = Services;
+
+                // Pass initial size
+                var requestedSize = new Int2(gameContext.RequestedWidth, gameContext.RequestedHeight);
+                window.PreferredWindowedSize = requestedSize;
+                window.PreferredFullscreenSize = requestedSize;
+
                 window.Initialize(gameContext);
                 return window;
             }
@@ -199,7 +200,7 @@ namespace Stride.Games
         protected void AddDevice(DisplayMode mode,  GraphicsDeviceInformation deviceBaseInfo, GameGraphicsParameters preferredParameters, List<GraphicsDeviceInformation> graphicsDeviceInfos)
         {
             // TODO: Temporary woraround
-            if (mode == null)
+            if (mode is null)
                 mode = new DisplayMode(PixelFormat.R8G8B8A8_UNorm, 800, 480, new Rational(60, 1));
 
             var deviceInfo = deviceBaseInfo.Clone();
@@ -346,13 +347,6 @@ namespace Stride.Games
             Idle = null;
             Resume = null;
             Suspend = null;
-        }
-    }
-
-    internal abstract class GamePlatform<TK> : GamePlatform
-    {
-        protected GamePlatform(GameBase game) : base(game)
-        {
         }
     }
 }

@@ -5,23 +5,25 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.Sprites;
 
+using Xunit;
+
 namespace Stride.Engine.Tests
 {
     /// <summary>
-    /// Tests that sprites with Orientation 90degrees are properly rendered and that their center is correctly calculated.
-    /// Note: with texture packing there are 4 cases to test:
-    ///   Before packing | After packing
-    /// - Not Rotated   -> Not Rotated
-    /// - Rotated       -> Not Rotated
-    /// - Not Rotated   -> Rotated
-    /// - Rotated       -> Rotated
+    ///   Tests that sprites with Orientation 90degrees are properly rendered and that their center is correctly calculated.
     /// </summary>
+    /// <remarks>
+    ///   NOTE: With texture packing there are 4 cases to test:
+    ///   Before packing  | After packing
+    ///     Not Rotated  --> Not Rotated
+    ///     Rotated      --> Not Rotated
+    ///     Not Rotated  --> Rotated
+    ///     Rotated      --> Rotated
+    /// </remarks>
     public class SpriteRotationTests : EngineTestBase
     {
         private const int ScreenWidth = 512;
@@ -93,12 +95,6 @@ namespace Stride.Engine.Tests
         public void SpriteRender2DRun()
         {
             RunGameTest(new SpriteRotationTests());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new SpriteRotationTests())
-                game.Run();
         }
     }
 }

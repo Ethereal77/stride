@@ -7,23 +7,23 @@ using Stride.Core;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Enumerates the different ways to interpret a visual resolution value.
+    ///   Defines the different ways to interpret a visual resolution value.
     /// </summary>
     [DataContract]
     public enum ResolutionStretch
     {
         /// <summary>
-        /// The resolution is determined by the width, height and depth of the field.
+        ///   The resolution is determined by the width, height, and depth of the field.
         /// </summary>
         FixedWidthFixedHeight,
 
         /// <summary>
-        /// The resolution is determined by the width, the ratio of the target, and the depth.
+        ///   The resolution is determined by the width, the ratio of the target, and the depth.
         /// </summary>
         FixedWidthAdaptableHeight,
 
         /// <summary>
-        /// The resolution is determined by the height, the ratio of the target, and the depth.
+        ///   The resolution is determined by the height, the ratio of the target, and the depth.
         /// </summary>
         FixedHeightAdaptableWidth,
     }

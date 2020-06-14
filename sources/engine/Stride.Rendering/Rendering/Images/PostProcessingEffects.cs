@@ -11,12 +11,11 @@ using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.Compositing;
 using Stride.Rendering.Materials;
-using Stride.Rendering.SubsurfaceScattering;
 
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// A default bundle of <see cref="ImageEffect"/>.
+    ///   Represents a default bundle of <see cref="ImageEffect"/> for post-processing.
     /// </summary>
     [DataContract("PostProcessingEffects")]
     [Display("Post-processing effects")]
@@ -103,7 +102,7 @@ namespace Stride.Rendering.Images
         /// Gets the bright pass-filter.
         /// </summary>
         /// <value>The bright filter.</value>
-        /// <userdoc>The bright filter isn't an effect by itself; 
+        /// <userdoc>The bright filter isn't an effect by itself;
         /// it extracts the brightest areas of the image and gives it to effects that use it (eg bloom, light streaks, lens flares).</userdoc>
         [DataMember(20)]
         [Category]
@@ -210,7 +209,7 @@ namespace Stride.Rendering.Images
             var colorIndex = outputValidator.Find<ColorTargetSemantic>();
             if (colorIndex < 0)
                 return;
-            
+
             SetInput(0, inputs[colorIndex]);
             SetInput(1, inputDepthStencil);
 
@@ -280,7 +279,7 @@ namespace Stride.Rendering.Images
                 context.CommandList.Copy(input, newInput);
                 input = newInput;
             }
-            
+
             var currentInput = input;
 
             var fxaa = Antialiasing as FXAAEffect;
@@ -294,12 +293,14 @@ namespace Stride.Rendering.Images
                 if (fxaa != null)
                     fxaa.InputLuminanceInAlpha = true;
 
-                Antialiasing.SetInput(1, inputDepthTexture);
+                var bufferIndex = 1;
+                if (Antialiasing.RequiresDepthBuffer)
+                    Antialiasing.SetInput(bufferIndex++, inputDepthTexture);
 
                 bool requiresVelocityBuffer = Antialiasing.RequiresVelocityBuffer;
                 if (requiresVelocityBuffer)
                 {
-                    Antialiasing.SetInput(2, GetInput(6));
+                    Antialiasing.SetInput(bufferIndex++, GetInput(6));
                 }
 
                 var aaSurface = NewScopedRenderTarget2D(input.Width, input.Height, input.Format);
@@ -458,7 +459,7 @@ namespace Stride.Rendering.Images
             {
                 luminanceToChannelTransform.Enabled = false;
             }
-            
+
             // Color transform group pass (tonemap, color grading)
             var lastEffect = colorTransformsGroup.Enabled ? (ImageEffect)colorTransformsGroup : Scaler;
             lastEffect.SetInput(currentInput);

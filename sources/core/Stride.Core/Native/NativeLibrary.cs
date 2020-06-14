@@ -49,9 +49,7 @@ namespace Stride.Core
                 // We are trying to load the dll from a shadow path if it is already registered, otherwise we use it directly from the folder
                 string basePath;
                 {
-                    var dllFolder = NativeLibraryInternal.GetShadowPathForNativeDll(libraryName);
-                    if (dllFolder == null)
-                        dllFolder = Path.Combine(Path.GetDirectoryName(owner.GetTypeInfo().Assembly.Location), cpu);
+                    var dllFolder = Path.Combine(Path.GetDirectoryName(owner.GetTypeInfo().Assembly.Location), cpu);
                     if (!Directory.Exists(dllFolder))
                         dllFolder = Path.Combine(Environment.CurrentDirectory, cpu);
                     var libraryFilename = Path.Combine(dllFolder, libraryName);
@@ -123,7 +121,7 @@ namespace Stride.Core
         private static void NormalizeLibName(ref string libName)
         {
             libName = libName.ToLowerInvariant();
-            if (libName.EndsWith(".dll") == false)
+            if (!libName.EndsWith(".dll"))
             {
                 libName += ".dll";
             }

@@ -4,26 +4,24 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.UI.Controls;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="TextBlock"/> 
+    ///   Test class for rendering tests on the <see cref="TextBlock"/>.
     /// </summary>
     public class TextBlockTest : UITestGameBase
     {
         private TextBlock textBlock;
 
-        public TextBlockTest()
-        {
-        }
+        public TextBlockTest() { }
 
         protected override async Task LoadContent()
         {
@@ -210,15 +208,6 @@ This is the last line.",
         public void RunTextBlockTest()
         {
             RunGameTest(new TextBlockTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new TextBlockTest())
-                game.Run();
         }
     }
 }

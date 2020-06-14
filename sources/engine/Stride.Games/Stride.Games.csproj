@@ -4,26 +4,19 @@
     <StrideRuntimeWindowsDotNet>true</StrideRuntimeWindowsDotNet>
     <StrideRuntimeWindowsNetCoreApp3>true</StrideRuntimeWindowsNetCoreApp3>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
+    <UseWindowsForms Condition="$(StrideUI.Contains('WINFORMS')) OR $(StrideUI.Contains('WPF'))">true</UseWindowsForms>
   </PropertyGroup>
-  <Import Project="..\..\targets\Stride.PreSettings.targets" />
-  <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
+  <Import Project="..\..\targets\Stride.props" />
+  <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.87" />
   <PropertyGroup>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
     <StridePlatformDependent>true</StridePlatformDependent>
-    <StrideProjectPlatformDependentWindows>true</StrideProjectPlatformDependentWindows>
     <StrideBuildTags>*</StrideBuildTags>
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
-  <Choose>
-    <When Condition="$(StrideUI.Contains('WINFORMS')) OR $(StrideUI.Contains('WPF'))">
-      <ItemGroup>
-        <Reference Include="System.Windows.Forms" />
-      </ItemGroup>
-    </When>
-  </Choose>
 
   <PropertyGroup>
     <AssemblyTitle>Stride Windowing and Game Loop</AssemblyTitle>
@@ -36,6 +29,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Stride.Graphics\Stride.Graphics.csproj" />
   </ItemGroup>
-  <Import Project="$(StridePostSettingsTargets)" />
-  <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
+  <Import Project="$(StrideSdkTargets)" />
+  <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.87" />
 </Project>

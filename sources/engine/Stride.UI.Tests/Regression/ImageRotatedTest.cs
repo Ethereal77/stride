@@ -4,17 +4,17 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Graphics;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ScrollViewer"/> 
+    ///   Test class for rendering tests on the <see cref="ScrollViewer"/>.
     /// </summary>
     public class ImageRotatedTest : UITestGameBase
     {
@@ -54,7 +54,7 @@ namespace Stride.UI.Tests.Regression
 
             var grid = new UniformGrid
             {
-                Rows = 2, 
+                Rows = 2,
                 Columns = 4,
                 Children = { img1, img2, img3, img4 }
             };
@@ -66,15 +66,6 @@ namespace Stride.UI.Tests.Regression
         public void RunImageRotatedTest()
         {
             RunGameTest(new ImageRotatedTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ImageRotatedTest())
-                game.Run();
         }
     }
 }

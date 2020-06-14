@@ -8,15 +8,14 @@ using System.Threading.Tasks;
 
 namespace Stride.Core.MicroThreading
 {
-#if NET45
     public class SwitchToAwaiter : INotifyCompletion
-#else
-    public class SwitchToAwaiter
-#endif
     {
-        private Scheduler scheduler;
+        private readonly Scheduler scheduler;
 
         private MicroThread microThread;
+
+        public bool IsCompleted => false;
+
 
         public SwitchToAwaiter(Scheduler scheduler)
         {
@@ -24,10 +23,6 @@ namespace Stride.Core.MicroThreading
             this.microThread = null;
         }
 
-        public bool IsCompleted
-        {
-            get { return false; }
-        }
 
         public void OnCompleted(Action continuation)
         {
@@ -38,19 +33,13 @@ namespace Stride.Core.MicroThreading
             });
         }
 
-        public IDisposable GetResult()
-        {
-            return new SwitchMicroThread(microThread);
-        }
+        public IDisposable GetResult() => new SwitchMicroThread(microThread);
 
-        public SwitchToAwaiter GetAwaiter()
-        {
-            return this;
-        }
+        public SwitchToAwaiter GetAwaiter() => this;
 
         private struct SwitchMicroThread : IDisposable
         {
-            private MicroThread microThread;
+            private readonly MicroThread microThread;
 
             public SwitchMicroThread(MicroThread microThread)
             {

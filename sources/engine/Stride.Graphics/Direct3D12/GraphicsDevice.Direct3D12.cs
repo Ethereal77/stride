@@ -240,10 +240,6 @@ namespace Stride.Graphics
                 SharpDX.Direct3D12.DebugInterface.Get().EnableDebugLayer();
             }
 
-            // Default fallback
-            if (graphicsProfiles.Length == 0)
-                graphicsProfiles = new[] { GraphicsProfile.Level_11_0 };
-
             // Create Device D3D12 with feature Level based on profile
             for (int index = 0; index < graphicsProfiles.Length; index++)
             {
@@ -296,7 +292,7 @@ namespace Stride.Graphics
                             // This occurs when there are uninitialized descriptors in a descriptor table,
                             // even when a shader does not access the missing descriptors.
                             MessageId.InvalidDescriptorHandle,
-                            
+
                             // These happen when capturing with VS diagnostics
                             MessageId.MapInvalidNullRange,
                             MessageId.UnmapInvalidNullRange,
@@ -591,10 +587,7 @@ namespace Stride.Graphics
                             liveObjects.Dequeue();
                             ResetObject(firstAllocator.Value);
 
-                            if (firstAllocator.Value == null)
-                            {
-                                
-                            }
+                            if (firstAllocator.Value is null) { }
 
                             return firstAllocator.Value;
                         }

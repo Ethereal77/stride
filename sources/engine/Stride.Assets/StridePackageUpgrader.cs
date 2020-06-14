@@ -7,23 +7,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Stride.Core.Assets;
 using Stride.Core;
-using Stride.Core.Assets.Serializers;
-using Stride.Core.Assets.Templates;
-using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
 using Stride.Core.IO;
-using Stride.Core.Mathematics;
-using Stride.Core.Serialization;
-using Stride.Core.Storage;
-using Stride.Core.Yaml;
-using Stride.Core.Yaml.Serialization;
-using Stride.TextureConverter;
-using Stride.Assets.Effect;
-using Stride.Assets.Templates;
-using Stride.Graphics;
-using System.Text;
+using Stride.Core.Assets;
+using Stride.Core.Diagnostics;
 
 namespace Stride.Assets
 {
@@ -61,9 +48,9 @@ namespace Stride.Assets
                             }
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        log.Warning($"Could not upgrade asset [{assetFile.AssetLocation}] to ShaderClassSource", e);
+                        log.Warning($"Could not upgrade asset [{assetFile.AssetLocation}] to ShaderClassSource.", ex);
                     }
                 }
             }
@@ -80,7 +67,7 @@ namespace Stride.Assets
                     }
                     catch (Exception e)
                     {
-                        log.Warning($"Could not upgrade asset [{assetFile.AssetLocation}] to Stride", e);
+                        log.Warning($"Could not upgrade asset [{assetFile.AssetLocation}] to Stride.", e);
                     }
                 }
             }
@@ -184,14 +171,16 @@ namespace Stride.Assets
                                 File.Move(oldGeneratedFilePath, newShaderFilePath + ".cs");
 
                                 // Remove Items (.xksl .cs and .xksl.cs)
-                                foreach (var csElement in project.Xml.ItemGroups.SelectMany(x => x.Items).Where(x =>
-                                    new UFile(x.Include) == new UFile(Path.ChangeExtension(shaderFile.EvaluatedInclude, ".cs"))
-                                    || new UFile(x.Include) == new UFile(shaderFile.EvaluatedInclude + ".cs")
-                                    || new UFile(x.Include) == new UFile(shaderFile.EvaluatedInclude)
-                                    || new UFile(x.Update) == new UFile(Path.ChangeExtension(shaderFile.EvaluatedInclude, ".cs"))
-                                    || new UFile(x.Update) == new UFile(shaderFile.EvaluatedInclude + ".cs")
-                                    || new UFile(x.Update) == new UFile(shaderFile.EvaluatedInclude)
-                                    ).ToArray())
+                                var items = project.Xml.ItemGroups.SelectMany(itemGroup => itemGroup.Items)
+                                    .Where(item =>
+                                        new UFile(item.Include) == new UFile(Path.ChangeExtension(shaderFile.EvaluatedInclude, ".cs")) ||
+                                        new UFile(item.Include) == new UFile(shaderFile.EvaluatedInclude + ".cs") ||
+                                        new UFile(item.Include) == new UFile(shaderFile.EvaluatedInclude) ||
+                                        new UFile(item.Update) == new UFile(Path.ChangeExtension(shaderFile.EvaluatedInclude, ".cs")) ||
+                                        new UFile(item.Update) == new UFile(shaderFile.EvaluatedInclude + ".cs") ||
+                                        new UFile(item.Update) == new UFile(shaderFile.EvaluatedInclude))
+                                    .ToArray();
+                                foreach (var csElement in items)
                                 {
                                     csElement.Parent.RemoveChild(csElement);
                                 }
@@ -208,9 +197,9 @@ namespace Stride.Assets
                     project.ProjectCollection.UnloadAllProjects();
                     project.ProjectCollection.Dispose();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    log.Warning($"Unable to load project [{projectFullPath.GetFileName()}]", e);
+                    log.Warning($"Unable to load project [{projectFullPath.GetFileName()}].", ex);
                 }
             }
 

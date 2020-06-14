@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -17,7 +16,7 @@ using Stride.Core.Threading;
 namespace Stride.Updater
 {
     /// <summary>
-    /// Efficiently updates values on objects using property paths.
+    ///   Represents a class that can efficiently update values on objects using property paths.
     /// </summary>
     public static unsafe class UpdateEngine
     {
@@ -267,7 +266,7 @@ namespace Stride.Updater
                         }
                         else
                         {
-                            UpdatableMember updatableMember;
+                            UpdatableMember updatableMember = null;
 
                             // Parse until end next group (or end)
                             state.ParseElementEnd = animationPath.Name.IndexOfAny(PathGroupDelimiters, state.ParseElementStart + 1);
@@ -278,12 +277,12 @@ namespace Stride.Updater
 
                             // try to find a member updater
                             var parentType = containerType;
-                            while (!UpdateKeys.TryGetValue(new UpdateKey(parentType, propertyName), out updatableMember) && parentType != null)
+                            while (parentType != null && !UpdateKeys.TryGetValue(new UpdateKey(parentType, propertyName), out updatableMember))
                             {
                                 parentType = parentType.GetTypeInfo().BaseType;
                             }
 
-                            // if not found, try to find a custom resolver 
+                            // if not found, try to find a custom resolver
                             parentType = containerType;
                             while (updatableMember == null && parentType != null)
                             {

@@ -4,8 +4,6 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -14,10 +12,12 @@ using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ImageElement"/> 
+    ///   Test class for rendering tests on clipping.
     /// </summary>
     public class ClippingTest : UITestGameBase
     {
@@ -26,9 +26,7 @@ namespace Stride.UI.Tests.Regression
         private ContentDecorator element3;
         private ContentDecorator element4;
 
-        public ClippingTest()
-        {
-        }
+        public ClippingTest() { }
 
         protected override async Task LoadContent()
         {
@@ -56,7 +54,7 @@ namespace Stride.UI.Tests.Regression
                 LocalMatrix = Matrix.Translation(-200, -100, 0),
                 BackgroundImage = SpriteFromSheet.Create(uiGroup, "uvRotated90")
             };
-            
+
             element2 = new ContentDecorator
             {
                 Name = "2",
@@ -259,15 +257,6 @@ namespace Stride.UI.Tests.Regression
         public void RunClippingTest()
         {
             RunGameTest(new ClippingTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ClippingTest())
-                game.Run();
         }
     }
 }

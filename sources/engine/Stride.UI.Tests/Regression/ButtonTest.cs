@@ -4,22 +4,20 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.UI.Controls;
+
+using Xunit;
 
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="Button"/> 
+    ///   Class for rendering tests for <see cref="Button"/>.
     /// </summary>
     public class ButtonTest : UITestGameBase
     {
         private Button button;
 
-        public ButtonTest()
-        {
-        }
+        public ButtonTest() { }
 
         protected override async Task LoadContent()
         {
@@ -49,15 +47,6 @@ namespace Stride.UI.Tests.Regression
         public void RunButtonTest()
         {
             RunGameTest(new ButtonTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ButtonTest())
-                game.Run();
         }
     }
 }

@@ -9,11 +9,10 @@ using System.Linq;
 
 using Xunit;
 
-using Stride.Core.Assets.Tests.Helpers;
-using Stride.Core.Assets.Yaml;
 using Stride.Core.IO;
 using Stride.Core.Reflection;
-using Stride.Core.Yaml;
+using Stride.Core.Assets.Yaml;
+using Stride.Core.Assets.Tests.Helpers;
 
 namespace Stride.Core.Assets.Tests
 {
@@ -27,17 +26,19 @@ namespace Stride.Core.Assets.Tests
         [Fact]
         public void TestMyAssetObject()
         {
-            var assetObject = new MyAsset();
-            assetObject.Id = AssetId.Empty;
+            var assetObject = new MyAsset
+            {
+                Id = AssetId.Empty,
 
-            assetObject.Description = "This is a test";
+                Description = "This is a test",
 
-            assetObject.AssetDirectory = new UDirectory("/test/dynamic/path/to/file/in/object/property");
-            assetObject.AssetUrl = new UFile("/test/dynamic/path/to/file/in/object/property");
+                AssetDirectory = new UDirectory("/test/dynamic/path/to/file/in/object/property"),
+                AssetUrl = new UFile("/test/dynamic/path/to/file/in/object/property"),
 
-            //assetObject.Base = new AssetBase("/this/is/an/url/to/MyObject", null);
+                //assetObject.Base = new AssetBase("/this/is/an/url/to/MyObject", null);
 
-            assetObject.CustomReference2 = new AssetReference(AssetId.Empty, "/this/is/an/url/to/MyCustomReference2");
+                CustomReference2 = new AssetReference(AssetId.Empty, "/this/is/an/url/to/MyCustomReference2")
+            };
             assetObject.CustomReferences.Add(new AssetReference(AssetId.Empty, "/this/is/an/url/to/MyCustomReferenceItem1"));
             var ids = CollectionItemIdHelper.GetCollectionItemIds(assetObject.CustomReferences);
             ids[0] = IdentifierGenerator.Get(99);
@@ -153,9 +154,7 @@ namespace Stride.Core.Assets.Tests
             writer.Flush();
             stream.Position = 0;
 
-            bool aliasOccurred;
-            AttachedYamlAssetMetadata metadata;
-            var assetItems = (List<AssetItem>)AssetFileSerializer.Default.Load(stream, null, null, true, out aliasOccurred, out metadata);
+            var assetItems = (List<AssetItem>)AssetFileSerializer.Default.Load(stream, null, null, true, out bool aliasOccurred, out AttachedYamlAssetMetadata metadata);
             if (aliasOccurred)
             {
                 foreach (var assetItem in assetItems)
@@ -164,11 +163,6 @@ namespace Stride.Core.Assets.Tests
                 }
             }
             return assetItems;
-        }
-
-        static void Main()
-        {
-            new TestSerializing().TestMyAssetObject();
         }
     }
 }

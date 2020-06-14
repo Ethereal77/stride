@@ -28,7 +28,7 @@
     <!-- Workaround for solution dependencies with incompatible frameworks: https://github.com/Microsoft/msbuild/issues/2661#issuecomment-338808156 -->
     <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
 
-  <!-- Assembly version for the launcher, used to generate the appropriate nuget package -->
+    <!-- Assembly version for the launcher, used to generate the appropriate nuget package -->
     <InformationalVersion>4.0.6</InformationalVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -81,7 +81,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Target Name="EmbedLauncherAsResources" AfterTargets="AfterResolveReferences">
     <ItemGroup>
       <AssembliesToEmbed Include="$(MSBuildThisFileDirectory)..\Stride.Launcher\$(OutDir)\**\*.dll;$(MSBuildThisFileDirectory)..\Stride.Launcher\$(OutDir)\**\*.exe;$(MSBuildThisFileDirectory)..\Stride.Launcher\$(OutDir)\**\*.pdb" />

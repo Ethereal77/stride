@@ -4,15 +4,15 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
-using Stride.Rendering.ComputeEffect.LambertianPrefiltering;
 using Stride.Rendering.Images.SphericalHarmonics;
+using Stride.Rendering.ComputeEffect.LambertianPrefiltering;
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -169,12 +169,6 @@ namespace Stride.Graphics.Tests
         public void RunTestPass2()
         {
             RunGameTest(new TestLambertPrefilteringSH());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestLambertPrefilteringSH())
-                game.Run();
         }
     }
 }

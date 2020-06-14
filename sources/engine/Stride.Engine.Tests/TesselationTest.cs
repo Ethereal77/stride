@@ -5,11 +5,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
-using Stride.Rendering.Lights;
 using Stride.Rendering;
 using Stride.Rendering.ProceduralModels;
 using Stride.Rendering.Tessellation;
@@ -17,7 +14,8 @@ using Stride.Games;
 using Stride.Graphics;
 using Stride.Graphics.Regression;
 using Stride.Input;
-using Stride.Rendering.Compositing;
+
+using Xunit;
 
 namespace Stride.Engine.Tests
 {
@@ -203,14 +201,6 @@ namespace Stride.Engine.Tests
         public void RunTestGame()
         {
             RunGameTest(new TesselationTest());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TesselationTest(true))
-            {
-                game.Run();
-            }
         }
 
         private class WireframeCullbackPipelineProcessor : PipelineProcessor

@@ -5,17 +5,18 @@
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Type of shared data. <see cref="GraphicsDevice.GetOrCreateSharedData{T}"/>
+    ///   Defines the types of shared data that can be accessed through a <see cref="GraphicsDevice"/> with
+    ///   <see cref="GraphicsDevice.GetOrCreateSharedData{T}"/>
     /// </summary>
     public enum GraphicsDeviceSharedDataType
     {
         /// <summary>
-        /// Data is shared within a <see cref="SharpDX.Direct3D11.Device"/>.
+        ///   Data is shared within a <see cref="SharpDX.Direct3D11.Device"/>.
         /// </summary>
         PerDevice,
 
         /// <summary>
-        /// Data is shared within a <see cref="SharpDX.Direct3D11.DeviceContext"/>
+        ///   Data is shared within a <see cref="SharpDX.Direct3D11.DeviceContext"/>
         /// </summary>
         PerContext,
     }

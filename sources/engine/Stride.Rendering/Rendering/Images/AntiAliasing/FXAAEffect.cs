@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -11,17 +11,19 @@ using Stride.Core.Annotations;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// A FXAA anti-aliasing pass.
+    ///   Represents an <see cref="ImageEffect"/> that implements a screen-space anti-aliasing pass using
+    ///   the FXAA (Fast approXimate Anti-Aliasing) algorithm.
     /// </summary>
     [DataContract("FXAAEffect")]
     public class FXAAEffect : ImageEffectShader, IScreenSpaceAntiAliasingEffect
     {
         private const int DefaultQuality = 3;
+
         internal static readonly PermutationParameterKey<int> GreenAsLumaKey = ParameterKeys.NewPermutation(0);
         internal static readonly PermutationParameterKey<int> QualityKey = ParameterKeys.NewPermutation(15);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FXAAEffect"/> class.
+        ///   Initializes a new instance of the <see cref="FXAAEffect"/> class.
         /// </summary>
         public FXAAEffect() : this("FXAAShaderEffect")
         {
@@ -29,6 +31,8 @@ namespace Stride.Rendering.Images
         }
 
         public bool NeedRangeDecompress => true;
+
+        public bool RequiresDepthBuffer => false;
 
         public bool RequiresVelocityBuffer => false;
 

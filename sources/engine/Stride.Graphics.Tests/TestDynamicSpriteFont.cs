@@ -4,21 +4,13 @@
 
 using Xunit;
 
-
 namespace Stride.Graphics.Tests
 {
     public class TestDynamicSpriteFont : TestSpriteFont
     {
         public TestDynamicSpriteFont()
             : base("DynamicFonts/", "dyn")
-        {
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestDynamicSpriteFont())
-                game.Run();
-        }
+        { }
 
         /// <summary>
         /// Run the test

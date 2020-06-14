@@ -1,0 +1,19 @@
+<!--
+***********************************************************************************************
+  Stride.Build.props
+
+  Build file pre-included before the building of the project to configure the default platform,
+  graphics API, names, etc.
+
+  Copyright (C) 2020 Stride and its contributors
+***********************************************************************************************
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <StrideCommonPreSettingsName>Stride</StrideCommonPreSettingsName>
+    <StridePlatforms Condition="'$(StridePlatforms)' == ''">Windows</StridePlatforms>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(StridePlatform)' == 'Windows'">
+    <StrideGraphicsApis Condition="'$(StrideGraphicsApis)' == ''">Direct3D11</StrideGraphicsApis>
+  </PropertyGroup>
+</Project>

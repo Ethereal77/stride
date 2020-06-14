@@ -4,11 +4,11 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -77,7 +77,7 @@ namespace Stride.Graphics.Tests
             GraphicsContext.CommandList.SetRenderTargetAndViewport(GraphicsDevice.Presenter.DepthStencilBuffer, GraphicsDevice.Presenter.BackBuffer);
 
             spriteBatch.Begin(GraphicsContext);
-            
+
             var x = 20f;
             var y = 20f;
 
@@ -96,7 +96,7 @@ namespace Stride.Graphics.Tests
             x += spheres[0].Region.Width + 5;
 
             spriteBatch.Draw(round, new RectangleF(x, y, round.ViewWidth / 2f, round.ViewHeight / 2f), Color.GreenYellow);
-            
+
             spriteBatch.End();
         }
 
@@ -132,12 +132,6 @@ namespace Stride.Graphics.Tests
             spriteBatch.DrawString(spriteFont, text, fontSize, new Vector2(x, y), Color.White);
 
             y += 1.4f * dim.Y;
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestSpriteBatchResolution())
-                game.Run();
         }
 
         /// <summary>

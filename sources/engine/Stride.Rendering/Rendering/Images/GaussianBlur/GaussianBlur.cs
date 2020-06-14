@@ -12,25 +12,27 @@ using Stride.Graphics;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Provides a gaussian blur effect.
+    ///   Represents an <see cref="ImageEffect"/> that provides a gaussian blur effect.
     /// </summary>
     /// <remarks>
-    /// To improve performance of this gaussian blur is using:
-    /// - a separable 1D horizontal and vertical blur
-    /// - linear filtering to reduce the number of taps
+    ///   To improve performance this gaussian blur is using:
+    ///   <list type="bullet">
+    ///     <item>A separable 1D horizontal and vertical blur.</item>
+    ///     <item>Linear filtering to reduce the number of taps.</item>
+    ///   </list>
     /// </remarks>
     [DataContract("GaussianBlur")]
     [Display("Gaussian Blur")]
-    public sealed class GaussianBlur : ImageEffect, IImageEffectRenderer // SceneEffectRenderer as GaussianBlur is a simple input/output effect.
+    public sealed class GaussianBlur : ImageEffect, IImageEffectRenderer
     {
-        private List<GaussianBlurShader> shaders = new List<GaussianBlurShader>();
+        private readonly List<GaussianBlurShader> shaders = new List<GaussianBlurShader>();
 
         private int radius;
 
         private float sigmaRatio;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GaussianBlur"/> class.
+        ///   Initializes a new instance of the <see cref="GaussianBlur"/> class.
         /// </summary>
         public GaussianBlur()
         {
@@ -39,56 +41,48 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Gets or sets the radius.
+        ///   Gets or sets the radius of the blur kernel.
         /// </summary>
-        /// <value>The radius.</value>
-        /// <userdoc>The radius of the Gaussian in pixels</userdoc>
+        /// <value>The radius of the blur.</value>
+        /// <userdoc>The radius of the blur, in pixels.</userdoc>
         [DataMember(10)]
         public int Radius
         {
-            get
-            {
-                return radius;
-            }
+            get => radius;
             set
             {
                 if (value < 1)
-                {
-                    throw new ArgumentOutOfRangeException("Radius cannot be < 1");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(Radius), "The blur radius cannot be less than one pixel.");
 
                 radius = value;
             }
         }
 
         /// <summary>
-        /// Gets or sets the sigma ratio. The sigma ratio is used to calculate the sigma based on the radius: The actual
-        /// formula is <c>sigma = radius / SigmaRatio</c>. The default value is 2.0f.
+        ///   Gets or sets the sigma ratio of the blur.
         /// </summary>
-        /// <value>The sigma ratio.</value>
-        /// <userdoc>The sigma ratio of the Gaussian. The sigma ratio is used to calculate the sigma of the Gaussian. 
-        /// The actual formula is <c>sigma = radius / SigmaRatio</c></userdoc>
+        /// <value>The sigma ratio. The default value is 2.0f.</value>
+        /// <remarks>
+        ///   The sigma ratio is used to calculate the sigma based on the radius: The actual formula is <c>sigma = radius / SigmaRatio</c>.
+        /// </remarks>
+        /// <userdoc>
+        ///   The sigma ratio of the Gaussian. The sigma ratio is used to calculate the sigma of the Gaussian.
+        ///   The actual formula is <c>sigma = radius / SigmaRatio</c>.
+        /// </userdoc>
         [DataMember(20)]
         public float SigmaRatio
         {
-            get
-            {
-                return sigmaRatio;
-            }
+            get => sigmaRatio;
             set
             {
                 if (value < 0.0f)
-                {
-                    throw new ArgumentOutOfRangeException("SigmaRatio cannot be < 0.0f");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(SigmaRatio), "SigmaRatio cannot be less than zero.");
 
                 sigmaRatio = value;
             }
         }
 
-        public void Collect(RenderContext context)
-        {
-        }
+        public void Collect(RenderContext context) { }
 
         protected override void DrawCore(RenderDrawContext context)
         {
@@ -104,7 +98,7 @@ namespace Stride.Rendering.Images
             }
 
             // Not found, create it
-            if (matchingGaussianBlurShader == null)
+            if (matchingGaussianBlurShader is null)
             {
                 matchingGaussianBlurShader = new GaussianBlurShader(this, Radius);
                 shaders.Add(matchingGaussianBlurShader);
@@ -115,7 +109,7 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Store a Gaussian Blur shader pair. If we didn't do so, it might trigger a LoadEffect every time the radius changes.
+        ///   Store a Gaussian Blur shader pair. If we didn't do so, it might trigger a LoadEffect every time the radius changes.
         /// </summary>
         private class GaussianBlurShader
         {

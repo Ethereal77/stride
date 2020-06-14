@@ -20,7 +20,7 @@ using RectangleF = Stride.Core.Mathematics.RectangleF;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// SpriteFont to use with <see cref="SpriteBatch"/>. See <see cref="SpriteFont"/> to learn how to use it.
+    ///   Represents a text font based on sprites to be drawn with a <see cref="SpriteBatch"/>.
     /// </summary>
     [DataContract]
     [ReferenceSerializer, DataSerializerGlobal(typeof(ReferenceSerializer<SpriteFont>), Profile = "Content")]
@@ -95,8 +95,8 @@ namespace Stride.Graphics
         public bool IgnoreUnkownCharacters { get; set; }
 
         /// <summary>
-        /// Gets or sets extra spacing (in pixels) between the characters for the current font <see cref="Size"/>. 
-        /// This value is scaled during the draw in the case of dynamic fonts. 
+        /// Gets or sets extra spacing (in pixels) between the characters for the current font <see cref="Size"/>.
+        /// This value is scaled during the draw in the case of dynamic fonts.
         /// Use <see cref="GetExtraSpacing"/> to get the value of the extra spacing for a given font size.
         /// </summary>
         public float ExtraSpacing { get; set; }
@@ -108,7 +108,7 @@ namespace Stride.Graphics
         /// </summary>
         /// <remarks>Line spacing is the distance between the base lines of two consecutive lines of text (blank space as well as characters' height are thus included).</remarks>
         public float ExtraLineSpacing { get; set; }
-        
+
         /// <summary>
         /// Gets the type indicating if the current font is static, dynamic or SDF.
         /// </summary>
@@ -149,7 +149,7 @@ namespace Stride.Graphics
         {
             void New();
         }
-        
+
         /// <summary>
         /// Get the value of the extra line spacing for the given font size.
         /// </summary>
@@ -191,14 +191,14 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Gets the value of the total line spacing (font default + user defined) in pixels for a given font size. 
+        /// Gets the value of the total line spacing (font default + user defined) in pixels for a given font size.
         /// </summary>
         /// <remarks>Line spacing is the distance between the base lines of two consecutive lines of text (blank space as well as characters' height are thus included).</remarks>
         public float GetTotalLineSpacing(float fontSize)
         {
             return GetExtraLineSpacing(fontSize) + GetFontDefaultLineSpacing(fontSize);
         }
-        
+
         internal void InternalDraw(CommandList commandList, ref StringProxy text, ref InternalDrawCommand drawCommand, TextAlignment alignment)
         {
             // If the text is mirrored, offset the start position accordingly.
@@ -209,8 +209,8 @@ namespace Stride.Graphics
 
             // Draw each character in turn.
             ForEachGlyph(commandList, ref text, ref drawCommand.FontSize, internalDrawGlyphAction, ref drawCommand, alignment, true);
-        }        
-        
+        }
+
         /// <summary>
         /// Pre-generate synchronously the glyphs of the character needed to render the provided text at the provided size.
         /// </summary>
@@ -247,7 +247,7 @@ namespace Stride.Graphics
             }
             var destination = new RectangleF(parameters.Position.X, parameters.Position.Y, parameters.Scale.X, parameters.Scale.Y);
             RectangleF? sourceRectangle = glyph.Subrect;
-            parameters.SpriteBatch.DrawSprite(Textures[glyph.BitmapIndex], ref destination, true, ref sourceRectangle, parameters.Color, new Color4(0, 0, 0, 0),  parameters.Rotation, ref offset, spriteEffects, ImageOrientation.AsIs, parameters.Depth, swizzle, true);            
+            parameters.SpriteBatch.DrawSprite(Textures[glyph.BitmapIndex], ref destination, true, ref sourceRectangle, parameters.Color, new Color4(0, 0, 0, 0),  parameters.Rotation, ref offset, spriteEffects, ImageOrientation.AsIs, parameters.Depth, swizzle, true);
         }
 
         internal void InternalUIDraw(CommandList commandList, ref StringProxy text, ref InternalUIDrawCommand drawCommand)
@@ -270,7 +270,7 @@ namespace Stride.Graphics
             var elementSize = new Vector2(
                 auxiliaryScaling.X * glyph.Subrect.Width / realVirtualResolutionRatio.X,
                 auxiliaryScaling.Y * glyph.Subrect.Height / realVirtualResolutionRatio.Y);
-            if (elementSize.LengthSquared() < MathUtil.ZeroTolerance) 
+            if (elementSize.LengthSquared() < MathUtil.ZeroTolerance)
                 return;
 
             var xShift = x;
@@ -289,7 +289,7 @@ namespace Stride.Graphics
             worldMatrix.M42 += worldMatrix.M12 * xScaledShift + worldMatrix.M22 * yScaledShift;
             worldMatrix.M43 += worldMatrix.M13 * xScaledShift + worldMatrix.M23 * yScaledShift;
             worldMatrix.M44 += worldMatrix.M14 * xScaledShift + worldMatrix.M24 * yScaledShift;
-            
+
             worldMatrix.M11 *= elementSize.X;
             worldMatrix.M12 *= elementSize.X;
             worldMatrix.M13 *= elementSize.X;
@@ -478,7 +478,7 @@ namespace Stride.Graphics
             auxiliaryScaling = Vector2.One;
             return null;
         }
-        
+
         private void MeasureStringGlyph(ref Vector2 result, in Vector2 fontSize, in Glyph glyph, float x, float y, float nextx, ref Vector2 auxiliaryScaling)
         {
             // TODO Do we need auxiliaryScaling
@@ -531,14 +531,14 @@ namespace Stride.Graphics
 
                     // Determine the start position of the line along the x axis
                     // We round this value to the closest integer to force alignment of all characters to the same pixels
-                    // Otherwise the starting offset can fall just in between two pixels and due to float imprecision 
+                    // Otherwise the starting offset can fall just in between two pixels and due to float imprecision
                     // some characters can be aligned to the pixel before and others to the pixel after, resulting in gaps and character overlapping
                     var xStart = (scanOrder == TextAlignment.Center) ? (wholeSize.X - lineSize.X) / 2 : wholeSize.X - lineSize.X;
-                    xStart = (float)Math.Round(xStart); 
+                    xStart = (float)Math.Round(xStart);
 
                     // scan the line
                     ForGlyph(commandList, ref text, ref requestedFontSize, action, ref parameters, startIndex, endIndex, updateGpuResources, xStart, yStart);
-                    
+
                     // update variable before going to next line
                     yStart += GetTotalLineSpacing(requestedFontSize.Y);
                     startIndex = endIndex + 1;
@@ -618,7 +618,7 @@ namespace Stride.Graphics
                 textString = null;
                 Length = text.Length;
             }
-            
+
             public StringProxy(string text, int length)
             {
                 textString = text;

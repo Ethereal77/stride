@@ -1,6 +1,6 @@
 <Project>
-  <Import Project="..\..\targets\Stride.PreSettings.targets" />
-  <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
+  <Import Project="..\..\targets\Stride.props" />
+  <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.87" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>$(StrideEditorTargetFrameworks)</TargetFrameworks>
@@ -19,8 +19,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" Version="16.5.0" ExcludeAssets="runtime" />
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ResharperDotSettings.cs">
@@ -64,6 +62,6 @@
     <Content Include="Templates\Stride.UnitTests\Resources\StrideIcon150x150.png" />
     <Resource Include="Templates\Stride.UnitTests\Resources\StrideIcon54x54.png" />
   </ItemGroup>
-  <Import Project="$(StridePostSettingsTargets)" />
-  <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
+  <Import Project="$(StrideSdkTargets)" />
+  <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.87" />
 </Project>

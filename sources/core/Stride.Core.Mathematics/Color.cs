@@ -3,13 +3,12 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Stride.Core.Mathematics
 {
     /// <summary>
-    /// Represents a 32-bit color (4 bytes) in the form of RGBA (in byte order: R, G, B, A).
+    ///   Represents a 32-bit (8 bpp) color value in the form RGBA.
     /// </summary>
     [DataContract("Color")]
     [DataStyle(DataStyle.Compact)]
@@ -17,31 +16,32 @@ namespace Stride.Core.Mathematics
     public partial struct Color : IEquatable<Color>
     {
         /// <summary>
-        /// The red component of the color.
+        ///   The red component of the color.
         /// </summary>
         [DataMember(0)]
         public byte R;
 
         /// <summary>
-        /// The green component of the color.
+        ///   The green component of the color.
         /// </summary>
         [DataMember(1)]
         public byte G;
 
         /// <summary>
-        /// The blue component of the color.
+        ///   The blue component of the color.
         /// </summary>
         [DataMember(2)]
         public byte B;
 
         /// <summary>
-        /// The alpha component of the color.
+        ///   The alpha component of the color.
         /// </summary>
         [DataMember(3)]
         public byte A;
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/> with all four components set to the same value.
         /// </summary>
         /// <param name="value">The value that will be assigned to all components.</param>
         public Color(byte value)
@@ -53,15 +53,16 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/> with all four components set to the same value.
         /// </summary>
-        /// <param name="value">The value that will be assigned to all components.</param>
-        public Color(float value) : this(ToByte(value))
-        {
-        }
+        /// <param name="value">
+        ///   The value that will be assigned to all components. A value of 0 is the smallest value, meaning black.
+        ///   A value of 1.0 is the maximum value, meaning white.
+        /// </param>
+        public Color(float value) : this(ToByte(value)) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/>.
         /// </summary>
         /// <param name="red">The red component of the color.</param>
         /// <param name="green">The green component of the color.</param>
@@ -76,7 +77,7 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.  Alpha is set to 255.
+        ///   Initializes a new <see cref="Color"/> fully opaque (alpha = 255).
         /// </summary>
         /// <param name="red">The red component of the color.</param>
         /// <param name="green">The green component of the color.</param>
@@ -90,12 +91,12 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/>.
         /// </summary>
-        /// <param name="red">The red component of the color.</param>
-        /// <param name="green">The green component of the color.</param>
-        /// <param name="blue">The blue component of the color.</param>
-        /// <param name="alpha">The alpha component of the color.</param>
+        /// <param name="red">The red component of the color. <c>0.0</c> is no red. <c>1.0</c>.is full red.</param>
+        /// <param name="green">The green component of the color. <c>0.0</c> is no green. <c>1.0</c>.is full green.</param>
+        /// <param name="blue">The blue component of the color. <c>0.0</c> is no blue. <c>1.0</c>.is full blue.</param>
+        /// <param name="alpha">The alpha component of the color. <c>0.0</c> is no alpha (transparent). <c>1.0</c>.is full alpha (opaque).</param>
         public Color(float red, float green, float blue, float alpha)
         {
             R = ToByte(red);
@@ -105,11 +106,11 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.  Alpha is set to 255.
+        ///   Initializes a new <see cref="Color"/> fully opaque (alpha = 255).
         /// </summary>
-        /// <param name="red">The red component of the color.</param>
-        /// <param name="green">The green component of the color.</param>
-        /// <param name="blue">The blue component of the color.</param>
+        /// <param name="red">The red component of the color. <c>0.0</c> is no red. <c>1.0</c>.is full red.</param>
+        /// <param name="green">The green component of the color. <c>0.0</c> is no green. <c>1.0</c>.is full green.</param>
+        /// <param name="blue">The blue component of the color. <c>0.0</c> is no blue. <c>1.0</c>.is full blue.</param>
         public Color(float red, float green, float blue)
         {
             R = ToByte(red);
@@ -119,75 +120,91 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/> from a <see cref="Vector4"/> that defines the values for the components.
         /// </summary>
-        /// <param name="value">The red, green, blue, and alpha components of the color.</param>
-        public Color(Vector4 value)
+        /// <param name="rgba">
+        ///   The red, green, blue, and alpha components of the color. For each compònent,
+        ///   <c>0.0</c> is no intensity. and <c>1.0</c>.is full intensity.
+        /// </param>
+        public Color(Vector4 rgba)
         {
-            R = ToByte(value.X);
-            G = ToByte(value.Y);
-            B = ToByte(value.Z);
-            A = ToByte(value.W);
+            R = ToByte(rgba.X);
+            G = ToByte(rgba.Y);
+            B = ToByte(rgba.Z);
+            A = ToByte(rgba.W);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/> from a <see cref="Vector3"/> that defines the values for the RGB components,
+        ///   avd an value for the alpha component.
         /// </summary>
-        /// <param name="value">The red, green, and blue components of the color.</param>
-        /// <param name="alpha">The alpha component of the color.</param>
-        public Color(Vector3 value, float alpha)
+        /// <param name="rgb">
+        ///   The red, green, and blue components of the color. For each compònent,
+        ///   <c>0.0</c> is no intensity. and <c>1.0</c>.is full intensity.
+        /// </param>
+        /// <param name="alpha">
+        ///   The alpha component of the color. <c>0.0</c> is mo alpha (transparent), and <c>1.0</c>.is full alpha (opaque).
+        /// </param>
+        public Color(Vector3 rgb, float alpha)
         {
-            R = ToByte(value.X);
-            G = ToByte(value.Y);
-            B = ToByte(value.Z);
+            R = ToByte(rgb.X);
+            G = ToByte(rgb.Y);
+            B = ToByte(rgb.Z);
             A = ToByte(alpha);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct. Alpha is set to 255.
+        ///   Initializes a new <see cref="Color"/> from a <see cref="Vector3"/> that defines the values for the RGB components
+        ///   and a fully opaque alpha value (255).
         /// </summary>
-        /// <param name="value">The red, green, and blue components of the color.</param>
-        public Color(Vector3 value)
+        /// <param name="rgb">
+        ///   The red, green, and blue components of the color. For each compònent,
+        ///   <c>0.0</c> is no intensity. and <c>1.0</c>.is full intensity.
+        /// </param>
+        public Color(Vector3 rgb)
         {
-            R = ToByte(value.X);
-            G = ToByte(value.Y);
-            B = ToByte(value.Z);
+            R = ToByte(rgb.X);
+            G = ToByte(rgb.Y);
+            B = ToByte(rgb.Z);
             A = 255;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/> from its 32-bit integer RGBA representation.
         /// </summary>
         /// <param name="rgba">A packed integer containing all four color components in RGBA order.</param>
         public Color(uint rgba)
         {
-            A = (byte)((rgba >> 24) & 255);
-            B = (byte)((rgba >> 16) & 255);
-            G = (byte)((rgba >> 8) & 255);
-            R = (byte)(rgba & 255);
+            A = (byte) ((rgba >> 24) & 255);
+            B = (byte) ((rgba >> 16) & 255);
+            G = (byte) ((rgba >> 8) & 255);
+            R = (byte) (rgba & 255);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/> from its 32-bit integer RGBA representation.
         /// </summary>
         /// <param name="rgba">A packed integer containing all four color components in RGBA order.</param>
         public Color(int rgba)
         {
-            A = (byte)((rgba >> 24) & 255);
-            B = (byte)((rgba >> 16) & 255);
-            G = (byte)((rgba >> 8) & 255);
-            R = (byte)(rgba & 255);
+            A = (byte) ((rgba >> 24) & 255);
+            B = (byte) ((rgba >> 16) & 255);
+            G = (byte) ((rgba >> 8) & 255);
+            R = (byte) (rgba & 255);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/> from an array of four values.
         /// </summary>
-        /// <param name="values">The values to assign to the red, green, and blue, alpha components of the color. This must be an array with four elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than four elements.</exception>
+        /// <param name="values">
+        ///   The values to assign to the red, green, blue, and alpha components of the color. This must be an array with four elements.
+        ///   For each compònent, <c>0.0</c> is no intensity. and <c>1.0</c>.is full intensity.
+        /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="values"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> contains more or less than four elements.</exception>
         public Color(float[] values)
         {
-            if (values == null)
+            if (values is null)
                 throw new ArgumentNullException(nameof(values));
             if (values.Length != 4)
                 throw new ArgumentOutOfRangeException(nameof(values), "There must be four and only four input values for Color.");
@@ -199,14 +216,16 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct.
+        ///   Initializes a new <see cref="Color"/> from an array of four values.
         /// </summary>
-        /// <param name="values">The values to assign to the alpha, red, green, and blue components of the color. This must be an array with four elements.</param>
-        /// <exception cref="ArgumentNullException">Thrown when <paramref name="values"/> is <c>null</c>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="values"/> contains more or less than four elements.</exception>
+        /// <param name="values">
+        ///   The values to assign to the red, green, blue, and alpha components of the color. This must be an array with four elements.
+        /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="values"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> contains more or less than four elements.</exception>
         public Color(byte[] values)
         {
-            if (values == null)
+            if (values is null)
                 throw new ArgumentNullException(nameof(values));
             if (values.Length != 4)
                 throw new ArgumentOutOfRangeException(nameof(values), "There must be four and only four input values for Color.");
@@ -217,11 +236,12 @@ namespace Stride.Core.Mathematics
             A = values[3];
         }
 
+
         /// <summary>
         /// Gets or sets the component at the specified index.
         /// </summary>
-        /// <value>The value of the alpha, red, green, or blue component, depending on the index.</value>
-        /// <param name="index">The index of the component to access. Use 0 for the alpha component, 1 for the red component, 2 for the green component, and 3 for the blue component.</param>
+        /// <value>The value of the red, green, blue, or alpha component, depending on the index.</value>
+        /// <param name="index">The index of the component to access. Use 0 for the red(R) component, 1 for the green(G) component, 2 for the blue(B) component, and 3 for the alpha(A) component.</param>
         /// <returns>The value of the component at the specified index.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when the <paramref name="index"/> is out of the range [0, 3].</exception>
         public byte this[int index]
@@ -690,7 +710,7 @@ namespace Stride.Core.Mathematics
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <param name="result">When the method completes, contains the linear interpolation of the two colors.</param>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Color start, ref Color end, float amount, out Color result)
         {
@@ -708,7 +728,7 @@ namespace Stride.Core.Mathematics
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <returns>The linear interpolation of the two colors.</returns>
         /// <remarks>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Color Lerp(Color start, Color end, float amount)
         {
@@ -1070,62 +1090,64 @@ namespace Stride.Core.Mathematics
             return new Color(value);
         }
 
+
         /// <summary>
-        /// Returns a <see cref="string"/> that represents this instance.
+        ///   Returns a <see cref="string"/> that represents this instance.
         /// </summary>
-        /// <returns>
-        /// A <see cref="string"/> that represents this instance.
-        /// </returns>
+        /// <returns>A <see cref="string"/> that represents this instance.</returns>
         public override string ToString()
         {
             return ColorExtensions.RgbaToString(ToRgba());
         }
 
         /// <summary>
-        /// Returns a hash code for this instance.
+        ///   Returns the hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        ///   A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
-            return A.GetHashCode() + R.GetHashCode() + G.GetHashCode() + B.GetHashCode();
+            return A.GetHashCode() +
+                   R.GetHashCode() +
+                   G.GetHashCode() +
+                   B.GetHashCode();
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="Color"/> is equal to this instance.
+        ///   Determines whether the specified <see cref="Color"/> is equal to this <see cref="Color"/>.
         /// </summary>
         /// <param name="other">The <see cref="Color"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="Color"/> is equal to this instance; otherwise, <c>false</c>.
+        ///   <c>true</c> if the specified <see cref="Color"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public bool Equals(Color other)
         {
-            return R == other.R && G == other.G && B == other.B && A == other.A;
+            return R == other.R &&
+                   G == other.G &&
+                   B == other.B &&
+                   A == other.A;
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="object"/> is equal to this instance.
+        ///   Determines whether the specified <see cref="object"/> is equal to this <see cref="Color"/>.
         /// </summary>
         /// <param name="value">The <see cref="object"/> to compare with this instance.</param>
         /// <returns>
-        /// <c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.
+        ///   <c>true</c> if the specified <see cref="object"/> is equal to this <see cref="Color"/>; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object value)
         {
-            if (value == null)
-                return false;
-
-            if (!ReferenceEquals(value.GetType(), typeof(Color)))
-                return false;
-
-            return Equals((Color)value);
+            return (value is Color color) && color.Equals(this);
         }
 
+        //
+        // Converts a float value in the range [0.0 - 1.0] to a byte in the range [0 - 255].
+        //
         private static byte ToByte(float component)
         {
-            var value = (int)(component * 255.0f);
-            return (byte)(value < 0 ? 0 : value > 255 ? 255 : value);
+            var value = (int) (component * 255.0f);
+            return (byte) (value < 0 ? 0 : value > 255 ? 255 : value);
         }
     }
 }

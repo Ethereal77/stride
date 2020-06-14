@@ -5,36 +5,37 @@
 namespace Stride.Input
 {
     /// <summary>
-    /// Interface IVirtualButton
+    ///   Defines the interface of a virtual button, a generic representation of an input that can be
+    ///   signaled from any valid input device.
     /// </summary>
     public interface IVirtualButton
     {
         /// <summary>
-        /// Gets the value associated with this virtual button from an input manager.
+        ///   Gets the value associated with this virtual button from an input manager.
         /// </summary>
-        /// <param name="manager">The manager.</param>
-        /// <returns>System.Single.</returns>
+        /// <param name="manager">The input manager.</param>
+        /// <returns>Value of the virtual button.</returns>
         float GetValue(InputManager manager);
 
         /// <summary>
-        /// Indicate if the button is currently down
+        ///   Gets a value that indicates whether the button is currently down.
         /// </summary>
         /// <param name="manager">The input manager</param>
-        /// <returns></returns>
+        /// <returns><c>true</c> if the button is currently down; <c>false</c> otherwise.</returns>
         bool IsDown(InputManager manager);
 
         /// <summary>
-        /// Indicate if the button has been pressed since the last frame
+        ///   Gets a value that indicates whether the button has been pressed since the last frame.
         /// </summary>
         /// <param name="manager">The input manager</param>
-        /// <returns></returns>
+        /// <returns><c>true</c> if the button has been pressed; <c>false</c> otherwise.</returns>
         bool IsPressed(InputManager manager);
 
         /// <summary>
-        /// Indicate if the button has been released since the last frame
+        ///   Gets a value that indicates whether the button has been released since the last frame.
         /// </summary>
         /// <param name="manager">The input manager</param>
-        /// <returns></returns>
+        /// <returns><c>true</c> if the button has been released; <c>false</c> otherwise.</returns>
         bool IsReleased(InputManager manager);
     }
 }

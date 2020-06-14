@@ -7,7 +7,7 @@ using Stride.Core;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Identifies the set of supported devices for the graphics subsystem based on device capabilities.
+    ///   Identifies the set of supported devices for the graphics subsystem based on device capabilities.
     /// </summary>
     [DataContract("GraphicsProfile")]
     public enum GraphicsProfile

@@ -2,24 +2,21 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if STRIDE_EFFECT_COMPILER
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 using Stride.Core.Extensions;
 using Stride.Core.Storage;
-using Stride.Core.Shaders.Ast.Stride;
-using Stride.Shaders.Parser.Utility;
 using Stride.Core.Shaders;
-using Stride.Core.Shaders.Ast;
-using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Grammar.Stride;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Ast.Stride;
+using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Parser;
 using Stride.Core.Shaders.Utility;
+using Stride.Shaders.Parser.Utility;
 
 namespace Stride.Shaders.Parser.Mixins
 {
@@ -273,7 +270,7 @@ namespace Stride.Shaders.Parser.Mixins
 
         Expression CreateExpressionFromString(string name)
         {
-            // TODO: catch errors
+            // TODO: Catch errors
             var result = ShaderParser.GetParser<StrideGrammar>(ShaderParser.GetGrammar<StrideGrammar>().ExpressionNonTerminal).Parser.Parse(name, "");
             return (Expression)result.Root.AstNode;
         }
@@ -315,7 +312,7 @@ namespace Stride.Shaders.Parser.Mixins
 
                 byte[] byteArray = Encoding.UTF8.GetBytes(preprocessedSource);
                 var hashPreprocessSource = ObjectId.FromBytes(byteArray);
-   
+
                 // Compile
                 var parsingResult = StrideShaderParser.TryParse(preprocessedSource, shaderSource.Path);
                 parsingResult.CopyTo(log);
@@ -474,4 +471,3 @@ namespace Stride.Shaders.Parser.Mixins
         }
     }
 }
-#endif

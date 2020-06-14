@@ -1,0 +1,14 @@
+<!--
+***********************************************************************************************
+  Stride.Runtime.Build.props
+
+  Build file pre-included before the building of the Stride runtime solution.
+
+  Copyright (C) 2020 Stride and its contributors
+***********************************************************************************************
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <StrideCommonPreSettingsName>Stride</StrideCommonPreSettingsName>
+  </PropertyGroup>
+</Project>

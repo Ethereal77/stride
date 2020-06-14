@@ -5,8 +5,6 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -15,10 +13,12 @@ using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ScrollViewer"/> 
+    ///   Test class for rendering tests on the <see cref="ScrollViewer"/>.
     /// </summary>
     public class ScrollViewerTest : UITestGameBase
     {
@@ -32,9 +32,7 @@ namespace Stride.UI.Tests.Regression
 
         private ContentDecorator contentDecorator;
 
-        public ScrollViewerTest()
-        {
-        }
+        public ScrollViewerTest() { }
 
         protected override async Task LoadContent()
         {
@@ -78,7 +76,7 @@ namespace Stride.UI.Tests.Regression
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            
+
             if (Input.IsKeyReleased(Keys.D1))
                 scrollViewer.Content = grid;
             if (Input.IsKeyReleased(Keys.D2))
@@ -237,15 +235,6 @@ namespace Stride.UI.Tests.Regression
         public void RunScrollViewerTest()
         {
             RunGameTest(new ScrollViewerTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ScrollViewerTest())
-                game.Run();
         }
     }
 }

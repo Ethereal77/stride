@@ -2,10 +2,13 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+//#define PROFILING_SCOPES
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 using Stride.Core.Annotations;
@@ -13,7 +16,7 @@ using Stride.Core.Collections;
 
 namespace Stride.Core.Threading
 {
-    public class Dispatcher
+    public static class Dispatcher
     {
         public static int MaxDegreeOfParallelism = Environment.ProcessorCount;
 
@@ -53,8 +56,7 @@ namespace Stride.Core.Threading
                         Fork(toExclusive, batchSize, MaxDegreeOfParallelism, action, state);
 
                         // Wait for all workers to finish
-                        if (state.WorkDone < toExclusive)
-                            state.Finished.WaitOne();
+                        state.WaitCompletion(toExclusive);
 
                         var ex = Interlocked.Exchange(ref state.ExceptionThrown, null);
                         if (ex != null)
@@ -102,8 +104,7 @@ namespace Stride.Core.Threading
                         Fork(toExclusive, batchSize, MaxDegreeOfParallelism, initializeLocal, action, finalizeLocal, state);
 
                         // Wait for all workers to finish
-                        if (state.WorkDone < toExclusive)
-                            state.Finished.WaitOne();
+                        state.WaitCompletion(toExclusive);
 
                         var ex = Interlocked.Exchange(ref state.ExceptionThrown, null);
                         if (ex != null)
@@ -152,8 +153,7 @@ namespace Stride.Core.Threading
                     Fork(collection, batchSize, MaxDegreeOfParallelism, action, state);
 
                     // Wait for all workers to finish
-                    if (state.WorkDone < collection.Count)
-                        state.Finished.WaitOne();
+                    state.WaitCompletion(collection.Count);
 
                     var ex = Interlocked.Exchange(ref state.ExceptionThrown, null);
                     if (ex != null)
@@ -186,8 +186,7 @@ namespace Stride.Core.Threading
                     Fork(collection, batchSize, MaxDegreeOfParallelism, initializeLocal, action, finalizeLocal, state);
 
                     // Wait for all workers to finish
-                    if (state.WorkDone < collection.Count)
-                        state.Finished.WaitOne();
+                    state.WaitCompletion(collection.Count);
 
                     var ex = Interlocked.Exchange(ref state.ExceptionThrown, null);
                     if (ex != null)
@@ -227,15 +226,12 @@ namespace Stride.Core.Threading
 
         private static void Fork<TKey, TValue>([NotNull] Dictionary<TKey, TValue> collection, int batchSize, int maxDegreeOfParallelism, [Pooled] Action<KeyValuePair<TKey, TValue>> action, [NotNull] BatchState state)
         {
-            // Other threads already processed all work before this one started. ActiveWorkerCount is already 0
+            // Other threads already processed all work before this one started
             if (state.StartInclusive >= collection.Count)
             {
                 state.Release();
                 return;
             }
-
-            // This thread is now actively processing work items, meaning there might be work in progress
-            Interlocked.Increment(ref state.ActiveWorkerCount);
 
             // Kick off another worker if there's any work left
             if (maxDegreeOfParallelism > 1 && state.StartInclusive + batchSize < collection.Count)
@@ -270,9 +266,9 @@ namespace Stride.Core.Threading
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Interlocked.Exchange(ref state.ExceptionThrown, e);
+                Interlocked.Exchange(ref state.ExceptionThrown, ex);
                 throw;
             }
             finally
@@ -283,15 +279,12 @@ namespace Stride.Core.Threading
 
         private static void Fork<TKey, TValue, TLocal>([NotNull] Dictionary<TKey, TValue> collection, int batchSize, int maxDegreeOfParallelism, [Pooled] Func<TLocal> initializeLocal, [Pooled] Action<KeyValuePair<TKey, TValue>, TLocal> action, [Pooled] Action<TLocal> finalizeLocal, [NotNull] BatchState state)
         {
-            // Other threads already processed all work before this one started. ActiveWorkerCount is already 0
+            // Other threads already processed all work before this one started
             if (state.StartInclusive >= collection.Count)
             {
                 state.Release();
                 return;
             }
-
-            // This thread is now actively processing work items, meaning there might be work in progress
-            Interlocked.Increment(ref state.ActiveWorkerCount);
 
             // Kick off another worker if there's any work left
             if (maxDegreeOfParallelism > 1 && state.StartInclusive + batchSize < collection.Count)
@@ -326,9 +319,9 @@ namespace Stride.Core.Threading
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Interlocked.Exchange(ref state.ExceptionThrown, e);
+                Interlocked.Exchange(ref state.ExceptionThrown, ex);
                 throw;
             }
             finally
@@ -368,15 +361,12 @@ namespace Stride.Core.Threading
 
         private static void Fork(int endExclusive, int batchSize, int maxDegreeOfParallelism, [Pooled] Action<int> action, [NotNull] BatchState state)
         {
-            // Other threads already processed all work before this one started. ActiveWorkerCount is already 0
+            // Other threads already processed all work before this one started
             if (state.StartInclusive >= endExclusive)
             {
                 state.Release();
                 return;
             }
-
-            // This thread is now actively processing work items, meaning there might be work in progress
-            Interlocked.Increment(ref state.ActiveWorkerCount);
 
             // Kick off another worker if there's any work left
             if (maxDegreeOfParallelism > 1 && state.StartInclusive + batchSize < endExclusive)
@@ -422,15 +412,12 @@ namespace Stride.Core.Threading
 
         private static void Fork<TLocal>(int endExclusive, int batchSize, int maxDegreeOfParallelism, [Pooled] Func<TLocal> initializeLocal, [Pooled] Action<int, TLocal> action, [Pooled] Action<TLocal> finalizeLocal, [NotNull] BatchState state)
         {
-            // Other threads already processed all work before this one started. ActiveWorkerCount is already 0
+            // Other threads already processed all work before this one started
             if (state.StartInclusive >= endExclusive)
             {
                 state.Release();
                 return;
             }
-
-            // This thread is now actively processing work items, meaning there might be work in progress
-            Interlocked.Increment(ref state.ActiveWorkerCount);
 
             // Kick off another worker if there's any work left
             if (maxDegreeOfParallelism > 1 && state.StartInclusive + batchSize < endExclusive)
@@ -540,20 +527,20 @@ namespace Stride.Core.Threading
             if (length <= 0)
                 return;
 
-            var state = SortState.Acquire();
+            var state = SortState.Acquire(MaxDegreeOfParallelism);
 
             try
             {
                 // Initial partition
+                Interlocked.Increment(ref state.OpLeft);
                 state.Partitions.Enqueue(new SortRange(index, length - 1));
 
                 // Sort recursively
                 state.AddReference();
-                Sort(collection, MaxDegreeOfParallelism, comparer, state);
+                SortOnThread(collection, comparer, state);
 
                 // Wait for all work to finish
-                if (state.ActiveWorkerCount != 0)
-                    state.Finished.WaitOne();
+                state.WaitCompletion();
             }
             finally
             {
@@ -561,48 +548,59 @@ namespace Stride.Core.Threading
             }
         }
 
-        private static void Sort<T>(T[] collection, int maxDegreeOfParallelism, IComparer<T> comparer, [NotNull] SortState state)
+        private static void SortOnThread<T>(T[] collection, IComparer<T> comparer, [NotNull] SortState state)
         {
             const int sequentialThreshold = 2048;
 
-            // Other threads already processed all work before this one started. ActiveWorkerCount is already 0
-            if (state.Partitions.IsEmpty)
-            {
-                state.Release();
-                return;
-            }
-
-            // This thread is now actively processing work items, meaning there might be work in progress
-            Interlocked.Increment(ref state.ActiveWorkerCount);
-
             var hasChild = false;
-
             try
             {
-                SortRange range;
-                while (state.Partitions.TryDequeue(out range))
+                var sw = new SpinWait();
+                while (Volatile.Read(ref state.OpLeft) != 0)
                 {
+                    if (state.Partitions.TryDequeue(out var range) == false)
+                    {
+                        sw.SpinOnce();
+                        continue;
+                    }
+
                     if (range.Right - range.Left < sequentialThreshold)
                     {
                         // Sort small collections sequentially
                         Array.Sort(collection, range.Left, range.Right - range.Left + 1, comparer);
+                        Interlocked.Decrement(ref state.OpLeft);
                     }
                     else
                     {
                         var pivot = Partition(collection, range.Left, range.Right, comparer);
 
+                        int delta = -1;
                         // Add work items
                         if (pivot - 1 > range.Left)
+                            delta++;
+
+                        if (range.Right > pivot + 1)
+                            delta++;
+
+                        Interlocked.Add(ref state.OpLeft, delta);
+
+                        if (pivot - 1 > range.Left)
                             state.Partitions.Enqueue(new SortRange(range.Left, pivot - 1));
+
 
                         if (range.Right > pivot + 1)
                             state.Partitions.Enqueue(new SortRange(pivot + 1, range.Right));
 
+
                         // Add a new worker if necessary
-                        if (maxDegreeOfParallelism > 1 && !hasChild)
+                        if (!hasChild)
                         {
-                            state.AddReference();
-                            Fork(collection, maxDegreeOfParallelism, comparer, state);
+                            var w = Interlocked.Decrement(ref state.MaxWorkerCount);
+                            if (w >= 0)
+                            {
+                                state.AddReference();
+                                ThreadPool.Instance.QueueWorkItem(() => SortOnThread(collection, comparer, state));
+                            }
                             hasChild = true;
                         }
                     }
@@ -610,18 +608,10 @@ namespace Stride.Core.Threading
             }
             finally
             {
-                state.Release();
-
-                if (Interlocked.Decrement(ref state.ActiveWorkerCount) == 0)
-                {
+                if(Volatile.Read(ref state.OpLeft) == 0)
                     state.Finished.Set();
-                }
+                state.Release();
             }
-        }
-
-        private static void Fork<T>(T[] collection, int maxDegreeOfParallelism, IComparer<T> comparer, SortState state)
-        {
-            ThreadPool.Instance.QueueWorkItem(() => Sort(collection, maxDegreeOfParallelism - 1, comparer, state));
         }
 
         private static int Partition<T>([NotNull] T[] collection, int left, int right, [NotNull] IComparer<T> comparer)
@@ -659,6 +649,7 @@ namespace Stride.Core.Threading
             return mid;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Swap<T>([NotNull] T[] collection, int i, int j)
         {
             var temp = collection[i];
@@ -675,10 +666,7 @@ namespace Stride.Core.Threading
             public readonly ManualResetEvent Finished = new ManualResetEvent(false);
 
             public int StartInclusive;
-
             public int WorkDone;
-
-            public int ActiveWorkerCount;
 
             public Exception ExceptionThrown;
 
@@ -687,11 +675,11 @@ namespace Stride.Core.Threading
             {
                 var state = Pool.Acquire();
                 state.referenceCount = 1;
-                state.ActiveWorkerCount = 0;
                 state.StartInclusive = 0;
                 state.WorkDone = 0;
                 state.ExceptionThrown = null;
                 state.Finished.Reset();
+
                 return state;
             }
 
@@ -707,12 +695,19 @@ namespace Stride.Core.Threading
                     Pool.Release(this);
                 }
             }
+
+            public void WaitCompletion(int end)
+            {
+                // Might as well steal some work instead of just waiting.
+                // Also helps prevent potential deadlocks from badly threaded code
+                while(WorkDone < end && !Finished.WaitOne(0))
+                    ThreadPool.Instance.TryCooperate();
+            }
         }
 
         private struct SortRange
         {
             public readonly int Left;
-
             public readonly int Right;
 
             public SortRange(int left, int right)
@@ -732,15 +727,18 @@ namespace Stride.Core.Threading
 
             public readonly ConcurrentQueue<SortRange> Partitions = new ConcurrentQueue<SortRange>();
 
-            public int ActiveWorkerCount;
+            public int MaxWorkerCount;
+            public int OpLeft;
 
             [NotNull]
-            public static SortState Acquire()
+            public static SortState Acquire(int MaxWorkerCount)
             {
                 var state = Pool.Acquire();
                 state.referenceCount = 1;
-                state.ActiveWorkerCount = 0;
+                state.OpLeft = 0;
+                state.MaxWorkerCount = MaxWorkerCount;
                 state.Finished.Reset();
+
                 return state;
             }
 
@@ -756,6 +754,14 @@ namespace Stride.Core.Threading
                     Pool.Release(this);
                 }
             }
+
+            public void WaitCompletion()
+            {
+                // Might as well steal some work instead of just waiting.
+                // Also helps prevent potential deadlocks from badly threaded code
+                while(Volatile.Read(ref OpLeft) != 0 && !Finished.WaitOne(0))
+                    ThreadPool.Instance.TryCooperate();
+            }
         }
 
         private class DispatcherNode
@@ -764,18 +770,18 @@ namespace Stride.Core.Threading
             public int Count;
             public TimeSpan TotalTime;
         }
-
+#if PROFILING_SCOPES
         private static ConcurrentDictionary<MethodInfo, DispatcherNode> nodes = new ConcurrentDictionary<MethodInfo, DispatcherNode>();
-
+#endif
         private struct ProfilingScope : IDisposable
         {
-#if false
+#if PROFILING_SCOPES
             public Stopwatch Stopwatch;
             public Delegate Action;
 #endif
             public void Dispose()
             {
-#if false
+#if PROFILING_SCOPES
                 Stopwatch.Stop();
                 var elapsed = Stopwatch.Elapsed;
 
@@ -809,7 +815,7 @@ namespace Stride.Core.Threading
         private static ProfilingScope Profile(Delegate action)
         {
             var result = new ProfilingScope();
-#if false
+#if PROFILING_SCOPES
             result.Action = action;
             result.Stopwatch = new Stopwatch();
             result.Stopwatch.Start();

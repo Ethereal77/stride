@@ -7,18 +7,18 @@ using Stride.Core;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// The colorspace used for textures, materials, lighting...
+    ///   Defines the different color spaces that can be used for textures, materials, lighting, etc.
     /// </summary>
     [DataContract("ColorSpace")]
     public enum ColorSpace
     {
         /// <summary>
-        /// Use a linear colorspace.
+        ///   Use a linear colorspace.
         /// </summary>
         Linear,
 
         /// <summary>
-        /// Use a gamma colorspace.
+        ///   Use a gamma colorspace.
         /// </summary>
         Gamma,
     }

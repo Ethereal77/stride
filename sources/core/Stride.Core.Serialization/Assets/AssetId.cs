@@ -4,9 +4,7 @@
 
 using System;
 
-using Stride.Core;
 using Stride.Core.Serialization;
-using Stride.Core.Storage;
 
 namespace Stride.Core.Assets
 {
@@ -14,9 +12,10 @@ namespace Stride.Core.Assets
     [DataSerializer(typeof(AssetId.Serializer))]
     public struct AssetId : IComparable<AssetId>, IEquatable<AssetId>
     {
+        public static readonly AssetId Empty = new AssetId();
+
         private readonly Guid guid;
 
-        public static readonly AssetId Empty = new AssetId();
 
         public AssetId(Guid guid)
         {
@@ -28,6 +27,12 @@ namespace Stride.Core.Assets
             this.guid = new Guid(guid);
         }
 
+        public static AssetId New()
+        {
+            return new AssetId(Guid.NewGuid());
+        }
+
+
         public static explicit operator AssetId(Guid guid)
         {
             return new AssetId(guid);
@@ -38,10 +43,6 @@ namespace Stride.Core.Assets
             return id.guid;
         }
 
-        public static AssetId New()
-        {
-            return new AssetId(Guid.NewGuid());
-        }
 
         /// <summary>
         /// Implements the ==.
@@ -66,48 +67,28 @@ namespace Stride.Core.Assets
         }
 
         /// <inheritdoc/>
-        public bool Equals(AssetId other)
-        {
-            return guid == other.guid;
-        }
+        public bool Equals(AssetId other) => (guid == other.guid);
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is AssetId && Equals((AssetId)obj);
-        }
+        public override bool Equals(object obj) => obj is AssetId id && Equals(id);
 
         /// <inheritdoc/>
-        public override int GetHashCode()
-        {
-            return guid.GetHashCode();
-        }
+        public override int GetHashCode() => guid.GetHashCode();
 
         /// <inheritdoc/>
-        public int CompareTo(AssetId other)
-        {
-            return guid.CompareTo(other.guid);
-        }
+        public int CompareTo(AssetId other) => guid.CompareTo(other.guid);
 
         public static bool TryParse(string input, out AssetId result)
         {
-            Guid guid;
-            var success = Guid.TryParse(input, out guid);
+            var success = Guid.TryParse(input, out Guid guid);
             result = new AssetId(guid);
             return success;
         }
 
-        public static AssetId Parse(string input)
-        {
-            return new AssetId(Guid.Parse(input));
-        }
+        public static AssetId Parse(string input) => new AssetId(Guid.Parse(input));
 
         /// <inheritdoc/>
-        public override string ToString()
-        {
-            return guid.ToString();
-        }
+        public override string ToString() => guid.ToString();
 
         internal class Serializer : DataSerializer<AssetId>
         {

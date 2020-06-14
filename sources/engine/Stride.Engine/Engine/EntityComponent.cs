@@ -11,7 +11,7 @@ using Stride.Core.Serialization;
 namespace Stride.Engine
 {
     /// <summary>
-    /// Base class for <see cref="Entity"/> components.
+    ///   Base class for <see cref="Engine.Entity"/> components.
     /// </summary>
     [DataSerializer(typeof(Serializer))]
     [DataContract(Inherited = true)]
@@ -19,16 +19,14 @@ namespace Stride.Engine
     public abstract class EntityComponent : IIdentifiable
     {
         /// <summary>
-        /// Gets or sets the owner entity.
+        ///   Gets the owner entity.
         /// </summary>
-        /// <value>
-        /// The owner entity.
-        /// </value>
+        /// <value>The owner entity.</value>
         [DataMemberIgnore]
         public Entity Entity { get; internal set; }
 
         /// <summary>
-        /// The unique identifier of this component.
+        ///   Gets or sets the unique identifier of this component.
         /// </summary>
         [DataMember(int.MinValue)]
         [Display(Browsable = false)]
@@ -36,20 +34,12 @@ namespace Stride.Engine
         public Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
-        /// Gets the entity and throws an exception if the entity is null.
+        ///   Gets the owner entity ensuring it is not <c>null</c>.
         /// </summary>
-        /// <value>The entity.</value>
-        /// <exception cref="System.InvalidOperationException">Entity on this instance is null</exception>
+        /// <value>The owner entity.</value>
+        /// <exception cref="InvalidOperationException">The owner <see cref="Entity"/> on this instance is a <c>null</c> reference.</exception>
         [DataMemberIgnore]
-        protected Entity EnsureEntity
-        {
-            get
-            {
-                if (Entity == null)
-                    throw new InvalidOperationException($"Entity on this instance [{GetType().Name}] cannot be null");
-                return Entity;
-            }
-        }
+        protected Entity EnsureEntity => Entity ?? throw new InvalidOperationException($"Entity on this instance [{GetType().Name}] cannot be null.");
 
         internal class Serializer : DataSerializer<EntityComponent>
         {

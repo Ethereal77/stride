@@ -4,17 +4,17 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Graphics;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="Button"/> 
+    ///   Test class for rendering tests on the <see cref="UniformGrid"/>
     /// </summary>
     public class UniformGridTest : UITestGameBase
     {
@@ -47,8 +47,8 @@ namespace Stride.UI.Tests.Regression
 
             var text = new TextBlock
             {
-                Text = "Test Uniform Grid", 
-                Font = Content.Load<SpriteFont>("MicrosoftSansSerif15"), 
+                Text = "Test Uniform Grid",
+                Font = Content.Load<SpriteFont>("MicrosoftSansSerif15"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -70,15 +70,6 @@ namespace Stride.UI.Tests.Regression
         public void RunUniformGridTest()
         {
             RunGameTest(new UniformGridTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new UniformGridTest())
-                game.Run();
         }
     }
 }

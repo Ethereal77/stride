@@ -4,10 +4,10 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -38,9 +38,7 @@ namespace Stride.Graphics.Tests
 ようにするには、3000から4000の漢字を知って
 いれば充分という[3]";
 
-        public TestDynamicSpriteFontJapanese()
-        {
-        }
+        public TestDynamicSpriteFontJapanese() { }
 
         protected override void RegisterTests()
         {
@@ -94,12 +92,6 @@ namespace Stride.Graphics.Tests
             spriteBatch.DrawString(hanSans18, Text, new Vector2(x, y + 5), Color.White);
 
             spriteBatch.End();
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestDynamicSpriteFontJapanese())
-                game.Run();
         }
 
         /// <summary>

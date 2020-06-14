@@ -1,7 +1,7 @@
 <Project>
 
-  <Import Project="..\..\targets\Stride.Core.PreSettings.targets" />
-  <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
+  <Import Project="..\..\targets\Stride.Core.props" />
+  <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="2.0.87" />
 
   <PropertyGroup>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
@@ -19,15 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+  
     <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
   </ItemGroup>
 
-  <Import Project="$(StridePostSettingsTargets)" />
-  <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.54" />
+  <Import Project="$(StrideSdkTargets)" />
+  <Import Project="Sdk.targets" Sdk="MSBuild.Sdk.Extras" Version="2.0.87" />
 
 </Project>

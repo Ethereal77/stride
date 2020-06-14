@@ -12,7 +12,7 @@ using Stride.Core.Mathematics;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// An helper class for manipulating vertex buffers on CPU (Generate new vertex attributes...etc.)
+    ///   Helper class for manipulating vertex buffers on the CPU.
     /// </summary>
     public static class VertexHelper
     {
@@ -35,11 +35,14 @@ namespace Stride.Graphics
         /// This method will copy the value of the first existing TEXCOORD found in the vertex buffer to the newly created TEXCOORDS.</remarks>
         public static unsafe VertexTransformResult GenerateMultiTextureCoordinates<T>(VertexDeclaration vertexDeclaration, T[] vertexBufferData, int maxTexcoord = 9) where T : struct
         {
-            if (vertexDeclaration == null) throw new ArgumentNullException("vertexDeclaration");
-            if (vertexBufferData == null) throw new ArgumentNullException("vertexBufferData");
+            if (vertexDeclaration is null)
+                throw new ArgumentNullException(nameof(vertexDeclaration));
+            if (vertexBufferData is null)
+                throw new ArgumentNullException(nameof(vertexBufferData));
+
             var vertexStride = Utilities.SizeOf<T>();
             var vertexBufferPtr = Interop.Fixed(vertexBufferData);
-            return GenerateMultiTextureCoordinates(vertexDeclaration, (IntPtr)vertexBufferPtr, vertexBufferData.Length, 0, vertexStride, maxTexcoord);
+            return GenerateMultiTextureCoordinates(vertexDeclaration, (IntPtr) vertexBufferPtr, vertexBufferData.Length, 0, vertexStride, maxTexcoord);
         }
 
         /// <summary>
@@ -47,30 +50,36 @@ namespace Stride.Graphics
         /// </summary>
         /// <param name="vertexDeclaration">The vertex declaration.</param>
         /// <param name="vertexBufferData">The vertex buffer data.</param>
-        /// <param name="vertexStride">The vertex stride.</param>
-        /// <param name="maxTexcoord">The maximum texcoord.</param>
+        /// <param name="vertexStride">The vertex stride, in bytes.</param>
+        /// <param name="maxTexcoord">The maximum texture coordinates index.</param>
         /// <returns>A new vertex buffer with additional texture coordinates.</returns>
         /// <exception cref="System.ArgumentNullException">
-        /// vertexDeclaration
-        /// or
-        /// vertexBufferData
+        ///   <paramref name="vertexDeclaration"/> is a <c>null</c> reference;
+        ///   or
+        ///   <paramref name="vertexBufferData"/> is a <c>null</c> reference.
         /// </exception>
-        /// <remarks>The original vertex buffer must contain at least a TEXCOORD[0-9] attribute in order for this method to work.
-        /// This method will copy the value of the first existing TEXCOORD found in the vertex buffer to the newly created TEXCOORDS.</remarks>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///   The length of <paramref name="vertexBufferData"/> doesn't match the expected length with <paramref name="vertexStride"/>.
+        /// </exception>
+        /// <remarks>
+        ///   The original vertex buffer must contain at least a <c>TEXCOORD[0-9]</c> attribute in order for this method to work.
+        ///   This method will copy the value of the first existing <c>TEXCOORD</c> found in the vertex buffer to the newly
+        ///   created <c>TEXCOORD</c>s.
+        /// </remarks>
         public static unsafe VertexTransformResult GenerateMultiTextureCoordinates(VertexDeclaration vertexDeclaration, byte[] vertexBufferData, int vertexStride = 0, int maxTexcoord = 9)
         {
-            if (vertexDeclaration == null) throw new ArgumentNullException("vertexDeclaration");
-            if (vertexBufferData == null) throw new ArgumentNullException("vertexBufferData");
+            if (vertexDeclaration is null)
+                throw new ArgumentNullException(nameof(vertexDeclaration));
+            if (vertexBufferData is null)
+                throw new ArgumentNullException(nameof(vertexBufferData));
+
             var vertexBufferPtr = Interop.Fixed(vertexBufferData);
             if (vertexStride == 0)
-            {
                 vertexStride = vertexDeclaration.VertexStride;
-            }
-            var vertexCount = ((int)(vertexBufferData.Length / vertexStride));
+
+            var vertexCount = vertexBufferData.Length / vertexStride;
             if (vertexBufferData.Length != (vertexCount * vertexStride))
-            {
-                throw new ArgumentOutOfRangeException("vertexBufferData", "The length of vertex buffer [{0}] doesn't match the expected length with the vertex stride [{1}]".ToFormat(vertexBufferData.Length, vertexCount * vertexStride));
-            }
+                throw new ArgumentOutOfRangeException(nameof(vertexBufferData), $"The length of vertex buffer [{vertexBufferData.Length}] doesn't match the expected length with the vertex stride [{vertexCount * vertexStride}].");
 
             return GenerateMultiTextureCoordinates(vertexDeclaration, (IntPtr)vertexBufferPtr, vertexCount, 0, vertexStride, maxTexcoord);
         }
@@ -109,26 +118,29 @@ namespace Stride.Graphics
         /// or
         /// vertexStride;vertexStride must be >= 0
         /// or
-        /// maxTexcoord;maxTexcoord must be > 0
+        /// maxTexcoord;maxTexcoord must be >= 0
         /// </exception>
         /// <exception cref="System.InvalidOperationException">The vertex buffer must contain at least the TEXCOORD</exception>
         /// <remarks>
-        /// The original vertex buffer must contain at least a TEXCOORD[0-9] attribute in order for this method to work. 
+        /// The original vertex buffer must contain at least a TEXCOORD[0-9] attribute in order for this method to work.
         /// This method will copy the value of the first existing TEXCOORD found in the vertex buffer to the newly created TEXCOORDS.
         /// </remarks>
         public static unsafe VertexTransformResult GenerateMultiTextureCoordinates(VertexDeclaration vertexDeclaration, IntPtr vertexBufferData, int vertexCount, int vertexOffset, int vertexStride, int maxTexcoord = 9)
         {
-            if (vertexDeclaration == null) throw new ArgumentNullException("vertexDeclaration");
-            if (vertexBufferData == IntPtr.Zero) throw new ArgumentNullException("vertexBufferData");
-            if (vertexCount <= 0) throw new ArgumentOutOfRangeException("vertexCount", "vertexCount must be > 0");
-            if (vertexStride < 0) throw new ArgumentOutOfRangeException("vertexStride", "vertexStride must be >= 0");
-            if (maxTexcoord < 0) throw new ArgumentOutOfRangeException("maxTexcoord", "maxTexcoord must be > 0");
+            if (vertexDeclaration is null)
+                throw new ArgumentNullException(nameof(vertexDeclaration));
+            if (vertexBufferData == IntPtr.Zero)
+                throw new ArgumentNullException(nameof(vertexBufferData));
+            if (vertexCount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(vertexCount), "vertexCount must be > 0.");
+            if (vertexStride < 0)
+                throw new ArgumentOutOfRangeException(nameof(vertexStride), "vertexStride must be >= 0.");
+            if (maxTexcoord < 0)
+                throw new ArgumentOutOfRangeException(nameof(maxTexcoord), "maxTexcoord must be >= 0.");
 
             // Get the stride from the vertex declaration if necessary
             if (vertexStride == 0)
-            {
                 vertexStride = vertexDeclaration.VertexStride;
-            }
 
             // TODO: Usage index in key
             var offsetMapping = vertexDeclaration
@@ -162,9 +174,7 @@ namespace Stride.Graphics
             }
 
             if (vertexUVOffset < 0)
-            {
-                throw new InvalidOperationException("The vertex buffer must contain at least the TEXCOORD");
-            }
+                throw new InvalidOperationException("The vertex buffer must contain at least the TEXCOORD.");
 
             var newVertexStride = vertexStride + newVertexElements.Count * newUvSize;
             var newVertexBuffer = new byte[newVertexStride * vertexCount];
@@ -205,9 +215,12 @@ namespace Stride.Graphics
         /// <returns>A new vertex buffer with its new layout.</returns>
         public static unsafe VertexTransformResult GenerateTangentBinormal<T>(VertexDeclaration vertexDeclaration, T[] vertexBufferData, int[] indexBuffer) where T : struct
         {
-            if (vertexDeclaration == null) throw new ArgumentNullException("vertexDeclaration");
-            if (vertexBufferData == null) throw new ArgumentNullException("vertexBufferData");
-            if (typeof(T) == typeof(byte)) throw new ArgumentOutOfRangeException("T", "Type vertex can't be a byte");
+            if (vertexDeclaration is null)
+                throw new ArgumentNullException(nameof(vertexDeclaration));
+            if (vertexBufferData is null)
+                throw new ArgumentNullException(nameof(vertexBufferData));
+            if (typeof(T) == typeof(byte))
+                throw new ArgumentOutOfRangeException("T", "Type vertex can't be a byte");
 
             var vertexStride = Utilities.SizeOf<T>();
             var vertexBufferPtr = Interop.Fixed(vertexBufferData);
@@ -231,17 +244,20 @@ namespace Stride.Graphics
         /// <returns>A new vertex buffer with its new layout.</returns>
         public static unsafe VertexTransformResult GenerateTangentBinormal(VertexDeclaration vertexDeclaration, IntPtr vertexBufferData, int vertexCount, int vertexOffset, int vertexStride, IntPtr indexData, bool is32BitIndex, int indexCountArg)
         {
-            if (vertexDeclaration == null) throw new ArgumentNullException("vertexDeclaration");
-            if (vertexBufferData == IntPtr.Zero) throw new ArgumentNullException("vertexBufferData");
-            if (vertexCount <= 0) throw new ArgumentOutOfRangeException("vertexCount", "vertexCount must be > 0");
-            if (vertexStride < 0) throw new ArgumentOutOfRangeException("vertexStride", "vertexStride must be >= 0");
-            if (indexData != IntPtr.Zero && indexCountArg < 0) throw new ArgumentOutOfRangeException("indexCountArg", "indexCountArg must be >= 0");
+            if (vertexDeclaration is null)
+                throw new ArgumentNullException(nameof(vertexDeclaration));
+            if (vertexBufferData == IntPtr.Zero)
+                throw new ArgumentNullException(nameof(vertexBufferData));
+            if (vertexCount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(vertexCount), "vertexCount must be > 0.");
+            if (vertexStride < 0)
+                throw new ArgumentOutOfRangeException(nameof(vertexStride), "vertexStride must be >= 0.");
+            if (indexData != IntPtr.Zero && indexCountArg < 0)
+                throw new ArgumentOutOfRangeException(nameof(indexCountArg), "indexCountArg must be >= 0.");
 
             // Get the stride from the vertex declaration if necessary
             if (vertexStride == 0)
-            {
                 vertexStride = vertexDeclaration.VertexStride;
-            }
 
             var indexBufferBinding = indexData;
 
@@ -310,14 +326,14 @@ namespace Stride.Graphics
                     int vertexOffset3 = index3 * oldVertexStride;
 
                     // Get positions
-                    var position1 = (Vector3*)&oldBuffer[vertexOffset1 + positionOffset];
-                    var position2 = (Vector3*)&oldBuffer[vertexOffset2 + positionOffset];
-                    var position3 = (Vector3*)&oldBuffer[vertexOffset3 + positionOffset];
+                    var position1 = (Vector3*) &oldBuffer[vertexOffset1 + positionOffset];
+                    var position2 = (Vector3*) &oldBuffer[vertexOffset2 + positionOffset];
+                    var position3 = (Vector3*) &oldBuffer[vertexOffset3 + positionOffset];
 
                     // Get texture coordinates
-                    var uv1 = (Vector2*)&oldBuffer[vertexOffset1 + uvOffset];
-                    var uv2 = (Vector2*)&oldBuffer[vertexOffset2 + uvOffset];
-                    var uv3 = (Vector2*)&oldBuffer[vertexOffset3 + uvOffset];
+                    var uv1 = (Vector2*) &oldBuffer[vertexOffset1 + uvOffset];
+                    var uv2 = (Vector2*) &oldBuffer[vertexOffset2 + uvOffset];
+                    var uv3 = (Vector2*) &oldBuffer[vertexOffset3 + uvOffset];
 
                     // Calculate position and UV vectors from vertex 1 to vertex 2 and 3
                     var edge1 = *position2 - *position1;
@@ -363,7 +379,7 @@ namespace Stride.Graphics
                     // Gram-Schmidt orthogonalize
                     var newTangentUnormalized = tangent - normal * Vector3.Dot(normal, tangent);
                     var length = newTangentUnormalized.Length();
-                    
+
                     // Workaround to handle degenerated case
                     // TODO: We need to understand more how we can handle this more accurately
                     if (MathUtil.IsZero(length))
@@ -394,7 +410,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Result of a vertex buffer transform.
+        ///   Result of a vertex buffer transform.
         /// </summary>
         public struct VertexTransformResult
         {

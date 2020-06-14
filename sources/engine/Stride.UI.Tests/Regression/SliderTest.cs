@@ -4,8 +4,6 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -14,10 +12,12 @@ using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="Slider"/> 
+    ///   Test class for rendering tests on the <see cref="Slider"/>.
     /// </summary>
     public class SliderTest : UITestGameBase
     {
@@ -220,15 +220,6 @@ namespace Stride.UI.Tests.Regression
         public void RunSliderTest()
         {
             RunGameTest(new SliderTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new SliderTest())
-                game.Run();
         }
     }
 }

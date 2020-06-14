@@ -8,12 +8,19 @@ using Stride.Core;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Base factory for all Graphics resources.
+    ///   Base factory for all graphics resources.
     /// </summary>
     public class GraphicsResourceFactoryBase : ComponentBase
     {
+        /// <summary>
+        ///   The graphics device this factory is dependent on.
+        /// </summary>
         protected internal GraphicsDevice GraphicsDevice { get; set; }
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="GraphicsResourceFactoryBase"/> class.
+        /// </summary>
+        /// <param name="device">The graphics device this factory is dependent on.</param>
         protected internal GraphicsResourceFactoryBase(GraphicsDevice device)
         {
             GraphicsDevice = device;

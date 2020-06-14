@@ -4,13 +4,13 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Diagnostics;
 using Stride.Rendering;
 using Stride.Rendering.Images;
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -95,12 +95,6 @@ namespace Stride.Graphics.Tests
             postProcessingEffects.SetInput(1, null); // No depth
             postProcessingEffects.SetOutput(GraphicsContext.CommandList.RenderTarget);
             postProcessingEffects.Draw(context);
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestImageEffect())
-                game.Run();
         }
 
         /// <summary>

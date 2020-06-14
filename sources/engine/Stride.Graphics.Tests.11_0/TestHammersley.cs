@@ -5,8 +5,6 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
@@ -14,10 +12,12 @@ using Stride.Rendering.ComputeEffect;
 using Stride.Games;
 using Stride.Input;
 
+using Xunit;
+
 namespace Stride.Graphics.Tests
 {
     /// <summary>
-    /// Test class for Hammersley sampling shader
+    ///   Test class for Hammersley sampling shader.
     /// </summary>
     public class TestHammersley : GraphicTestGameBase
     {
@@ -76,12 +76,6 @@ namespace Stride.Graphics.Tests
             GraphicsContext.DrawTexture(output);
 
             base.Draw(gameTime);
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestHammersley())
-                game.Run();
         }
 
         /// <summary>

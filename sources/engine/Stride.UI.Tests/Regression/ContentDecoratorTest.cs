@@ -4,8 +4,6 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -13,10 +11,12 @@ using Stride.Input;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ContentDecorator"/> 
+    ///   Test class for rendering tests on the <see cref="ContentDecorator"/>.
     /// </summary>
     public class ContentDecoratorTest : UITestGameBase
     {
@@ -29,7 +29,7 @@ namespace Stride.UI.Tests.Regression
         protected override async Task LoadContent()
         {
             await base.LoadContent();
-            
+
             textBlock = new TextBlock
             {
                 TextColor = Color.Black,
@@ -40,7 +40,7 @@ namespace Stride.UI.Tests.Regression
 
             var decorator = new ContentDecorator
             {
-                Content = textBlock, 
+                Content = textBlock,
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 BackgroundImage = (SpriteFromTexture)new Sprite(Content.Load<Texture>("DumbWhite"))
@@ -89,15 +89,6 @@ namespace Stride.UI.Tests.Regression
         public void RunContentDecoratorTest()
         {
             RunGameTest(new ContentDecoratorTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ContentDecoratorTest())
-                game.Run();
         }
     }
 }

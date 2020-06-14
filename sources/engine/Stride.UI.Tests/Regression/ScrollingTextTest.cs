@@ -5,8 +5,6 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -14,10 +12,12 @@ using Stride.Input;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="Button"/> 
+    ///   Test class for rendering tests on the <see cref="ScrollingText"/>.
     /// </summary>
     public class ScrollingTextTest : UITestGameBase
     {
@@ -25,14 +25,10 @@ namespace Stride.UI.Tests.Regression
 
         private ContentDecorator decorator;
 
-        public bool IsAutomatic;
-
         private const string InitialText = "This is a scrolling text test. ";
         private const string TextWithBlanks = "  This is another test with a lot of blanks                             .";
 
-        public ScrollingTextTest()
-        {
-        }
+        public ScrollingTextTest() { }
 
         protected override async Task LoadContent()
         {
@@ -41,19 +37,19 @@ namespace Stride.UI.Tests.Regression
 
             textScroller = new ScrollingText
             {
-                Name = "Text Scroller", 
-                DesiredCharacterNumber = 25, 
+                Name = "Text Scroller",
+                DesiredCharacterNumber = 25,
                 Text = InitialText,
                 TextColor = Color.Black,
-                Font = Content.Load<SpriteFont>("CourierNew12"), 
-                IsEnabled = IsAutomatic,
+                Font = Content.Load<SpriteFont>("CourierNew12"),
+                IsEnabled = ForceInteractiveMode,
                 SynchronousCharacterGeneration = true
             };
-            
+
             decorator = new ContentDecorator
             {
-                Name = "ContentDecorator", 
-                Content = textScroller, 
+                Name = "ContentDecorator",
+                Content = textScroller,
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 BackgroundImage = (SpriteFromTexture)new Sprite(Content.Load<Texture>("DumbWhite"))
@@ -102,7 +98,7 @@ namespace Stride.UI.Tests.Regression
             decorator.Width = 500;
             decorator.Height = 100;
         }
-        
+
         private void UpdateScrollingText(TimeSpan elapsedTime)
         {
             textScroller.IsEnabled = true;
@@ -137,6 +133,7 @@ namespace Stride.UI.Tests.Regression
         private void Draw3()
         {
             // test higher speed (result should be same as Draw1)
+            textScroller.Text = string.Empty; // force full reset
             textScroller.Text = InitialText;
             textScroller.ScrollingSpeed = 2 * textScroller.ScrollingSpeed;
             UpdateScrollingText(new TimeSpan(0, 0, 0, 2, 750));
@@ -164,18 +161,6 @@ namespace Stride.UI.Tests.Regression
         public void RunScrollingTextTest()
         {
             RunGameTest(new ScrollingTextTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ScrollingTextTest())
-            {
-                game.IsAutomatic = true;
-                game.Run();
-            }
         }
     }
 }

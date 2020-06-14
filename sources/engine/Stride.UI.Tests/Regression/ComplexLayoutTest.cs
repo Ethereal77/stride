@@ -5,8 +5,6 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -15,10 +13,12 @@ using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ImageElement"/> 
+    ///   Test class for rendering tests on complex layouts.
     /// </summary>
     public class ComplexLayoutTest : UITestGameBase
     {
@@ -30,11 +30,7 @@ namespace Stride.UI.Tests.Regression
 
         private ScrollingText scrollingText;
 
-        public bool IsUpdateAutomatic;
-
-        public ComplexLayoutTest()
-        {
-        }
+        public ComplexLayoutTest() { }
 
         protected override async Task LoadContent()
         {
@@ -104,7 +100,7 @@ namespace Stride.UI.Tests.Regression
             };
             ApplyToggleButtonBlockDefaultStyle(toggle);
 
-            scrollingText = new ScrollingText { Font = Content.Load<SpriteFont>("MicrosoftSansSerif15"), Text = "<<<--- Scrolling text in a button ", IsEnabled = IsUpdateAutomatic };
+            scrollingText = new ScrollingText { Font = Content.Load<SpriteFont>("MicrosoftSansSerif15"), Text = "<<<--- Scrolling text in a button ", IsEnabled = ForceInteractiveMode };
             ApplyScrollingTextDefaultStyle(scrollingText);
             var button7 = new Button { Margin = Thickness.UniformRectangle(5), Content = scrollingText };
             ApplyButtonDefaultStyle(button7);
@@ -232,18 +228,6 @@ namespace Stride.UI.Tests.Regression
         public void RunComplexLayoutTest()
         {
             RunGameTest(new ComplexLayoutTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ComplexLayoutTest())
-            {
-                game.IsUpdateAutomatic = true;
-                game.Run();
-            }
         }
     }
 }

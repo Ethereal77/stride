@@ -13,7 +13,7 @@ using Stride.Graphics;
 namespace Stride.Games
 {
     /// <summary>
-    /// Manages the <see cref="GraphicsDevice"/> lifecycle.
+    ///   Represents a class that manages the lifecycle of a <see cref="Graphics.GraphicsDevice"/>.
     /// </summary>
     public class GraphicsDeviceManager : ComponentBase, IGraphicsDeviceManager, IGraphicsDeviceService
     {
@@ -121,7 +121,7 @@ namespace Stride.Games
         {
             game.Window.ClientSizeChanged += Window_ClientSizeChanged;
             game.Window.OrientationChanged += Window_OrientationChanged;
-            game.Window.FullscreenToggle += WindowOnFullscreenToggle;
+            game.Window.FullscreenChanged += Window_FullscreenChanged;
         }
 
         #endregion
@@ -149,7 +149,7 @@ namespace Stride.Games
         /// </summary>
         /// <value>The graphics profile.</value>
         /// <remarks>
-        /// By default, the PreferredGraphicsProfile is set to { <see cref="GraphicsProfile.Level_11_2"/>, 
+        /// By default, the PreferredGraphicsProfile is set to { <see cref="GraphicsProfile.Level_11_2"/>,
         /// <see cref="GraphicsProfile.Level_11_1"/>
         /// <see cref="GraphicsProfile.Level_11_0"/>}
         /// </remarks>
@@ -159,7 +159,7 @@ namespace Stride.Games
         /// Gets or sets the shader graphics profile that will be used to compile shaders. See remarks.
         /// </summary>
         /// <value>The shader graphics profile.</value>
-        /// <remarks>If this property is not set, the profile used to compile the shader will be taken from the <see cref="GraphicsDevice"/> 
+        /// <remarks>If this property is not set, the profile used to compile the shader will be taken from the <see cref="GraphicsDevice"/>
         /// based on the list provided by <see cref="PreferredGraphicsProfile"/></remarks>
         public GraphicsProfile? ShaderProfile { get; set; }
 
@@ -738,7 +738,7 @@ namespace Stride.Games
                         if (IsFullScreen)
                         {
                             if (((PreferredBackBufferWidth == 0) || (PreferredBackBufferHeight == 0)) &&
-                                PreferredFullScreenOutputIndex < leftAdapter.Outputs.Length && 
+                                PreferredFullScreenOutputIndex < leftAdapter.Outputs.Length &&
                                 PreferredFullScreenOutputIndex < rightAdapter.Outputs.Length)
                             {
                                 // assume we got here only adapters that have the needed number of outputs:
@@ -797,7 +797,7 @@ namespace Stride.Games
             {
                 foreach (var graphicsProfileValue in graphicsProfiles)
                 {
-                    var graphicsProfile = (GraphicsProfile)graphicsProfileValue;
+                    var graphicsProfile = (GraphicsProfile) graphicsProfileValue;
                     if (graphicsProfile > availableProfile && graphicsAdapter.IsProfileSupported(graphicsProfile))
                         availableProfile = graphicsProfile;
                 }
@@ -826,7 +826,7 @@ namespace Stride.Games
 
             return int.MaxValue;
         }
-        
+
         private int CalculateFormatSize(PixelFormat format)
         {
             switch (format)
@@ -855,17 +855,17 @@ namespace Stride.Games
         {
             DeviceDisposing?.Invoke(sender, args);
         }
-        
+
         protected virtual void OnDeviceReset(object sender, EventArgs args)
         {
             DeviceReset?.Invoke(sender, args);
         }
-        
+
         protected virtual void OnDeviceResetting(object sender, EventArgs args)
         {
             DeviceResetting?.Invoke(sender, args);
         }
-        
+
         protected virtual void OnPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs args)
         {
             PreparingDeviceSettings?.Invoke(sender, args);
@@ -892,8 +892,8 @@ namespace Stride.Games
                 if ((game.Window.ClientBounds.Height > game.Window.ClientBounds.Width && preferredBackBufferWidth > preferredBackBufferHeight) ||
                     (game.Window.ClientBounds.Width > game.Window.ClientBounds.Height && preferredBackBufferHeight > preferredBackBufferWidth))
                 {
-                    //Client size and Back Buffer size are different things
-                    //in this case all we care is if orientation changed, if so we swap width and height
+                    // Client size and Back Buffer size are different things
+                    // in this case all we care is if orientation changed, if so we swap width and height
                     var w = PreferredBackBufferWidth;
                     PreferredBackBufferWidth = PreferredBackBufferHeight;
                     PreferredBackBufferHeight = w;
@@ -902,10 +902,24 @@ namespace Stride.Games
             }
         }
 
-        private void WindowOnFullscreenToggle(object sender, EventArgs eventArgs)
+        private void Window_FullscreenChanged(object sender, EventArgs eventArgs)
         {
-            IsFullScreen = !IsFullScreen;
-            ApplyChanges();
+            if (sender is GameWindow window)
+            {
+                IsFullScreen = window.IsFullscreen;
+                if (IsFullScreen)
+                {
+                    PreferredBackBufferWidth = window.PreferredFullscreenSize.X;
+                    PreferredBackBufferHeight = window.PreferredFullscreenSize.Y;
+                }
+                else
+                {
+                    PreferredBackBufferWidth = window.PreferredWindowedSize.X;
+                    PreferredBackBufferHeight = window.PreferredWindowedSize.Y;
+                }
+
+                ApplyChanges();
+            }
         }
 
         private void CreateDevice(GraphicsDeviceInformation newInfo)
@@ -975,7 +989,7 @@ namespace Stride.Games
                     var width = game.Window.ClientBounds.Width;
                     var height = game.Window.ClientBounds.Height;
 
-                    //If the orientation is free to be changed from portrait to landscape we actually need this check now, 
+                    //If the orientation is free to be changed from portrait to landscape we actually need this check now,
                     //it is mostly useful only at initialization actually tho because Window_OrientationChanged does the same logic on runtime change
                     if (game.Window.CurrentOrientation != currentWindowOrientation)
                     {
@@ -1067,6 +1081,7 @@ namespace Stride.Games
                         if (isBeginScreenDeviceChange)
                         {
                             game.Window.EndScreenDeviceChange(width, height);
+                            game.Window.SetIsReallyFullscreen(isReallyFullScreen);
                         }
 
                         currentWindowOrientation = game.Window.CurrentOrientation;

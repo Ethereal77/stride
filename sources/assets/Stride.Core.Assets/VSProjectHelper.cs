@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 using Microsoft.Build.Evaluation;
@@ -15,7 +14,6 @@ using Microsoft.Build.Framework;
 
 using NuGet.ProjectModel;
 
-using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
 
@@ -41,38 +39,42 @@ namespace Stride.Core.Assets
 
         private static BuildManager mainBuildManager = new BuildManager();
 
-        public static Guid GetProjectGuid(Microsoft.Build.Evaluation.Project project)
+        public static Guid GetProjectGuid(Project project)
         {
             if (project == null) throw new ArgumentNullException("project");
             return Guid.Parse(project.GetPropertyValue("ProjectGuid"));
         }
 
-        public static PlatformType? GetPlatformTypeFromProject(Microsoft.Build.Evaluation.Project project)
+        public static PlatformType? GetPlatformTypeFromProject(Project project)
         {
             return GetEnumFromProperty<PlatformType>(project, StridePlatform);
         }
 
-        public static ProjectType? GetProjectTypeFromProject(Microsoft.Build.Evaluation.Project project)
+        public static ProjectType? GetProjectTypeFromProject(Project project)
         {
             return GetEnumFromProperty<ProjectType>(project, StrideProjectType);
         }
 
-        private static T? GetEnumFromProperty<T>(Microsoft.Build.Evaluation.Project project, string propertyName) where T : struct
+        private static T? GetEnumFromProperty<T>(Project project, string propertyName) where T : struct
         {
-            if (project == null) throw new ArgumentNullException("project");
-            if (propertyName == null) throw new ArgumentNullException("propertyName");
+            if (project is null)
+                throw new ArgumentNullException(nameof(project));
+            if (propertyName is null)
+                 throw new ArgumentNullException(nameof(propertyName));
+
             var value = project.GetPropertyValue(propertyName);
             if (string.IsNullOrEmpty(value))
-            {
                 return null;
-            }
-            return (T)Enum.Parse(typeof(T), value);
+
+            return (T) Enum.Parse(typeof(T), value);
         }
 
-        public static string GetOrCompileProjectAssembly(string solutionFullPath, string fullProjectLocation, ILogger logger, string targets, bool autoCompileProject, string configuration, string platform = "AnyCPU", Dictionary<string, string> extraProperties = null, bool onlyErrors = false, BuildRequestDataFlags flags = BuildRequestDataFlags.None)
+        public static string GetOrCompileProjectAssembly(string fullProjectLocation, ILogger logger, string targets, bool autoCompileProject, string configuration, string platform = "AnyCPU", Dictionary<string, string> extraProperties = null, bool onlyErrors = false, BuildRequestDataFlags flags = BuildRequestDataFlags.None)
         {
-            if (fullProjectLocation == null) throw new ArgumentNullException("fullProjectLocation");
-            if (logger == null) throw new ArgumentNullException("logger");
+            if (fullProjectLocation is null)
+                throw new ArgumentNullException(nameof(fullProjectLocation));
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
 
             var project = LoadProject(fullProjectLocation, configuration, platform, extraProperties);
             var assemblyPath = project.GetPropertyValue("TargetPath");
@@ -84,7 +86,7 @@ namespace Stride.Core.Assets
                     {
                         var asyncBuild = new CancellableAsyncBuild(project, assemblyPath);
                         asyncBuild.Build(project, targets, flags, new LoggerRedirect(logger, onlyErrors));
-                        var buildResult = asyncBuild.BuildTask.Result;
+                        asyncBuild.BuildTask.Wait();
                     }
                 }
             }
@@ -97,10 +99,12 @@ namespace Stride.Core.Assets
             return assemblyPath;
         }
 
-        public static ICancellableAsyncBuild CompileProjectAssemblyAsync(string solutionFullPath, string fullProjectLocation, ILogger logger, string targets = "Build", string configuration = "Debug", string platform = "AnyCPU", Dictionary<string, string> extraProperties = null, BuildRequestDataFlags flags = BuildRequestDataFlags.None)
+        public static ICancellableAsyncBuild CompileProjectAssemblyAsync(string fullProjectLocation, ILogger logger, string targets = "Build", string configuration = "Debug", string platform = "AnyCPU", Dictionary<string, string> extraProperties = null, BuildRequestDataFlags flags = BuildRequestDataFlags.None)
         {
-            if (fullProjectLocation == null) throw new ArgumentNullException("fullProjectLocation");
-            if (logger == null) throw new ArgumentNullException("logger");
+            if (fullProjectLocation is null)
+                throw new ArgumentNullException(nameof(fullProjectLocation));
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
 
             var project = LoadProject(fullProjectLocation, configuration, platform, extraProperties);
             var assemblyPath = project.GetPropertyValue("TargetPath");
@@ -190,14 +194,16 @@ namespace Stride.Core.Assets
             });
         }
 
-        public static Microsoft.Build.Evaluation.Project LoadProject(string fullProjectLocation, string configuration = "Debug", string platform = "AnyCPU", Dictionary<string, string> extraProperties = null)
+        public static Project LoadProject(string fullProjectLocation, string configuration = "Debug", string platform = "AnyCPU", Dictionary<string, string> extraProperties = null)
         {
             configuration = configuration ?? "Debug";
             platform = platform ?? "AnyCPU";
 
-            var globalProperties = new Dictionary<string, string>();
-            globalProperties["Configuration"] = configuration;
-            globalProperties["Platform"] = platform;
+            var globalProperties = new Dictionary<string, string>
+            {
+                ["Configuration"] = configuration,
+                ["Platform"] = platform
+            };
 
             if (extraProperties != null)
             {
@@ -211,22 +217,31 @@ namespace Stride.Core.Assets
             projectCollection.LoadProject(fullProjectLocation);
             var project = projectCollection.LoadedProjects.First();
 
-            // Support for cross-targeting (TargetFrameworks)
-            var assemblyPath = project.GetPropertyValue("TargetPath");
-            var targetFramework = project.GetPropertyValue("TargetFramework");
-            var targetFrameworks = project.GetPropertyValue("TargetFrameworks");
-            if (string.IsNullOrWhiteSpace(assemblyPath) && string.IsNullOrWhiteSpace(targetFramework) && !string.IsNullOrWhiteSpace(targetFrameworks))
+            // Support for cross-targeting (TargetFrameworks and RuntimeIdentifiers)
+            // Reload project with first TargetFramework and/or RuntimeIdentifier
+            void TryReloadWithFirstValue(string valuePropertyName, string valuesPropertyName)
             {
-                // We might be in a cross-targeting scenario
-                // Reload project with first target framework
-                project.ProjectCollection.UnloadAllProjects();
-                project.ProjectCollection.Dispose();
+                if (globalProperties.ContainsKey(valuePropertyName))
+                    return;
 
-                globalProperties.Add("TargetFramework", targetFrameworks.Split(';').First());
-                projectCollection = new Microsoft.Build.Evaluation.ProjectCollection(globalProperties);
-                projectCollection.LoadProject(fullProjectLocation);
-                project = projectCollection.LoadedProjects.First();
+                var propertyValue = project.GetPropertyValue(valuePropertyName);
+                var propertyValues = project.GetPropertyValue(valuesPropertyName);
+                if (string.IsNullOrWhiteSpace(propertyValue) && !string.IsNullOrWhiteSpace(propertyValues))
+                {
+                    project.ProjectCollection.UnloadAllProjects();
+                    project.ProjectCollection.Dispose();
+
+                    globalProperties.Add(valuePropertyName, propertyValues.Split(';').First());
+                    projectCollection = new Microsoft.Build.Evaluation.ProjectCollection(globalProperties);
+                    projectCollection.LoadProject(fullProjectLocation);
+                    project = projectCollection.LoadedProjects.First();
+                }
             }
+
+            // We need to go through them one by one (because a MSBuild Condition might depend on previous step)
+            TryReloadWithFirstValue("TargetFramework", "TargetFrameworks");
+            TryReloadWithFirstValue("RuntimeIdentifier", "RuntimeIdentifiers");
+            TryReloadWithFirstValue("StrideGraphicsApi", "StrideGraphicsApis");
 
             return project;
         }
@@ -238,14 +253,18 @@ namespace Stride.Core.Assets
 
             public LoggerRedirect(ILogger logger, bool onlyErrors = false)
             {
-                if (logger == null) throw new ArgumentNullException("logger");
+                if (logger is null)
+                    throw new ArgumentNullException(nameof(logger));
+
                 this.logger = logger;
                 this.onlyErrors = onlyErrors;
             }
 
-            public override void Initialize(Microsoft.Build.Framework.IEventSource eventSource)
+            public override void Initialize(IEventSource eventSource)
             {
-                if (eventSource == null) throw new ArgumentNullException("eventSource");
+                if (eventSource is null)
+                    throw new ArgumentNullException(nameof(eventSource));
+
                 if (!onlyErrors)
                 {
                     eventSource.MessageRaised += MessageRaised;
@@ -256,8 +275,7 @@ namespace Stride.Core.Assets
 
             void MessageRaised(object sender, BuildMessageEventArgs e)
             {
-                var loggerResult = logger as LoggerResult;
-                if (loggerResult != null)
+                if (logger is LoggerResult loggerResult)
                 {
                     loggerResult.Module = $"{e.File}({e.LineNumber},{e.ColumnNumber})";
                 }
@@ -281,8 +299,7 @@ namespace Stride.Core.Assets
 
             void WarningRaised(object sender, BuildWarningEventArgs e)
             {
-                var loggerResult = logger as LoggerResult;
-                if (loggerResult != null)
+                if (logger is LoggerResult loggerResult)
                 {
                     loggerResult.Module = string.Format("{0}({1},{2})", e.File, e.LineNumber, e.ColumnNumber);
                 }
@@ -291,8 +308,7 @@ namespace Stride.Core.Assets
 
             void ErrorRaised(object sender, Microsoft.Build.Framework.BuildErrorEventArgs e)
             {
-                var loggerResult = logger as LoggerResult;
-                if (loggerResult != null)
+                if (logger is LoggerResult loggerResult)
                 {
                     loggerResult.Module = string.Format("{0}({1},{2})", e.File, e.LineNumber, e.ColumnNumber);
                 }
@@ -321,10 +337,12 @@ namespace Stride.Core.Assets
 
             public bool IsCanceled { get; private set; }
 
-            internal void Build(Microsoft.Build.Evaluation.Project project, string targets, BuildRequestDataFlags flags, Microsoft.Build.Utilities.Logger logger)
+            internal void Build(Project project, string targets, BuildRequestDataFlags flags, Microsoft.Build.Utilities.Logger logger)
             {
-                if (project == null) throw new ArgumentNullException("project");
-                if (logger == null) throw new ArgumentNullException("logger");
+                if (project is null)
+                    throw new ArgumentNullException(nameof(project));
+                if (logger is null)
+                    throw new ArgumentNullException(nameof(logger));
 
                 // Make sure that we are using the project collection from the loaded project, otherwise we are getting
                 // weird cache behavior with the MSBuild system

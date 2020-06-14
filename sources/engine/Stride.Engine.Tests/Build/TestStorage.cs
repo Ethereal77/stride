@@ -2,15 +2,14 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Stride.Core;
 using System;
 using System.IO;
 using System.Text;
 
-using Xunit;
-
 using Stride.Core.Storage;
 using Stride.Core.IO;
+
+using Xunit;
 
 namespace Stride.Core.Tests.Build
 {

@@ -54,12 +54,13 @@ namespace Stride.GameStudio
 
         public GameStudioWindow(EditorViewModel editor)
         {
-            if (editor == null)
+            if (editor is null)
                 throw new ArgumentNullException(nameof(editor));
-            if (editor.Session == null)
+            if (editor.Session is null)
                 throw new ArgumentException($@"A valid session must exist before creating a {nameof(GameStudioWindow)}", nameof(editor));
 
-            DataContext = editor; // Must be set before calling InitializeComponent
+            // Must be set before calling InitializeComponent
+            DataContext = editor;
 
             dockingLayout = new DockingLayoutManager(this, editor.Session);
             assetEditorsManager = new AssetEditorsManager(dockingLayout, editor.Session);
@@ -72,6 +73,7 @@ namespace Stride.GameStudio
             EditorSettings.ResetEditorLayout.Command = new AnonymousTaskCommand(editor.ServiceProvider, ResetAllLayouts);
 
             InitializeComponent();
+
             Application.Current.Activated += (s, e) => editor.ServiceProvider.Get<IEditorDialogService>().ShowDelayedNotifications();
             Loaded += GameStudioLoaded;
 
@@ -224,6 +226,8 @@ namespace Stride.GameStudio
             var previousWorkAreaHeight = GameStudioInternalSettings.WorkAreaHeight.GetValue();
             var wasWindowMaximized = GameStudioInternalSettings.WindowMaximized.GetValue();
             var workArea = this.GetWorkArea();
+
+            AdjustMaxSizeWithTaskbar();
 
             if (wasWindowMaximized || previousWorkAreaWidth > (int)workArea.Width || previousWorkAreaHeight > (int)workArea.Height)
             {
@@ -388,16 +392,16 @@ namespace Stride.GameStudio
             if (gameSettingsAsset == null)
                 return;
 
-            var defaultScene = ((Assets.GameSettingsAsset)gameSettingsAsset?.Asset)?.DefaultScene;
-            if (defaultScene == null)
+            var defaultScene = ((Assets.GameSettingsAsset) gameSettingsAsset?.Asset)?.DefaultScene;
+            if (defaultScene is null)
                 return;
 
             var defaultSceneReference = AttachedReferenceManager.GetAttachedReference(defaultScene);
-            if (defaultSceneReference == null)
+            if (defaultSceneReference is null)
                 return;
 
             var asset = session.GetAssetById(defaultSceneReference.Id);
-            if (asset == null)
+            if (asset is null)
                 return;
 
             Editor.Session.ActiveAssetView.SelectAssets(asset.Yield());
@@ -407,7 +411,7 @@ namespace Stride.GameStudio
 
         private void OpenDebugWindow()
         {
-            if (debugWindow == null)
+            if (debugWindow is null)
             {
                 debugWindow = new DebugWindow();
                 debugWindow.Show();
@@ -467,6 +471,23 @@ namespace Stride.GameStudio
         private void EditorWindowPreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             ((EditorViewModel)DataContext).Status.DiscardStatus();
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            base.OnStateChanged(e);
+            // To handle window changing screen
+            AdjustMaxSizeWithTaskbar();
+        }
+
+        void AdjustMaxSizeWithTaskbar()
+        {
+            // There's an issue were auto-hide taskbars cannot be focused while WPF windows are maximized
+            // decreasing, even slightly, the maximum size fixes that issue
+            var v = this.GetWorkArea();
+            MaxWidth = v.Width;
+            // Yes, works even when the taskbar is on the left and right of the screen, somehow
+            MaxHeight = v.Height - 0.1d;
         }
     }
 }

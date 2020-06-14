@@ -5,19 +5,17 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading;
-
-using Xunit;
 
 using Stride.Core;
-using Stride.Core.Collections;
 using Stride.Engine.Design;
 using Stride.Engine.Processors;
+
+using Xunit;
 
 namespace Stride.Engine.Tests
 {
     /// <summary>
-    /// Tests for the <see cref="EntityManager"/>.
+    ///   Tests for the <see cref="EntityManager"/>.
     /// </summary>
     public partial class TestEntityManager
     {
@@ -272,7 +270,7 @@ namespace Stride.Engine.Tests
 
             var customProcessor = entityManager.GetProcessor<CustomEntityComponentProcessorWithDependency>();
 
-            // Because the custom processor has a dependency on TransformComponent, we are checking that the dependencies is correctly registered back in the 
+            // Because the custom processor has a dependency on TransformComponent, we are checking that the dependencies is correctly registered back in the
             // list of processors for TransformComponent that should have a link to the custom processor
             var processorsForTransform = entityManager.MapComponentTypeToProcessors[typeof(TransformComponent).GetTypeInfo()];
 
@@ -281,7 +279,7 @@ namespace Stride.Engine.Tests
             Assert.NotNull(processorsForTransform.Dependencies);
             Assert.Single(processorsForTransform.Dependencies);
             Assert.Equal(customProcessor, processorsForTransform.Dependencies[0]);
-            
+
             // Check that the custom processor is empty
             var processorsForCustom = entityManager.MapComponentTypeToProcessors[typeof(CustomEntityComponentWithDependency).GetTypeInfo()];
             Assert.Single(processorsForCustom);
@@ -453,10 +451,6 @@ namespace Stride.Engine.Tests
             Assert.True(addChildCheck);
             Assert.True(removeChildCheck);
             Assert.True(prevRootAsChildCheck);
-        }
-
-        internal static void Main()
-        {
         }
     }
 

@@ -5,10 +5,10 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -19,9 +19,7 @@ namespace Stride.Graphics.Tests
 
         private SpriteBatch spriteBatch;
 
-        public TestSprite()
-        {
-        }
+        public TestSprite() { }
 
         protected override void RegisterTests()
         {
@@ -91,7 +89,7 @@ namespace Stride.Graphics.Tests
 
             positionSphere.X += spriteSphereSize.X + spaceSpan;
             spriteSphere.Sprites[0].Draw(spriteBatch, positionSphere, Color.White, new Vector2(0.66f, 0.33f), depthLayer: 1);
-            
+
             positionSphere.X = spaceSpan;
             positionSphere.Y += 1.5f * spriteSphereSize.Y;
             spriteSphere.Sprites[0].Center = new Vector2(0, spriteSphereSize.Y);
@@ -99,12 +97,6 @@ namespace Stride.Graphics.Tests
             spriteSphere.Sprites[0].Center = new Vector2(spriteSphereSize.X / 2, spriteSphereSize.Y / 2);
 
             spriteBatch.End();
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestSprite())
-                game.Run();
         }
 
         /// <summary>

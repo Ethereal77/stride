@@ -4,11 +4,11 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -17,9 +17,7 @@ namespace Stride.Graphics.Tests
         private Texture offlineTarget;
         private bool firstSave;
 
-        public TestDrawQuad()
-        {
-        }
+        public TestDrawQuad() { }
 
         protected override void RegisterTests()
         {
@@ -53,7 +51,7 @@ namespace Stride.Graphics.Tests
 
         private void DrawQuad()
         {
-            // Clears the screen 
+            // Clears the screen
             GraphicsContext.CommandList.Clear(GraphicsDevice.Presenter.BackBuffer, Color.LimeGreen);
             GraphicsContext.CommandList.Clear(GraphicsDevice.Presenter.DepthStencilBuffer, DepthStencilClearOptions.DepthBuffer | DepthStencilClearOptions.Stencil);
 
@@ -68,12 +66,6 @@ namespace Stride.Graphics.Tests
             //// Render to the backbuffer using offline texture
             //GraphicsDevice.SetDepthAndRenderTarget(GraphicsDevice.DepthStencilBuffer, GraphicsDevice.BackBuffer);
             //GraphicsDevice.DrawTexture(offlineTarget.Texture);
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestDrawQuad())
-                game.Run();
         }
 
         /// <summary>

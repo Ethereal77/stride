@@ -4,8 +4,6 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Rendering.Materials.ComputeColors;
@@ -15,6 +13,8 @@ using Stride.Rendering.Compositing;
 using Stride.Rendering.Materials;
 using Stride.Rendering.ProceduralModels;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -101,12 +101,6 @@ namespace Stride.Graphics.Tests
 
         //    GraphicsDevice.DrawQuad(effectInstance.Effect, effectParameters);
         //}
-
-        internal static void Main()
-        {
-            using (var game = new TestScene())
-                game.Run();
-        }
 
         /// <summary>
         /// Run the test

@@ -9,15 +9,15 @@ using Stride.Games;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// A platform specific window handle.
+    ///   A platform-specific handle for managing and referencing a window.
     /// </summary>
     public class WindowHandle
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WindowHandle"/> class.
+        ///   Initializes a new instance of the <see cref="WindowHandle"/> class.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="nativeWindow">The native window instance (WinForms, WPF, ...).</param>
+        /// <param name="context">The context type the window is created in.</param>
+        /// <param name="nativeWindow">The native window instance (WinForms, WPF, etc).</param>
         /// <param name="handle">The associated handle of <paramref name="nativeWindow"/>.</param>
         public WindowHandle(AppContextType context, object nativeWindow, IntPtr handle)
         {
@@ -27,17 +27,17 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// The context.
+        ///   The context type the window is created in.
         /// </summary>
         public readonly AppContextType Context;
 
         /// <summary>
-        /// The native windows as an opaque <see cref="System.Object"/>.
+        ///   Gets the native window as an opaque <see cref="System.Object"/>.
         /// </summary>
         public object NativeWindow { get; }
 
         /// <summary>
-        /// The associated platform specific handle of <seealso cref="NativeWindow"/>.
+        ///   Gets the associated platform-specific handle of <seealso cref="NativeWindow"/>.
         /// </summary>
         public IntPtr Handle { get; }
     }

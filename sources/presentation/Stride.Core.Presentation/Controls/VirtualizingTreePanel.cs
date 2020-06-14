@@ -2,7 +2,7 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#define DEBUGVIRTUALIZATIONno
+//#define DEBUGVIRTUALIZATION
 
 using System;
 using System.Collections.Generic;
@@ -193,7 +193,7 @@ namespace Stride.Core.Presentation.Controls
                 }
                 else
                 {
-                    // get the area where items have to be visualized. This is from top to bottom of the visible space in tree system. 
+                    // get the area where items have to be visualized. This is from top to bottom of the visible space in tree system.
                     // We add a little of offset. It seems like it improves estimation of heights.
                     double predictionOffset = 50;
                     var top = VerticalOffset - predictionOffset;
@@ -384,7 +384,7 @@ namespace Stride.Core.Presentation.Controls
             var generator = ItemContainerGenerator;
 
             //Extent = finalSize;
-            var foundVisibleItem = false; ;
+            var foundVisibleItem = false;
             double currentY = 0;
             if (treeView.IsVirtualizing)
             {
@@ -500,7 +500,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <returns>The cached or estimated size.</returns>
         /// <remarks>This estimation looks if the given index is cached. If not it returns the maximum height of the cached
-        /// containers. If no container is cached, returns zero. 
+        /// containers. If no container is cached, returns zero.
         /// One case it fails is, if all cached items are bigger
         /// than the estimated items. This leads to jumping scrollbars. The effect is not that bad, if many items will be visualized.</remarks>
         private double GetCachedOrEstimatedHeight(TreeView tree, int level)

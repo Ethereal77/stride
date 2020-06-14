@@ -3,40 +3,35 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace Stride.Core.IO
 {
     /// <summary>
-    /// Exposes the whole file system through folder similar to Cygwin.
-    /// As an example, "/c/Program Files/Test/Data.dat" would work.
+    ///   Represents a <see cref="FileSystemProvider"/> that exposes the whole file system through folder
+    ///   (similar to Cygwin) with paths in the form <c>"/c/Program Files/Test/Data.dat"</c>.
     /// </summary>
     public class DriveFileProvider : FileSystemProvider
     {
         public static string DefaultRootPath = "/drive";
 
-        public DriveFileProvider(string rootPath) : base(rootPath, null)
-        {
-        }
+
+        public DriveFileProvider(string rootPath) : base(rootPath, null) { }
+
 
         /// <summary>
-        /// Resolves the VFS URL from a given file path.
+        ///   Resolves the VFS URL from a given file path.
         /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <returns></returns>
-        /// <exception cref="System.InvalidOperationException"></exception>
+        /// <param name="filePath">The file path to resolve.</param>
+        /// <returns>The VFS local path of the corresponding file.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public string GetLocalPath(string filePath)
         {
-#if !NETFX_CORE
             filePath = Path.GetFullPath(filePath);
-#endif
 
-            var resolveProviderResult = VirtualFileSystem.ResolveProvider(RootPath, true);
-            var provider = resolveProviderResult.Provider as DriveFileProvider;
-
-            if (provider == null)
+            var resolveProviderResult = VirtualFileSystem.ResolveProvider(RootPath, resolveTop: true);
+            if (!(resolveProviderResult.Provider is DriveFileProvider provider))
                 throw new InvalidOperationException();
 
             return provider.ConvertFullPathToUrl(filePath);
@@ -50,13 +45,14 @@ namespace Stride.Core.IO
                 return url;
 
             // TODO: Support more complex URL such as UNC or devices
-            // Windows style: reprocess URL like cygwin
+            // Windows style: reprocess URL like Cygwin
             var result = new StringBuilder(url.Length + 1);
             int separatorIndex = 0;
 
-            foreach (var c in url.ToCharArray())
+            foreach (char ch in url.ToCharArray())
             {
-                if (c == VirtualFileSystem.DirectorySeparatorChar || c == VirtualFileSystem.AltDirectorySeparatorChar)
+                if (ch == VirtualFileSystem.DirectorySeparatorChar ||
+                    ch == VirtualFileSystem.AltDirectorySeparatorChar)
                 {
                     if (separatorIndex == 1)
                     {
@@ -74,7 +70,7 @@ namespace Stride.Core.IO
                 }
                 else
                 {
-                    result.Append(c);
+                    result.Append(ch);
                 }
             }
 
@@ -89,24 +85,24 @@ namespace Stride.Core.IO
                 return path;
 
             // TODO: Support more complex URL such as UNC or devices
-            // Windows style: reprocess URL like cygwin
+            // Windows style: reprocess URL like Cygwin
             var result = new StringBuilder(path.Length + 1);
 
             result.Append(VirtualFileSystem.DirectorySeparatorChar);
 
-            foreach (var c in path.ToCharArray())
+            foreach (char ch in path.ToCharArray())
             {
-                if (c == VolumeSeparatorChar)
+                if (ch == VolumeSeparatorChar)
                 {
                     // TODO: More advanced validation, i.e. is there no directory separator before volume separator, etc...
                 }
-                else if (c == DirectorySeparatorChar)
+                else if (ch == DirectorySeparatorChar)
                 {
                     result.Append(VirtualFileSystem.DirectorySeparatorChar);
                 }
                 else
                 {
-                    result.Append(c);
+                    result.Append(ch);
                 }
             }
 

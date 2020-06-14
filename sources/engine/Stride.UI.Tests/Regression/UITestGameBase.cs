@@ -3,25 +3,24 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
 using Stride.Engine;
-using Stride.Rendering;
-using Stride.Rendering.Compositing;
-using Stride.Games;
 using Stride.Graphics;
 using Stride.Graphics.Regression;
-using Stride.Input;
+using Stride.Rendering;
 using Stride.Rendering.Sprites;
+using Stride.Rendering.Compositing;
+using Stride.Input;
+using Stride.Games;
 using Stride.UI.Controls;
 
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// A base class for rendering tests
+    ///   A base class for rendering tests on UI.
     /// </summary>
     public class UITestGameBase : GameTestBase
     {
@@ -90,7 +89,7 @@ namespace Stride.UI.Tests.Regression
 
             UIRoot = new Entity("Root entity of camera UI") { new UIComponent() };
             UIComponent.IsFullScreen = true;
-            UIComponent.Resolution = new Vector3(1000, 500, 500);
+            UIComponent.Resolution = new Vector3(1000, 600, 500);
             UIComponent.ResolutionStretch = ResolutionStretch.FixedWidthFixedHeight;
             Scene.Entities.Add(UIRoot);
 

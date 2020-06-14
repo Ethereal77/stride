@@ -10,27 +10,38 @@ using Stride.Particles.VertexLayouts;
 namespace Stride.Particles.Materials
 {
     /// <summary>
-    /// Animates the texture coordinates starting with one rectangle and scrolling/zooming it to an ending rectangle over the particle's life
+    ///   Represents an <see cref="UVBuilder"/> that animates the texture coordinates starting with one rectangle and
+    ///   scrolling / zooming it to an ending rectangle over the particle's life.
     /// </summary>
     [DataContract("UVBuilderScroll")]
     [Display("Scrolling")]
     public class UVBuilderScroll : UVBuilder, IAttributeTransformer<Vector2, Vector4>
     {
         /// <summary>
-        /// Starting sub-region (rectangle) for the scroll
+        ///   Gets or sets the starting sub-region (rectangle) for the scroll.
         /// </summary>
+        /// <value>
+        ///   The rectangular sub-region of the texture where the scrolling should start, given as (Xmin, Ymin, Xmax, Ymax)
+        ///   ( (0, 0, 1, 1) being the entire texture ). Numbers also can be negative or bigger than 1.
+        /// </value>
         /// <userdoc>
-        /// The rectangular sub-region of the texture where the scrolling should start, given as (Xmin, Ymin, Xmax, Ymax) ( (0, 0, 1, 1) being the entire texture). Numbers also can be negative or bigger than 1.
+        ///   The rectangular sub-region of the texture where the scrolling should start, given as (Xmin, Ymin, Xmax, Ymax)
+        ///   ( (0, 0, 1, 1) being the entire texture ). Numbers also can be negative or bigger than 1.
         /// </userdoc>
         [DataMember(200)]
         [Display("Start frame")]
         public Vector4 StartFrame { get; set; } = new Vector4(0, 0, 1, 1);
 
         /// <summary>
-        /// Ending sub-region (rectangle) for the scroll
+        ///   Gets or sets the ending sub-region (rectangle) for the scroll.
         /// </summary>
+        /// <value>
+        ///   The rectangular sub-region of the texture where the scrolling should end at the particle life's end, given
+        ///   as (Xmin, Ymin, Xmax, Ymax) ( (0, 0, 1, 1) being the entire texture ). Numbers also can be negative or bigger than 1.
+        /// </value>
         /// <userdoc>
-        /// The rectangular sub-region of the texture where the scrolling should end at the particle life's end, given as (Xmin, Ymin, Xmax, Ymax) ( (0, 0, 1, 1) being the entire texture). Numbers also can be negative or bigger than 1.
+        ///   The rectangular sub-region of the texture where the scrolling should end at the particle life's end, given
+        ///   as (Xmin, Ymin, Xmax, Ymax) ( (0, 0, 1, 1) being the entire texture ). Numbers also can be negative or bigger than 1.
         /// </userdoc>
         [DataMember(240)]
         [Display("End frame")]
@@ -58,7 +69,7 @@ namespace Stride.Particles.Materials
 
             foreach (var particle in sorter)
             {
-                var normalizedTimeline = 1f - *(float*)(particle[lifeField]); ;
+                var normalizedTimeline = 1f - *(float*)(particle[lifeField]);
 
                 Vector4 uvTransform = Vector4.Lerp(StartFrame, EndFrame, normalizedTimeline);
                 uvTransform.Z -= uvTransform.X;

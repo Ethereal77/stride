@@ -11,35 +11,43 @@ using Stride.Shaders;
 namespace Stride.Rendering.Materials
 {
     /// <summary>
-    /// The microfacet specular shading model.
+    ///   Represents the material feature of the microfacet specular shading model.
     /// </summary>
     [DataContract("MaterialSpecularMicrofacetModelFeature")]
     [Display("Microfacet")]
     public class MaterialSpecularMicrofacetModelFeature : MaterialFeature, IMaterialSpecularModelFeature, IEquatable<MaterialSpecularMicrofacetModelFeature>
     {
-        /// <userdoc>Specify the function to use to calculate the Fresnel component of the micro-facet lighting equation. 
-        /// This defines the amount of the incoming light that is reflected.</userdoc>
+        /// <userdoc>
+        ///   Specifies the function to use to calculate the Fresnel component of the micro-facet lighting equation.
+        ///   This defines the amount of the incoming light that is reflected.
+        /// </userdoc>
         [DataMember(10)]
         [Display("Fresnel")]
         [NotNull]
         public IMaterialSpecularMicrofacetFresnelFunction Fresnel { get; set; } = new MaterialSpecularMicrofacetFresnelSchlick();
 
-        /// <userdoc>Specify the function to use to calculate the visibility component of the micro-facet lighting equation.</userdoc>
+        /// <userdoc>
+        ///   Specifies the function to use to calculate the visibility component of the micro-facet lighting equation.
+        /// </userdoc>
         [DataMember(20)]
         [Display("Visibility")]
         [NotNull]
         public IMaterialSpecularMicrofacetVisibilityFunction Visibility { get; set; } = new MaterialSpecularMicrofacetVisibilitySmithSchlickGGX();
 
-        /// <userdoc>Specify the function to use to calculate the normal distribution in the micro-facet lighting equation. 
-        /// This defines how the normal is distributed.</userdoc>
+        /// <userdoc>
+        ///   Specifies the function to use to calculate the normal distribution in the micro-facet lighting equation.
+        ///   This defines how the normals are distributed.
+        /// </userdoc>
         [DataMember(30)]
         [Display("Normal Distribution")]
         [NotNull]
         public IMaterialSpecularMicrofacetNormalDistributionFunction NormalDistribution { get; set; } = new MaterialSpecularMicrofacetNormalDistributionGGX();
 
-        /// <userdoc>Specify the function to use to calculate the environment DFG term in the micro-facet lighting equation. 
-        /// This defines how the material reflects specular cubemaps.</userdoc>
-        [DataMember(30)]
+        /// <userdoc>
+        ///   Specifies the function to use to calculate the environment DFG term in the micro-facet lighting equation.
+        ///   This defines how the material reflects specular cubemaps.
+        /// </userdoc>
+        [DataMember(40)]
         [Display("Environment (DFG)")]
         [NotNull]
         public IMaterialSpecularMicrofacetEnvironmentFunction Environment { get; set; } = new MaterialSpecularMicrofacetEnvironmentGGXLUT();
@@ -87,7 +95,7 @@ namespace Stride.Rendering.Materials
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(Fresnel, other.Fresnel) && Equals(Visibility, other.Visibility) && Equals(NormalDistribution, other.NormalDistribution);
+            return Equals(Fresnel, other.Fresnel) && Equals(Visibility, other.Visibility) && Equals(NormalDistribution, other.NormalDistribution) && Equals(Environment, other.Environment);
         }
 
         public override bool Equals(object obj)
@@ -105,6 +113,7 @@ namespace Stride.Rendering.Materials
                 int hashCode = (Fresnel != null ? Fresnel.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Visibility != null ? Visibility.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (NormalDistribution != null ? NormalDistribution.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Environment != null ? Environment.GetHashCode() : 0);
                 return hashCode;
             }
         }

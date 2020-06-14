@@ -5,9 +5,7 @@
 namespace Stride.Rendering
 {
     /// <summary>
-    /// A graphics renderer.
+    ///   Represents the interface of a renderer, an object that can render graphics.
     /// </summary>
-    public interface IGraphicsRenderer : IGraphicsRendererBase, IGraphicsRendererCore
-    {
-    }
+    public interface IGraphicsRenderer : IGraphicsRendererBase, IGraphicsRendererCore { }
 }

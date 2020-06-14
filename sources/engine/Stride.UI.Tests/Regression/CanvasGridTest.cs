@@ -4,24 +4,22 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="Canvas"/> and on the <see cref="UniformGrid"/>
+    ///   Test class for rendering tests on the <see cref="Canvas"/> and on the <see cref="UniformGrid"/>.
     /// </summary>
     public class CanvasGridTest : UITestGameBase
     {
-        public CanvasGridTest()
-        {
-        }
+        public CanvasGridTest() { }
 
         protected override void RegisterTests()
         {
@@ -79,7 +77,7 @@ namespace Stride.UI.Tests.Regression
             image5.DependencyProperties.Set(Canvas.PinOriginPropertyKey, new Vector3(0.5f, 0.5f, 0));
             canvas.Children.Add(image5);
 
-            // 1/3 right/top right aligned 
+            // 1/3 right/top right aligned
             var image6 = new ImageElement { Source = (SpriteFromTexture)new Sprite(Content.Load<Texture>("uv")), StretchType = StretchType.FillOnStretch };
             image6.DependencyProperties.Set(Canvas.UseAbsolutePositionPropertyKey, false);
             image6.DependencyProperties.Set(Canvas.RelativeSizePropertyKey, relativeSize * Vector3.One);
@@ -102,7 +100,7 @@ namespace Stride.UI.Tests.Regression
             image8.DependencyProperties.Set(Canvas.RelativePositionPropertyKey, new Vector3(2/3f, 2/3f, 0));
             image8.DependencyProperties.Set(Canvas.PinOriginPropertyKey, new Vector3(0.5f, 1, 0));
             canvas.Children.Add(image8);
-            
+
             var grid = new UniformGrid { Rows = 3, Columns = 3 };
             for (int c = 0; c < 3; c++)
                 for (int r = 0; r < 3; r++)
@@ -128,15 +126,6 @@ namespace Stride.UI.Tests.Regression
         public void RunCanvasGridTest()
         {
             RunGameTest(new CanvasGridTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new CanvasGridTest())
-                game.Run();
         }
     }
 }

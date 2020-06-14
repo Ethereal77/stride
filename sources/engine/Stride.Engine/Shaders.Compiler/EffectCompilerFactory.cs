@@ -2,10 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using Stride.Core;
 using Stride.Core.IO;
 using Stride.Engine.Design;
@@ -19,8 +15,7 @@ namespace Stride.Shaders.Compiler
         {
             EffectCompilerBase compiler = null;
 
-#if STRIDE_EFFECT_COMPILER
-            if ((effectCompilationMode & EffectCompilationMode.Local) != 0)
+            if (effectCompilationMode.HasFlag(EffectCompilationMode.Local))
             {
                 // Local allowed and available, let's use that
                 compiler = new EffectCompiler(fileProvider)
@@ -28,10 +23,9 @@ namespace Stride.Shaders.Compiler
                     SourceDirectories = { EffectCompilerBase.DefaultSourceShaderFolder },
                 };
             }
-#endif
 
             // Nothing to do remotely
-            bool needRemoteCompiler = (compiler == null && (effectCompilationMode & EffectCompilationMode.Remote) != 0);
+            bool needRemoteCompiler = (compiler is null && effectCompilationMode.HasFlag(EffectCompilationMode.Remote));
             if (needRemoteCompiler || recordEffectRequested)
             {
                 // Create the object that handles the connection
@@ -57,10 +51,8 @@ namespace Stride.Shaders.Compiler
             }
 
             // Local not possible or allowed, and remote not allowed either => switch back to null compiler
-            if (compiler == null)
-            {
+            if (compiler is null)
                 compiler = new NullEffectCompiler(fileProvider);
-            }
 
             return new EffectCompilerCache(compiler, taskSchedulerSelector);
         }

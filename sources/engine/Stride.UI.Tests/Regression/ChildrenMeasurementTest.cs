@@ -4,26 +4,24 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Test to see if the children of a panel's panel get rendered correctly the root panel size is manually set.
+    ///   Test class to see if the children of a panel's panel get rendered correctly if the root panel size is manually set.
     /// </summary>
     public class ChildrenMeasurementTest : UITestGameBase
     {
         private Canvas canvas;
         private StackPanel stackPanel;
 
-        public ChildrenMeasurementTest()
-        {
-        }
+        public ChildrenMeasurementTest() { }
 
         protected override async Task LoadContent()
         {
@@ -103,17 +101,6 @@ namespace Stride.UI.Tests.Regression
         public void RunChildrenMeasurementTest()
         {
             RunGameTest(new ChildrenMeasurementTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ChildrenMeasurementTest())
-            {
-                game.Run();
-            }
         }
     }
 }

@@ -8,32 +8,32 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
-using Stride.Core.Assets.Templates;
 using Stride.Core;
+using Stride.Core.Extensions;
 using Stride.Core.Annotations;
-using Stride.Core.IO;
 using Stride.Core.Mathematics;
+using Stride.Core.IO;
 using Stride.Core.Serialization;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
 using Stride.Core.Presentation.Services;
-using Stride.Assets.Entities;
-using Stride.Assets.Materials;
-using Stride.Assets.Skyboxes;
+using Stride.Assets.Models;
 using Stride.Assets.Textures;
+using Stride.Assets.Materials;
+using Stride.Assets.Entities;
+using Stride.Assets.Rendering;
+using Stride.Assets.Skyboxes;
+using Stride.Assets.Templates;
 using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
-using Stride.Rendering.Compositing;
-using Stride.Rendering.Lights;
+using Stride.Rendering.ProceduralModels;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
-using Stride.Rendering.ProceduralModels;
+using Stride.Rendering.Lights;
 using Stride.Rendering.Skyboxes;
-using Stride.Assets.Models;
-using Stride.Assets.Rendering;
-using Stride.Assets.Templates;
-using Stride.Core.Extensions;
+using Stride.Rendering.Compositing;
 
 namespace Stride.Assets.Presentation.Templates
 {
@@ -60,8 +60,10 @@ namespace Stride.Assets.Presentation.Templates
         /// </summary>
         public static void SetParameters([NotNull] SessionTemplateGeneratorParameters parameters, [NotNull] IEnumerable<SelectedSolutionPlatform> platforms, GraphicsProfile graphicsProfile = GraphicsProfile.Level_11_0, bool isHDR = true, DisplayOrientation orientation = DisplayOrientation.Default, IEnumerable<UDirectory> assets = null)
         {
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
-            if (platforms == null) throw new ArgumentNullException(nameof(platforms));
+            if (parameters is null)
+                throw new ArgumentNullException(nameof(parameters));
+            if (platforms is null)
+                throw new ArgumentNullException(nameof(platforms));
 
             parameters.SetTag(PlatformsKey, new List<SelectedSolutionPlatform>(platforms));
             if (assets != null)
@@ -73,13 +75,17 @@ namespace Stride.Assets.Presentation.Templates
 
         public override bool IsSupportingTemplate(TemplateDescription templateDescription)
         {
-            if (templateDescription == null) throw new ArgumentNullException(nameof(templateDescription));
+            if (templateDescription is null)
+                throw new ArgumentNullException(nameof(templateDescription));
+
             return templateDescription.Id == TemplateId;
         }
 
         public override async Task<bool> PrepareForRun(SessionTemplateGeneratorParameters parameters)
         {
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            if (parameters is null)
+                throw new ArgumentNullException(nameof(parameters));
+
             parameters.Validate();
 
             var defaultNamespace = Utilities.BuildValidNamespaceName(parameters.Name);
@@ -102,7 +108,9 @@ namespace Stride.Assets.Presentation.Templates
 
         protected override bool Generate(SessionTemplateGeneratorParameters parameters)
         {
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            if (parameters is null)
+                throw new ArgumentNullException(nameof(parameters));
+
             // Structure of files to generate:
             //     $Name$.sdpkg
             //     $Name$.targets
@@ -134,7 +142,7 @@ namespace Stride.Assets.Presentation.Templates
             var project = ProjectTemplateGeneratorHelper.GenerateTemplate(parameters, platforms, "ProjectLibrary.Game/ProjectLibrary.Game.ttproj", projectGameName, PlatformType.Shared, null, ProjectType.Library, orientation);
             var package = project.Package;
 
-            //write gitignore
+            // Write gitignore
             WriteGitIgnore(parameters);
 
             // Setup the assets folder
@@ -167,8 +175,8 @@ namespace Stride.Assets.Presentation.Templates
 
             // Create camera script
             var cameraScriptTemplate = TemplateManager.FindTemplates(package.Session).OfType<TemplateAssetDescription>().FirstOrDefault(x => x.DefaultOutputName == CameraScriptDefaultOutputName);
-            if (cameraScriptTemplate == null)
-                throw new InvalidOperationException($"Could not find template for script '{CameraScriptDefaultOutputName}'");
+            if (cameraScriptTemplate is null)
+                throw new InvalidOperationException($"Could not find template for script '{CameraScriptDefaultOutputName}'.");
 
             var cameraScriptParameters = new AssetTemplateGeneratorParameters(string.Empty)
             {
@@ -180,13 +188,14 @@ namespace Stride.Assets.Presentation.Templates
                 Unattended = true,
             };
             ScriptTemplateGenerator.SetClassName(cameraScriptParameters, cameraScriptTemplate.DefaultOutputName);
-            if (!ScriptTemplateGenerator.Default.PrepareForRun(cameraScriptParameters).Result || !ScriptTemplateGenerator.Default.Run(cameraScriptParameters))
+            if (!ScriptTemplateGenerator.Default.PrepareForRun(cameraScriptParameters).Result ||
+                !ScriptTemplateGenerator.Default.Run(cameraScriptParameters))
             {
-                throw new InvalidOperationException($"Could not create script '{CameraScriptDefaultOutputName}'");
+                throw new InvalidOperationException($"Could not create script '{CameraScriptDefaultOutputName}'.");
             }
 
             // Force save after having created the script
-            // Note: We do that AFTER GameSettings is dirty, otherwise it would ask for an assembly reload (game settings saved might mean new graphics API)
+            // NOTE: We do that AFTER GameSettings is dirty, otherwise it would ask for an assembly reload (game settings saved might mean new graphics API)
             SaveSession(parameters);
 
             // Load missing references

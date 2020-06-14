@@ -11,6 +11,7 @@ using Stride.Core.ReferenceCounting;
 namespace Stride.Graphics
 {
     /// <summary>
+    ///   Reoresents a class that abstracts a
     /// This class is a frontend to <see cref="SwapChain" /> and <see cref="SwapChain1" />.
     /// </summary>
     /// <remarks>
@@ -21,39 +22,31 @@ namespace Stride.Graphics
         private Texture depthStencilBuffer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GraphicsPresenter" /> class.
+        ///   Initializes a new instance of the <see cref="GraphicsPresenter" /> class.
         /// </summary>
-        /// <param name="device">The device.</param>
-        /// <param name="presentationParameters"> </param>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="presentationParameters">The parameters that describes how to present graphics to the screen.</param>
         protected GraphicsPresenter(GraphicsDevice device, PresentationParameters presentationParameters)
         {
             GraphicsDevice = device;
             var description = presentationParameters.Clone();
 
-            // If we are creating a GraphicsPresenter with 
+            // If we are creating a GraphicsPresenter with linear colorspace
             if (device.Features.HasSRgb && device.ColorSpace == ColorSpace.Linear)
             {
-                // If the device support SRgb and ColorSpace is linear, we use automatically a SRgb backbuffer
+                // We use automatically a SRgb backbuffer
                 if (description.BackBufferFormat == PixelFormat.R8G8B8A8_UNorm)
-                {
                     description.BackBufferFormat = PixelFormat.R8G8B8A8_UNorm_SRgb;
-                }
                 else if (description.BackBufferFormat == PixelFormat.B8G8R8A8_UNorm)
-                {
                     description.BackBufferFormat = PixelFormat.B8G8R8A8_UNorm_SRgb;
-                }
             }
             else if (!device.Features.HasSRgb)
             {
-                // If the device does not support SRgb, but the backbuffer format asked is SRgb, convert it to non SRgb
+                // The device does not support SRgb, but the backbuffer format asked is SRgb, convert it to non SRgb
                 if (description.BackBufferFormat == PixelFormat.R8G8B8A8_UNorm_SRgb)
-                {
                     description.BackBufferFormat = PixelFormat.R8G8B8A8_UNorm;
-                }
                 else if (description.BackBufferFormat == PixelFormat.B8G8R8A8_UNorm_SRgb)
-                {
                     description.BackBufferFormat = PixelFormat.B8G8R8A8_UNorm;
-                }
             }
 
             Description = description;
@@ -65,79 +58,74 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Gets the graphics device.
+        ///   Gets the graphics device.
         /// </summary>
         /// <value>The graphics device.</value>
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
-        /// Gets the description of this presenter.
+        ///   Gets the description of this presenter.
         /// </summary>
+        /// <value>
+        ///   A <see cref="PresentationParameters"/> describing how to present graphics to the screen.
+        /// </value>
         public PresentationParameters Description { get; private set; }
 
         /// <summary>
-        /// Gets the default back buffer for this presenter.
+        ///   Gets the default back buffer for this presenter.
         /// </summary>
         public abstract Texture BackBuffer { get; }
 
         /// <summary>
-        /// Gets the default depth stencil buffer for this presenter.
+        ///   Gets the default depth stencil buffer for this presenter.
         /// </summary>
         public Texture DepthStencilBuffer
         {
-            get
-            {
-                return depthStencilBuffer;
-            }
-
-            protected set
-            {
-                depthStencilBuffer = value;
-            }
+            get => depthStencilBuffer;
+            protected set => depthStencilBuffer = value;
         }
 
         /// <summary>
-        /// Gets the underlying native presenter (can be a <see cref="SharpDX.DXGI.SwapChain"/> or <see cref="SharpDX.DXGI.SwapChain1"/> or null, depending on the platform).
+        ///   Gets the underlying native presenter.
         /// </summary>
         /// <value>The native presenter.</value>
+        /// <remarks>
+        ///   This can be a <see cref="SharpDX.DXGI.SwapChain"/> or <see cref="SharpDX.DXGI.SwapChain1"/> or <see langword="null"/>,
+        ///   depending on the platform).
+        /// </remarks>
         public abstract object NativePresenter { get; }
 
         /// <summary>
-        /// Gets or sets fullscreen mode for this presenter.
+        ///   Gets or sets a value indicating whether this presenter should render in fullscreen mode.
         /// </summary>
-        /// <value><c>true</c> if this instance is full screen; otherwise, <c>false</c>.</value>
-        /// <remarks>This method is only valid on Windows Desktop.</remarks>
+        /// <value><c>true</c> to present in full screen; otherwise, <c>false</c>.</value>
         public abstract bool IsFullScreen { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="PresentInterval"/>. Default is to wait for one vertical blanking.
+        ///   Gets or sets the <see cref="PresentInterval"/>. Default is to wait for one vertical blanking (VSync).
         /// </summary>
         /// <value>The present interval.</value>
         public PresentInterval PresentInterval
         {
-            get { return Description.PresentationInterval; }
-            set { Description.PresentationInterval = value; }
+            get => Description.PresentationInterval;
+            set => Description.PresentationInterval = value;
         }
 
-        public virtual void BeginDraw(CommandList commandList)
-        {
-        }
+        public virtual void BeginDraw(CommandList commandList) { }
 
-        public virtual void EndDraw(CommandList commandList, bool present)
-        {
-        }
+        public virtual void EndDraw(CommandList commandList, bool present) { }
 
         /// <summary>
-        /// Presents the Backbuffer to the screen.
+        ///   Presents the backbuffer to the screen.
         /// </summary>
         public abstract void Present();
 
         /// <summary>
-        /// Resizes the current presenter, by resizing the back buffer and the depth stencil buffer.
+        ///   Resizes the current presenter, resizing the back buffer and the depth stencil buffer.
         /// </summary>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <param name="format"></param>
+        /// <param name="width">New width of the resized backbuffer.</param>
+        /// <param name="height">New height of the resized backbuffer.</param>
+        /// <param name="format">New pixel format of the backbuffer.</param>
         public void Resize(int width, int height, PixelFormat format)
         {
             GraphicsDevice.Begin();
@@ -167,29 +155,24 @@ namespace Stride.Graphics
         protected override void Destroy()
         {
             OnDestroyed();
+
             base.Destroy();
         }
-        
+
         /// <summary>
-        /// Called when [destroyed].
+        ///   Methid called when this presenter has been destroyed.
         /// </summary>
-        protected internal virtual void OnDestroyed()
-        {
-        }
+        protected internal virtual void OnDestroyed() { }
 
         /// <summary>
-        /// Called when [recreated].
+        ///   Methid called when this presenter has been recreated.
         /// </summary>
-        public virtual void OnRecreated()
-        {
-        }
+        public virtual void OnRecreated() { }
 
-        protected virtual void ProcessPresentationParameters()
-        {
-        }
+        protected virtual void ProcessPresentationParameters() { }
 
         /// <summary>
-        /// Creates the depth stencil buffer.
+        ///   Creates the depth stencil buffer.
         /// </summary>
         protected virtual void CreateDepthStencilBuffer()
         {

@@ -6,17 +6,15 @@
 using System;
 using System.IO;
 
-using Xunit;
-
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
-using Stride.Core.Serialization.Assets;
 using Stride.Core.Storage;
-using Stride.Rendering;
 using Stride.Rendering;
 using Stride.Games;
 using Stride.Shaders;
 using Stride.Shaders.Compiler;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -26,16 +24,14 @@ namespace Stride.Graphics.Tests
         private Effect MultiTexturesEffect;
         private GeometricPrimitive geometry;
 
-        public TestMultiTextures()
-        {
-        }
+        public TestMultiTextures() { }
 
         protected override async Task LoadContent()
         {
             await base.LoadContent();
 
             var objDatabase = new ObjectDatabase(VirtualFileSystem.ApplicationDatabasePath);
-            using (var contentIndexMap = new contentIndexMap("/assets"))
+            using (var contentIndexMap = new ContentIndexMap("/assets"))
             {
                 contentIndexMap.LoadNewValues();
                 DatabaseFileProvider database = null;
@@ -109,12 +105,6 @@ namespace Stride.Graphics.Tests
                     }
                 }
             }
-        }
-
-        public static void Main()
-        {
-            using (var game = new TestMultiTextures())
-                game.Run();
         }
     }
 }

@@ -4,18 +4,18 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Input;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for tests on the <see cref="UIElement.TouchLeave"/> and <see cref="UIElement.TouchEnter"/> events.
+    ///   Class for tests on the <see cref="UIElement.TouchLeave"/> and <see cref="UIElement.TouchEnter"/> events.
     /// </summary>
     public class LeaveEnterTest : UITestGameBase
     {
@@ -35,14 +35,12 @@ namespace Stride.UI.Tests.Regression
 
         private Button buttomBottonRight0;
 
-        public LeaveEnterTest()
-        {
-        }
+        public LeaveEnterTest() { }
 
         protected override async Task LoadContent()
         {
             await base.LoadContent();
-            
+
             buttonLeftTop2 = new Button { Padding = new Thickness(50, 50, 0, 50) };
             buttonLeftTop1 = new Button { Padding = new Thickness(50, 50, 0, 50), Content = buttonLeftTop2 };
             buttonLeftTop0 = new Button { Padding = new Thickness(50, 50, 0, 50), Content = buttonLeftTop1};
@@ -182,15 +180,6 @@ namespace Stride.UI.Tests.Regression
         public void RunLeaveEnterTest()
         {
             RunGameTest(new LeaveEnterTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new LeaveEnterTest())
-                game.Run();
         }
     }
 }

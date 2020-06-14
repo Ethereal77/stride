@@ -13,14 +13,7 @@ namespace Stride.Graphics.Tests
     {
         public TestPrecompiledSpriteFont()
             : base("PrecompiledFonts/", "pre")
-        {
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestPrecompiledSpriteFont())
-                game.Run();
-        }
+        { }
 
         /// <summary>
         /// Run the test

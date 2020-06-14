@@ -2,19 +2,7 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-
-using NShader;
-
-using Stride.Core;
-using Stride.Core.Assets;
-using Stride.Core.Shaders.Ast;
-using Stride.Core.Shaders.Utility;
-using Stride.Shaders.Parser;
 using Stride.VisualStudio.BuildEngine;
-using Stride.VisualStudio.Commands.Shaders;
 
 namespace Stride.VisualStudio.Commands
 {
@@ -110,7 +98,7 @@ namespace Stride.VisualStudio.Commands
 
         private List<string> CollectShadersDirectories(string packagePath)
         {
-            if (packagePath == null)
+            if (packagePath is null)
             {
                 packagePath = PackageStore.Instance.GetPackageFileName("Stride.Engine", new PackageVersionRange(new PackageVersion(StrideVersion.NuGetVersion)));
             }

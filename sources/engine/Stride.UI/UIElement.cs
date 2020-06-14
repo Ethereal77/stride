@@ -17,7 +17,7 @@ using Stride.Games;
 namespace Stride.UI
 {
     /// <summary>
-    /// Provides a base class for all the User Interface elements in Stride applications.
+    ///   Base class for all the User Interface elements in a Stride application.
     /// </summary>
     [DataContract(Inherited = true)]
     [CategoryOrder(10, AppearanceCategory, Expand = ExpandRule.Auto)]

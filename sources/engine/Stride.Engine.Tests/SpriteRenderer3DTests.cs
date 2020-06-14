@@ -5,14 +5,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Graphics.Regression;
 using Stride.Rendering.Sprites;
+
+using Xunit;
 
 namespace Stride.Engine.Tests
 {
@@ -151,12 +151,6 @@ namespace Stride.Engine.Tests
         public void SpriteRender3DRun()
         {
             RunGameTest(new SpriteRenderer3DTests());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new SpriteRenderer3DTests())
-                game.Run();
         }
     }
 }

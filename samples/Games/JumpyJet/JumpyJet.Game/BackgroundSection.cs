@@ -33,7 +33,7 @@ namespace JumpyJet
         public bool IsUpdating { get; set; }
         public bool IsRunning { get; protected set; }
         public bool IsVisible { get; protected set; }
-        public int ScrollPos { get; protected set; }
+        public float ScrollPos { get; protected set; }
         public float ScrollWidth { get; protected set; }
         public float ScrollSpeed { get; protected set; }
 
@@ -62,7 +62,7 @@ namespace JumpyJet
                 if (ScrollPos > textureRegion.Width)
                     ScrollPos = 0;
 
-                ScrollPos += (int)(elapsedTime * ScrollSpeed);
+                ScrollPos += elapsedTime * ScrollSpeed;
 
                 UpdateSpriteQuads();
             }

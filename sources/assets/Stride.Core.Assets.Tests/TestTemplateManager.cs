@@ -12,7 +12,7 @@ using Stride.Core.Assets.Templates;
 namespace Stride.Core.Assets.Tests
 {
     /// <summary>
-    /// Tests for the <see cref="TemplateManager"/> class.
+    ///   Tests for the <see cref="TemplateManager"/> class.
     /// </summary>
     public class TestTemplateManager: TemplateGeneratorBase<SessionTemplateGeneratorParameters>
     {
@@ -52,12 +52,6 @@ namespace Stride.Core.Assets.Tests
         public override bool Run(SessionTemplateGeneratorParameters parameters)
         {
             return true;
-        }
-
-        internal static void Main()
-        {
-            var test = new TestTemplateManager();
-            test.TestTemplateDescriptions();
         }
     }
 }

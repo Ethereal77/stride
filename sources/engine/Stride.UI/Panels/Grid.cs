@@ -15,7 +15,7 @@ using Stride.Core.Mathematics;
 namespace Stride.UI.Panels
 {
     /// <summary>
-    /// Represents a grid control with adjustable columns, rows and layers.
+    ///   Represents a grid control with adjustable columns, rows, and layers.
     /// </summary>
     [DataContract(nameof(Grid))]
     [DebuggerDisplay("Grid - Name={Name}")]
@@ -27,45 +27,46 @@ namespace Stride.UI.Panels
         {
             GridDimensionData.Create(),     // Column
             GridDimensionData.Create(),     // Row
-            GridDimensionData.Create(),     // Layer
+            GridDimensionData.Create()      // Layer
         };
 
         /// <summary>
-        /// A list use to make a copy of the star definition and then make a modification on this list.
+        ///   A list used to make a copy of the strip definitions and then make a modification on this list.
         /// </summary>
         private readonly List<StripDefinition> starDefinitionsCopy = new List<StripDefinition>();
 
         /// <summary>
-        /// The list of the star definitions of an element sorted by increasing minimum size wrt their star value
+        ///   The list of the strip definitions of an element sorted by increasing minimum size with respect to their star value.
         /// </summary>
-        /// <remarks> This variable is declared as a field to avoid reallocations at each frame</remarks>
+        /// <remarks>This variable is declared as a field to avoid reallocations each frame.</remarks>
         private readonly List<StripDefinition> minSortedStarDefinitions = new List<StripDefinition>();
 
         /// <summary>
-        /// The list of the star definitions of an element sorted by increasing maximum size wrt their star value
+        ///   The list of the strip definitions of an element sorted by increasing maximum size with respect to their star value.
         /// </summary>
-        /// <remarks> This variable is declared as a field to avoid reallocations at each frame</remarks>
+        /// <remarks>This variable is declared as a field to avoid reallocations each frame.</remarks>
         private readonly List<StripDefinition> maxSortedStarDefinitions = new List<StripDefinition>();
 
         /// <summary>
-        /// The list of the star definitions that were bounded by their maximum values in the current iteration step.
+        ///   The list of the strip definitions that were bounded by their maximum values in the current iteration step.
         /// </summary>
-        /// <remarks> This variable is declared as a field to avoid reallocations at each frame</remarks>
+        /// <remarks>This variable is declared as a field to avoid reallocations each frame.</remarks>
         private readonly List<StripDefinition> maxBoundedStarDefinitions = new List<StripDefinition>();
 
         /// <summary>
-        /// The list of the star definitions that were bounded by their minimum values in the current iteration step.
+        ///   The list of the strip definitions that were bounded by their minimum values in the current iteration step.
         /// </summary>
-        /// <remarks> This variable is declared as a field to avoid reallocations at each frame</remarks>
+        /// <remarks>This variable is declared as a field to avoid reallocations each frame.</remarks>
         private readonly List<StripDefinition> minBoundedStarDefinitions = new List<StripDefinition>();
 
         /// <summary>
-        /// The list of all elements contained in at least on auto-sized strip.
+        ///   The list of all elements contained in at least one auto-sized strip.
         /// </summary>
         private readonly HashSet<UIElement> autoDefinedElements = new HashSet<UIElement>();
 
         private readonly IComparer<StripDefinition> sortByIncreasingMaximumComparer = new StripDefinition.SortByIncreasingStarRelativeMaximumValues();
         private readonly IComparer<StripDefinition> sortByIncreasingMinimumComparer = new StripDefinition.SortByIncreasingStarRelativeMinimumValues();
+
 
         public Grid()
         {
@@ -73,6 +74,7 @@ namespace Stride.UI.Panels
             ColumnDefinitions.CollectionChanged += DefinitionCollectionChanged;
             LayerDefinitions.CollectionChanged += DefinitionCollectionChanged;
         }
+
 
         private void DefinitionCollectionChanged(object sender, TrackingCollectionChangedEventArgs trackingCollectionChangedEventArgs)
         {
@@ -82,9 +84,11 @@ namespace Stride.UI.Panels
                 case NotifyCollectionChangedAction.Add:
                     modifiedElement.DefinitionChanged += OnStripDefinitionChanged;
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     modifiedElement.DefinitionChanged -= OnStripDefinitionChanged;
                     break;
+
                 default:
                     throw new NotSupportedException();
             }
@@ -97,88 +101,98 @@ namespace Stride.UI.Panels
         }
 
         /// <summary>
-        /// The actual definitions of the grid rows.
+        ///   Gets the actual definitions of the grid rows.
         /// </summary>
-        /// <remarks>A grid always has at least one default row definition, even when <see cref="RowDefinitions"/> is empty.</remarks>
+        /// <remarks>
+        ///   A grid always has at least one default row definition, even when <see cref="RowDefinitions"/> is empty.
+        /// </remarks>
         [DataMemberIgnore]
         public StripDefinitionCollection ActualRowDefinitions => dimensionData[1].StripDefinitions;
 
         /// <summary>
-        /// The actual definitions of the grid columns.
+        ///   The actual definitions of the grid columns.
         /// </summary>
-        /// <remarks>A grid always has at least one default row definition, even when <see cref="ColumnDefinitions"/> is empty.</remarks>
+        /// <remarks>
+        ///   A grid always has at least one default row definition, even when <see cref="ColumnDefinitions"/> is empty.
+        /// </remarks>
         [DataMemberIgnore]
         public StripDefinitionCollection ActualColumnDefinitions => dimensionData[0].StripDefinitions;
 
         /// <summary>
         /// The actual definitions of the grid layers.
         /// </summary>
-        /// <remarks>A grid always has at least one default row definition, even when <see cref="LayerDefinitions"/> is empty.</remarks>
+        /// <remarks>
+        ///   A grid always has at least one default row definition, even when <see cref="LayerDefinitions"/> is empty.
+        /// </remarks>
         [DataMemberIgnore]
         public StripDefinitionCollection ActualLayerDefinitions => dimensionData[2].StripDefinitions;
 
         /// <summary>
-        /// The definitions of the grid rows.
+        ///   Gets the definitions of the grid's rows.
         /// </summary>
-        /// <userdoc>The definitions of the grid rows.</userdoc>
+        /// <userdoc>The definitions of the grid's rows.</userdoc>
         [DataMember]
         [Display(category: LayoutCategory)]
         public StripDefinitionCollection RowDefinitions { get; } = new StripDefinitionCollection();
 
         /// <summary>
-        /// The definitions of the grid columns.
+        ///   Gets the definitions of the grid's columns.
         /// </summary>
-        /// <userdoc>The definitions of the grid columns.</userdoc>
+        /// <userdoc>The definitions of the grid's columns.</userdoc>
         [DataMember]
         [Display(category: LayoutCategory)]
         public StripDefinitionCollection ColumnDefinitions { get; } = new StripDefinitionCollection();
 
         /// <summary>
-        /// The definitions of the grid layers.
+        ///   Gets the definitions of the grid's layers.
         /// </summary>
-        /// <userdoc>The definitions of the grid layers.</userdoc>
+        /// <userdoc>The definitions of the grid's layers.</userdoc>
         [DataMember]
         [Display(category: LayoutCategory)]
         public StripDefinitionCollection LayerDefinitions { get; } = new StripDefinitionCollection();
 
+
         protected override Vector3 MeasureOverride(Vector3 availableSizeWithoutMargins)
         {
             // This function is composed of 6 main parts:
-            // 1. Add default strip definition to ensure that all elements are in the grid
-            // 2. Rebuild the needed cache data to perform future calculations
-            // 3. Measure all children that are not contained in star-sized strips with the best estimation possible.
-            // 4. Determine the size of the auto-size strips.
-            // 5. Determine the size of 1-star strip.
-            // 6. Re-measure all children, this time with the exact strip size value.
-            // 7. Calculate size required by the grid to contain all its children.
+            //  1. Add default strip definition to ensure that all elements are in the grid.
+            //  2. Rebuild the needed cache data to perform future calculations.
+            //  3. Measure all children that are not contained in star-sized strips with the best estimation possible.
+            //  4. Determine the size of the auto-size strips.
+            //  5. Determine the size of 1-star strip.
+            //  6. Re-measure all children, this time with the exact strip size value.
+            //  7. Calculate size required by the grid to contain all its children.
 
-            // 1. Ensure that all child UI element are completely inside the grid by adding strip definitions
+            // 1. Ensure that all children UI elements are completely inside the grid by adding strip definitions
             CheckChildrenPositionsAndAdjustGridSize();
 
             // 2. Update the autoStripNumberToElements cache data structure for the next Measure and Arrange sequence
             RebuildMeasureCacheData();
 
-            // 3. Measure all children that are contained in a least one auto-strip with the best estimation possible of the strips final size.
-            // Note that only an estimation of the final strip size can be used at this point, since the final sizes can only be determined once all auto-children have been measured.
+            // 3. Measure all children that are contained in a least one auto-strip with the best estimation possible of the strips final size
+            //    Note that only an estimation of the final strip size can be used at this point, since the final sizes can only be determined
+            //    once all auto-children have been measured.
             //
-            // We chose a kind of gross but simple/efficient algorithm. It works as follows:
-            // - Initialize the strip sizes with the strip minimum size for star/auto strips and exact final size for fixed strips.
-            // - Remove the minimal strip size as well as the fixed strip size.
-            // - Use this same remaining size to measure all the auto elements.
-            // This algorithm put all the auto elements on an equal footing, but propose more space to the children that the grid really have.
+            //    We chose a kind of gross but simple/efficient algorithm. It works as follows:
+            //     - Initialize the strip sizes with the strip minimum size for star/auto strips and exact final size for fixed strips.
+            //     - Remove the minimal strip size as well as the fixed strip size.
+            //     - Use this same remaining size to measure all the auto elements.
+            //    This algorithm put all the auto elements on an equal footing, but propose more space to the children that the grid really have.
             //
-            // For a better estimation of the size really available to the children, the following algorithm would be possible,
-            // but it is much more complex and heavy not only in term of CPU usage but also in memory (cached data):
-            // - Initialize the strip sizes with the strip minimum size for star/auto strips and exact final size for fixed strips.
-            // - Measure elements by iterating on columns (left to right) then rows (top to bottom) and finally layers (back to front)
-            // - Estimate the measure size by removing from the available size the size of all previous strips actual size (that is current size estimation).
-            // - When going to the next strip iteration, refine the previous strip estimated size (ActualSize) by taking the max sized needed among all element ending in this strip.
+            //    For a better estimation of the size really available to the children, the following algorithm would be possible,
+            //    but it is much more complex and heavy not only in term of CPU usage but also in memory (cached data):
+            //     - Initialize the strip sizes with the strip minimum size for star/auto strips and exact final size for fixed strips.
+            //     - Measure elements by iterating on columns (left to right) then rows (top to bottom) and finally layers (back to front).
+            //     - Estimate the measure size by removing from the available size the size of all previous strips actual size (that is
+            //       current size estimation).
+            //     - When going to the next strip iteration, refine the previous strip estimated size (ActualSize) by taking the max sized
+            //       needed among all element ending in this strip.
 
             // Initialize strip actual size with minimal values
             for (var dim = 0; dim < 3; dim++)
                 InitializeStripDefinitionActualSize(dimensionData[dim].StripDefinitions);
 
-            // calculate size available for all auto elements.
+            // Calculate size available for all auto elements.
             var autoElementAvailableSize = availableSizeWithoutMargins;
             for (var dim = 0; dim < 3; dim++)
             {
@@ -188,7 +202,7 @@ namespace Stride.UI.Panels
                 }
             }
 
-            // measure all the children
+            // Measure all the children
             foreach (var child in autoDefinedElements)
             {
                 var childAvailableSize = Vector3.Zero;
@@ -209,38 +223,43 @@ namespace Stride.UI.Panels
                 child.Measure(childAvailableSize);
             }
 
-            // 4. Determine the size of the auto-sized strips
-            // -> Our algorithm here tries to minimize as long as possible the size of the Auto-strips during the iteration.
+            // 4. Determine the size of the auto-sized strips.
+            //    Our algorithm here tries to minimize as long as possible the size of the Auto-strips during the iteration.
             //    By doing so, we postpone the increase in size of shared Auto-strips to the last strip shared.
             //    This method is way much easier than spreading space equally between all the shared auto-sized strips.
             //
-            //   |<-    auto   ->|<-    auto   ->|
-            //   _________________________________
-            //   |element1       |element2       |  <-- spreads space equally between auto-sized strips -- very difficult (even WPF implementation is buggy and not optimal)
-            //   |-----element3-with-span-of-2---|
+            //     |<-    auto   ->|<-    auto   ->|
+            //     ┌───────────────┬───────────────┐
+            //     │element1       │element2       │  <-- Spreads space equally between auto-sized strips -- very difficult
+            //     │ ---element3-with-span-of-2--- │      (even the WPF implementation is buggy and not optimal)
             //
-            //   |<-auto->|<-        auto      ->|
-            //   _________________________________
-            //   |element1|element2              |  <-- our algorithm always minimize auto-sized strips as long as possible -- simple and optimal
-            //   |-----element3-with-span-of-2---|
+            //     |<-auto->|<-        auto      ->|
+            //     ┌────────┬──────────────────────┐
+            //     │element1│element2              │  <-- Our algorithm always minimize auto-sized strips as long as possible -- simple and optimal
+            //     │ ---element3-with-span-of-2--- │
             //
-            // -> There is an issue with elements contained both in auto and star strip definitions.
-            //    Intuitively, we expect that those elements receive enough space to layout and that this space is perfectly divided into the auto / star strips.
-            //    The problem is that it is not possible to determine the size of star strips as long as all auto strip size as not been determined,
-            //    and that it is not possible determine missing space to include into the auto-sized strips for those elements as long as we don't know the size of star-sized strips.
+            //    There is an issue with elements contained both in auto and star strip definitions.
+            //    Intuitively, we expect that those elements receive enough space to layout and that this space is perfectly divided
+            //    into the auto / star strips. The problem is that it is not possible to determine the size of star strips as long as
+            //    all auto strip size have not been determined, and that it is not possible determine missing space to include into the
+            //    auto-sized strips for those elements as long as we don't know the size of star-sized strips.
+            //
             //    We are in a dead-end. There is basically two solutions:
-            //       1. Include all the missing size for those element into the auto strips
-            //       2. Include none of the missing size into the auto strips and hope that the star strips will be big enough to contain those elements.
-            //    Here we chose option (2), that is we ignore those elements during calculation of auto-sized strips.
-            //    The reason between this choice is that (1) will tend to increase excessively the size of auto-sized strips (for nothing).
+            //       1. Include all the missing size for those element into the auto strips.
+            //       2. Include none of the missing size into the auto strips and hope that the star strips will be big enough to contain
+            //          those elements.
+            //
+            //    Here we chose option (2): We ignore those elements during calculation of auto-sized strips.
+            //    The reason is that (1) will tend to increase excessively the size of auto-sized strips (for nothing).
             //    Moreover, we consider most of the time elements included both auto and star-size strips are more elements that we want
             //    to be spread along several strips rather than elements that we want auto-sized.
+
             for (var dim = 0; dim < 3; dim++)
             {
                 ref var dimData = ref dimensionData[dim];
                 var definitions = dimData.StripDefinitions;
 
-                // reset the estimated size of the auto-sized strip calculated before.
+                // Reset the estimated size of the auto-sized strip calculated before
                 InitializeStripDefinitionActualSize(definitions);
 
                 var elementToStripDefinitions = dimData.ElementToStripDefinitions;
@@ -248,16 +267,18 @@ namespace Stride.UI.Panels
                 for (var index = 0; index < definitions.Count; index++)
                 {
                     var currentDefinition = definitions[index];
-                    if (currentDefinition.Type != StripType.Auto) // we are interested only in auto-sized strip here
+                    if (currentDefinition.Type != StripType.Auto)
+                        // We are interested only in auto-sized strip here
                         continue;
 
-                    // for each strip iterate all the elements (with no star definition) to determine the biggest space needed.
+                    // For each strip iterate all the elements (with no star definition) to determine the biggest space needed
                     foreach (var element in stripIndexToNoStarElements[index])
                     {
-                        var currentDefinitionIndex = 0; // the index of 'currentDefinition' in 'elementToStripDefinitions[element]'
+                        // Index of 'currentDefinition' in 'elementToStripDefinitions[element]'
+                        var currentDefinitionIndex = 0;
                         var elementStripDefinitions = elementToStripDefinitions[element];
 
-                        // first determine the total space still needed for the element
+                        // First determine the total space still needed for the element
                         var spaceAvailable = 0f;
                         for (var i = 0; i < elementStripDefinitions.Count; i++)
                         {
@@ -268,11 +289,11 @@ namespace Stride.UI.Panels
                         }
                         var spaceNeeded = Math.Max(0, element.DesiredSizeWithMargins[dim] - spaceAvailable);
 
-                        // if no space is needed, go check the next element
+                        // If no space is needed, go check the next element
                         if (spaceNeeded <= 0)
                             continue;
 
-                        // look if the space needed can be found in next strip definitions
+                        // Look if the space needed can be found in next strip definitions
                         for (var i = currentDefinitionIndex + 1; i < elementStripDefinitions.Count; i++)
                         {
                             var def = elementStripDefinitions[i];
@@ -280,19 +301,21 @@ namespace Stride.UI.Panels
                             if (def.Type == StripType.Auto)
                                 spaceNeeded = Math.Max(0, spaceNeeded - (def.MaximumSize - def.ActualSize));
 
-                            if (spaceNeeded <= 0) // if no space is needed anymore, there is no need to continue the process
+                            // If no space is needed anymore, there is no need to continue the process
+                            if (spaceNeeded <= 0)
                                 break;
                         }
-                        // increase the strip size by the needed space
+
+                        // Increase the strip size by the needed space
                         currentDefinition.ActualSize = currentDefinition.ClampSizeByMinimumMaximum(currentDefinition.ActualSize + spaceNeeded);
                     }
                 }
             }
 
-            // 5. Calculate the actual size of 1-star strip.
+            // 5. Calculate the actual size of 1-star strip
             CalculateStarStripSize(availableSizeWithoutMargins);
 
-            // 6. Re-measure all the children, this time with the exact available size.
+            // 6. Re-measure all the children, this time with the exact available size
             foreach (var child in VisualChildrenCollection)
             {
                 var availableToChildWithMargin = Vector3.Zero;
@@ -303,12 +326,12 @@ namespace Stride.UI.Panels
             }
 
             // 7. Calculate the size needed by the grid in order to be able to contain all its children.
-            // This consist at finding the size of 1-star strip so that elements enter into the star-size strips.
+            //    This consist at finding the size of 1-star strip so that elements enter into the star-size strips.
             //
-            // For each grid dimension:
-            // -> calculate the size required by 1-star
-            // -> update the actual size of the star-sized elements
-            // -> calculate the size needed by the grid
+            //    For each grid dimension:
+            //     - Calculate the size required by 1-star.
+            //     - Update the actual size of the star-sized elements.
+            //     - Calculate the size needed by the grid.
             //
             var neededSize = Vector3.Zero;
             for (var dim = 0; dim < 3; dim++)
@@ -324,11 +347,11 @@ namespace Stride.UI.Panels
                     var element = kv.Key;
                     var elementDefinitions = kv.Value;
 
-                    // clear previous cached values
+                    // Clear previous cached values
                     minSortedStarDefinitions.Clear();
                     maxSortedStarDefinitions.Clear();
 
-                    // calculate the space missing for the element
+                    // Calculate the space missing for the element
                     var availableSpace = 0f;
                     foreach (var def in elementDefinitions)
                     {
@@ -341,18 +364,19 @@ namespace Stride.UI.Panels
                     }
                     var currentNeededSpace = Math.Max(0, element.DesiredSizeWithMargins[dim] - availableSpace);
 
-                    // sort the star definition by increasing relative minimum and maximum values
+                    // Sort the star definition by increasing relative minimum and maximum values
                     minSortedStarDefinitions.Sort(sortByIncreasingMinimumComparer);
 
-                    // calculate the size needed for 1-star for this element
-                    // -> starting with the element with the smallest relative minimum size,
-                    //    we progressively increase the star strip size until reaching the needed size
+                    // Calculate the size needed for 1-star for this element.
+                    //   Starting with the element with the smallest relative minimum size, we progressively increase the star
+                    //   strip size until reaching the needed size.
                     var neededOneStarSize = 0f;
                     for (var minIndex = 0; minIndex < minSortedStarDefinitions.Count && currentNeededSpace > 0; ++minIndex)
                     {
                         var minDefinition = minSortedStarDefinitions[minIndex];
 
-                        maxSortedStarDefinitions.Add(minDefinition);  // add current definition to the list of definition that can have their size increased
+                        // Add current definition to the list of definitions that can have their size increased
+                        maxSortedStarDefinitions.Add(minDefinition);
                         maxSortedStarDefinitions.Sort(sortByIncreasingMaximumComparer);
 
                         var nextDefinitionRelativeMinSize = (minIndex == minSortedStarDefinitions.Count - 1) ? float.PositiveInfinity : minSortedStarDefinitions[minIndex + 1].ValueRelativeMinimum();
@@ -364,13 +388,13 @@ namespace Stride.UI.Panels
                             var maxNextStepSizeIncrease = maxDefinition.SizeValue * minNextRelativeStepSizeIncrease;
                             var maxNextStepRelativeSizeIncreate = Math.Min(minNextRelativeStepSizeIncrease, (maxDefinition.MaximumSize - maxDefinition.ActualSize) / maxDefinition.SizeValue);
 
-                            // remove the size of the max increase from the min target increase
+                            // Remove the size of the max increase from the min target increase
                             minNextRelativeStepSizeIncrease -= maxNextStepRelativeSizeIncreate;
 
-                            // determine if the current element has reached its maximum size
+                            // Determine if the current element has reached its maximum size
                             var maxDefinitionReachedItsMax = maxDefinition.ActualSize + maxNextStepSizeIncrease >= maxDefinition.MaximumSize;
 
-                            // update the actual size of all the max definitions and reduce the needed size accordingly
+                            // Update the actual size of all the max definitions and reduce the needed size accordingly
                             foreach (var definition in maxSortedStarDefinitions)
                             {
                                 var absoluteIncrease = maxNextStepRelativeSizeIncreate * definition.SizeValue;
@@ -378,7 +402,7 @@ namespace Stride.UI.Panels
                                 definition.ActualSize += absoluteIncrease;
                             }
 
-                            // if the element has reached its maximum -> we remove it from the list for the next iteration
+                            // If the element has reached its maximum -> we remove it from the list for the next iteration
                             if (maxDefinitionReachedItsMax)
                             {
                                 var minNextStepSizeIncrease = minNextRelativeStepSizeIncrease * SumValues(maxSortedStarDefinitions);
@@ -386,12 +410,12 @@ namespace Stride.UI.Panels
                                 minNextRelativeStepSizeIncrease = minNextStepSizeIncrease / SumValues(maxSortedStarDefinitions);
                             }
 
-                            // update the size needed for one star
+                            // Update the size needed for one star
                             neededOneStarSize = Math.Max(neededOneStarSize, maxDefinition.ActualSize / maxDefinition.SizeValue);
                         }
                     }
 
-                    // update the grid dimension-global 1-star size
+                    // Update the grid dimension-global 1-star size
                     oneStarSize = Math.Max(oneStarSize, neededOneStarSize);
                 }
 
@@ -399,7 +423,7 @@ namespace Stride.UI.Panels
                 foreach (var starDefinition in dimData.StarDefinitions)
                     starDefinition.ActualSize = starDefinition.ClampSizeByMinimumMaximum(oneStarSize * starDefinition.SizeValue);
 
-                // determine to size needed by the grid
+                // Determine the size needed by the grid
                 neededSize[dim] += SumStripCurrentSize(definitions);
             }
 
@@ -407,9 +431,9 @@ namespace Stride.UI.Panels
         }
 
         /// <summary>
-        /// Set the size of all the fix-sized strips, and initialize the size of auto/star-sized strips to their minimal size.
+        ///   Sets the size of all the fix-sized strips, and initialize the size of auto/star-sized strips to their minimal size.
         /// </summary>
-        /// <param name="definitions">The strip definitions</param>
+        /// <param name="definitions">The strip definitions.</param>
         private static void InitializeStripDefinitionActualSize(StripDefinitionCollection definitions)
         {
             foreach (var definition in definitions)
@@ -425,13 +449,13 @@ namespace Stride.UI.Panels
 
         protected override Vector3 ArrangeOverride(Vector3 finalSizeWithoutMargins)
         {
-            // determine the size of the star strips now that we have the final available size.
+            // Determine the size of the star strips now that we have the final available size
             CalculateStarStripSize(finalSizeWithoutMargins);
 
             // Update strip starting position cache data
             RebuildStripPositionCacheData();
 
-            // calculate the final size of the grid.
+            // Calculate the final size of the grid
             var gridFinalSize = Vector3.Zero;
             for (var dim = 0; dim < 3; dim++)
             {
@@ -439,26 +463,25 @@ namespace Stride.UI.Panels
                 gridFinalSize[dim] = Math.Max(dimData.CachedStripIndexToStripPosition[dimData.StripDefinitions.Count], finalSizeWithoutMargins[dim]);
             }
 
-            // arrange the children
+            // Arrange the children
             foreach (var child in VisualChildrenCollection)
             {
-                // calculate child position
+                // Calculate child position
                 var gridPosition = GetElementGridPositions(child);
                 var position = new Vector3(
                     dimensionData[0].CachedStripIndexToStripPosition[gridPosition.X],
                     dimensionData[1].CachedStripIndexToStripPosition[gridPosition.Y],
                     dimensionData[2].CachedStripIndexToStripPosition[gridPosition.Z]);
 
-                // set the arrange matrix values
+                // Set the arrange matrix values
                 child.DependencyProperties.Set(PanelArrangeMatrixPropertyKey, Matrix.Translation(position - gridFinalSize / 2));
 
-                // calculate the size provided to the child
-                var providedSize = new Vector3(
-                    SumStripCurrentSize(dimensionData[0].ElementToStripDefinitions[child]),
-                    SumStripCurrentSize(dimensionData[1].ElementToStripDefinitions[child]),
-                    SumStripCurrentSize(dimensionData[2].ElementToStripDefinitions[child]));
+                // Calculate the size provided to the child
+                var providedSize = new Vector3(SumStripCurrentSize(dimensionData[0].ElementToStripDefinitions[child]),
+                                               SumStripCurrentSize(dimensionData[1].ElementToStripDefinitions[child]),
+                                               SumStripCurrentSize(dimensionData[2].ElementToStripDefinitions[child]));
 
-                // arrange the child
+                // Arrange the child
                 child.Arrange(providedSize, IsCollapsed);
             }
 
@@ -467,36 +490,38 @@ namespace Stride.UI.Panels
 
         private void CalculateStarStripSize(Vector3 finalSizeWithoutMargins)
         {
-            // calculate the ActualSize of the start-sized strips. Possible minimum and maximum values have to be taken in account for that calculation.
+            // Calculate the ActualSize of the start-sized strips
+            // Possible minimum and maximum values have to be taken into account for that calculation
             for (var dim = 0; dim < 3; dim++)
             {
                 ref var dimData = ref dimensionData[dim];
                 starDefinitionsCopy.Clear();
                 starDefinitionsCopy.AddRange(dimData.StarDefinitions);
 
-                // compute the size taken by fixed and auto strips
+                // Compute the size taken by fixed and auto strips
                 var spaceTakenByFixedAndAutoStrips = SumStripAutoAndFixedSize(dimData.StripDefinitions);
 
-                // calculate the size remaining for the start-sized strips
+                // Calculate the size remaining for the start-sized strips
                 var spaceRemainingForStarStrips = Math.Max(0f, finalSizeWithoutMargins[dim] - spaceTakenByFixedAndAutoStrips);
 
-                // calculate the total value of the stars.
+                // Calculate the total value of the stars.
                 var starValuesSum = SumValues(starDefinitionsCopy);
 
-                // calculate the space dedicated to one star
+                // Calculate the space dedicated to one star
                 var oneStarSpace = spaceRemainingForStarStrips / starValuesSum;
 
-                // At this point we have the size of a 1-star-sized strip if none of strips are saturated by their min or max size values.
-                // In following loop we progressively refine the value until reaching the final value for 1-star-sized strip.
+                // At this point we have the size of a 1-star strip if no strips are saturated by their min or max size values.
+                // In the following loop we progressively refine the value until reaching the final value for 1-star strips.
+                //
                 // Our algorithm works as follow:
-                //   1. Finding saturated strips (by min or max)
-                //   2. Determine if size taken by star-sized strip will increase or decrease due to saturated strips.
-                //   3. Updating the total size dedicated of star-sized strips by removing the size taken by min (resp. max) saturated strips
-                //   4. Updating the total remaining star value by removing the star-values of min (resp. max) saturated strips
-                //   5. Updating size of 1-star-sized strip.
-                //   6. Removing from the star-sized strip list the min (resp. max) saturated strips.
-                //   7. As new strips can now reach min (resp. max) saturation with the decreased (resp. increase) of the 1-star-sized strip size,
-                //      repeat the process until none of the remaining strips are saturated anymore.
+                //  1. Find saturated strips (by min or max).
+                //  2. Determine if the size taken by star-sized strip will increase or decrease due to saturated strips.
+                //  3. Update the total size dedicated of star-sized strips by removing the size taken by min (resp. max) saturated strips.
+                //  4. Update the total remaining star value by removing the star-values of min (resp. max) saturated strips.
+                //  5. Update size of 1-star strips.
+                //  6. Removing from the star-sized strips list the min (resp. max) saturated strips.
+                //  7. As new strips can now reach min (resp. max) saturation with the decreased (resp. increased) 1-star strip size,
+                //     repeat the process until no remaining strips are saturated anymore.
                 //
                 // Note that termination is ensured by the fact the set of star-sized to measure strictly decrease at each iteration.
                 do
@@ -504,7 +529,7 @@ namespace Stride.UI.Panels
                     maxBoundedStarDefinitions.Clear();
                     minBoundedStarDefinitions.Clear();
 
-                    // find the min/max saturated strips.
+                    // Find the min/max saturated strips.
                     foreach (var definition in starDefinitionsCopy)
                     {
                         definition.ActualSize = definition.SizeValue * oneStarSpace;
@@ -520,28 +545,28 @@ namespace Stride.UI.Panels
                         }
                     }
 
-                    // re-calculate the size taken by star-sized strips (taking into account saturated strips)
+                    // Re-calculate the size taken by star-sized strips (taking into account saturated strips)
                     var resultingSize = SumStripCurrentSize(starDefinitionsCopy);
 
-                    // determine if we have to trim max or min saturated star strips
+                    // Determine if we have to trim max or min saturated star strips
                     var strimList = resultingSize < spaceRemainingForStarStrips ? maxBoundedStarDefinitions : minBoundedStarDefinitions;
 
-                    // update the size of 1-star-strip
+                    // Update the size of 1-star-strip
                     spaceRemainingForStarStrips -= SumStripCurrentSize(strimList);
                     starValuesSum -= SumValues(strimList);
                     oneStarSpace = spaceRemainingForStarStrips / starValuesSum;
 
-                    // remove definitions of star strip that will remain saturated until the end of the process from the to-measure list
+                    // Remove definitions of star strip that will remain saturated until the end of the process from the to-measure list
                     for (int i = strimList.Count - 1; i >= 0; i--)
                     {
-                        // faster to remove in reverse
+                        // Faster to remove in reverse
                         var definition = strimList[i];
                         int removeIndex = starDefinitionsCopy.LastIndexOf(definition);
                         starDefinitionsCopy.RemoveAt(removeIndex);
                     }
                 }
-                // stops the process if either there is no saturated strip or no star-sized strip to measure anymore.
-                while ((maxBoundedStarDefinitions.Count != 0 || minBoundedStarDefinitions.Count != 0) && starDefinitionsCopy.Count != 0);
+                // Stops the process if either there is no saturated strip or no star-sized strip to measure anymore
+                while ((maxBoundedStarDefinitions.Count > 0 || minBoundedStarDefinitions.Count > 0) && starDefinitionsCopy.Count > 0);
             }
         }
 
@@ -552,10 +577,11 @@ namespace Stride.UI.Panels
             for (var dim = 0; dim < 3; dim++)
             {
                 ref var dimData = ref dimensionData[dim];
-                // remove the strip definitions associated to the removed child
+
+                // Remove the strip definitions associated to the removed child
                 dimData.ElementToStripDefinitions.Remove(oldElement);
 
-                // remove the strip definitions associated to the removed child
+                // Remove the strip definitions associated to the removed child
                 dimData.PartialStarElementToStripDefinitions.Remove(oldElement);
 
                 autoDefinedElements.Remove(oldElement);
@@ -569,21 +595,23 @@ namespace Stride.UI.Panels
             for (var dim = 0; dim < 3; dim++)
             {
                 ref var dimData = ref dimensionData[dim];
-                // ensure that all children have a associate list strip definitions
+
+                // Ensure that all children have a associate list strip definitions
                 dimData.ElementToStripDefinitions[newElement] = new List<StripDefinition>();
 
-                // ensure that all children have a associate list strip definitions
+                // Ensure that all children have a associate list strip definitions
                 dimData.PartialStarElementToStripDefinitions[newElement] = new List<StripDefinition>();
             }
         }
 
         private void RebuildMeasureCacheData()
         {
-            // clear existing cache data
+            // Clear existing cache data
             for (var dim = 0; dim < 3; dim++)
             {
                 ref var dimData = ref dimensionData[dim];
-                // the 'stripIndexToNoStarElements' entries
+
+                // The 'stripIndexToNoStarElements' entries
                 var stripIndexToNoStarElements = dimData.StripIndexToNoStarElements;
                 for (var index = 0; index < dimData.StripDefinitions.Count; ++index)
                 {
@@ -593,17 +621,17 @@ namespace Stride.UI.Panels
                     stripIndexToNoStarElements[index].Clear();
                 }
 
-                // the 'elementToStripDefinitions' entries
+                // The 'elementToStripDefinitions' entries
                 foreach (var list in dimData.ElementToStripDefinitions.Values)
                     list.Clear();
 
-                // the 'partialStarElementToStripDefinitions' entries
+                // The 'partialStarElementToStripDefinitions' entries
                 foreach (var list in dimData.PartialStarElementToStripDefinitions.Values)
                     list.Clear();
             }
             autoDefinedElements.Clear();
 
-            // build 'elementToStripDefinitions', stripIndexToNoStarElements', 'partialStarElementToStripDefinitions' and 'autoDefinedElements'
+            // Build 'elementToStripDefinitions', stripIndexToNoStarElements', 'partialStarElementToStripDefinitions' and 'autoDefinedElements'
             foreach (var child in VisualChildrenCollection)
             {
                 var childPosition = GetElementGridPositions(child);
@@ -619,7 +647,7 @@ namespace Stride.UI.Panels
                     int childPositionStart = childPosition[dim];
                     int childPositionEndExcl = childPosition[dim] + childSpan[dim];
 
-                    // fill 'elementToStripDefinitions'
+                    // Fill 'elementToStripDefinitions'
                     var elementToStripDefinitions = dimData.ElementToStripDefinitions;
                     for (var i = childPositionStart; i < childPositionEndExcl; i++)
                     {
@@ -632,7 +660,7 @@ namespace Stride.UI.Panels
                         elementToStripDefinitions[child].Add(currentStripDef);
                     }
 
-                    // fill 'stripIndexToNoStarElements' and 'partialStarElementToStripDefinitions'
+                    // Fill 'stripIndexToNoStarElements' and 'partialStarElementToStripDefinitions'
                     if (childHasNoStarDefinitions)
                     {
                         var stripIndexToNoStarElements = dimData.StripIndexToNoStarElements;
@@ -648,7 +676,7 @@ namespace Stride.UI.Panels
                 }
             }
 
-            // build the star definitions cache
+            // Build the star definitions cache
             for (var dim = 0; dim < 3; ++dim)
             {
                 ref var dimData = ref dimensionData[dim];
@@ -695,17 +723,17 @@ namespace Stride.UI.Panels
 
         private void RebuildStripPositionCacheData()
         {
-            // rebuild strip begin position cached data
+            // Rebuild strip begin position cached data
             for (var dim = 0; dim < 3; dim++)
             {
                 ref var dimData = ref dimensionData[dim];
                 var cachedStripIndexToStripPosition = dimData.CachedStripIndexToStripPosition;
                 var stripDefinitions = dimData.StripDefinitions;
 
-                //clear last cached data
+                // Clear last cached data
                 cachedStripIndexToStripPosition.Clear();
 
-                // calculate the strip start position
+                // Calculate the strip start position
                 var startPosition = 0f;
                 for (var index = 0; index < stripDefinitions.Count; index++)
                 {
@@ -777,9 +805,7 @@ namespace Stride.UI.Panels
 
         public override Vector2 GetSurroudingAnchorDistances(Orientation direction, float position)
         {
-            Vector2 distances;
-
-            GetDistanceToSurroundingAnchors(dimensionData[(int)direction].CachedStripIndexToStripPosition, position, out distances);
+            GetDistanceToSurroundingAnchors(dimensionData[(int)direction].CachedStripIndexToStripPosition, position, out Vector2 distances);
 
             return distances;
         }
@@ -798,34 +824,34 @@ namespace Stride.UI.Panels
         }
 
         /// <summary>
-        /// Helper container that stores all the strip data for a given dimension.
+        ///   Helper container that stores all the strip data for a given dimension.
         /// </summary>
         private struct GridDimensionData
         {
             public StripDefinitionCollection StripDefinitions;
 
             /// <summary>
-            /// For index of strip, return the list of UIElement that are contained only in auto-sized strips
+            ///   For index of strip, return the list of UIElement that are contained only in auto-sized strips
             /// </summary>
             public readonly List<List<UIElement>> StripIndexToNoStarElements;
 
             /// <summary>
-            /// For UIelement, returns the list of all the strip definition it is contained in ordered by increasing strip index
+            ///   For UIelement, returns the list of all the strip definition it is contained in ordered by increasing strip index
             /// </summary>
             public readonly Dictionary<UIElement, List<StripDefinition>> ElementToStripDefinitions;
 
             /// <summary>
-            /// For UIelement that is partially contained in star-sized strip, returns the list of all the strip definition it is contained in
+            ///   For UIelement that is partially contained in star-sized strip, returns the list of all the strip definition it is contained in
             /// </summary>
             public readonly Dictionary<UIElement, List<StripDefinition>> PartialStarElementToStripDefinitions;
 
             /// <summary>
-            /// For strip index, return the starting position of the strip.
+            ///   For strip index, return the starting position of the strip.
             /// </summary>
             public readonly List<float> CachedStripIndexToStripPosition;
 
             /// <summary>
-            /// The list of the star definitions for the current dimension iteration (Ox, Oy or Oz).
+            ///   The list of the star definitions for the current dimension iteration (Ox, Oy or Oz).
             /// </summary>
             public readonly List<StripDefinition> StarDefinitions;
 
@@ -845,9 +871,8 @@ namespace Stride.UI.Panels
                 StarDefinitions = dimToStarDefinitions;
             }
 
-            public static GridDimensionData Create()
-            {
-                var data = new GridDimensionData(
+            public static GridDimensionData Create() => new GridDimensionData
+                (
                     stripDefinitions: null,
                     stripIndexToNoStarElements: new List<List<UIElement>>(),
                     elementToStripDefinitions: new Dictionary<UIElement, List<StripDefinition>>(),
@@ -855,8 +880,6 @@ namespace Stride.UI.Panels
                     cachedStripIndexToStripPosition: new List<float>(),
                     dimToStarDefinitions: new List<StripDefinition>()
                 );
-                return data;
-            }
         }
     }
 }

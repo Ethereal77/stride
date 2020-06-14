@@ -4,19 +4,18 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Rendering;
-using Stride.Rendering.ComputeEffect;
 using Stride.Rendering.Images;
+using Stride.Rendering.ComputeEffect;
 using Stride.Games;
-using Stride.Graphics.Regression;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
     /// <summary>
-    /// The the pass 2 of lambertian prefiltering SH
+    ///   Test class for pass 2 of Lambertian prefiltering Spherical Harmonics.
     /// </summary>
     public class TestLambertPrefilteringSHPass2 : GraphicTestGameBase
     {
@@ -40,9 +39,7 @@ namespace Stride.Graphics.Tests
 
         private readonly Int2 screenSize = new Int2(1200, 900);
 
-        public TestLambertPrefilteringSHPass2() : this(true)
-        {
-        }
+        public TestLambertPrefilteringSHPass2() : this(true) { }
 
         protected TestLambertPrefilteringSHPass2(bool assertResults)
         {
@@ -125,14 +122,6 @@ namespace Stride.Graphics.Tests
         public void RunTestPass2()
         {
             RunGameTest(new TestLambertPrefilteringSHPass2());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestLambertPrefilteringSHPass2(false))
-            {
-                game.Run();
-            }
         }
     }
 }

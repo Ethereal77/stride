@@ -10,14 +10,7 @@ namespace Stride.Graphics.Tests
     {
         public TestStaticSpriteFont()
             : base("StaticFonts/", "sta")
-        {
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestStaticSpriteFont())
-                game.Run();
-        }
+        { }
 
         /// <summary>
         /// Run the test

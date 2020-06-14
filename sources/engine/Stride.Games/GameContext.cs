@@ -13,62 +13,77 @@ using Stride.Graphics;
 namespace Stride.Games
 {
     /// <summary>
-    /// Contains context used to render the game (Control for WinForm, a DrawingSurface for WP8...etc.).
+    ///   Represents a class that contains context information used to render the game (Control for WinForm, DrawingSurface for WPF, etc).
     /// </summary>
     public abstract class GameContext
     {
         /// <summary>
-        /// Context type of this instance.
+        ///   Gets the context type of this instance.
         /// </summary>
         public AppContextType ContextType { get; protected set; }
 
         /// <summary>
-        /// Indicating whether the user will call the main loop. E.g. Stride is used as a library.
+        ///   Gets a value indicating whether the user will call the main loop.
         /// </summary>
+        /// <remarks>
+        ///    This is useful if Stride is used as a library.
+        /// </remarks>
         public bool IsUserManagingRun { get; protected set; }
 
-        // TODO: remove these requested values.
+        /// <summary>
+        ///   Gets the main loop callback to be called when <see cref="IsUserManagingRun"/> is <c>true</c>.
+        /// </summary>
+        /// <value>The run loop.</value>
+        public Action RunCallback { get; internal set; }
 
         /// <summary>
-        /// The requested width.
+        ///   Gets the exit callback to be called when exiting the game when <see cref="IsUserManagingRun"/> is <c>true</c>.
+        /// </summary>
+        /// <value>The exit callback.</value>
+        public Action ExitCallback { get; internal set; }
+
+        // TODO: Remove these requested values.
+
+        /// <summary>
+        ///   The requested width.
         /// </summary>
         internal int RequestedWidth;
 
         /// <summary>
-        /// The requested height.
+        ///   The requested height.
         /// </summary>
         internal int RequestedHeight;
 
         /// <summary>
-        /// The requested back buffer format.
+        ///   The requested back buffer format.
         /// </summary>
         internal PixelFormat RequestedBackBufferFormat;
 
         /// <summary>
-        /// The requested depth stencil format.
+        ///   The requested depth stencil format.
         /// </summary>
         internal PixelFormat RequestedDepthStencilFormat;
 
         /// <summary>
-        /// THe requested graphics profiles.
+        ///   THe requested graphics profiles.
         /// </summary>
         internal GraphicsProfile[] RequestedGraphicsProfile;
 
         /// <summary>
-        /// The device creation flags that will be used to create the <see cref="GraphicsDevice"/>.
+        ///   The device creation flags that will be used to create the <see cref="GraphicsDevice"/>.
         /// </summary>
         /// <value>The device creation flags.</value>
         public DeviceCreationFlags DeviceCreationFlags;
 
         /// <summary>
-        /// Indicate whether the game must initialize the default database when it starts running.
+        ///   Indicate whether the game must initialize the default database when it starts running.
         /// </summary>
         public bool InitializeDatabase = true;
 
         /// <summary>
-        /// Product name of game.
-        /// TODO: Provide proper access title through code and game studio
+        ///   Gets the product name of the game.
         /// </summary>
+        // TODO: Provide proper access title through code and Game Studio
         internal static string ProductName
         {
             get
@@ -80,9 +95,9 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Product location of game.
-        /// TODO: Only used for retrieving game's icon. See ProductName for future refactoring
+        ///   Gets the location of the game.
         /// </summary>
+        // TODO: Only used for retrieving game's icon. See ProductName for future refactoring
         public static string ProductLocation
         {
             get
@@ -109,25 +124,26 @@ namespace Stride.Games
     }
 
     /// <summary>
-    /// Generic version of <see cref="GameContext"/>. The later is used to describe a generic game Context.
-    /// This version enables us to constraint the game context to a specifc toolkit and ensures a better cohesion
-    /// between the various toolkit specific classes, such as InputManager, GameWindow.
+    ///   Represents a generic <see cref="GameContext"/> constrained to a specific toolkit (WinForms, WPF, etc).
     /// </summary>
-    /// <typeparam name="TK"></typeparam>
-    public abstract class GameContext<TK> : GameContext
+    /// <typeparam name="TControl">Type of control on which the game will render.</typeparam>
+    /// <remarks>
+    ///   This version ensures a better cohesion between the various toolkit specific classes, such as InputManager, GameWindow, etc.
+    /// </remarks>
+    public abstract class GameContext<TControl> : GameContext
     {
         /// <summary>
-        /// Underlying control associated with context.
+        ///   Gets the underlying control associated with this context.
         /// </summary>
-        public TK Control { get; internal set; }
+        public TControl Control { get; internal set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameContext" /> class.
+        ///   Initializes a new instance of the <see cref="GameContext" /> class.
         /// </summary>
-        /// <param name="control">The control.</param>
-        /// <param name="requestedWidth">Width of the requested.</param>
-        /// <param name="requestedHeight">Height of the requested.</param>
-        protected GameContext(TK control, int requestedWidth = 0, int requestedHeight = 0)
+        /// <param name="control">The control on which the game will run.</param>
+        /// <param name="requestedWidth">Requested width of the control.</param>
+        /// <param name="requestedHeight">Requested height of the control.</param>
+        protected GameContext(TControl control, int requestedWidth = 0, int requestedHeight = 0)
         {
             Control = control;
             RequestedWidth = requestedWidth;

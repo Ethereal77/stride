@@ -4,17 +4,17 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
 
     /// <summary>
-    /// Test a sprite font imported from an external ttf file (not system font).
+    ///   Test class for a sprite font imported from an external TTF file (not system font).
     /// </summary>
     public class TestExternSpriteFont : GraphicTestGameBase
     {
@@ -22,9 +22,7 @@ namespace Stride.Graphics.Tests
         private SpriteFont testFont;
         private Texture colorTexture;
 
-        public TestExternSpriteFont()
-        {
-        }
+        public TestExternSpriteFont() { }
 
         protected override void RegisterTests()
         {
@@ -81,12 +79,6 @@ namespace Stride.Graphics.Tests
 
             if (Input.IsKeyReleased(Keys.S))
                 SaveTexture(GraphicsDevice.Presenter.BackBuffer, "sprite-font-extern-test.png");
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestExternSpriteFont())
-                game.Run();
         }
 
         /// <summary>

@@ -14,7 +14,7 @@ using Stride.UI.Controls;
 namespace Stride.UI
 {
     /// <summary>
-    /// Interface of the UI system.
+    ///   Represents a system that can draw UI and process interaction from the user.
     /// </summary>
     public class UISystem : GameSystemBase
     {
@@ -42,7 +42,8 @@ namespace Stride.UI
             Enabled = true;
             Visible = false;
 
-            if (Game != null) // thumbnail system has no game
+            // Thumbnail system has no game
+            if (Game != null)
             {
                 Game.Activated += OnApplicationResumed;
                 Game.Deactivated += OnApplicationPaused;
@@ -51,13 +52,14 @@ namespace Stride.UI
 
         protected override void Destroy()
         {
-            if (Game != null) // thumbnail system has no game
+            // Thumbnail system has no game
+            if (Game != null)
             {
                 Game.Activated -= OnApplicationResumed;
                 Game.Deactivated -= OnApplicationPaused;
             }
 
-            // ensure that OnApplicationPaused is called before destruction, when Game.Deactivated event is not triggered.
+            // Ensure that OnApplicationPaused is called before destruction, when Game.Deactivated event is not triggered.
             OnApplicationPaused(this, EventArgs.Empty);
 
             base.Destroy();
@@ -67,13 +69,14 @@ namespace Stride.UI
         {
             base.LoadContent();
 
-            // create effect and geometric primitives
+            // Create effects and geometric primitives
             Batch = new UIBatch(GraphicsDevice);
 
-            // create depth stencil states
-            var depthStencilDescription = new DepthStencilStateDescription(true, true)
+            // Create depth stencil states
+            var depthStencilDescription = new DepthStencilStateDescription(depthEnable: true, depthWriteEnable: true)
             {
                 StencilEnable = true,
+
                 FrontFace = new DepthStencilStencilOpDescription
                 {
                     StencilDepthBufferFail = StencilOperation.Keep,
@@ -81,6 +84,7 @@ namespace Stride.UI
                     StencilPass = StencilOperation.Keep,
                     StencilFunction = CompareFunction.Equal
                 },
+
                 BackFace = new DepthStencilStencilOpDescription
                 {
                     StencilDepthBufferFail = StencilOperation.Keep,
@@ -101,21 +105,21 @@ namespace Stride.UI
         }
 
         /// <summary>
-        /// The method to call when the application is put on background.
+        ///   Called when the Application is put on background.
         /// </summary>
         private static void OnApplicationPaused(object sender, EventArgs e)
         {
-            // validate the edit text and close the keyboard, if any edit text is currently active
-            if (UIElement.FocusedElement is EditText focusedEdit)
-                focusedEdit.IsSelectionActive = false;
+            // Validate the edit text and close the keyboard, if any edit text is currently active
+            if (UIElement.FocusedElement is EditText focusedEditText)
+                focusedEditText.IsSelectionActive = false;
         }
 
         /// <summary>
-        /// The method to call when the application is put on foreground.
+        ///   Called when the Application is put on foreground.
         /// </summary>
         private static void OnApplicationResumed(object sender, EventArgs e)
         {
-            // revert the state of the edit text here?
+            // TODO: Revert the state of the edit text here?
         }
 
         public override void Update(GameTime gameTime)
@@ -127,10 +131,12 @@ namespace Stride.UI
 
         private void UpdateKeyEvents()
         {
-            if (input == null)
+            if (input is null)
                 return;
 
-            if (UIElement.FocusedElement == null || !UIElement.FocusedElement.IsHierarchyEnabled) return;
+            if (UIElement.FocusedElement is null ||
+                !UIElement.FocusedElement.IsHierarchyEnabled)
+                return;
 
             // Raise text input events
             var textEvents = input.Events.OfType<TextInputEvent>();
@@ -139,28 +145,27 @@ namespace Stride.UI
             {
                 enteredText = true;
                 UIElement.FocusedElement?.RaiseTextInputEvent(new TextEventArgs
-                {
-                    Text = textEvent.Text,
-                    Type = textEvent.Type,
-                    CompositionStart = textEvent.CompositionStart,
-                    CompositionLength = textEvent.CompositionLength
-                });
+                    {
+                        Text = textEvent.Text,
+                        Type = textEvent.Type,
+                        CompositionStart = textEvent.CompositionStart,
+                        CompositionLength = textEvent.CompositionLength
+                    });
             }
 
             foreach (var keyEvent in input.KeyEvents)
             {
-                var key = keyEvent.Key;
-                var evt = new KeyEventArgs { Key = key, Input = input };
                 if (enteredText)
-                    continue; // Skip key events if text was entered
+                    // Skip key events if text was entered
+                    continue;
+
+                var key = keyEvent.Key;
+                var eventArgs = new KeyEventArgs { Key = key, Input = input };
+
                 if (keyEvent.IsDown)
-                {
-                    UIElement.FocusedElement?.RaiseKeyPressedEvent(evt);
-                }
+                    UIElement.FocusedElement?.RaiseKeyPressedEvent(eventArgs);
                 else
-                {
-                    UIElement.FocusedElement?.RaiseKeyReleasedEvent(evt);
-                }
+                    UIElement.FocusedElement?.RaiseKeyReleasedEvent(eventArgs);
             }
 
             foreach (var key in input.DownKeys)

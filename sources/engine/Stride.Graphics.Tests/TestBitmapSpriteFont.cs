@@ -4,11 +4,11 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -18,9 +18,7 @@ namespace Stride.Graphics.Tests
         private SpriteFont testFont;
         private Texture colorTexture;
 
-        public TestBitmapSpriteFont()
-        {
-        }
+        public TestBitmapSpriteFont() { }
 
         protected override void RegisterTests()
         {
@@ -38,8 +36,6 @@ namespace Stride.Graphics.Tests
             // Instantiate a SpriteBatch
             spriteBatch = new SpriteBatch(GraphicsDevice);
             colorTexture = Texture.New2D(GraphicsDevice, 1, 1, PixelFormat.R8G8B8A8_UNorm, new[] { Color.White });
-
-            spriteBatch = new SpriteBatch(GraphicsDevice);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -77,12 +73,6 @@ namespace Stride.Graphics.Tests
 
             if (Input.IsKeyReleased(Keys.S))
                 SaveTexture(GraphicsDevice.Presenter.BackBuffer, "sprite-font-bitmap-test.png");
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestBitmapSpriteFont())
-                game.Run();
         }
 
         /// <summary>

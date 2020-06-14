@@ -8,13 +8,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
 using Stride.Graphics.Regression;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -413,11 +413,10 @@ namespace Stride.Graphics.Tests
             Skip.If(sourceFormat == ImageFileType.Wmp, "no input image of this format.");
             Skip.If(sourceFormat == ImageFileType.Wmp || sourceFormat == ImageFileType.Tga, "TODO remove this when Load/Save methods are implemented for those types.");
 
-            TestName = nameof(TestLoadDraw);
-
             PerformDrawTest(
                 (game, context) =>
                 {
+                    game.TestName = $"{nameof(TestLoadDraw)}({sourceFormat})";
                     context.CommandList.Clear(context.CommandList.RenderTarget, new Color4(Color.Green).ToColorSpace(ColorSpace.Linear));
                     context.CommandList.Clear(context.CommandList.DepthStencilBuffer, DepthStencilClearOptions.DepthBuffer);
 

@@ -17,12 +17,12 @@ using Stride.Graphics.Regression;
 namespace Stride.Particles.Tests
 {
     /// <summary>
-    /// Game class for test on the Input sensors.
+    ///   Game class for test on the Particles system.
     /// </summary>
     public class GameTest : GameTestBase
     {
         /// <summary>
-        /// The <see cref="ParticleTestVersion"/> is shared for all tests
+        ///   The <see cref="ParticleTestVersion"/> is shared for all tests
         /// </summary>
         // Breaking changes
         //  Please update the version number every time there is a breaking change to the particle engine and write down what has been changed
@@ -56,7 +56,7 @@ namespace Stride.Particles.Tests
 
             AutoLoadDefaultSettings = true; // Note! This will override the preferred graphics profile so save it for later
             overrideGraphicsProfile = profile;
-            
+
             IsFixedTimeStep = true;
             ForceOneUpdatePerDraw = true;
             IsDrawDesynchronized = false;
@@ -83,7 +83,7 @@ namespace Stride.Particles.Tests
             var assetManager = Services.GetSafeServiceAs<ContentManager>();
 
             // Make sure you have created a Scene with the same name (testName) in your StrideGameStudio project.
-            // The scene should be included in the build as Root and copied together with the other 
+            // The scene should be included in the build as Root and copied together with the other
             //  assets to the /GameAssets directory contained in this assembly's directory
             // Finally, make sure the scene is also added to the Stride.Particles.Tests.sdpkg
             //  and it has a proper uid. Example (for the VisualTestSpawners scene):
@@ -132,32 +132,6 @@ namespace Stride.Particles.Tests
                 return;
 
             ScreenshotRequested = false;
-        }
-
-        /// <summary>
-        /// This is useful if you want to run all the tests on your own machine and compare images
-        /// </summary>
-        public static void Main()
-        {
-            //using (var game = new GameTest("GameTest")) { game.Run(); }
-
-            using (var game = new VisualTestInitializers()) { game.Run(); }
-
-            using (var game = new VisualTestSpawners()) { game.Run(); }
-
-            using (var game = new VisualTestGeneral()) { game.Run(); }
-
-            using (var game = new VisualTestUpdaters()) { game.Run(); }
-
-            using (var game = new VisualTestMaterials()) { game.Run(); }
-
-            using (var game = new VisualTestCurves()) { game.Run(); }
-
-            using (var game = new VisualTestRibbons()) { game.Run(); }
-
-            using (var game = new VisualTestChildren()) { game.Run(); }
-
-            using (var game = new GameTest("VisualTestSoftEdge", GraphicsProfile.Level_11_0)) { game.Run(); }
         }
     }
 }

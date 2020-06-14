@@ -65,7 +65,7 @@ namespace Stride.Shaders.Parser
         {
             SourceManager = new ShaderSourceManager(fileProvider);
             var shaderLoader = new ShaderLoader(SourceManager);
-            
+
             if (shaderLibrary == null)
             {
                 shaderLibrary = new StrideShaderLibrary(shaderLoader);
@@ -194,7 +194,7 @@ namespace Stride.Shaders.Parser
 
             // Update the clone context in case new instances of classes are created
             CloneContext mixCloneContext;
-            
+
             lock (hlslCloneContextLock)
             {
                 if (hlslCloneContext == null)
@@ -278,7 +278,7 @@ namespace Stride.Shaders.Parser
                     }
 
                     parsingResult.EntryPoints[stage] = entryPoint.Name.Text;
-                    
+
                     // When this is a compute shader, there is no need to scan other stages
                     if (stage == ShaderStage.Compute)
                         break;
@@ -417,7 +417,7 @@ namespace Stride.Shaders.Parser
                         if (module.MixinName == className || module.InheritanceList.Any(x => x.MixinName == className))
                         {
                             // add reference
-                            var foundVars = module.FindAllVariablesByName(variable.Name).Where(value => value.Variable.Qualifiers.Contains(StrideStorageQualifier.Compose)).ToList();;
+                            var foundVars = module.FindAllVariablesByName(variable.Name).Where(value => value.Variable.Qualifiers.Contains(StrideStorageQualifier.Compose)).ToList();
                             if (foundVars.Count > 1)
                             {
                                 log.Error(StrideMessageCode.ErrorAmbiguousComposition, new SourceSpan(), variable.Name);
@@ -430,7 +430,7 @@ namespace Stride.Shaders.Parser
                                 List<ModuleMixin> previousList;
                                 if (dictionary.TryGetValue(foundVar, out previousList))
                                 {
-                                    previousList.AddRange(composition); 
+                                    previousList.AddRange(composition);
                                 }
                                 else
                                     extraDictionary.Add(foundVars[0].Variable, composition);

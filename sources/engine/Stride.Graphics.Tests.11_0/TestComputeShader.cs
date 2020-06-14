@@ -4,13 +4,13 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Rendering.ComputeEffect;
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -90,12 +90,6 @@ namespace Stride.Graphics.Tests
         public void RunTest()
         {
             RunGameTest(new TestComputeShader());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestComputeShader())
-                game.Run();
         }
     }
 }

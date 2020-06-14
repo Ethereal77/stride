@@ -2,19 +2,14 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xunit;
-
-using Stride.Core.Mathematics;
 using Stride.Engine;
-using Stride.Engine.NextGen;
 using Stride.Games;
 using Stride.Graphics.Regression;
-using Stride.Rendering.Compositing;
-using Stride.Rendering.Images;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -41,7 +36,7 @@ namespace Stride.Graphics.Tests
         protected override async Task LoadContent()
         {
             await base.LoadContent();
-            
+
             Window.AllowUserResizing = true;
 
             var cameraEntity = SceneSystem.SceneInstance.First(x => x.Get<CameraComponent>() != null);
@@ -54,12 +49,6 @@ namespace Stride.Graphics.Tests
             FrameGameSystem.TakeScreenshot(2);
         }
 
-        internal static void Main()
-        {
-            using (var game = new TestLightShafts())
-                game.Run();
-        }
-        
         /// <summary>
         /// Run the test
         /// </summary>

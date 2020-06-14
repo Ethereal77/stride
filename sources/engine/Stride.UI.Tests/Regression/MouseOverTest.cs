@@ -4,21 +4,20 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Engine;
 using Stride.Games;
 using Stride.Graphics;
-using Stride.Input;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
+
+using Xunit;
 
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Test the mouse over event/property/designs
+    ///   Test class to test the mouse over events / property / designs.
     /// </summary>
     public class MouseOverTest : UITestGameBase
     {
@@ -39,9 +38,7 @@ namespace Stride.UI.Tests.Regression
         private MouseOverState oldValueButton1;
         private MouseOverState newValueButton1;
 
-        public MouseOverTest()
-        {
-        }
+        public MouseOverTest() { }
 
         protected override async Task LoadContent()
         {
@@ -69,9 +66,9 @@ namespace Stride.UI.Tests.Regression
 
             stackPanel = new StackPanel
             {
-                Children = { button2, edit2 }, 
-                HorizontalAlignment = HorizontalAlignment.Center, 
-                VerticalAlignment = VerticalAlignment.Center, 
+                Children = { button2, edit2 },
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
                 Orientation = Orientation.Horizontal
             };
             stackPanel.SetCanvasRelativePosition(new Vector3(0.5f, 0.5f, 0f));
@@ -187,7 +184,7 @@ namespace Stride.UI.Tests.Regression
             Assert.False(triggeredEdit2);
             Assert.False(triggeredStackPanel);
         }
-        
+
         private void PrepareTest4()
         {
             ResetStates();
@@ -211,7 +208,7 @@ namespace Stride.UI.Tests.Regression
             Assert.False(triggeredEdit2);
             Assert.False(triggeredStackPanel);
         }
-        
+
         private void PrepareTest5()
         {
             ResetStates();
@@ -290,15 +287,6 @@ namespace Stride.UI.Tests.Regression
             RequirePlatform(PlatformType.Windows);
 
             RunGameTest(new MouseOverTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new MouseOverTest())
-                game.Run();
         }
     }
 }

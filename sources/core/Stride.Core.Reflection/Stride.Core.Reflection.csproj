@@ -3,7 +3,7 @@
     <StrideRuntime>true</StrideRuntime>
     <StrideRuntimeNetStandard>true</StrideRuntimeNetStandard>
   </PropertyGroup>
-  <Import Project="..\..\targets\Stride.Core.PreSettings.targets" />
+  <Import Project="..\..\targets\Stride.Core.props" />
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <PropertyGroup>
     <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
@@ -20,15 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Stride.Core.Serialization\Stride.Core.Serialization.csproj" />
   </ItemGroup>
-  <Choose>
-    <When Condition="'$(StrideEffectCompiler)' == 'true'">
-      <ItemGroup Condition="'$(StrideEffectCompiler)' == 'true'">
-        <ProjectReference Include="..\Stride.Shaders.Compiler\Stride.Shaders.Compiler.csproj">
-                  <Private>False</Private>
-        </ProjectReference>
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Import Project="$(StridePostSettingsTargets)" />
+  <Import Project="$(StrideSdkTargets)" />
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

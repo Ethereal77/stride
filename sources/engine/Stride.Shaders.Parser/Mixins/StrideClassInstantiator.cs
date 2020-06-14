@@ -4,15 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
-using Stride.Core.Shaders.Ast.Stride;
-using Stride.Shaders.Parser.Utility;
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
-using Stride.Core.Shaders.Utility;
+using Stride.Core.Shaders.Ast.Stride;
 using Stride.Core.Shaders.Visitor;
+using Stride.Core.Shaders.Utility;
+using Stride.Shaders.Parser.Utility;
 
 using StorageQualifier = Stride.Core.Shaders.Ast.StorageQualifier;
 
@@ -29,7 +28,7 @@ namespace Stride.Shaders.Parser.Mixins
         private Dictionary<string, Variable> variableGenerics;
 
         private Dictionary<string, Expression> expressionGenerics;
-        
+
         private Dictionary<string, Identifier> identifiersGenerics;
 
         private Dictionary<string, string> stringGenerics;
@@ -68,13 +67,13 @@ namespace Stride.Shaders.Parser.Mixins
             int insertIndex = 0;
             foreach (var variable in shaderClassType.ShaderGenerics)
             {
-                // For all string generic argument, don't try to assign an initial value as they are replaced directly at visit time. 
+                // For all string generic argument, don't try to assign an initial value as they are replaced directly at visit time.
                 if (variable.Type is IGenericStringArgument)
                     continue;
 
                 variable.InitialValue = expressionGenerics[variable.Name.Text];
-                
-                // TODO: be more precise
+
+                // TODO: Be more precise
 
                 if (!(variable.InitialValue is VariableReferenceExpression || variable.InitialValue is MemberReferenceExpression))
                 {
@@ -120,13 +119,16 @@ namespace Stride.Shaders.Parser.Mixins
         public override void Visit(Variable variable)
         {
             base.Visit(variable);
-            //TODO: check types
+            //TODO: Check types
 
             // Don't perform any replacement if we are just auto instancing shaders
             if (autoGenericInstances)
             {
                 return;
             }
+
+            if (variable.IsGroup)
+                return;
 
             // no call on base
             // Semantic keyword: replace semantics

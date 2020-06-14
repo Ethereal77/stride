@@ -4,12 +4,11 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
-using Stride.Core.Serialization.Contents;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -19,9 +18,7 @@ namespace Stride.Graphics.Tests
         private Texture jpg;
         private Texture png;
 
-        public TestImageLoad()
-        {
-        }
+        public TestImageLoad() { }
 
         protected override void RegisterTests()
         {
@@ -66,12 +63,6 @@ namespace Stride.Graphics.Tests
             spriteBatch.Draw(png, new Rectangle(0, (int)(screenSize.Y / 2), (int)screenSize.X, (int)(screenSize.Y / 2)), Color.White);
 
             spriteBatch.End();
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestImageLoad())
-                game.Run();
         }
 
         /// <summary>

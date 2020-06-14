@@ -5,18 +5,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Audio.Tests
 {
     public class BasicTest : AudioTestGame
     {
-        public BasicTest()
-        {
-        }
+        public BasicTest() { }
 
 
         private int count;
@@ -41,7 +39,7 @@ namespace Stride.Audio.Tests
 
             return Task.FromResult(true);
         }
-        
+
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -70,12 +68,6 @@ namespace Stride.Audio.Tests
         public void RunBasicGame()
         {
             RunGameTest(new BasicTest());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new BasicTest())
-                game.Run();
         }
     }
 }

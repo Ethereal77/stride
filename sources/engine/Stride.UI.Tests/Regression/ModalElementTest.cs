@@ -5,8 +5,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Games;
@@ -18,10 +16,12 @@ using Stride.UI.Controls;
 using Stride.UI.Events;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ModalElement"/>
+    ///   Class for rendering tests on the <see cref="ModalElement"/>.
     /// </summary>
     public class ModalElementTest : UITestGameBase
     {
@@ -36,9 +36,7 @@ namespace Stride.UI.Tests.Regression
 
         private SpriteSheet sprites;
 
-        public ModalElementTest()
-        {
-        }
+        public ModalElementTest() { }
 
         protected override async Task LoadContent()
         {
@@ -195,15 +193,6 @@ namespace Stride.UI.Tests.Regression
         public void RunModalElementTest()
         {
             RunGameTest(new ModalElementTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ModalElementTest())
-                game.Run();
         }
 
         private class ClearAndDrawTextureRenderer : ClearRenderer

@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Annotations;
@@ -14,7 +13,7 @@ using Stride.Core.Mathematics;
 namespace Stride.UI
 {
     /// <summary>
-    /// Represents the definition of a grid strip.
+    ///   Represents the definition of a grid strip.
     /// </summary>
     [DataContract(nameof(StripDefinition))]
     [Display(Expand = ExpandRule.Never)]
@@ -22,122 +21,128 @@ namespace Stride.UI
     {
         private float maximumSize = float.PositiveInfinity;
         private float minimumSize;
-        private StripType type = StripType.Star;
         private float sizeValue = 1.0f;
 
+        private StripType type = StripType.Star;
+
         /// <summary>
-        /// The actual size of the strip in virtual pixels.
+        ///   Gets the actual size of the strip in virtual pixels.
         /// </summary>
         [DataMemberIgnore]
         public float ActualSize { get; internal set; }
 
-        /// <summary>
-        /// Creates a 1-Star sized strip definition.
-        /// </summary>
-        public StripDefinition()
-        {
-        }
 
         /// <summary>
-        /// Creates a <see cref="StripDefinition"/> with the provided size and type.
+        ///   Gets or sets the maximum size of the strip, in virtual pixels.
         /// </summary>
-        /// <param name="type">The type of the strip to create</param>
-        /// <param name="sizeValue">The value of the strip to create</param>
-        public StripDefinition(StripType type, float sizeValue = 1.0f)
-        {
-            Type = type;
-            SizeValue = sizeValue;
-        }
-
-        /// <summary>
-        /// The maximum size of the strip in virtual pixels.
-        /// </summary>
-        /// <remarks>The value is coerced in the range [<see cref="MinimumSize"/>, <see cref="float.PositiveInfinity"/>].</remarks>
-        /// <userdoc>The maximum size of the strip in virtual pixels.</userdoc>
+        /// <remarks>The value is coerced to be in the range [<see cref="MinimumSize"/>, <see cref="float.PositiveInfinity"/>].</remarks>
+        /// <userdoc>The maximum size of the strip, in virtual pixels.</userdoc>
         [DataMember]
         [DataMemberRange(0.0f, 3)]
         [DefaultValue(float.PositiveInfinity)]
         public float MaximumSize
         {
-            get { return maximumSize; }
+            get => maximumSize;
             set
             {
                 if (float.IsNaN(value))
                     return;
+
                 CoerceMaximumSize(value);
                 DefinitionChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         /// <summary>
-        /// The minimum size of the strip in virtual pixels.
+        ///   Gets or sets the minimum size of the strip, in virtual pixels.
         /// </summary>
-        /// <remarks>The value is coerced in the range [0, <see cref="float.MaxValue"/>].</remarks>
-        /// <userdoc>The minimum size of the strip in virtual pixels.</userdoc>
+        /// <remarks>The value is coerced to be in the range [0, <see cref="float.MaxValue"/>].</remarks>
+        /// <userdoc>The minimum size of the strip, in virtual pixels.</userdoc>
         [DataMember]
         [DataMemberRange(0.0f, 3)]
         [DefaultValue(0)]
         public float MinimumSize
         {
-            get { return minimumSize; }
+            get => minimumSize;
             set
             {
                 if (float.IsNaN(value))
                     return;
-                minimumSize = MathUtil.Clamp(value, 0.0f, float.MaxValue); ;
+
+                minimumSize = MathUtil.Clamp(value, 0.0f, float.MaxValue);
                 CoerceMaximumSize(maximumSize);
                 DefinitionChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         /// <summary>
-        /// Gets or sets the type of the strip.
+        ///   Gets or sets the type of the strip.
         /// </summary>
         /// <userdoc>The type of the strip.</userdoc>
         [DataMember]
         [DefaultValue(StripType.Star)]
         public StripType Type
         {
-            get { return type; }
+            get => type;
             set
             {
                 if (type == value)
                     return;
 
                 type = value;
-                
+
                 DefinitionChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
         /// <summary>
-        /// Gets or sets the size value of the strip. 
-        /// Note that the value is interpreted differently depending on the strip <see cref="Type"/>.
+        ///   Gets or sets the size value of the strip.
+        ///   Note that the value is interpreted differently depending on the strip <see cref="Type"/>.
         /// </summary>
-        /// <remarks>The value is coerced in the range [0, <see cref="float.MaxValue"/>].</remarks>
+        /// <remarks>The value is coerced to be in the range [0, <see cref="float.MaxValue"/>].</remarks>
         /// <userdoc>The size value of the strip.</userdoc>
         [DataMember]
         [DataMemberRange(0.0f, 3)]
         [DefaultValue(1.0f)]
         public float SizeValue
         {
-            get { return sizeValue; }
+            get => sizeValue;
             set
             {
                 if (float.IsNaN(value))
                     return;
+
                 sizeValue = MathUtil.Clamp(value, 0.0f, float.MaxValue);
                 DefinitionChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        internal event EventHandler<EventArgs> DefinitionChanged;
 
         /// <summary>
-        /// Clamp the provided size by the definition's minimum and maximum values.
+        ///   Initializes a new instance of <see cref="StripDefinition"/> as a 1-Star sized strip definition.
         /// </summary>
-        /// <param name="desiredSize">The size to clamp</param>
-        /// <returns>The size clamped by the minimum and maximum values of the strip definition</returns>
+        public StripDefinition() { }
+
+        /// <summary>
+        ///   Initializes a new instance of <see cref="StripDefinition"/> with the provided size and type.
+        /// </summary>
+        /// <param name="type">The type of the strip to create.</param>
+        /// <param name="sizeValue">The value of the strip to create.</param>
+        public StripDefinition(StripType type, float sizeValue = 1.0f)
+        {
+            Type = type;
+            SizeValue = sizeValue;
+        }
+
+
+        internal event EventHandler<EventArgs> DefinitionChanged;
+
+
+        /// <summary>
+        ///   Clamps the provided size by the definition's minimum and maximum values.
+        /// </summary>
+        /// <param name="desiredSize">The size to clamp.</param>
+        /// <returns>The size clamped by the minimum and maximum values of the strip definition.</returns>
         public float ClampSizeByMinimumMaximum(float desiredSize)
         {
             return MathUtil.Clamp(desiredSize, MinimumSize, MaximumSize);
@@ -147,6 +152,7 @@ namespace Stride.UI
         {
             if (sizeValue < MathUtil.ZeroTolerance)
                 return 0;
+
             return MinimumSize / SizeValue;
         }
 
@@ -154,6 +160,7 @@ namespace Stride.UI
         {
             if (sizeValue < MathUtil.ZeroTolerance)
                 return 0;
+
             return MaximumSize / SizeValue;
         }
 

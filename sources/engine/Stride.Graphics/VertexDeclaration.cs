@@ -7,12 +7,11 @@ using System.Collections.Generic;
 
 using Stride.Core;
 using Stride.Core.Serialization;
-using Stride.Core.Serialization.Serializers;
 
 namespace Stride.Graphics
 {
     /// <summary>
-    /// The layout of a vertex buffer with a set of <see cref="VertexElement" />.
+    ///   Represents the <see cref="VertexElement"/>s that define the layout of a vertex in a vertex buffer.
     /// </summary>
     [DataContract]
     [DataSerializer(typeof(Serializer))]
@@ -24,36 +23,36 @@ namespace Stride.Graphics
         private readonly int hashCode;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VertexDeclaration"/> class.
+        ///   Initializes a new instance of the <see cref="VertexDeclaration"/> class.
         /// </summary>
         internal VertexDeclaration() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VertexDeclaration"/> class.
+        ///   Initializes a new instance of the <see cref="VertexDeclaration"/> class.
         /// </summary>
-        /// <param name="elements">The elements.</param>
+        /// <param name="elements">The elements that compose a vertex.</param>
         public VertexDeclaration(params VertexElement[] elements)
             : this(elements, 0, 0)
-        {
-        }
+        { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VertexDeclaration"/> class.
+        ///   Initializes a new instance of the <see cref="VertexDeclaration"/> class.
         /// </summary>
-        /// <param name="elements">The elements.</param>
+        /// <param name="elements">The elements that compose a vertex.</param>
         /// <param name="instanceCount">The instance count.</param>
-        /// <param name="vertexStride">The vertex stride.</param>
-        /// <exception cref="System.ArgumentNullException">elements</exception>
-        public VertexDeclaration(VertexElement[] elements, int instanceCount = 0, int vertexStride = 0) 
+        /// <param name="vertexStride">The vertex stride, in bytes. Specify 0 to compute the stride from <paramref name="elements"/>.</param>
+        /// <exception cref="System.ArgumentNullException"><paramref name="elements"/> is a <c>null</c> reference.</exception>
+        public VertexDeclaration(VertexElement[] elements, int instanceCount, int vertexStride)
         {
-            if (elements == null) throw new ArgumentNullException("elements");
+            if (elements is null)
+                throw new ArgumentNullException(nameof(elements));
 
             this.elements = elements;
             this.vertexStride = vertexStride == 0 ? VertexElementValidator.GetVertexStride(elements) : vertexStride;
             this.instanceCount = instanceCount;
 
-            // Validate Vertices
-            VertexElementValidator.Validate(VertexStride, elements);
+            // Validate vertices
+            VertexElementValidator.Validate(vertexStride, elements);
 
             hashCode = instanceCount;
             hashCode = (hashCode * 397) ^ vertexStride;
@@ -64,42 +63,27 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Gets the vertex elements.
+        ///   Gets the vertex elements.
         /// </summary>
-        /// <value>The vertex elements.</value>
-        public VertexElement[] VertexElements
-        {
-            get { return elements; }
-        }
+        /// <value>An array of the <see cref="VertexElement"/> that compose a vertex.</value>
+        public VertexElement[] VertexElements => elements;
 
         /// <summary>
-        /// Gets the instance count.
+        ///   Gets the instance count.
         /// </summary>
         /// <value>The instance count.</value>
-        public int InstanceCount
-        {
-            get
-            {
-                return instanceCount;
-            }
-        }
+        public int InstanceCount => instanceCount;
 
         /// <summary>
-        /// Gets the vertex stride.
+        ///   Gets the vertex stride.
         /// </summary>
-        /// <value>The vertex stride.</value>
-        public int VertexStride
-        {
-            get
-            {
-                return vertexStride;
-            }
-        }
+        /// <value>The vertex stride, in bytes.</value>
+        public int VertexStride => vertexStride;
 
         /// <summary>
-        /// Enumerates <see cref="VertexElement"/> with declared offsets.
+        ///   Enumerates <see cref="VertexElement"/> with declared offsets.
         /// </summary>
-        /// <returns>A set of <see cref="VertexElement"/> with offsets.</returns>
+        /// <returns>A collection of the <see cref="VertexElement"/>s with their respective offsets.</returns>
         public IEnumerable<VertexElementWithOffset> EnumerateWithOffsets()
         {
             int offset = 0;
@@ -119,9 +103,9 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Calculate the size of the vertex declaration.
+        ///   Calculates the size of this vertex declaration.
         /// </summary>
-        /// <returns>The size in bytes of the vertex declaration</returns>
+        /// <returns>The size of this vertex declaration, in bytes.</returns>
         public int CalculateSize()
         {
             var size = 0;
@@ -138,7 +122,8 @@ namespace Stride.Graphics
                 // Compute next offset (if automatic)
                 offset += elementSize;
 
-                size = Math.Max(size, offset); // element are not necessary ordered by increasing offsets
+                // Elements are not necessary ordered by increasing offsets
+                size = Math.Max(size, offset);
             }
 
             return size;
@@ -146,17 +131,21 @@ namespace Stride.Graphics
 
         public bool Equals(VertexDeclaration other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return hashCode == other.hashCode && vertexStride == other.vertexStride && instanceCount == other.instanceCount && Utilities.Compare(elements, other.elements);
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return hashCode == other.hashCode &&
+                   vertexStride == other.vertexStride &&
+                   instanceCount == other.instanceCount &&
+                   Utilities.Compare(elements, other.elements);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((VertexDeclaration)obj);
+            return (obj is VertexDeclaration vertexDeclaration) && Equals(vertexDeclaration);
         }
 
         public override int GetHashCode()
@@ -165,24 +154,18 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="VertexElement"/> to <see cref="VertexDeclaration"/>.
+        ///   Performs an implicit conversion from <see cref="VertexElement"/> to <see cref="VertexDeclaration"/>.
         /// </summary>
         /// <param name="element">The element.</param>
-        /// <returns>The result of the conversion.</returns>
-        public static implicit operator VertexDeclaration(VertexElement element)
-        {
-            return new VertexDeclaration(element);
-        }
+        /// <returns>The resulting <see cref="VertexDeclaration"/>.</returns>
+        public static implicit operator VertexDeclaration(VertexElement element) => new VertexDeclaration(element);
 
         /// <summary>
-        /// Performs an implicit conversion from <see cref="VertexElement[][]"/> to <see cref="VertexDeclaration"/>.
+        ///   Performs an implicit conversion from <see cref="VertexElement"/>[] to <see cref="VertexDeclaration"/>.
         /// </summary>
-        /// <param name="elements">The elements.</param>
-        /// <returns>The result of the conversion.</returns>
-        public static implicit operator VertexDeclaration(VertexElement[] elements)
-        {
-            return new VertexDeclaration(elements);
-        }
+        /// <param name="elements">The array of elements.</param>
+        /// <returns>The resulting <see cref="VertexDeclaration"/>.</returns>
+        public static implicit operator VertexDeclaration(VertexElement[] elements) => new VertexDeclaration(elements);
 
         internal class Serializer : DataSerializer<VertexDeclaration>, IDataSerializerGenericInstantiation
         {

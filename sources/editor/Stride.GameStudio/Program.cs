@@ -114,6 +114,7 @@ namespace Stride.GameStudio
                             // TODO: RenderDoc is not working here (when not in debug)
                             GameStudioPreviewService.DisablePreview = true;
                             renderDocManager = new RenderDocManager();
+                            renderDocManager.Initialize();
                         }
                         else if (args[i] == "/Reattach")
                         {
@@ -160,7 +161,7 @@ namespace Stride.GameStudio
                         app.Run();
                     }
 
-                    renderDocManager?.Shutdown();
+                    renderDocManager?.RemoveHooks();
                 }
                 catch (Exception ex)
                 {
@@ -355,6 +356,7 @@ namespace Stride.GameStudio
                 Arguments = string.Join(" ", args.Skip(1)),
                 WorkingDirectory = Environment.CurrentDirectory,
             };
+
             Process.Start(startInfo);
             Environment.Exit(0);
         }

@@ -2,19 +2,17 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Stride.Rendering.Compositing;
 using Stride.Rendering.Images;
+using Stride.Rendering.Compositing;
 
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Renderer interface for a end-user <see cref="ImageEffect"/> accessible from <see cref="SceneEffectRenderer"/>. See remarks.
+    ///   Defines the interface for a image effect that can be used by a <see cref="SceneRendererBase"/>.
     /// </summary>
     /// <remarks>
-    /// An <see cref="IImageEffectRenderer"/> expect an input texture on slot 0, possibly a depth texture on slot 1 and a single
-    /// output.
+    ///   An <see cref="IImageEffectRenderer"/> expects an input texture on slot 0, possibly a depth texture
+    ///   on slot 1 and a single output.
     /// </remarks>
-    public interface IImageEffectRenderer : IImageEffect
-    {
-    }
+    public interface IImageEffectRenderer : IImageEffect { }
 }

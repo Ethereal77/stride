@@ -1,0 +1,16 @@
+<!--
+***********************************************************************************************
+  Stride.UnitTests.Build.props
+
+  Build file pre-included before the building of the unit tests to configure the default
+  graphics API, etc.
+
+  Copyright (C) 2020 Stride and its contributors
+***********************************************************************************************
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(StridePlatform)' == 'Windows'">
+    <StrideGraphicsApis Condition="'$(StrideGraphicsApis)' == ''">Direct3D11</StrideGraphicsApis>
+  </PropertyGroup>
+</Project>
+

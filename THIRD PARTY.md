@@ -1,8 +1,8 @@
 # Third Party Software
 
-Xenko uses the following open-source products.
+Stride uses the following open-source products.
 
-Xenko contains third party software which may be under their own license terms.
+Stride contains third party software which may be under their own license terms.
 All such code will be identified clearly using at least one of these mechanisms:
 
   1) It will be in a separate directory tree with its own `LICENSE.txt` or
@@ -39,7 +39,7 @@ All such code will be identified clearly using at least one of these mechanisms:
 
 ## Editor & Build
 
-### License gift to Xenko
+### License gift to Stride
 
 * [Advanced Installer](https://www.advancedinstaller.com/) graciously offered us an Enterprise license. Thanks!
 * [NDepend](https://www.ndepend.com/) for static code analysis. Thanks for providing us an Open Source license!
@@ -52,7 +52,7 @@ All such code will be identified clearly using at least one of these mechanisms:
 * [DocFX](https://dotnet.github.io/docfx/) (MIT License)
 * [ffmpeg](https://ffmpeg.org/) (GPL 3)
 * [FreeImage](http://freeimage.sourceforge.net/) (FreeImage Public License - Version 1.0)
-* [Gettext.NET](https://sourceforge.net/projects/gettextnet/) (LGPL 2.1, [modified binaries](https://github.com/xenko3d/gettextnet))
+* [Gettext.NET](https://sourceforge.net/projects/gettextnet/) (LGPL 2.1, [modified binaries](https://github.com/stride3d/gettextnet))
 * [ILRepack](https://github.com/gluck/il-repack) (Apache License 2.0)
 * [ImageMagick](http://www.imagemagick.org/)
 * [Markdown.XAML](https://github.com/theunrepentantgeek/Markdown.XAML) (MIT License)

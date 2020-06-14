@@ -5,14 +5,14 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
+
+using Xunit;
 
 namespace Stride.UI.Tests.Regression
 {
@@ -26,9 +26,7 @@ namespace Stride.UI.Tests.Regression
 
         private ScrollViewer scrollViewer;
 
-        public StackPanelTest()
-        {
-        }
+        public StackPanelTest() { }
 
         protected override void RegisterTests()
         {
@@ -44,7 +42,7 @@ namespace Stride.UI.Tests.Regression
 
             FrameGameSystem.Update(() => SetCurrentContent(stackPanel3));
             TakeSequenceOfScreenShots();
-            
+
             //FrameGameSystem.Update(() => SetCurrentContent(stackPanel4));
             //FrameGameSystem.TakeScreenshot();
         }
@@ -57,7 +55,7 @@ namespace Stride.UI.Tests.Regression
             TakeSubSequenceOfScreenShots(true);
 
             FrameGameSystem.Update(ScrollToFixedElementMiddle).TakeScreenshot();
-            
+
             FrameGameSystem.Update(() => currentStackPanel.ItemVirtualizationEnabled = !currentStackPanel.ItemVirtualizationEnabled).TakeScreenshot();
 
             TakeSubSequenceOfScreenShots(false);
@@ -206,14 +204,5 @@ namespace Stride.UI.Tests.Regression
         {
             RunGameTest(new StackPanelTest());
         }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        private static void Main()
-        {
-            using (var game = new StackPanelTest())
-                game.Run();
-        } 
     }
 }

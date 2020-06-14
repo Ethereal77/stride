@@ -15,6 +15,7 @@ namespace Stride.Rendering.Images
     public class TemporalAntiAliasEffect : ImageEffectShader, IScreenSpaceAntiAliasingEffect
     {
         private int jitteringFrameCount;
+
         private ImageScaler textureScaler;
         private Texture previousTexture;
 
@@ -50,6 +51,8 @@ namespace Stride.Rendering.Images
         }
 
         public bool NeedRangeDecompress => false;
+
+        public bool RequiresDepthBuffer => true;
 
         public bool RequiresVelocityBuffer => true;
 

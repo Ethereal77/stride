@@ -2,12 +2,7 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
-
-#if NET45
-using TaskEx = System.Threading.Tasks.Task;
-#endif
 
 namespace Stride.Core.MicroThreading
 {

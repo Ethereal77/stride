@@ -4,11 +4,11 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -23,9 +23,7 @@ namespace Stride.Graphics.Tests
 
         private float switchEffectLevel;
 
-        public TestCustomEffect()
-        {
-        }
+        public TestCustomEffect() { }
 
         protected override void RegisterTests()
         {
@@ -56,18 +54,12 @@ namespace Stride.Graphics.Tests
             GraphicsContext.CommandList.Clear(GraphicsDevice.Presenter.DepthStencilBuffer, DepthStencilClearOptions.DepthBuffer);
             GraphicsContext.CommandList.SetRenderTargetAndViewport(GraphicsDevice.Presenter.DepthStencilBuffer, GraphicsDevice.Presenter.BackBuffer);
 
-            effectInstance.Parameters.Set(MyCustomShaderKeys.ColorFactor2, (Vector4)Color.Red);
+            effectInstance.Parameters.Set(MyCustomShaderKeys.ColorFactor2, (Vector4) Color.Red);
             effectInstance.Parameters.Set(CustomShaderKeys.SwitchEffectLevel, switchEffectLevel);
             effectInstance.Parameters.Set(TexturingKeys.Texture0, UVTexture);
             switchEffectLevel++; // TODO: Add switch Effect to test and capture frames
 
             GraphicsContext.DrawQuad(effectInstance);
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestCustomEffect())
-                game.Run();
         }
 
         /// <summary>

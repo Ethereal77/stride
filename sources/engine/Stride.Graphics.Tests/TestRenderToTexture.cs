@@ -5,13 +5,13 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Games;
 using Stride.Graphics.GeometricPrimitives;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -29,9 +29,7 @@ namespace Stride.Graphics.Tests
         private int width;
         private int height;
 
-        public TestRenderToTexture()
-        {
-        }
+        public TestRenderToTexture() { }
 
         protected override void RegisterTests()
         {
@@ -129,12 +127,6 @@ namespace Stride.Graphics.Tests
         {
             simpleEffect.Parameters.Set(SpriteBaseKeys.MatrixTransform, worldViewProjection);
             geometry.Draw(GraphicsContext, simpleEffect);
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestRenderToTexture())
-                game.Run();
         }
 
         /// <summary>

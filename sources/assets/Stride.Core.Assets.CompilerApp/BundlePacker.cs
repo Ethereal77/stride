@@ -28,6 +28,7 @@ namespace Stride.Core.Assets.CompilerApp
         /// </summary>
         /// <param name="logger">The builder logger.</param>
         /// <param name="packageSession">The project session.</param>
+        /// <param name="rootPackage">The root package.</param>
         /// <param name="indexName">Name of the index file.</param>
         /// <param name="outputDirectory">The output directory.</param>
         /// <param name="disableCompressionIds">
@@ -41,7 +42,7 @@ namespace Stride.Core.Assets.CompilerApp
         /// <exception cref="ArgumentNullException"><paramref name="disableCompressionIds"/> is a <c>null</c> reference.</exception>
         /// <exception cref="InvalidOperationException">Can't exist two bundles with the same name.</exception>
         /// <exception cref="InvalidOperationException">Could not find a dependency when processing a bundle.</exception>
-        public void Build(Logger logger, PackageSession packageSession, string indexName, string outputDirectory, ISet<ObjectId> disableCompressionIds, bool useIncrementalBundles, List<string> bundleFiles)
+        public void Build(Logger logger, PackageSession packageSession, Package rootPackage, string indexName, string outputDirectory, ISet<ObjectId> disableCompressionIds, bool useIncrementalBundles, List<string> bundleFiles)
         {
             if (logger is null)
                 throw new ArgumentNullException(nameof(logger));
@@ -189,7 +190,6 @@ namespace Stride.Core.Assets.CompilerApp
 
                         var outputGroupBundleBackends = new Dictionary<string, BundleOdbBackend>();
 
-                        var rootPackage = packageSession.LocalPackages.First();
                         if (rootPackage.OutputGroupDirectories != null)
                         {
                             foreach (var item in rootPackage.OutputGroupDirectories)

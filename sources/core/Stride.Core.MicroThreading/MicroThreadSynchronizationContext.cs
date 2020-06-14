@@ -11,28 +11,32 @@ namespace Stride.Core.MicroThreading
     {
         private readonly MicroThread microThread;
 
+        MicroThread IMicroThreadSynchronizationContext.MicroThread => microThread;
+
+
         public MicroThreadSynchronizationContext(MicroThread microThread)
         {
             this.microThread = microThread;
         }
 
-        public override SynchronizationContext CreateCopy()
-        {
-            return this;
-        }
 
-        public override void Post(SendOrPostCallback d, object state)
+        public override SynchronizationContext CreateCopy() => this;
+
+        public override void Post(SendOrPostCallback callback, object state)
         {
-            // There is two case:
-            // 1/ We are either in normal MicroThread inside Scheduler.Step() (CurrentThread test),
-            // in which case we will directly execute the callback to avoid further processing from scheduler.
-            // Also, note that Wait() sends us event that are supposed to come back into scheduler.
-            // Note: As it will end up on the callstack, it might be better to Schedule it instead (to avoid overflow)?
-            // 2/ Otherwise, we just received an external task continuation (i.e. TaskEx.Sleep()), or a microthread triggering another,
-            // so schedule it so that it comes back in our regular scheduler.
+            // There is two cases:
+            //
+            //   1) We are either in normal MicroThread inside Scheduler.Step() (CurrentThread test),
+            //      in which case we will directly execute the callback to avoid further processing from scheduler.
+            //      Also, note that Wait() sends us event that are supposed to come back into scheduler.
+            //      NOTE: As it will end up on the callstack, it might be better to Schedule it instead (to avoid overflow)?
+            //
+            //   2) Otherwise, we just received an external task continuation (i.e. Task.Sleep()), or a microthread triggering
+            //      another, so schedule it so that it comes back in our regular scheduler.
+
             if (microThread.Scheduler.RunningMicroThread == microThread)
             {
-                d(state);
+                callback(state);
             }
             else if (microThread.State == MicroThreadState.Completed)
             {
@@ -40,10 +44,8 @@ namespace Stride.Core.MicroThreading
             }
             else
             {
-                microThread.ScheduleContinuation(microThread.ScheduleMode, d, state);
+                microThread.ScheduleContinuation(microThread.ScheduleMode, callback, state);
             }
         }
-
-        MicroThread IMicroThreadSynchronizationContext.MicroThread => microThread;
     }
 }

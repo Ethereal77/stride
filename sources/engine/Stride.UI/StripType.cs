@@ -5,26 +5,26 @@
 namespace Stride.UI
 {
     /// <summary>
-    /// The different types of strip possible of a grid.
+    ///   Defines the different types of strip possible on a <see cref="Panels.Grid"/>.
     /// </summary>
     public enum StripType
     {
         /// <summary>
-        /// A strip having fixed size expressed in number of virtual pixels.
+        ///   A strip having fixed size expressed in number of virtual pixels.
         /// </summary>
         /// <userdoc>A strip having fixed size expressed in number of virtual pixels.</userdoc>
         Fixed,
 
         /// <summary>
-        /// A strip that occupies exactly the size required by its content. 
+        ///   A strip that occupies exactly the size required by its content.
         /// </summary>
         /// <userdoc>A strip that occupies exactly the size required by its content. </userdoc>
         Auto,
 
         /// <summary>
-        /// A strip that occupies the maximum available size, dispatched among the other stared-size columns.
+        ///   A strip that occupies the maximum available size, dispatched among the other star-sized columns.
         /// </summary>
-        /// <userdoc>A strip that occupies the maximum available size, dispatched among the other stared-size columns.</userdoc>
-        Star,
+        /// <userdoc>A strip that occupies the maximum available size, dispatched among the other star-sized columns.</userdoc>
+        Star
     }
 }

@@ -63,33 +63,21 @@ namespace Stride.Graphics.Regression
                     var buffer = image.PixelBuffer[i];
                     var referenceBuffer = referenceImage.PixelBuffer[i];
 
-                    if (buffer.Width != referenceBuffer.Width || buffer.Height != referenceBuffer.Height || buffer.RowStride != referenceBuffer.RowStride)
+                    if (buffer.Width != referenceBuffer.Width ||
+                        buffer.Height != referenceBuffer.Height ||
+                        buffer.RowStride != referenceBuffer.RowStride)
                         return false;
 
                     var swapBGR = buffer.Format.IsBGRAOrder() != referenceBuffer.Format.IsBGRAOrder();
-                    // For now, we handle only this specific case
-                    if (buffer.Format != PixelFormat.R8G8B8A8_UNorm_SRgb || referenceBuffer.Format != PixelFormat.B8G8R8A8_UNorm)
+                    // For now, we handle only those specific cases
+                    if ((buffer.Format != PixelFormat.R8G8B8A8_UNorm_SRgb && buffer.Format != PixelFormat.B8G8R8A8_UNorm_SRgb) ||
+                        referenceBuffer.Format != PixelFormat.B8G8R8A8_UNorm)
                     {
-                        // TODO: support more formats
+                        // TODO: Support more formats
                         return false;
                     }
 
-                    bool checkAlpha;
-                    switch (buffer.Format)
-                    {
-                        case PixelFormat.B8G8R8X8_UNorm:
-                        case PixelFormat.B8G8R8X8_UNorm_SRgb:
-                            checkAlpha = false;
-                            break;
-
-                        case PixelFormat.R8G8B8A8_UNorm:
-                        case PixelFormat.R8G8B8A8_UNorm_SRgb:
-                            checkAlpha = true;
-                            break;
-
-                        default:
-                            throw new NotSupportedException($"Format {buffer.Format} not supported when comparing images.");
-                    }
+                    bool checkAlpha = buffer.Format.AlphaSizeInBits() > 0;
 
                     // Compare remaining bytes
                     int allowedDiff = 2;
@@ -98,8 +86,8 @@ namespace Stride.Graphics.Regression
                     {
                         for (int y = 0; y < buffer.Height; ++y)
                         {
-                            var pSrc = (Color*)(buffer.DataPointer + y * buffer.RowStride);
-                            var pDst = (Color*)(referenceBuffer.DataPointer + y * referenceBuffer.RowStride);
+                            var pSrc = (Color*) (buffer.DataPointer + y * buffer.RowStride);
+                            var pDst = (Color*) (referenceBuffer.DataPointer + y * referenceBuffer.RowStride);
                             for (int x = 0; x < buffer.Width; ++x, ++pSrc, ++pDst)
                             {
                                 var src = *pSrc;

@@ -3,7 +3,6 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -13,7 +12,7 @@ using Stride.Shaders;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Post effect using an <see cref="Effect"/> (either sdfx or sdsl).
+    ///   Represents an <see cref="ImageEffect"/> that uses an <see cref="Effect"/> (either SDFX or SDSL).
     /// </summary>
     [DataContract("ImageEffectShader")]
     public class ImageEffectShader : ImageEffect

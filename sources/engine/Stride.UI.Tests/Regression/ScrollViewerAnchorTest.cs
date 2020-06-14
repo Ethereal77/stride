@@ -5,8 +5,6 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -14,10 +12,12 @@ using Stride.Input;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ScrollViewer"/> 
+    ///   Test class for rendering tests on the <see cref="ScrollViewer"/>.
     /// </summary>
     public class ScrollViewerAnchorTest : UITestGameBase
     {
@@ -77,7 +77,7 @@ namespace Stride.UI.Tests.Regression
                 for (int r = 0; r < uniformGrid.Rows; ++r)
                     uniformGrid.Children.Add(CreateButton(c,r, 175, 300));
             }
-                
+
             // build the grid
             const int gridColumns = 10;
             const int gridRows = 10;
@@ -140,7 +140,7 @@ namespace Stride.UI.Tests.Regression
                 scrollViewer.Content = uniformGrid;
             if (Input.IsKeyReleased(Keys.D4))
                 scrollViewer.Content = grid;
-            
+
             if (Input.IsKeyReleased(Keys.NumPad4))
                 scrollViewer.ScrollToBeginning(Orientation.Horizontal);
             if (Input.IsKeyReleased(Keys.NumPad6))
@@ -203,20 +203,11 @@ namespace Stride.UI.Tests.Regression
         {
             scrollViewer.Content = element;
         }
-        
+
         [Fact]
         public void RunScrollViewerAnchorTests()
         {
             RunGameTest(new ScrollViewerAnchorTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ScrollViewerAnchorTest())
-                game.Run();
         }
     }
 }

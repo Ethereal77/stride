@@ -6,11 +6,10 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
-using Stride.Graphics.Font;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -19,9 +18,9 @@ namespace Stride.Graphics.Tests
         private SpriteFont hanSans13;
 
         private SpriteBatch spriteBatch;
-        
+
         private const string AssetPrefix = "DynamicFonts/";
-        
+
         private readonly StringBuilder varyingString = new StringBuilder(VaryingStringLength);
         private const int VaryingStringLength = 200;
         private int varyingStringCurrentIndex = VaryingStringStartIndex;
@@ -30,9 +29,7 @@ namespace Stride.Graphics.Tests
         private const double VaryingStringTimeInterval = 1;
         private double accumulatedSeconds;
 
-        public TestDynamicSpriteFontVarious()
-        {
-        }
+        public TestDynamicSpriteFontVarious() { }
 
         protected override void RegisterTests()
         {
@@ -84,7 +81,7 @@ namespace Stride.Graphics.Tests
 
             var x = 20;
             var y = 10;
-            
+
             var size = 11;
             hanSans13.PreGenerateGlyphs(BuildTextSize(size), size * Vector2.One);
             var dim = hanSans13.MeasureString(BuildTextSize(size), size);
@@ -155,12 +152,6 @@ namespace Stride.Graphics.Tests
         private string BuildTextSize(int size)
         {
             return "HanSans size " + size +" pixels. 漢字のサイズは" + size + "ピクセル。";
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestDynamicSpriteFontVarious())
-                game.Run();
         }
 
         /// <summary>

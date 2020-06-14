@@ -6,13 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Games;
 using Stride.Graphics.GeometricPrimitives;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -33,9 +33,7 @@ namespace Stride.Graphics.Tests
 
         private int primitiveStartOffset;
 
-        public TestGeometricPrimitives()
-        {
-        }
+        public TestGeometricPrimitives() { }
 
         protected override void RegisterTests()
         {
@@ -158,12 +156,6 @@ namespace Stride.Graphics.Tests
                 simpleEffect.Parameters.Set(SpriteBaseKeys.MatrixTransform, Matrix.Multiply(world, Matrix.Multiply(view, projection)));
                 primitive.Draw(GraphicsContext, simpleEffect);
             }
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestGeometricPrimitives())
-                game.Run();
         }
 
         /// <summary>

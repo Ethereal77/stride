@@ -4,32 +4,30 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ImageElement"/> 
+    ///   Class for rendering tests for <see cref="ImageElement"/>.
     /// </summary>
     public class BorderImageTest : UITestGameBase
     {
         private StackPanel stackPanel;
 
-        public BorderImageTest()
-        {
-        }
+        public BorderImageTest() { }
 
         protected override async Task LoadContent()
         {
             await base.LoadContent();
 
-            var sprite = (SpriteFromTexture)new Sprite(Content.Load<Texture>("BorderButton")) { Borders = new Vector4(64, 64, 64, 64) };
+            var sprite = (SpriteFromTexture) new Sprite(Content.Load<Texture>("BorderButton")) { Borders = new Vector4(64, 64, 64, 64) };
 
             var bi1 = new ImageElement { Source = sprite, Height = 150 };
             var bi2 = new ImageElement { Source = sprite, Height = 300 };
@@ -46,6 +44,7 @@ namespace Stride.UI.Tests.Regression
         protected override void RegisterTests()
         {
             base.RegisterTests();
+
             FrameGameSystem.DrawOrder = -1;
             FrameGameSystem.Draw(DrawSmallerElement).TakeScreenshot();
             FrameGameSystem.Draw(DrawRealSizeElement).TakeScreenshot();
@@ -71,15 +70,6 @@ namespace Stride.UI.Tests.Regression
         public void RunBorderImageTest()
         {
             RunGameTest(new BorderImageTest());
-        }
-        
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new BorderImageTest())
-                game.Run();
         }
     }
 }

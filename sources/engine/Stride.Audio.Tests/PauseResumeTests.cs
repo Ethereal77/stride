@@ -4,10 +4,10 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Games;
 using Stride.Input;
+
+using Xunit;
 
 namespace Stride.Audio.Tests
 {
@@ -15,10 +15,8 @@ namespace Stride.Audio.Tests
     {
         private SoundInstance music;
         private SoundInstance effect;
-        
-        public PauseResumeTest()
-        {
-        }
+
+        public PauseResumeTest() { }
 
         protected override async Task LoadContent()
         {
@@ -52,12 +50,6 @@ namespace Stride.Audio.Tests
         public void RunPauseGame()
         {
             RunGameTest(new PauseResumeTest());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new PauseResumeTest())
-                game.Run();
         }
     }
 }

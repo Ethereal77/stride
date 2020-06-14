@@ -3,24 +3,19 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
-using Stride.Animations;
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Graphics.Regression;
-using Stride.Input;
 using Stride.Rendering;
-using Stride.Rendering.Colors;
-using Stride.Rendering.Lights;
 using Stride.Rendering.ProceduralModels;
-using Stride.Rendering.Tessellation;
+using Stride.Animations;
+
+using Xunit;
 
 namespace Stride.Engine.Tests
 {
@@ -127,14 +122,6 @@ namespace Stride.Engine.Tests
         public void RunTestGame()
         {
             RunGameTest(new AnimatedModelTests());
-        }
-
-        internal static void Main()
-        {
-            using (var game = new AnimatedModelTests())
-            {
-                game.Run();
-            }
         }
     }
 }

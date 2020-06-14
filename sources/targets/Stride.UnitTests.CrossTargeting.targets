@@ -1,0 +1,17 @@
+<!--
+***********************************************************************************************
+  Stride.UnitTests.CrossTargeting.targets
+
+  Build file post-included after the building of the project to configure the targets for the
+  unit tests when no specific set of target frameworks is specified.
+
+  Copyright (C) 2020 Stride and its contributors
+***********************************************************************************************
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Workaround so that Build returns list of produced executables even if there is multiple TargetFrameworks
+       https://github.com/microsoft/msbuild/issues/2148#issuecomment-305033099 -->
+  <Target Name="Build"
+    DependsOnTargets="_SetBuildInnerTarget;DispatchToInnerBuilds"
+    Returns="@(InnerOutput)" />
+</Project>

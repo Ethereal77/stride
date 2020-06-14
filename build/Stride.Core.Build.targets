@@ -1,0 +1,19 @@
+<!--
+***********************************************************************************************
+  Stride.Core.Build.targets
+
+  Build file post-included after the building of the project to configure the steps to
+  post-process the generated assemblies with the Assembly Processor.
+
+  Copyright (C) 2020 Stride and its contributors
+***********************************************************************************************
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Override StrideBuildDirectory only now so that Stride common projects still get build in obj without StrideGraphicsApi -->
+    <StrideAssemblyProcessorGlobal>true</StrideAssemblyProcessorGlobal>
+    <StrideAssemblyProcessorBasePath>$(StridePackageStride)\deps\AssemblyProcessor\</StrideAssemblyProcessorBasePath>
+
+    <StrideCoreAssemblyPath>$(MSBuildThisFileDirectory)..\Bin\$(StrideBuildDirectory)\Stride.Core.dll</StrideCoreAssemblyPath>
+  </PropertyGroup>
+</Project>

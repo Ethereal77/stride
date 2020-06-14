@@ -261,7 +261,6 @@ namespace Nerdbank.GitVersioning
             return possibleCommits;
         }
 
-#if NET45
         /// <summary>
         /// Assists the operating system in finding the appropriate native libgit2 module.
         /// </summary>
@@ -319,7 +318,6 @@ namespace Nerdbank.GitVersioning
                 Environment.SetEnvironmentVariable("PATH", pathEnvVar);
             }
         }
-#endif
 
         /// <summary>
         /// Finds the directory that contains the appropriate native libgit2 module.
@@ -328,15 +326,12 @@ namespace Nerdbank.GitVersioning
         /// <returns>Receives the directory that native binaries are expected.</returns>
         public static string FindLibGit2NativeBinaries(string basePath)
         {
-#if !NET45
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-#endif
             {
                 return Path.Combine(basePath, "lib", "win32", IntPtr.Size == 4 ? "x86" : "x64");
             }
-#if !NET45
+
             return null;
-#endif
         }
 
         /// <summary>

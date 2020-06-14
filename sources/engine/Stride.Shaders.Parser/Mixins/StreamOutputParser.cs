@@ -2,8 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if STRIDE_EFFECT_COMPILER
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +9,6 @@ using System.Text.RegularExpressions;
 
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
-using Stride.Graphics;
 
 namespace Stride.Shaders.Parser.Mixins
 {
@@ -29,7 +26,7 @@ namespace Stride.Shaders.Parser.Mixins
 
             Parse(entries, out strides, streamStrings, fields);
         }
-        
+
         /// <summary>
         /// Parse stream output declarations.
         /// Format is "[slot :] semantic[index][.mask] ; ...".
@@ -73,7 +70,7 @@ namespace Stride.Shaders.Parser.Mixins
                         streamOutputDecl.ComponentCount = 1;
                     else
                         throw new InvalidOperationException(string.Format("Could not recognize type of stream output for {0}.", matchingField));
-                        
+
                     var mask = match.Groups[5].Value;
                     ParseMask(mask, ref streamOutputDecl.StartComponent, ref streamOutputDecl.ComponentCount);
 
@@ -109,4 +106,3 @@ namespace Stride.Shaders.Parser.Mixins
         }
     }
 }
-#endif

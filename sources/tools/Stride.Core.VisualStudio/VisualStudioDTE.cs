@@ -80,7 +80,7 @@ namespace Stride.Core.VisualStudio
 #else
         public static IEnumerable<Process> GetActiveInstances()
         {
-            return new Process[0];
+            return Array.Empty<Process>();
         }
 #endif
     }

@@ -4,8 +4,6 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -13,25 +11,25 @@ using Stride.Input;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="TextBlock"/> 
+    ///   Test class for rendering tests on the <see cref="TextBlock"/> text wrapping.
     /// </summary>
     public class TextBlockWrappingTest : UITestGameBase
     {
         private TextBlock textBlock;
 
-        public TextBlockWrappingTest()
-        {
-        }
+        public TextBlockWrappingTest() { }
 
         protected override async Task LoadContent()
         {
             await base.LoadContent();
 
             UIComponent.Resolution = new Vector3(GraphicsDevice.Presenter.BackBuffer.Width, GraphicsDevice.Presenter.BackBuffer.Height, 500);
-            
+
             textBlock = new TextBlock
             {
                 WrapText = true,
@@ -47,7 +45,7 @@ Does it work with kanjis too? let's see that in the following line. Here we goes
             var decorator = new ContentDecorator
             {
                 Width = 200,
-                Content = textBlock, 
+                Content = textBlock,
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 BackgroundImage = (SpriteFromTexture)new Sprite(Content.Load<Texture>("DumbWhite"))
@@ -191,15 +189,6 @@ Does it work with kanjis too? let's see that in the following line. Here we goes
         public void RunTextBlockWrappingTest()
         {
             RunGameTest(new TextBlockWrappingTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new TextBlockWrappingTest())
-                game.Run();
         }
     }
 }

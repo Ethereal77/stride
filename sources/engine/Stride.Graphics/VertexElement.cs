@@ -10,17 +10,22 @@ using System.Text.RegularExpressions;
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Core.Serialization;
-using Stride.Core.Serialization.Serializers;
 
 namespace Stride.Graphics
 {
     /// <summary>
-    /// A description of a single element for the input-assembler stage. This structure is related to <see cref="Direct3D11.InputElement"/>.
+    ///   Description of a single element for the input-assembler stage.
     /// </summary>
     /// <remarks>
-    /// Because <see cref="Direct3D11.InputElement"/> requires to have the same <see cref="VertexBufferLayout.SlotIndex"/>, <see cref="VertexBufferLayout.VertexClassification"/> and <see cref="VertexBufferLayout.instanceDataStepRate"/>,
-    /// the <see cref="VertexBufferLayout"/> structure encapsulates a set of <see cref="VertexElement"/> for a particular slot, classification and instance data step rate.
-    /// Unlike the default <see cref="Direct3D11.InputElement"/>, this structure accepts a semantic name with a postfix number that will be automatically extracted to the semantic index.
+    ///   This structure is related to <see cref="Direct3D11.InputElement"/>.
+    ///   <para/>
+    ///   Because <see cref="Direct3D11.InputElement"/> requires to have the same <see cref="VertexBufferLayout.SlotIndex"/>,
+    ///   <see cref="VertexBufferLayout.VertexClassification"/> and <see cref="VertexBufferLayout.instanceDataStepRate"/>,
+    ///   the <see cref="VertexBufferLayout"/> structure encapsulates a set of <see cref="VertexElement"/> for a particular
+    ///   slot, classification and instance data step rate.
+    ///   <para/>
+    ///   Unlike the default <see cref="Direct3D11.InputElement"/>, this structure accepts a semantic name with a postfix
+    ///   number that will be automatically extracted to the semantic index.
     /// </remarks>
     /// <seealso cref="VertexBufferLayout"/>
     [DataContract]

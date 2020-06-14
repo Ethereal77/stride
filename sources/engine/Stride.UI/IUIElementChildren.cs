@@ -7,12 +7,12 @@ using System.Collections.Generic;
 namespace Stride.UI
 {
     /// <summary>
-    /// Interfaces representing an <see cref="UIElement"/> containing child elements.
+    ///   Defines a way to get the children UI elements contained within a <see cref="UIElement"/>.
     /// </summary>
     public interface IUIElementChildren
     {
         /// <summary>
-        /// Gets the children of this element.
+        ///   Gets the children of this element.
         /// </summary>
         IEnumerable<IUIElementChildren> Children { get; }
     }

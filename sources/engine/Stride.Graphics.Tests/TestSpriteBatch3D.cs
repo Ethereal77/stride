@@ -5,10 +5,10 @@
 using System;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -104,7 +104,7 @@ namespace Stride.Graphics.Tests
             pos.X = leftTopCorner.X + width / 2;
             pos.Y = leftTopCorner.Y + height / 2;
             Draw(noRotation, pos);
-            
+
             // rotated image
             pos.X = leftTopCorner.X + width / 2;
             pos.Y = leftTopCorner.Y + height + height / 2;
@@ -142,7 +142,7 @@ namespace Stride.Graphics.Tests
             // ball
             pos.Y = leftTopCorner.X + 4 * width;
             pos.X = leftTopCorner.Y + 1 * width;
-            
+
             var time = timeInSeconds;
             var rotation = (float)(time * Math.PI * 2.0);
             var sourceRectangle = GetSphereAnimation(time);
@@ -150,7 +150,7 @@ namespace Stride.Graphics.Tests
             var size = new Vector2(SphereWidth, SphereHeight);
             var color = Color4.White;
             batch.Draw(sphere, ref world, ref sourceRectangle, ref size, ref color);
-            
+
             batch.End();
         }
 
@@ -166,12 +166,6 @@ namespace Stride.Graphics.Tests
             int sphereX = sphereIndex % SphereCountPerRow;
             int sphereY = sphereIndex / SphereCountPerRow;
             return new RectangleF(sphereX * (SphereWidth + SphereSpace), sphereY * (SphereHeight + SphereSpace), SphereWidth, SphereHeight);
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestSpriteBatch3D())
-                game.Run();
         }
 
         /// <summary>

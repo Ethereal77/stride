@@ -2,8 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
@@ -11,24 +9,25 @@ using Stride.Rendering;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Primitive quad use to draw an effect on a quad (fullscreen by default). This is directly accessible from the <see cref="GraphicsDevice.DrawQuad"/> method.
+    ///   Represents a primitive quad use to draw an effect on a quad (fullscreen by default).
     /// </summary>
     public class PrimitiveQuad : ComponentBase
     {
         /// <summary>
-        /// The pipeline state.
+        ///   The pipeline state.
         /// </summary>
         private readonly MutablePipelineState pipelineState;
 
         private readonly EffectInstance simpleEffect;
         private readonly SharedData sharedData;
+
         private const int QuadCount = 3;
 
         public static readonly VertexDeclaration VertexDeclaration = VertexPositionNormalTexture.Layout;
         public static readonly PrimitiveType PrimitiveType = PrimitiveType.TriangleList;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PrimitiveQuad" /> class.
+        ///   Initializes a new instance of the <see cref="PrimitiveQuad" /> class.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="effect">The effect.</param>
@@ -48,21 +47,22 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Gets the graphics device.
+        ///   Gets the graphics device.
         /// </summary>
         /// <value>The graphics device.</value>
         public GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
-        /// Gets the parameters used.
+        ///   Gets the parameters used.
         /// </summary>
         /// <value>The parameters.</value>
         public ParameterCollection Parameters => simpleEffect.Parameters;
 
         /// <summary>
-        /// Draws a quad. The effect must have been applied before calling this method with pixel shader having the signature float2:TEXCOORD.
+        ///   Draws the quad. An effect must have been applied before calling this method with a pixel shader having the
+        ///   signature <c>float2 : TEXCOORD</c>.
         /// </summary>
-        /// <param name="texture"></param>
+        /// <param name="commandList">The command list to use to draw.</param>
         public void Draw(CommandList commandList)
         {
             commandList.SetVertexBuffer(0, sharedData.VertexBuffer.Buffer, sharedData.VertexBuffer.Offset, sharedData.VertexBuffer.Stride);
@@ -70,9 +70,10 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Draws a quad. The effect must have been applied before calling this method with pixel shader having the signature float2:TEXCOORD.
+        ///   Draws the quad with the specified effect.
         /// </summary>
-        /// <param name="texture"></param>
+        /// <param name="graphicsContext">The graphics context to use to draw the quad.</param>
+        /// <param name="effectInstance">The effect instance used to draw the quad.</param>
         public void Draw(GraphicsContext graphicsContext, EffectInstance effectInstance)
         {
             effectInstance.UpdateEffect(GraphicsDevice);
@@ -92,23 +93,24 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Draws a quad with a texture. This Draw method is using the current effect bound to this instance.
+        ///   Draws the quad with the specified texture, using a simple pixel shader that is sampling the texture.
         /// </summary>
-        /// <param name="texture">The texture.</param>
-        /// <param name="applyEffectStates">The flag to apply effect states.</param>
+        /// <param name="graphicsContext">The graphics context to use to draw the texture.</param>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="blendState">Blend state to use to draw the texture. If <c>null</c> is specified, no blending will be performed.</param>
         public void Draw(GraphicsContext graphicsContext, Texture texture, BlendStateDescription? blendState = null)
         {
-            Draw(graphicsContext, texture, null, Color.White, blendState);
+            Draw(graphicsContext, texture, samplerState: null, Color.White, blendState);
         }
 
         /// <summary>
-        /// Draws a quad with a texture. This Draw method is using a simple pixel shader that is sampling the texture.
+        ///   Draws the quad with the specified texture, using a simple pixel shader that is sampling the texture.
         /// </summary>
+        /// <param name="graphicsContext">The graphics context to use to draw the texture.</param>
         /// <param name="texture">The texture to draw.</param>
-        /// <param name="samplerState">State of the sampler. If null, default sampler is <see cref="SamplerStateFactory.LinearClamp" />.</param>
-        /// <param name="color">The color.</param>
-        /// <param name="applyEffectStates">The flag to apply effect states.</param>
-        /// <exception cref="System.ArgumentException">Expecting a Texture;texture</exception>
+        /// <param name="samplerState">The sampler state. If <c>null</c>, <see cref="SamplerStateFactory.LinearClamp"/> will be used by default.</param>
+        /// <param name="color">The color tint. Specify <see cref="Color4.White"/> for no tinting.</param>
+        /// <param name="blendState">Blend state to use to draw the texture. If <c>null</c> is specified, no blending will be performed.</param>
         public void Draw(GraphicsContext graphicsContext, Texture texture, SamplerState samplerState, Color4 color, BlendStateDescription? blendState = null)
         {
             pipelineState.State.RootSignature = simpleEffect.RootSignature;
@@ -126,20 +128,20 @@ namespace Stride.Graphics
 
             Draw(graphicsContext.CommandList);
 
-            // TODO ADD QUICK UNBIND FOR SRV
+            // TODO: ADD QUICK UNBIND FOR SRV
             //GraphicsDevice.Context.PixelShader.SetShaderResource(0, null);
         }
 
         /// <summary>
-        /// Internal structure used to store VertexBuffer and VertexInputLayout.
+        ///   Internal structure used to store VertexBuffer and VertexInputLayout.
         /// </summary>
         private class SharedData : ComponentBase
         {
             /// <summary>
-            /// The vertex buffer
+            ///   The vertex buffer
             /// </summary>
             public readonly VertexBufferBinding VertexBuffer;
-            
+
             private static readonly VertexPositionNormalTexture[] QuadsVertices =
             {
                 new VertexPositionNormalTexture(new Vector3(-1,  1, 0), new Vector3(0, 0, 1), new Vector2(0, 0)),
@@ -150,7 +152,7 @@ namespace Stride.Graphics
             public SharedData(GraphicsDevice device)
             {
                 var vertexBuffer = Buffer.Vertex.New(device, QuadsVertices).DisposeBy(this);
-                
+
                 // Register reload
                 vertexBuffer.Reload = (graphicsResource) => ((Buffer)graphicsResource).Recreate(QuadsVertices);
 

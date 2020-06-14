@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -15,18 +13,18 @@ using Stride.Input;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests to test batching ordering for transparency.
+    ///   Test class for rendering tests to test batching ordering for transparency.
     /// </summary>
     public class ClickTests : UITestGameBase
     {
         private List<Button> elements;
 
-        public ClickTests()
-        {
-        }
+        public ClickTests() { }
 
         protected override async Task LoadContent()
         {
@@ -34,30 +32,30 @@ namespace Stride.UI.Tests.Regression
 
             var textblock = new TextBlock { Font = Content.Load<SpriteFont>("CourierNew12"), SynchronousCharacterGeneration = true };
             ApplyTextBlockDefaultStyle(textblock);
-            var element1 = new Button { Name = "1", Width = 800, Height = 400, Content = textblock };
+            var element1 = new Button { Name = "1", Width = 800, Height = 480, Content = textblock };
             ApplyButtonDefaultStyle(element1);
-            element1.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(100, 50, 0));
+            element1.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(100, 60, 0));
             element1.DependencyProperties.Set(Panel.ZIndexPropertyKey, -1);
 
             textblock = new TextBlock { Font = Content.Load<SpriteFont>("CourierNew12"), SynchronousCharacterGeneration = true };
             ApplyTextBlockDefaultStyle(textblock);
-            var element2 = new Button { Name = "2", Width = 400, Height = 200, Content = textblock };
+            var element2 = new Button { Name = "2", Width = 400, Height = 240, Content = textblock };
             ApplyButtonDefaultStyle(element2);
-            element2.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(300, 150, 0));
+            element2.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(300, 180, 0));
             element2.DependencyProperties.Set(Panel.ZIndexPropertyKey, 1);
 
             textblock = new TextBlock { Font = Content.Load<SpriteFont>("CourierNew12"), SynchronousCharacterGeneration = true };
             ApplyTextBlockDefaultStyle(textblock);
-            var element3 = new Button { Name = "3", Width = 400, Height = 200, Content = textblock };
+            var element3 = new Button { Name = "3", Width = 400, Height = 240, Content = textblock };
             ApplyButtonDefaultStyle(element3);
-            element3.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(150, 225, 0));
+            element3.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(150, 270, 0));
             element3.DependencyProperties.Set(Panel.ZIndexPropertyKey, 2);
 
             textblock = new TextBlock { Font = Content.Load<SpriteFont>("CourierNew12"), SynchronousCharacterGeneration = true };
             ApplyTextBlockDefaultStyle(textblock);
-            var element4 = new Button { Name = "4", Width = 400, Height = 200, Content = textblock };
+            var element4 = new Button { Name = "4", Width = 400, Height = 240, Content = textblock };
             ApplyButtonDefaultStyle(element4);
-            element4.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(450, 75, 0));
+            element4.DependencyProperties.Set(Canvas.AbsolutePositionPropertyKey, new Vector3(450, 90, 0));
             element4.DependencyProperties.Set(Panel.ZIndexPropertyKey, 0);
 
             var canvas = new Canvas();
@@ -126,8 +124,8 @@ namespace Stride.UI.Tests.Regression
             FrameGameSystem.Draw(0, UpdateTextBlockText).TakeScreenshot(0);
             FrameGameSystem.Draw(1, Draw1).TakeScreenshot(1);
             FrameGameSystem.Draw(2, Draw2).TakeScreenshot(2);
-            FrameGameSystem.Draw(3, () => SetElement2Matrix(Matrix.Translation(0, 0, -110))).Draw(4, Draw3).TakeScreenshot(4);
-            FrameGameSystem.Draw(5, () => SetElement2Matrix(Matrix.Translation(0, 0, 170))).Draw(6, Draw4).TakeScreenshot(6);
+            FrameGameSystem.Draw(3, () => SetElement2Matrix(Matrix.Translation(0, 0, -132))).Draw(4, Draw3).TakeScreenshot(4);
+            FrameGameSystem.Draw(5, () => SetElement2Matrix(Matrix.Translation(0, 0, 204))).Draw(6, Draw4).TakeScreenshot(6);
             FrameGameSystem.Draw(7, () => SetElement2Matrix(Matrix.RotationYawPitchRoll(-0.1f, -0.2f, 0.3f))).Draw(8, Draw5).TakeScreenshot(8);
             FrameGameSystem.Draw(Draw6).TakeScreenshot();
         }
@@ -183,16 +181,5 @@ namespace Stride.UI.Tests.Regression
         {
             RunGameTest(new ClickTests());
         }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ClickTests())
-            {
-                game.Run();
-            }
-        }
-    } 
+    }
 }

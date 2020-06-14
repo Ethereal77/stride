@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
 using Stride.Core;
@@ -13,36 +13,36 @@ namespace ##Namespace##
     public class ##Scriptname## : AsyncScript
     {
         /// <summary>
-        /// Enables or disable the game profiling
+        ///   Enables or disable the game profiling.
         /// </summary>
         public bool Enabled;
 
         /// <summary>
-        /// The color of the text displayed during profiling
+        ///   The color of the text displayed during profiling.
         /// </summary>
         [Display(4, "Text color")]
         public Color TextColor { get; set; } = Color.LightGreen;
 
         /// <summary>
-        /// The time between two refreshes of the profiling information in milliseconds.
+        ///   The time between two refreshes of the profiling information, in milliseconds.
         /// </summary>
         [Display(2, "Refresh interval (ms)")]
         public double RefreshTime { get; set; } = 500;
 
         /// <summary>
-        /// Gets or set the sorting mode of the profiling entries
+        ///   Gets or set the sorting mode of the profiling entries.
         /// </summary>
         [Display(1, "Sort by")]
         public GameProfilingSorting SortingMode { get; set; } = GameProfilingSorting.ByTime;
 
         /// <summary>
-        /// Gets or sets the type of the profiling to display: CPU or GPU
+        ///   Gets or sets the type of the profiling to display: CPU or GPU.
         /// </summary>
         [Display(0, "Filter")]
         public GameProfilingResults FilteringMode { get; set; } = GameProfilingResults.Fps;
 
         /// <summary>
-        /// Gets or sets the current profiling result page to display.
+        ///   Gets or sets the current profiling result page to display.
         /// </summary>
         [Display(3, "Display page")]
         public uint ResultPage { get; set; } = 1;
@@ -77,18 +77,18 @@ namespace ##Namespace##
 
                 if (Enabled)
                 {
-                    // toggle the filtering mode
+                    // Toggle the filtering mode
                     if (Input.IsKeyPressed(Keys.F1))
                     {
                         FilteringMode = (GameProfilingResults)(((int)FilteringMode + 1) % Enum.GetValues(typeof(GameProfilingResults)).Length);
                     }
-                    // toggle the sorting mode
+                    // Toggle the sorting mode
                     if (Input.IsKeyPressed(Keys.F2))
                     {
                         SortingMode = (GameProfilingSorting)(((int)SortingMode + 1) % Enum.GetValues(typeof(GameProfilingSorting)).Length);
                     }
 
-                    // update the result page
+                    // Update the result page
                     if (Input.IsKeyPressed(Keys.F3))
                     {
                         ResultPage = Math.Max(1, --ResultPage);
@@ -118,7 +118,7 @@ namespace ##Namespace##
                         ResultPage = 5;
                     }
 
-                    // update the refreshing speed
+                    // Update the refreshing speed
                     if (Input.IsKeyPressed(Keys.Subtract) || Input.IsKeyPressed(Keys.OemMinus))
                     {
                         RefreshTime = Math.Min(RefreshTime * 2, 10000);

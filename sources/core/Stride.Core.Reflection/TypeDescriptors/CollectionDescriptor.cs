@@ -12,11 +12,11 @@ using Stride.Core.Yaml.Serialization;
 namespace Stride.Core.Reflection
 {
     /// <summary>
-    /// Provides a descriptor for a <see cref="System.Collections.ICollection"/>.
+    ///   Provides a descriptor for a <see cref="ICollection"/>.
     /// </summary>
     public class CollectionDescriptor : ObjectDescriptor
     {
-        private static readonly object[] EmptyObjects = new object[0];
+        private static readonly object[] EmptyObjects = Array.Empty<object>();
         private static readonly List<string> ListOfMembersToRemove = new List<string> { "Capacity", "Count", "IsReadOnly", "IsFixedSize", "IsSynchronized", "SyncRoot", "Comparer" };
 
         private readonly Func<object, bool> IsReadOnlyFunction;
@@ -29,24 +29,74 @@ namespace Stride.Core.Reflection
         private readonly Action<object, object> CollectionRemoveFunction;
         private readonly Action<object> CollectionClearFunction;
 
+        public override DescriptorCategory Category => DescriptorCategory.Collection;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionDescriptor" /> class.
+        ///   Gets the type of the elements in the collection.
         /// </summary>
-        /// <param name="factory">The factory.</param>
-        /// <param name="type">The type.</param>
-        /// <exception cref="System.ArgumentException">Expecting a type inheriting from System.Collections.ICollection;type</exception>
+        /// <value>The type of the elements.</value>
+        public Type ElementType { get; }
+
+        /// <summary>
+        ///   Gets a value indicating whether this instance is a pure collection (no public properties nor fields).
+        /// </summary>
+        /// <value><c>true</c> if this instance is a pure collection; otherwise, <c>false</c>.</value>
+        /// <remarks>
+        ///   A pure collection is one that can be represented exclusively by the elements it contains, because
+        ///   it has no other state publicly accesible through fields or properties.
+        /// </remarks>
+        public bool IsPureCollection { get; private set; }
+
+        /// <summary>
+        ///   Gets a value indicating whether this collection type has <c>Add</c> method.
+        /// </summary>
+        /// <value><c>true</c> if this instance has <c>Add</c>; otherwise, <c>false</c>.</value>
+        public bool HasAdd => CollectionAddFunction != null;
+
+        /// <summary>
+        ///   Gets a value indicating whether this collection type has <c>Insert</c> method.
+        /// </summary>
+        /// <value><c>true</c> if this instance has <c>Insert</c>; otherwise, <c>false</c>.</value>
+        public bool HasInsert => CollectionInsertFunction != null;
+
+        /// <summary>
+        ///   Gets a value indicating whether this collection type has <c>RemoveAt</c> method.
+        /// </summary>
+        /// <value><c>true</c> if this instance has <c>RemoveAt</c>; otherwise, <c>false</c>.</value>
+        public bool HasRemoveAt => CollectionRemoveAtFunction != null;
+
+        /// <summary>
+        ///   Gets a value indicating whether this collection type has <c>Remove</c> method.
+        /// </summary>
+        /// <value><c>true</c> if this instance has <c>Remove</c>; otherwise, <c>false</c>.</value>
+        public bool HasRemove => CollectionRemoveFunction != null;
+
+        /// <summary>
+        ///   Gets a value indicating whether this collection type has valid indexer accessors.
+        ///   If so, <see cref="SetValue(object, object, object)"/> and <see cref="GetValue(object, object)"/> can be invoked.
+        /// </summary>
+        /// <value><c>true</c> if this instance has a valid indexer accesors; otherwise, <c>false</c>.</value>
+        public bool HasIndexerAccessors { get; }
+
+        /// <summary>
+        ///   Gets a value indicating whether this collection implements <see cref="IList"/> or <see cref="IList{T}"/>.
+        /// </summary>
+        public bool IsList { get; }
+
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="CollectionDescriptor" /> class.
+        /// </summary>
+        /// <param name="factory">The type descriptors factory.</param>
+        /// <param name="type">The type of <see cref="ICollection"/>.</param>
+        /// <exception cref="ArgumentException">Expecting a type inheriting from System.Collections.ICollection;type</exception>
         public CollectionDescriptor(ITypeDescriptorFactory factory, Type type, bool emitDefaultValues, IMemberNamingConvention namingConvention)
             : base(factory, type, emitDefaultValues, namingConvention)
         {
-            if (!IsCollection(type))
-                throw new ArgumentException(@"Expecting a type inheriting from System.Collections.ICollection", nameof(type));
-
             // Gets the element type
-            var collectionType = type.GetInterface(typeof(IEnumerable<>));
-            ElementType = (collectionType != null) ? collectionType.GetGenericArguments()[0] : typeof(object);
-            var typeSupported = false;
+            ElementType = type.GetInterface(typeof(IEnumerable<>))?.GetGenericArguments()[0] ?? typeof(object);
 
-            // implements IList
+            // If it implements IList
             if (typeof(IList).IsAssignableFrom(type))
             {
                 CollectionAddFunction = (obj, value) => ((IList)obj).Add(value);
@@ -58,26 +108,31 @@ namespace Stride.Core.Reflection
                 SetIndexedItem = (obj, index, value) => ((IList)obj)[index] = value;
                 IsReadOnlyFunction = obj => ((IList)obj).IsReadOnly;
                 HasIndexerAccessors = true;
-                typeSupported = true;
                 IsList = true;
             }
-            var itype = type.GetInterface(typeof(ICollection<>));
-
-            // implements ICollection<T>
-            if (!typeSupported && itype != null)
+            // If it implements ICollection<T>
+            else if (type.GetInterface(typeof(ICollection<>)) is Type itype)
             {
+                var add = itype.GetMethod(nameof(ICollection<object>.Add), new[] { ElementType });
+                CollectionAddFunction = (obj, value) => add.Invoke(obj, new[] { value });
                 var remove = itype.GetMethod(nameof(ICollection<object>.Remove), new[] { ElementType });
                 CollectionRemoveFunction = (obj, value) => remove.Invoke(obj, new[] { value });
-                var add = itype.GetMethod(nameof(ICollection<object>.Add), new[] {ElementType});
-                CollectionAddFunction = (obj, value) => add.Invoke(obj, new[] {value});
-                var clear = itype.GetMethod(nameof(ICollection<object>.Clear), Type.EmptyTypes);
-                CollectionClearFunction = obj => clear.Invoke(obj, EmptyObjects);
-                var countMethod = itype.GetProperty(nameof(ICollection<object>.Count)).GetGetMethod();
-                GetCollectionCountFunction = o => (int)countMethod.Invoke(o, null);
-                var isReadOnly = itype.GetProperty(nameof(ICollection<object>.IsReadOnly)).GetGetMethod();
-                IsReadOnlyFunction = obj => (bool)isReadOnly.Invoke(obj, null);
-                typeSupported = true;
-                // implements IList<T>
+                if (typeof(IDictionary).IsAssignableFrom(type))
+                {
+                    CollectionClearFunction = obj => ((IDictionary)obj).Clear();
+                    GetCollectionCountFunction = o => ((IDictionary)o).Count;
+                    IsReadOnlyFunction = obj => ((IDictionary)obj).IsReadOnly;
+                }
+                else
+                {
+                    var clear = itype.GetMethod(nameof(ICollection<object>.Clear), Type.EmptyTypes);
+                    CollectionClearFunction = obj => clear.Invoke(obj, EmptyObjects);
+                    var countMethod = itype.GetProperty(nameof(ICollection<object>.Count)).GetGetMethod();
+                    GetCollectionCountFunction = o => (int)countMethod.Invoke(o, null);
+                    var isReadOnly = itype.GetProperty(nameof(ICollection<object>.IsReadOnly)).GetGetMethod();
+                    IsReadOnlyFunction = obj => (bool)isReadOnly.Invoke(obj, null);
+                }
+                // Implements IList<T>
                 itype = type.GetInterface(typeof(IList<>));
                 if (itype != null)
                 {
@@ -101,7 +156,7 @@ namespace Stride.Core.Reflection
 
                     var removeAt = type.GetMethod(nameof(IList<object>.RemoveAt), new[] { typeof(int) });
                     if (removeAt != null)
-                    CollectionRemoveAtFunction = (obj, index) => removeAt.Invoke(obj, new object[] { index });
+                        CollectionRemoveAtFunction = (obj, index) => removeAt.Invoke(obj, new object[] { index });
 
                     var getItem = type.GetMethod("get_Item", new[] { typeof(int) });
                     if (getItem != null)
@@ -114,8 +169,7 @@ namespace Stride.Core.Reflection
                     HasIndexerAccessors = getItem != null && setItem != null;
                 }
             }
-
-            if (!typeSupported)
+            else
             {
                 throw new ArgumentException($"Type [{(type)}] is not supported as a modifiable collection");
             }
@@ -128,94 +182,55 @@ namespace Stride.Core.Reflection
             IsPureCollection = Count == 0;
         }
 
-        public override DescriptorCategory Category => DescriptorCategory.Collection;
 
         /// <summary>
-        /// Gets or sets the type of the element.
+        ///   Returns the value matching the given index in the collection.
         /// </summary>
-        /// <value>The type of the element.</value>
-        public Type ElementType { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is a pure collection (no public property/field)
-        /// </summary>
-        /// <value><c>true</c> if this instance is pure collection; otherwise, <c>false</c>.</value>
-        public bool IsPureCollection { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether this collection type has add method.
-        /// </summary>
-        /// <value><c>true</c> if this instance has add; otherwise, <c>false</c>.</value>
-        public bool HasAdd => CollectionAddFunction != null;
-
-        /// <summary>
-        /// Gets a value indicating whether this collection type has insert method.
-        /// </summary>
-        /// <value><c>true</c> if this instance has insert; otherwise, <c>false</c>.</value>
-        public bool HasInsert => CollectionInsertFunction != null;
-
-        /// <summary>
-        /// Gets a value indicating whether this collection type has RemoveAt method.
-        /// </summary>
-        /// <value><c>true</c> if this instance has RemoveAt; otherwise, <c>false</c>.</value>
-        public bool HasRemoveAt => CollectionRemoveAtFunction != null;
-
-        /// <summary>
-        /// Gets a value indicating whether this collection type has Remove method.
-        /// </summary>
-        /// <value><c>true</c> if this instance has Remove; otherwise, <c>false</c>.</value>
-        public bool HasRemove => CollectionRemoveFunction != null;
-
-        /// <summary>
-        /// Gets a value indicating whether this collection type has valid indexer accessors.
-        /// If so, <see cref="SetValue(object, object, object)"/> and <see cref="GetValue(object, object)"/> can be invoked.
-        /// </summary>
-        /// <value><c>true</c> if this instance has a valid indexer setter; otherwise, <c>false</c>.</value>
-        public bool HasIndexerAccessors { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether this collection implements <see cref="IList"/> or <see cref="IList{T}"/>.
-        /// </summary>
-        public bool IsList { get; }
-
-        /// <summary>
-        /// Returns the value matching the given index in the collection.
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="index">The index.</param>
-        public object GetValue(object list, object index)
+        /// <param name="collection">The collection.</param>
+        /// <param name="index">The index of the value to get.</param>
+        public object GetValue(object collection, object index)
         {
-            if (list == null) throw new ArgumentNullException(nameof(list));
-            if (!(index is int)) throw new ArgumentException("The index must be an int.");
-            return GetValue(list, (int)index);
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+            if (!(index is int))
+                throw new ArgumentException("The index must be an int.");
+
+            return GetValue(collection, (int) index);
         }
 
         /// <summary>
-        /// Returns the value matching the given index in the collection.
+        ///   Returns the value matching the given index in the collection.
         /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="index">The index.</param>
-        public object GetValue(object list, int index)
+        /// <param name="collection">The collection.</param>
+        /// <param name="index">The index of the value to get.</param>
+        public object GetValue(object collection, int index)
         {
-            if (list == null) throw new ArgumentNullException(nameof(list));
-            return GetIndexedItem(list, index);
+            if (collection is null)
+                throw new ArgumentNullException(nameof(collection));
+
+            return GetIndexedItem(collection, index);
         }
 
         public void SetValue(object list, object index, object value)
         {
-            if (list == null) throw new ArgumentNullException(nameof(list));
-            if (!(index is int)) throw new ArgumentException("The index must be an int.");
-            SetValue(list, (int)index, value);
+            if (list is null)
+                throw new ArgumentNullException(nameof(list));
+            if (!(index is int))
+                throw new ArgumentException("The index must be an int.");
+
+            SetValue(list, (int) index, value);
         }
 
         public void SetValue(object list, int index, object value)
         {
-            if (list == null) throw new ArgumentNullException(nameof(list));
+            if (list is null)
+                throw new ArgumentNullException(nameof(list));
+
             SetIndexedItem(list, index, value);
         }
 
         /// <summary>
-        /// Clears the specified collection.
+        ///   Clears the specified collection.
         /// </summary>
         /// <param name="collection">The collection.</param>
         public void Clear(object collection)
@@ -224,7 +239,7 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Add to the collections of the same type than this descriptor.
+        ///   Adds a value to a collection of the type described by this descriptor.
         /// </summary>
         /// <param name="collection">The collection.</param>
         /// <param name="value">The value to add to this collection.</param>
@@ -234,10 +249,10 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Insert to the collections of the same type than this descriptor.
+        ///   Insert a value to a collection of the type described by this descriptor.
         /// </summary>
         /// <param name="collection">The collection.</param>
-        /// <param name="index">The index of the insertion.</param>
+        /// <param name="index">The index where to insert the value.</param>
         /// <param name="value">The value to insert to this collection.</param>
         public void Insert(object collection, int index, object value)
         {
@@ -245,50 +260,50 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Remove item at the given index from the collections of the same type.
+        ///   Remove item at the given index from the collections of the same type.
         /// </summary>
         /// <param name="collection">The collection.</param>
-        /// <param name="index">The index of the item to remove from this collection.</param>
+        /// <param name="index">The index of the item to remove from the collection.</param>
         public void RemoveAt(object collection, int index)
         {
             CollectionRemoveAtFunction(collection, index);
         }
 
         /// <summary>
-        /// Removes the item from the collections of the same type.
+        ///   Removes a value from a collection of the type described by this descriptor.
         /// </summary>
         /// <param name="collection">The collection.</param>
-        /// <param name="item"></param>
+        /// <param name="item">The item to remove from the collection.</param>
         public void Remove(object collection, object item)
         {
             CollectionRemoveFunction(collection, item);
         }
 
         /// <summary>
-        /// Determines whether the specified collection is read only.
+        ///   Determines whether the specified collection is read only.
         /// </summary>
         /// <param name="collection">The collection.</param>
         /// <returns><c>true</c> if the specified collection is read only; otherwise, <c>false</c>.</returns>
         public bool IsReadOnly(object collection)
         {
-            return collection == null || IsReadOnlyFunction == null || IsReadOnlyFunction(collection);
+            return collection is null || IsReadOnlyFunction is null || IsReadOnlyFunction(collection);
         }
 
         /// <summary>
-        /// Determines the number of elements of a collection, -1 if it cannot determine the number of elements.
+        ///   Determines the number of elements of a collection.
         /// </summary>
         /// <param name="collection">The collection.</param>
-        /// <returns>The number of elements of a collection, -1 if it cannot determine the number of elements.</returns>
+        /// <returns>The number of elements in the collection; or <c>-1</c> if it cannot determine the number of elements.</returns>
         public int GetCollectionCount(object collection)
         {
-            return collection == null || GetCollectionCountFunction == null ? -1 : GetCollectionCountFunction(collection);
+            return collection is null || GetCollectionCountFunction is null ? -1 : GetCollectionCountFunction(collection);
         }
 
         /// <summary>
-        /// Determines whether the specified type is collection.
+        ///   Determines whether the specified <see cref="Type"/> represents a collection.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <returns><c>true</c> if the specified type is collection; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if the specified <see cref="Type"/> is a collection; otherwise, <c>false</c>.</returns>
         public static bool IsCollection(Type type)
         {
             return TypeHelper.IsCollection(type);

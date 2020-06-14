@@ -2,12 +2,12 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Xunit;
-
 using System.Threading.Tasks;
 
 using Stride.Core.Mathematics;
 using Stride.Games;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -34,9 +34,7 @@ Two blank lines above
 One blank line below
 ";
 
-        public TestSpriteFontAlignment()
-        {
-        }
+        public TestSpriteFontAlignment() { }
 
         protected override void RegisterTests()
         {
@@ -104,12 +102,6 @@ One blank line below
             spriteBatch.DrawString(arial, Text2, new Vector2(x, y + 20), Color.Black, TextAlignment.Center);
 
             spriteBatch.End();
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestSpriteFontAlignment())
-                game.Run();
         }
 
         /// <summary>

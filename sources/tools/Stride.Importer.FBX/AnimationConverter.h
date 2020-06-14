@@ -37,7 +37,7 @@ namespace Stride {
 
 					this->logger = logger;
 					this->sceneMapping = sceneMapping;
-					this->scene = sceneMapping->Scene;;
+					this->scene = sceneMapping->Scene;
 
 					auto documentInfo = scene->GetDocumentInfo();
 					if (documentInfo->Original_ApplicationName.Get() == "Maya")
@@ -73,7 +73,7 @@ namespace Stride {
 					int animStackCount = scene->GetMemberCount<FbxAnimStack>();
 					if (animStackCount == 0)
 						return animationData;
-						
+
 					// We support only anim stack count == 1
 					if (animStackCount > 1)
 					{
@@ -553,7 +553,7 @@ namespace Stride {
 						{
 							auto isUserDefined = lProperty.GetFlag(FbxPropertyFlags::eUserDefined); // import only user custom properties
 							FbxAnimCurveNode* lCurveNode = lProperty.GetCurveNode(animLayer); // import only animated properties
-							if (!isUserDefined || !lCurveNode) 
+							if (!isUserDefined || !lCurveNode)
 							{
 								lProperty = pNode->GetNextProperty(lProperty);
 								continue;
@@ -567,8 +567,8 @@ namespace Stride {
 								curves[c] = lCurveNode->GetCurve(c);
 
 							FbxDataType lDataType = lProperty.GetPropertyDataType();
-							if (lDataType.GetType() == eFbxBool || 
-								lDataType.GetType() == eFbxDouble || lDataType.GetType() == eFbxFloat || 
+							if (lDataType.GetType() == eFbxBool ||
+								lDataType.GetType() == eFbxDouble || lDataType.GetType() == eFbxFloat ||
 								lDataType.GetType() == eFbxInt    || lDataType.GetType() == eFbxUInt ||
 								lDataType.GetType() == eFbxChar   || lDataType.GetType() == eFbxUChar ||
 								lDataType.GetType() == eFbxShort  || lDataType.GetType() == eFbxUShort)
@@ -602,7 +602,7 @@ namespace Stride {
 					}
 				}
 
-				// This code is not used but is a reference code for code animation but less optimized than ProcessAnimationByCurve. 
+				// This code is not used but is a reference code for code animation but less optimized than ProcessAnimationByCurve.
 				void ProcessAnimation(FbxTime animStart, FbxTime animEnd, AnimationClip^ animationClip, FbxAnimStack* animStack, FbxNode* pNode)
 				{
 					auto layer0 = animStack->GetMember<FbxAnimLayer>(0);
@@ -805,7 +805,7 @@ namespace Stride {
 
 				void GetAnimationNodes(FbxAnimLayer* animLayer, FbxNode* pNode, List<String^>^ animationNodes)
 				{
-					auto nodeData = sceneMapping->FindNode(pNode);;
+					auto nodeData = sceneMapping->FindNode(pNode);
 					auto nodeName = nodeData.Name;
 
 					bool checkTranslation = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X) != NULL;

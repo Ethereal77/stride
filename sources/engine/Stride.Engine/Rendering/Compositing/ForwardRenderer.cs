@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 using Stride.Core;
 using Stride.Core.Annotations;
@@ -23,8 +22,11 @@ using Stride.Rendering.SubsurfaceScattering;
 namespace Stride.Rendering.Compositing
 {
     /// <summary>
-    /// Renders your game. It should use current <see cref="RenderContext.RenderView"/> and <see cref="CameraComponentRendererExtensions.GetCurrentCamera"/>.
+    ///   Represents a scene renderer that renders using "Forward Rendering".
     /// </summary>
+    /// <remarks>
+    ///   The renderer should use the current <see cref="RenderContext.RenderView"/> and <see cref="CameraComponentRendererExtensions.GetCurrentCamera"/>.
+    /// </remarks>
     [Display("Forward renderer")]
     public partial class ForwardRenderer : SceneRendererBase, ISharedRenderer
     {
@@ -226,7 +228,7 @@ namespace Stride.Rendering.Compositing
 
                 CollectStages(context);
 
-                //write params to view
+                // Write params to view
                 SceneCameraRenderer.UpdateCameraToRenderView(context, context.RenderView, camera);
 
                 CollectView(context);

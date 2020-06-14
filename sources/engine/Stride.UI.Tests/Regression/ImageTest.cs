@@ -4,25 +4,23 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Class for rendering tests on the <see cref="ImageElement"/> 
+    ///   Test class for rendering tests on the <see cref="ImageElement"/> .
     /// </summary>
     public class ImageTest : UITestGameBase
     {
         private ImageElement imageElement;
 
-        public ImageTest()
-        {
-        }
+        public ImageTest() { }
 
         protected override async Task LoadContent()
         {
@@ -52,15 +50,6 @@ namespace Stride.UI.Tests.Regression
         public void RunImageTest()
         {
             RunGameTest(new ImageTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new ImageTest())
-                game.Run();
         }
     }
 }

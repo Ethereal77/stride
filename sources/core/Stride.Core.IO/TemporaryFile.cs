@@ -10,31 +10,24 @@ namespace Stride.Core.IO
     public partial class TemporaryFile : IDisposable
     {
         private bool isDisposed;
-        private string path;
+
+        public string Path { get; private set; }
+
 
         public TemporaryFile()
         {
-            path = VirtualFileSystem.GetTempFileName();
+            Path = VirtualFileSystem.GetTempFileName();
         }
 
-        public string Path
-        {
-            get { return path; }
-        }
-
-#if !NETFX_CORE
         ~TemporaryFile()
         {
             Dispose(false);
         }
-#endif
 
         public void Dispose()
         {
             Dispose(false);
-#if !NETFX_CORE
             GC.SuppressFinalize(this);
-#endif
         }
 
         private void Dispose(bool disposing)
@@ -50,14 +43,10 @@ namespace Stride.Core.IO
         {
             try
             {
-                VirtualFileSystem.FileDelete(path);
+                VirtualFileSystem.FileDelete(Path);
             }
-            catch (IOException)
-            {
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
         }
     }
 }

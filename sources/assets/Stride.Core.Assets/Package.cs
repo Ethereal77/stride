@@ -1051,7 +1051,7 @@ namespace Stride.Core.Assets
                     var fullProjectLocation = projectReference.Location.ToWindowsPath();
                     if (loadParameters.AutoCompileProjects || string.IsNullOrWhiteSpace(assemblyPath))
                     {
-                        assemblyPath = VSProjectHelper.GetOrCompileProjectAssembly(Session?.SolutionPath, fullProjectLocation, forwardingLogger, "Build", loadParameters.AutoCompileProjects, loadParameters.BuildConfiguration, extraProperties: loadParameters.ExtraCompileProperties, onlyErrors: true);
+                        assemblyPath = VSProjectHelper.GetOrCompileProjectAssembly(fullProjectLocation, forwardingLogger, "Build", loadParameters.AutoCompileProjects, loadParameters.BuildConfiguration, extraProperties: loadParameters.ExtraCompileProperties, onlyErrors: true);
                         if (string.IsNullOrWhiteSpace(assemblyPath))
                         {
                             log.Error($"Unable to locate assembly reference for project [{fullProjectLocation}].");
@@ -1297,7 +1297,7 @@ namespace Stride.Core.Assets
                 return;
 
             var project = package.Container as SolutionProject;
-            if (project == null || project.FullPath == null || project.Type != ProjectType.Library)
+            if (project is null || project.FullPath is null)
                 return;
 
             var projectAssets = FindAssetsInProject(project.FullPath, out string defaultNamespace);

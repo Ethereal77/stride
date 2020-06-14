@@ -6,19 +6,17 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
-using Stride.Core.MicroThreading;
 using Stride.Engine;
 using Stride.Games;
 using Stride.Graphics.Regression;
 using Stride.Physics;
-using Stride.Rendering.Compositing;
+
+using Xunit;
 
 namespace Stride.Navigation.Tests
 {
-    public class DynamicBarrierTest : Game
+    public class DynamicBarrierTest : GameTestBase
     {
         private Entity entityA;
         private Entity entityB;
@@ -152,14 +150,7 @@ namespace Stride.Navigation.Tests
         [Fact]
         public static void DynamicBarrierTest1()
         {
-            DynamicBarrierTest game = new DynamicBarrierTest();
-            game.Run();
-            game.Dispose();
-        }
-
-        internal static void Main()
-        {
-            DynamicBarrierTest1();
+            RunGameTest(new DynamicBarrierTest());
         }
     }
 }

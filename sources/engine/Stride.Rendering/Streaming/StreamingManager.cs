@@ -4,6 +4,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -14,7 +15,6 @@ using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.IO;
 using Stride.Core.Streaming;
-using Stride.Engine;
 using Stride.Games;
 using Stride.Graphics;
 using Stride.Graphics.Data;
@@ -23,14 +23,14 @@ using Stride.Rendering;
 namespace Stride.Streaming
 {
     /// <summary>
-    /// Performs content streaming.
+    ///   Represents a class that manages and performs content streaming.
     /// </summary>
-    /// <seealso cref="Stride.Games.GameSystemBase" />
-    /// <seealso cref="Stride.Graphics.Data.ITexturesStreamingProvider" />
+    /// <seealso cref="GameSystemBase"/>
+    /// <seealso cref="ITexturesStreamingProvider"/>
     public class StreamingManager : GameSystemBase, IStreamingManager, ITexturesStreamingProvider
     {
         private readonly List<StreamableResource> resources = new List<StreamableResource>(512);
-        private readonly Dictionary<object, StreamableResource> resourcesLookup = new Dictionary<object, StreamableResource>(512);
+        private readonly ConcurrentDictionary<object, StreamableResource> resourcesLookup = new ConcurrentDictionary<object, StreamableResource>();
         private readonly List<StreamableResource> activeStreaming = new List<StreamableResource>(8); // Important: alwasy use inside lock(resources)
         private int lastUpdateResourcesIndex;
         private bool isDisposing;
@@ -156,10 +156,7 @@ namespace Stride.Streaming
         public T Get<T>(object obj) where T : StreamableResource
         {
             StreamableResource result;
-            lock (resources)
-            {
-                resourcesLookup.TryGetValue(obj, out result);
-            }
+            resourcesLookup.TryGetValue(obj, out result);
             return result as T;
         }
 
@@ -316,7 +313,8 @@ namespace Stride.Streaming
                 Debug.Assert(!resources.Contains(resource), "!resources.Contains(resource)");
 
                 resources.Add(resource);
-                resourcesLookup.Add(resource.Resource, resource);
+                if(resourcesLookup.TryAdd(resource.Resource, resource) == false)
+                    throw new InvalidOperationException();
             }
         }
 
@@ -332,7 +330,7 @@ namespace Stride.Streaming
                 Debug.Assert(resources.Contains(resource), "resources.Contains(resource)");
 
                 resources.Remove(resource);
-                resourcesLookup.Remove(resource.Resource);
+                resourcesLookup.TryRemove(resource.Resource, out _);
                 activeStreaming.Remove(resource);
             }
         }

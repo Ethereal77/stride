@@ -1,0 +1,21 @@
+<!--
+***********************************************************************************************
+  Stride.Graphics.targets
+
+  Build file post-included after the building of the project to configure the graphics API
+  in case the user has not specified one.
+
+  Copyright (C) 2020 Stride and its contributors
+***********************************************************************************************
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Choose GraphicsApi if not specified by user -->
+  <PropertyGroup>
+    <!-- Defaults for GraphicsApi based on platform-->
+    <StrideDefaultGraphicsApi Condition="'$(StridePlatform)' == 'Windows'">Direct3D11</StrideDefaultGraphicsApi>
+    <StrideGraphicsApi Condition="'$(StrideGraphicsApi)' == '' and '$(StrideDefaultGraphicsApi)' != ''">$(StrideDefaultGraphicsApi)</StrideGraphicsApi>
+  </PropertyGroup>
+
+  <!-- Consume packages with StrideGraphicsApi -->
+  <Import Project="$(MSBuildThisFileDirectory)Stride.GraphicsApi.PackageReference.targets" />
+</Project>

@@ -9,16 +9,27 @@ using Stride.Core.Assets;
 namespace Stride.Core
 {
     /// <summary>
-    /// Represents the absolute identifier of an identifiable object in an asset.
+    ///   Represents the absolute identifier of an identifiable object in an Asset.
     /// </summary>
     [DataContract("AbsoluteId")]
     public struct AbsoluteId : IEquatable<AbsoluteId>
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="AbsoluteId"/>.
+        ///   Gets the identifier of the containing Asset.
         /// </summary>
-        /// <param name="assetId"></param>
-        /// <param name="objectId"></param>
+        public AssetId AssetId { get; }
+
+        /// <summary>
+        ///   Gets the identifier of the object in the Asset.
+        /// </summary>
+        public Guid ObjectId { get; }
+
+
+        /// <summary>
+        ///   Initializes a new instance of <see cref="AbsoluteId"/>.
+        /// </summary>
+        /// <param name="assetId">Identifier of the Asset.</param>
+        /// <param name="objectId">Identifier of the object.</param>
         /// <exception cref="ArgumentException"><paramref name="assetId"/> and <paramref name="objectId"/> cannot both be empty.</exception>
         public AbsoluteId(AssetId assetId, Guid objectId)
         {
@@ -29,40 +40,20 @@ namespace Stride.Core
             ObjectId = objectId;
         }
 
-        /// <summary>
-        /// The identifier of the containing asset.
-        /// </summary>
-        public AssetId AssetId { get; }
 
-        /// <summary>
-        /// The identifier of the object in the asset.
-        /// </summary>
-        public Guid ObjectId { get; }
+        public static bool operator ==(AbsoluteId left, AbsoluteId right) => left.Equals(right);
 
-        /// <inheritdoc />
-        public static bool operator ==(AbsoluteId left, AbsoluteId right)
-        {
-            return left.Equals(right);
-        }
-
-        /// <inheritdoc />
-        public static bool operator !=(AbsoluteId left, AbsoluteId right)
-        {
-            return !left.Equals(right);
-        }
+        public static bool operator !=(AbsoluteId left, AbsoluteId right) => !left.Equals(right);
 
         /// <inheritdoc />
         public bool Equals(AbsoluteId other)
         {
-            return AssetId.Equals(other.AssetId) && ObjectId.Equals(other.ObjectId);
+            return AssetId.Equals(other.AssetId) &&
+                   ObjectId.Equals(other.ObjectId);
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is AbsoluteId && Equals((AbsoluteId)obj);
-        }
+        public override bool Equals(object obj) => obj is AbsoluteId id && Equals(id);
 
         /// <inheritdoc />
         public override int GetHashCode()
@@ -74,9 +65,6 @@ namespace Stride.Core
         }
 
         /// <inheritdoc/>
-        public override string ToString()
-        {
-            return $"{AssetId}/{ObjectId}";
-        }
+        public override string ToString() => $"{AssetId}/{ObjectId}";
     }
 }

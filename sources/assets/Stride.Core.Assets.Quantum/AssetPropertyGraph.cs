@@ -568,11 +568,11 @@ namespace Stride.Core.Assets.Quantum
 
         private void LinkBaseNode([NotNull] IGraphNode currentNode, IGraphNode baseNode)
         {
-            var assetNode = (IAssetNode)currentNode;
-            ((IAssetNodeInternal)assetNode).SetPropertyGraph(this);
-            ((IAssetNodeInternal)assetNode).SetBaseNode(baseNode);
+            var assetNode = (IAssetNodeInternal) currentNode;
+            assetNode.SetPropertyGraph(this);
+            assetNode.SetBaseNode(baseNode);
 
-            BaseToDerivedRegistry.RegisterBaseToDerived((IAssetNode)baseNode, (IAssetNode)currentNode);
+            BaseToDerivedRegistry.RegisterBaseToDerived((IAssetNode) baseNode, assetNode);
 
             if (!baseLinkedNodes.ContainsKey(assetNode))
             {
@@ -580,14 +580,13 @@ namespace Stride.Core.Assets.Quantum
                 EventHandler<ItemChangeEventArgs> itemChange = null;
                 if (baseNode != null)
                 {
-                    var member = assetNode.BaseNode as IMemberNode;
-                    if (member != null)
+                    if (assetNode.BaseNode is IMemberNode member)
                     {
                         valueChange = (s, e) => OnBaseContentChanged(e, currentNode);
                         member.ValueChanged += valueChange;
                     }
-                    var objectNode = assetNode.BaseNode as IObjectNode;
-                    if (objectNode != null)
+
+                    if (assetNode.BaseNode is IObjectNode objectNode)
                     {
                         itemChange = (s, e) => OnBaseContentChanged(e, currentNode);
                         objectNode.ItemChanged += itemChange;
@@ -603,13 +602,12 @@ namespace Stride.Core.Assets.Quantum
 
             if (baseLinkedNodes.TryGetValue(assetNode, out NodeChangeHandlers linkedNode))
             {
-                var member = assetNode.BaseNode as IMemberNode;
-                if (member != null)
+                if (assetNode.BaseNode is IMemberNode member)
                 {
                     member.ValueChanged -= linkedNode.ValueChange;
                 }
-                var objectNode = assetNode.BaseNode as IObjectNode;
-                if (objectNode != null)
+
+                if (assetNode.BaseNode is IObjectNode objectNode)
                 {
                     objectNode.ItemChanged -= linkedNode.ItemChange;
                 }
@@ -621,13 +619,12 @@ namespace Stride.Core.Assets.Quantum
         {
             foreach (var linkedNode in baseLinkedNodes)
             {
-                var member = linkedNode.Key.BaseNode as IMemberNode;
-                if (member != null)
+                if (linkedNode.Key.BaseNode is IMemberNode member)
                 {
                     member.ValueChanged -= linkedNode.Value.ValueChange;
                 }
-                var objectNode = linkedNode.Key.BaseNode as IObjectNode;
-                if (objectNode != null)
+
+                if (linkedNode.Key.BaseNode is IObjectNode objectNode)
                 {
                     objectNode.ItemChanged -= linkedNode.Value.ItemChange;
                 }

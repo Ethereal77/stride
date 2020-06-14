@@ -5,8 +5,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
 using Stride.Games;
 using Stride.Graphics;
@@ -15,26 +13,26 @@ using Stride.Rendering.Sprites;
 using Stride.UI.Controls;
 using Stride.UI.Panels;
 
+using Xunit;
+
 namespace Stride.UI.Tests.Regression
 {
     /// <summary>
-    /// Regression tests for <see cref="Border"/>
+    ///   Regression tests for <see cref="Border"/>.
     /// </summary>
     public class BorderTest : UITestGameBase
     {
         private Border border;
 
-        public BorderTest()
-        {
-        }
+        public BorderTest() { }
 
         protected override async Task LoadContent()
         {
             await base.LoadContent();
 
-            border = new Border { Width = 200, Height = 150, Content = new Button { NotPressedImage = (SpriteFromTexture)new Sprite(Content.Load<Texture>("uv")), DepthAlignment = DepthAlignment.Back}};
+            border = new Border { Width = 200, Height = 150, Content = new Button { NotPressedImage = (SpriteFromTexture) new Sprite(Content.Load<Texture>("uv")), DepthAlignment = DepthAlignment.Back } };
             border.SetCanvasPinOrigin(new Vector3(0.5f));
-            
+
             border.BackgroundColor = Color.Red;
 
             ResetBorderElement();
@@ -45,7 +43,7 @@ namespace Stride.UI.Tests.Regression
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            
+
             const float DepthIncrement = 10f;
             const float RotationIncrement = 0.1f;
 
@@ -95,6 +93,7 @@ namespace Stride.UI.Tests.Regression
         protected override void RegisterTests()
         {
             base.RegisterTests();
+
             FrameGameSystem.DrawOrder = -1;
             FrameGameSystem.TakeScreenshot();
             FrameGameSystem.Draw(TurnBorderElement).TakeScreenshot();
@@ -130,15 +129,6 @@ namespace Stride.UI.Tests.Regression
         public void RunBorderTest()
         {
             RunGameTest(new BorderTest());
-        }
-
-        /// <summary>
-        /// Launch the Image test.
-        /// </summary>
-        internal static void Main()
-        {
-            using (var game = new BorderTest())
-                game.Run();
         }
     }
 }

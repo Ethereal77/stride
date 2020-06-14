@@ -4,11 +4,11 @@
 
 using System.Threading.Tasks;
 
-using Xunit;
-
 using Stride.Core.Mathematics;
-using Stride.Rendering;
 using Stride.Games;
+using Stride.Rendering;
+
+using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -108,7 +108,7 @@ namespace Stride.Graphics.Tests
 
         private void DrawTextureSampling()
         {
-            // Clears the screen 
+            // Clears the screen
             GraphicsContext.CommandList.Clear(GraphicsDevice.Presenter.BackBuffer, Color.LightBlue);
             GraphicsContext.CommandList.Clear(GraphicsDevice.Presenter.DepthStencilBuffer, DepthStencilClearOptions.DepthBuffer | DepthStencilClearOptions.Stencil);
             GraphicsContext.CommandList.SetRenderTargetAndViewport(GraphicsDevice.Presenter.DepthStencilBuffer, GraphicsDevice.Presenter.BackBuffer);
@@ -137,12 +137,6 @@ namespace Stride.Graphics.Tests
                 simpleEffect.Apply(GraphicsContext);
                 GraphicsContext.CommandList.DrawIndexed(6);
             }
-        }
-
-        internal static void Main()
-        {
-            using (var game = new TestTextureSampling())
-                game.Run();
         }
 
         /// <summary>

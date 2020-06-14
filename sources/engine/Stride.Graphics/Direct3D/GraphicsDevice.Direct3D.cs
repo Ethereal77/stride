@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 using SharpDX;
 using SharpDX.Direct3D11;
@@ -209,10 +210,6 @@ namespace Stride.Graphics
             // Map GraphicsProfile to D3D11 FeatureLevel
             creationFlags = (SharpDX.Direct3D11.DeviceCreationFlags)deviceCreationFlags;
 
-            // Default fallback
-            if (graphicsProfiles.Length == 0)
-                graphicsProfiles = new[] { GraphicsProfile.Level_11_2, GraphicsProfile.Level_11_1, GraphicsProfile.Level_11_0 };
-
             // Create Device D3D11 with feature Level based on profile
             for (int index = 0; index < graphicsProfiles.Length; index++)
             {
@@ -221,6 +218,7 @@ namespace Stride.Graphics
                 {
                     // D3D12 supports only feature level 11+
                     var level = graphicsProfile.ToFeatureLevel();
+
 
                     nativeDevice = new SharpDX.Direct3D11.Device(Adapter.NativeAdapter, creationFlags, level);
 
@@ -290,6 +288,11 @@ namespace Stride.Graphics
             if (resourceLink.Resource is GraphicsResource resource)
                 resource.DiscardNextMap = true;
         }
+
+#if STRIDE_PLATFORM_WINDOWS_DESKTOP
+        [DllImport("kernel32.dll", EntryPoint = "GetModuleHandle", CharSet = CharSet.Unicode)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+#endif
     }
 }
 #endif

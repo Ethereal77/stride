@@ -5,11 +5,12 @@
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Common interface for a screen-space anti-aliasing effect
+    ///   Defines the common interface for a screen-space anti-aliasing effect.
     /// </summary>
     public interface IScreenSpaceAntiAliasingEffect : IImageEffect
     {
         bool NeedRangeDecompress { get; }
+        bool RequiresDepthBuffer { get; }
         bool RequiresVelocityBuffer { get; }
     }
 }

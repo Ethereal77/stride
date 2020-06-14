@@ -76,19 +76,6 @@ namespace Stride.Graphics.Data
                     // Check if streaming service is available
                     if (texturesStreamingProvider != null)
                     {
-                        if (allowContentStreaming)
-                        {
-                            // Register texture for streaming
-                            texturesStreamingProvider.RegisterTexture(texture, ref imageDescription, ref storageHeader);
-
-                            // Note: here we don't load texture data and don't allocate GPU memory
-                        }
-                        else
-                        {
-                            // Request texture loading (should be fully loaded)
-                            texturesStreamingProvider.FullyLoadTexture(texture, ref imageDescription, ref storageHeader);
-                        }
-
                         // Load initial texture (with limited number of mipmaps)
                         if (storageHeader.InitialImage)
                         {
@@ -100,15 +87,25 @@ namespace Stride.Graphics.Data
                                 texture.InitializeFrom(textureData.Description, new TextureViewDescription(), textureData.ToDataBox());
                             }
                         }
+
+                        if (allowContentStreaming)
+                        {
+                            // Register texture for streaming
+                            // NOTE: Here we don't load texture data and don't allocate GPU memory
+                            texturesStreamingProvider.RegisterTexture(texture, ref imageDescription, ref storageHeader);
+                        }
+                        else
+                        {
+                            // Request texture loading (should be fully loaded)
+                            texturesStreamingProvider.FullyLoadTexture(texture, ref imageDescription, ref storageHeader);
+                        }
                     }
                     else
                     {
                         // Load initial texture and discard it (we are going to load the full chunk texture right after)
                         if (storageHeader.InitialImage)
                         {
-                            using (var textureData = Image.Load(stream.NativeStream))
-                            {
-                            }
+                            using (var textureData = Image.Load(stream.NativeStream)) { }
                         }
 
                         // Deserialize whole texture without streaming feature
@@ -120,7 +117,7 @@ namespace Stride.Graphics.Data
             else
             {
                 var textureData = texture.GetSerializationData();
-                if (textureData == null)
+                if (textureData is null)
                     throw new InvalidOperationException("Trying to serialize a Texture without CPU info.");
 
                 textureData.Write(stream);
@@ -138,7 +135,7 @@ namespace Stride.Graphics.Data
             {
                 // Get content storage container
                 var storage = content.GetStorage(ref storageHeader);
-                if (storage == null)
+                if (storage is null)
                     throw new ContentStreamingException("Missing content storage.");
                 storage.LockChunks();
 

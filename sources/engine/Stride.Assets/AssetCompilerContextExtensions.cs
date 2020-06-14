@@ -38,14 +38,6 @@ namespace Stride.Assets
             if (context.OptionProperties.TryGetValue("StrideGraphicsApi", out graphicsApi))
                 return (GraphicsPlatform)Enum.Parse(typeof(GraphicsPlatform), graphicsApi);
 
-            if (context.OptionProperties.TryGetValue("RuntimeIdentifier", out var runtimeIdentifier))
-            {
-                if (runtimeIdentifier.Contains("-d3d11"))
-                    return GraphicsPlatform.Direct3D11;
-                else if (runtimeIdentifier.Contains("-d3d12"))
-                    return GraphicsPlatform.Direct3D12;
-            }
-
             // Ohterwise, use default as fallback
             return context.Platform.GetDefaultGraphicsPlatform();
         }
@@ -71,12 +63,15 @@ namespace Stride.Assets
                 case "Debug":
                     compilationMode = CompilationMode.Debug;
                     break;
+
                 case "Release":
                     compilationMode = CompilationMode.Release;
                     break;
+
                 case "AppStore":
                     compilationMode = CompilationMode.AppStore;
                     break;
+
                 case "Testing":
                     compilationMode = CompilationMode.Testing;
                     break;

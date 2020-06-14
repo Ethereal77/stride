@@ -24,6 +24,7 @@ using Stride.Rendering.Compositing;
 using Stride.Rendering.LightProbes;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
@@ -85,7 +86,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         {
             return editor.Controller.InvokeAsync(() =>
             {
-                editor.ServiceProvider.TryGet<RenderDocManager>()?.StartCapture(game.GraphicsDevice, IntPtr.Zero);
+                editor.ServiceProvider.TryGet<RenderDocManager>()?.StartFrameCapture(game.GraphicsDevice, IntPtr.Zero);
 
                 // Reset lightprobes temporarily (if requested)
                 // Note: we only process first LightProbeProcessor

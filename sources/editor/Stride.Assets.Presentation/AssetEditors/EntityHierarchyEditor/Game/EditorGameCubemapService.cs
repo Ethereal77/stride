@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
 using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
 using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Stride.Editor.EditorGame.Game;
 using Stride.Graphics;
 using Stride.Rendering.Skyboxes;
+using Stride.Editor.EditorGame.Game;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
@@ -43,7 +43,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         {
             return await editor.Controller.InvokeAsync(() =>
             {
-                editor.ServiceProvider.TryGet<RenderDocManager>()?.StartCapture(game.GraphicsDevice, IntPtr.Zero);
+                editor.ServiceProvider.TryGet<RenderDocManager>()?.StartFrameCapture(game.GraphicsDevice, IntPtr.Zero);
 
                 var editorCompositor = game.EditorSceneSystem.GraphicsCompositor.Game;
                 try
