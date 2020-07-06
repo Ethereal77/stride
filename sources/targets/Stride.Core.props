@@ -9,7 +9,7 @@
   Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="RuntimeIdentifier">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Setup this part according to your project if you want your .csproj to compile individually without going through the .sln file -->
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)..\..\build\</SolutionDir>
@@ -32,16 +32,15 @@
   <Import Project="$(SolutionDir)$(SolutionName).Build.props" Condition="Exists('$(SolutionDir)$(SolutionName).Build.props')" />
   <Import Project="$(SolutionDir)Stride.Core.Build.props" Condition="Exists('$(SolutionDir)Stride.Core.Build.props')" />
 
-    <!--
-    Settings StridePlatform specific
+  <Import Project="$(MSBuildThisFileDirectory)Stride.Core.TargetFrameworks.Editor.props" />
+
+  <!--
+    Settings StridePlatform specific.
   -->
   <PropertyGroup>
     <!-- Using C# version 7.3 -->
     <LangVersion>7.3</LangVersion>
-    <StrideRuntimeTargetFramework>net461</StrideRuntimeTargetFramework>
-    <StrideEditorTargetFramework>net472</StrideEditorTargetFramework>
-    <StrideEditorTargetFrameworks>net472</StrideEditorTargetFrameworks>
-    <StridePlatformDefines>NET45</StridePlatformDefines>
+    <StridePlatformDefines>STRIDE_PLATFORM_WINDOWS;STRIDE_PLATFORM_WINDOWS_DESKTOP</StridePlatformDefines>
 
     <!-- NOTE: Ideally we would split using ItemGroup but then PropertyGroup are not properly evaluated if they contain ItemGroup (unless using Targets) -->
     <StridePlatforms Condition="'$(StridePlatforms)' == ''">Windows</StridePlatforms>
@@ -162,7 +161,7 @@
   </PropertyGroup>
 
   <!--
-    Settings StrideNETRuntime specific
+    Settings StrideNETRuntime specific.
   -->
   <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp'))">
     <StrideNETRuntimeDefines>STRIDE_RUNTIME_CORECLR</StrideNETRuntimeDefines>

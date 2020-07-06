@@ -19,39 +19,37 @@ namespace Stride.Rendering
     }
 
     /// <summary>
-    /// Metadata used for <see cref="ParameterKey"/>
+    ///   Represents metadata used for a <see cref="ParameterKey"/>.
     /// </summary>
     public class ParameterKeyValueMetadata<T> : ParameterKeyValueMetadata
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParameterKeyValueMetadata"/> class.
+        ///   Initializes a new instance of the <see cref="ParameterKeyValueMetadata"/> class.
         /// </summary>
-        public ParameterKeyValueMetadata()
-        {
-        }
+        public ParameterKeyValueMetadata() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParameterKeyValueMetadata"/> class.
+        ///   Initializes a new instance of the <see cref="ParameterKeyValueMetadata"/> class.
         /// </summary>
-        /// <param name="setupDelegate">The setup delegate.</param>
+        /// <param name="defaultValue">The value to use by default.</param>
         public ParameterKeyValueMetadata(T defaultValue)
         {
             DefaultValue = defaultValue;
         }
 
         /// <summary>
-        /// Gets the default value.
+        ///   Gets the default value.
         /// </summary>
-        public readonly T DefaultValue;
+        public T DefaultValue { get; internal set; }
 
         public override unsafe bool WriteBuffer(IntPtr dest, int alignment = 1)
         {
-            // We only support structs (not sure how to deal with arrays yet
+            // We only support structs (not sure how to deal with arrays yet)
             if (typeof(T).GetTypeInfo().IsValueType)
             {
                 // Struct copy
                 var value = DefaultValue;
-                Interop.CopyInline((void*)dest, ref value);
+                Interop.CopyInline((void*) dest, ref value);
                 return true;
             }
 

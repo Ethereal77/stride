@@ -34,7 +34,7 @@ namespace Stride.Graphics
         public PrimitiveQuad(GraphicsDevice graphicsDevice)
         {
             GraphicsDevice = graphicsDevice;
-            sharedData = GraphicsDevice.GetOrCreateSharedData(GraphicsDeviceSharedDataType.PerDevice, "PrimitiveQuad::VertexBuffer", d => new SharedData(GraphicsDevice));
+            sharedData = GraphicsDevice.GetOrCreateSharedData("PrimitiveQuad::VertexBuffer", _ => new SharedData(GraphicsDevice));
 
             simpleEffect = new EffectInstance(new Effect(GraphicsDevice, SpriteEffect.Bytecode));
             simpleEffect.Parameters.Set(SpriteBaseKeys.MatrixTransform, Matrix.Identity);
@@ -128,7 +128,7 @@ namespace Stride.Graphics
 
             Draw(graphicsContext.CommandList);
 
-            // TODO: ADD QUICK UNBIND FOR SRV
+            // TODO: Add quick Unbind for SRV
             //GraphicsDevice.Context.PixelShader.SetShaderResource(0, null);
         }
 
@@ -154,7 +154,7 @@ namespace Stride.Graphics
                 var vertexBuffer = Buffer.Vertex.New(device, QuadsVertices).DisposeBy(this);
 
                 // Register reload
-                vertexBuffer.Reload = (graphicsResource) => ((Buffer)graphicsResource).Recreate(QuadsVertices);
+                vertexBuffer.Reload = (graphicsResource) => ((Buffer) graphicsResource).Recreate(QuadsVertices);
 
                 VertexBuffer = new VertexBufferBinding(vertexBuffer, VertexDeclaration, QuadsVertices.Length, VertexPositionNormalTexture.Size);
             }

@@ -14,38 +14,37 @@ using Stride.Rendering;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// A collection of <see cref="IGraphicsRenderer"/> that is itself a <see cref="IGraphicsRenderer"/> handling automatically
-    /// <see cref="IGraphicsRenderer.Initialize"/> and <see cref="IGraphicsRenderer.Unload"/>.
+    ///   Represents a collection of <see cref="IGraphicsRenderer"/> that is itself a <see cref="IGraphicsRenderer"/>
+    ///   and automatically handles <see cref="IGraphicsRenderer.Initialize"/> and <see cref="IGraphicsRenderer.Unload"/>.
     /// </summary>
     /// <typeparam name="T">Type of the <see cref="IGraphicsRenderer"/></typeparam>.
     [DataSerializer(typeof(ListAllSerializer<,>), Mode = DataSerializerGenericMode.TypeAndGenericArguments)]
-    public abstract class GraphicsRendererCollectionBase<T> : RendererCoreBase, IGraphicsRenderer, IList<T> where T : class, IGraphicsRendererCore
+    public abstract class GraphicsRendererCollectionBase<T> : RendererCoreBase, IGraphicsRenderer, IList<T>, IReadOnlyList<T>
+        where T : class, IGraphicsRendererCore
     {
         private readonly HashSet<T> tempRenderers;
 
         private readonly List<T> currentRenderers;
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="GraphicsRendererCollection{T}"/> class.
+        ///   Initializes a new instance of the <see cref="GraphicsRendererCollection{T}"/> class.
         /// </summary>
         protected GraphicsRendererCollectionBase()
         {
             tempRenderers = new HashSet<T>(ReferenceEqualityComparer<T>.Default);
             currentRenderers = new List<T>();
-            Profiling = false; // We don't generate a begin/end for a collection but let the collection be embedded in the parent
+
+            // We don't generate a profiler Begin / End for a collection but let the collection be embedded in the parent
+            Profiling = false;
         }
+
 
         [DataMemberIgnore]
         public override bool Enabled
         {
-            get
-            {
-                return base.Enabled;
-            }
-            set
-            {
-                base.Enabled = value;
-            }
+            get => base.Enabled;
+            set => base.Enabled = value;
         }
 
         public List<T>.Enumerator GetEnumerator()
@@ -65,10 +64,9 @@ namespace Stride.Rendering
 
         public void Add(T item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
             currentRenderers.Add(item);
         }
 
@@ -92,21 +90,9 @@ namespace Stride.Rendering
             return currentRenderers.Remove(item);
         }
 
-        public int Count
-        {
-            get
-            {
-                return currentRenderers.Count;
-            }
-        }
+        public int Count => currentRenderers.Count;
 
-        public bool IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public bool IsReadOnly => false;
 
         public int IndexOf(T item)
         {
@@ -115,10 +101,9 @@ namespace Stride.Rendering
 
         public void Insert(int index, T item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
             currentRenderers.Insert(index, item);
         }
 
@@ -129,16 +114,12 @@ namespace Stride.Rendering
 
         public T this[int index]
         {
-            get
-            {
-                return currentRenderers[index];
-            }
+            get => currentRenderers[index];
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                if (value is null)
+                    throw new ArgumentNullException(nameof(value));
+
                 currentRenderers[index] = value;
             }
         }
@@ -156,11 +137,11 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Draws this renderer with the specified context.
+        ///   Draws this renderer with the specified context.
         /// </summary>
         /// <param name="context">The context.</param>
-        /// <exception cref="System.ArgumentNullException">context</exception>
-        /// <exception cref="System.InvalidOperationException">Cannot use a different context between Load and Draw</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="context"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="InvalidOperationException">Cannot use a different context between <c>Load</c> and <c>Draw</c>.</exception>
         public void Draw(RenderDrawContext context)
         {
             if (Enabled)

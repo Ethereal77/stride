@@ -32,7 +32,6 @@ namespace Stride.Graphics
 
         private readonly List<IDisposable> sharedDataToDispose = new List<IDisposable>();
         private readonly Dictionary<object, IDisposable> sharedDataPerDevice;
-        private readonly Dictionary<object, IDisposable> sharedDataPerDeviceContext = new Dictionary<object, IDisposable>();
         private GraphicsPresenter presenter;
 
         internal PipelineState DefaultPipelineState;
@@ -118,7 +117,6 @@ namespace Stride.Graphics
             for (int index = sharedDataToDispose.Count - 1; index >= 0; index--)
                 sharedDataToDispose[index].Dispose();
             sharedDataPerDevice.Clear();
-            sharedDataPerDeviceContext.Clear();
 
             SamplerStates.Dispose();
             SamplerStates = null;
@@ -284,20 +282,18 @@ namespace Stride.Graphics
         /// <returns>
         ///   The shared data object. It will be disposed by this <see cref="GraphicsDevice" /> instance.
         /// </returns>
-        public T GetOrCreateSharedData<T>(GraphicsDeviceSharedDataType type, object key, CreateSharedData<T> sharedDataCreator) where T : class, IDisposable
+        public T GetOrCreateSharedData<T>(object key, CreateSharedData<T> sharedDataCreator) where T : class, IDisposable
         {
-            Dictionary<object, IDisposable> dictionary = (type == GraphicsDeviceSharedDataType.PerDevice) ? sharedDataPerDevice : sharedDataPerDeviceContext;
-
-            lock (dictionary)
+            lock (sharedDataPerDevice)
             {
-                if (!dictionary.TryGetValue(key, out IDisposable localValue))
+                if (!sharedDataPerDevice.TryGetValue(key, out IDisposable localValue))
                 {
                     localValue = sharedDataCreator(this);
                     if (localValue is null)
                         return null;
 
                     sharedDataToDispose.Add(localValue);
-                    dictionary.Add(key, localValue);
+                    sharedDataPerDevice.Add(key, localValue);
                 }
 
                 return (T) localValue;

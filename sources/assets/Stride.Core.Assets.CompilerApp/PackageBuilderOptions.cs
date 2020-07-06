@@ -17,7 +17,6 @@ namespace Stride.Core.Assets.CompilerApp
         public bool Verbose = false;
         public bool Debug = false;
 
-        public List<string> LogPipeNames = new List<string>();
         public List<string> MonitorPipeNames = new List<string>();
         public bool EnableFileLogging;
         public string CustomLogFileName;

@@ -42,7 +42,7 @@ namespace Stride.Graphics
 
         public static CommandList New(GraphicsDevice device)
         {
-            throw new InvalidOperationException("Can't create multiple command lists with D3D11");
+            throw new InvalidOperationException("Can't create multiple command lists with D3D11.");
         }
 
         internal CommandList(GraphicsDevice device) : base(device)
@@ -71,13 +71,9 @@ namespace Stride.Graphics
             base.OnDestroyed();
         }
 
-        public void Reset()
-        {
-        }
+        public void Reset() { }
 
-        public void Flush()
-        {
-        }
+        public void Flush() { }
 
         public CompiledCommandList Close()
         {
@@ -139,7 +135,9 @@ namespace Stride.Graphics
 
         unsafe partial void SetScissorRectanglesImpl(int scissorCount, Rectangle[] scissorRectangles)
         {
-            if (scissorRectangles == null) throw new ArgumentNullException("scissorRectangles");
+            if (scissorRectangles is null)
+                throw new ArgumentNullException(nameof(scissorRectangles));
+
             var localScissorRectangles = new RawRectangle[scissorCount];
             for (int i = 0; i < scissorCount; i++)
             {
@@ -204,7 +202,7 @@ namespace Stride.Graphics
         internal void SetConstantBuffer(ShaderStage stage, int slot, Buffer buffer)
         {
             if (stage == ShaderStage.None)
-                throw new ArgumentException("Cannot use Stage.None", "stage");
+                throw new ArgumentException("Cannot use Stage.None.", nameof(stage));
 
             int stageIndex = (int)stage - 1;
 
@@ -225,7 +223,7 @@ namespace Stride.Graphics
         internal void SetConstantBuffer(ShaderStage stage, int slot, int offset, Buffer buffer)
         {
             if (stage == ShaderStage.None)
-                throw new ArgumentException("Cannot use Stage.None", "stage");
+                throw new ArgumentException("Cannot use Stage.None.", nameof(stage));
 
             int stageIndex = (int)stage - 1;
 
@@ -246,7 +244,8 @@ namespace Stride.Graphics
         internal void SetSamplerState(ShaderStage stage, int slot, SamplerState samplerState)
         {
             if (stage == ShaderStage.None)
-                throw new ArgumentException("Cannot use Stage.None", "stage");
+                throw new ArgumentException("Cannot use Stage.None.", nameof(stage));
+
             int stageIndex = (int)stage - 1;
 
             int slotIndex = stageIndex * SamplerStateCount + slot;
@@ -306,7 +305,7 @@ namespace Stride.Graphics
         internal void SetUnorderedAccessView(ShaderStage stage, int slot, GraphicsResource unorderedAccessView, int uavInitialOffset)
         {
             if (stage != ShaderStage.Compute && stage != ShaderStage.Pixel)
-                throw new ArgumentException("Invalid stage.", "stage");
+                throw new ArgumentException("Invalid stage.", nameof(stage));
 
             var view = unorderedAccessView?.NativeUnorderedAccessView;
             if (stage == ShaderStage.Compute)
@@ -420,9 +419,11 @@ namespace Stride.Graphics
         /// <param name="offsetInBytes">The offset information bytes.</param>
         public void Dispatch(Buffer indirectBuffer, int offsetInBytes)
         {
+            if (indirectBuffer is null)
+                throw new ArgumentNullException(nameof(indirectBuffer));
+
             PrepareDraw();
 
-            if (indirectBuffer == null) throw new ArgumentNullException("indirectBuffer");
             NativeDeviceContext.DispatchIndirect(indirectBuffer.NativeBuffer, offsetInBytes);
         }
 
@@ -494,7 +495,8 @@ namespace Stride.Graphics
         /// <param name="alignedByteOffsetForArgs">Offset in <em>pBufferForArgs</em> to the start of the GPU generated primitives.</param>
         public void DrawIndexedInstanced(Buffer argumentsBuffer, int alignedByteOffsetForArgs = 0)
         {
-            if (argumentsBuffer == null) throw new ArgumentNullException("argumentsBuffer");
+            if (argumentsBuffer is null)
+                throw new ArgumentNullException(nameof(argumentsBuffer));
 
             PrepareDraw();
 
@@ -527,7 +529,8 @@ namespace Stride.Graphics
         /// <param name="alignedByteOffsetForArgs">Offset in <em>pBufferForArgs</em> to the start of the GPU generated primitives.</param>
         public void DrawInstanced(Buffer argumentsBuffer, int alignedByteOffsetForArgs = 0)
         {
-            if (argumentsBuffer == null) throw new ArgumentNullException("argumentsBuffer");
+            if (argumentsBuffer is null)
+                throw new ArgumentNullException(nameof(argumentsBuffer));
 
             PrepareDraw();
 
@@ -543,7 +546,7 @@ namespace Stride.Graphics
         /// <param name="index">The query index.</param>
         public void WriteTimestamp(QueryPool queryPool, int index)
         {
-            nativeDeviceContext.End(queryPool.NativeQueries[index]);    
+            nativeDeviceContext.End(queryPool.NativeQueries[index]);
         }
 
         /// <summary>
@@ -574,7 +577,8 @@ namespace Stride.Graphics
         /// <exception cref="System.InvalidOperationException"></exception>
         public void Clear(Texture depthStencilBuffer, DepthStencilClearOptions options, float depth = 1, byte stencil = 0)
         {
-            if (depthStencilBuffer == null) throw new ArgumentNullException("depthStencilBuffer");
+            if (depthStencilBuffer is null)
+                throw new ArgumentNullException(nameof(depthStencilBuffer));
 
             var flags = ((options & DepthStencilClearOptions.DepthBuffer) != 0) ? SharpDX.Direct3D11.DepthStencilClearFlags.Depth : 0;
 
@@ -583,6 +587,7 @@ namespace Stride.Graphics
             {
                 if (!depthStencilBuffer.HasStencil)
                     throw new InvalidOperationException(string.Format(FrameworkResources.NoStencilBufferForDepthFormat, depthStencilBuffer.ViewFormat));
+
                 flags |= SharpDX.Direct3D11.DepthStencilClearFlags.Stencil;
             }
 
@@ -597,7 +602,8 @@ namespace Stride.Graphics
         /// <exception cref="System.ArgumentNullException">renderTarget</exception>
         public unsafe void Clear(Texture renderTarget, Color4 color)
         {
-            if (renderTarget == null) throw new ArgumentNullException("renderTarget");
+            if (renderTarget is null)
+                throw new ArgumentNullException(nameof(renderTarget));
 
             NativeDeviceContext.ClearRenderTargetView(renderTarget.NativeRenderTargetView, *(RawColor4*)&color);
         }
@@ -611,8 +617,10 @@ namespace Stride.Graphics
         /// <exception cref="System.ArgumentException">Expecting buffer supporting UAV;buffer</exception>
         public unsafe void ClearReadWrite(Buffer buffer, Vector4 value)
         {
-            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
-            if (buffer.NativeUnorderedAccessView == null) throw new ArgumentException("Expecting buffer supporting UAV", nameof(buffer));
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+            if (buffer.NativeUnorderedAccessView is null)
+                throw new ArgumentException("Expecting buffer supporting UAV.", nameof(buffer));
 
             NativeDeviceContext.ClearUnorderedAccessView(buffer.NativeUnorderedAccessView, *(RawVector4*)&value);
         }
@@ -626,8 +634,10 @@ namespace Stride.Graphics
         /// <exception cref="System.ArgumentException">Expecting buffer supporting UAV;buffer</exception>
         public unsafe void ClearReadWrite(Buffer buffer, Int4 value)
         {
-            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
-            if (buffer.NativeUnorderedAccessView == null) throw new ArgumentException("Expecting buffer supporting UAV", nameof(buffer));
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+            if (buffer.NativeUnorderedAccessView is null)
+                throw new ArgumentException("Expecting buffer supporting UAV.", nameof(buffer));
 
             NativeDeviceContext.ClearUnorderedAccessView(buffer.NativeUnorderedAccessView, *(RawInt4*)&value);
         }
@@ -641,8 +651,10 @@ namespace Stride.Graphics
         /// <exception cref="System.ArgumentException">Expecting buffer supporting UAV;buffer</exception>
         public unsafe void ClearReadWrite(Buffer buffer, UInt4 value)
         {
-            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
-            if (buffer.NativeUnorderedAccessView == null) throw new ArgumentException("Expecting buffer supporting UAV", nameof(buffer));
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+            if (buffer.NativeUnorderedAccessView is null)
+                throw new ArgumentException("Expecting buffer supporting UAV.", nameof(buffer));
 
             NativeDeviceContext.ClearUnorderedAccessView(buffer.NativeUnorderedAccessView, *(RawInt4*)&value);
         }
@@ -656,8 +668,10 @@ namespace Stride.Graphics
         /// <exception cref="System.ArgumentException">Expecting texture supporting UAV;texture</exception>
         public unsafe void ClearReadWrite(Texture texture, Vector4 value)
         {
-            if (texture == null) throw new ArgumentNullException(nameof(texture));
-            if (texture.NativeUnorderedAccessView == null) throw new ArgumentException("Expecting texture supporting UAV", nameof(texture));
+            if (texture is null)
+                throw new ArgumentNullException(nameof(texture));
+            if (texture.NativeUnorderedAccessView is null)
+                throw new ArgumentException("Expecting texture supporting UAV.", nameof(texture));
 
             NativeDeviceContext.ClearUnorderedAccessView(texture.NativeUnorderedAccessView, *(RawVector4*)&value);
         }
@@ -671,8 +685,10 @@ namespace Stride.Graphics
         /// <exception cref="System.ArgumentException">Expecting texture supporting UAV;texture</exception>
         public unsafe void ClearReadWrite(Texture texture, Int4 value)
         {
-             if (texture == null) throw new ArgumentNullException(nameof(texture));
-            if (texture.NativeUnorderedAccessView == null) throw new ArgumentException("Expecting texture supporting UAV", nameof(texture));
+             if (texture is null)
+                throw new ArgumentNullException(nameof(texture));
+            if (texture.NativeUnorderedAccessView is null)
+                throw new ArgumentException("Expecting texture supporting UAV.", nameof(texture));
 
             NativeDeviceContext.ClearUnorderedAccessView(texture.NativeUnorderedAccessView, *(RawInt4*)&value);
         }
@@ -686,32 +702,48 @@ namespace Stride.Graphics
         /// <exception cref="System.ArgumentException">Expecting texture supporting UAV;texture</exception>
         public unsafe void ClearReadWrite(Texture texture, UInt4 value)
         {
-            if (texture == null) throw new ArgumentNullException(nameof(texture));
-            if (texture.NativeUnorderedAccessView == null) throw new ArgumentException("Expecting texture supporting UAV", nameof(texture));
+            if (texture is null)
+                throw new ArgumentNullException(nameof(texture));
+            if (texture.NativeUnorderedAccessView is null)
+                throw new ArgumentException("Expecting texture supporting UAV.", nameof(texture));
 
             NativeDeviceContext.ClearUnorderedAccessView(texture.NativeUnorderedAccessView, *(RawInt4*)&value);
         }
 
+        /// <summary>
+        /// Copy a texture. View is ignored and full underlying texture is copied.
+        /// </summary>
+        /// <param name="source">The source texture.</param>
+        /// <param name="destination">The destination texture.</param>
         public void Copy(GraphicsResource source, GraphicsResource destination)
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (destination == null) throw new ArgumentNullException("destination");
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+            if (destination is null)
+                throw new ArgumentNullException(nameof(destination));
+
             NativeDeviceContext.CopyResource(source.NativeResource, destination.NativeResource);
         }
 
         public void CopyMultisample(Texture sourceMultisampleTexture, int sourceSubResource, Texture destTexture, int destSubResource, PixelFormat format = PixelFormat.None)
         {
-            if (sourceMultisampleTexture == null) throw new ArgumentNullException(nameof(sourceMultisampleTexture));
-            if (destTexture == null) throw new ArgumentNullException("destTexture");
-            if (!sourceMultisampleTexture.IsMultisample) throw new ArgumentOutOfRangeException(nameof(sourceMultisampleTexture), "Source texture is not a MSAA texture");
+            if (sourceMultisampleTexture is null)
+                throw new ArgumentNullException(nameof(sourceMultisampleTexture));
+            if (destTexture is null)
+                throw new ArgumentNullException(nameof(destTexture));
+
+            if (!sourceMultisampleTexture.IsMultisample)
+                throw new ArgumentOutOfRangeException(nameof(sourceMultisampleTexture), "Source texture is not a MSAA texture.");
 
             NativeDeviceContext.ResolveSubresource(sourceMultisampleTexture.NativeResource, sourceSubResource, destTexture.NativeResource, destSubResource, (SharpDX.DXGI.Format)(format == PixelFormat.None ? destTexture.Format : format));
         }
 
         public void CopyRegion(GraphicsResource source, int sourceSubresource, ResourceRegion? sourecRegion, GraphicsResource destination, int destinationSubResource, int dstX = 0, int dstY = 0, int dstZ = 0)
         {
-            if (source == null) throw new ArgumentNullException("source");
-            if (destination == null) throw new ArgumentNullException("destination");
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+            if (destination is null)
+                throw new ArgumentNullException(nameof(destination));
 
             var nullableSharpDxRegion = new SharpDX.Direct3D11.ResourceRegion?();
 
@@ -727,24 +759,31 @@ namespace Stride.Graphics
         /// <inheritdoc />
         public void CopyCount(Buffer sourceBuffer, Buffer destBuffer, int offsetInBytes)
         {
-            if (sourceBuffer == null) throw new ArgumentNullException("sourceBuffer");
-            if (destBuffer == null) throw new ArgumentNullException("destBuffer");
+            if (sourceBuffer is null)
+                throw new ArgumentNullException(nameof(sourceBuffer));
+            if (destBuffer is null)
+                throw new ArgumentNullException(nameof(destBuffer));
+
             NativeDeviceContext.CopyStructureCount(destBuffer.NativeBuffer, offsetInBytes, sourceBuffer.NativeUnorderedAccessView);
         }
 
         internal unsafe void UpdateSubresource(GraphicsResource resource, int subResourceIndex, DataBox databox)
         {
-            if (resource == null) throw new ArgumentNullException("resource");
+            if (resource is null)
+                throw new ArgumentNullException(nameof(resource));
+
             NativeDeviceContext.UpdateSubresource(*(SharpDX.DataBox*)Interop.Cast(ref databox), resource.NativeResource, subResourceIndex);
         }
 
         internal unsafe void UpdateSubresource(GraphicsResource resource, int subResourceIndex, DataBox databox, ResourceRegion region)
         {
-            if (resource == null) throw new ArgumentNullException("resource");
+            if (resource is null)
+                throw new ArgumentNullException(nameof(resource));
+
             NativeDeviceContext.UpdateSubresource(*(SharpDX.DataBox*)Interop.Cast(ref databox), resource.NativeResource, subResourceIndex, *(SharpDX.Direct3D11.ResourceRegion*)Interop.Cast(ref region));
         }
 
-        // TODO GRAPHICS REFACTOR what should we do with this?
+        // TODO: GRAPHICS REFACTOR What should we do with this?
         /// <summary>
         /// Maps a subresource.
         /// </summary>
@@ -757,7 +796,8 @@ namespace Stride.Graphics
         /// <returns>Pointer to the sub resource to map.</returns>
         public unsafe MappedResource MapSubresource(GraphicsResource resource, int subResourceIndex, MapMode mapMode, bool doNotWait = false, int offsetInBytes = 0, int lengthInBytes = 0)
         {
-            if (resource == null) throw new ArgumentNullException("resource");
+            if (resource is null)
+                throw new ArgumentNullException(nameof(resource));
 
             // This resource has just been recycled by the GraphicsResourceAllocator, we force a rename to avoid GPU=>GPU sync point
             if (resource.DiscardNextMap && mapMode == MapMode.WriteNoOverwrite)
@@ -767,12 +807,12 @@ namespace Stride.Graphics
             var databox = *(DataBox*)Interop.Cast(ref dataBox);
             if (!dataBox.IsEmpty)
             {
-                databox.DataPointer = (IntPtr)((byte*)databox.DataPointer + offsetInBytes);
+                databox.DataPointer = (IntPtr)((byte*) databox.DataPointer + offsetInBytes);
             }
             return new MappedResource(resource, subResourceIndex, databox);
         }
 
-        // TODO GRAPHICS REFACTOR what should we do with this?
+        // TODO: GRAPHICS REFACTOR What should we do with this?
         public void UnmapSubresource(MappedResource unmapped)
         {
             NativeDeviceContext.UnmapSubresource(unmapped.Resource.NativeResource, unmapped.SubResourceIndex);
@@ -782,14 +822,14 @@ namespace Stride.Graphics
         {
             inputAssembler = nativeDeviceContext.InputAssembler;
             outputMerger = nativeDeviceContext.OutputMerger;
-            shaderStages[(int)ShaderStage.Vertex - 1] = nativeDeviceContext.VertexShader;
-            shaderStages[(int)ShaderStage.Hull - 1] = nativeDeviceContext.HullShader;
-            shaderStages[(int)ShaderStage.Domain - 1] = nativeDeviceContext.DomainShader;
-            shaderStages[(int)ShaderStage.Geometry - 1] = nativeDeviceContext.GeometryShader;
-            shaderStages[(int)ShaderStage.Pixel - 1] = nativeDeviceContext.PixelShader;
-            shaderStages[(int)ShaderStage.Compute - 1] = nativeDeviceContext.ComputeShader;
+            shaderStages[(int) ShaderStage.Vertex - 1]   = nativeDeviceContext.VertexShader;
+            shaderStages[(int) ShaderStage.Hull - 1]     = nativeDeviceContext.HullShader;
+            shaderStages[(int) ShaderStage.Domain - 1]   = nativeDeviceContext.DomainShader;
+            shaderStages[(int) ShaderStage.Geometry - 1] = nativeDeviceContext.GeometryShader;
+            shaderStages[(int) ShaderStage.Pixel - 1]    = nativeDeviceContext.PixelShader;
+            shaderStages[(int) ShaderStage.Compute - 1]  = nativeDeviceContext.ComputeShader;
         }
     }
 }
- 
-#endif 
+
+#endif

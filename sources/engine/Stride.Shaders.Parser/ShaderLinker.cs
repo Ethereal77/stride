@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -20,7 +20,8 @@ using StorageQualifier = Stride.Core.Shaders.Ast.StorageQualifier;
 namespace Stride.Shaders.Parser
 {
     /// <summary>
-    /// This AST Visitor will look for any "Link" annotation in order to bind EffectVariable to their associated HLSL variables.
+    ///   Represents a visitor that walks over the Syntax Tree and look for any "Link" annotation in order to
+    ///   bind EffectVariables to their associated HLSL variables.
     /// </summary>
     internal class ShaderLinker : ShaderWalker
     {
@@ -43,13 +44,7 @@ namespace Stride.Shaders.Parser
         /// <summary>
         /// Gets the samplers.
         /// </summary>
-        public IDictionary<string, SamplerStateDescription> Samplers
-        {
-            get
-            {
-                return samplers;
-            }
-        }
+        public IDictionary<string, SamplerStateDescription> Samplers => samplers;
 
         /// <summary>
         /// Runs the linker on the specified Shader.
@@ -95,7 +90,8 @@ namespace Stride.Shaders.Parser
         public override void Visit(Variable variable)
         {
             var parameterKey = GetLinkParameterKey(variable);
-            if (parameterKey == null) return;
+            if (parameterKey is null)
+                return;
 
             var resolvedType = variable.Type.ResolveType();
             var slotCount = 1;
@@ -264,11 +260,9 @@ namespace Stride.Shaders.Parser
                 if (rasterizedStream != null && !(rasterizedStream.Value is int))
                     rasterizedStream = null;
 
-                int[] streamOutputStrides;
-
                 // Parse declarations
                 // Everything should be registered in GS_OUTPUT (previous pass in ShaderMixer).
-                StreamOutputParser.Parse(effectReflection.ShaderStreamOutputDeclarations, out streamOutputStrides, streamOutputAttribute, ((StructType)FindDeclaration("GS_OUTPUT")).Fields);
+                StreamOutputParser.Parse(effectReflection.ShaderStreamOutputDeclarations, out int[] streamOutputStrides, streamOutputAttribute, ((StructType)FindDeclaration("GS_OUTPUT")).Fields);
 
                 effectReflection.StreamOutputStrides = streamOutputStrides;
                 effectReflection.StreamOutputRasterizedStream = rasterizedStream != null ? (int)rasterizedStream.Value : -1;
@@ -304,9 +298,7 @@ namespace Stride.Shaders.Parser
             foreach (var annotation in attributable.Attributes.OfType<AttributeDeclaration>())
             {
                 if (annotation.Name != "Link" || annotation.Parameters.Count < 1)
-                {
                     continue;
-                }
 
                 var variableName = (string)annotation.Parameters[0].Value;
                 var parameterKey = new LocalParameterKey() {Name = variableName};
@@ -353,16 +345,25 @@ namespace Stride.Shaders.Parser
 
             if (variableType is ScalarType)
             {
-                // Uint and int are collapsed to int
-                if (variableType == ScalarType.Int || variableType == ScalarType.UInt)
+                if (variableType == ScalarType.Int)
                 {
                     parameterTypeInfo.Class = EffectParameterClass.Scalar;
-                    parameterTypeInfo.Type = variableType == ScalarType.Int ? EffectParameterType.Int : EffectParameterType.UInt;
+                    parameterTypeInfo.Type = EffectParameterType.Int;
+                }
+                else if (variableType == ScalarType.UInt)
+                {
+                    parameterTypeInfo.Class = EffectParameterClass.Scalar;
+                    parameterTypeInfo.Type = EffectParameterType.UInt;
                 }
                 else if (variableType == ScalarType.Float)
                 {
                     parameterTypeInfo.Class = EffectParameterClass.Scalar;
                     parameterTypeInfo.Type = EffectParameterType.Float;
+                }
+                else if (variableType == ScalarType.Double)
+                {
+                    parameterTypeInfo.Class = EffectParameterClass.Scalar;
+                    parameterTypeInfo.Type = EffectParameterType.Double;
                 }
                 else if (variableType == ScalarType.Bool)
                 {
@@ -373,20 +374,25 @@ namespace Stride.Shaders.Parser
                 parameterTypeInfo.RowCount = 1;
                 parameterTypeInfo.ColumnCount = 1;
             }
-            else if (variableType is VectorType)
+            else if (variableType is VectorType vectorType)
             {
-                if (variableType == VectorType.Float2 || variableType == VectorType.Float3 || variableType == VectorType.Float4)
+                if (vectorType.Type == ScalarType.Float)
                 {
                     bool isColor = attributes.OfType<AttributeDeclaration>().Any(x => x.Name == "Color");
                     parameterTypeInfo.Class = isColor ? EffectParameterClass.Color : EffectParameterClass.Vector;
                     parameterTypeInfo.Type = EffectParameterType.Float;
                 }
-                else if (variableType == VectorType.Int2 || variableType == VectorType.Int3 || variableType == VectorType.Int4)
+                else if (vectorType.Type == ScalarType.Double)
+                {
+                    parameterTypeInfo.Class = EffectParameterClass.Vector;
+                    parameterTypeInfo.Type = EffectParameterType.Double;
+                }
+                else if (vectorType.Type == ScalarType.Int)
                 {
                     parameterTypeInfo.Class = EffectParameterClass.Vector;
                     parameterTypeInfo.Type = EffectParameterType.Int;
                 }
-                else if (variableType == VectorType.UInt2 || variableType == VectorType.UInt3 || variableType == VectorType.UInt4)
+                else if (vectorType.Type == ScalarType.UInt)
                 {
                     parameterTypeInfo.Class = EffectParameterClass.Vector;
                     parameterTypeInfo.Type = EffectParameterType.UInt;
@@ -496,7 +502,7 @@ namespace Stride.Shaders.Parser
                     case "texture2dms":
                         parameterTypeInfo.Class = EffectParameterClass.ShaderResourceView;
                         parameterTypeInfo.Type = EffectParameterType.Texture2DMultisampled;
-                        break;                   
+                        break;
 
                     case "texture3d":
                         parameterTypeInfo.Class = EffectParameterClass.ShaderResourceView;
@@ -572,7 +578,7 @@ namespace Stride.Shaders.Parser
                 {
                     var memberSize = ComputeSize(field.Type);
 
-                    // Seems like this element needs to be split accross multiple lines, 
+                    // Seems like this element needs to be split accross multiple lines
                     if ((structSize + memberSize - 1) / 16 != structSize / 16)
                         structSize = (structSize + 16 - 1) / 16 * 16;
 
@@ -618,8 +624,7 @@ namespace Stride.Shaders.Parser
         {
             if (variable.Qualifiers.Contains(Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Static) ||
                 variable.Qualifiers.Contains(StorageQualifier.Const) ||
-                variable.Qualifiers.Contains(Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Groupshared)
-                )
+                variable.Qualifiers.Contains(Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Groupshared))
                 return;
 
             if (variable.Qualifiers.Contains(StrideStorageQualifier.Stream))
@@ -654,7 +659,18 @@ namespace Stride.Shaders.Parser
 
         private static void LinkVariable(EffectReflection reflection, string variableName, LocalParameterKey parameterKey, int slotCount)
         {
-            var binding = new EffectResourceBindingDescription { KeyInfo = { KeyName = parameterKey.Name }, Class = parameterKey.Type.Class, Type = parameterKey.Type.Type, ElementType = parameterKey.ElementType, RawName = variableName, SlotStart = -1, SlotCount = slotCount > 0 ? slotCount : 1, ResourceGroup = parameterKey.ResourceGroup, LogicalGroup = parameterKey.LogicalGroup };
+            var binding = new EffectResourceBindingDescription
+            {
+                KeyInfo = { KeyName = parameterKey.Name },
+                Class = parameterKey.Type.Class,
+                Type = parameterKey.Type.Type,
+                ElementType = parameterKey.ElementType,
+                RawName = variableName,
+                SlotStart = -1,
+                SlotCount = slotCount > 0 ? slotCount : 1,
+                ResourceGroup = parameterKey.ResourceGroup,
+                LogicalGroup = parameterKey.LogicalGroup
+            };
             reflection.ResourceBindings.Add(binding);
         }
 
@@ -662,11 +678,20 @@ namespace Stride.Shaders.Parser
         {
             // If the constant buffer is not present, add it
             var constantBuffer = effectReflection.ConstantBuffers.FirstOrDefault(buffer => buffer.Name == cbName);
-            if (constantBuffer == null)
+            if (constantBuffer is null)
             {
-                constantBuffer = new EffectConstantBufferDescription() {Name = cbName, Type = ConstantBufferType.ConstantBuffer};
+                constantBuffer = new EffectConstantBufferDescription { Name = cbName, Type = ConstantBufferType.ConstantBuffer };
                 effectReflection.ConstantBuffers.Add(constantBuffer);
-                var constantBufferBinding = new EffectResourceBindingDescription { KeyInfo = { KeyName = cbName }, Class = EffectParameterClass.ConstantBuffer, Type = EffectParameterType.ConstantBuffer, RawName = cbName, SlotStart = -1, SlotCount = 1, ResourceGroup = cbName };
+                var constantBufferBinding = new EffectResourceBindingDescription
+                {
+                    KeyInfo = { KeyName = cbName },
+                    Class = EffectParameterClass.ConstantBuffer,
+                    Type = EffectParameterType.ConstantBuffer,
+                    RawName = cbName,
+                    SlotStart = -1,
+                    SlotCount = 1,
+                    ResourceGroup = cbName
+                };
                 effectReflection.ResourceBindings.Add(constantBufferBinding);
                 valueBindings.Add(constantBuffer, new List<EffectValueDescription>());
             }
@@ -676,26 +701,81 @@ namespace Stride.Shaders.Parser
 
             var binding = new EffectValueDescription
             {
-                KeyInfo =
-                {
-                    KeyName = parameterKey.Name,
-                },
+                KeyInfo = { KeyName = parameterKey.Name },
                 LogicalGroup = (string)variable.GetTag(StrideTags.LogicalGroup),
                 Type = parameterKey.Type,
                 RawName = variable.Name,
+                DefaultValue = ParseDefaultValue(variable),
             };
-            
+
             members.Add(binding);
+        }
+
+        private object ParseDefaultValue(Variable variable)
+        {
+            var initialValue = variable.InitialValue;
+            if (initialValue is null)
+                return default;
+
+            var parameterType = variable.Type.ResolveType();
+            if (parameterType is ScalarType scalarType)
+            {
+                if (scalarType == ScalarType.Bool)
+                    return ValueParsing.ToScalar<bool>(initialValue);
+                else if (scalarType == ScalarType.Float)
+                    return ValueParsing.ToScalar<float>(initialValue);
+                else if (scalarType == ScalarType.Double)
+                    return ValueParsing.ToScalar<double>(initialValue);
+                else if (scalarType == ScalarType.Half)
+                    return ValueParsing.ToScalar<Half>(initialValue);
+                else if (scalarType == ScalarType.Int)
+                    return ValueParsing.ToScalar<int>(initialValue);
+                else if (scalarType == ScalarType.UInt)
+                    return ValueParsing.ToScalar<uint>(initialValue);
+            }
+            else if (parameterType is VectorType vectorType)
+            {
+                var componentType = vectorType.Type;
+                if (componentType == ScalarType.Float)
+                {
+                    var isColor = variable.Attributes.OfType<AttributeDeclaration>().Any(x => x.Name == "Color");
+                    if (isColor)
+                        return ValueParsing.ToColor(initialValue, vectorType.Dimension);
+                    else
+                        return ValueParsing.ToFloatVector(initialValue, vectorType.Dimension);
+                }
+                else if (componentType == ScalarType.Double)
+                    return ValueParsing.ToDoubleVector(initialValue, vectorType.Dimension);
+                else if (componentType == ScalarType.Half)
+                    return ValueParsing.ToHalfVector(initialValue, vectorType.Dimension);
+                else if (componentType == ScalarType.Int)
+                    return ValueParsing.ToIntVector(initialValue, vectorType.Dimension);
+                else if (componentType == ScalarType.UInt)
+                    return ValueParsing.ToUIntVector(initialValue, vectorType.Dimension);
+            }
+            else if (parameterType is MatrixType matrixType)
+            {
+                var componentType = matrixType.Type;
+                if (componentType == ScalarType.Float)
+                {
+                    if (matrixType.RowCount == 4 && matrixType.ColumnCount == 4)
+                        return ValueParsing.ToVector(initialValue, (float[] args) => new Matrix(args));
+                }
+            }
+            else if (parameterType is ArrayType arrayType)
+            {
+                if (initialValue is ArrayInitializerExpression arrayInitializer)
+                    return ValueParsing.ToArray(arrayInitializer.Items, arrayType.Type);
+            }
+
+            return default;
         }
 
         private class LocalParameterKey
         {
             public string Name;
-
             public string ResourceGroup;
-
             public string LogicalGroup;
-
             public EffectTypeDescription Type;
 
             /// <summary>
@@ -715,6 +795,220 @@ namespace Stride.Shaders.Parser
 
             public string TypeName;
             public EffectParameterTypeInfo[] Members;*/
+        }
+
+        private static class ValueParsing
+        {
+            public static Array ToArray(List<Expression> v, TypeBase elementType)
+            {
+                if (elementType == ScalarType.Float)
+                    return ToArray<float>(v);
+                if (elementType == ScalarType.Double)
+                    return ToArray<double>(v);
+                if (elementType == ScalarType.Half)
+                    return ToArray<Half>(v);
+                if (elementType == ScalarType.Int)
+                    return ToArray<int>(v);
+                if (elementType == ScalarType.UInt)
+                    return ToArray<uint>(v);
+                if (elementType == ScalarType.Bool)
+                    return ToArray<bool>(v);
+                if (elementType == VectorType.Float2)
+                    return ToArray(v, ToVector2);
+                if (elementType == VectorType.Float3)
+                    return ToArray(v, ToVector3);
+                if (elementType == VectorType.Float4)
+                    return ToArray(v, ToVector4);
+                if (elementType == VectorType.Double2)
+                    return ToArray(v, ToDouble2);
+                if (elementType == VectorType.Double3)
+                    return ToArray(v, ToDouble3);
+                if (elementType == VectorType.Double4)
+                    return ToArray(v, ToDouble4);
+                if (elementType == VectorType.Half2)
+                    return ToArray(v, ToHalf2);
+                if (elementType == VectorType.Half3)
+                    return ToArray(v, ToHalf3);
+                if (elementType == VectorType.Half4)
+                    return ToArray(v, ToHalf4);
+                if (elementType == VectorType.Int2)
+                    return ToArray(v, ToInt2);
+                if (elementType == VectorType.Int3)
+                    return ToArray(v, ToInt3);
+                if (elementType == VectorType.Int4)
+                    return ToArray(v, ToInt4);
+                if (elementType == VectorType.UInt4)
+                    return ToArray(v, ToUInt4);
+                return default;
+            }
+
+            static T[] ToArray<T>(List<Expression> v)
+            {
+                var a = new T[v.Count];
+                for (int i = 0; i < a.Length; i++)
+                    a[i] = ToScalar<T>(v[i]);
+                return a;
+            }
+
+            static T[] ToArray<T>(List<Expression> v, Func<Expression, T> factory)
+            {
+                var a = new T[v.Count];
+                for (int i = 0; i < a.Length; i++)
+                    a[i] = factory(v[i]);
+                return a;
+            }
+
+            public static object ToColor(Expression e, int dimension)
+            {
+                switch (dimension)
+                {
+                    case 3:
+                        return new Color3(ToVector(e, (float[] args) => new Vector3(args)));
+                    case 4:
+                        return new Color4(ToVector(e, (float[] args) => new Vector4(args)));
+                }
+                return null;
+            }
+
+            public static object ToFloatVector(Expression e, int dimension)
+            {
+                switch (dimension)
+                {
+                    case 2:
+                        return ToVector2(e);
+                    case 3:
+                        return ToVector3(e);
+                    case 4:
+                        return ToVector4(e);
+                }
+                return null;
+            }
+
+            public static object ToDoubleVector(Expression e, int dimension)
+            {
+                switch (dimension)
+                {
+                    case 2:
+                        return ToDouble2(e);
+                    case 3:
+                        return ToDouble3(e);
+                    case 4:
+                        return ToDouble4(e);
+                }
+                return null;
+            }
+
+            public static object ToHalfVector(Expression e, int dimension)
+            {
+                switch (dimension)
+                {
+                    case 2:
+                        return ToHalf2(e);
+                    case 3:
+                        return ToHalf3(e);
+                    case 4:
+                        return ToHalf4(e);
+                }
+                return null;
+            }
+
+            public static object ToIntVector(Expression e, int dimension)
+            {
+                switch (dimension)
+                {
+                    case 2:
+                        return ToInt2(e);
+                    case 3:
+                        return ToInt3(e);
+                    case 4:
+                        return ToInt4(e);
+                }
+                return null;
+            }
+
+            public static object ToUIntVector(Expression e, int dimension)
+            {
+                switch (dimension)
+                {
+                    case 4:
+                        return ToUInt4(e);
+                }
+                return null;
+            }
+
+            static Vector2 ToVector2(Expression e) => ToVector(e, (float[] args) => new Vector2(args));
+
+            static Vector3 ToVector3(Expression e) => ToVector(e, (float[] args) => new Vector3(args));
+
+            static Vector4 ToVector4(Expression e) => ToVector(e, (float[] args) => new Vector4(args));
+
+            static Double2 ToDouble2(Expression e) => ToVector(e, (double[] args) => new Double2(args));
+
+            static Double3 ToDouble3(Expression e) => ToVector(e, (double[] args) => new Double3(args));
+
+            static Double4 ToDouble4(Expression e) => ToVector(e, (double[] args) => new Double4(args));
+
+            static Half2 ToHalf2(Expression e) => ToVector(e, (Half[] args) => new Half2(args));
+
+            static Half3 ToHalf3(Expression e) => ToVector(e, (Half[] args) => new Half3(args));
+
+            static Half4 ToHalf4(Expression e) => ToVector(e, (Half[] args) => new Half4(args));
+
+            static Int2 ToInt2(Expression e) => ToVector(e, (int[] args) => new Int2(args));
+
+            static Int3 ToInt3(Expression e) => ToVector(e, (int[] args) => new Int3(args));
+
+            static Int4 ToInt4(Expression e) => ToVector(e, (int[] args) => new Int4(args));
+
+            static UInt4 ToUInt4(Expression e) => ToVector(e, (uint[] args) => new UInt4(args));
+
+            public static TVector ToVector<TVector, TComponent>(Expression e, Func<TComponent[], TVector> factory)
+                where TVector : unmanaged
+                where TComponent : unmanaged
+            {
+                if (e is LiteralExpression l)
+                    return ToVector(new List<Expression>(1) { e }, factory);
+                else if (e is MethodInvocationExpression m)
+                    return ToVector(m.Arguments, factory);
+                else if (e is ArrayInitializerExpression a)
+                    return ToVector(a.Items, factory);
+                return default;
+            }
+
+            static unsafe TVector ToVector<TVector, TComponent>(List<Expression> args, Func<TComponent[], TVector> factory)
+                where TVector : unmanaged
+                where TComponent : unmanaged
+            {
+                var dimension = sizeof(TVector) / sizeof(TComponent);
+                if (args.Count == 1)
+                    return factory(Enumerable.Repeat(ToScalar<TComponent>(args[0]), dimension).ToArray());
+                else if (args.Count == dimension)
+                    return factory(ToArray<TComponent>(args));
+                return default;
+            }
+
+            public static T ToScalar<T>(Expression e)
+            {
+                if (e is LiteralExpression l)
+                    return ToScalar<T>(l.Literal);
+                else
+                    return default;
+            }
+
+            static T ToScalar<T>(Literal l)
+            {
+                if (l.Value is T t)
+                    return t;
+
+                try
+                {
+                    return (T)Convert.ChangeType(l.Value, typeof(T));
+                }
+                catch
+                {
+                    return default;
+                }
+            }
         }
     }
 }

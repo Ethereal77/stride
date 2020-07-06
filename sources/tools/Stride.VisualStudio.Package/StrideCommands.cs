@@ -11,14 +11,11 @@ using System.Linq;
 using EnvDTE;
 using EnvDTE80;
 
-using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
-using Microsoft.Build.Framework;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-using Stride.Core.Packages;
 using Stride.VisualStudio.BuildEngine;
 using Stride.VisualStudio.Commands;
 

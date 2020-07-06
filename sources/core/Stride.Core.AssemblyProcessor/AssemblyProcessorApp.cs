@@ -278,9 +278,9 @@ namespace Stride.Core.AssemblyProcessor
                     assemblyDefinition.CustomAttributes.Add(new CustomAttribute(assemblyProcessedAttributeConstructor));
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                OnErrorAction(null, e);
+                OnErrorAction(errorMessage: null, ex);
                 return false;
             }
 

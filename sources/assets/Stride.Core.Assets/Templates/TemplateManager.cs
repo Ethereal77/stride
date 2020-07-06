@@ -14,10 +14,10 @@ namespace Stride.Core.Assets.Templates
     /// </summary>
     public static class TemplateManager
     {
-        private static readonly object ThisLock = new object();
+        private static readonly object managerLock = new object();
 
-        private static readonly List<ITemplateGenerator> Generators = new List<ITemplateGenerator>();
         private static readonly PackageCollection ExtraPackages = new PackageCollection();
+        private static readonly List<ITemplateGenerator> Generators = new List<ITemplateGenerator>();
 
         public static void RegisterPackage(Package package)
         {
@@ -29,12 +29,12 @@ namespace Stride.Core.Assets.Templates
         /// </summary>
         /// <param name="generator">An <see cref="ITemplateGenerator"/> that can be used to create a package.</param>
         /// <exception cref="ArgumentNullException"><paramref name="generator"/> is a <c>null</c> reference.</exception>
-        public static void Register(ITemplateGenerator generator)
+        public static void RegisterGenerator(ITemplateGenerator generator)
         {
             if (generator is null)
                 throw new ArgumentNullException(nameof(generator));
 
-            lock (ThisLock)
+            lock (managerLock)
             {
                 if (!Generators.Contains(generator))
                 {
@@ -53,7 +53,7 @@ namespace Stride.Core.Assets.Templates
             if (generator is null)
                 throw new ArgumentNullException(nameof(generator));
 
-            lock (ThisLock)
+            lock (managerLock)
             {
                 Generators.Remove(generator);
             }
@@ -66,8 +66,10 @@ namespace Stride.Core.Assets.Templates
         /// <returns>An enumeration of all the registered template descriptions.</returns>
         public static IEnumerable<TemplateDescription> FindTemplates(PackageSession session = null)
         {
-            var packages = session?.Packages.Concat(ExtraPackages)
-                                            .Distinct(DistinctPackagePathComparer.Default) ?? ExtraPackages;
+            var packages = session?.Packages
+                           .Concat(ExtraPackages)
+                           .Distinct(DistinctPackagePathComparer.Default)
+                           ?? ExtraPackages;
 
             // TODO: This will not work if the same package has different versions
             return packages.SelectMany(package => package.Templates)
@@ -100,7 +102,7 @@ namespace Stride.Core.Assets.Templates
             if (description is null)
                 throw new ArgumentNullException(nameof(description));
 
-            lock (ThisLock)
+            lock (managerLock)
             {
                 // From most recently registered to older
                 for (int i = Generators.Count - 1; i >= 0; i--)
@@ -128,7 +130,7 @@ namespace Stride.Core.Assets.Templates
             if (parameters is null)
                 throw new ArgumentNullException(nameof(parameters));
 
-            lock (ThisLock)
+            lock (managerLock)
             {
                 // From most recently registered to older
                 for (int i = Generators.Count - 1; i >= 0; i--)

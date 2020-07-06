@@ -18,22 +18,25 @@ using Stride.Core.Serialization.Contents;
 using Stride.Core.Storage;
 using Stride.Rendering;
 using Stride.Graphics;
-using Stride.Shaders.Parser;
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Utility;
+using Stride.Shaders.Parser;
+
 using Encoding = System.Text.Encoding;
 using LoggerResult = Stride.Core.Diagnostics.LoggerResult;
 
 namespace Stride.Shaders.Compiler
 {
     /// <summary>
-    /// An <see cref="IEffectCompiler"/> which will compile effect into multiple shader code, and compile them with a <see cref="IShaderCompiler"/>.
+    ///   Represents an <see cref="IEffectCompiler"/> which will compile effects into multiple shader source codes,
+    ///   and compile them with a <see cref="IShaderCompiler"/>.
     /// </summary>
     public class EffectCompiler : EffectCompilerBase
     {
-        private bool d3dCompilerLoaded = false;
         private static readonly Object WriterLock = new Object();
+
+        private bool d3dCompilerLoaded = false;
 
         private ShaderMixinParser shaderMixinParser;
 
@@ -49,7 +52,9 @@ namespace Stride.Shaders.Compiler
         public EffectCompiler(IVirtualFileProvider fileProvider)
         {
             FileProvider = fileProvider;
+
             NativeLibrary.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
+
             SourceDirectories = new List<string>();
             UrlToFilePath = new Dictionary<string, string>();
         }
@@ -60,9 +65,9 @@ namespace Stride.Shaders.Compiler
         }
 
         /// <summary>
-        /// Remove cached files for modified shaders
+        ///   Clears the cached files for modified shaders.
         /// </summary>
-        /// <param name="modifiedShaders"></param>
+        /// <param name="modifiedShaders">The modified shaders.</param>
         public override void ResetCache(HashSet<string> modifiedShaders)
         {
             GetMixinParser().DeleteObsoleteCache(modifiedShaders);
@@ -73,12 +78,12 @@ namespace Stride.Shaders.Compiler
             lock (shaderMixinParserLock)
             {
                 // Generate the AST from the mixin description
-                if (shaderMixinParser == null)
+                if (shaderMixinParser is null)
                 {
                     shaderMixinParser = new ShaderMixinParser(FileProvider);
-                    shaderMixinParser.SourceManager.LookupDirectoryList.AddRange(SourceDirectories); // TODO: temp
+                    shaderMixinParser.SourceManager.LookupDirectoryList.AddRange(SourceDirectories); // TODO: Temp
                     shaderMixinParser.SourceManager.UseFileSystem = UseFileSystem;
-                    shaderMixinParser.SourceManager.UrlToFilePath = UrlToFilePath; // TODO: temp
+                    shaderMixinParser.SourceManager.UrlToFilePath = UrlToFilePath; // TODO: Temp
                 }
                 return shaderMixinParser;
             }
@@ -88,8 +93,8 @@ namespace Stride.Shaders.Compiler
         {
             var log = new LoggerResult();
 
-            // Load D3D compiler dll
-            // Note: No lock, it's probably fine if it gets called from multiple threads at the same time.
+            // Load D3D compiler DLL
+            // NOTE: No lock, it's probably fine if it gets called from multiple threads at the same time.
             if (!d3dCompilerLoaded)
             {
                 NativeLibrary.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
@@ -111,6 +116,7 @@ namespace Stride.Shaders.Compiler
                     shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
                     shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D11", 1);
                     break;
+
                 case GraphicsPlatform.Direct3D12:
                     shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D", 1);
                     shaderMixinSource.AddMacro("STRIDE_GRAPHICS_API_DIRECT3D12", 1);
@@ -126,7 +132,7 @@ namespace Stride.Shaders.Compiler
             shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_1", (int) GraphicsProfile.Level_11_1);
             shaderMixinSource.AddMacro("GRAPHICS_PROFILE_LEVEL_11_2", (int) GraphicsProfile.Level_11_2);
 
-            // In .sdsl, class has been renamed to shader to avoid ambiguities with HLSL
+            // In .SDSL, class has been renamed to shader to avoid ambiguities with HLSL
             shaderMixinSource.AddMacro("class", "shader");
 
             var parsingResult = GetMixinParser().Parse(shaderMixinSource, shaderMixinSource.Macros.ToArray());
@@ -224,6 +230,7 @@ namespace Stride.Shaders.Compiler
 
             // Remove unused reflection data, as it is entirely resolved at compile time.
             CleanupReflection(bytecode.Reflection);
+
             bytecode.Stages = shaderStageBytecodes.ToArray();
 
             int shaderSourceLineOffset = 0;
@@ -335,9 +342,11 @@ namespace Stride.Shaders.Compiler
                     case ReportMessageLevel.Error:
                         logType = LogMessageType.Error;
                         break;
+
                     case ReportMessageLevel.Info:
                         logType = LogMessageType.Info;
                         break;
+
                     case ReportMessageLevel.Warning:
                         logType = LogMessageType.Warning;
                         break;
@@ -350,7 +359,7 @@ namespace Stride.Shaders.Compiler
 
         private static void CleanupReflection(EffectReflection reflection)
         {
-            // TODO GRAPHICS REFACTOR we hardcode several resource group we want to preserve or optimize completly
+            // TODO: GRAPHICS REFACTOR. We hardcode several resource group we want to preserve or optimize completly
             // Somehow this should be handled some other place (or probably we shouldn't cleanup reflection at all?)
             bool hasMaterialGroup = false;
             bool hasLightingGroup = false;

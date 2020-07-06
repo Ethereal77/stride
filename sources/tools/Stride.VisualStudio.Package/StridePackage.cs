@@ -93,8 +93,6 @@ namespace Stride.VisualStudio
         private bool configurationLock;
 
         private DTE2 dte2;
-        private AppDomain buildMonitorDomain;
-        private BuildLogPipeGenerator buildLogPipeGenerator;
         private SolutionEventsListener solutionEventsListener;
         private ErrorListProvider errorListProvider;
         private uint m_componentID;
@@ -317,6 +315,8 @@ namespace Stride.VisualStudio
         {
             // Disable UIContext (this will hide Stride menus)
             UpdateCommandVisibilityContext(false);
+
+            StrideCommandsProxy.CloseSolution();
         }
 
         private async System.Threading.Tasks.Task InitializeCommandProxy()
@@ -363,30 +363,6 @@ namespace Stride.VisualStudio
                 }
             }
 
-            // Initialize the build monitor, that will display BuildEngine results in the Build Output pane.
-            buildLogPipeGenerator = new BuildLogPipeGenerator(this);
-
-            try
-            {
-                // Start PackageBuildMonitorRemote in a separate app domain
-                if (buildMonitorDomain != null)
-                    AppDomain.Unload(buildMonitorDomain);
-
-                buildMonitorDomain = StrideCommandsProxy.CreateStrideDomain();
-                StrideCommandsProxy.InitializeFromSolution(solutionPath, stridePackageInfo, buildMonitorDomain);
-                var remoteCommands = StrideCommandsProxy.CreateProxy(buildMonitorDomain);
-                remoteCommands.StartRemoteBuildLogServer(new BuildMonitorCallback(), buildLogPipeGenerator.LogPipeUrl);
-            }
-            catch (Exception e)
-            {
-                generalOutputPane.OutputStringThreadSafe($"Error loading Stride SDK: {e}\r\n");
-                generalOutputPane.Activate();
-
-                // Unload domain right away
-                AppDomain.Unload(buildMonitorDomain);
-                buildMonitorDomain = null;
-            }
-
             // Preinitialize the parser in a separate thread
             var thread = new System.Threading.Thread(
                 () =>
@@ -416,10 +392,6 @@ namespace Stride.VisualStudio
 
         protected override void Dispose(bool disposing)
         {
-            // Unload build monitor pipe domain
-            if (buildMonitorDomain != null)
-                AppDomain.Unload(buildMonitorDomain);
-
             if (m_componentID != 0)
             {
                 IOleComponentManager mgr = GetService(typeof(SOleComponentManager))

@@ -7,37 +7,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using Stride.Core.Annotations;
+using Stride.Core.Extensions;
+using Stride.Core.Diagnostics;
+using Stride.Core.Presentation.View;
 using Stride.Core.Assets.Editor.Components.Properties;
 using Stride.Core.Assets.Editor.ViewModel;
-using Stride.Core.Annotations;
-using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
-using Stride.Core.Presentation.View;
 
 namespace Stride.Core.Assets.Editor.Services
 {
     public abstract class AssetsPlugin
     {
-        protected static readonly Dictionary<Type, object> TypeImages = new Dictionary<Type, object>();
         internal static readonly List<AssetsPlugin> RegisteredPlugins = new List<AssetsPlugin>();
 
-        // TODO: give access to this differently
+        // TODO: Give access to this differently
         public readonly List<PackageSettingsEntry> ProfileSettings = new List<PackageSettingsEntry>();
 
         public static IReadOnlyDictionary<Type, object> TypeImagesDictionary => TypeImages;
+        protected static readonly Dictionary<Type, object> TypeImages = new Dictionary<Type, object>();
 
         public static void RegisterPlugin([NotNull] Type type)
         {
-            if (type.GetConstructor(Type.EmptyTypes) == null)
-                throw new ArgumentException("The given type does not have a parameterless constructor.");
+            if (type.GetConstructor(Type.EmptyTypes) is null)
+                throw new ArgumentException("The given type does not have a parameterless constructor.", nameof(type));
 
             if (!typeof(AssetsPlugin).IsAssignableFrom(type))
-                throw new ArgumentException("The given type does not inherit from AssetsPlugin.");
+                throw new ArgumentException("The given type does not inherit from AssetsPlugin.", nameof(type));
 
-            if (RegisteredPlugins.Any(x => x.GetType() == type))
+            if (RegisteredPlugins.Any(p => p.GetType() == type))
                 throw new InvalidOperationException("The plugin type is already registered.");
 
-            var plugin = (AssetsPlugin)Activator.CreateInstance(type);
+            var plugin = (AssetsPlugin) Activator.CreateInstance(type);
             RegisteredPlugins.Add(plugin);
         }
 

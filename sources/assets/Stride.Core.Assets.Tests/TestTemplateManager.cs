@@ -29,7 +29,7 @@ namespace Stride.Core.Assets.Tests
         [Fact]
         public void TestTemplateGenerator()
         {
-            TemplateManager.Register(this);
+            TemplateManager.RegisterGenerator(this);
 
             var templateGenerator = TemplateManager.FindTemplateGenerator(new SessionTemplateGeneratorParameters());
 

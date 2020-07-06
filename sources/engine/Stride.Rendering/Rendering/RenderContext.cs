@@ -9,20 +9,22 @@ using System.Threading;
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Engine;
-using Stride.Games;
 using Stride.Graphics;
+using Stride.Games;
 using Stride.Streaming;
+
 using ComponentBase = Stride.Core.ComponentBase;
 using IServiceRegistry = Stride.Core.IServiceRegistry;
 
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Rendering context.
+    ///   Rendering context.
     /// </summary>
     public sealed class RenderContext : ComponentBase
     {
         private const string SharedImageEffectContextKey = "__SharedRenderContext__";
+
         private readonly ThreadLocal<RenderDrawContext> threadContext;
         private readonly object threadContextLock = new object();
 
@@ -52,70 +54,74 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Occurs when a renderer is initialized.
+        ///   Occurs when a renderer is initialized.
         /// </summary>
         public event Action<IGraphicsRendererCore> RendererInitialized;
 
         /// <summary>
-        /// Gets the content manager.
+        ///   Gets the effects system.
         /// </summary>
-        /// <value>The content manager.</value>
+        /// <value>The effects system.</value>
         public EffectSystem Effects { get; }
 
         /// <summary>
-        /// Gets the graphics device.
+        ///   Gets the graphics device.
         /// </summary>
         /// <value>The graphics device.</value>
         public GraphicsDevice GraphicsDevice { get; }
 
         /// <summary>
-        /// Gets the services registry.
+        ///   Gets the services registry.
         /// </summary>
         /// <value>The services registry.</value>
         public IServiceRegistry Services { get; }
 
         /// <summary>
-        /// Gets the time.
+        ///   Gets the time.
         /// </summary>
         /// <value>The time.</value>
         public GameTime Time { get; internal set; }
 
         /// <summary>
-        /// Gets the <see cref="GraphicsResource"/> allocator.
+        ///   Gets the <see cref="GraphicsResource"/> allocator.
         /// </summary>
-        /// <value>The allocator.</value>
+        /// <value>The allocator for graphics resources.</value>
         public GraphicsResourceAllocator Allocator { get; }
 
         /// <summary>
-        /// The current render system.
+        ///   Gets or sets the current render system.
         /// </summary>
+        /// <value>The current render system.</value>
         public RenderSystem RenderSystem { get; set; }
 
         /// <summary>
-        /// The current visibility group from the <see cref="SceneInstance"/> and <see cref="RenderSystem"/>.
+        ///   Gets or sets the current visibility group from the <see cref="RenderSystem"/>.
         /// </summary>
         public VisibilityGroup VisibilityGroup { get; set; }
 
         /// <summary>
-        /// The current render output format (used during the collect phase).
+        ///   The current render output description (used during the collect phase).
         /// </summary>
         public RenderOutputDescription RenderOutput;
 
         /// <summary>
-        /// The current render output format (used during the collect phase).
+        ///   The current render viewport (used during the collect phase).
         /// </summary>
         public ViewportState ViewportState;
 
         /// <summary>
-        /// The current render view.
+        ///   Gets the current render view.
         /// </summary>
+        /// <value>The current <see cref="Rendering.RenderView"/>.</value>
         public RenderView RenderView { get; set; }
 
         /// <summary>
-        /// The streaming manager.
+        ///   Gets or sets the streaming manager.
         /// </summary>
+        /// <value>The streaming manager.</value>
         [CanBeNull]
         public StreamingManager StreamingManager { get; set; }
+
 
         protected override void Destroy()
         {
@@ -129,21 +135,22 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Gets a global shared context.
+        ///   Gets the global shared context.
         /// </summary>
-        /// <param name="services">The services.</param>
-        /// <returns>RenderContext.</returns>
+        /// <param name="services">The services registry.</param>
+        /// <returns>The global shared <see cref="RenderContext"/>.</returns>
         public static RenderContext GetShared(IServiceRegistry services)
         {
-            if (services == null) throw new ArgumentNullException(nameof(services));
+            if (services is null)
+                throw new ArgumentNullException(nameof(services));
 
             // Store RenderContext shared into the GraphicsDevice
             var graphicsDevice = services.GetSafeServiceAs<IGraphicsDeviceService>().GraphicsDevice;
-            return graphicsDevice.GetOrCreateSharedData(GraphicsDeviceSharedDataType.PerDevice, SharedImageEffectContextKey, d => new RenderContext(services));
+            return graphicsDevice.GetOrCreateSharedData(SharedImageEffectContextKey, d => new RenderContext(services));
         }
 
         /// <summary>
-        /// Saves a viewport state and restores after using it.
+        ///   Saves a viewport and restores it after using it.
         /// </summary>
         public ViewportRestore SaveViewportAndRestore()
         {
@@ -151,7 +158,7 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Saves a viewport and restores it after using it.
+        ///   Saves a render output and restores it after using it.
         /// </summary>
         public RenderOutputRestore SaveRenderOutputAndRestore()
         {
@@ -159,7 +166,7 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Pushes a render view and restores it after using it.
+        ///   Pushes a render view and restores it after using it.
         /// </summary>
         /// <param name="renderView">The render view.</param>
         public RenderViewRestore PushRenderViewAndRestore(RenderView renderView)
@@ -173,7 +180,8 @@ namespace Stride.Rendering
 
         public void Reset()
         {
-            var contextList = threadContext.Values;     // returns IList so don't use foreach otherwise an object will be allocated
+            // NOTE: Returns IList so don't use foreach otherwise an object will be allocated
+            var contextList = threadContext.Values;
             for (int i = 0; i < contextList.Count; i++)
             {
                 var context = contextList[i];
@@ -183,7 +191,8 @@ namespace Stride.Rendering
 
         public void Flush()
         {
-            var contextList = threadContext.Values;     // returns IList so don't use foreach otherwise an object will be allocated
+            // NOTE: Returns IList so don't use foreach otherwise an object will be allocated
+            var contextList = threadContext.Values;
             for (int i = 0; i < contextList.Count; i++)
             {
                 var context = contextList[i];

@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 using Stride.Core;
 using Stride.Rendering;
@@ -14,7 +15,7 @@ using Stride.Shaders;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Base class to batch a group of draw calls into one.
+    ///   Base class to batch a group of draw calls into one.
     /// </summary>
     /// <typeparam name="TDrawInfo">A structure containing all the required information to draw one element of the batch.</typeparam>
     public abstract class BatchBase<TDrawInfo> : ComponentBase where TDrawInfo : struct
@@ -54,8 +55,8 @@ namespace Stride.Graphics
             }
         }
 
-        // TODO: dispose vertex array when Effect is disposed
-        protected readonly DeviceResourceContext ResourceContext;
+        protected readonly ThreadLocal<DeviceResourceContext> ResourceContextPool;
+        protected DeviceResourceContext ResourceContext;
 
         protected MutablePipelineState mutablePipeline;
         protected GraphicsDevice graphicsDevice;
@@ -105,7 +106,7 @@ namespace Stride.Graphics
 
             graphicsDevice = device;
             mutablePipeline = new MutablePipelineState(device);
-            // TODO GRAPHICS REFACTOR Should we initialize FX lazily?
+            // TODO: GRAPHICS REFACTOR Should we initialize FX lazily?
             DefaultEffect = new EffectInstance(new Effect(device, defaultEffectByteCode) { Name = "BatchDefaultEffect" });
             DefaultEffectSRgb = new EffectInstance(new Effect(device, defaultEffectByteCodeSRgb) { Name = "BatchDefaultEffectSRgb" });
 
@@ -116,12 +117,18 @@ namespace Stride.Graphics
             BackToFrontComparer = new SpriteBackToFrontComparer();
             FrontToBackComparer = new SpriteFrontToBackComparer();
 
-            // set the vertex layout and size
+            // Set the vertex layout and size
             indexStructSize = indexSize;
             vertexStructSize = vertexDeclaration.CalculateSize();
 
             // Creates the vertex buffer (shared by within a device context).
-            ResourceContext = graphicsDevice.GetOrCreateSharedData(GraphicsDeviceSharedDataType.PerContext, resourceBufferInfo.ResourceKey, d => new DeviceResourceContext(graphicsDevice, vertexDeclaration, resourceBufferInfo));
+            // TODO: Find a better way to do that, and check resource disposal
+            ResourceContextPool = graphicsDevice.GetOrCreateSharedData(resourceBufferInfo.ResourceKey, d => new ThreadLocal<DeviceResourceContext>(() => new DeviceResourceContext(graphicsDevice, vertexDeclaration, resourceBufferInfo), true));
+        }
+
+        protected override void Destroy()
+        {
+            base.Destroy();
         }
 
         /// <summary>
@@ -147,6 +154,8 @@ namespace Stride.Graphics
         protected void Begin(GraphicsContext graphicsContext, EffectInstance effect, SpriteSortMode sessionSortMode, BlendStateDescription? sessionBlendState, SamplerState sessionSamplerState, DepthStencilStateDescription? sessionDepthStencilState, RasterizerStateDescription? sessionRasterizerState, int stencilValue)
         {
             CheckEndHasBeenCalled("begin");
+
+            ResourceContext = ResourceContextPool.Value;
 
             GraphicsContext = graphicsContext;
 
@@ -178,9 +187,7 @@ namespace Stride.Graphics
             if (sessionSortMode == SpriteSortMode.Immediate)
             {
                 if (ResourceContext.IsInImmediateMode)
-                {
-                    throw new InvalidOperationException("Only one SpriteBatch at a time can use SpriteSortMode.Immediate");
-                }
+                    throw new InvalidOperationException("Only one SpriteBatch at a time can use SpriteSortMode.Immediate.");
 
                 PrepareForRendering();
 
@@ -229,21 +236,17 @@ namespace Stride.Graphics
         protected void CheckBeginHasBeenCalled(string functionName)
         {
             if (!isBeginCalled)
-            {
-                throw new InvalidOperationException("Begin must be called before " + functionName);
-            }
+                throw new InvalidOperationException($"Begin must be called before {functionName}.");
         }
 
         protected void CheckEndHasBeenCalled(string functionName)
         {
             if (isBeginCalled)
-            {
-                throw new InvalidOperationException("End must be called before " + functionName);
-            }
+                throw new InvalidOperationException($"End must be called before {functionName}.");
         }
 
         /// <summary>
-        /// Flushes the sprite batch and restores the device state to how it was before Begin was called. 
+        /// Flushes the sprite batch and restores the device state to how it was before Begin was called.
         /// </summary>
         public void End()
         {
@@ -257,19 +260,19 @@ namespace Stride.Graphics
             {
                 // Draw the queued sprites now.
                 if (ResourceContext.IsInImmediateMode)
-                {
-                    throw new InvalidOperationException("Cannot end one SpriteBatch while another is using SpriteSortMode.Immediate");
-                }
+                    throw new InvalidOperationException("Cannot end one SpriteBatch while another is using SpriteSortMode.Immediate.");
 
                 // If not immediate, then setup and render all sprites
                 PrepareForRendering();
                 FlushBatch();
             }
 
+            ResourceContext = null;
+
             // We are with begin pair
             isBeginCalled = false;
         }
-        
+
         private void SortSprites()
         {
             IComparer<int> comparer;
@@ -294,7 +297,7 @@ namespace Stride.Graphics
                     throw new NotSupportedException();
             }
 
-            if ((sortIndices == null) || (sortIndices.Length < drawsQueueCount))
+            if ((sortIndices is null) || (sortIndices.Length < drawsQueueCount))
             {
                 sortIndices = new int[drawsQueueCount];
                 sortedDraws = new ElementInfo[drawsQueueCount];
@@ -448,7 +451,7 @@ namespace Stride.Graphics
 
                 // ------------------------------------------------------------------------------------------------------------
                 // CAUTION: Performance problem under x64 resolved by this special codepath:
-                // For some unknown reasons, It seems that writing directly to the pointer returned by the MapSubresource is 
+                // For some unknown reasons, It seems that writing directly to the pointer returned by the MapSubresource is
                 // extremely inefficient using x64 but using a temporary buffer and performing a mempcy to the locked region
                 // seems to be running at the same speed than x86
                 // ------------------------------------------------------------------------------------------------------------
@@ -518,7 +521,7 @@ namespace Stride.Graphics
                 Array.Resize(ref drawsQueue, drawsQueue.Length * 2);
             }
 
-            // set the info required to draw the image
+            // Set the info required to draw the image
             drawsQueue[drawsQueueCount] = elementInfo;
 
             // If we are in immediate mode, render the sprite directly
@@ -545,13 +548,13 @@ namespace Stride.Graphics
         /// <param name="indexPointer">The pointer to the index array buffer to update. This value is null if the index buffer used is static.</param>
         /// <param name="vexterStartOffset">The offset in the vertex buffer where the vertex of the element starts</param>
         protected abstract void UpdateBufferValuesFromElementInfo(ref ElementInfo elementInfo, IntPtr vertexPointer, IntPtr indexPointer, int vexterStartOffset);
-        
+
         #region Nested types
 
         protected struct DrawTextures
         {
             public Texture Texture0;
-            
+
             public static bool NotEqual(ref DrawTextures left, ref DrawTextures right)
             {
                 return left.Texture0 != right.Texture0;
@@ -588,7 +591,7 @@ namespace Stride.Graphics
             /// Gets or sets the static indices to use for the index buffer.
             /// </summary>
             public short[] StaticIndices;
-            
+
             /// <summary>
             /// Gets the value indicating whether the index buffer is static or dynamic.
             /// </summary>
@@ -634,7 +637,7 @@ namespace Stride.Graphics
         /// </summary>
         /// <remarks>
         /// The index buffer is used in static mode and contains six indices for each quad. The vertex buffer contains 4 vertices for each quad.
-        /// Rectangle is composed of two triangles as follow: 
+        /// Rectangle is composed of two triangles as follow:
         ///                  v0 - - - v1                  v0 - - - v1
         ///                  |  \      |                  | t1   /  |
         ///  If cycle=true:  |    \ t1 | If cycle=false:  |    /    |
@@ -704,14 +707,14 @@ namespace Stride.Graphics
                 return ImageInfos[right].Depth.CompareTo(ImageInfos[left].Depth);
             }
         }
-        
+
         protected abstract class QueueComparer<TInfo> : IComparer<int>
         {
             public TInfo[] ImageInfos;
 
             public abstract int Compare(int x, int y);
         }
-        
+
         /// <summary>
         /// Use a ResourceContext per GraphicsDevice (DeviceContext)
         /// </summary>

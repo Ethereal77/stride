@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Stride.Assets.Presentation;
-using Stride.Assets.Presentation.Templates;
-using Stride.Assets.Templates;
-using Stride.Core.Assets;
-using Stride.Core.Assets.Templates;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Templates;
+using Stride.Assets.Templates;
+using Stride.Assets.Presentation;
+using Stride.Assets.Presentation.Templates;
 
 namespace Stride.Samples.Tests
 {
-    public class SampleTestFixture : IDisposable
+    public class SampleTestFixture
     {
         public SampleTestFixture(UDirectory outputPath, Guid templateGuid)
         {
@@ -35,11 +35,9 @@ namespace Stride.Samples.Tests
         {
             var project = session.Projects.OfType<SolutionProject>().First(x => x.Platform == Core.PlatformType.Windows);
 
-            var buildResult = VSProjectHelper.CompileProjectAssemblyAsync(null, project.FullPath, logger, extraProperties: new Dictionary<string, string> { { "StrideAutoTesting", "true" } }).BuildTask.Result;
+            var buildResult = VSProjectHelper.CompileProjectAssemblyAsync(null, logger, extraProperties: new Dictionary<string, string> { { "StrideAutoTesting", "true" } }).BuildTask.Result;
             if (logger.HasErrors)
-            {
                 throw new InvalidOperationException($"Error compiling sample {sampleName}:\r\n{logger.ToText()}");
-            }
         }
 
         private static PackageSession GenerateSample(UDirectory outputPath, Guid templateGuid, string sampleName, LoggerResult logger)
@@ -60,7 +58,7 @@ namespace Stride.Samples.Tests
             parameters.Unattended = true;
             TemplateSampleGenerator.SetParameters(
                 parameters,
-                AssetRegistry.SupportedPlatforms.Where(x => x.Type == Core.PlatformType.Windows).Select(x => new SelectedSolutionPlatform(x, x.Templates.FirstOrDefault())).ToList(),
+                AssetRegistry.SupportedPlatforms.Where(p => p.Type == Core.PlatformType.Windows).Select(x => new SelectedSolutionPlatform(x, x.Templates.FirstOrDefault())).ToList(),
                 addGamesTesting: true);
 
             session.SolutionPath = UPath.Combine<UFile>(outputPath, sampleName + ".sln");
@@ -72,9 +70,9 @@ namespace Stride.Samples.Tests
                 {
                     Directory.Delete(outputPath, true);
                 }
-                catch (Exception)
+                catch
                 {
-                    logger.Warning($"Unable to delete directory [{outputPath}]");
+                    logger.Warning($"Unable to delete directory [{outputPath}].");
                 }
             }
 
@@ -98,16 +96,9 @@ namespace Stride.Samples.Tests
             parameters.Description = updaterTemplate;
 
             if (logger.HasErrors)
-            {
                 throw new InvalidOperationException($"Error generating sample {sampleName} from template:\r\n{logger.ToText()}");
-            }
 
             return session;
-        }
-
-        public void Dispose()
-        {
-
         }
     }
 }

@@ -7,17 +7,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
 using Stride.Core;
-using Stride.Core.Extensions;
-using Stride.LauncherApp.Views;
 using Stride.Core.Packages;
+using Stride.Core.Extensions;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
+using Stride.LauncherApp.Views;
+using Stride.LauncherApp.Resources;
+
 using MessageBoxButton = Stride.Core.Presentation.Services.MessageBoxButton;
 using MessageBoxImage = Stride.Core.Presentation.Services.MessageBoxImage;
 
@@ -33,6 +37,7 @@ namespace Stride.LauncherApp.Services
         {
             var assembly = Assembly.GetEntryAssembly();
             var assemblyInformationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+
             Version = assemblyInformationalVersion.InformationalVersion;
         }
 
@@ -43,9 +48,9 @@ namespace Stride.LauncherApp.Services
                 var dispatcher = services.Get<IDispatcherService>();
                 try
                 {
-                    await UpdateLauncherFiles(dispatcher, store, CancellationToken.None);
+                    await UpdateLauncherFiles(dispatcher, services.Get<IDialogService>(), store, CancellationToken.None);
                 }
-                catch (Exception e)
+                catch
                 {
                     dispatcher.Invoke(() => selfUpdateWindow?.ForceClose());
                     throw;
@@ -53,12 +58,36 @@ namespace Stride.LauncherApp.Services
             });
         }
 
-        private static async Task UpdateLauncherFiles(IDispatcherService dispatcher, NugetStore store, CancellationToken cancellationToken)
+        private static async Task UpdateLauncherFiles(IDispatcherService dispatcher, IDialogService dialogService, NugetStore store, CancellationToken cancellationToken)
         {
             var version = new PackageVersion(Version);
             var productAttribute = (typeof(SelfUpdater).Assembly).GetCustomAttribute<AssemblyProductAttribute>();
             var packageId = productAttribute.Product;
             var packages = (await store.GetUpdates(new PackageName(packageId, version), true, true, cancellationToken)).OrderBy(x => x.Version);
+
+            try
+            {
+                const string ReinstallUrlPattern = @"force-reinstall:\s*(\S+)\s*(\S+)";
+
+                // First, check if there is a package forcing us to download new installer
+                var reinstallPackage = packages.LastOrDefault(pkg => pkg.Version > version &&
+                                                              Regex.IsMatch(pkg.Description, ReinstallUrlPattern));
+                if (reinstallPackage != null)
+                {
+                    var regexMatch = Regex.Match(reinstallPackage.Description, ReinstallUrlPattern);
+                    var minimumVersion = PackageVersion.Parse(regexMatch.Groups[1].Value);
+                    if (version < minimumVersion)
+                    {
+                        var installerDownloadUrl = regexMatch.Groups[2].Value;
+                        await DownloadAndInstallNewVersion(dispatcher, dialogService, installerDownloadUrl);
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await dialogService.MessageBox(string.Format(Strings.NewVersionDownloadError, ex.Message), MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             // If there is a mandatory intermediate upgrade, take it, otherwise update straight to latest version
             var package = (packages.FirstOrDefault(x => x.Version > version && x.Version.SpecialVersion == "req") ?? packages.LastOrDefault());
@@ -68,7 +97,7 @@ namespace Stride.LauncherApp.Services
             {
                 var windowCreated = new TaskCompletionSource<SelfUpdateWindow>();
                 var mainWindow = dispatcher.Invoke(() => Application.Current.MainWindow as LauncherWindow);
-                if (mainWindow == null)
+                if (mainWindow is null)
                     throw new ApplicationException("Update requested without a Launcher Window. Cannot continue!");
 
                 dispatcher.InvokeAsync(() =>
@@ -91,9 +120,9 @@ namespace Stride.LauncherApp.Services
 
                 // TODO: We should get list of previous files from nuspec (store it as a resource and open it with NuGet API maybe?)
                 // TODO: For now, we deal only with the App.config file since we won't be able to fix it afterward.
-                var exeLocation = Assembly.GetEntryAssembly().Location;
+                var exeLocation = Launcher.GetExecutablePath();
                 var exeDirectory = Path.GetDirectoryName(exeLocation);
-                const string directoryRoot = "tools/"; // Important!: this is matching where files are store in the nuspec
+                const string directoryRoot = "tools/"; // Important!: this is matching where files are store in the .nuspec
                 try
                 {
                     if (File.Exists(exeLocation))
@@ -122,7 +151,7 @@ namespace Stride.LauncherApp.Services
                         UpdateFile(fileName, file);
                     }
                 }
-                catch (Exception)
+                catch
                 {
                     // Revert all olds files if a file didn't work well
                     foreach (var oldFile in movedFiles)
@@ -145,7 +174,7 @@ namespace Stride.LauncherApp.Services
                             File.Delete(renamedPath);
                         }
                     }
-                    catch (Exception)
+                    catch
                     {
                         // All the files have been replaced, we let it go even if we cannot remove all the old files.
                     }
@@ -161,19 +190,55 @@ namespace Stride.LauncherApp.Services
         private static void Move(string oldPath, string newPath)
         {
             EnsureDirectory(newPath);
+
             try
             {
                 if (File.Exists(newPath))
-                {
                     File.Delete(newPath);
-                }
             }
-            catch (FileNotFoundException)
-            {
-
-            }
+            catch (FileNotFoundException) { }
 
             File.Move(oldPath, newPath);
+        }
+
+        internal static async Task DownloadAndInstallNewVersion(IDispatcherService dispatcher, IDialogService dialogService, string strideInstallerUrl)
+        {
+            try
+            {
+                // Diplay progress window
+                var mainWindow = dispatcher.Invoke(() => Application.Current.MainWindow as LauncherWindow);
+                dispatcher.InvokeAsync(() =>
+                {
+                    selfUpdateWindow = new SelfUpdateWindow { Owner = mainWindow };
+                    selfUpdateWindow.LockWindow();
+                    selfUpdateWindow.ShowDialog();
+                }).Forget();
+
+
+                var strideInstaller = Path.Combine(Path.GetTempPath(), $"StrideSetup-{Guid.NewGuid()}.exe");
+                using (WebClient webClient = new WebClient())
+                {
+                    webClient.DownloadFile(strideInstallerUrl, strideInstaller);
+                }
+
+                // Release the mutex before starting the new process
+                Launcher.Mutex.Dispose();
+
+                var startInfo = new ProcessStartInfo(strideInstaller) { UseShellExecute = true };
+                Process.Start(startInfo);
+
+                Environment.Exit(0);
+            }
+            catch (Exception ex)
+            {
+                await dispatcher.InvokeAsync(() =>
+                {
+                    if (selfUpdateWindow != null)
+                        selfUpdateWindow.ForceClose();
+                });
+
+                await dialogService.MessageBox(string.Format(Strings.NewVersionDownloadError, ex.Message), MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private static void EnsureDirectory(string filePath)
@@ -189,25 +254,31 @@ namespace Stride.LauncherApp.Services
         private static void UpdateFile(string newFilePath, PackageFile file)
         {
             EnsureDirectory(newFilePath);
-            using (Stream fromStream = file.GetStream(), toStream = File.Create(newFilePath))
-            {
-                fromStream.CopyTo(toStream);
-            }
+
+            using Stream fromStream = file.GetStream(),
+                         toStream = File.Create(newFilePath);
+
+            fromStream.CopyTo(toStream);
         }
 
         public static void RestartApplication()
         {
             var args = Environment.GetCommandLineArgs().ToList();
             args.Add("/UpdateTargets");
-            var startInfo = new ProcessStartInfo(Assembly.GetEntryAssembly().Location)
+
+            var exeLocation = Launcher.GetExecutablePath();
+
+            // Release the mutex before starting the new process
+            Launcher.Mutex.Dispose();
+
+            var startInfo = new ProcessStartInfo(exeLocation)
             {
                 Arguments = string.Join(" ", args.Skip(1)),
                 WorkingDirectory = Environment.CurrentDirectory,
                 UseShellExecute = true
             };
-            // Release the mutex before starting the new process
-            Launcher.Mutex.Dispose();
             Process.Start(startInfo);
+
             Environment.Exit(0);
         }
     }

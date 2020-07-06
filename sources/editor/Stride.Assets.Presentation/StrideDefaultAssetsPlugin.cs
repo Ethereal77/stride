@@ -8,27 +8,26 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 
-using Stride.Core.Assets.Editor.ViewModel;
-using Stride.Core.Assets;
-using Stride.Core.Assets.Editor.Components.Properties;
-using Stride.Core.Assets.Editor.Services;
-using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
-using Stride.Core.Reflection;
 using Stride.Core;
+using Stride.Core.Extensions;
 using Stride.Core.Annotations;
+using Stride.Core.Diagnostics;
+using Stride.Core.Reflection;
+using Stride.Core.Packages;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Templates;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Editor.Components.Properties;
 using Stride.Assets.Presentation.AssetEditors.AssetHighlighters;
 using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFactories;
 using Stride.Assets.Presentation.AssetEditors.Gizmos;
 using Stride.Assets.Presentation.NodePresenters.Commands;
 using Stride.Assets.Presentation.NodePresenters.Updaters;
 using Stride.Assets.Presentation.SceneEditor.Services;
-using Stride.Assets.Presentation.ViewModel;
 using Stride.Assets.Presentation.ViewModel.CopyPasteProcessors;
-using Stride.Editor;
 using Stride.Engine;
-using Stride.Core.Assets.Templates;
-using Stride.Core.Packages;
+using Stride.Editor;
 
 namespace Stride.Assets.Presentation
 {
@@ -78,6 +77,7 @@ namespace Stride.Assets.Presentation
         private static ResourceDictionary graphicsCompositorTemplateDictionary;
         private static ResourceDictionary visualScriptingTemplateDictionary;
         private static ResourceDictionary visualScriptingGraphTemplatesDictionary;
+
         private static readonly Dictionary<Type, Type> GizmoTypes = new Dictionary<Type, Type>();
         private static readonly Dictionary<Type, Type> AssetHighlighterTypes = new Dictionary<Type, Type>();
 
@@ -97,6 +97,7 @@ namespace Stride.Assets.Presentation
             LoadDefaultTemplates();
         }
 
+        // TODO: Currently hardcoded, this will need to change with plugin system
         private static readonly (string Name, string Version)[] DefaultPackages = new[]
             {
                 ( Name: "Stride.Assets.Presentation",  Version: StrideVersion.NuGetVersion ),
@@ -107,7 +108,6 @@ namespace Stride.Assets.Presentation
         public static void LoadDefaultTemplates()
         {
             // Load templates
-            // Currently hardcoded, this will need to change with plugin system
             foreach (var packageInfo in DefaultPackages)
             {
                 var logger = new LoggerResult();
@@ -123,27 +123,29 @@ namespace Stride.Assets.Presentation
         /// <inheritdoc />
         protected override void Initialize(ILogger logger)
         {
-            imageDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/ImageDictionary.xaml", UriKind.RelativeOrAbsolute));
-            animationPropertyTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/AnimationPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
-            entityPropertyTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/EntityPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
-            materialPropertyTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/MaterialPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
-            skeletonTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/SkeletonPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
-            spriteFontTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/SpriteFontPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
-            uiTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/UIPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
-            graphicsCompositorTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/GraphicsCompositorTemplates.xaml", UriKind.RelativeOrAbsolute));
-            visualScriptingTemplateDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/VisualScriptingTemplates.xaml", UriKind.RelativeOrAbsolute));
-            visualScriptingGraphTemplatesDictionary = (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/AssetEditors/VisualScriptEditor/Views/GraphTemplates.xaml", UriKind.RelativeOrAbsolute));
+            imageDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/ImageDictionary.xaml", UriKind.RelativeOrAbsolute));
+            animationPropertyTemplateDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/AnimationPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
+            entityPropertyTemplateDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/EntityPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
+            materialPropertyTemplateDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/MaterialPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
+            skeletonTemplateDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/SkeletonPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
+            spriteFontTemplateDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/SpriteFontPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
+            uiTemplateDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/UIPropertyTemplates.xaml", UriKind.RelativeOrAbsolute));
+            graphicsCompositorTemplateDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/GraphicsCompositorTemplates.xaml", UriKind.RelativeOrAbsolute));
+            visualScriptingTemplateDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/View/VisualScriptingTemplates.xaml", UriKind.RelativeOrAbsolute));
+            visualScriptingGraphTemplatesDictionary = (ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/AssetEditors/VisualScriptEditor/Views/GraphTemplates.xaml", UriKind.RelativeOrAbsolute));
 
             // Make Visual Script colors available to StaticResourceConverter
             Application.Current.Resources.MergedDictionaries.Add(imageDictionary);
 
             // Make script editor styles and icons available to StaticResourceConverter
-            Application.Current.Resources.MergedDictionaries.Add((ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/AssetEditors/ScriptEditor/Resources/Icons.xaml", UriKind.RelativeOrAbsolute)));
-            Application.Current.Resources.MergedDictionaries.Add((ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/AssetEditors/ScriptEditor/Resources/ThemeScriptEditor.xaml", UriKind.RelativeOrAbsolute)));
+            Application.Current.Resources.MergedDictionaries.Add((ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/AssetEditors/ScriptEditor/Resources/Icons.xaml", UriKind.RelativeOrAbsolute)));
+            Application.Current.Resources.MergedDictionaries.Add((ResourceDictionary) Application.LoadComponent(new Uri("/Stride.Assets.Presentation;component/AssetEditors/ScriptEditor/Resources/ThemeScriptEditor.xaml", UriKind.RelativeOrAbsolute)));
 
             var entityFactories = new Core.Collections.SortedList<EntityFactoryCategory, EntityFactoryCategory>();
             var assemblyEntityFactories = Assembly.GetExecutingAssembly().GetTypes()
-                                          .Where(t => typeof(IEntityFactory).IsAssignableFrom(t) && t.GetConstructor(Type.EmptyTypes) != null);
+                                          .Where(t => typeof(IEntityFactory).IsAssignableFrom(t) &&
+                                                       t.GetConstructor(Type.EmptyTypes) != null);
+
             foreach (var factoryType in assemblyEntityFactories)
             {
                 var display = factoryType.GetCustomAttribute<DisplayAttribute>();

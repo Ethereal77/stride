@@ -2,6 +2,8 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+#if STRIDE_PLATFORM_WINDOWS_DESKTOP
+
 using System;
 using System.IO;
 using System.Text;
@@ -179,3 +181,5 @@ namespace Stride.Core.Tests.Build
         }
     }
 }
+
+#endif

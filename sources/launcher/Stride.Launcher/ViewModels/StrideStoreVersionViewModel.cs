@@ -3,28 +3,28 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Stride.Core;
 using Stride.Core.Extensions;
-using Stride.LauncherApp.Resources;
 using Stride.Core.Packages;
 using Stride.Core.Presentation.Collections;
-using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
-using System.Collections.Generic;
-using System.Linq;
+using Stride.LauncherApp.Resources;
 
 namespace Stride.LauncherApp.ViewModels
 {
     /// <summary>
-    /// An implementation of the <see cref="StrideVersionViewModel"/> that represents an official release coming from the store.
+    ///   Represents an official release coming from the store as a <see cref="StrideVersionViewModel"/>.
     /// </summary>
     internal sealed class StrideStoreVersionViewModel : StrideVersionViewModel
     {
+        public const string PrerequisitesInstaller = @"Bin\Prerequisites\install-prerequisites.exe";
+
         internal NugetServerPackage LatestServerPackage;
         private ReleaseNotesViewModel releaseNotes;
 
@@ -94,14 +94,17 @@ namespace Stride.LauncherApp.ViewModels
             if (alternateVersions != null)
             {
                 Dispatcher.Invoke(() =>
+                {
                     UpdateAlternateVersions(alternateVersions, (alternateVersionViewModel, alternateVersion) =>
                     {
                         if (alternateVersion == null && alternateVersionViewModel.ServerPackage == null)
                             AlternateVersions.Remove(alternateVersionViewModel);
                         else
                             alternateVersionViewModel.UpdateLocalPackage(alternateVersion);
-                    }));
+                    });
+                });
             }
+            Dispatcher.Invoke(() => UpdateFrameworks());
         }
 
         /// <summary>
@@ -172,31 +175,28 @@ namespace Stride.LauncherApp.ViewModels
             }
 
             // Run prerequisites installer (if it exists)
-            var prerequisitesInstaller = Store.GetPrerequisitesInstaller();
-            if (!string.IsNullOrEmpty(prerequisitesInstaller))
+            var prerequisitesInstaller = PrerequisitesInstaller;
+            var packagePath = Store.GetInstalledPath(ServerPackage.Id, ServerPackage.Version);
+            var prerequisitesInstallerPath = Path.Combine(packagePath, prerequisitesInstaller);
+            if (File.Exists(prerequisitesInstallerPath))
             {
-                var packagePath = Store.GetInstalledPath(ServerPackage.Id, ServerPackage.Version);
-                var prerequisitesInstallerPath = Path.Combine(packagePath, prerequisitesInstaller);
-                if (File.Exists(prerequisitesInstallerPath))
+                CurrentProcessStatus = Strings.ReportInstallingPrerequisites;
+                var prerequisitesInstalled = false;
+                while (!prerequisitesInstalled)
                 {
-                    CurrentProcessStatus = Strings.ReportInstallingPrerequisites;
-                    var prerequisitesInstalled = false;
-                    while (!prerequisitesInstalled)
+                    try
                     {
-                        try
-                        {
-                            var prerequisitesInstallerProcess = Process.Start(prerequisitesInstallerPath);
-                            prerequisitesInstallerProcess?.WaitForExit();
-                            prerequisitesInstalled = true;
-                        }
-                        catch
-                        {
-                            // We'll enter this if UAC has been declined, but also if it timed out (which is a frequent case
-                            // if you don't stay in front of your computer during the installation.
-                            var result = await ServiceProvider.Get<IDialogService>().MessageBox("The installation of prerequisites has been canceled by user or failed to run. Do you want to run it again?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                            if (result != MessageBoxResult.Yes)
-                                break;
-                        }
+                        var prerequisitesInstallerProcess = Process.Start(prerequisitesInstallerPath);
+                        prerequisitesInstallerProcess?.WaitForExit();
+                        prerequisitesInstalled = true;
+                    }
+                    catch
+                    {
+                        // We'll enter this if UAC has been declined, but also if it timed out (which is a frequent case
+                        // if you don't stay in front of your computer during the installation.
+                        var result = await ServiceProvider.Get<IDialogService>().MessageBox("The installation of prerequisites has been canceled by user or failed to run. Do you want to run it again?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                        if (result != MessageBoxResult.Yes)
+                            break;
                     }
                 }
             }

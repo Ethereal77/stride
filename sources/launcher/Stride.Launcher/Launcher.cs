@@ -4,22 +4,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 
-using Stride.Core.Assets.Editor;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Packages;
+using Stride.Core.Assets.Editor;
 using Stride.Core.Windows;
-using Stride.LauncherApp.CrashReport;
-using Stride.LauncherApp.Services;
 using Stride.Metrics;
 using Stride.PrivacyPolicy;
+using Stride.LauncherApp.Services;
+using Stride.LauncherApp.CrashReport;
 
 using Dispatcher = System.Windows.Threading.Dispatcher;
 using MessageBox = System.Windows.MessageBox;
@@ -41,14 +42,26 @@ namespace Stride.LauncherApp
         /// </summary>
         /// <returns>The process error code to return.</returns>
         [STAThread]
-        public static int Main()
+        public static int Main(string[] args)
         {
             // For now, we force culture to invariant one because GNU.Gettext.GettextResourceManager.GetSatelliteAssembly crashes when Assembly.Location is null
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
-            var arguments = ProcessArguments();
+            var arguments = ProcessArguments(args);
             var result = ProcessAction(arguments);
-            return (int)result;
+            return (int) result;
+        }
+
+        /// <summary>
+        ///   Returns the path of the Launcher.
+        /// </summary>
+        /// <remarks>
+        ///   We can't use <c>Assembly.GetEntryAssembly().Location</c> in .NET Core, especially with self-publish.
+        /// </remarks>
+        /// <returns>The path of the Launcher executable.</returns>
+        internal static string GetExecutablePath()
+        {
+            return Process.GetCurrentProcess().MainModule.FileName;
         }
 
         /// <summary>
@@ -83,16 +96,13 @@ namespace Stride.LauncherApp
             MessageBox.Show(message, "Stride", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private static LauncherArguments ProcessArguments()
+        private static LauncherArguments ProcessArguments(string[] args)
         {
             var result = new LauncherArguments
             {
                 // Default action is to run the server
                 Actions = new List<LauncherArguments.ActionType> { LauncherArguments.ActionType.Run }
             };
-
-            // Environment.GetCommandLineArgs correctly process arguments regarding the presence of '\' and '"'
-            var args = Environment.GetCommandLineArgs().Skip(1).ToArray();
 
             foreach (var arg in args)
             {

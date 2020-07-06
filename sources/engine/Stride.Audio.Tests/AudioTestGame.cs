@@ -12,9 +12,5 @@ namespace Stride.Audio.Tests
     /// </summary>
     public class AudioTestGame : GameTestBase
     {
-        public AudioTestGame()
-        {
-            RequireGraphicPlatform(GraphicsPlatform.Direct3D11);
-        }
     }
 }

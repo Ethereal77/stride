@@ -30,6 +30,7 @@ using Stride.VisualStudio.Commands;
 using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 using VsShell = Microsoft.VisualStudio.Shell.VsShellUtilities;
 using Task = System.Threading.Tasks.Task;
+using Stride.VisualStudio.Commands.Shaders;
 
 namespace NShader
 {
@@ -392,7 +393,8 @@ namespace NShader
 
                     if (result.Messages.Count > 0)
                     {
-                        errorListProvider.Show(); // make sure it is visible
+					    // Make sure it is visible
+                        errorListProvider.Show();
                     }
                     else
                     {
@@ -510,6 +512,5 @@ namespace NShader
                 return null;
             }
         }
-
     }
 }

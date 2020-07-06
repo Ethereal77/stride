@@ -16,7 +16,7 @@ using Stride.Engine.Processors;
 namespace Stride.Engine
 {
     /// <summary>
-    /// Defines Position, Rotation and Scale of its <see cref="Entity"/>.
+    ///   Represents a component of an <see cref="Entity"/> that defines its position, rotation and scale.
     /// </summary>
     [DataContract("TransformComponent")]
     [DataSerializerGlobal(null, typeof(FastCollection<TransformComponent>))]
@@ -32,6 +32,7 @@ namespace Stride.Engine
         // This is useful for scenario such as binding a node to a bone, where it first need to run TransformProcessor for the hierarchy,
         // run MeshProcessor to update ModelViewHierarchy, copy Node/Bone transformation to another Entity with special root and then update its children transformations.
         private bool useTRS = true;
+
         private TransformComponent parent;
 
         private readonly TransformChildrenCollection children;
@@ -45,49 +46,58 @@ namespace Stride.Engine
         public FastListStruct<TransformOperation> PostOperations = new FastListStruct<TransformOperation>(EmptyTransformOperations);
 
         /// <summary>
-        /// The world matrix.
-        /// Its value is automatically recomputed at each frame from the local and the parent matrices.
-        /// One can use <see cref="UpdateWorldMatrix"/> to force the update to happen before next frame.
+        ///   The world transform matrix.
         /// </summary>
-        /// <remarks>The setter should not be used and is accessible only for performance purposes.</remarks>
+        /// <remarks>
+        ///   The world matrix defines the transform in the global space.
+        ///   <para/>
+        ///   This value is automatically recomputed each frame from the local matrix and the matrices from
+        ///   the transform hierarchy (parents).
+        ///   <para/>
+        ///   You can use <see cref="UpdateWorldMatrix"/> to force the update to happen before next frame.
+        /// </remarks>
         [DataMemberIgnore]
         public Matrix WorldMatrix = Matrix.Identity;
 
         /// <summary>
-        /// The local matrix.
-        /// Its value is automatically recomputed at each frame from the position, rotation and scale.
-        /// One can use <see cref="UpdateLocalMatrix"/> to force the update to happen before next frame.
+        ///   The local transform matrix.
         /// </summary>
-        /// <remarks>The setter should not be used and is accessible only for performance purposes.</remarks>
+        /// <remarks>
+        ///   This value is automatically recomputed each frame from the <see cref="Position"/>, <see cref="Rotation"/>
+        ///   and <see cref="Scale"/>.
+        ///   <para/>
+        ///   You can use <see cref="UpdateLocalMatrix"/> to force the update to happen before next frame.
+        /// </remarks>
         [DataMemberIgnore]
         public Matrix LocalMatrix = Matrix.Identity;
 
         /// <summary>
-        /// The translation relative to the parent transformation.
+        ///   The position in local space, meaning the translation relative to the parent transformation.
         /// </summary>
-        /// <userdoc>The translation of the entity with regard to its parent</userdoc>
+        /// <userdoc>The translation of the entity relative to its parent.</userdoc>
         [DataMember(10)]
         public Vector3 Position;
 
         /// <summary>
-        /// The rotation relative to the parent transformation.
+        ///   The rotation in local space, meaning relative to the parent transformation.
         /// </summary>
-        /// <userdoc>The rotation of the entity with regard to its parent</userdoc>
+        /// <userdoc>The rotation of the entity relative to its parent.</userdoc>
         [DataMember(20)]
         public Quaternion Rotation;
 
         /// <summary>
-        /// The scaling relative to the parent transformation.
+        ///   The scaling in local space, meaning relative to the parent transformation.
         /// </summary>
-        /// <userdoc>The scale of the entity with regard to its parent</userdoc>
+        /// <userdoc>The scale of the entity relative to its parent.</userdoc>
         [DataMember(30)]
         public Vector3 Scale;
 
         [DataMemberIgnore]
         public TransformLink TransformLink;
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="TransformComponent" /> class.
+        ///   Initializes a new instance of the <see cref="TransformComponent" /> class.
         /// </summary>
         public TransformComponent()
         {
@@ -98,31 +108,36 @@ namespace Stride.Engine
             Rotation = Quaternion.Identity;
         }
 
+
         /// <summary>
-        /// Gets or sets a value indicating whether to use the Translation/Rotation/Scale.
+        ///   Gets or sets a value indicating whether to compute the transform matrix using the
+        ///   <see cref="Position"/> / <see cref="Rotation"/> / <see cref="Scale"/>.
         /// </summary>
-        /// <value><c>true</c> if [use TRS]; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> to use TRS when computing the transform matrix; otherwise, <c>false</c>.</value>
         [DataMemberIgnore]
         [Display(Browsable = false)]
         [DefaultValue(true)]
         public bool UseTRS
         {
-            get { return useTRS; }
-            set { useTRS = value; }
+            get => useTRS;
+            set => useTRS = value;
         }
 
         /// <summary>
-        /// Gets the children of this <see cref="TransformComponent"/>.
+        ///   Gets the children of this <see cref="TransformComponent"/>.
         /// </summary>
         public FastCollection<TransformComponent> Children => children;
 
         /// <summary>
-        /// Gets or sets the euler rotation, with XYZ order.
-        /// Not stable: setting value and getting it again might return different value as it is internally encoded as a <see cref="Quaternion"/> in <see cref="Rotation"/>.
+        ///   Gets or sets the Euler rotation, with XYZ order.
         /// </summary>
         /// <value>
-        /// The euler rotation.
+        ///   The Euler rotation around each of the XYZ axes.
         /// </value>
+        /// <remarks>
+        ///   Note that this is not stable. Setting the value and getting it again might return a different value
+        ///   as it is internally encoded as a <see cref="Quaternion"/> in <see cref="Rotation"/>.
+        /// </remarks>
         [DataMemberIgnore]
         public Vector3 RotationEulerXYZ
         {
@@ -165,11 +180,11 @@ namespace Stride.Engine
             {
                 // Equilvalent to:
                 //  Quaternion quatX, quatY, quatZ;
-                //  
+                //
                 //  Quaternion.RotationX(value.X, out quatX);
                 //  Quaternion.RotationY(value.Y, out quatY);
                 //  Quaternion.RotationZ(value.Z, out quatZ);
-                //  
+                //
                 //  rotation = quatX * quatY * quatZ;
 
                 var halfAngles = value * 0.5f;
@@ -192,23 +207,23 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets or sets the parent of this <see cref="TransformComponent"/>.
+        ///   Gets or sets the parent of this <see cref="TransformComponent"/>.
         /// </summary>
         /// <value>
-        /// The parent.
+        ///   The parent of this <see cref="TransformComponent"/> in the transform hierarchy.
         /// </value>
         [DataMemberIgnore]
         public TransformComponent Parent
         {
-            get { return parent; }
+            get => parent;
             set
             {
                 var oldParent = Parent;
                 if (oldParent == value)
                     return;
-                
+
                 // SceneValue must be null if we have a parent
-                if( Entity.SceneValue != null )
+                if (Entity.SceneValue != null)
                     Entity.Scene = null;
 
                 var previousScene = oldParent?.Entity?.Scene;
@@ -235,9 +250,12 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Updates the local matrix.
-        /// If <see cref="UseTRS"/> is true, <see cref="LocalMatrix"/> will be updated from <see cref="Position"/>, <see cref="Rotation"/> and <see cref="Scale"/>.
+        ///   Updates the local matrix.
         /// </summary>
+        /// <remarks>
+        ///   If <see cref="UseTRS"/> is <c>trie</c>, <see cref="LocalMatrix"/> will be updated from <see cref="Position"/>,
+        ///   <see cref="Rotation"/> and <see cref="Scale"/>.
+        /// </remarks>
         public void UpdateLocalMatrix()
         {
             if (UseTRS)
@@ -247,11 +265,11 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Updates the local matrix based on the world matrix and the parent entity's or containing scene's world matrix.
+        ///   Updates the local matrix based on the world matrix and the parent entity's or containing scene's world matrix.
         /// </summary>
         public void UpdateLocalFromWorld()
         {
-            if (Parent == null)
+            if (Parent is null)
             {
                 var scene = Entity?.Scene;
                 if (scene != null)
@@ -266,35 +284,39 @@ namespace Stride.Engine
             }
             else
             {
-                //We are not root so we need to derive the local matrix as well
+                // We are not root so we need to derive the local matrix as well
                 Matrix.Invert(ref Parent.WorldMatrix, out var inverseParent);
                 Matrix.Multiply(ref WorldMatrix, ref inverseParent, out LocalMatrix);
             }
         }
 
         /// <summary>
-        /// Updates the world matrix.
-        /// It will first call <see cref="UpdateLocalMatrix"/> on self, and <see cref="UpdateWorldMatrix"/> on <see cref="Parent"/> if not null.
-        /// Then <see cref="WorldMatrix"/> will be updated by multiplying <see cref="LocalMatrix"/> and parent <see cref="WorldMatrix"/> (if any).
+        ///   Updates the world matrix.
         /// </summary>
+        /// <remarks>
+        ///   This will first call <see cref="UpdateLocalMatrix"/> on itself, and <see cref="UpdateWorldMatrix"/> on
+        ///   its <see cref="Parent"/> if not <c>null</c>.
+        ///   Then <see cref="WorldMatrix"/> will be updated by multiplying <see cref="LocalMatrix"/> and its parent's
+        ///   <see cref="WorldMatrix"/> (if any).
+        /// </remarks>
         public void UpdateWorldMatrix()
         {
             UpdateLocalMatrix();
-            UpdateWorldMatrixInternal(true);
+            UpdateWorldMatrixInternal(recursive: true);
         }
 
         internal void UpdateWorldMatrixInternal(bool recursive)
         {
             if (TransformLink != null)
             {
-                Matrix linkMatrix;
-                TransformLink.ComputeMatrix(recursive, out linkMatrix);
+                TransformLink.ComputeMatrix(recursive, out Matrix linkMatrix);
                 Matrix.Multiply(ref LocalMatrix, ref linkMatrix, out WorldMatrix);
             }
             else if (Parent != null)
             {
                 if (recursive)
                     Parent.UpdateWorldMatrix();
+
                 Matrix.Multiply(ref LocalMatrix, ref Parent.WorldMatrix, out WorldMatrix);
             }
             else
@@ -303,9 +325,7 @@ namespace Stride.Engine
                 if (scene != null)
                 {
                     if (recursive)
-                    {
                         scene.UpdateWorldMatrix();
-                    }
 
                     Matrix.Multiply(ref LocalMatrix, ref scene.WorldMatrix, out WorldMatrix);
                 }
@@ -335,7 +355,7 @@ namespace Stride.Engine
             private void OnTransformAdded(TransformComponent item)
             {
                 if (item.Parent != null)
-                    throw new InvalidOperationException("This TransformComponent already has a Parent, detach it first.");
+                    throw new InvalidOperationException("This TransformComponent already has a Parent. Detach it first.");
 
                 item.parent = transform;
 
@@ -345,14 +365,14 @@ namespace Stride.Engine
             private void OnTransformRemoved(TransformComponent item)
             {
                 if (item.Parent != transform)
-                    throw new InvalidOperationException("This TransformComponent's parent is not the expected value.");
+                    throw new InvalidOperationException("This TransformComponent's Parent is not the expected value.");
 
                 item.parent = null;
 
                 Entity?.EntityManager?.OnHierarchyChanged(item.Entity);
                 Entity?.EntityManager?.GetProcessor<TransformProcessor>().NotifyChildrenCollectionChanged(item, false);
             }
-            
+
             /// <inheritdoc/>
             protected override void InsertItem(int index, TransformComponent item)
             {
@@ -372,6 +392,7 @@ namespace Stride.Engine
             {
                 for (var i = Count - 1; i >= 0; --i)
                     OnTransformRemoved(this[i]);
+
                 base.ClearItems();
             }
 

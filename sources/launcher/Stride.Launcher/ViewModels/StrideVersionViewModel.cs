@@ -3,19 +3,28 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+using System.IO;
+using System.Linq;
+
+using NuGet.Frameworks;
 
 using Stride.Core.Packages;
+using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
+using Stride.LauncherApp.Services;
 
 namespace Stride.LauncherApp.ViewModels
 {
     /// <summary>
-    /// An implementation of the <see cref="PackageVersionViewModel"/> that represents a major version of Stride.
+    ///   Represents a major version of Stride as a <see cref="PackageVersionViewModel"/>.
     /// </summary>
     internal abstract class StrideVersionViewModel : PackageVersionViewModel, IComparable<StrideVersionViewModel>, IComparable<Tuple<int, int>>
     {
+        public const string MainExecutables = @"lib\net472\Stride.GameStudio.exe,lib\net472\Xenko.GameStudio.exe,Bin\Windows\Xenko.GameStudio.exe,Bin\Windows-Direct3D11\Xenko.GameStudio.exe";
+
         private bool isVisible;
         private bool canStart;
+        private string selectedFramework;
 
         internal StrideVersionViewModel(LauncherViewModel launcher, NugetStore store, NugetLocalPackage localPackage, string packageId, int major, int minor)
             : base(launcher, store, localPackage)
@@ -26,6 +35,48 @@ namespace Stride.LauncherApp.ViewModels
             SetAsActiveCommand = new AnonymousCommand(ServiceProvider, () => launcher.ActiveVersion = this);
             // Update status if the user changes whether to display beta versions.
             launcher.PropertyChanged += (s, e) => { if (e.PropertyName == nameof(LauncherViewModel.ShowBetaVersions)) UpdateStatus(); };
+        }
+
+        protected void UpdateFrameworks()
+        {
+            Frameworks.Clear();
+            if (LocalPackage != null && InstallPath != null)
+            {
+                var libDirectory = Path.Combine(InstallPath, "lib");
+                var frameworks = Directory.EnumerateDirectories(libDirectory);
+                foreach (var frameworkPath in frameworks)
+                {
+                    var frameworkFolder = new DirectoryInfo(frameworkPath).Name;
+                    if (File.Exists(Path.Combine(frameworkPath, "Stride.GameStudio.exe")) ||
+                        File.Exists(Path.Combine(frameworkPath, "Xenko.GameStudio.exe")))
+                    {
+                        Frameworks.Add(frameworkFolder);
+                    }
+                }
+
+                if (Frameworks.Count > 0)
+                {
+                    try
+                    {
+                        // If preferred framework exists in our list, select it
+                        var preferredFramework = LauncherSettings.PreferredFramework;
+                        if (Frameworks.Contains(preferredFramework))
+                            SelectedFramework = preferredFramework;
+                        else
+                        {
+                            // Otherwise, try to find a framework of the same kind (.NET Core or .NET Framework)
+                            var nugetFramework = NuGetFramework.ParseFolder(preferredFramework);
+                            SelectedFramework =
+                                Frameworks.FirstOrDefault(x => NuGetFramework.ParseFolder(preferredFramework).Framework == nugetFramework.Framework)
+                                        ?? Frameworks.First(); // Otherwise fallback to first choice
+                        }
+                    }
+                    catch
+                    {
+                        SelectedFramework = Frameworks.First();
+                    }
+                }
+            }
         }
 
         public string PackageSimpleName { get; }
@@ -70,6 +121,10 @@ namespace Stride.LauncherApp.ViewModels
         /// </summary>
         public bool CanStart { get { return canStart; } private set { SetValue(ref canStart, value); } }
 
+        public ObservableList<string> Frameworks { get; } = new ObservableList<string>();
+
+        public string SelectedFramework { get { return selectedFramework; } set { SetValue(ref selectedFramework, value); } }
+
         /// <summary>
         /// Builds a string that represents the given version numbers.
         /// </summary>
@@ -84,7 +139,7 @@ namespace Stride.LauncherApp.ViewModels
 
             return $"{packageSimpleName} {majorVersion}.{minorVersion}";
         }
-        
+
         /// <summary>
         /// Indicates if the given version corresponds to a beta version.
         /// </summary>
@@ -100,13 +155,54 @@ namespace Stride.LauncherApp.ViewModels
         protected override void UpdateStatus()
         {
             base.UpdateStatus();
+
             // It is visible if it's installed, or if it's not a beta, or if user want to see be available betas
             IsVisible = Launcher.ShowBetaVersions || !IsBeta || CanDelete;
             SetAsActiveCommand.IsEnabled = CanDelete;
             DeleteCommand.IsEnabled = CanDelete;
             CanStart = CanDelete;
+
             if (Launcher.ActiveVersion == this)
                 Launcher.StartStudioCommand.IsEnabled = CanStart;
+        }
+
+        /// <summary>
+        /// Name of main executable of current store.
+        /// </summary>
+        /// <returns>Name of the executable.</returns>
+        public string GetMainExecutables()
+        {
+            return MainExecutables;
+        }
+
+        /// <summary>
+        /// Locate the main executable from a given package installation path. It throws exceptions if not found.
+        /// </summary>
+        /// <param name="packagePath">The package installation path.</param>
+        /// <returns>The main executable.</returns>
+        public string LocateMainExecutable()
+        {
+            // First, try to use the selected framework
+            if (SelectedFramework != null)
+            {
+                var gameStudioDirectory = Path.Combine(InstallPath, "lib", SelectedFramework);
+                foreach (var gameStudioExecutable in new[] { "Stride.GameStudio.exe", "Xenko.GameStudio.exe" })
+                {
+                    var gameStudioPath = Path.Combine(gameStudioDirectory, gameStudioExecutable);
+                    if (File.Exists(gameStudioPath))
+                        return gameStudioPath;
+                }
+            }
+
+            // Otherwise, old-style fallback
+            var mainExecutableList = GetMainExecutables();
+            var fullExePath = mainExecutableList.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                                .Select(exe => Path.Combine(InstallPath, exe))
+                                                .FirstOrDefault(predicate: File.Exists);
+            if (fullExePath is null)
+                throw new InvalidOperationException("Unable to locate the executable for the selected version.");
+
+            return fullExePath;
         }
 
         public int CompareTo(StrideVersionViewModel other)

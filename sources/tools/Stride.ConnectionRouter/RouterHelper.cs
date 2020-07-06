@@ -49,7 +49,8 @@ namespace Stride.ConnectionRouter
                     }
                 }
 
-                var defaultRouterAssemblyLocation = typeof(Router).Assembly.Location;
+                // Make sure to use .exe rather than .dll (.NET Core)
+                var defaultRouterAssemblyLocation = Path.ChangeExtension(typeof(Router).Assembly.Location, ".exe");
                 if (defaultRouterAssemblyLocation == null)
                 {
                     throw new InvalidOperationException("Could not find Connection Router assembly location");

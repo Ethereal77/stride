@@ -16,24 +16,46 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 
         private TemplateDescriptionGroupViewModel selectedGroup;
         private ITemplateDescriptionViewModel selectedTemplate;
+
         private string name;
         private bool usedDefinedName;
 
+
         protected TemplateDescriptionCollectionViewModel(IViewModelServiceProvider serviceProvider)
             : base(serviceProvider)
-        {
-        }
+        { }
 
 
         public IReadOnlyObservableCollection<ITemplateDescriptionViewModel> Templates => templates;
 
         public abstract IEnumerable<TemplateDescriptionGroupViewModel> RootGroups { get; }
 
-        public TemplateDescriptionGroupViewModel SelectedGroup { get { return selectedGroup; } set { SetValue(ref selectedGroup, value, UpdateTemplateList); } }
+        public TemplateDescriptionGroupViewModel SelectedGroup
+        {
+            get => selectedGroup;
+            set => SetValue(ref selectedGroup, value, UpdateTemplateList);
+        }
 
-        public ITemplateDescriptionViewModel SelectedTemplate { get { return selectedTemplate; } set { SetValue(ref selectedTemplate, value); UpdateName(); } }
+        public ITemplateDescriptionViewModel SelectedTemplate
+        {
+            get => selectedTemplate;
+            set
+            {
+                SetValue(ref selectedTemplate, value);
+                UpdateName();
+            }
+        }
 
-        public string Name { get { return name; } set { usedDefinedName = !string.IsNullOrEmpty(value) && name != value; SetValue(ref name, value); } }
+        public string Name
+        {
+            get => name;
+            set
+            {
+                usedDefinedName = !string.IsNullOrEmpty(value) && name != value;
+                SetValue(ref name, value);
+            }
+        }
+
 
         public abstract bool ValidateProperties(out string error);
 
@@ -43,7 +65,10 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
                 return null;
 
             var groupDirectories = groupPath.Split("/\\".ToCharArray());
-            return groupDirectories.Aggregate(rootGroup, (current, groupDirectory) => current.SubGroups.FirstOrDefault(x => x.Name == groupDirectory) ?? new TemplateDescriptionGroupViewModel(current, groupDirectory));
+            return groupDirectories.Aggregate(
+                rootGroup,
+                (current, groupDirectory) => current.SubGroups.FirstOrDefault(group => group.Name == groupDirectory)
+                ?? new TemplateDescriptionGroupViewModel(current, groupDirectory));
         }
 
         protected abstract string UpdateNameFromSelectedTemplate();

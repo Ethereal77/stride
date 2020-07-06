@@ -27,9 +27,7 @@ namespace Stride.Graphics
 
         private EffectBytecode bytecode;
 
-        internal Effect()
-        {
-        }
+        internal Effect() { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Effect"/> class.
@@ -49,11 +47,14 @@ namespace Stride.Graphics
 
         internal void InitializeFrom(GraphicsDevice device, EffectBytecode bytecode)
         {
-            if (device == null) throw new ArgumentNullException("device");
-            if (bytecode == null) throw new ArgumentNullException("bytecode");
+            if (device is null)
+                throw new ArgumentNullException(nameof(device));
+            if (bytecode is null)
+                throw new ArgumentNullException(nameof(bytecode));
 
             this.graphicsDeviceDefault = device;
             this.bytecode = bytecode;
+
             Initialize();
         }
 
@@ -61,13 +62,7 @@ namespace Stride.Graphics
         /// Gets the bytecode.
         /// </summary>
         /// <value>The bytecode.</value>
-        public EffectBytecode Bytecode
-        {
-            get
-            {
-                return bytecode;
-            }
-        }
+        public EffectBytecode Bytecode => bytecode;
 
         internal bool SourceChanged { get; set; }
 
@@ -107,11 +102,11 @@ namespace Stride.Graphics
 
         private static void PrepareReflection(EffectReflection reflection)
         {
-            // prepare resource bindings used internally
+            // Prepare resource bindings used internally
             for (int i = 0; i < reflection.ResourceBindings.Count; i++)
             {
-                // it is fine if multiple threads do this at the same time (same result)
-                // we use ref to avoid reassigning to the list (which cause a Collection modified during enumeration exception)
+                // It is fine if multiple threads do this at the same time (same result)
+                // We use ref to avoid reassigning to the list (which cause a Collection modified during enumeration exception)
                 UpdateResourceBindingKey(ref reflection.ResourceBindings.Items[i]);
             }
             foreach (var constantBuffer in reflection.ConstantBuffers)
@@ -143,7 +138,7 @@ namespace Stride.Graphics
                     {
                         samplerBinding.Key = key;
                         var samplerDescription = samplerBinding.Description;
-                        // TODO GRAPHICS REFACTOR
+                        // TODO: GRAPHICS REFACTOR
                         //defaultParameters.Set((ObjectParameterKey<SamplerState>)key, SamplerState.New(graphicsDeviceDefault, samplerDescription));
                     }
                 }
@@ -152,7 +147,7 @@ namespace Stride.Graphics
             // Create constant buffers from descriptions (previously generated from shader reflection)
             foreach (var constantBuffer in reflection.ConstantBuffers)
             {
-                // TODO GRAPHICS REFACTOR (check if necessary)
+                // TODO: GRAPHICS REFACTOR (check if necessary)
                 // Handle ConstantBuffer. Share the same key ParameterConstantBuffer with all the stages
                 //var parameterConstantBuffer = new ParameterConstantBuffer(graphicsDeviceDefault, constantBuffer.Name, constantBuffer);
                 //var constantBufferKey = ParameterKeys.New<Buffer>(constantBuffer.Name);
@@ -177,6 +172,7 @@ namespace Stride.Graphics
                 case EffectParameterClass.Sampler:
                     binding.KeyInfo.Key = FindOrCreateResourceKey<SamplerState>(keyName);
                     break;
+
                 case EffectParameterClass.ConstantBuffer:
                 case EffectParameterClass.TextureBuffer:
                 case EffectParameterClass.ShaderResourceView:
@@ -195,6 +191,7 @@ namespace Stride.Graphics
                         case EffectParameterType.RWByteAddressBuffer:
                             binding.KeyInfo.Key = FindOrCreateResourceKey<Buffer>(keyName);
                             break;
+
                         case EffectParameterType.Texture:
                         case EffectParameterType.Texture1D:
                         case EffectParameterType.Texture1DArray:
@@ -216,10 +213,8 @@ namespace Stride.Graphics
                     break;
             }
 
-            if (binding.KeyInfo.Key == null)
-            {
-                throw new InvalidOperationException(string.Format("Unable to find/generate key [{0}] with unsupported type [{1}/{2}]", binding.KeyInfo.KeyName, binding.Class, binding.Type));
-            }
+            if (binding.KeyInfo.Key is null)
+                throw new InvalidOperationException($"Unable to find/generate key [{binding.KeyInfo.KeyName}] with unsupported type [{binding.Class}/{binding.Type}].");
         }
 
         private static void UpdateValueBindingKey(ref EffectValueDescription binding)
@@ -230,32 +225,41 @@ namespace Stride.Graphics
                     switch (binding.Type.Type)
                     {
                         case EffectParameterType.Bool:
-                            binding.KeyInfo.Key = FindOrCreateValueKey<bool>(binding);
+                            binding.KeyInfo.Key = FindOrCreateValueKey<bool>(ref binding);
                             break;
+
                         case EffectParameterType.Int:
-                            binding.KeyInfo.Key = FindOrCreateValueKey<int>(binding);
+                            binding.KeyInfo.Key = FindOrCreateValueKey<int>(ref binding);
                             break;
+
                         case EffectParameterType.UInt:
-                            binding.KeyInfo.Key = FindOrCreateValueKey<uint>(binding);
+                            binding.KeyInfo.Key = FindOrCreateValueKey<uint>(ref binding);
                             break;
+
                         case EffectParameterType.Float:
-                            binding.KeyInfo.Key = FindOrCreateValueKey<float>(binding);
+                            binding.KeyInfo.Key = FindOrCreateValueKey<float>(ref binding);
+                            break;
+
+                        case EffectParameterType.Double:
+                            binding.KeyInfo.Key = FindOrCreateValueKey<double>(ref binding);
                             break;
                     }
                     break;
+
                 case EffectParameterClass.Color:
                     {
                         var componentCount = binding.Type.RowCount != 1 ? binding.Type.RowCount : binding.Type.ColumnCount;
                         switch (binding.Type.Type)
                         {
                             case EffectParameterType.Float:
-                                binding.KeyInfo.Key = componentCount == 4
-                                                        ? FindOrCreateValueKey<Color4>(binding)
-                                                        : (componentCount == 3 ? FindOrCreateValueKey<Color3>(binding) : null);
+                                binding.KeyInfo.Key =
+                                    componentCount == 4 ? FindOrCreateValueKey<Color4>(ref binding) :
+                                    componentCount == 3 ? FindOrCreateValueKey<Color3>(ref binding) : null;
                                 break;
                         }
                     }
                     break;
+
                 case EffectParameterClass.Vector:
                     {
                         var componentCount = binding.Type.RowCount != 1 ? binding.Type.RowCount : binding.Type.ColumnCount;
@@ -263,32 +267,45 @@ namespace Stride.Graphics
                         {
                             case EffectParameterType.Bool:
                             case EffectParameterType.Int:
-                                binding.KeyInfo.Key = componentCount == 4 ? (ParameterKey)FindOrCreateValueKey<Int4>(binding) : (componentCount == 3 ? FindOrCreateValueKey<Int3>(binding) : null);
+                                binding.KeyInfo.Key =
+                                    componentCount == 4 ? FindOrCreateValueKey<Int4>(ref binding) :
+                                    componentCount == 3 ? FindOrCreateValueKey<Int3>(ref binding) :
+                                    componentCount == 2 ? FindOrCreateValueKey<Int2>(ref binding) : null;
                                 break;
+
                             case EffectParameterType.UInt:
-                                binding.KeyInfo.Key = componentCount == 4 ? FindOrCreateValueKey<UInt4>(binding) : null;
+                                binding.KeyInfo.Key =
+                                    componentCount == 4 ? FindOrCreateValueKey<UInt4>(ref binding) : null;
                                 break;
+
                             case EffectParameterType.Float:
-                                binding.KeyInfo.Key = componentCount == 4
-                                                        ? FindOrCreateValueKey<Vector4>(binding)
-                                                        : (componentCount == 3 ? (ParameterKey)FindOrCreateValueKey<Vector3>(binding) : (componentCount == 2 ? FindOrCreateValueKey<Vector2>(binding) : null));
+                                binding.KeyInfo.Key =
+                                    componentCount == 4 ? FindOrCreateValueKey<Vector4>(ref binding) :
+                                    componentCount == 3 ? FindOrCreateValueKey<Vector3>(ref binding) :
+                                    componentCount == 2 ? FindOrCreateValueKey<Vector2>(ref binding) : null;
+                                break;
+
+                            case EffectParameterType.Double:
+                                binding.KeyInfo.Key =
+                                    componentCount == 4 ? FindOrCreateValueKey<Double4>(ref binding) :
+                                    componentCount == 3 ? FindOrCreateValueKey<Double3>(ref binding) :
+                                    componentCount == 2 ? FindOrCreateValueKey<Double2>(ref binding) : null;
                                 break;
                         }
                     }
                     break;
                 case EffectParameterClass.MatrixRows:
                 case EffectParameterClass.MatrixColumns:
-                    binding.KeyInfo.Key = FindOrCreateValueKey<Matrix>(binding);
+                    binding.KeyInfo.Key = FindOrCreateValueKey<Matrix>(ref binding);
                     break;
+
                 case EffectParameterClass.Struct:
                     binding.KeyInfo.Key = ParameterKeys.FindByName(binding.KeyInfo.KeyName);
                     break;
             }
 
-            if (binding.KeyInfo.Key == null)
-            {
-                throw new InvalidOperationException(string.Format("Unable to find/generate key [{0}] with unsupported type [{1}/{2}]", binding.KeyInfo.KeyName, binding.Type.Class, binding.Type.Type));
-            }
+            if (binding.KeyInfo.Key is null)
+                throw new InvalidOperationException($"Unable to find/generate key [{binding.KeyInfo.KeyName}] with unsupported type [{binding.Type.Class}/{binding.Type.Type}].");
         }
 
         private static ParameterKey FindOrCreateResourceKey<T>(string name)
@@ -296,10 +313,14 @@ namespace Stride.Graphics
             return ParameterKeys.FindByName(name) ?? ParameterKeys.NewObject<T>(default(T), name);
         }
 
-        private static ParameterKey FindOrCreateValueKey<T>(EffectValueDescription binding) where T : struct
+        private static ParameterKey FindOrCreateValueKey<T>(ref EffectValueDescription binding) where T : struct
         {
             var name = binding.KeyInfo.KeyName;
-            return ParameterKeys.FindByName(name) ?? ParameterKeys.NewValue<T>(default(T), name);
+            var key = ParameterKeys.FindByName(name) as ValueParameterKey<T> ?? ParameterKeys.NewValue<T>(name: name);
+            // Update the default value with the one from the shader
+            if (binding.DefaultValue is T defaultValue)
+                key.DefaultValueMetadataT.DefaultValue = defaultValue;
+            return key;
         }
 
         private static void UpdateConstantBufferHashes(EffectReflection reflection)
@@ -308,7 +329,7 @@ namespace Stride.Graphics
             foreach (var constantBuffer in reflection.ConstantBuffers)
             {
                 // We will generate a unique hash that depends on cbuffer layout (to easily detect if they differ when binding a new effect)
-                // TODO: currently done at runtime, but it should better be done at compile time
+                // TODO: Currently done at runtime, but it should better be done at compile time
                 var hashBuilder = new ObjectIdBuilder();
                 hashBuilder.Write(constantBuffer.Name);
                 hashBuilder.Write(constantBuffer.Size);

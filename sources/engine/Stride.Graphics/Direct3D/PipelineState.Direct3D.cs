@@ -37,7 +37,7 @@ namespace Stride.Graphics
         private SharpDX.Direct3D11.InputLayout inputLayout;
 
         private readonly SharpDX.Direct3D.PrimitiveTopology primitiveTopology;
-        // Note: no need to store RTV/DSV formats
+        // NOTE: No need to store RTV/DSV formats.
 
         internal PipelineState(GraphicsDevice graphicsDevice, PipelineStateDescription pipelineStateDescription) : base(graphicsDevice)
         {
@@ -45,8 +45,8 @@ namespace Stride.Graphics
             var pipelineStateCache = GetPipelineStateCache();
 
             // Effect
-            this.rootSignature = pipelineStateDescription.RootSignature;
-            this.effectBytecode = pipelineStateDescription.EffectBytecode;
+            rootSignature = pipelineStateDescription.RootSignature;
+            effectBytecode = pipelineStateDescription.EffectBytecode;
             CreateShaders(pipelineStateCache);
             if (rootSignature != null && effectBytecode != null)
                 ResourceBinder.Compile(graphicsDevice, rootSignature.EffectDescriptorSetReflection, this.effectBytecode);
@@ -56,7 +56,7 @@ namespace Stride.Graphics
             // States
             blendState = pipelineStateCache.BlendStateCache.Instantiate(pipelineStateDescription.BlendState);
 
-            this.sampleMask = pipelineStateDescription.SampleMask;
+            sampleMask = pipelineStateDescription.SampleMask;
             rasterizerState = pipelineStateCache.RasterizerStateCache.Instantiate(pipelineStateDescription.RasterizerState);
             depthStencilState = pipelineStateCache.DepthStencilStateCache.Instantiate(pipelineStateDescription.DepthStencilState);
 
@@ -147,7 +147,7 @@ namespace Stride.Graphics
 
         private void CreateInputLayout(InputElementDescription[] inputElements)
         {
-            if (inputElements == null)
+            if (inputElements is null)
                 return;
 
             var nativeInputElements = new SharpDX.Direct3D11.InputElement[inputElements.Length];
@@ -168,31 +168,35 @@ namespace Stride.Graphics
 
         private void CreateShaders(DevicePipelineStateCache pipelineStateCache)
         {
-            if (effectBytecode == null)
+            if (effectBytecode is null)
                 return;
 
             foreach (var shaderBytecode in effectBytecode.Stages)
             {
                 var reflection = effectBytecode.Reflection;
 
-                // TODO CACHE Shaders with a bytecode hash
+                // TODO: CACHE Shaders with a bytecode hash
                 switch (shaderBytecode.Stage)
                 {
                     case ShaderStage.Vertex:
                         vertexShader = pipelineStateCache.VertexShaderCache.Instantiate(shaderBytecode);
                         // Note: input signature can be reused when reseting device since it only stores non-GPU data,
                         // so just keep it if it has already been created before.
-                        if (inputSignature == null)
+                        if (inputSignature is null)
                             inputSignature = shaderBytecode;
                         break;
+
                     case ShaderStage.Domain:
                         domainShader = pipelineStateCache.DomainShaderCache.Instantiate(shaderBytecode);
                         break;
+
                     case ShaderStage.Hull:
                         hullShader = pipelineStateCache.HullShaderCache.Instantiate(shaderBytecode);
                         break;
+
                     case ShaderStage.Geometry:
-                        if (reflection.ShaderStreamOutputDeclarations != null && reflection.ShaderStreamOutputDeclarations.Count > 0)
+                        if (reflection.ShaderStreamOutputDeclarations != null &&
+                            reflection.ShaderStreamOutputDeclarations.Count > 0)
                         {
                             // stream out elements
                             var soElements = new List<SharpDX.Direct3D11.StreamOutputElement>();
@@ -209,7 +213,7 @@ namespace Stride.Graphics
                                 };
                                 soElements.Add(soElem);
                             }
-                            // TODO GRAPHICS REFACTOR better cache
+                            // TODO: GRAPHICS REFACTOR Better cache
                             geometryShader = new SharpDX.Direct3D11.GeometryShader(GraphicsDevice.NativeDevice, shaderBytecode, soElements.ToArray(), reflection.StreamOutputStrides, reflection.StreamOutputRasterizedStream);
                         }
                         else
@@ -217,9 +221,11 @@ namespace Stride.Graphics
                             geometryShader = pipelineStateCache.GeometryShaderCache.Instantiate(shaderBytecode);
                         }
                         break;
+
                     case ShaderStage.Pixel:
                         pixelShader = pipelineStateCache.PixelShaderCache.Instantiate(shaderBytecode);
                         break;
+
                     case ShaderStage.Compute:
                         computeShader = pipelineStateCache.ComputeShaderCache.Instantiate(shaderBytecode);
                         break;
@@ -252,9 +258,8 @@ namespace Stride.Graphics
             {
                 lock (lockObject)
                 {
-                    TValue value;
                     var key = computeKey(source);
-                    if (!storage.TryGetValue(key, out value))
+                    if (!storage.TryGetValue(key, out TValue value))
                     {
                         value = computeValue(source);
                         storage.Add(key, value);
@@ -275,8 +280,7 @@ namespace Stride.Graphics
                 // Should we remove it from the cache?
                 lock (lockObject)
                 {
-                    int refCount;
-                    if (!counter.TryGetValue(value, out refCount))
+                    if (!counter.TryGetValue(value, out int refCount))
                         return;
 
                     counter[value] = --refCount;
@@ -284,8 +288,7 @@ namespace Stride.Graphics
                     {
                         counter.Remove(value);
                         reverse.Remove(value);
-                        TKey key;
-                        if (reverse.TryGetValue(value, out key))
+                        if (reverse.TryGetValue(value, out TKey key))
                         {
                             storage.Remove(key);
                         }
@@ -314,7 +317,7 @@ namespace Stride.Graphics
 
         private DevicePipelineStateCache GetPipelineStateCache()
         {
-            return GraphicsDevice.GetOrCreateSharedData(GraphicsDeviceSharedDataType.PerDevice, typeof(DevicePipelineStateCache), device => new DevicePipelineStateCache(device));
+            return GraphicsDevice.GetOrCreateSharedData(typeof(DevicePipelineStateCache), device => new DevicePipelineStateCache(device));
         }
 
         // Caches
@@ -429,4 +432,5 @@ namespace Stride.Graphics
         }
     }
 }
+
 #endif

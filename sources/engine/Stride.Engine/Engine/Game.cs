@@ -8,38 +8,38 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using Stride.Audio;
 using Stride.Core.Diagnostics;
-using Stride.Core.IO;
 using Stride.Core.Mathematics;
+using Stride.Core.IO;
 using Stride.Core.Storage;
 using Stride.Engine.Design;
 using Stride.Engine.Processors;
-using Stride.Games;
+using Stride.Profiling;
+using Stride.Audio;
+using Stride.Shaders.Compiler;
 using Stride.Graphics;
 using Stride.Graphics.Font;
 using Stride.Input;
-using Stride.Profiling;
 using Stride.Rendering;
 using Stride.Rendering.Fonts;
 using Stride.Rendering.Sprites;
-using Stride.Shaders.Compiler;
 using Stride.Streaming;
+using Stride.Games;
 
 namespace Stride.Engine
 {
     /// <summary>
-    /// Main Game class system.
+    ///   Represents the main Game system.
     /// </summary>
     public class Game : GameBase, ISceneRendererContext, IGameSettingsService
     {
         /// <summary>
-        /// Static event that will be fired when a game is initialized
+        ///   Occurs when the game is initialized.
         /// </summary>
         public static event EventHandler GameStarted;
 
         /// <summary>
-        /// Static event that will be fired when a game is destroyed
+        ///   Occurs when the game is destroyed.
         /// </summary>
         public static event EventHandler GameDestroyed;
 
@@ -50,80 +50,82 @@ namespace Stride.Engine
         private DatabaseFileProvider databaseFileProvider;
 
         /// <summary>
-        /// Readonly game settings as defined in the GameSettings asset
-        /// Please note that it will be populated during initialization
-        /// It will be ok to read them after the GameStarted event or after initialization
+        ///   Readonly game settings as defined in the GameSettings asset.
         /// </summary>
+        /// <remarks>
+        ///   Please note that it will be populated during initialization. It will be safe to read them after
+        ///   the <see cref="GameStarted"/> event or after initialization.
+        /// </remarks>
         public GameSettings Settings { get; private set; } // for easy transfer from PrepareContext to Initialize
 
         /// <summary>
-        /// Gets the graphics device manager.
+        ///   Gets the graphics device manager.
         /// </summary>
         /// <value>The graphics device manager.</value>
         public GraphicsDeviceManager GraphicsDeviceManager { get; internal set; }
 
         /// <summary>
-        /// Gets the script system.
+        ///   Gets the script system.
         /// </summary>
-        /// <value>The script.</value>
+        /// <value>The script system.</value>
         public ScriptSystem Script { get; }
 
         /// <summary>
-        /// Gets the input manager.
+        ///   Gets the input manager.
         /// </summary>
-        /// <value>The input.</value>
+        /// <value>The input manager.</value>
         public InputManager Input { get; internal set; }
 
         /// <summary>
-        /// Gets the scene system.
+        ///   Gets the scene system.
         /// </summary>
         /// <value>The scene system.</value>
         public SceneSystem SceneSystem { get; }
 
         /// <summary>
-        /// Gets the effect system.
+        ///   Gets the effect system.
         /// </summary>
         /// <value>The effect system.</value>
         public EffectSystem EffectSystem { get; private set; }
 
         /// <summary>
-        /// Gets the streaming system.
+        ///   Gets the streaming system.
         /// </summary>
         /// <value>The streaming system.</value>
         public StreamingManager Streaming { get; }
 
         /// <summary>
-        /// Gets the audio system.
+        ///   Gets the audio system.
         /// </summary>
-        /// <value>The audio.</value>
+        /// <value>The audio system.</value>
         public AudioSystem Audio { get; }
 
         /// <summary>
-        /// Gets the sprite animation system.
+        ///   Gets the sprite animation system.
         /// </summary>
         /// <value>The sprite animation system.</value>
         public SpriteAnimationSystem SpriteAnimation { get; }
 
         /// <summary>
-        /// Gets the game profiler system.
+        ///   Gets the debugging text rendering system.
         /// </summary>
         public DebugTextSystem DebugTextSystem { get; }
 
         /// <summary>
-        /// Gets the game profiler system.
+        ///   Gets the game profiler system.
         /// </summary>
         public GameProfilingSystem ProfilingSystem { get; }
 
         /// <summary>
-        /// Gets the font system.
+        ///   Gets the font system.
         /// </summary>
         /// <value>The font system.</value>
-        /// <exception cref="System.InvalidOperationException">The font system is not initialized yet</exception>
+        /// <exception cref="InvalidOperationException">The font system is not initialized yet.</exception>
         public IFontFactory Font
         {
             get
             {
-                if (gameFontSystem.FontSystem == null)
+                if (gameFontSystem.FontSystem is null)
                     throw new InvalidOperationException("The font system is not initialized yet");
 
                 return gameFontSystem.FontSystem;
@@ -131,24 +133,21 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets or sets the console log mode. See remarks.
+        ///   Gets or sets the console log mode.
         /// </summary>
         /// <value>The console log mode.</value>
         /// <remarks>
-        /// Defines how the console will be displayed when running the game. By default, on Windows, It will open only on debug
-        /// if there are any messages logged.
+        ///   Defines how the console will be displayed when running the game. By default, it will open only on
+        ///   <c>Debug</c> configuration if there is any message logged.
         /// </remarks>
         public ConsoleLogMode ConsoleLogMode
         {
-            get
-            {
-                var consoleLogListener = logListener as ConsoleLogListener;
-                return consoleLogListener != null ? consoleLogListener.LogMode : default(ConsoleLogMode);
-            }
+            get => logListener is ConsoleLogListener consoleLogListener
+                    ? consoleLogListener.LogMode
+                    : default;
             set
             {
-                var consoleLogListener = logListener as ConsoleLogListener;
-                if (consoleLogListener != null)
+                if (logListener is ConsoleLogListener consoleLogListener)
                 {
                     consoleLogListener.LogMode = value;
                 }
@@ -156,20 +155,17 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets or sets the default console log level.
+        ///   Gets or sets the default console log level.
         /// </summary>
         /// <value>The console log level.</value>
         public LogMessageType ConsoleLogLevel
         {
-            get
-            {
-                var consoleLogListener = logListener as ConsoleLogListener;
-                return consoleLogListener != null ? consoleLogListener.LogLevel : default(LogMessageType);
-            }
+            get => logListener is ConsoleLogListener consoleLogListener
+                    ? consoleLogListener.LogLevel
+                    : default;
             set
             {
-                var consoleLogListener = logListener as ConsoleLogListener;
-                if (consoleLogListener != null)
+                if (logListener is ConsoleLogListener consoleLogListener)
                 {
                     consoleLogListener.LogLevel = value;
                 }
@@ -177,12 +173,14 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Automatically initializes game settings like default scene, resolution, graphics profile.
+        ///   Gets or sets a value indicating whether to automatically initialize the game settings like
+        ///   default scene, resolution, graphics profile, etc.
         /// </summary>
         public bool AutoLoadDefaultSettings { get; set; }
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="Game"/> class.
+        ///   Initializes a new instance of the <see cref="Game"/> class.
         /// </summary>
         public Game()
         {
@@ -278,8 +276,10 @@ namespace Stride.Engine
                         deviceManager.PreferredGraphicsProfile = new[] { renderingSettings.DefaultGraphicsProfile };
                     }
 
-                    if (renderingSettings.DefaultBackBufferWidth > 0) deviceManager.PreferredBackBufferWidth = renderingSettings.DefaultBackBufferWidth;
-                    if (renderingSettings.DefaultBackBufferHeight > 0) deviceManager.PreferredBackBufferHeight = renderingSettings.DefaultBackBufferHeight;
+                    if (renderingSettings.DefaultBackBufferWidth > 0)
+                        deviceManager.PreferredBackBufferWidth = renderingSettings.DefaultBackBufferWidth;
+                    if (renderingSettings.DefaultBackBufferHeight > 0)
+                        deviceManager.PreferredBackBufferHeight = renderingSettings.DefaultBackBufferHeight;
 
                     deviceManager.PreferredColorSpace = renderingSettings.ColorSpace;
                     SceneSystem.InitialSceneUrl = Settings?.DefaultSceneUrl;
@@ -292,32 +292,26 @@ namespace Stride.Engine
 
         public override void ConfirmRenderingSettings(bool gameCreation)
         {
-            if (!AutoLoadDefaultSettings) return;
+            if (!AutoLoadDefaultSettings)
+                return;
 
             var renderingSettings = Settings?.Configurations.Get<RenderingSettings>();
-            if (renderingSettings == null) return;
 
-            var deviceManager = (GraphicsDeviceManager)graphicsDeviceManager;
+            var deviceManager = (GraphicsDeviceManager) graphicsDeviceManager;
 
             if (gameCreation)
             {
-                //execute the following steps only when the game is still at creation stage
-
-                deviceManager.PreferredGraphicsProfile = Context.RequestedGraphicsProfile = new[] { renderingSettings.DefaultGraphicsProfile };
-
-                //if our device height is actually smaller then requested we use the device one
-                deviceManager.PreferredBackBufferHeight = Context.RequestedHeight = Math.Min(renderingSettings.DefaultBackBufferHeight, Window.ClientBounds.Height);
-                //if our device width is actually smaller then requested we use the device one
-                deviceManager.PreferredBackBufferWidth = Context.RequestedWidth = Math.Min(renderingSettings.DefaultBackBufferWidth, Window.ClientBounds.Width);
+                // If our device width or height is actually smaller then requested we use the device one
+                deviceManager.PreferredBackBufferWidth = Context.RequestedWidth = Math.Min(deviceManager.PreferredBackBufferWidth, Window.ClientBounds.Width);
+                deviceManager.PreferredBackBufferHeight = Context.RequestedHeight = Math.Min(deviceManager.PreferredBackBufferHeight, Window.ClientBounds.Height);
             }
 
-            //these might get triggered even during game runtime, resize, orientation change
-
-            if (renderingSettings.AdaptBackBufferToScreen)
+            // These might get triggered even during game runtime, resize, orientation change
+            if (renderingSettings != null && renderingSettings.AdaptBackBufferToScreen)
             {
                 var deviceAr = Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
 
-                if (renderingSettings.DefaultBackBufferHeight > renderingSettings.DefaultBackBufferWidth)
+                if (deviceManager.PreferredBackBufferHeight > deviceManager.PreferredBackBufferWidth)
                 {
                     deviceManager.PreferredBackBufferWidth = Context.RequestedWidth = (int)(deviceManager.PreferredBackBufferHeight * deviceAr);
                 }
@@ -332,7 +326,7 @@ namespace Stride.Engine
         {
             // ---------------------------------------------------------
             // Add common GameSystems - Adding order is important
-            // (Unless overriden by gameSystem.UpdateOrder)
+            // (unless overriden by gameSystem.UpdateOrder)
             // ---------------------------------------------------------
 
             // Add the input manager
@@ -382,7 +376,7 @@ namespace Stride.Engine
             // Add the Audio System
             GameSystems.Add(Audio);
 
-            // TODO: data-driven?
+            // TODO: Data-driven?
             Content.Serializer.RegisterSerializer(new ImageSerializer());
 
             OnGameStarted(this);
@@ -416,12 +410,12 @@ namespace Stride.Engine
 
         protected override void EndDraw(bool present)
         {
-            // Allow to make a screenshot using CTRL+c+F12 (on release of F12)
+            // Allow to make a screenshot using CTRL + C + F12 (on release of F12)
             if (Input.HasKeyboard)
             {
-                if (Input.IsKeyDown(Keys.LeftCtrl)
-                    && Input.IsKeyDown(Keys.C)
-                    && Input.IsKeyReleased(Keys.F12))
+                if (Input.IsKeyDown(Keys.LeftCtrl) &&
+                    Input.IsKeyDown(Keys.C) &&
+                    Input.IsKeyReleased(Keys.F12))
                 {
                     var currentFilePath = Assembly.GetEntryAssembly().Location;
                     var timeNow = DateTime.Now.ToString("s", CultureInfo.InvariantCulture).Replace(':', '_');
@@ -431,7 +425,7 @@ namespace Stride.Engine
 
                     Console.WriteLine("Saving screenshot: {0}", newFileName);
 
-                    using (var stream = System.IO.File.Create(newFileName))
+                    using (var stream = File.Create(newFileName))
                     {
                         GraphicsDevice.Presenter.BackBuffer.Save(GraphicsContext.CommandList, stream, ImageFileType.Png);
                     }
@@ -442,7 +436,7 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Loads the content.
+        ///   Loads the content.
         /// </summary>
         protected virtual Task LoadContent()
         {

@@ -6,10 +6,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace NShader
+namespace Stride.VisualStudio.Commands.Shaders
 {
     /// <summary>
-    /// Result of shader navigation.
+    ///   Represents the result of shader definition navigation.
     /// </summary>
     [Serializable]
     public class RawShaderNavigationResult
@@ -20,15 +20,15 @@ namespace NShader
         }
 
         /// <summary>
-        /// Gets or sets the definition Span.
+        ///   Gets or sets the definition span.
         /// </summary>
-        /// <value>The definition Span.</value>
+        /// <value>The span that marks the definition.</value>
         public RawSourceSpan DefinitionSpan { get; set; }
 
         /// <summary>
-        /// Gets the parsing messages.
+        ///   Gets the parsing messages.
         /// </summary>
-        /// <value>The messages.</value>
+        /// <value>The parsing messages.</value>
         public List<RawShaderAnalysisMessage> Messages { get; private set; }
     }
 }

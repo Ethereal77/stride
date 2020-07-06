@@ -1,35 +1,36 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 
-using Stride.LauncherApp.Services;
-using Stride.LauncherApp.ViewModels;
+using NuGet.Frameworks;
+
 using Stride.Core.Packages;
 using Stride.Core.Presentation.Dialogs;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.View;
 using Stride.Core.Presentation.ViewModel;
+using Stride.LauncherApp.Services;
+using Stride.LauncherApp.ViewModels;
 
 namespace Stride.LauncherApp.Views
 {
     /// <summary>
-    /// Interaction logic for LauncherWindow.xaml
+    ///   Interaction logic for LauncherWindow.xaml.
     /// </summary>
     public partial class LauncherWindow
     {
-        
         public LauncherWindow()
         {
             InitializeComponent();
+
             ExitOnUserClose = true;
             Loaded += OnLoaded;
             TabControl.SelectedIndex = LauncherSettings.CurrentTab >= 0 ? LauncherSettings.CurrentTab : 0;
@@ -48,12 +49,13 @@ namespace Stride.LauncherApp.Views
             var workArea = this.GetWorkArea();
             Width = Math.Min(Width, workArea.Width);
             Height = Math.Min(Height, workArea.Height);
+
             this.CenterToArea(workArea);
         }
 
         public bool ExitOnUserClose { get; set; }
-        
-        private LauncherViewModel ViewModel => (LauncherViewModel)DataContext;
+
+        private LauncherViewModel ViewModel => (LauncherViewModel) DataContext;
 
         internal void Initialize(NugetStore store, string defaultLogText = null)
         {
@@ -78,8 +80,8 @@ namespace Stride.LauncherApp.Views
                 }
             }
 
-            var viewModel = (LauncherViewModel)DataContext;
-            LauncherSettings.ActiveVersion = viewModel.ActiveVersion != null ? viewModel.ActiveVersion.Name : ""; 
+            var viewModel = (LauncherViewModel) DataContext;
+            LauncherSettings.ActiveVersion = viewModel.ActiveVersion != null ? viewModel.ActiveVersion.Name : "";
             LauncherSettings.Save();
             if (ExitOnUserClose)
                 Environment.Exit(1);
@@ -90,10 +92,20 @@ namespace Stride.LauncherApp.Views
             LauncherSettings.CurrentTab = TabControl.SelectedIndex;
         }
 
+        private void FrameworkChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var framework = (string) FrameworkSelector.SelectedItem;
+            if (framework != null && LauncherSettings.PreferredFramework != framework)
+            {
+                LauncherSettings.PreferredFramework = framework;
+                LauncherSettings.Save();
+            }
+        }
+
         private void OpenWithClicked(object sender, RoutedEventArgs e)
         {
             var dependencyObject = sender as DependencyObject;
-            if (dependencyObject == null)
+            if (dependencyObject is null)
                 return;
 
             var scrollViewer = dependencyObject.FindVisualParentOfType<ScrollViewer>();

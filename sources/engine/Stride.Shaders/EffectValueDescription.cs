@@ -10,44 +10,44 @@ using Stride.Core.Serialization;
 namespace Stride.Shaders
 {
     /// <summary>
-    /// Describes a shader parameter for a valuetype (usually stored in constant buffers).
+    ///   Describes a shader parameter for a value type (usually stored in constant buffers).
     /// </summary>
     [DataContract]
     [DebuggerDisplay("{Type.Class}{Type.RowCount}x{Type.ColumnCount} {KeyInfo.KeyName} -> {RawName}")]
     public struct EffectValueDescription
     {
         /// <summary>
-        /// The type of this value.
+        ///   Type of this value.
         /// </summary>
         public EffectTypeDescription Type;
 
         /// <summary>
-        /// The common description of this parameter.
+        ///   Common description of this parameter.
         /// </summary>
         public EffectParameterKeyInfo KeyInfo;
 
         /// <summary>
-        /// Name of this parameter in the original shader
+        ///   Name of this parameter in the original shader.
         /// </summary>
         public string RawName;
-        
+
         /// <summary>
-        /// Offset in bytes into the constant buffer.
+        ///   Offset of this value in the constant buffer, in bytes.
         /// </summary>
         public int Offset;
 
         /// <summary>
-        /// Size in bytes in a constant buffer.
+        ///   Size of this value in the constant buffer, in bytes.
         /// </summary>
         public int Size;
 
         /// <summary>
-        /// The default value.
+        ///   Value to use by default.
         /// </summary>
-        public byte[] DefaultValue;
+        public object DefaultValue;
 
         /// <summary>
-        /// Logical group, used to group related descriptors and variables together.
+        ///   Logical group used to group related descriptors and variables together.
         /// </summary>
         public string LogicalGroup;
     }

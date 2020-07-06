@@ -16,9 +16,10 @@ namespace Stride.LauncherApp.Services
     {
         private static readonly SettingsContainer SettingsContainer = new SettingsContainer();
 
-        private static readonly SettingsKey<bool> CloseLauncherAutomaticallyKey = new SettingsKey<bool>("Internal/Launcher/CloseLauncherAutomatically", SettingsContainer, false);
-        private static readonly SettingsKey<string> ActiveVersionKey = new SettingsKey<string>("Internal/Launcher/ActiveVersion", SettingsContainer, "");
-        private static readonly SettingsKey<int> CurrentTabKey = new SettingsKey<int>("Internal/Launcher/CurrentTabSessions", SettingsContainer, 0);
+        private static readonly SettingsKey<bool> CloseLauncherAutomaticallyKey = new SettingsKey<bool>("Internal/Launcher/CloseLauncherAutomatically", SettingsContainer, defaultValue: false);
+        private static readonly SettingsKey<string> ActiveVersionKey = new SettingsKey<string>("Internal/Launcher/ActiveVersion", SettingsContainer, defaultValue: "");
+        private static readonly SettingsKey<string> PreferredFrameworkKey = new SettingsKey<string>("Internal/Launcher/PreferredFramework", SettingsContainer, defaultValue: "netcoreapp3.1");
+        private static readonly SettingsKey<int> CurrentTabKey = new SettingsKey<int>("Internal/Launcher/CurrentTabSessions", SettingsContainer, defaultValue: 0);
         private static readonly SettingsKey<List<UDirectory>> DeveloperVersionsKey = new SettingsKey<List<UDirectory>>("Internal/Launcher/DeveloperVersions", SettingsContainer, () => new List<UDirectory>());
 
         private static readonly string LauncherConfigPath = Path.Combine(EditorPath.UserDataPath, "LauncherSettings.conf");
@@ -28,6 +29,7 @@ namespace Stride.LauncherApp.Services
             SettingsContainer.LoadSettingsProfile(GetLatestLauncherConfigPath(), true);
             CloseLauncherAutomatically = CloseLauncherAutomaticallyKey.GetValue();
             ActiveVersion = ActiveVersionKey.GetValue();
+            PreferredFramework = PreferredFrameworkKey.GetValue();
             CurrentTab = CurrentTabKey.GetValue();
             DeveloperVersions = DeveloperVersionsKey.GetValue();
         }
@@ -36,16 +38,19 @@ namespace Stride.LauncherApp.Services
         {
             CloseLauncherAutomaticallyKey.SetValue(CloseLauncherAutomatically);
             ActiveVersionKey.SetValue(ActiveVersion);
+            PreferredFrameworkKey.SetValue(PreferredFramework);
             CurrentTabKey.SetValue(CurrentTab);
             SettingsContainer.SaveSettingsProfile(SettingsContainer.CurrentProfile, LauncherConfigPath);
         }
 
         public static IReadOnlyCollection<UDirectory> DeveloperVersions { get; private set; }
-        
+
         public static bool CloseLauncherAutomatically { get; set; }
-        
+
         public static string ActiveVersion { get; set; }
-        
+
+        public static string PreferredFramework { get; set; }
+
         public static int CurrentTab { get; set; }
 
         private static string GetLatestLauncherConfigPath()

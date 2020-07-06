@@ -2,38 +2,29 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Stride.VisualStudio.BuildEngine;
+using System.Collections.Generic;
+using System.IO;
+
+using Stride.Core;
+using Stride.Core.Assets;
+using Stride.Core.Shaders.Ast;
+using Stride.Core.Shaders.Utility;
+using Stride.Shaders.Parser;
+using Stride.Shaders.Parser.Mixins;
+using Stride.VisualStudio.Commands.Shaders;
 
 namespace Stride.VisualStudio.Commands
 {
-    public class StrideCommands : IStrideCommands, IStrideCommands2
+    public class StrideCommands : IStrideCommands
     {
-        public void Initialize(string strideSdkDir)
+        public StrideCommands()
         {
-            //DirectoryHelper.PackageDirectoryOverride = strideSdkDir;
-            // Don't necessarely initialize the shaders
-            //StrideShaderParser.Initialize();
-        }
-
-        public bool ShouldReload()
-        {
-            // This is implemented in the proxy only
-            throw new NotImplementedException();
-        }
-
-        public void StartRemoteBuildLogServer(IBuildMonitorCallback buildMonitorCallback, string logPipeUrl)
-        {
-            new PackageBuildMonitorRemote(buildMonitorCallback, logPipeUrl);
+            PackageSessionPublicHelper.FindAndSetMSBuildVersion();
         }
 
         public byte[] GenerateShaderKeys(string inputFileName, string inputFileContent)
         {
             return ShaderKeyFileHelper.GenerateCode(inputFileName, inputFileContent);
-        }
-
-        public RawShaderNavigationResult AnalyzeAndGoToDefinition(string sourceCode, RawSourceSpan span)
-        {
-            return AnalyzeAndGoToDefinition(null, sourceCode, span);
         }
 
         public RawShaderNavigationResult AnalyzeAndGoToDefinition(string projectPath, string sourceCode, RawSourceSpan span)
@@ -53,7 +44,7 @@ namespace Stride.VisualStudio.Commands
                 }
             }
 
-            var resultAnalysis = navigation.AnalyzeAndGoToDefinition(sourceCode, new Stride.Core.Shaders.Ast.SourceLocation(span.File, 0, span.Line, span.Column), shaderDirectories);
+            var resultAnalysis = navigation.AnalyzeAndGoToDefinition(sourceCode, new SourceLocation(span.File, 0, span.Line, span.Column), shaderDirectories);
 
             if (resultAnalysis.DefinitionLocation.Location.FileSource != null)
             {
@@ -99,9 +90,7 @@ namespace Stride.VisualStudio.Commands
         private List<string> CollectShadersDirectories(string packagePath)
         {
             if (packagePath is null)
-            {
                 packagePath = PackageStore.Instance.GetPackageFileName("Stride.Engine", new PackageVersionRange(new PackageVersion(StrideVersion.NuGetVersion)));
-            }
 
             var defaultLoad = PackageLoadParameters.Default();
             defaultLoad.AutoCompileProjects = false;

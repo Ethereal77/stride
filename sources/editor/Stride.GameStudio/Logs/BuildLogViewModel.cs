@@ -14,20 +14,11 @@ namespace Stride.GameStudio.Logs
 {
     public sealed class BuildLogViewModel : LoggerViewModel, IForwardSerializableLogRemote
     {
-        private const string BasePipeName = "StrideCoreAssetsEditor";
-
-        private readonly NpHost host;
 
         public BuildLogViewModel(IViewModelServiceProvider serviceProvider)
             : base(serviceProvider)
         {
-            PipeName = $"{BasePipeName}.{Guid.NewGuid()}";
-            host = new NpHost(PipeName, null, null, new StrideServiceWireSerializer());
-            host.AddService<IForwardSerializableLogRemote>(this);
-            host.Open();
         }
-
-        public string PipeName { get; }
 
         public void ForwardSerializableLog(SerializableLogMessage message)
         {
@@ -40,7 +31,6 @@ namespace Stride.GameStudio.Logs
         /// <inheritdoc/>
         public override void Destroy()
         {
-            host.Close();
             base.Destroy();
         }
     }

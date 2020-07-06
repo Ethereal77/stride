@@ -5,17 +5,15 @@
 
 using System;
 
-namespace NShader
+namespace Stride.VisualStudio.Commands.Shaders
 {
     /// <summary>
-    /// Defines a Span span in a file.
+    ///   Reoresents a span of text in a source code file.
     /// </summary>
     [Serializable]
     public class RawSourceSpan
     {
-        public RawSourceSpan()
-        {
-        }
+        public RawSourceSpan() { }
 
         public RawSourceSpan(string file, int line, int column)
         {
@@ -36,10 +34,7 @@ namespace NShader
 
         public int EndColumn { get; set; }
 
-        public override string ToString()
-        {
-            // TODO: include span
-            return string.Format("{0}({1},{2})", File ?? string.Empty, Line, Column);
-        }
+        // TODO: Include span
+        public override string ToString() => $"{File ?? string.Empty}({Line},{Column})";
     }
 }

@@ -13,25 +13,29 @@ namespace Stride.Graphics
     {
         private readonly GraphicsDevice graphicsDevice;
         private readonly Dictionary<PipelineStateDescriptionWithHash, PipelineState> cache;
+
         public PipelineStateDescription State;
 
+
         /// <summary>
-        /// Current compiled state.
+        ///   Current compiled <see cref="PipelineState"/>.
         /// </summary>
         public PipelineState CurrentState;
+
 
         public MutablePipelineState(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
 
-            cache = graphicsDevice.GetOrCreateSharedData(GraphicsDeviceSharedDataType.PerDevice, typeof(MutablePipelineStateCache), device => new MutablePipelineStateCache()).Cache;
+            cache = graphicsDevice.GetOrCreateSharedData(typeof(MutablePipelineStateCache), device => new MutablePipelineStateCache()).Cache;
 
             State = new PipelineStateDescription();
             State.SetDefaults();
         }
 
+
         /// <summary>
-        /// Determine and updates <see cref="CurrentState"/> from <see cref="State"/>.
+        ///   Determines and updates the <see cref="CurrentState"/> from <see cref="State"/>.
         /// </summary>
         public void Update()
         {
@@ -41,7 +45,7 @@ namespace Stride.Graphics
             // Find existing PipelineState object
             PipelineState pipelineState;
 
-            // TODO GRAPHICS REFACTOR We could avoid lock by adding them to a ThreadLocal (or RenderContext) and merge at end of frame
+            // TODO: GRAPHICS REFACTOR We could avoid lock by adding them to a ThreadLocal (or RenderContext) and merge at end of frame
             lock (cache)
             {
                 if (!cache.TryGetValue(hashedState, out pipelineState))

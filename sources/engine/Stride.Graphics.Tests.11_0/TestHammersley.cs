@@ -79,7 +79,7 @@ namespace Stride.Graphics.Tests
         }
 
         /// <summary>
-        /// Run the test
+        ///   Run the test.
         /// </summary>
         [SkippableFact]
         public void RunImageLoad()

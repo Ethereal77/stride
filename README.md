@@ -43,29 +43,29 @@ Ask for help or report issues:
 
 ### Prerequisites
 
-1. [Git](https://git-scm.com/downloads) (recent version that includes LFS, or install [Git LFS](https://git-lfs.github.com/) separately).
+1. [Git](https://git-scm.com/downloads) with **Large File Support** selected.
 
 2. [Visual Studio 2019](https://www.visualstudio.com/downloads/) with the following workloads:
 
-  * `.NET desktop development` with `.NET Framework 4.7.2 targeting pack`
+  * `.NET desktop development` with `.NET Framework 4.7.2 targeting pack`.
 
   * `Desktop development with C++` with
 
-    - `Windows 10 SDK (10.0.17763.0)` or later version (should be enabled by default)
-    - `MSVC v142 - VS2019 C++ x64/x86 build tools (v14.23)` or later version (should be enabled by default)
-    - `MSVC v142 - VS2019 C++ x64/x86 Spectre-mitigated libs (v14.23)` or later version (should be enabled by default)
+    - `Windows 10 SDK (10.0.18362.0)` or later (should be enabled by default).
+    - `MSVC v142 - VS2019 C++ x64/x86 build tools (v14.26)` or later (should be enabled by default)
+    - `C++/CLI support for v142 build tools (v14.26)` or later (**not enabled by default**).
 
-  * `.NET Core cross-platform development`
+  * `.NET Core cross-platform development`.
 
 3. [FBX SDK 2019.0 VS2015](https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-2019-0)
 
 ### Build Stride
 
-1. Clone Stride: `git clone https://github.com/Ethereal77/stride.git`
+1. Clone Stride: `git clone https://github.com/Ethereal77/stride.git`.
 
-2. Open `<StrideDir>\build\Stride.sln` with Visual Studio 2019, and build.
+2. Open `Stride.sln` in the `build` directory with Visual Studio 2019 and build `Stride.GameStudio` (it should be the default startup project).
 
-3. Open `<StrideDir>\samples\StrideSamples.sln` and play with the samples.
+Do note that test solutions might fail but it should not prevent you from building `Stride.GameStudio`.
 
 ### Contribution Guidelines
 

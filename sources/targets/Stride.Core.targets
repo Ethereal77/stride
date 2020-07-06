@@ -87,6 +87,8 @@
   </Target>
 
   <PropertyGroup>
+    <StrideCompilerTargetsEnable Condition=" '$(StridePlatform)' != 'Windows' and $(StrideWindowsOnly) == 'true'">false</StrideCompilerTargetsEnable>
+
     <!-- Skip unit tests if requested -->
     <StrideCompilerTargetsEnable Condition="'$(StrideSkipUnitTests)' == 'true' And $(StrideOutputFolder.StartsWith('Tests'))">false</StrideCompilerTargetsEnable>
 

@@ -20,7 +20,7 @@
     <!-- Check if we have override -->
     <StrideGraphicsApis Condition="'$(StrideGraphicsApisTest)' != ''">$(StrideGraphicsApisTest)</StrideGraphicsApis>
 
-    <!-- Compute list of Graphics APIs for platforms that supports multiple -->
+    <!-- Build list of Graphics APIs for platform that support multiple -->
     <StrideGraphicsApis Condition="'$(StridePlatform)' == 'Windows' And '$(StrideGraphicsApiDependentBuildAll)' == 'true'">Direct3D11;Direct3D12</StrideGraphicsApis>
     <StrideGraphicsApis Condition="'$(StridePlatform)' == 'Windows' And '$(StrideGraphicsApis)' == ''">Direct3D11</StrideGraphicsApis>
 
@@ -51,7 +51,6 @@
 
   </PropertyGroup>
 
-
   <PropertyGroup Condition="'$(StrideGraphicsApiDependent)' != 'true'">
     <OutputPath>$(MSBuildThisFileDirectory)..\..\bin\Tests\$(AssemblyName)\$(StridePlatform)\</OutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(StridePlatform)\$(Configuration)\</IntermediateOutputPath>
@@ -61,7 +60,10 @@
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(StridePlatform)-$(StrideGraphicsApi)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
+  <PropertyGroup Condition="'$(StridePlatform)' == 'Windows'">
+    <StartupObject>xunit.runner.stride.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(StridePlatform)' == 'Windows'">
     <Compile Condition="'$(StrideGraphicsApiDependent)' != 'true'" Include="$(MSBuildThisFileDirectory)..\shared\tests\xunit\LauncherSimple.Windows.cs">
       <Link>LauncherSimple.Windows.cs</Link>
     </Compile>

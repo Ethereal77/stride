@@ -16,16 +16,16 @@ using Microsoft.Build.Execution;
 using Microsoft.CodeAnalysis;
 
 using Stride.Core;
-using Stride.Core.IO;
-using Stride.Core.Annotations;
-using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
+using Stride.Core.Annotations;
+using Stride.Core.IO;
+using Stride.Core.Diagnostics;
 using Stride.Core.Assets;
 using Stride.Core.Translation;
-using Stride.Core.Assets.Editor.Components.Status;
 using Stride.Core.Assets.Editor.Settings;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Core.Assets.Editor.Components.Status;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
@@ -44,12 +44,15 @@ namespace Stride.GameStudio
         private readonly ScriptSourceCodeResolver scriptsSorter;
         private readonly CancellationTokenSource assemblyTrackingCancellation;
         private readonly LoggerResult assemblyReloadLogger = new LoggerResult();
+
+        private readonly string outputTitleBase = Tr._p("Title", "Output");
+
         private bool assemblyChangesPending;
         private bool trackAssemblyChanges;
         private string outputTitle;
-        private readonly string outputTitleBase = Tr._p("Title", "Output");
         private bool buildInProgress;
         private ICancellableAsyncBuild currentBuild;
+
 
         public DebuggingViewModel(GameStudioViewModel editor, IDebugService debugService)
             : base(editor.SafeArgument(nameof(editor)).ServiceProvider)
@@ -62,15 +65,16 @@ namespace Stride.GameStudio
             BuildLog = new BuildLogViewModel(ServiceProvider);
             LiveScriptingLog = new LoggerViewModel(ServiceProvider);
             LiveScriptingLog.AddLogger(assemblyReloadLogger);
+
             BuildProjectCommand = new AnonymousTaskCommand(ServiceProvider, () => BuildProject(false));
             StartProjectCommand = new AnonymousTaskCommand(ServiceProvider, () => BuildProject(true));
             CancelBuildCommand = new AnonymousCommand(ServiceProvider, () => { currentBuild?.Cancel(); });
             LivePlayProjectCommand = new AnonymousTaskCommand(ServiceProvider, LivePlayProject);
             ReloadAssembliesCommand = new AnonymousTaskCommand(ServiceProvider, ReloadAssemblies) { IsEnabled = false };
             ResetOutputTitleCommand = new AnonymousCommand(ServiceProvider, () => OutputTitle = outputTitleBase);
+
             modifiedAssemblies = new Dictionary<PackageLoadedAssembly, ModifiedAssembly>();
             trackAssemblyChanges = true;
-
             assemblyTrackingCancellation = new CancellationTokenSource();
 
             // Create script resolver
@@ -88,6 +92,7 @@ namespace Stride.GameStudio
                 PullAssemblyChanges(watcher);
             });
         }
+
 
         /// <summary>
         ///   Gets the current session.
@@ -109,13 +114,22 @@ namespace Stride.GameStudio
         /// <summary>
         ///   Gets the title of the output pane, including an asterisk if new logs have arrived.
         /// </summary>
-        // We need to manage dirtiness of the output title directly in the string because the rad pane requires a single string as title
-        public string OutputTitle { get => outputTitle; private set => SetValue(ref outputTitle, value); }
+        // TODO: We need to manage dirtiness of the output title directly in the string because the rad pane requires a single string as title
+        public string OutputTitle
+        {
+            get => outputTitle;
+            private set => SetValue(ref outputTitle, value);
+        }
 
         /// <summary>
         ///   Gets whether there is a build currently in progress.
         /// </summary>
-        public bool BuildInProgress { get => buildInProgress; private set => SetValue(ref buildInProgress, value, UpdateCommands); }
+        public bool BuildInProgress
+        {
+            get => buildInProgress;
+            private set => SetValue(ref buildInProgress, value, UpdateCommands);
+        }
+
 
         [NotNull]
         public ICommandBase BuildProjectCommand { get; }
@@ -134,6 +148,7 @@ namespace Stride.GameStudio
 
         [NotNull]
         public ICommandBase ResetOutputTitleCommand { get; }
+
 
         /// <inheritdoc/>
         public override void Destroy()
@@ -167,7 +182,7 @@ namespace Stride.GameStudio
                 {
                     var assemblyChange = await changesBuffer.ReceiveAsync(assemblyTrackingCancellation.Token);
 
-                    if (!trackAssemblyChanges || assemblyChange == null)
+                    if (!trackAssemblyChanges || assemblyChange is null)
                         continue;
 
                     // Ignore Binary changes
@@ -189,13 +204,19 @@ namespace Stride.GameStudio
                         if (shouldNotify)
                         {
                             var message = Tr._p("Message", "Some game code files have been modified. Do you want to reload the assemblies?");
-                            ServiceProvider.Get<IEditorDialogService>().AddDelayedNotification(EditorSettings.AskBeforeReloadingAssemblies, message,
-                                Tr._p("Button", "Reload"), Tr._p("Button", "Don't reload"),
+                            ServiceProvider.Get<IEditorDialogService>().AddDelayedNotification(
+                                EditorSettings.AskBeforeReloadingAssemblies,
+                                message,
+                                Tr._p("Button", "Reload"),
+                                Tr._p("Button", "Don't reload"),
                                 yesAction: async () =>
                                 {
+                                    // Wait for current transactions, undo/redo or save to complete before continuing
                                     var undoRedoService = ServiceProvider.Get<IUndoRedoService>();
-                                    // Wait for current transactions, undo/redo or save to complete before continuing.
-                                    await Task.WhenAll(undoRedoService.TransactionCompletion, undoRedoService.UndoRedoCompletion, Session.SaveCompletion);
+                                    await Task.WhenAll(undoRedoService.TransactionCompletion,
+                                                       undoRedoService.UndoRedoCompletion,
+                                                       Session.SaveCompletion);
+
                                     // Reload assembly, if possible
                                     if (ReloadAssembliesCommand.IsEnabled)
                                         ReloadAssembliesCommand.Execute();
@@ -221,13 +242,12 @@ namespace Stride.GameStudio
 
         private struct ModifiedAssembly
         {
-            public PackageLoadedAssembly LoadedAssembly;
+            public Project Project;
 
+            public PackageLoadedAssembly LoadedAssembly;
             public string LoadedAssemblyPath;
 
             public AssemblyChangeType ChangeType;
-
-            public Project Project;
         }
 
         private async Task ReloadAssemblies()
@@ -247,18 +267,18 @@ namespace Stride.GameStudio
                 }
                 else if (modifiedAssembly.Key.ProjectReference != null)
                 {
-                    // If source code has changed, rebuild. If the build is successfull, reload the assembly.
-                    // Otherwise add the assembly back to the list of modified ones.
+                    // If source code has changed, rebuild
                     var result = await BuildProject(modifiedAssembly.Key.ProjectReference.Location);
-
                     if (result.IsSuccessful)
                     {
+                        // If the build is successfull, reload the assembly
                         var assemblyToReload = modifiedAssembly.Value;
                         assemblyToReload.LoadedAssemblyPath = result.AssemblyPath;
                         assembliesToReload.Add(assemblyToReload);
                     }
                     else
                     {
+                        // Build unsuccesful: Add the assembly back to the list of modified ones
                         modifiedAssemblies[modifiedAssembly.Key] = modifiedAssembly.Value;
                     }
                 }
@@ -272,33 +292,45 @@ namespace Stride.GameStudio
             {
                 using (var transaction = Session.UndoRedoService.CreateTransaction())
                 {
-                    var assemblyToAnalyze = assembliesToReload.Where(x => x.LoadedAssembly?.Assembly != null && x.Project != null).ToDictionary(x => x.Project, x => x.LoadedAssembly.Assembly.FullName);
+                    var assemblyToAnalyze = assembliesToReload
+                        .Where(a => a.LoadedAssembly?.Assembly != null &&
+                                    a.Project != null)
+                        .ToDictionary(a => a.Project,
+                                      a => a.LoadedAssembly.Assembly.FullName);
+
                     var logResult = new LoggerResult();
                     BuildLog.AddLogger(logResult);
-                    GameStudioAssemblyReloader.Reload(Session, logResult, async () =>
-                    {
-                        foreach (var assemblyToReload in assemblyToAnalyze)
+
+                    GameStudioAssemblyReloader.Reload(Session, logResult,
+                        postReloadAction: async () =>
                         {
-                            await scriptsSorter.AnalyzeProject(Session, assemblyToReload.Key, assemblyTrackingCancellation.Token);
-                        }
-                        UpdateCommands();
-                    }, () =>
-                    {
-                        foreach (var assemblyToReload in assembliesToReload)
-                        {
-                            if (!modifiedAssemblies.ContainsKey(assemblyToReload.LoadedAssembly))
+                            foreach (var assemblyToReload in assemblyToAnalyze)
                             {
-                                var modifiedAssembly = assemblyToReload;
-                                modifiedAssembly.ChangeType = AssemblyChangeType.Binary;
-                                modifiedAssemblies.Add(assemblyToReload.LoadedAssembly, modifiedAssembly);
+                                await scriptsSorter.AnalyzeProject(Session, assemblyToReload.Key, assemblyTrackingCancellation.Token);
                             }
-                        }
-                    }, assembliesToReload.ToDictionary(x => x.LoadedAssembly, x => x.LoadedAssemblyPath));
-                    Session.AllAssets.ForEach(x => x.PropertyGraph?.RefreshBase());
-                    Session.AllAssets.ForEach(x => x.PropertyGraph?.ReconcileWithBase());
+                            UpdateCommands();
+                        },
+                        undoAction: () =>
+                        {
+                            foreach (var assemblyToReload in assembliesToReload)
+                            {
+                                if (!modifiedAssemblies.ContainsKey(assemblyToReload.LoadedAssembly))
+                                {
+                                    var modifiedAssembly = assemblyToReload;
+                                    modifiedAssembly.ChangeType = AssemblyChangeType.Binary;
+                                    modifiedAssemblies.Add(assemblyToReload.LoadedAssembly, modifiedAssembly);
+                                }
+                            }
+                        },
+                        assembliesToReload.ToDictionary(a => a.LoadedAssembly,
+                                                        a => a.LoadedAssemblyPath));
+
+                    Session.AllAssets.ForEach(a => a.PropertyGraph?.RefreshBase());
+                    Session.AllAssets.ForEach(a => a.PropertyGraph?.ReconcileWithBase());
 
                     Session.UndoRedoService.SetName(transaction, "Reload game assemblies");
                 }
+
                 // Make sure we refresh the property grid so we don't reference any old type
                 Session.AssetViewProperties.RefreshSelectedPropertiesAsync().Forget();
             }
@@ -314,10 +346,10 @@ namespace Stride.GameStudio
             // Make sure it is Windows platform (only supported for now)
             if (Session.CurrentProject.Platform != PlatformType.Windows)
             {
-                await ServiceProvider.Get<IDialogService>()
-                    .MessageBox(
-                        string.Format(Tr._p("Message", "Platform {0} isn't supported for execution."), Session.CurrentProject.Platform),
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                await ServiceProvider.Get<IDialogService>().MessageBox(
+                    string.Format(Tr._p("Message", "Platform {0} isn't supported for execution."), Session.CurrentProject.Platform),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
                 return false;
             }
 
@@ -327,11 +359,9 @@ namespace Stride.GameStudio
             var result = false;
             try
             {
-                // Build projects+assets (note: assets only would be enough)
-                if (!await BuildProjectCore(false))
-                {
+                // Build projects + assets (NOTE: Assets only would be enough)
+                if (!await BuildProjectCore(startProject: false))
                     return false;
-                }
 
                 // Start live debugging
                 return result = await debugService.StartDebug(editor, Session.CurrentProject, assemblyReloadLogger);
@@ -392,7 +422,6 @@ namespace Stride.GameStudio
                 var target = "Build";
                 var extraProperties = new Dictionary<string, string>
                 {
-                    ["StrideBuildEngineLogPipeUrl"] = BuildLog.PipeName,
                     ["StrideBuildEngineLogVerbose"] = "true",
                 };
 
@@ -423,7 +452,7 @@ namespace Stride.GameStudio
                     }
                 }
 
-                if (projectViewModel == null)
+                if (projectViewModel is null)
                 {
                     logger.Error(string.Format(Tr._p("Message", "Platform {0} isn't supported for execution."), Session.CurrentProject.Platform != PlatformType.Shared ? Session.CurrentProject.Platform : PlatformType.Windows));
                     return false;
@@ -431,9 +460,9 @@ namespace Stride.GameStudio
 
                 // Build project
                 currentBuild = VSProjectHelper.CompileProjectAssemblyAsync(projectViewModel.ProjectPath, logger, target, configuration, platformName, extraProperties, BuildRequestDataFlags.ProvideProjectStateAfterBuild);
-                if (currentBuild == null)
+                if (currentBuild is null)
                 {
-                    logger.Error(string.Format(Tr._p("Message", "Unable to load and compile project {0}"), projectViewModel.ProjectPath));
+                    logger.Error(string.Format(Tr._p("Message", "Unable to load and compile project {0}."), projectViewModel.ProjectPath));
                     return false;
                 }
 
@@ -441,16 +470,23 @@ namespace Stride.GameStudio
                 var buildTask = await currentBuild.BuildTask;
 
                 // Execute
-                if (startProject && !currentBuild.IsCanceled && !logger.HasErrors && projectViewModel.Platform != PlatformType.Shared)
+                if (startProject &&
+                    !currentBuild.IsCanceled &&
+                    !logger.HasErrors &&
+                    projectViewModel.Platform != PlatformType.Shared)
                 {
                     switch (projectViewModel.Platform)
                     {
                         case PlatformType.Windows:
+                            // .NET Core: use the .exe launcher
+                            if (Path.GetExtension(assemblyPath).ToLowerInvariant() == ".dll")
+                                assemblyPath = Path.ChangeExtension(assemblyPath, ".exe");
+
                             if (string.Equals(Path.GetExtension(assemblyPath), ".exe", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 if (!File.Exists(assemblyPath))
                                 {
-                                    logger.Error(string.Format(Tr._p("Message", "Unable to reach to output executable: {0}"), assemblyPath));
+                                    logger.Error(string.Format(Tr._p("Message", "Unable to reach to output executable: {0}."), assemblyPath));
                                     return false;
                                 }
                                 var process = new Process
@@ -468,10 +504,13 @@ namespace Stride.GameStudio
                     logger.Info(string.Format(Tr._p("Message", "Deployment of {0} successful."), projectViewModel.Name));
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.Error("An exception occurred during compilation.", e);
-                await ServiceProvider.Get<IDialogService>().MessageBox(string.Format(Tr._p("Message", "An exception occurred while compiling the project: {0}"), e.FormatSummary(true)), MessageBoxButton.OK, MessageBoxImage.Information);
+                logger.Error("An exception occurred during compilation.", ex);
+                await ServiceProvider.Get<IDialogService>().MessageBox(
+                    string.Format(Tr._p("Message", "An exception occurred while compiling the project: {0}"), ex.FormatSummary(true)),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
 
             return !currentBuild.IsCanceled && !logger.HasErrors;
@@ -479,9 +518,12 @@ namespace Stride.GameStudio
 
         private async Task<bool> PrepareBuild()
         {
-            if (Session.CurrentProject == null)
+            if (Session.CurrentProject is null)
             {
-                await ServiceProvider.Get<IDialogService>().MessageBox(Tr._p("Message", "To process the build, set an executable project as the current project in the session explorer."), MessageBoxButton.OK, MessageBoxImage.Information);
+                await ServiceProvider.Get<IDialogService>().MessageBox(
+                    Tr._p("Message", "To process the build, set an executable project as the current project in the session explorer."),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
                 return false;
             }
 
@@ -489,7 +531,10 @@ namespace Stride.GameStudio
 
             if (!saved)
             {
-                await ServiceProvider.Get<IDialogService>().MessageBox(Tr._p("Message", "To build, save the project first."), MessageBoxButton.OK, MessageBoxImage.Information);
+                await ServiceProvider.Get<IDialogService>().MessageBox(
+                    Tr._p("Message", "To build, save the project first."),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
                 return false;
             }
 
@@ -500,20 +545,22 @@ namespace Stride.GameStudio
 
         private struct BuildProjectResult
         {
+            public bool IsSuccessful { get; }
+
+            public string AssemblyPath { get; }
+
             public BuildProjectResult(bool isSuccessful, string assemblyPath)
             {
                 IsSuccessful = isSuccessful;
                 AssemblyPath = assemblyPath;
             }
-            public bool IsSuccessful { get; }
-
-            public string AssemblyPath { get; }
         }
 
         private async Task<BuildProjectResult> BuildProject(UFile projectPath)
         {
             BuildLog.ClearMessages();
             BuildLog.ClearLoggers();
+
             var logger = new LoggerResult();
             RegisterBuildLogger(logger);
 
@@ -529,7 +576,6 @@ namespace Stride.GameStudio
                 var extraProperties = new Dictionary<string, string>
                 {
                     ["SolutionPlatform"] = "Any CPU",
-                    ["StrideBuildEngineLogPipeUrl"] = BuildLog.PipeName,
                     ["StrideBuildEngineLogVerbose"] = "true",
                 };
 
@@ -543,9 +589,12 @@ namespace Stride.GameStudio
                     await currentBuild.BuildTask;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                await ServiceProvider.Get<IDialogService>().MessageBox(string.Format(Tr._p("Message", "An exception occurred while compiling the project: {0}"), e.FormatSummary(true)), MessageBoxButton.OK, MessageBoxImage.Information);
+                await ServiceProvider.Get<IDialogService>().MessageBox(
+                    string.Format(Tr._p("Message", "An exception occurred while compiling the project: {0}"), ex.FormatSummary(true)),
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
             finally
             {

@@ -25,6 +25,7 @@
     <NuGetPath>$(MSBuildThisFileDirectory).nuget\NuGet.exe</NuGetPath>
 
     <XunitRunnerConsoleVersion>2.4.1</XunitRunnerConsoleVersion>
+    <StrideStoreUrl Condition="'$(StrideStoreUrl)' == ''">https://api.nuget.org/v3/index.json</StrideStoreUrl>
     <AdvancedInstallerPath Condition="'$(AdvancedInstallerPath)' == '' And Exists('$(MSBuildProgramFiles32)\Caphyon\Advanced Installer 15.5.1\bin\x86\advinst.exe')">$(MSBuildProgramFiles32)\Caphyon\Advanced Installer 15.5.1\bin\x86\advinst.exe</AdvancedInstallerPath>
     <StrideBuildPrerequisitesInstaller Condition="'$(StrideBuildPrerequisitesInstaller)' == ''">true</StrideBuildPrerequisitesInstaller>
   </PropertyGroup>
@@ -51,7 +52,7 @@
   </Target>
 
   <!--
-    Package Installer: Install Prerequisites
+    Package Installer: Install Prerequisites.
   -->
   <Target Name="PrerequisitesInstaller">
     <Delete Files="$(StrideRoot)Bin\Prerequisites\install-prerequisites.exe"/>
@@ -59,7 +60,7 @@
   </Target>
 
   <!--
-    Perform a full build: Build, Package
+    Perform a full build: Build, Package.
   -->
   <Target Name="FullBuild">
     <CallTarget Targets="Build"/>
@@ -68,7 +69,7 @@
   </Target>
 
   <!--
-    Publish Stride nupkg from this folder to the store
+    Publish Stride .nupkg from this folder to the store.
   -->
   <Target Name="Publish">
     <Error Condition="'$(StrideStoreApiKey)' == ''" Text="Missing environment variable StrideStoreApiKey"/>
@@ -86,7 +87,7 @@
   </Target>
 
   <!--
-    Publish VSIX nupkg from this folder to the store
+    Publish VSIX .nupkg from this folder to the store.
   -->
   <Target Name="PublishVSIX">
     <Error Condition="'$(StrideStoreApiKey)' == ''" Text="Missing environment variable StrideStoreApiKey"/>
@@ -94,7 +95,7 @@
   </Target>
 
   <!--
-    Build Stride: Windows
+    Build Stride: Windows.
   -->
   <Target Name="Clean">
     <Exec Command="RMDIR /Q /S $(StrideRoot)\Bin"/>
@@ -129,11 +130,9 @@
     <Message Text="Done preparing build for version $(StridePackageVersion)"/>
     <TeamCitySetBuildNumber BuildNumber="$(StridePackageVersion)" Condition="'$(TEAMCITY_BUILD_PROPERTIES_FILE)' != '' " />
   </Target>
-
   <PropertyGroup>
     <_StridePackageTargetPrerequisitesInstaller Condition="'$(StrideBuildPrerequisitesInstaller)' == 'true'">PrerequisitesInstaller</_StridePackageTargetPrerequisitesInstaller>
   </PropertyGroup>
-
   <Target Name="Package" DependsOnTargets="PreparePackageBuild;$(_StridePackageTargetPrerequisitesInstaller);Build;VSIXPlugin"/>
 
   <Target Name="RestoreInternal">
@@ -289,7 +288,7 @@
   </Target>
 
   <!--
-    Package Launcher
+    Package Launcher.
   -->
   <Target Name="PackageLauncher" DependsOnTargets="LauncherPrerequisitesInstaller">
     <ItemGroup>
@@ -300,11 +299,11 @@
     <Delete Files="@(FilesToDeleteLauncher)"/>
 
     <!-- Generate the NuGet package for the Launcher application -->
-    <Exec Command='"$(NuGetPath)" pack "$(StrideRoot)sources\launcher\Stride.LauncherApp\Stride.LauncherApp.nuspec" -BasePath "$(StrideRoot)sources\launcher\Stride.LauncherApp\bin\Release" -OutputDirectory "$(StrideRoot)bin\launcher"' />
+    <Exec Command='"$(NuGetPath)" pack "$(StrideRoot)sources\launcher\Stride.Launcher\Stride.Launcher.nuspec" -BasePath "$(StrideRoot)sources\launcher\Stride.Launcher\bin\Release\publish" -OutputDirectory "$(StrideRoot)bin\launcher"' />
   </Target>
 
   <!--
-    Package Installer: StrideSetup.exe
+    Package Installer: StrideSetup.exe.
   -->
   <Target Name="PackageInstallerSimple" DependsOnTargets="PackageLauncher">
     <Delete Files="$(StrideRoot)bin\launcher\StrideSetup.exe"/>
@@ -351,14 +350,14 @@
   <Target Name="PackageInstaller" DependsOnTargets="$(PackageInstallerTarget)"/>
 
   <!--
-    Package Installer: launcher-prerequisites.exe
+    Package Installer: launcher-prerequisites.exe.
   -->
   <Target Name="LauncherPrerequisitesInstaller">
     <Exec Command='"$(AdvancedInstallerPath)" /rebuild "$(StrideRoot)sources\launcher\Prerequisites\launcher-prerequisites.aip"'/>
   </Target>
 
   <!--
-    Perform a full build: Build, Package and PackageInstaller
+    Perform a full build: Build, Package and PackageInstaller.
   -->
   <Target Name="FullBuildLauncher">
     <CallTarget Targets="BuildLauncher"/>
@@ -366,7 +365,7 @@
   </Target>
 
   <!--
-    Publish Launcher nupkg from this folder to the store
+    Publish Launcher nupkg from this folder to the store.
   -->
   <Target Name="PublishLauncher">
     <Error Condition="'$(StrideStoreApiKey)' == ''" Text="Missing environment variable StrideStoreApiKey"/>
@@ -374,7 +373,10 @@
   </Target>
 
   <Target Name="BuildLauncher">
-    <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="StrideSolution=$(StrideSolutionLauncher)"/>
-    <MSBuild Targets="Build" Projects="$(StrideSolutionLauncher).sln" Properties="$(BuildProperties);Platform=Any CPU"/>
+    <PropertyGroup>
+      <StrideSolution>Stride.Launcher</StrideSolution>
+    </PropertyGroup>
+    <MSBuild Targets="Restore" Projects="$(MSBuildThisFileFullPath)" Properties="StridePlatforms=Windows;StrideSolution=$(StrideSolution)"/>
+    <MSBuild Projects="..\sources\launcher\Stride.Launcher\Stride.Launcher.csproj" Targets="Publish" Properties="$(BuildProperties);PublishProfile=FolderProfile;SolutionName=Stride.Launcher" />
   </Target>
 </Project>

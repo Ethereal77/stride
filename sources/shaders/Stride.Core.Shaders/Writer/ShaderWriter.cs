@@ -14,7 +14,7 @@ using Stride.Core.Shaders.Visitor;
 namespace Stride.Core.Shaders.Writer
 {
     /// <summary>
-    /// A writer for a shader.
+    ///   A writer for shaders.
     /// </summary>
     public class ShaderWriter : ShaderWalker
     {
@@ -26,10 +26,10 @@ namespace Stride.Core.Shaders.Writer
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShaderWriter"/> class.
+        ///   Initializes a new instance of the <see cref="ShaderWriter"/> class.
         /// </summary>
-        /// <param name="buildScopeDeclaration">if set to <c>true</c> [build scope declaration].</param>
-        /// <param name="useNodeStack">if set to <c>true</c> [use node stack].</param>
+        /// <param name="buildScopeDeclaration">Value that indicates whether to build scope declaration.</param>
+        /// <param name="useNodeStack">Value that indicates whether to use node stack.</param>
         public ShaderWriter(bool buildScopeDeclaration = false, bool useNodeStack = false)
             : base(buildScopeDeclaration, useNodeStack)
         {
@@ -48,13 +48,7 @@ namespace Stride.Core.Shaders.Writer
         /// <summary>
         ///   Gets the text.
         /// </summary>
-        public string Text
-        {
-            get
-            {
-                return StringBuilder.ToString();
-            }
-        }
+        public string Text => StringBuilder.ToString();
 
         #endregion
 
@@ -518,6 +512,36 @@ namespace Stride.Core.Shaders.Writer
             for (int i = 0; i < genericType.Parameters.Count; i++)
             {
                 var parameter = genericType.Parameters[i];
+                if (i > 0) Write(",").WriteSpace();
+
+                VisitDynamic(parameter);
+            }
+
+            Write(">");
+        }
+
+        /// <inheritdoc />
+        public override void Visit(VectorType vectorType)
+        {
+            Write(vectorType.Name).Write("<");
+            for (int i = 0; i < vectorType.Parameters.Count; i++)
+            {
+                var parameter = vectorType.Parameters[i];
+                if (i > 0) Write(",").WriteSpace();
+
+                VisitDynamic(parameter);
+            }
+
+            Write(">");
+        }
+
+        /// <inheritdoc />
+        public override void Visit(MatrixType vectorType)
+        {
+            Write(vectorType.Name).Write("<");
+            for (int i = 0; i < vectorType.Parameters.Count; i++)
+            {
+                var parameter = vectorType.Parameters[i];
                 if (i > 0) Write(",").WriteSpace();
 
                 VisitDynamic(parameter);

@@ -7,9 +7,12 @@ using Stride.Core.Storage;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Defines a group of descriptors and cbuffer range that are updated together.
-    /// It can be declared in shader using the syntax <c>cbuffer PerView_LogicalGroupName</c> (also works with <c>rgroup</c>).
+    ///   Defines a group of descriptors and constant buffers that are updated together.
     /// </summary>
+    /// <remarks>
+    ///   It can be declared in shader using the syntax <c>cbuffer PerView.LogicalGroupName</c>
+    ///   (also works with <c>rgroup</c>).
+    /// </remarks>
     public struct LogicalGroup
     {
         public ObjectId Hash;

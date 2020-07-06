@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,15 +14,14 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 
 using Stride.Core.Extensions;
-using Stride.PrivacyPolicy;
-using Stride.LauncherApp.Resources;
-using Stride.LauncherApp.Services;
 using Stride.Core.Packages;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
 using Stride.Metrics;
+using Stride.LauncherApp.Resources;
+using Stride.LauncherApp.Services;
 
 namespace Stride.LauncherApp.ViewModels
 {
@@ -52,7 +50,9 @@ namespace Stride.LauncherApp.ViewModels
         internal LauncherViewModel(IViewModelServiceProvider serviceProvider, NugetStore store)
             : base(serviceProvider)
         {
-            if (store == null) throw new ArgumentNullException(nameof(store));
+            if (store == null)
+                throw new ArgumentNullException(nameof(store));
+
             DependentProperties.Add("ActiveVersion", new[] { "ActiveDocumentationPages" });
             this.store = store;
             store.Logger = this;
@@ -61,6 +61,7 @@ namespace Stride.LauncherApp.ViewModels
 
             VsixPackage = new VsixVersionViewModel(this, store, store.VsixPluginId);
             VsixPackageXenko = new VsixVersionViewModel(this, store, store.VsixPluginId.Replace("Stride", "Xenko"));
+
             // Commands
             InstallLatestVersionCommand = new AnonymousTaskCommand(ServiceProvider, InstallLatestVersion) { IsEnabled = false };
             OpenUrlCommand = new AnonymousTaskCommand<string>(ServiceProvider, OpenUrl);
@@ -124,17 +125,26 @@ namespace Stride.LauncherApp.ViewModels
                 {
                     if (logMessages.Count == 0)
                         return "Empty";
-                    return string.Join(Environment.NewLine, logMessages.Select(x => $"[{x.Time.ToString("HH:mm:ss")}] {x.Level}: {x.Message}"));
+
+                    return string.Join(Environment.NewLine, logMessages.Select(msg => $"[{msg.Time:HH:mm:ss}] {msg.Level}: {msg.Message}"));
                 }
             }
         }
 
-        public bool AutoCloseLauncher { get { return autoCloseLauncher; } set { SetValue(ref autoCloseLauncher, value, () => LauncherSettings.CloseLauncherAutomatically = value); } }
+        public bool AutoCloseLauncher
+        {
+            get => autoCloseLauncher;
+            set => SetValue(ref autoCloseLauncher, value, updateAction: () => LauncherSettings.CloseLauncherAutomatically = value);
+        }
 
         /// <summary>
         ///   Gets or sets the visibility status of the launcher.
         /// </summary>
-        public bool IsVisible { get { return isVisible; } set { SetValue(ref isVisible, value); } }
+        public bool IsVisible
+        {
+            get => isVisible;
+            set => SetValue(ref isVisible, value);
+        }
 
         public CommandBase InstallLatestVersionCommand { get; }
 
@@ -157,7 +167,7 @@ namespace Stride.LauncherApp.ViewModels
                     {
                         await SelfUpdater.SelfUpdate(ServiceProvider, store);
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
                         var message = $@"**An error occurred while updating the launcher. If the problem persists, please reinstall this application.**
 ### Log
@@ -167,7 +177,7 @@ namespace Stride.LauncherApp.ViewModels
 
 ### Exception
 ```
-{e.FormatSummary(false).TrimEnd(Environment.NewLine.ToCharArray())}
+{ex.FormatSummary(false).TrimEnd(Environment.NewLine.ToCharArray())}
 ```";
                         await ServiceProvider.Get<IDialogService>().MessageBox(message, MessageBoxButton.OK, MessageBoxImage.Error);
                         // We do not want our users to use the old launcher when a new one is available.
@@ -277,16 +287,16 @@ namespace Stride.LauncherApp.ViewModels
                         var version = new StrideDevVersionViewModel(this, store, package, realPath, true);
                         Dispatcher.Invoke(() => strideVersions.Add(version));
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        await ServiceProvider.Get<IDialogService>().MessageBox(string.Format(Strings.ErrorDevRedirect, e), MessageBoxButton.OK, MessageBoxImage.Information);
+                        await ServiceProvider.Get<IDialogService>().MessageBox(string.Format(Strings.ErrorDevRedirect, ex), MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                // TODO: error
-                e.Ignore();
+                // TODO: Error
+                ex.Ignore();
             }
             finally
             {
@@ -382,10 +392,10 @@ namespace Stride.LauncherApp.ViewModels
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                // TODO: error
-                e.Ignore();
+                // TODO: Error
+                ex.Ignore();
             }
             finally
             {
@@ -502,8 +512,7 @@ namespace Stride.LauncherApp.ViewModels
             try
             {
                 Dispatcher.Invoke(() => StartStudioCommand.IsEnabled = false);
-                var packagePath = ActiveVersion.InstallPath;
-                var mainExecutable = store.LocateMainExecutable(packagePath);
+                var mainExecutable = ActiveVersion.LocateMainExecutable();
 
                 // If version is older than 1.2.0, than we need to log the usage of older version
                 var activeStoreVersion = ActiveVersion as StrideStoreVersionViewModel;
@@ -556,7 +565,7 @@ namespace Stride.LauncherApp.ViewModels
                 Process.Start(url);
             }
             // TODO: Catch only specific exceptions?
-            catch (Exception)
+            catch
             {
                 await ServiceProvider.Get<IDialogService>().MessageBox(Strings.ErrorOpeningBrowser, MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -592,9 +601,7 @@ namespace Stride.LauncherApp.ViewModels
             }
         }
 
-        private void DisplayReleaseAnnouncement()
-        {
-        }
+        private void DisplayReleaseAnnouncement() { }
 
         void IPackagesLogger.Log(MessageLevel level, string message)
         {

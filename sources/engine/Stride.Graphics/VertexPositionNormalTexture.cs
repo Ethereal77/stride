@@ -11,11 +11,27 @@ using Stride.Core.Mathematics;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Describes a custom vertex format structure that contains position, normal and texture information.
+    ///   Describes a vertex format structure that contains position, normal and texture coordinates.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct VertexPositionNormalTexture : IEquatable<VertexPositionNormalTexture>, IVertex
     {
+        /// <summary>
+        ///   Position of the vertex.
+        /// </summary>
+        public Vector3 Position;
+
+        /// <summary>
+        /// Normal vector of the vertex.
+        /// </summary>
+        public Vector3 Normal;
+
+        /// <summary>
+        ///   UV texture coordinates.
+        /// </summary>
+        public Vector2 TextureCoordinate;
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VertexPositionNormalTexture"/> struct.
         /// </summary>
@@ -29,43 +45,32 @@ namespace Stride.Graphics
             TextureCoordinate = textureCoordinate;
         }
 
-        /// <summary>
-        /// XYZ position.
-        /// </summary>
-        public Vector3 Position;
 
-        /// <summary>
-        /// The vertex normal.
-        /// </summary>
-        public Vector3 Normal;
-
-        /// <summary>
-        /// UV texture coordinates.
-        /// </summary>
-        public Vector2 TextureCoordinate;
-        
         /// <summary>
         /// Defines structure byte size.
         /// </summary>
         public static readonly int Size = 32;
 
         /// <summary>
-        /// The vertex layout of this struct.
+        ///   The vertex layout of this struct.
         /// </summary>
         public static readonly VertexDeclaration Layout = new VertexDeclaration(
             VertexElement.Position<Vector3>(),
             VertexElement.Normal<Vector3>(),
             VertexElement.TextureCoordinate<Vector2>());
 
+        public VertexDeclaration GetLayout() => Layout;
+
         public bool Equals(VertexPositionNormalTexture other)
         {
-            return Position.Equals(other.Position) && Normal.Equals(other.Normal) && TextureCoordinate.Equals(other.TextureCoordinate);
+            return Position.Equals(other.Position) &&
+                   Normal.Equals(other.Normal) &&
+                   TextureCoordinate.Equals(other.TextureCoordinate);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is VertexPositionNormalTexture && Equals((VertexPositionNormalTexture)obj);
+            return obj is VertexPositionNormalTexture vertex && Equals(vertex);
         }
 
         public override int GetHashCode()
@@ -77,11 +82,6 @@ namespace Stride.Graphics
                 hashCode = (hashCode * 397) ^ TextureCoordinate.GetHashCode();
                 return hashCode;
             }
-        }
-
-        public VertexDeclaration GetLayout()
-        {
-            return Layout;
         }
 
         public void FlipWinding()
@@ -99,9 +99,6 @@ namespace Stride.Graphics
             return !left.Equals(right);
         }
 
-        public override string ToString()
-        {
-            return string.Format("Position: {0}, Normal: {1}, Texcoord: {2}", Position, Normal, TextureCoordinate);
-        }
+        public override string ToString() => $"Position: {Position}, Normal: {Normal}, Texcoord: {TextureCoordinate}";
     }
 }

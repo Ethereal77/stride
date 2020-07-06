@@ -9,18 +9,18 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
+using Stride.Core;
+using Stride.Core.Extensions;
+using Stride.Core.Annotations;
+using Stride.Core.IO;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel;
-using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Core.Extensions;
-using Stride.Core.IO;
-using Stride.Core.MostRecentlyUsedFiles;
-using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.ViewModel;
 using Stride.Core.Translation;
 using Stride.Core.VisualStudio;
+using Stride.Core.MostRecentlyUsedFiles;
 using Stride.Assets.Effect;
 using Stride.Assets.Presentation.ViewModel;
 using Stride.GameStudio.Services;
@@ -31,22 +31,28 @@ namespace Stride.GameStudio
     {
         private PreviewViewModel preview;
         private DebuggingViewModel debugging;
+
         private string restartArguments;
+
         private readonly List<IDEInfo> availableIDEs;
+
 
         public GameStudioViewModel([NotNull] IViewModelServiceProvider serviceProvider, MostRecentlyUsedFileCollection mru)
             : base(serviceProvider, mru, StrideGameStudio.EditorName, StrideGameStudio.EditorVersionMajor)
         {
-            Panels = new EditionPanelViewModel(ServiceProvider);
             availableIDEs = new List<IDEInfo> { VisualStudioVersions.DefaultIDE };
             availableIDEs.AddRange(VisualStudioVersions.AvailableVisualStudioInstances);
+
+            Panels = new EditionPanelViewModel(ServiceProvider);
+
             NewSessionCommand = new AnonymousCommand(serviceProvider, RestartAndCreateNewSession);
-            OpenAboutPageCommand = new AnonymousCommand(serviceProvider, OpenAboutPage);
             OpenSessionCommand = new AnonymousTaskCommand<UFile>(serviceProvider, RestartAndOpenSession);
             ReloadSessionCommand = new AnonymousTaskCommand(serviceProvider, () => RestartAndOpenSession(Session.SessionFilePath));
+            OpenAboutPageCommand = new AnonymousCommand(serviceProvider, OpenAboutPage);
         }
 
-        public static GameStudioViewModel GameStudio => (GameStudioViewModel)Instance;
+
+        public static GameStudioViewModel GameStudio => (GameStudioViewModel) Instance;
 
         [NotNull]
         public EditionPanelViewModel Panels { get; }
@@ -60,6 +66,7 @@ namespace Stride.GameStudio
         [NotNull]
         public IReadOnlyList<IDEInfo> AvailableIDEs => availableIDEs;
 
+
         [NotNull]
         public ICommandBase NewSessionCommand { get; }
 
@@ -72,6 +79,7 @@ namespace Stride.GameStudio
         [NotNull]
         public ICommandBase ReloadSessionCommand { get; }
 
+
         protected internal override IEnumerable<string> TextAssetTypes
         {
             get
@@ -80,6 +88,7 @@ namespace Stride.GameStudio
                 yield return nameof(EffectCompositorAsset);
             }
         }
+
 
         protected override void RestartAndCreateNewSession()
         {
@@ -94,13 +103,12 @@ namespace Stride.GameStudio
                 await ServiceProvider.Get<IDialogService>().MessageBox(Tr._p("Message", "The file {0} does not exist.").ToFormat(sessionPath.ToWindowsPath()));
                 return;
             }
-            if (sessionPath == null)
-            {
+
+            if (sessionPath is null)
                 sessionPath = await EditorDialogHelper.BrowseForExistingProject(ServiceProvider);
-            }
 
             // Operation cancelled
-            if (sessionPath == null)
+            if (sessionPath is null)
                 return;
 
             restartArguments = $"\"{sessionPath.ToWindowsPath()}\"" + GetCommonArguments();
@@ -115,7 +123,7 @@ namespace Stride.GameStudio
         }
 
         /// <summary>
-        /// Attempts to close the window and then restarts if closing succeeded.
+        ///   Attempts to close the main window and then restart Game Studio if closing succeeded.
         /// </summary>
         [NotNull]
         private Task CloseAndRestart()
@@ -136,15 +144,16 @@ namespace Stride.GameStudio
                 {
                     StartInfo =
                     {
-                        FileName = Assembly.GetExecutingAssembly().Location,
-                        Arguments = restartArguments,
+                        // Make sure to use .exe rather than .dll (.NET Core)
+                        FileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, ".exe"),
+                        Arguments = restartArguments
                     }
                 };
                 process.Start();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                e.Ignore();
+                ex.Ignore();
             }
         }
 

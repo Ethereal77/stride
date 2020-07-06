@@ -16,18 +16,22 @@ namespace Stride.Core.AssemblyProcessor
         public bool Process(AssemblyProcessorContext context)
         {
             var assembly = context.Assembly;
-            var moduleInitializers = new List<KeyValuePair<int, MethodReference>>();
+            var moduleInitializers = new List<(int Order, MethodReference Method)>();
 
             // Generate a module initializer for all types, including nested types
             foreach (var type in assembly.MainModule.GetAllTypes())
             {
                 foreach (var method in type.Methods)
                 {
-                    var moduleInitializerAttribute = method.CustomAttributes.FirstOrDefault(x => x.AttributeType.FullName == "Stride.Core.ModuleInitializerAttribute");
+                    var moduleInitializerAttribute = method.CustomAttributes.FirstOrDefault(
+                        attrib => attrib.AttributeType.FullName == "Stride.Core.ModuleInitializerAttribute");
+
                     if (moduleInitializerAttribute != null)
                     {
-                        var order = moduleInitializerAttribute.HasConstructorArguments ? (int)moduleInitializerAttribute.ConstructorArguments[0].Value : 0;
-                        moduleInitializers.Add(new KeyValuePair<int, MethodReference>(order, method));
+                        var order = moduleInitializerAttribute.HasConstructorArguments
+                            ? (int) moduleInitializerAttribute.ConstructorArguments[0].Value : 0;
+
+                        moduleInitializers.Add((order, method));
                     }
                 }
             }
@@ -36,12 +40,10 @@ namespace Stride.Core.AssemblyProcessor
                 return false;
 
             // Sort by Order property
-            moduleInitializers = moduleInitializers.OrderBy(x => x.Key).ToList();
+            moduleInitializers = moduleInitializers.OrderBy(x => x.Order).ToList();
 
             // Get or create module static constructor
-            Instruction returnInstruction;
-            var staticConstructor = OpenModuleConstructor(assembly, out returnInstruction);
-
+            var staticConstructor = OpenModuleConstructor(assembly, out Instruction returnInstruction);
             var il = staticConstructor.Body.GetILProcessor();
 
             var newReturnInstruction = Instruction.Create(returnInstruction.OpCode);
@@ -53,7 +55,7 @@ namespace Stride.Core.AssemblyProcessor
             staticConstructor.Body.SimplifyMacros();
             foreach (var moduleInitializer in moduleInitializers)
             {
-                il.Append(Instruction.Create(OpCodes.Call, moduleInitializer.Value));
+                il.Append(Instruction.Create(OpCodes.Call, moduleInitializer.Method));
             }
             il.Append(newReturnInstruction);
             staticConstructor.Body.OptimizeMacros();
@@ -61,18 +63,19 @@ namespace Stride.Core.AssemblyProcessor
             return true;
         }
 
-        public static MethodDefinition OpenModuleConstructor(AssemblyDefinition assembly, out Instruction returnInstruction)
+        private static MethodDefinition OpenModuleConstructor(AssemblyDefinition assembly, out Instruction returnInstruction)
         {
-            // Get or create module static constructor
+            // Get or create the module static constructor
             var voidType = assembly.MainModule.TypeSystem.Void;
             var moduleClass = assembly.MainModule.Types.First(t => t.Name == "<Module>");
             var staticConstructor = moduleClass.GetStaticConstructor();
-            if (staticConstructor == null)
+            if (staticConstructor is null)
             {
                 staticConstructor = new MethodDefinition(".cctor",
                     MethodAttributes.Private | MethodAttributes.HideBySig | MethodAttributes.Static |
                     MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
                     voidType);
+
                 staticConstructor.Body.GetILProcessor().Append(Instruction.Create(OpCodes.Ret));
 
                 moduleClass.Methods.Add(staticConstructor);

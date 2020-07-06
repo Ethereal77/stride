@@ -5,41 +5,38 @@
 
 using System;
 
-namespace NShader
+namespace Stride.VisualStudio.Commands.Shaders
 {
     /// <summary>
-    /// A log message for a particular line.
+    ///   Represents a diagnostics message for a particular line of shader source code.
     /// </summary>
     [Serializable]
     public class RawShaderAnalysisMessage
     {
         /// <summary>
-        /// Gets or sets the Span.
+        ///   Gets or sets the text span this message refers to.
         /// </summary>
-        /// <value>The Span.</value>
+        /// <value>The text span this message refers to.</value>
         public RawSourceSpan Span { get; set; }
 
         /// <summary>
-        /// Gets or sets the message.
+        ///   Gets or sets the message.
         /// </summary>
         /// <value>The message.</value>
         public string Text { get; set; }
 
         /// <summary>
-        /// Gets or sets the code.
+        ///   Gets or sets the shader source code.
         /// </summary>
-        /// <value>The code.</value>
+        /// <value>The shader source code.</value>
         public string Code { get; set; }
 
         /// <summary>
-        /// Gets or sets the type.
+        ///   Gets or sets the type.
         /// </summary>
         /// <value>The type.</value>
         public string Type { get; set; }
 
-        public override string ToString()
-        {
-            return string.Format("{0}: {1} {2} : {3}", this.Span, Type, this.Code, this.Text);
-        }
+        public override string ToString() => $"{Span}: {Type} {Code} : {Text}";
     }
 }

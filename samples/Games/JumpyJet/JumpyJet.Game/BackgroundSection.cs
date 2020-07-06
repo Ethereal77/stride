@@ -40,7 +40,7 @@ namespace JumpyJet
         public BackgroundSection(Sprite backgroundSprite, Vector3 screenVirtualResolution, float scrollSpeed, float depth, Vector2 startPos = default(Vector2))
         {
             screenResolution = new Int2((int)screenVirtualResolution.X, (int)screenVirtualResolution.Y);
-            screenCenter = new Vector2(screenVirtualResolution.X / 2, screenVirtualResolution.Y /2);
+            screenCenter = new Vector2(screenVirtualResolution.X / 2, screenVirtualResolution.Y / 2);
 
             this.depth = depth;
             firstQuadPos = startPos;
@@ -59,7 +59,7 @@ namespace JumpyJet
             if (IsUpdating)
             {
                 // Update Scroll position
-                if (ScrollPos > textureRegion.Width)
+                if (ScrollPos >= textureRegion.Width)
                     ScrollPos = 0;
 
                 ScrollPos += elapsedTime * ScrollSpeed;
@@ -69,7 +69,7 @@ namespace JumpyJet
 
             // DrawParallax the first quad
             spriteBatch.Draw(texture, firstQuadPos + screenCenter, firstQuadRegion, Color.White, 0f, firstQuadOrigin, 1f, SpriteEffects.None, ImageOrientation.AsIs, depth);
-            
+
             if (secondQuadRegion.Width > 0)
             {
                 // DrawParallax the second quad
@@ -109,7 +109,7 @@ namespace JumpyJet
             // Update second Quad
             // Calculate new X position and width of the second quad
             var secondQuadNewWidth = (ScrollPos + screenResolution.X) - textureRegion.Width;
-            var secondQuadNewXPosition = (screenResolution .X/ 2 - secondQuadNewWidth) + secondQuadNewWidth / 2;
+            var secondQuadNewXPosition = (screenResolution.X - secondQuadNewWidth) / 2;
 
             secondQuadRegion.Width = secondQuadNewWidth;
             secondQuadPos.X = secondQuadNewXPosition;
