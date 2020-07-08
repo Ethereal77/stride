@@ -17,10 +17,26 @@ namespace Stride.Graphics
     [DataSerializer(typeof(Serializer))]
     public class VertexDeclaration : IEquatable<VertexDeclaration>
     {
-        private readonly VertexElement[] elements;
-        private readonly int instanceCount;
-        private readonly int vertexStride;
         private readonly int hashCode;
+
+        /// <summary>
+        ///   Gets the vertex elements.
+        /// </summary>
+        /// <value>An array of the <see cref="VertexElement"/> that compose a vertex.</value>
+        public VertexElement[] VertexElements { get; }
+
+        /// <summary>
+        ///   Gets the instance count.
+        /// </summary>
+        /// <value>The instance count.</value>
+        public int InstanceCount { get; }
+
+        /// <summary>
+        ///   Gets the vertex stride.
+        /// </summary>
+        /// <value>The vertex stride, in bytes.</value>
+        public int VertexStride { get; }
+
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="VertexDeclaration"/> class.
@@ -32,7 +48,7 @@ namespace Stride.Graphics
         /// </summary>
         /// <param name="elements">The elements that compose a vertex.</param>
         public VertexDeclaration(params VertexElement[] elements)
-            : this(elements, 0, 0)
+            : this(elements, instanceCount: 0, vertexStride: 0)
         { }
 
         /// <summary>
@@ -47,38 +63,19 @@ namespace Stride.Graphics
             if (elements is null)
                 throw new ArgumentNullException(nameof(elements));
 
-            this.elements = elements;
-            this.vertexStride = vertexStride == 0 ? VertexElementValidator.GetVertexStride(elements) : vertexStride;
-            this.instanceCount = instanceCount;
+            VertexElements = elements;
+            VertexStride = vertexStride == 0 ? VertexElementValidator.GetVertexStride(elements) : vertexStride;
+            InstanceCount = instanceCount;
 
-            // Validate vertices
-            VertexElementValidator.Validate(vertexStride, elements);
+            // Validate vertex declaration elements
+            VertexElementValidator.Validate(VertexStride, VertexElements);
 
-            hashCode = instanceCount;
-            hashCode = (hashCode * 397) ^ vertexStride;
-            foreach (var vertexElement in elements)
-            {
+            hashCode = InstanceCount;
+            hashCode = (hashCode * 397) ^ VertexStride;
+            foreach (var vertexElement in VertexElements)
                 hashCode = (hashCode * 397) ^ vertexElement.GetHashCode();
-            }
         }
 
-        /// <summary>
-        ///   Gets the vertex elements.
-        /// </summary>
-        /// <value>An array of the <see cref="VertexElement"/> that compose a vertex.</value>
-        public VertexElement[] VertexElements => elements;
-
-        /// <summary>
-        ///   Gets the instance count.
-        /// </summary>
-        /// <value>The instance count.</value>
-        public int InstanceCount => instanceCount;
-
-        /// <summary>
-        ///   Gets the vertex stride.
-        /// </summary>
-        /// <value>The vertex stride, in bytes.</value>
-        public int VertexStride => vertexStride;
 
         /// <summary>
         ///   Enumerates <see cref="VertexElement"/> with declared offsets.
@@ -138,9 +135,9 @@ namespace Stride.Graphics
                 return true;
 
             return hashCode == other.hashCode &&
-                   vertexStride == other.vertexStride &&
-                   instanceCount == other.instanceCount &&
-                   Utilities.Compare(elements, other.elements);
+                   VertexStride == other.VertexStride &&
+                   InstanceCount == other.InstanceCount &&
+                   Utilities.Compare(VertexElements, other.VertexElements);
         }
 
         public override bool Equals(object obj)
@@ -148,10 +145,7 @@ namespace Stride.Graphics
             return (obj is VertexDeclaration vertexDeclaration) && Equals(vertexDeclaration);
         }
 
-        public override int GetHashCode()
-        {
-            return hashCode;
-        }
+        public override int GetHashCode() => hashCode;
 
         /// <summary>
         ///   Performs an implicit conversion from <see cref="VertexElement"/> to <see cref="VertexDeclaration"/>.
@@ -189,9 +183,9 @@ namespace Stride.Graphics
                 }
                 else
                 {
-                    stream.Write(obj.elements);
-                    stream.Write(obj.instanceCount);
-                    stream.Write(obj.vertexStride);
+                    stream.Write(obj.VertexElements);
+                    stream.Write(obj.InstanceCount);
+                    stream.Write(obj.VertexStride);
                 }
             }
 
