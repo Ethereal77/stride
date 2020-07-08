@@ -25,6 +25,7 @@ using Stride.Assets.Presentation.AssetEditors.Gizmos;
 using Stride.Assets.Presentation.NodePresenters.Commands;
 using Stride.Assets.Presentation.NodePresenters.Updaters;
 using Stride.Assets.Presentation.SceneEditor.Services;
+using Stride.Assets.Presentation.ViewModel;
 using Stride.Assets.Presentation.ViewModel.CopyPasteProcessors;
 using Stride.Engine;
 using Stride.Editor;
@@ -201,6 +202,8 @@ namespace Stride.Assets.Presentation
         public override void InitializeSession(SessionViewModel session)
         {
             session.ServiceProvider.RegisterService(new StrideDialogService());
+
+            _ = new StrideAssetsViewModel(session);
 
             session.AssetViewProperties.RegisterNodePresenterCommand(new FetchEntityCommand());
             session.AssetViewProperties.RegisterNodePresenterCommand(new SetEntityReferenceCommand());
