@@ -3,19 +3,17 @@
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-
 using Stride.Core;
-using Stride.Core.ReferenceCounting;
 
 namespace Stride.Graphics
 {
     /// <summary>
-    ///   Reoresents a class that abstracts a
-    /// This class is a frontend to <see cref="SwapChain" /> and <see cref="SwapChain1" />.
+    ///   Reoresents a class that abstracts a swap chain, a collection of backbuffers that are flipped or copied to
+    ///   a frontbuffer to show the rendered image on the screen.
     /// </summary>
     /// <remarks>
-    /// In order to create a new <see cref="GraphicsPresenter"/>, a <see cref="GraphicsDevice"/> should have been initialized first.
+    ///   In order to create a new <see cref="GraphicsPresenter"/>, a <see cref="Graphics.GraphicsDevice"/> should have
+    ///   been initialized first.
     /// </remarks>
     public abstract class GraphicsPresenter : ComponentBase
     {

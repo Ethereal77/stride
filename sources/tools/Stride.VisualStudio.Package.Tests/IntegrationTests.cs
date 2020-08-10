@@ -49,9 +49,10 @@ namespace Stride.VisualStudio.Package.Tests
     public class IntegrationTests : IDisposable
     {
         private const string StartArguments = @"/RootSuffix Stride /resetsettings Profiles\General.vssettings";
-        private DTE dte;
-        private Process process;
-        private bool killVisualStudioProcessDuringTearDown;
+
+        private readonly DTE dte;
+        private readonly Process process;
+        private readonly bool killVisualStudioProcessDuringTearDown;
 
         public IntegrationTests()
         {

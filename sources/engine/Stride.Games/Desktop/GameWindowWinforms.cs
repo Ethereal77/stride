@@ -20,12 +20,11 @@ using Size = System.Drawing.Size;
 namespace Stride.Games
 {
     /// <summary>
-    /// An abstract window.
+    ///   Represents a <see cref="GameWindow"/> that renders and processes the input on a <see cref="System.Windows.Forms.Control"/>.
     /// </summary>
     internal class GameWindowWinforms : GameWindow<Control>
     {
         private bool isMouseVisible;
-
         private bool isMouseCurrentlyHidden;
 
         public Control Control;
@@ -43,17 +42,9 @@ namespace Stride.Games
         private bool allowUserResizing;
         private bool isBorderLess;
 
-        internal GameWindowWinforms()
-        {
-        }
+        internal GameWindowWinforms() { }
 
-        public override WindowHandle NativeWindow
-        {
-            get
-            {
-                return windowHandle;
-            }
-        }
+        public override WindowHandle NativeWindow => windowHandle;
 
         public override void BeginScreenDeviceChange(bool willBeFullScreen)
         {
@@ -116,8 +107,7 @@ namespace Stride.Games
             }
 
             // Notifies the GameForm about the fullscreen state
-            var gameForm = form as GameForm;
-            if (gameForm != null)
+            if (form is GameForm gameForm)
             {
                 gameForm.IsFullScreen = isFullScreenMaximized;
             }
@@ -155,8 +145,7 @@ namespace Stride.Games
             Control.MouseLeave += GameWindowForm_MouseLeave;
 
             form = Control as Form;
-            var gameForm = Control as GameForm;
-            if (gameForm != null)
+            if (Control is GameForm gameForm)
             {
                 //gameForm.AppActivated += OnActivated;
                 //gameForm.AppDeactivated += OnDeactivated;
@@ -209,6 +198,11 @@ namespace Stride.Games
             }
         }
 
+        public override IMessageLoop CreateUserManagedMessageLoop()
+        {
+            return new WindowsMessageLoop(Control);
+        }
+
         private void GameWindowForm_MouseEnter(object sender, System.EventArgs e)
         {
             if (!isMouseVisible && !isMouseCurrentlyHidden)
@@ -229,10 +223,8 @@ namespace Stride.Games
 
         public override bool IsMouseVisible
         {
-            get
-            {
-                return isMouseVisible;
-            }
+            get => isMouseVisible;
+
             set
             {
                 if (isMouseVisible != value)
@@ -256,26 +248,20 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="GameWindow" /> is visible.
+        ///   Gets or sets a value indicating whether this <see cref="GameWindow" /> is visible.
         /// </summary>
-        /// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if the window is visible; otherwise, <c>false</c>.</value>
         public override bool Visible
         {
-            get
-            {
-                return Control.Visible;
-            }
-            set
-            {
-                Control.Visible = value;
-            }
+            get => Control.Visible;
+            set => Control.Visible = value;
         }
 
         public override Int2 Position
         {
             get
             {
-                if (Control == null)
+                if (Control is null)
                     return base.Position;
 
                 return new Int2(Control.Location.X, Control.Location.Y);
@@ -304,10 +290,8 @@ namespace Stride.Games
 
         public override bool AllowUserResizing
         {
-            get
-            {
-                return allowUserResizing;
-            }
+            get => allowUserResizing;
+
             set
             {
                 if (form != null)
@@ -320,10 +304,8 @@ namespace Stride.Games
 
         public override bool IsBorderLess
         {
-            get
-            {
-                return isBorderLess;
-            }
+            get => isBorderLess;
+
             set
             {
                 if (isBorderLess != value)
@@ -358,13 +340,7 @@ namespace Stride.Games
             }
         }
 
-        public override DisplayOrientation CurrentOrientation
-        {
-            get
-            {
-                return DisplayOrientation.Default;
-            }
-        }
+        public override DisplayOrientation CurrentOrientation => DisplayOrientation.Default;
 
         public override bool IsMinimized
         {

@@ -7,14 +7,12 @@ namespace Stride.Games
     /// <summary>
     ///   Base class for all <see cref="GameContext"/> on the Windows platform.
     /// </summary>
-    /// <typeparam name="TControl"></typeparam>
+    /// <typeparam name="TControl">Type of the control on which to present the game.</typeparam>
     public abstract class GameContextDesktop<TControl> : GameContext<TControl>
     {
         /// <inheritDoc/>
         protected GameContextDesktop(TControl control, int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false)
-            : base(control, requestedWidth, requestedHeight)
-        {
-            IsUserManagingRun = isUserManagingRun;
-        }
+            : base(control, requestedWidth, requestedHeight, isUserManagingRun)
+        { }
     }
 }

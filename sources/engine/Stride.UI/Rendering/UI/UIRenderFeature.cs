@@ -46,6 +46,11 @@ namespace Stride.Rendering.UI
         /// </remarks>
         public UIElement UIElementUnderMouseCursor { get; private set; }
 
+        public UIRenderFeature()
+        {
+            SortKey = 192;
+        }
+
         protected override void InitializeCore()
         {
             base.InitializeCore();

@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 using Stride.Core;
 using Stride.Core.Annotations;
@@ -17,8 +16,11 @@ using Stride.Games;
 namespace Stride.Navigation.Processors
 {
     /// <summary>
-    /// Manages the loading of the native side navigation meshes. Will only load one version of the navigation mesh if it is referenced by multiple components
+    ///   Represents an <see cref="EntityProcessor"/> that manages the loading of <see cref="NavigationMesh"/>es.
     /// </summary>
+    /// <remarks>
+    ///   It will only load one version of the Navigation Mesh if it is referenced by multiple Components.
+    /// </remarks>
     public class NavigationProcessor : EntityProcessor<NavigationComponent, NavigationProcessor.AssociatedData>
     {
         private readonly Dictionary<NavigationMesh, NavigationMeshData> loadedNavigationMeshes = new Dictionary<NavigationMesh, NavigationMeshData>();
@@ -39,8 +41,8 @@ namespace Stride.Navigation.Processors
         protected override void OnSystemAdd()
         {
             gameSystemCollection = Services.GetService<IGameSystemCollection>() as GameSystemCollection;
-            if (gameSystemCollection == null)
-                throw new Exception("NavigationProcessor can not access the game systems collection");
+            if (gameSystemCollection is null)
+                throw new Exception("NavigationProcessor can not access the game systems collection.");
 
             gameSystemCollection.CollectionChanged += GameSystemsOnCollectionChanged;
         }
@@ -50,7 +52,7 @@ namespace Stride.Navigation.Processors
         {
             if (gameSystemCollection != null)
             {
-                gameSystemCollection.CollectionChanged += GameSystemsOnCollectionChanged;
+                gameSystemCollection.CollectionChanged -= GameSystemsOnCollectionChanged;
             }
 
             if (dynamicNavigationMeshSystem != null)
@@ -92,8 +94,9 @@ namespace Stride.Navigation.Processors
         private void DynamicNavigationMeshSystemOnNavigationMeshUpdatedUpdated(object sender, NavigationMeshUpdatedEventArgs eventArgs)
         {
             var newNavigationMesh = eventArgs.BuildResult.NavigationMesh;
-            NavigationMeshData data;
-            if (eventArgs.OldNavigationMesh != null && loadedNavigationMeshes.TryGetValue(eventArgs.OldNavigationMesh, out data))
+
+            if (eventArgs.OldNavigationMesh != null &&
+                loadedNavigationMeshes.TryGetValue(eventArgs.OldNavigationMesh, out NavigationMeshData data))
             {
                 // Move to new navigation mesh
                 loadedNavigationMeshes.Remove(eventArgs.OldNavigationMesh);
@@ -109,15 +112,12 @@ namespace Stride.Navigation.Processors
                     var loadedGroup = data.LoadedGroups[oldGroupKey];
 
                     // See if this layer was updated
-                    NavigationMeshLayerUpdateInfo layerUpdateInfo;
-                    if (!updatedLayers.TryGetValue(oldGroupKey, out layerUpdateInfo))
+                    if (!updatedLayers.TryGetValue(oldGroupKey, out NavigationMeshLayerUpdateInfo layerUpdateInfo))
                         continue;
 
-                    // Check if the new navigation mesh contains this layer
-                    //  if it does not, that means it was removed completely and we
-                    //  will remove all the loaded tiles in the loop below
-                    NavigationMeshLayer newLayer = null;
-                    newNavigationMesh.Layers.TryGetValue(oldGroupKey, out newLayer);
+                    // Check if the new navigation mesh contains this layer.
+                    //   If not, that means it was removed completely and we will remove all the loaded tiles in the loop below
+                    newNavigationMesh.Layers.TryGetValue(oldGroupKey, out NavigationMeshLayer newLayer);
 
                     foreach (var updatedTileCoord in layerUpdateInfo.UpdatedTiles)
                     {
@@ -128,8 +128,7 @@ namespace Stride.Navigation.Processors
                                 continue;
                         }
 
-                        // Either add the tile if it is contained in the new navigation mesh or
-                        //  try to remove it if it does not
+                        // Either add the tile if it is contained in the new navigation mesh or try to remove it if it does not
                         if (newTile != null)
                         {
                             loadedGroup.RecastNavigationMesh.AddOrReplaceTile(newTile.Data);
@@ -142,8 +141,7 @@ namespace Stride.Navigation.Processors
                 }
             }
 
-            // Update loaded navigation meshes for components that are useing it,
-            //  in case a group was added
+            // Update loaded navigation meshes for components that are using it, in case a group was added
             var componentsToUpdate = ComponentDatas.Values.Where(x => x.Component.NavigationMesh == null).ToArray();
             foreach (var component in componentsToUpdate)
             {
@@ -153,14 +151,14 @@ namespace Stride.Navigation.Processors
 
         private void ComponentOnNavigationMeshChanged(object sender, EventArgs eventArgs)
         {
-            var data = ComponentDatas[(NavigationComponent)sender];
+            var data = ComponentDatas[(NavigationComponent) sender];
             UpdateNavigationMesh(data);
         }
 
         private void UpdateNavigationMesh(AssociatedData data)
         {
             var navigationMeshToLoad = data.Component.NavigationMesh;
-            if (navigationMeshToLoad == null && dynamicNavigationMeshSystem != null)
+            if (navigationMeshToLoad is null && dynamicNavigationMeshSystem != null)
             {
                 // Load dynamic navigation mesh when no navigation mesh is specified on the component
                 navigationMeshToLoad = dynamicNavigationMeshSystem?.CurrentNavigationMesh;
@@ -179,13 +177,15 @@ namespace Stride.Navigation.Processors
         private void UpdateSceneOffset(AssociatedData data)
         {
             // Store scene offset of entity in the component, which will make all the queries local to the baked navigation mesh (for baked navigation only)
-            data.Component.SceneOffset = data.Component.NavigationMesh != null ? data.Component.Entity.Scene.Offset : Vector3.Zero;
+            data.Component.SceneOffset = data.Component.NavigationMesh != null
+                ? data.Component.Entity.Scene.Offset
+                : Vector3.Zero;
         }
 
         private void GameSystemsOnCollectionChanged(object sender, TrackingCollectionChangedEventArgs trackingCollectionChangedEventArgs)
         {
             // Detect addition of dynamic navigation mesh system
-            if (dynamicNavigationMeshSystem == null)
+            if (dynamicNavigationMeshSystem is null)
             {
                 dynamicNavigationMeshSystem = gameSystemCollection.OfType<DynamicNavigationMeshSystem>().FirstOrDefault();
                 if (dynamicNavigationMeshSystem != null)
@@ -196,16 +196,15 @@ namespace Stride.Navigation.Processors
         }
 
         /// <summary>
-        /// Loads or references a <see cref="RecastNavigationMesh"/> for a group of a navigation mesh
+        ///   Loads or references a <see cref="NavigationMesh"/> for a group of a navigation meshes.
         /// </summary>
         [CanBeNull]
         private NavigationMeshGroupData Load(NavigationMesh mesh, Guid groupId)
         {
-            if (mesh == null || groupId == Guid.Empty)
+            if (mesh is null || groupId == Guid.Empty)
                 return null;
 
-            NavigationMeshData data;
-            if (!loadedNavigationMeshes.TryGetValue(mesh, out data))
+            if (!loadedNavigationMeshes.TryGetValue(mesh, out NavigationMeshData data))
             {
                 loadedNavigationMeshes.Add(mesh, data = new NavigationMeshData
                 {
@@ -213,12 +212,11 @@ namespace Stride.Navigation.Processors
                 });
             }
 
-            NavigationMeshGroupData groupData;
-            if (!data.LoadedGroups.TryGetValue(groupId, out groupData))
+            if (!data.LoadedGroups.TryGetValue(groupId, out NavigationMeshGroupData groupData))
             {
-                NavigationMeshLayer layer;
-                if (!mesh.Layers.TryGetValue(groupId, out layer))
-                    return null; // Group not present in navigation mesh
+                if (!mesh.Layers.TryGetValue(groupId, out NavigationMeshLayer layer))
+                    // Group not present in navigation mesh
+                    return null;
 
                 data.LoadedGroups.Add(groupId, groupData = new NavigationMeshGroupData
                 {
@@ -231,7 +229,7 @@ namespace Stride.Navigation.Processors
                 foreach (var tile in layer.Tiles)
                 {
                     if (!groupData.RecastNavigationMesh.AddOrReplaceTile(tile.Value.Data))
-                        throw new InvalidOperationException("Failed to add tile");
+                        throw new InvalidOperationException("Failed to add tile to the Navigation Mesh.");
                 }
             }
 
@@ -240,7 +238,7 @@ namespace Stride.Navigation.Processors
         }
 
         /// <summary>
-        /// Removes a reference to a group
+        ///   Removes a reference to a group.
         /// </summary>
         private void Unload(NavigationMeshGroupData group)
         {
@@ -263,7 +261,7 @@ namespace Stride.Navigation.Processors
         }
 
         /// <summary>
-        /// Associated data for navigation mesh components
+        ///   Represents the data associated to <see cref="NavigationComponent"/>.
         /// </summary>
         public class AssociatedData
         {
@@ -272,7 +270,7 @@ namespace Stride.Navigation.Processors
         }
 
         /// <summary>
-        /// Contains groups that are loaded for a navigation mesh
+        ///   Represents the data of the groups that are loaded for a <see cref="Stride.Navigation.NavigationMesh"/>.
         /// </summary>
         internal class NavigationMeshData
         {
@@ -281,7 +279,7 @@ namespace Stride.Navigation.Processors
         }
 
         /// <summary>
-        /// A loaded group of a navigation mesh
+        ///   Represents a loaded group of a <see cref="NavigationMesh"/>.
         /// </summary>
         internal class NavigationMeshGroupData : IReferencable
         {

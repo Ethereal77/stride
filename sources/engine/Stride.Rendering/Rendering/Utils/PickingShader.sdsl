@@ -5,7 +5,7 @@
 namespace Stride.Rendering
 {
     /// <summary>
-    /// A shader used to output the id of the model component, mesh and material for a particular RenderMesh
+    ///   A shader used to output the Id of the Model component, Mesh and Material for a particular RenderMesh.
     /// </summary>
     shader PickingShader : ShaderBase
     {
@@ -16,7 +16,10 @@ namespace Stride.Rendering
 
         stage override void PSMain()
         {
-            streams.ColorTarget = PickingData;
+            float modelComponentId = PickingData.x + (min(streams.InstanceID, 1023.0) / 1024.0);
+            float meshMaterialIndex = PickingData.y;
+
+            streams.ColorTarget = float4(modelComponentId, meshMaterialIndex, 1, 1);
         }
     };
 }

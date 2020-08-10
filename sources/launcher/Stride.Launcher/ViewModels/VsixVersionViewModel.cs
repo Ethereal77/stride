@@ -116,9 +116,9 @@ namespace Stride.LauncherApp.ViewModels
             ServerPackage = await Launcher.RunLockTask(() => Store.FindSourcePackagesById(packageId, CancellationToken.None).Result.OrderByDescending(p => p.Version).FirstOrDefault());
         }
 
-        private void ExecuteAction()
+        public async Task ExecuteAction()
         {
-            Task.Run(async () =>
+            await Task.Run(async () =>
             {
                 await Download(false);
 

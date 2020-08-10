@@ -9,6 +9,7 @@ using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
 using Stride.Engine;
 using Stride.Games;
+using Stride.Graphics;
 using Stride.Physics.Engine;
 using Stride.Rendering;
 
@@ -18,9 +19,27 @@ namespace Stride.Physics
     {
         public class AssociatedData
         {
+            /// <summary>
+            ///   The associated PhysicsComponent of the Entity.
+            /// </summary>
             public PhysicsComponent PhysicsComponent;
+
+            /// <summary>
+            ///   The associated Transform of the Entity.
+            /// </summary>
             public TransformComponent TransformComponent;
-            public ModelComponent ModelComponent; //not mandatory, could be null e.g. invisible triggers
+
+            /// <summary>
+            ///   The associated Model of the Entity.
+            /// </summary>
+            /// <remarks>
+            ///   This component is not mandatory. It can be <c>null</c> (for example, for invisible triggers).
+            /// </remarks>
+            public ModelComponent ModelComponent;
+
+            /// <summary>
+            ///   A value indicating whether the bone matrices have been updated.
+            /// </summary>
             public bool BoneMatricesUpdated;
         }
 
@@ -105,10 +124,13 @@ namespace Stride.Physics
 
         protected override void OnEntityComponentAdding(Entity entity, PhysicsComponent component, AssociatedData data)
         {
+            // Tagged for removal? If yes, cancel it
+            if (currentFrameRemovals.Remove(component))
+                return;
+
             component.Attach(data);
 
-            var character = component as CharacterComponent;
-            if (character != null)
+            if (component is CharacterComponent character)
             {
                 characters.Add(character);
             }
@@ -142,8 +164,7 @@ namespace Stride.Physics
                 component.RemoveDebugEntity(debugScene);
             }
 
-            var character = component as CharacterComponent;
-            if (character != null)
+            if (component is CharacterComponent character)
             {
                 characters.Remove(character);
             }
@@ -151,7 +172,7 @@ namespace Stride.Physics
             component.Detach();
         }
 
-        private readonly List<PhysicsComponent> currentFrameRemovals = new List<PhysicsComponent>();
+        private readonly HashSet<PhysicsComponent> currentFrameRemovals = new HashSet<PhysicsComponent>();
 
         protected override void OnEntityComponentRemoved(Entity entity, PhysicsComponent component, AssociatedData data)
         {
@@ -160,8 +181,8 @@ namespace Stride.Physics
 
         protected override void OnSystemAdd()
         {
-            physicsSystem = (Bullet2PhysicsSystem)Services.GetService<IPhysicsSystem>();
-            if (physicsSystem == null)
+            physicsSystem = Services.GetService<IPhysicsSystem>() as Bullet2PhysicsSystem;
+            if (physicsSystem is null)
             {
                 physicsSystem = new Bullet2PhysicsSystem(Services);
                 Services.AddService<IPhysicsSystem>(physicsSystem);
@@ -169,10 +190,11 @@ namespace Stride.Physics
                 gameSystems.Add(physicsSystem);
             }
 
-            ((IReferencable)physicsSystem).AddReference();
+            ((IReferencable) physicsSystem).AddReference();
 
             // Check if PhysicsShapesRenderingService is created (and check if rendering is enabled with IGraphicsDeviceService)
-            if (Services.GetService<Graphics.IGraphicsDeviceService>() != null && Services.GetService<PhysicsShapesRenderingService>() == null)
+            if (Services.GetService<IGraphicsDeviceService>() != null &&
+                Services.GetService<PhysicsShapesRenderingService>() is null)
             {
                 debugShapeRendering = new PhysicsShapesRenderingService(Services);
                 var gameSystems = Services.GetSafeServiceAs<IGameSystemCollection>();
@@ -187,26 +209,26 @@ namespace Stride.Physics
         protected override void OnSystemRemove()
         {
             physicsSystem.Release(this);
-            ((IReferencable)physicsSystem).Release();
+            ((IReferencable) physicsSystem).Release();
         }
 
         internal void UpdateCharacters()
         {
             var charactersProfilingState = Profiler.Begin(PhysicsProfilingKeys.CharactersProfilingKey);
             var activeCharacters = 0;
-            //characters need manual updating
+
+            // Characters need manual updating
             foreach (var element in characters)
             {
-                if (!element.Enabled || element.ColliderShape == null) continue;
+                if (!element.Enabled || element.ColliderShape is null)
+                    continue;
 
                 var worldTransform = Matrix.RotationQuaternion(element.Orientation) * element.PhysicsWorldTransform;
                 element.UpdateTransformationComponent(ref worldTransform);
 
                 if (element.DebugEntity != null)
                 {
-                    Vector3 scale, pos;
-                    Quaternion rot;
-                    worldTransform.Decompose(out scale, out rot, out pos);
+                    worldTransform.Decompose(out _, out Quaternion rot, out Vector3 pos);
                     element.DebugEntity.Transform.Position = pos;
                     element.DebugEntity.Transform.Rotation = rot;
                 }
@@ -219,7 +241,8 @@ namespace Stride.Physics
 
         public override void Draw(RenderContext context)
         {
-            if (Simulation.DisableSimulation) return;
+            if (Simulation.DisableSimulation)
+                return;
 
             foreach (var element in boneElements)
             {

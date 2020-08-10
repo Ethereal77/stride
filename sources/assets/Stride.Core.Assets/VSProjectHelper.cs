@@ -41,7 +41,9 @@ namespace Stride.Core.Assets
 
         public static Guid GetProjectGuid(Project project)
         {
-            if (project == null) throw new ArgumentNullException("project");
+            if (project is null)
+                throw new ArgumentNullException(nameof(project));
+
             return Guid.Parse(project.GetPropertyValue("ProjectGuid"));
         }
 
@@ -239,6 +241,7 @@ namespace Stride.Core.Assets
             }
 
             // We need to go through them one by one (because a MSBuild Condition might depend on previous step)
+            // TODO: We should deduct TFM from referencing project(s) (if any) rather than default one.
             TryReloadWithFirstValue("TargetFramework", "TargetFrameworks");
             TryReloadWithFirstValue("RuntimeIdentifier", "RuntimeIdentifiers");
             TryReloadWithFirstValue("StrideGraphicsApi", "StrideGraphicsApis");
@@ -288,9 +291,11 @@ namespace Stride.Core.Assets
                     case MessageImportance.High:
                         logger.Info(e.Message);
                         break;
+
                     case MessageImportance.Normal:
                         logger.Verbose(e.Message);
                         break;
+
                     case MessageImportance.Low:
                         logger.Debug(e.Message);
                         break;

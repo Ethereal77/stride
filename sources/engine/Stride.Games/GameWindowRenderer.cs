@@ -12,7 +12,7 @@ using Stride.Graphics;
 namespace Stride.Games
 {
     /// <summary>
-    /// A GameSystem that allows to draw to another window or control. Currently only valid on desktop with Windows.Forms.
+    ///   Represents a <see cref="GameSystemBase"/> that allows to draw to another window or control. Currently only valid on desktop with Windows.Forms.
     /// </summary>
     public class GameWindowRenderer : GameSystemBase
     {
@@ -26,9 +26,9 @@ namespace Stride.Games
         private bool windowUserResized;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameWindowRenderer" /> class.
+        ///   Initializes a new instance of the <see cref="GameWindowRenderer" /> class.
         /// </summary>
-        /// <param name="registry">The registry.</param>
+        /// <param name="registry">The registry of game services.</param>
         /// <param name="gameContext">The window context.</param>
         public GameWindowRenderer(IServiceRegistry registry, GameContext gameContext)
             : base(registry)
@@ -37,33 +37,30 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets the underlying native window.
+        ///   Gets the underlying context where to render.
         /// </summary>
-        /// <value>The underlying native window.</value>
+        /// <value>The underlying <see cref="Games.GameContext"/>.</value>
         public GameContext GameContext { get; private set; }
 
         /// <summary>
-        /// Gets the window.
+        ///   Gets the window where to render.
         /// </summary>
         /// <value>The window.</value>
         public GameWindow Window { get; private set; }
 
         /// <summary>
-        /// Gets or sets the presenter.
+        ///   Gets or sets the presenter.
         /// </summary>
-        /// <value>The presenter.</value>
+        /// <value>The <see cref="GraphicsPresenter"/> in charge of presenting the buffers to the screen.</value>
         public GraphicsPresenter Presenter { get; protected set; }
 
         /// <summary>
-        /// Gets or sets the preferred back buffer format.
+        ///   Gets or sets the preferred backbuffer pixel format.
         /// </summary>
-        /// <value>The preferred back buffer format.</value>
+        /// <value>The preferred backbuffer format.</value>
         public PixelFormat PreferredBackBufferFormat
         {
-            get
-            {
-                return preferredBackBufferFormat;
-            }
+            get => preferredBackBufferFormat;
 
             set
             {
@@ -76,15 +73,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the height of the preferred back buffer.
+        ///   Gets or sets the preferred height of the backbuffer, in pixels.
         /// </summary>
-        /// <value>The height of the preferred back buffer.</value>
+        /// <value>The preferred height of the backbuffer, in pixels.</value>
         public int PreferredBackBufferHeight
         {
-            get
-            {
-                return preferredBackBufferHeight;
-            }
+            get => preferredBackBufferHeight;
 
             set
             {
@@ -97,15 +91,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the width of the preferred back buffer.
+        ///   Gets or sets the preferred width of the backbuffer, in pixels.
         /// </summary>
-        /// <value>The width of the preferred back buffer.</value>
+        /// <value>The preferred width of the backbuffer, in pixels.</value>
         public int PreferredBackBufferWidth
         {
-            get
-            {
-                return preferredBackBufferWidth;
-            }
+            get => preferredBackBufferWidth;
 
             set
             {
@@ -118,20 +109,13 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the preferred depth stencil format.
+        ///   Gets or sets the preferred depth-buffer and stencil format.
         /// </summary>
-        /// <value>The preferred depth stencil format.</value>
+        /// <value>The preferred depth-buffer and stencil format.</value>
         public PixelFormat PreferredDepthStencilFormat
         {
-            get
-            {
-                return preferredDepthStencilFormat;
-            }
-
-            set
-            {
-                preferredDepthStencilFormat = value;
-            }
+            get => preferredDepthStencilFormat;
+            set => preferredDepthStencilFormat = value;
         }
 
         public override void Initialize()
@@ -147,6 +131,16 @@ namespace Stride.Games
             base.Initialize();
         }
 
+        protected override void Destroy()
+        {
+            Presenter?.Dispose();
+            Presenter = null;
+            Window?.Dispose();
+            Window = null;
+
+            base.Destroy();
+        }
+
         private Vector2 GetRequestedSize(out PixelFormat format)
         {
             var bounds = Window.ClientBounds;
@@ -158,7 +152,7 @@ namespace Stride.Games
 
         protected virtual void CreateOrUpdatePresenter()
         {
-            if (Presenter == null)
+            if (Presenter is null)
             {
                 var size = GetRequestedSize(out PixelFormat resizeFormat);
                 var presentationParameters = new PresentationParameters((int)size.X, (int)size.Y, Window.NativeWindow, resizeFormat);
@@ -180,9 +174,8 @@ namespace Stride.Games
 
                 if (isBackBufferToResize || windowUserResized)
                 {
-                    PixelFormat resizeFormat;
-                    var size = GetRequestedSize(out resizeFormat);
-                    Presenter.Resize((int)size.X, (int)size.Y, resizeFormat);
+                    var size = GetRequestedSize(out PixelFormat resizeFormat);
+                    Presenter.Resize((int) size.X, (int) size.Y, resizeFormat);
 
                     isBackBufferToResize = false;
                     windowUserResized = false;
@@ -208,7 +201,8 @@ namespace Stride.Games
                 }
                 catch (GraphicsException ex)
                 {
-                    if (ex.Status != GraphicsDeviceStatus.Removed && ex.Status != GraphicsDeviceStatus.Reset)
+                    if (ex.Status != GraphicsDeviceStatus.Removed &&
+                        ex.Status != GraphicsDeviceStatus.Reset)
                     {
                         throw;
                     }

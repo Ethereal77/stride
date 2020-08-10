@@ -2,14 +2,14 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Stride.Core.Collections;
 using Stride.Core.Storage;
 using Stride.Graphics;
 
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Implementation of <see cref="ResourceGroupLayout"/> specifically for <see cref="RenderSystem"/> use (contains some extra information).
+    ///   Represents a <see cref="ResourceGroupLayout"/> specifically implemented for use by the <see cref="RenderSystem"/>,
+    ///   with some extra information needed by its processes.
     /// </summary>
     public class RenderSystemResourceGroupLayout : ResourceGroupLayout
     {
@@ -17,7 +17,7 @@ namespace Stride.Rendering
         internal int[] ConstantBufferOffsets;
 
         /// <summary>
-        /// Describes what state the effect is in (compiling, error, etc..)
+        ///   Describes what state the effect is in (compiling, error, etc..).
         /// </summary>
         public RenderEffectState State;
 
@@ -41,28 +41,32 @@ namespace Stride.Rendering
 
             var hashBuilder = new ObjectIdBuilder();
 
-            for (int index = 0; index < ConstantBufferReflection.Members.Length; index++)
+            if (ConstantBufferReflection != null)
             {
-                var member = ConstantBufferReflection.Members[index];
-                if (member.LogicalGroup == name)
+                for (int index = 0; index < ConstantBufferReflection.Members.Length; index++)
                 {
-                    // First item?
-                    if (logicalGroup.ConstantBufferMemberStart == -1)
+                    var member = ConstantBufferReflection.Members[index];
+                    if (member.LogicalGroup == name)
                     {
-                        logicalGroup.ConstantBufferOffset = member.Offset;
-                        logicalGroup.ConstantBufferMemberStart = index;
+                        // First item?
+                        if (logicalGroup.ConstantBufferMemberStart == -1)
+                        {
+                            logicalGroup.ConstantBufferOffset = member.Offset;
+                            logicalGroup.ConstantBufferMemberStart = index;
+                        }
+
+                        // Update count
+                        logicalGroup.ConstantBufferMemberCount = index + 1 - logicalGroup.ConstantBufferMemberStart;
+                        logicalGroup.ConstantBufferSize = member.Offset + member.Size - logicalGroup.ConstantBufferOffset;
+
+                        // Hash
+                        Effect.HashConstantBufferMember(ref hashBuilder, ref member, logicalGroup.ConstantBufferOffset);
                     }
-
-                    // Update count
-                    logicalGroup.ConstantBufferMemberCount = index + 1 - logicalGroup.ConstantBufferMemberStart;
-                    logicalGroup.ConstantBufferSize = member.Offset + member.Size - logicalGroup.ConstantBufferOffset;
-
-                    // Hash
-                    Effect.HashConstantBufferMember(ref hashBuilder, ref member, logicalGroup.ConstantBufferOffset);
-                }
-                else if (logicalGroup.ConstantBufferMemberStart != -1)
-                {
-                    break; // group is finished, no need to scan the end
+                    else if (logicalGroup.ConstantBufferMemberStart != -1)
+                    {
+                        // Group is finished, no need to scan the end
+                        break;
+                    }
                 }
             }
 
@@ -89,7 +93,8 @@ namespace Stride.Rendering
                 }
                 else if (logicalGroup.DescriptorEntryStart != -1)
                 {
-                    break; // group is finished, no need to scan the end
+                    // Group is finished, no need to scan the end
+                    break;
                 }
 
                 slot += descriptorSetEntry.ArraySize;

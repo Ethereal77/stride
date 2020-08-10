@@ -7,52 +7,48 @@ using System;
 namespace Stride.Games
 {
     /// <summary>
-    /// Given a <see cref="AppContextType"/> creates the corresponding GameContext instance based on the current executing platform.
+    ///   Provides methods to creates <see cref="GameContext"/> based on the provided <see cref="AppContextType"/> and the current executing platform.
     /// </summary>
     public static class GameContextFactory
     {
         [Obsolete("Use NewGameContext with the proper AppContextType.")]
-        internal static GameContext NewDefaultGameContext()
+        internal static GameContext NewDefaultGameContext(int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false)
         {
             // Default context is Desktop
-            return NewGameContext(AppContextType.Desktop);
+            return NewGameContext(AppContextType.Desktop, requestedWidth, requestedHeight, isUserManagingRun);
         }
 
         /// <summary>
-        /// Given a <paramref name="type"/> create the appropriate game Context for the current executing platform.
+        ///   Creates the appropriate <see cref="GameContext"/> for the current executing platform and <see cref="AppContextType"/>.
         /// </summary>
-        /// <returns></returns>
-        public static GameContext NewGameContext(AppContextType type)
+        /// <returns>The created <see cref="GameContext"/>.</returns>
+        public static GameContext NewGameContext(AppContextType type, int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false)
         {
-            GameContext res = null;
             switch (type)
             {
                 case AppContextType.Desktop:
-                    res = NewGameContextDesktop();
-                    break;
+                    return NewGameContextDesktop(requestedWidth, requestedHeight, isUserManagingRun);
+
                 case AppContextType.DesktopWpf:
-                    res = NewGameContextWpf();
-                    break;
-            }
+                    return NewGameContextWpf(requestedWidth, requestedHeight, isUserManagingRun);
 
-            if (res == null)
-            {
-                throw new InvalidOperationException("Requested type and current platform are incompatible.");
+                default:
+                    throw new InvalidOperationException("Requested type and current platform are incompatible.");
             }
-
-            return res;
         }
 
-        public static GameContext NewGameContextDesktop()
+        public static GameContext NewGameContextDesktop(int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false)
         {
-#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
-        return new GameContextWinforms(null);
-#else
-        return null;
+#if STRIDE_PLATFORM_WINDOWS_DESKTOP
+        #if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
+            return new GameContextWinforms(null, requestedWidth, requestedHeight, isUserManagingRun);
+        #else
+            return null;
+        #endif
 #endif
         }
 
-        public static GameContext NewGameContextWpf()
+        public static GameContext NewGameContextWpf(int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false)
         {
             // Not supported for now
             return null;

@@ -57,8 +57,6 @@ namespace Stride.ConnectionRouter
                 if (commandArgs.Count > 0)
                     throw new OptionException("This command expect no additional arguments.", "");
 
-                SetupTrayIcon(logFileName);
-
                 // Enable file logging
                 if (!string.IsNullOrEmpty(logFileName))
                 {

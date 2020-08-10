@@ -3,12 +3,10 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 using Stride.Core;
 using Stride.Core.Annotations;
-using Stride.Engine;
 using Stride.Graphics;
 using Stride.Games;
 using Stride.Streaming;
@@ -19,7 +17,7 @@ using IServiceRegistry = Stride.Core.IServiceRegistry;
 namespace Stride.Rendering
 {
     /// <summary>
-    ///   Rendering context.
+    ///   Represents the context information and services needed for the Renderer in Stride.
     /// </summary>
     public sealed class RenderContext : ComponentBase
     {
@@ -77,10 +75,9 @@ namespace Stride.Rendering
         public IServiceRegistry Services { get; }
 
         /// <summary>
-        ///   Gets the time.
+        ///   Gets or sets the time.
         /// </summary>
-        /// <value>The time.</value>
-        public GameTime Time { get; internal set; }
+        public GameTime Time { get; set; }
 
         /// <summary>
         ///   Gets the <see cref="GraphicsResource"/> allocator.
@@ -211,10 +208,10 @@ namespace Stride.Rendering
             private readonly RenderContext context;
             private readonly ViewportState previousValue;
 
-            public ViewportRestore(RenderContext context)
+            public ViewportRestore(RenderContext renderContext)
             {
-                this.context = context;
-                this.previousValue = context.ViewportState;
+                context = renderContext;
+                previousValue = renderContext.ViewportState;
             }
 
             public void Dispose()
@@ -228,10 +225,10 @@ namespace Stride.Rendering
             private readonly RenderContext context;
             private readonly RenderOutputDescription previousValue;
 
-            public RenderOutputRestore(RenderContext context)
+            public RenderOutputRestore(RenderContext renderContext)
             {
-                this.context = context;
-                this.previousValue = context.RenderOutput;
+                context = renderContext;
+                previousValue = renderContext.RenderOutput;
             }
 
             public void Dispose()
@@ -245,10 +242,10 @@ namespace Stride.Rendering
             private readonly RenderContext context;
             private readonly RenderView previousValue;
 
-            public RenderViewRestore(RenderContext context)
+            public RenderViewRestore(RenderContext renderContext)
             {
-                this.context = context;
-                this.previousValue = context.RenderView;
+                context = renderContext;
+                previousValue = renderContext.RenderView;
             }
 
             public void Dispose()

@@ -8,7 +8,7 @@ using Stride.Rendering.Materials;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Base effect
+    ///   Base Stride Rendering effect.
     /// </summary>
     partial effect StrideEffectBase
     {
@@ -28,7 +28,7 @@ namespace Stride.Rendering
         if (extensionPreVertexStageSurfaceShaders != null)
         {
             // Must come before TransformationBase as this is responsible to modify the vertex input stream
-            mixin MaterialSurfaceVertexStageCompositor;  
+            mixin MaterialSurfaceVertexStageCompositor;
             mixin compose materialVertexStage = (extensionPreVertexStageSurfaceShaders);
             mixin compose streamInitializerVertexStage = MaterialKeys.VertexStageStreamInitializer;
         }
@@ -39,27 +39,57 @@ namespace Stride.Rendering
         // Come after material surface per vertex
         mixin TransformationBase;
         mixin NormalStream;
-        mixin TransformationWAndVP;
 
-        // -----------------------------------------------
-        // Performs normal mapping (in case of no-skinning, otherwise it is overloaded below)
-        // -----------------------------------------------
-        if (MaterialKeys.HasNormalMap)
+        if (StrideEffectBaseKeys.HasInstancing)
         {
-            mixin NormalFromNormalMapping;
+            mixin macro StrideEffectBaseKeys.ModelTransformUsage;
+            mixin TransformationWAndVPInstanced;
+
+            // -----------------------------------------------------------------------------------
+            // Performs normal mapping (in case of no-skinning, otherwise it is overloaded below)
+            // -----------------------------------------------------------------------------------
+            if (MaterialKeys.HasNormalMap)
+            {
+                mixin NormalFromNormalMappingInstanced;
+            }
+            else
+            {
+                mixin NormalFromMeshInstanced;
+            }
         }
         else
         {
-            mixin NormalFromMesh;
+            mixin TransformationWAndVP;
+
+            // -----------------------------------------------------------------------------------
+            // Performs normal mapping (in case of no-skinning, otherwise it is overloaded below)
+            // -----------------------------------------------------------------------------------
+            if (MaterialKeys.HasNormalMap)
+            {
+                mixin NormalFromNormalMapping;
+            }
+            else
+            {
+                mixin NormalFromMesh;
+            }
         }
 
-        // -----------------------------------------------
+
+        // -----------------------------------------------------------
         // Performs animation skinning (position, normal and tangent)
-        // -----------------------------------------------
+        // -----------------------------------------------------------
         if (MaterialKeys.HasSkinningPosition)
         {
             mixin macro MaterialKeys.SkinningMaxBones;
-            mixin TransformationSkinning;
+
+            if (StrideEffectBaseKeys.HasInstancing)
+            {
+                mixin TransformationSkinningInstanced;
+            }
+            else
+            {
+                mixin TransformationSkinning;
+            }
 
             if (MaterialKeys.HasSkinningNormal)
             {
@@ -95,12 +125,12 @@ namespace Stride.Rendering
             var extensionDomainStageSurfaceShaders = MaterialKeys.DomainStageSurfaceShaders;
             if(extensionDomainStageSurfaceShaders != null)
             {
-                mixin MaterialSurfaceDomainStageCompositor;  
+                mixin MaterialSurfaceDomainStageCompositor;
                 mixin compose materialDomainStage = (extensionDomainStageSurfaceShaders);
                 mixin compose streamInitializerDomainStage = MaterialKeys.DomainStageStreamInitializer;
             }
         }
-        
+
         // -----------------------------------------------
         // Screen space velocity calculation
         // -----------------------------------------------

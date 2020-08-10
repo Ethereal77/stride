@@ -18,15 +18,15 @@ using Stride.Updater;
 namespace Stride.Engine
 {
     /// <summary>
-    /// Add a <see cref="Model"/> to an <see cref="Entity"/>, that will be used during rendering.
+    ///   Represents an <see cref="EntityComponent"/> to add a <see cref="Rendering.Model"/> to an <see cref="Entity"/>, that will be used during rendering.
     /// </summary>
     [DataContract("ModelComponent")]
     [Display("Model", Expand = ExpandRule.Once)]
-    // TODO GRAPHICS REFACTOR
     [DefaultEntityComponentProcessor(typeof(ModelTransformProcessor))]
     [DefaultEntityComponentRenderer(typeof(ModelRenderProcessor))]
     [ComponentOrder(11000)]
     [ComponentCategory("Model")]
+    // TODO: GRAPHICS REFACTOR
     public sealed class ModelComponent : ActivableEntityComponent, IModelInstance
     {
         private readonly List<MeshInfo> meshInfos = new List<MeshInfo>();
@@ -35,35 +35,32 @@ namespace Stride.Engine
         private bool modelViewHierarchyDirty = true;
 
         /// <summary>
-        /// Per-entity state of each individual mesh of a model.
+        ///   Represents the per-entity state of each individual mesh of a model.
         /// </summary>
         public class MeshInfo
         {
             /// <summary>
-            /// The current blend matrices of a skinned meshes, transforming from mesh space to world space, for each bone.
+            ///   The current blend matrices of the skinned meshes, transforming from mesh space to world space, for each bone.
             /// </summary>
             public Matrix[] BlendMatrices;
 
             /// <summary>
-            /// The meshes current bounding box in world space.
+            ///   The mesh's current bounding box in world space.
             /// </summary>
             public BoundingBox BoundingBox;
-
             /// <summary>
-            /// The meshes current sphere box in world space.
+            ///   The mesh's current bounding sphere in world space.
             /// </summary>
             public BoundingSphere BoundingSphere;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ModelComponent"/> class.
+        ///   Initializes a new instance of the <see cref="ModelComponent"/> class.
         /// </summary>
-        public ModelComponent() : this(null)
-        {
-        }
+        public ModelComponent() : this(null) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ModelComponent"/> class.
+        ///   Initializes a new instance of the <see cref="ModelComponent"/> class.
         /// </summary>
         /// <param name="model">The model.</param>
         public ModelComponent(Model model)
@@ -73,20 +70,16 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets or sets the model.
+        ///   Gets or sets the model associated to the <see cref="Entity"/>.
         /// </summary>
-        /// <value>
-        /// The model.
-        /// </value>
-        /// <userdoc>The reference to the model asset to attach to this entity</userdoc>
+        /// <value>The model.</value>
+        /// <userdoc>The reference to the model asset to attach to this entity.</userdoc>
         [DataMemberCustomSerializer]
         [DataMember(10)]
         public Model Model
         {
-            get
-            {
-                return model;
-            }
+            get => model;
+
             set
             {
                 if (model != value)
@@ -96,10 +89,11 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets the materials; non-null ones will override materials from <see cref="Stride.Rendering.Model.Materials"/> (same slots should be used).
+        ///   Gets the list of materials to use for the <see cref="Rendering.Model"/>.
         /// </summary>
         /// <value>
-        /// The materials overriding <see cref="Stride.Rendering.Model.Materials"/> ones.
+        ///   The list of materials. The non-<c>null</c> ones will override the corresponding materials from
+        ///   <see cref="Model.Materials"/> in the same slots.
         /// </value>
         /// <userdoc>The list of materials to use with the model. This list overrides the default materials of the model.</userdoc>
         [DataMember(40)]
@@ -119,7 +113,7 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets the current per-entity state for each mesh in the associated model.
+        ///   Gets the current per-entity state for each mesh in the associated <see cref="Rendering.Model"/>.
         /// </summary>
         [DataMemberIgnore]
         public IReadOnlyList<MeshInfo> MeshInfos => meshInfos;
@@ -134,17 +128,17 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets or sets a boolean indicating if this model component is casting shadows.
+        ///   Gets or sets a value indicating whether the <see cref="Rendering.Model"/> should cast shadows in the environment.
         /// </summary>
-        /// <value>A boolean indicating if this model component is casting shadows.</value>
-        /// <userdoc>Generate a shadow (when shadow maps are enabled)</userdoc>
+        /// <value>A value indicating if the model should cast shadows.</value>
+        /// <userdoc>Cast a shadow (when shadow maps are enabled).</userdoc>
         [DataMember(30)]
         [DefaultValue(true)]
         [Display("Cast shadows")]
         public bool IsShadowCaster { get; set; }
 
         /// <summary>
-        /// The render group for this component.
+        ///   Gets or sets the render group for this <see cref="Rendering.Model"/>.
         /// </summary>
         [DataMember(20)]
         [DefaultValue(RenderGroup.Group0)]
@@ -152,34 +146,38 @@ namespace Stride.Engine
         public RenderGroup RenderGroup { get; set; }
 
         /// <summary>
-        /// Gets the bounding box in world space.
+        ///   The bounding box of the <see cref="Rendering.Model"/>, in world space.
         /// </summary>
         /// <value>The bounding box.</value>
         [DataMemberIgnore]
         public BoundingBox BoundingBox;
 
         /// <summary>
-        /// Gets the bounding sphere in world space.
+        ///   The bounding sphere of the <see cref="Rendering.Model"/>, in world space.
         /// </summary>
         /// <value>The bounding sphere.</value>
         [DataMemberIgnore]
         public BoundingSphere BoundingSphere;
 
         /// <summary>
-        /// Gets the material at the specified index. If the material is not overriden by this component, it will try to get it from <see cref="Stride.Rendering.Model.Materials"/>
+        ///   Gets the material at the specified index. If the material is not overriden by this component, it will try to get it
+        ///   from <see cref="Model.Materials"/>.
         /// </summary>
-        /// <param name="index">The index of the material</param>
-        /// <returns>The material at the specified index or null if not found</returns>
+        /// <param name="index">The index of the material to get.</param>
+        /// <returns>
+        ///   The <see cref="Material"/> at the specified <paramref name="index"/>;
+        ///   or <c>null</c> if not found.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> cannot be less than 0.</exception>
         public Material GetMaterial(int index)
         {
-            if (index < 0) throw new ArgumentOutOfRangeException(nameof(index), @"index cannot be < 0");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), $"{nameof(index)} cannot be less than 0.");
 
-            Material material;
-            if (Materials.TryGetValue(index, out material))
-            {
+            if (Materials.TryGetValue(index, out Material material))
                 return material;
-            }
-            // TODO: if Model is null, shouldn't we always return null?
+
+            // TODO: If Model is null, shouldn't we always return null?
             if (Model != null && index < Model.Materials.Count)
             {
                 material = Model.Materials[index].Material;
@@ -188,17 +186,10 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets the number of materials (computed from <see cref="Stride.Rendering.Model.Materials"/>)
+        ///   Gets the number of materials of the <see cref="Rendering.Model"/> (computed from <see cref="Model.Materials"/>).
         /// </summary>
-        /// <returns></returns>
-        public int GetMaterialCount()
-        {
-            if (Model != null)
-            {
-                return Model.Materials.Count;
-            }
-            return 0;
-        }
+        /// <returns>Number of materials of the model.</returns>
+        public int GetMaterialCount() => Model?.Materials.Count ?? 0;
 
         private void ModelUpdated()
         {
@@ -227,9 +218,13 @@ namespace Stride.Engine
             }
         }
 
+        /// <summary>
+        ///   Updates the skeleton, skinning and bounding box with the associated <see cref="TransformComponent"/> of a <see cref="Rendering.Model"/>.
+        /// </summary>
+        /// <param name="transformComponent">The transform of the model.</param>
         internal void Update(TransformComponent transformComponent)
         {
-            if (!Enabled || model == null)
+            if (!Enabled || model is null)
                 return;
 
             ref Matrix worldMatrix = ref transformComponent.WorldMatrix;
@@ -271,10 +266,8 @@ namespace Stride.Engine
                         var nodeIndex = bones[boneIndex].NodeIndex;
                         Matrix.Multiply(ref bones[boneIndex].LinkToMeshMatrix, ref skeleton.NodeTransformations[nodeIndex].WorldMatrix, out meshInfo.BlendMatrices[boneIndex]);
 
-                        BoundingBox skinnedBoundingBox;
-                        BoundingBox.Transform(ref mesh.BoundingBox, ref meshInfo.BlendMatrices[boneIndex], out skinnedBoundingBox);
-                        BoundingSphere skinnedBoundingSphere;
-                        BoundingSphere.Transform(ref mesh.BoundingSphere, ref meshInfo.BlendMatrices[boneIndex], out skinnedBoundingSphere);
+                        BoundingBox.Transform(ref mesh.BoundingBox, ref meshInfo.BlendMatrices[boneIndex], out BoundingBox skinnedBoundingBox);
+                        BoundingSphere.Transform(ref mesh.BoundingSphere, ref meshInfo.BlendMatrices[boneIndex], out BoundingSphere skinnedBoundingSphere);
 
                         if (meshHasBoundingBox)
                         {

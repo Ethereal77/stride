@@ -3,8 +3,6 @@
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#pragma warning disable SA1402 // File may only contain a single type
-
 using System;
 
 using Stride.Core;
@@ -14,7 +12,7 @@ using Stride.Graphics;
 namespace Stride.Games
 {
     /// <summary>
-    ///   Represents an abstract window.
+    ///   Represents an abstract window for a <see cref="GameBase"/> to render on and process inputs.
     /// </summary>
     public abstract class GameWindow : ComponentBase
     {
@@ -219,6 +217,12 @@ namespace Stride.Games
 
         internal abstract void Resize(int width, int height);
 
+        public virtual IMessageLoop CreateUserManagedMessageLoop()
+        {
+            // Default: not implemented
+            throw new PlatformNotSupportedException();
+        }
+
         internal IServiceRegistry Services { get; set; }
 
         protected internal abstract void SetSupportedOrientations(DisplayOrientation orientations);
@@ -283,20 +287,22 @@ namespace Stride.Games
         }
     }
 
+    /// <summary>
+    ///   Represents an abstract <see cref="GameWindow"/> that renders and processes the input of a specific
+    ///   type of control.
+    /// </summary>
+    /// <typeparam name="TControl">Type of the control to use as window.</typeparam>
     public abstract class GameWindow<TControl> : GameWindow
     {
         protected internal sealed override void Initialize(GameContext gameContext)
         {
-            var context = gameContext as GameContext<TControl>;
-            if (context != null)
+            if (gameContext is GameContext<TControl> context)
             {
                 GameContext = context;
                 Initialize(context);
             }
             else
-            {
-                throw new InvalidOperationException("Invalid context for current game.");
-            }
+                throw new InvalidOperationException("Invalid context for the current game.");
         }
 
         internal GameContext<TControl> GameContext;

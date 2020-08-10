@@ -4,15 +4,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.Mathematics;
-using Stride.Core.MicroThreading;
 using Stride.Engine;
 using Stride.Graphics;
 using Stride.Input;
@@ -24,6 +21,7 @@ namespace Stride.Assets.Presentation.SceneEditor
     internal struct PickingObjectInfo
     {
         private const float MaxMaterialIndex = 1024;
+        private const float MaxInstancingId = 1024;
 
         public float ModelComponentId;
         public float MeshMaterialIndex;
@@ -31,19 +29,23 @@ namespace Stride.Assets.Presentation.SceneEditor
         public PickingObjectInfo(int componentId, int meshIndex, int materialIndex)
         {
             ModelComponentId = componentId;
-            MeshMaterialIndex = meshIndex + (materialIndex / MaxMaterialIndex); // Pack to: MeshIndex.MaterialIndex
+            MeshMaterialIndex = meshIndex + (Math.Min(materialIndex, MaxMaterialIndex - 1) / MaxMaterialIndex); // Pack to: MeshIndex.MaterialIndex
         }
 
         public EntityPickingResult GetResult(Dictionary<int, Entity> idToEntity)
         {
-            var fraction = MeshMaterialIndex - Math.Floor(MeshMaterialIndex);
-            var integral = MeshMaterialIndex - fraction;
+            var mcFraction = ModelComponentId - Math.Floor(ModelComponentId);
+            var mcIntegral = ModelComponentId - mcFraction;
+
+            var mmiFraction = MeshMaterialIndex - Math.Floor(MeshMaterialIndex);
+            var mmiIntegral = MeshMaterialIndex - mmiFraction;
 
             var result = new EntityPickingResult
             {
-                ComponentId = (int)Math.Round(ModelComponentId),
-                MeshNodeIndex = (int)Math.Round(integral),
-                MaterialIndex = (int)Math.Round(fraction * MaxMaterialIndex),
+                ComponentId = (int)Math.Round(mcIntegral),
+                InstanceId = (int)Math.Round(mcFraction * MaxInstancingId),
+                MeshNodeIndex = (int)Math.Round(mmiIntegral),
+                MaterialIndex = (int)Math.Round(mmiFraction * MaxMaterialIndex),
             };
             idToEntity.TryGetValue(result.ComponentId, out result.Entity);
             return result;
@@ -74,7 +76,7 @@ namespace Stride.Assets.Presentation.SceneEditor
 
         protected override void DrawCore(RenderContext context, RenderDrawContext drawContext)
         {
-            if (pickingTexture == null)
+            if (pickingTexture is null)
             {
                 // TODO: Release resources!
                 pickingTexture = Texture.New2D(drawContext.GraphicsDevice, 1, 1, PickingRenderStage.Output.RenderTargetFormat0, TextureFlags.None, 1, GraphicsResourceUsage.Staging);
@@ -115,123 +117,121 @@ namespace Stride.Assets.Presentation.SceneEditor
         }
 
         /// <summary>
-        /// Cache identifier of all components of the specified <paramref name="entity"/>.
+        ///   Caches the identifier of all the <see cref="EntityComponent"/>s of the specified <see cref="Entity"/>.
         /// </summary>
-        /// <param name="entity">The entity which components to cache.</param>
-        /// <param name="isRecursive"><c>true</c> if the components of child entities should also be cached, recursively; otherwise, <c>false</c>.</param>
+        /// <param name="entity">The entity for which to cache its components.</param>
+        /// <param name="isRecursive">A value indicating whether to also cache the components of child entities, recursively.</param>
         public void CacheEntity([NotNull] Entity entity, bool isRecursive)
         {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity));
 
             foreach (var component in entity.Components)
             {
                 idToEntity[RuntimeIdHelper.ToRuntimeId(component)] = component.Entity;
             }
 
-            if (!isRecursive)
-                return;
-
-            foreach (var component in entity.GetChildren().BreadthFirst(x => x.GetChildren()).SelectMany(e => e.Components))
-            {
-                idToEntity[RuntimeIdHelper.ToRuntimeId(component)] = component.Entity;
-            }
+            if (isRecursive)
+                foreach (var component in entity.GetChildren().BreadthFirst(x => x.GetChildren()).SelectMany(e => e.Components))
+                {
+                    idToEntity[RuntimeIdHelper.ToRuntimeId(component)] = component.Entity;
+                }
         }
 
         /// <summary>
-        /// Cache identifier of the component specified />. 
+        ///   Caches the identifier of a component.
         /// </summary>
-        /// <param name="component">The component to cache</param>
+        /// <param name="component">The component to cache.</param>
         public void CacheEntityComponent([NotNull] EntityComponent component)
         {
-            if (component == null) throw new ArgumentNullException(nameof(component));
+            if (component is null)
+                throw new ArgumentNullException(nameof(component));
 
             idToEntity[RuntimeIdHelper.ToRuntimeId(component)] = component.Entity;
         }
 
         /// <summary>
-        /// Uncache identifier of all components of the specified <paramref name="entity"/>.
+        ///   Invalidates the cached identifiers of all the <see cref="EntityComponent"/>s of the specified <see cref="Entity"/>.
         /// </summary>
-        /// <param name="entity">The entity which components to uncache.</param>
-        /// <param name="isRecursive"><c>true</c> if the components of child entities should also be uncached recursively; otherwise, <c>false</c>.</param>
+        /// <param name="entity">The entity for which to invalidate the cached identifiers of its components.</param>
+        /// <param name="isRecursive">A value indicating whether to also invalidate the cached identifiers of the components of child entities, recursively.</param>
         public void UncacheEntity([NotNull] Entity entity, bool isRecursive)
         {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            if (entity is null)
+                throw new ArgumentNullException(nameof(entity));
 
             foreach (var component in entity.Components)
             {
                 idToEntity.Remove(RuntimeIdHelper.ToRuntimeId(component));
             }
 
-            if (!isRecursive)
-                return;
-
-            foreach (var component in entity.GetChildren().BreadthFirst(x => x.GetChildren()).SelectMany(e => e.Components))
-            {
-                idToEntity.Remove(RuntimeIdHelper.ToRuntimeId(component));
-            }
+            if (isRecursive)
+                foreach (var component in entity.GetChildren().BreadthFirst(x => x.GetChildren()).SelectMany(e => e.Components))
+                {
+                    idToEntity.Remove(RuntimeIdHelper.ToRuntimeId(component));
+                }
         }
 
         /// <summary>
-        /// Uncache identifier of the component specified />. 
+        ///   Invalidates a cached identifier of a component.
         /// </summary>
-        /// <param name="component">The component to uncache</param>
+        /// <param name="component">The cached component to invalidate.</param>
         public void UncacheEntityComponent([NotNull] EntityComponent component)
         {
-            if (component == null) throw new ArgumentNullException(nameof(component));
+            if (component is null)
+                throw new ArgumentNullException(nameof(component));
 
             idToEntity.Remove(RuntimeIdHelper.ToRuntimeId(component));
         }
 
         /// <summary>
-        /// Cache identifier of all components of all entities of the specified <paramref name="scene"/>.
+        ///   Caches the identifiers of all the <see cref="EntityComponent"/>s of all the <see cref="Entity"/>s of a <see cref="Scene"/>.
         /// </summary>
-        /// <param name="scene">The scene which entity components to cache.</param>
-        /// <param name="isRecursive"><c>true</c> if the components of all entities in child scenes should also be cached, recursively; otherwise, <c>false</c>.</param>
+        /// <param name="scene">The scene for which to cache the entity components.</param>
+        /// <param name="isRecursive">A value indicating whether to also cache the identifiers of the components of child entities, recursively.</param>
         public void CacheScene([NotNull] Scene scene, bool isRecursive)
         {
-            if (scene == null) throw new ArgumentNullException(nameof(scene));
+            if (scene is null)
+                throw new ArgumentNullException(nameof(scene));
 
             foreach (var entity in scene.Entities)
             {
                 CacheEntity(entity, true);
             }
 
-            if (!isRecursive)
-                return;
-
-            foreach (var entity in scene.Children.BreadthFirst(s => s.Children).SelectMany(s => s.Entities))
-            {
-                CacheEntity(entity, true);
-            }
+            if (isRecursive)
+                foreach (var entity in scene.Children.BreadthFirst(s => s.Children).SelectMany(s => s.Entities))
+                {
+                    CacheEntity(entity, true);
+                }
         }
 
         /// <summary>
-        /// Uncache identifier of all components of all entities of the specified <paramref name="scene"/>.
+        ///   Invalidates the cached identifiers of all the <see cref="EntityComponent"/>s of all the <see cref="Entity"/>s of a <see cref="Scene"/>.
         /// </summary>
-        /// <param name="scene">The scene which entity components to uncache.</param>
-        /// <param name="isRecursive"><c>true</c> if the components of all entities in child scenes should also be uncached, recursively; otherwise, <c>false</c>.</param>
+        /// <param name="scene">The scene for which to invalidate the cached identifiers of entity components.</param>
+        /// <param name="isRecursive">A value indicating whether to also invalidate the cached identifiers of the components of child entities, recursively.</param>
         public void UncacheScene([NotNull] Scene scene, bool isRecursive)
         {
-            if (scene == null) throw new ArgumentNullException(nameof(scene));
+            if (scene is null)
+                throw new ArgumentNullException(nameof(scene));
 
             foreach (var entity in scene.Entities)
             {
                 UncacheEntity(entity, true);
             }
 
-            if (!isRecursive)
-                return;
-
-            foreach (var entity in scene.Children.BreadthFirst(s => s.Children).SelectMany(s => s.Entities))
-            {
-                UncacheEntity(entity, true);
-            }
+            if (isRecursive)
+                foreach (var entity in scene.Children.BreadthFirst(s => s.Children).SelectMany(s => s.Entities))
+                {
+                    UncacheEntity(entity, true);
+                }
         }
 
         /// <summary>
-        /// Gets the entity at the provided screen position
+        ///   Tries to get the <see cref="Entity"/> under the mouse cursor.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An <see cref="EntityPickingResult"/> structure containing information of the picked <see cref="Entity"/>, if any.</returns>
         public EntityPickingResult Pick()
         {
             return pickingResult.GetResult(idToEntity);

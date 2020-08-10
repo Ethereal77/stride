@@ -1249,7 +1249,7 @@ namespace Stride.Core.Assets
             // Adjust extensions for Stride rename
             foreach (var loadingAsset in listFiles)
             {
-                var originalExt = loadingAsset.FilePath.GetFileExtension();
+                var originalExt = loadingAsset.FilePath.GetFileExtension() ?? "";
                 var ext = originalExt.Replace(".xk", ".sd");
                 if (ext != originalExt)
                 {

@@ -21,24 +21,22 @@ using Stride.Rendering;
 namespace Stride.Engine
 {
     /// <summary>
-    /// Manage a collection of entities.
+    ///   Represents a class that manages a collection of <see cref="Entity"/>.
     /// </summary>
     public abstract class EntityManager : ComponentBase, IReadOnlySet<Entity>
     {
-        // TODO: Make this class threadsafe (current locks aren't sufficients)
+        // TODO: Make this class threadsafe (current locks aren't sufficient)
 
         public ExecutionMode ExecutionMode { get; protected set; } = ExecutionMode.Runtime;
 
-        // List of all entities, with their respective processors
+        // Set of all the contained Entities
         private readonly HashSet<Entity> entities;
 
-        // List of processors currently registered
+        // Collection of Entity Processors currently registered
         private readonly TrackingEntityProcessorCollection processors;
-
-        // use an ordered list to make sure processor are added in the correct order as much as possible
-        private readonly EntityProcessorCollection pendingProcessors; 
-
-        // List of processors per EntityComponent final type
+        // Ordered list of Entity Processors to make sure they are added in the correct order as much as possible
+        private readonly EntityProcessorCollection pendingProcessors;
+        // Dictionary of Entity Processors per EntityComponent final type
         internal readonly Dictionary<TypeInfo, EntityProcessorCollectionPerComponentType> MapComponentTypeToProcessors;
 
         private readonly List<EntityProcessor> currentDependentProcessors;
@@ -46,38 +44,41 @@ namespace Stride.Engine
         private int addEntityLevel = 0;
 
         /// <summary>
-        /// Occurs when an entity is added.
+        ///   Occurs when an <see cref="Entity"/> is added.
         /// </summary>
         public event EventHandler<Entity> EntityAdded;
-
         /// <summary>
-        /// Occurs when an entity is removed.
+        ///   Occurs when an <see cref="Entity"/> is removed.
         /// </summary>
         public event EventHandler<Entity> EntityRemoved;
 
         /// <summary>
-        /// Occurs when an entity is removed.
+        ///   Occurs when the transform hierarchy of an entity is changed.
         /// </summary>
+        /// <seealso cref="TransformComponent.Parent"/>
+        /// <seealso cref="TransformComponent.Children"/>
         public event EventHandler<Entity> HierarchyChanged;
 
         /// <summary>
-        /// Occurs when a new component type is added.
+        ///   Occurs when a new <see cref="EntityComponent"/> type is added.
         /// </summary>
         public event EventHandler<TypeInfo> ComponentTypeAdded;
 
         /// <summary>
-        /// Occurs when a component changed for an entity (Added or removed)
+        ///   Occurs when a <see cref="EntityComponent"/> has been added or removed from an <see cref="Entity"/>.
         /// </summary>
         public event EventHandler<EntityComponentEventArgs> ComponentChanged;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EntityManager"/> class.
+        ///   Initializes a new instance of the <see cref="EntityManager"/> class.
         /// </summary>
-        /// <param name="registry">The registry.</param>
-        /// <exception cref="System.ArgumentNullException">registry</exception>
+        /// <param name="registry">The registry of game services.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="registry"/> is a <c>null</c> reference.</exception>
         protected EntityManager(IServiceRegistry registry)
         {
-            if (registry == null) throw new ArgumentNullException("registry");
+            if (registry is null)
+                throw new ArgumentNullException("registry");
+
             Services = registry;
 
             entities = new HashSet<Entity>();
@@ -91,20 +92,23 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Gets the services.
+        ///   Gets the registry of the services of the game.
         /// </summary>
         /// <value>The services.</value>
         public IServiceRegistry Services { get; private set; }
 
         /// <summary>
-        /// Gets the entity Processors.
+        ///   Gets a list of the registered <see cref="EntityProcessor"/>s.
         /// </summary>
         public EntityProcessorCollection Processors => processors;
 
+        /// <summary>
+        ///   Gets the number of entities.
+        /// </summary>
         public int Count => entities.Count;
 
         /// <summary>
-        /// Gets the list of component types from the entities..
+        ///   Gets a list of the <see cref="EntityComponent"/> types from the entities.
         /// </summary>
         /// <value>The registered component types.</value>
         public IEnumerable<TypeInfo> ComponentTypes => componentTypes;
@@ -124,29 +128,32 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Determines whether this instance contains the specified entity.
+        ///   Determines whether this instance contains the specified <see cref="Entity"/>.
         /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns><c>true</c> if this instance contains the specified entity; otherwise, <c>false</c>.</returns>
-        public bool Contains(Entity item)
+        /// <param name="entity">The entity to look for.</param>
+        /// <returns><c>true</c> if this instance contains the specified <see cref="Entity"/>; otherwise, <c>false</c>.</returns>
+        public bool Contains(Entity entity)
         {
-            return entities.Contains(item);
+            return entities.Contains(entity);
         }
 
         /// <summary>
-        /// Gets the <see cref="Entity"/> enumerator of this instance.
+        ///   Gets an enumeration object with which you can loop over the entities in iteration.
         /// </summary>
-        /// <returns>The entity enumerator</returns>
+        /// <returns>An enumerator over the entities in this instance.</returns>
         public HashSet<Entity>.Enumerator GetEnumerator()
         {
             return entities.GetEnumerator();
         }
 
         /// <summary>
-        /// Gets the first processor of the type TProcessor.
+        ///   Gets the first <see cref="EntityProcessor"/> of the provided type.
         /// </summary>
-        /// <typeparam name="TProcessor">Type of the processor</typeparam>
-        /// <returns>The first processor of type T or <c>null</c> if not found.</returns>
+        /// <typeparam name="TProcessor">Type of the processor.</typeparam>
+        /// <returns>
+        ///   The first processor of the provided type <typeparamref name="TProcessor"/>;
+        ///   or <c>null</c> if not found.
+        /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TProcessor GetProcessor<TProcessor>() where TProcessor : EntityProcessor
         {
@@ -154,18 +161,20 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Removes the entity from the <see cref="EntityManager" />.
-        /// It works weither entity has a parent or not.
-        /// In conjonction with <see cref="HierarchicalProcessor" />, it will remove child entities as well.
+        ///   Removes the specified <see cref="Entity"/> from this <see cref="EntityManager"/>.
         /// </summary>
-        /// <param name="entity">The entity.</param>
+        /// <param name="entity">The entity to remove.</param>
+        /// <remarks>
+        ///   This method removes the entity whether it has a parent or not.
+        ///   In conjonction with <see cref="HierarchicalProcessor" />, it will remove child entities as well.
+        /// </remarks>
         public void Remove(Entity entity)
         {
-            InternalRemoveEntity(entity, true);
+            InternalRemoveEntity(entity, removeParent: true);
         }
 
         /// <summary>
-        /// Removes all entities from the <see cref="EntityManager"/>.
+        ///   Removes all the entities from this <see cref="EntityManager"/>.
         /// </summary>
         protected internal virtual void Reset()
         {
@@ -182,7 +191,11 @@ namespace Stride.Engine
             processors.Clear();
         }
 
-        internal virtual void Draw(RenderContext context)
+        /// <summary>
+        ///   Draws the entities in this instance through all the enabled <see cref="EntityProcessor"/>s.
+        /// </summary>
+        /// <param name="context">The render context.</param>
+        public virtual void Draw(RenderContext context)
         {
             foreach (var processor in processors)
             {
@@ -197,11 +210,14 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Adds the entity.
-        /// If the <see cref="Entity" /> has a parent, its parent should be added (or <see cref="TransformComponent.Children" />) should be used.
+        ///   Adds an <see cref="Entity"/>.
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <exception cref="System.ArgumentException">Entity shouldn't have a parent.;entity</exception>
+        /// <param name="entity">The entity to add.</param>
+        /// <exception cref="ArgumentException">Entity shouldn't have a parent.;entity</exception>
+        /// <remarks>
+        ///   If the provided <see cref="Entity" /> has a parent, its parent should also be added (or <see cref="TransformComponent.Children" />)
+        ///   should be used.
+        /// </remarks>
         internal void Add(Entity entity)
         {
             // Entity can't be a root because it already has a parent?
@@ -212,7 +228,7 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Adds the specified entity.
+        ///   Adds the specified <see cref="Entity"/>.
         /// </summary>
         /// <param name="entity">The entity to add.</param>
         internal void InternalAddEntity(Entity entity)
@@ -222,16 +238,14 @@ namespace Stride.Engine
                 return;
 
             if (entity.EntityManager != null)
-            {
-                throw new InvalidOperationException("Cannot add an entity to this entity manager when it is already used by another entity manager");
-            }
+                throw new InvalidOperationException("Cannot add an Entity to this EntityManager when it is already used by another one.");
 
             // Add this entity to our internal hashset
             entity.EntityManager = this;
             entities.Add(entity);
             entity.AddReferenceInternal();
 
-            // Because a processor can add entities, we want to make sure that 
+            // Because a processor can add entities, we want to make sure that
             // the RegisterPendingProcessors is called only at the top level
             {
                 addEntityLevel++;
@@ -264,10 +278,10 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// Removes the specified entity.
+        ///   Removes the specified <see cref="Entity"/>.
         /// </summary>
         /// <param name="entity">The entity to remove.</param>
-        /// <param name="removeParent">Indicate if entity should be removed from its parent</param>
+        /// <param name="removeParent">A value indicating if the entity should be removed from its parent.</param>
         internal void InternalRemoveEntity(Entity entity, bool removeParent)
         {
             // Entity wasn't already added
@@ -295,9 +309,7 @@ namespace Stride.Engine
         private void CollectNewProcessorsByComponentType(TypeInfo componentType)
         {
             if (componentTypes.Contains(componentType))
-            {
                 return;
-            }
 
             componentTypes.Add(componentType);
             OnComponentTypeAdded(componentType);
@@ -307,14 +319,14 @@ namespace Stride.Engine
             foreach (var processorAttributeType in processorAttributes)
             {
                 var processorType = AssemblyRegistry.GetType(processorAttributeType.TypeName);
-                if (processorType == null || !typeof(EntityProcessor).GetTypeInfo().IsAssignableFrom(processorType.GetTypeInfo()))
+                if (processorType is null || !typeof(EntityProcessor).GetTypeInfo().IsAssignableFrom(processorType.GetTypeInfo()))
                 {
-                    // TODO: log an error if type is not of EntityProcessor
+                    // TODO: Log an error if type is not of EntityProcessor
                     continue;
                 }
 
                 // Filter using ExecutionMode
-                if ((ExecutionMode & processorAttributeType.ExecutionMode) != ExecutionMode.None)
+                if (ExecutionMode.HasFlag(processorAttributeType.ExecutionMode))
                 {
                     // Make sure that we are adding a processor of the specified type only if it is not already in the list or pending
 
@@ -339,7 +351,7 @@ namespace Stride.Engine
                                 break;
                             }
                         }
-                        
+
                         // If not found, we can add this processor
                         if (addNewProcessor)
                         {
@@ -377,7 +389,7 @@ namespace Stride.Engine
                 // Add dependent component
                 if (processor.IsDependentOnComponentType(componentType))
                 {
-                    if (processorList.Dependencies == null)
+                    if (processorList.Dependencies is null)
                     {
                         processorList.Dependencies = new List<EntityProcessor>();
                     }
@@ -385,8 +397,7 @@ namespace Stride.Engine
                 }
             }
 
-            // NOTE: It is important to perform a ToList() as the TransformProcessor adds children 
-            // entities and modifies the current list of entities
+            // NOTE: It is important to perform a ToList() as the TransformProcessor adds children entities and modifies the current list of entities
             foreach (var entity in entities.ToList())
             {
                 CheckEntityWithNewProcessor(entity, processor);
@@ -416,7 +427,7 @@ namespace Stride.Engine
 
         internal void NotifyComponentChanged(Entity entity, int index, EntityComponent oldComponent, EntityComponent newComponent)
         {
-            // No real update   
+            // No real update
             if (oldComponent == newComponent)
                 return;
 
@@ -428,7 +439,7 @@ namespace Stride.Engine
             }
 
             // Remove previous component from processors
-            currentDependentProcessors.Clear(); 
+            currentDependentProcessors.Clear();
             if (oldComponent != null)
             {
                 CheckEntityComponentWithProcessors(entity, oldComponent, true, currentDependentProcessors);
@@ -591,12 +602,12 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// List of processors for a particular component type.
+        ///   Represents a collection of <see cref="EntityProcessor"/>s for a particular <see cref="EntityComponent"/> type.
         /// </summary>
         internal class EntityProcessorCollectionPerComponentType : EntityProcessorCollection
         {
             /// <summary>
-            /// The processors that are depending on the component type
+            ///   The processors that are depending on the component type
             /// </summary>
             public List<EntityProcessor> Dependencies;
         }
@@ -607,10 +618,12 @@ namespace Stride.Engine
 
             public TrackingEntityProcessorCollection(EntityManager manager)
             {
-                if (manager == null) throw new ArgumentNullException(nameof(manager));
+                if (manager is null)
+                    throw new ArgumentNullException(nameof(manager));
+
                 this.manager = manager;
             }
-            
+
             protected override void ClearItems()
             {
                 for (int i = 0; i < Count; i++)
@@ -623,7 +636,9 @@ namespace Stride.Engine
 
             protected override void AddItem(EntityProcessor processor)
             {
-                if (processor == null) throw new ArgumentNullException(nameof(processor));
+                if (processor is null)
+                    throw new ArgumentNullException(nameof(processor));
+
                 if (!Contains(processor))
                 {
                     base.AddItem(processor);

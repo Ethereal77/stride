@@ -4,14 +4,16 @@
 
 using System.Threading.Tasks;
 
-using Stride.Core.Assets.Editor.Services;
 using Stride.Core;
 using Stride.Core.Mathematics;
-using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
 using Stride.Assets.Skyboxes;
+using Stride.Core.Assets.Editor.Services;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
 using Stride.Engine;
 using Stride.Rendering.Lights;
 using Stride.Rendering.Skyboxes;
+using Stride.Rendering.Voxels;
+using Stride.Rendering.Voxels.VoxelGI;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFactories
 {
@@ -79,9 +81,10 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFa
         public override async Task<Entity> CreateEntity(EntityHierarchyItemViewModel parent)
         {
             var skybox = await PickupAsset(parent.Editor.Session, new[] { typeof(SkyboxAsset) });
-            if (skybox == null)
+            if (skybox is null)
                 return null;
-            var skyboxAsset = (SkyboxAsset)skybox.Asset;
+
+            var skyboxAsset = (SkyboxAsset) skybox.Asset;
 
             var name = ComputeNewName(parent, "Skybox light");
             var lightComponent = new LightComponent { Type = new LightSkybox { Skybox = ContentReferenceHelper.CreateReference<Skybox>(skybox) } };
@@ -90,7 +93,29 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFa
         }
     }
 
-    [Display(60, "Light probe", "Light")]
+    [Display(60, "Voxel light", "Light")]
+    public class VoxelLightEntityFactory : EntityFactory
+    {
+        public override Task<Entity> CreateEntity(EntityHierarchyItemViewModel parent)
+        {
+            var name = ComputeNewName(parent, "Voxel light");
+            var component = new LightComponent { Type = new LightVoxel() };
+            return CreateEntityWithComponent(name, component);
+        }
+    }
+
+    [Display(65, "Voxel volume", "Light")]
+    public class VoxelVolumeEntityFactory : EntityFactory
+    {
+        public override Task<Entity> CreateEntity(EntityHierarchyItemViewModel parent)
+        {
+            var name = ComputeNewName(parent, "Voxel volume");
+            var component = new VoxelVolumeComponent { Attributes = { new VoxelAttributeEmissionOpacity() } };
+            return CreateEntityWithComponent(name, component);
+        }
+    }
+
+    [Display(70, "Light probe", "Light")]
     public class LightProbeEntityFactory : EntityFactory
     {
         public override async Task<Entity> CreateEntity(EntityHierarchyItemViewModel parent)

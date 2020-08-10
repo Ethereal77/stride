@@ -11,7 +11,8 @@ using Stride.Rendering.Compositing;
 namespace Stride.Engine.Processors
 {
     /// <summary>
-    /// The processor for <see cref="CameraComponent"/>.
+    ///   Represents an <see cref="EntityProcessor"/> that manages the cameras (<see cref="CameraComponent"/>) through
+    ///   which the <see cref="Scene"/> will be rendered.
     /// </summary>
     public class CameraProcessor : EntityProcessor<CameraComponent>
     {
@@ -20,7 +21,7 @@ namespace Stride.Engine.Processors
         private bool cameraSlotsDirty = true;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CameraProcessor"/> class.
+        ///   Initializes a new instance of the <see cref="CameraProcessor"/> class.
         /// </summary>
         public CameraProcessor()
         {
@@ -29,7 +30,7 @@ namespace Stride.Engine.Processors
 
         public override void Draw(RenderContext context)
         {
-            var graphicsCompositor = context.Tags.Get(SceneSystem.Current)?.GraphicsCompositor;
+            var graphicsCompositor = context.Tags.Get(GraphicsCompositor.Current);
 
             // Monitor changes in the camera slots of the current compositor
             if (graphicsCompositor != currentCompositor)
@@ -80,7 +81,7 @@ namespace Stride.Engine.Processors
                 var camera = matchingCamera.Value;
                 if (graphicsCompositor != null)
                 {
-                    if (camera.Enabled && camera.Slot.AttachedCompositor == null)
+                    if (camera.Enabled && camera.Slot.AttachedCompositor is null)
                     {
                         // Either the slot has been changed and need to be re-attached, or the camera has just been enabled.
                         // Make sure this camera is detached from all slots, we'll re-attach it in the second pass.
@@ -101,7 +102,7 @@ namespace Stride.Engine.Processors
 
                 if (graphicsCompositor != null)
                 {
-                    if (camera.Enabled && camera.Slot.AttachedCompositor == null)
+                    if (camera.Enabled && camera.Slot.AttachedCompositor is null)
                     {
                         // Attach to the new slot
                         AttachCameraToSlot(graphicsCompositor, camera);

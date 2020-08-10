@@ -9,19 +9,18 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using EnvDTE;
-using Microsoft.VisualStudio.Text.Editor;
-using NShader;
 
 using NuGet.Common;
 using NuGet.Frameworks;
 using NuGet.Versioning;
+
 using ServiceWire.NamedPipes;
+
 using Stride.Core;
 using Stride.Core.Assets;
-using Process = System.Diagnostics.Process;
+
 using Thread = System.Threading.Thread;
+using Process = System.Diagnostics.Process;
 
 namespace Stride.VisualStudio.Commands
 {
@@ -37,7 +36,6 @@ namespace Stride.VisualStudio.Commands
             public List<string> SdkPaths;
 
             public PackageVersion ExpectedVersion;
-
             public PackageVersion LoadedVersion;
         }
 
@@ -60,12 +58,10 @@ namespace Stride.VisualStudio.Commands
         {
             var assemblyName = new AssemblyName(args.Name);
 
-            // Necessary to avoid conflicts with Visual Studio NuGet
-            if (args.Name.StartsWith("NuGet", StringComparison.InvariantCultureIgnoreCase))
+            // Non-signed assemblies need to be manually loaded
+            if (assemblyName.Name == "ServiceWire")
                 return Assembly.Load(assemblyName);
-            if (args.Name.StartsWith("ServiceWire", StringComparison.InvariantCultureIgnoreCase))
-                return Assembly.Load(assemblyName);
-            if (args.Name.StartsWith("Stride.VisualStudio.Commands.Interfaces", StringComparison.InvariantCultureIgnoreCase))
+            if (assemblyName.Name == "Stride.VisualStudio.Commands.Interfaces")
                 return Assembly.Load(assemblyName);
 
             return null;
@@ -181,7 +177,8 @@ namespace Stride.VisualStudio.Commands
                 foreach (var framework in new[] { ".NETCoreApp,Version=v3.1", ".NETFramework,Version=v4.7.2" })
                 {
                     var logger = new Logger();
-                    var (request, result) = await Task.Run(() => RestoreHelper.Restore(logger, NuGetFramework.ParseFrameworkName(framework, DefaultFrameworkNameProvider.Instance), "win", packageName, new VersionRange(packageInfo.ExpectedVersion.ToNuGetVersion())));
+                    var solutionRoot = Path.GetDirectoryName(solution);
+                    var (request, result) = await Task.Run(() => RestoreHelper.Restore(logger, NuGetFramework.ParseFrameworkName(framework, DefaultFrameworkNameProvider.Instance), "win", packageName, new VersionRange(packageInfo.ExpectedVersion.ToNuGetVersion()), solutionRoot));
                     if (result.Success)
                     {
                         packageInfo.SdkPaths.AddRange(RestoreHelper.ListAssemblies(result.LockFile));
@@ -192,9 +189,8 @@ namespace Stride.VisualStudio.Commands
                 }
                 if (!success)
                 {
-                    MessageBox.Show( $"Could not restore {packageName} {packageInfo.ExpectedVersion}, this Visual Studio extension may fail to work properly without it. " +
-                                     $"To fix this you can either build {packageName} or pull the right version from NuGet manually." );
-                    throw new InvalidOperationException($"Could not restore {packageName} {packageInfo.ExpectedVersion}.");
+                    throw new InvalidOperationException($"Could not restore {packageName} {packageInfo.ExpectedVersion}, this visual studio extension may fail to work " +
+                                                        $"properly without it. To fix this you can either build {packageName} or pull the right version from NuGet manually.");
                 }
             }
 
@@ -204,47 +200,24 @@ namespace Stride.VisualStudio.Commands
         public class Logger : ILogger
         {
             private object logLock = new object();
+
             public List<(LogLevel Level, string Message)> Logs { get; } = new List<(LogLevel, string)>();
 
-            public void LogDebug(string data)
-            {
-                Log(LogLevel.Debug, data);
-            }
+            public void LogDebug(string data) => Log(LogLevel.Debug, data);
 
-            public void LogVerbose(string data)
-            {
-                Log(LogLevel.Verbose, data);
-            }
+            public void LogVerbose(string data) => Log(LogLevel.Verbose, data);
 
-            public void LogInformation(string data)
-            {
-                Log(LogLevel.Information, data);
-            }
+            public void LogInformation(string data) => Log(LogLevel.Information, data);
 
-            public void LogMinimal(string data)
-            {
-                Log(LogLevel.Minimal, data);
-            }
+            public void LogMinimal(string data) => Log(LogLevel.Minimal, data);
 
-            public void LogWarning(string data)
-            {
-                Log(LogLevel.Warning, data);
-            }
+            public void LogWarning(string data) => Log(LogLevel.Warning, data);
 
-            public void LogError(string data)
-            {
-                Log(LogLevel.Error, data);
-            }
+            public void LogError(string data) => Log(LogLevel.Error, data);
 
-            public void LogInformationSummary(string data)
-            {
-                Log(LogLevel.Information, data);
-            }
+            public void LogInformationSummary(string data) => Log(LogLevel.Information, data);
 
-            public void LogErrorSummary(string data)
-            {
-                Log(LogLevel.Error, data);
-            }
+            public void LogErrorSummary(string data) => Log(LogLevel.Error, data);
 
             public void Log(LogLevel level, string data)
             {
@@ -274,21 +247,25 @@ namespace Stride.VisualStudio.Commands
         }
 
         /// <summary>
-        /// Converts a <see cref="PackageVersion"/> into a <see cref="NuGetVersion"/>.
+        ///   Converts a <see cref="PackageVersion"/> into a <see cref="NuGetVersion"/>.
         /// </summary>
-        /// <param name="version">The source of conversion.</param>
-        /// <returns>A new instance of <see cref="NuGetVersion"/> corresponding to <paramref name="version"/>.</returns>
+        /// <param name="version">The version to convert.</param>
+        /// <returns>A <see cref="NuGetVersion"/> corresponding to <paramref name="version"/>.</returns>
         public static NuGetVersion ToNuGetVersion(this PackageVersion version)
         {
-            if (version == null) throw new ArgumentNullException(nameof(version));
+            if (version is null)
+                throw new ArgumentNullException(nameof(version));
 
             return new NuGetVersion(version.Version, version.SpecialVersion);
         }
 
-
-        internal static void InitializeFromSolution(string solutionPath, PackageInfo stridePackageInfo)
+        internal static void SetSolution(string solutionPath)
         {
             solution = solutionPath;
+        }
+
+        internal static void SetPackageInfo(PackageInfo stridePackageInfo)
+        {
             CurrentPackageInfo = stridePackageInfo;
         }
 

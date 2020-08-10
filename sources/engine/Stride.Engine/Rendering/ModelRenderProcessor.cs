@@ -15,6 +15,10 @@ using Stride.Rendering.Materials.ComputeColors;
 
 namespace Stride.Rendering
 {
+    /// <summary>
+    ///   Represents the <see cref="EntityProcessor"/> that handles the updating and rendering of <see cref="Model"/>s
+    ///   attached to an <see cref="Entity"/> by means of <see cref="ModelComponent"/>s.
+    /// </summary>
     public class ModelRenderProcessor : EntityProcessor<ModelComponent, RenderModel>, IEntityComponentRenderProcessor
     {
         private Material fallbackMaterial;
@@ -23,9 +27,7 @@ namespace Stride.Rendering
 
         public VisibilityGroup VisibilityGroup { get; set; }
 
-        public ModelRenderProcessor() : base(typeof(TransformComponent))
-        {
-        }
+        public ModelRenderProcessor() : base(typeof(TransformComponent)) { }
 
         /// <inheritdoc />
         protected internal override void OnSystemAdd()
@@ -71,9 +73,8 @@ namespace Stride.Rendering
         /// <inheritdoc />
         public override void Draw(RenderContext context)
         {
-            // Note: we are rebuilding RenderMeshes every frame
-            // TODO: check if it wouldn't be better to add/remove directly in CheckMeshes()?
-            //foreach (var entity in ComponentDatas)
+            // NOTE: We are rebuilding RenderMeshes every frame
+            // TODO: Check if it wouldn't be better to add/remove directly in CheckMeshes()?
             Dispatcher.ForEach(ComponentDatas, entity =>
             {
                 var modelComponent = entity.Key;
@@ -86,7 +87,7 @@ namespace Stride.Rendering
 
         private void UpdateRenderModel(ModelComponent modelComponent, RenderModel renderModel)
         {
-            if (modelComponent.Model == null)
+            if (modelComponent.Model is null)
                 return;
 
             var modelViewHierarchy = modelComponent.Skeleton;
@@ -95,7 +96,7 @@ namespace Stride.Rendering
             for (int sourceMeshIndex = 0; sourceMeshIndex < renderModel.Materials.Length; sourceMeshIndex++)
             {
                 var passes = renderModel.Materials[sourceMeshIndex].MeshCount;
-                // Note: indices in RenderModel.Meshes and Model.Meshes are different (due to multipass materials)
+                // NOTE: Indices in RenderModel.Meshes and Model.Meshes are different (due to multipass materials)
                 var meshIndex = renderModel.Materials[sourceMeshIndex].MeshStartIndex;
 
                 for (int pass = 0; pass < passes; ++pass, ++meshIndex)
@@ -146,7 +147,7 @@ namespace Stride.Rendering
                 if (model != null)
                 {
                     // Number of meshes changed in the model?
-                    if (model.Meshes.Count != renderModel.Meshes.Length)
+                    if (model.Meshes.Count != renderModel.UniqueMeshCount)
                         goto RegenerateMeshes;
 
                     if (modelComponent.Enabled)
@@ -194,7 +195,7 @@ namespace Stride.Rendering
                 }
             }
 
-            if (model == null)
+            if (model is null)
                 return;
 
             // Count meshes
@@ -234,6 +235,7 @@ namespace Stride.Rendering
             }
 
             renderModel.Meshes = renderMeshes;
+            renderModel.UniqueMeshCount = model.Meshes.Count;
 
             // Update before first add so that RenderGroup is properly set
             UpdateRenderModel(modelComponent, renderModel);

@@ -16,61 +16,72 @@ using Stride.Graphics;
 
 namespace Stride.Rendering.Compositing
 {
+    /// <summary>
+    ///   Represents a class that manages the rendering pipeline and the composition of the different <see cref="RenderFeature"/>s
+    ///   and <see cref="RenderStage"/>s to render the <see cref="Scene"/>s through <see cref="RenderView"/>s and finally apply
+    ///   post-processing if appropriate.
+    /// </summary>
     [DataSerializerGlobal(typeof(ReferenceSerializer<GraphicsCompositor>), Profile = "Content")]
     [ReferenceSerializer, ContentSerializer(typeof(DataContentSerializerWithReuse<GraphicsCompositor>))]
     [DataContract]
     // Needed for indirect serialization of RenderSystem.RenderStages and RenderSystem.RenderFeatures
-    // TODO: we would like an attribute to specify that serializing through the interface type is fine in this case (bypass type detection)
+    // TODO: We would like an attribute to specify that serializing through the interface type is fine in this case (bypass type detection)
     [DataSerializerGlobal(null, typeof(FastTrackingCollection<RenderStage>))]
     [DataSerializerGlobal(null, typeof(FastTrackingCollection<RootRenderFeature>))]
     public class GraphicsCompositor : RendererBase
     {
+        /// <summary>
+        ///   A property key to get the current <see cref="GraphicsCompositor"/> from the <see cref="RenderContext.Tags"/>.
+        /// </summary>
+        public static readonly PropertyKey<GraphicsCompositor> Current = new PropertyKey<GraphicsCompositor>("GraphicsCompositor.Current", typeof(GraphicsCompositor));
+
         private readonly List<SceneInstance> initializedSceneInstances = new List<SceneInstance>();
 
         /// <summary>
-        /// Gets the render system used with this graphics compositor.
+        ///   Gets the <see cref="Rendering.RenderSystem"/> used with this graphics compositor.
         /// </summary>
         [DataMemberIgnore]
         public RenderSystem RenderSystem { get; } = new RenderSystem();
 
         /// <summary>
-        /// Gets the cameras used by this composition.
+        ///   Gets the cameras used by this graphics compositor.
         /// </summary>
-        /// <value>The cameras.</value>
-        /// <userdoc>The list of cameras used in the graphic pipeline</userdoc>
+        /// <value>The collection of cameras in use by this graphics compositor.</value>
+        /// <userdoc>The list of cameras used in the graphic pipeline.</userdoc>
         [DataMember(10)]
         [Category]
         [MemberCollection(NotNullItems = true)]
         public SceneCameraSlotCollection Cameras { get; } = new SceneCameraSlotCollection();
 
         /// <summary>
-        /// The list of render stages.
+        ///   Gets the list of render stages registered in this graphics compositor.
         /// </summary>
+        /// <value>A list of <see cref="RenderStage"/>s registered with this graphics compositor.</value>
         [DataMember(20)]
         [Category]
         [MemberCollection(NotNullItems = true)]
         public IList<RenderStage> RenderStages => RenderSystem.RenderStages;
 
         /// <summary>
-        /// The list of render features.
+        ///   Gets the list of render features registered in this graphics compositor.
         /// </summary>
+        /// <value>A list of the available <see cref="RenderFeature"/>s registered with this graphics compositor.</value>
         [DataMember(30)]
         [Category]
         [MemberCollection(NotNullItems = true)]
         public IList<RootRenderFeature> RenderFeatures => RenderSystem.RenderFeatures;
 
         /// <summary>
-        /// The entry point for the game compositor.
+        ///   Gets or sets the <see cref="ISceneRenderer"/> to use as entry point for the game compositor.
         /// </summary>
         public ISceneRenderer Game { get; set; }
-
         /// <summary>
-        /// The entry point for a compositor that can render a single view.
+        ///   Gets or sets the <see cref="ISceneRenderer"/> to use as entry point for a compositor that can render a single view,
+        ///   like cubemaps, render textures, etc.
         /// </summary>
         public ISceneRenderer SingleView { get; set; }
-
         /// <summary>
-        /// The entry point for a compositor used by the scene editor.
+        ///   Gets or sets the <see cref="ISceneRenderer"/> to use as entry point for a compositor used by the scene editor.
         /// </summary>
         public ISceneRenderer Editor { get; set; }
 
@@ -141,6 +152,7 @@ namespace Stride.Rendering.Compositing
                 using (context.RenderContext.PushTagAndRestore(SceneInstance.CurrentVisibilityGroup, visibilityGroup))
                 using (context.RenderContext.PushTagAndRestore(SceneInstance.CurrentRenderSystem, RenderSystem))
                 using (context.RenderContext.PushTagAndRestore(SceneCameraSlotCollection.Current, Cameras))
+                using (context.RenderContext.PushTagAndRestore(Current, this))
                 {
                     // Set render system
                     context.RenderContext.RenderSystem = RenderSystem;

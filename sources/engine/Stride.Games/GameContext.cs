@@ -3,8 +3,6 @@
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#pragma warning disable SA1402 // File may only contain a single type
-
 using System;
 using System.Reflection;
 
@@ -143,11 +141,13 @@ namespace Stride.Games
         /// <param name="control">The control on which the game will run.</param>
         /// <param name="requestedWidth">Requested width of the control.</param>
         /// <param name="requestedHeight">Requested height of the control.</param>
-        protected GameContext(TControl control, int requestedWidth = 0, int requestedHeight = 0)
+        /// <param name="isUserManagingRun">A value indicating whether the user manages the main loop.</param>
+        protected GameContext(TControl control, int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false)
         {
             Control = control;
             RequestedWidth = requestedWidth;
             RequestedHeight = requestedHeight;
+            IsUserManagingRun = isUserManagingRun;
         }
     }
 }

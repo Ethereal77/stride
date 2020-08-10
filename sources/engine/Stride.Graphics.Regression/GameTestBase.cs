@@ -44,11 +44,8 @@ namespace Stride.Graphics.Regression
         public int FrameIndex;
 
         private bool screenshotAutomationEnabled;
-        private List<string> comparisonMissingMessages = new List<string>();
-        private List<string> comparisonFailedMessages = new List<string>();
-
-        private BackBufferSizeMode backBufferSizeMode;
-
+        private readonly List<string> comparisonMissingMessages = new List<string>();
+        private readonly List<string> comparisonFailedMessages = new List<string>();
         private RenderDocManager renderDocManager;
 
         protected GameTestBase()
@@ -74,7 +71,7 @@ namespace Stride.Graphics.Regression
             FrameGameSystem = new FrameGameSystem(Services);
             GameSystems.Add(FrameGameSystem);
 
-            // by default we want the same size for the back buffer on mobiles and windows.
+            // By default we want the same size for the back buffer on mobiles and Windows
             BackBufferSizeMode = BackBufferSizeMode.FitToDesiredValues;
         }
 
@@ -101,23 +98,23 @@ namespace Stride.Graphics.Regression
         }
 
         /// <summary>
-        /// Save the image locally or on the server.
+        ///   Saves the image locally or on the server.
         /// </summary>
         /// <param name="textureToSave">The texture to save.</param>
         /// <param name="testName">The name of the test corresponding to the image to save</param>
         public void SaveImage(Texture textureToSave, string testName = null)
         {
-            if (textureToSave == null)
+            if (textureToSave is null)
                 return;
 
-            TestGameLogger.Info(@"Saving image");
+            TestGameLogger.Info(@"Saving image...");
             using (var image = textureToSave.GetDataAsImage(GraphicsContext.CommandList))
             {
                 try
                 {
                     SendImage(image, testName);
                 }
-                catch (Exception)
+                catch
                 {
                     TestGameLogger.Error(@"An error occurred when trying to send the data to the server.");
                     throw;
@@ -126,21 +123,21 @@ namespace Stride.Graphics.Regression
         }
 
         /// <summary>
-        /// Save the image locally or on the server.
+        ///   Saves the image locally or on the server.
         /// </summary>
         public void SaveBackBuffer(string testName = null)
         {
-            TestGameLogger.Info(@"Saving the backbuffer");
-            // TODO GRAPHICS REFACTOR switched to presenter backbuffer, need to check if it's good
+            TestGameLogger.Info(@"Saving the backbuffer...");
+            // TODO: GRAPHICS REFACTOR switched to presenter backbuffer, need to check if it's good
             SaveImage(GraphicsDevice.Presenter.BackBuffer, testName);
         }
 
         /// <summary>
-        /// Gets or sets the value indicating if the screen shots automation should be enabled or not.
+        ///   Gets or sets a value indicating whether the screenshots automation should be enabled.
         /// </summary>
         public bool ScreenShotAutomationEnabled
         {
-            get { return screenshotAutomationEnabled; }
+            get => screenshotAutomationEnabled;
             set
             {
                 FrameGameSystem.Visible = value;
@@ -149,11 +146,7 @@ namespace Stride.Graphics.Regression
             }
         }
 
-        public BackBufferSizeMode BackBufferSizeMode
-        {
-            get { return backBufferSizeMode; }
-            set { backBufferSizeMode = value; }
-        }
+        public BackBufferSizeMode BackBufferSizeMode { get; set; }
 
         protected internal void EnableSimulatedInputSource()
         {
@@ -256,7 +249,7 @@ namespace Stride.Graphics.Regression
         }
 
         /// <summary>
-        /// Loop through all the tests and save the images.
+        ///   Loop through all the tests while saving the resulting images.
         /// </summary>
         /// <param name="gameTime">the game time.</param>
         protected override void Draw(GameTime gameTime)
@@ -274,19 +267,17 @@ namespace Stride.Graphics.Regression
             if (!ScreenShotAutomationEnabled)
                 return;
 
-            string testName;
-
             if (FrameGameSystem.AllTestsCompleted)
                 Exit();
-            else if (FrameGameSystem.IsScreenshotNeeded(out testName))
+            else if (FrameGameSystem.IsScreenshotNeeded(out string testName))
                 SaveBackBuffer(testName);
         }
 
-        protected void PerformTest(Action<Game> testAction, GraphicsProfile? profileOverride = null, bool takeSnapshot = false)
+        protected void PerformTest(Action<GameTestBase> testAction, GraphicsProfile? profileOverride = null, bool takeSnapshot = false)
         {
             // create the game instance
             var typeGame = GetType();
-            var game = (GameTestBase)Activator.CreateInstance(typeGame);
+            var game = (GameTestBase) Activator.CreateInstance(typeGame);
             if (profileOverride.HasValue)
                 game.GraphicsDeviceManager.PreferredGraphicsProfile = new[] { profileOverride.Value };
 
@@ -326,11 +317,9 @@ namespace Stride.Graphics.Regression
         }
 
         /// <summary>
-        /// Method to register the tests.
+        ///   This method should be overriden to register the tests to process. By default, it does nothing.
         /// </summary>
-        protected virtual void RegisterTests()
-        {
-        }
+        protected virtual void RegisterTests() { }
 
         protected static void RunGameTest(GameTestBase game)
         {
@@ -362,20 +351,21 @@ namespace Stride.Graphics.Regression
         }
 
         /// <summary>
-        /// Send the data of the test to the server.
+        ///   Sends the data of the test to the server.
         /// </summary>
         /// <param name="image">The image to send.</param>
         /// <param name="testName">The name of the test.</param>
         public void SendImage(Image image, string testName)
         {
             var frame = testName;
-            if (frame == null && FrameIndex++ > 0)
+            if (frame is null && FrameIndex++ > 0)
                 frame = "f" + (FrameIndex - 1);
 
             // Register 3D card name
             // TODO: This doesn't work well because ImageTester.ImageTestResultConnection is static, this will need improvements
             //if (!ImageTester.ImageTestResultConnection.DeviceName.Contains("_"))
-            //    ImageTester.ImageTestResultConnection.DeviceName += "_" + GraphicsDevice.Adapter.Description.Split('\0')[0].TrimEnd(' '); // Workaround for sharpDX bug: Description ends with an series trailing of '\0' characters
+            //    // Workaround for SharpDX bug: Description ends with an series trailing of '\0' characters
+            //    ImageTester.ImageTestResultConnection.DeviceName += "_" + GraphicsDevice.Adapter.Description.Split('\0')[0].TrimEnd(' ');
 
             var platformSpecific = GetPlatformSpecificFolder();
             var rootFolder = FindStrideRootFolder();
@@ -463,7 +453,7 @@ namespace Stride.Graphics.Regression
         }
 
         /// <summary>
-        /// A structure to store information about the connected test devices.
+        ///   A structure to store information about the connected test devices.
         /// </summary>
         public struct ConnectedDevice
         {
@@ -478,35 +468,35 @@ namespace Stride.Graphics.Regression
         }
 
         /// <summary>
-        /// Ignore the test on the given platform
+        ///   Ignores the test on the given platform
         /// </summary>
         public static void IgnorePlatform(PlatformType platform)
         {
-            Skip.If(Platform.Type == platform, $"This test is not valid for the '{platform}' platform. It has been ignored");
+            Skip.If(Platform.Type == platform, $"This test is not valid for the '{platform}' platform. It has been ignored.");
         }
 
         /// <summary>
-        /// Ignore the test on any other platform than the provided one.
+        ///   Ignores the test on any other platform than the provided one.
         /// </summary>
         public static void RequirePlatform(PlatformType platform)
         {
-            Skip.If(Platform.Type != platform, $"This test requires the '{platform}' platform. It has been ignored");
+            Skip.If(Platform.Type != platform, $"This test requires the '{platform}' platform. It has been ignored.");
         }
 
         /// <summary>
-        /// Ignore the test on the given graphic platform
+        ///   Ignores the test on the given graphics platform.
         /// </summary>
         public static void IgnoreGraphicPlatform(GraphicsPlatform platform)
         {
-            Skip.If(GraphicsDevice.Platform == platform, $"This test is not valid for the '{platform}' graphic platform. It has been ignored");
+            Skip.If(GraphicsDevice.Platform == platform, $"This test is not valid for the '{platform}' graphic platform. It has been ignored.");
         }
 
         /// <summary>
-        /// Ignore the test on any other graphic platform than the provided one.
+        ///   Ignores the test on any other graphics platform than the provided one.
         /// </summary>
         public static void RequireGraphicPlatform(GraphicsPlatform platform)
         {
-            Skip.If(GraphicsDevice.Platform != platform, $"This test requires the '{platform}' platform. It has been ignored");
+            Skip.If(GraphicsDevice.Platform != platform, $"This test requires the '{platform}' platform. It has been ignored.");
         }
     }
 }

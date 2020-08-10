@@ -13,12 +13,13 @@ using Stride.Core.Collections;
 using Stride.Core.Mathematics;
 using Stride.Core.Threading;
 using Stride.Graphics;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Renders <see cref="RenderMesh"/>.
+    ///   Represents a <see cref="RenderFeature"/> that renders <see cref="RenderMesh"/>es.
     /// </summary>
     public class MeshRenderFeature : RootEffectRenderFeature
     {
@@ -27,7 +28,7 @@ namespace Stride.Rendering
         private Buffer emptyBuffer;
 
         /// <summary>
-        /// Lists of sub render features that can be applied on <see cref="RenderMesh"/>.
+        ///   Lists of sub render features that can be applied on <see cref="RenderMesh"/>.
         /// </summary>
         [DataMember]
         [Category]
@@ -89,7 +90,6 @@ namespace Stride.Rendering
             }
         }
 
-        /// <param name="context"></param>
         /// <inheritdoc/>
         public override void PrepareEffectPermutationsImpl(RenderDrawContext context)
         {
@@ -123,7 +123,7 @@ namespace Stride.Rendering
 
         protected override void ProcessPipelineState(RenderContext context, RenderNodeReference renderNodeReference, ref RenderNode renderNode, RenderObject renderObject, PipelineStateDescription pipelineState)
         {
-            var renderMesh = (RenderMesh)renderObject;
+            var renderMesh = (RenderMesh) renderObject;
             var drawData = renderMesh.ActiveMeshDraw;
 
             pipelineState.InputElements = PrepareInputElements(pipelineState, drawData);
@@ -157,11 +157,11 @@ namespace Stride.Rendering
 
             // TODO: stackalloc?
             var descriptorSetsLocal = descriptorSets.Value;
-            if (descriptorSetsLocal == null || descriptorSetsLocal.Length < EffectDescriptorSetSlotCount)
+            if (descriptorSetsLocal is null || descriptorSetsLocal.Length < EffectDescriptorSetSlotCount)
             {
                 descriptorSetsLocal = descriptorSets.Value = new DescriptorSet[EffectDescriptorSetSlotCount];
             }
-            
+
             MeshDraw currentDrawData = null;
             int emptyBufferSlot = -1;
             for (int index = startIndex; index < endIndex; index++)
@@ -201,7 +201,7 @@ namespace Stride.Rendering
                 }
 
                 var resourceGroupOffset = ComputeResourceGroupOffset(renderNodeReference);
-                
+
                 // Update cbuffer
                 renderEffect.Reflection.BufferUploader.Apply(context.CommandList, ResourceGroupPool, resourceGroupOffset);
 
@@ -217,13 +217,19 @@ namespace Stride.Rendering
                 commandList.SetDescriptorSets(0, descriptorSetsLocal);
 
                 // Draw
-                if (drawData.IndexBuffer == null)
+                if (drawData.IndexBuffer is null)
                 {
-                    commandList.Draw(drawData.DrawCount, drawData.StartLocation);
+                    if (renderMesh.InstanceCount > 0)
+                        commandList.DrawInstanced(drawData.DrawCount, renderMesh.InstanceCount, drawData.StartLocation);
+                    else
+                        commandList.Draw(drawData.DrawCount, drawData.StartLocation);
                 }
                 else
                 {
-                    commandList.DrawIndexed(drawData.DrawCount, drawData.StartLocation);
+                    if (renderMesh.InstanceCount > 0)
+                        commandList.DrawIndexedInstanced(drawData.DrawCount, renderMesh.InstanceCount, drawData.StartLocation);
+                    else
+                        commandList.DrawIndexed(drawData.DrawCount, drawData.StartLocation);
                 }
             }
         }
@@ -265,11 +271,11 @@ namespace Stride.Rendering
             foreach (var inputAttribute in pipelineState.EffectBytecode.Reflection.InputAttributes)
             {
                 var inputElementIndex = FindElementBySemantic(availableInputElements, inputAttribute.SemanticName, inputAttribute.SemanticIndex);
-                
+
                 // Provided by any vertex buffer?
                 if (inputElementIndex >= 0)
                     continue;
-                
+
                 inputElements.Add(new InputElementDescription
                 {
                     AlignedByteOffset = 0,

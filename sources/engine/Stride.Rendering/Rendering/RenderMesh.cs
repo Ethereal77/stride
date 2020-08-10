@@ -8,7 +8,7 @@ using Stride.Rendering.Materials;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Used by <see cref="MeshRenderFeature"/> to render a <see cref="Rendering.Mesh"/>.
+    ///   Represents a <see cref="RenderObject"/> used by <see cref="MeshRenderFeature"/> to render a <see cref="Rendering.Mesh"/>.
     /// </summary>
     public class RenderMesh : RenderObject
     {
@@ -17,25 +17,29 @@ namespace Stride.Rendering
         public RenderModel RenderModel;
 
         /// <summary>
-        /// Underlying mesh, can be accessed only during <see cref="RenderFeature.Extract"/> phase.
+        ///   The underlying mesh.
         /// </summary>
+        /// <remarks>
+        ///   The mesh can be accessed only during <see cref="RenderFeature.Extract"/> phase.
+        /// </remarks>
         public Mesh Mesh;
 
         // Material
         // TODO: Extract with MaterialRenderFeature
         public MaterialPass MaterialPass;
 
-        // TODO GRAPHICS REFACTOR store that in RenderData (StaticObjectNode?)
+        // TODO: GRAPHICS REFACTOR store that in RenderData (StaticObjectNode?)
         internal MaterialRenderFeature.MaterialInfo MaterialInfo;
 
         public bool IsShadowCaster;
 
         public bool IsScalingNegative;
-
         public bool IsPreviousScalingNegative;
 
         public Matrix World = Matrix.Identity;
 
         public Matrix[] BlendMatrices;
+
+        public int InstanceCount;
     }
 }
