@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 using SharpDX;
 using SharpDX.Direct3D11;
@@ -32,12 +31,12 @@ namespace Stride.Graphics
         private SharpDX.Direct3D11.DeviceCreationFlags creationFlags;
 
         /// <summary>
-        /// The tick frquency of timestamp queries in Hertz.
+        ///   Gets the tick frquency of timestamp queries, in hertz.
         /// </summary>
         public long TimestampFrequency { get; private set; }
 
         /// <summary>
-        ///     Gets the status of this device.
+        ///   Gets the status of this device.
         /// </summary>
         /// <value>The graphics device status.</value>
         public GraphicsDeviceStatus GraphicsDeviceStatus
@@ -86,31 +85,19 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///     Gets the native device.
+        ///   Gets the underlying native device.
         /// </summary>
         /// <value>The native device.</value>
-        internal SharpDX.Direct3D11.Device NativeDevice
-        {
-            get
-            {
-                return nativeDevice;
-            }
-        }
+        internal Device NativeDevice => nativeDevice;
 
         /// <summary>
-        /// Gets the native device context.
+        ///   Gets the underlying native device context.
         /// </summary>
         /// <value>The native device context.</value>
-        internal SharpDX.Direct3D11.DeviceContext NativeDeviceContext
-        {
-            get
-            {
-                return nativeDeviceContext;
-            }
-        }
+        internal DeviceContext NativeDeviceContext => nativeDeviceContext;
 
         /// <summary>
-        ///     Marks context as active on the current thread.
+        ///   Marks the context as active on the current thread.
         /// </summary>
         public void Begin()
         {
@@ -136,42 +123,37 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Enables profiling.
+        ///   Enables profiling.
         /// </summary>
-        /// <param name="enabledFlag">if set to <c>true</c> [enabled flag].</param>
-        public void EnableProfile(bool enabledFlag)
-        {
-        }
+        /// <param name="enabledFlag"><c>true</c> to enable profiling; <c>false</c> to disable.</param>
+        public void EnableProfile(bool enabledFlag) { }
 
         /// <summary>
-        ///     Unmarks context as active on the current thread.
+        ///   Unmarks context as active on the current thread.
         /// </summary>
         public void End()
         {
-            // If this fails, it means Begin()/End() don't match, something is very wrong
+            // If this fails, it means Begin() / End() don't match and something is very wrong
             var currentDisjointQuery = currentDisjointQueries.Pop();
             NativeDeviceContext.End(currentDisjointQuery);
             disjointQueries.Enqueue(currentDisjointQuery);
         }
 
         /// <summary>
-        /// Executes a deferred command list.
+        ///   Executes a deferred command list.
         /// </summary>
         /// <param name="commandList">The deferred command list.</param>
-        public void ExecuteCommandList(CompiledCommandList commandList)
-        {
-            throw new NotImplementedException();
-        }
+        public void ExecuteCommandList(CompiledCommandList commandList) => throw new NotImplementedException();
 
         /// <summary>
-        /// Executes multiple deferred command lists.
+        ///   Executes multiple deferred command lists.
         /// </summary>
         /// <param name="commandLists">The deferred command lists.</param>
-        public void ExecuteCommandLists(int count, CompiledCommandList[] commandLists)
-        {
-            throw new NotImplementedException();
-        }
+        public void ExecuteCommandLists(int count, CompiledCommandList[] commandLists) => throw new NotImplementedException();
 
+        /// <summary>
+        ///   Initiates a simulated device lost / reset status.
+        /// </summary>
         public void SimulateReset()
         {
             simulateReset = true;
@@ -183,13 +165,10 @@ namespace Stride.Graphics
             InternalMainCommandList = new CommandList(this);
         }
 
-        private string GetRendererName()
-        {
-            return rendererName;
-        }
+        private string GetRendererName() => rendererName;
 
         /// <summary>
-        ///     Initializes the specified device.
+        ///   Initializes the device for the specified profile.
         /// </summary>
         /// <param name="graphicsProfiles">The graphics profiles.</param>
         /// <param name="deviceCreationFlags">The device creation flags.</param>
@@ -204,28 +183,27 @@ namespace Stride.Graphics
 
             rendererName = Adapter.NativeAdapter.Description.Description;
 
-            // Profiling is supported through pix markers
+            // Profiling is supported through PIX markers
             IsProfilingSupported = true;
 
             // Map GraphicsProfile to D3D11 FeatureLevel
-            creationFlags = (SharpDX.Direct3D11.DeviceCreationFlags)deviceCreationFlags;
+            creationFlags = (SharpDX.Direct3D11.DeviceCreationFlags) deviceCreationFlags;
 
-            // Create Device D3D11 with feature Level based on profile
+            // Create Direct3D 11 Device with feature Level based on profile
             for (int index = 0; index < graphicsProfiles.Length; index++)
             {
                 var graphicsProfile = graphicsProfiles[index];
                 try
                 {
-                    // D3D12 supports only feature level 11+
+                    // Direct3D 12 supports only feature level 11+
                     var level = graphicsProfile.ToFeatureLevel();
 
-
-                    nativeDevice = new SharpDX.Direct3D11.Device(Adapter.NativeAdapter, creationFlags, level);
+                    nativeDevice = new Device(Adapter.NativeAdapter, creationFlags, level);
 
                     RequestedProfile = graphicsProfile;
                     break;
                 }
-                catch (Exception)
+                catch
                 {
                     if (index == graphicsProfiles.Length - 1)
                         throw;
@@ -233,17 +211,16 @@ namespace Stride.Graphics
             }
 
             nativeDeviceContext = nativeDevice.ImmediateContext;
+
             // We keep one reference so that it doesn't disappear with InternalMainCommandList
-            ((IUnknown)nativeDeviceContext).AddReference();
+            ((IUnknown) nativeDeviceContext).AddReference();
             if (IsDebugMode)
-            {
                 GraphicsResourceBase.SetDebugName(this, nativeDeviceContext, "ImmediateContext");
-            }
         }
 
         private void AdjustDefaultPipelineStateDescription(ref PipelineStateDescription pipelineStateDescription)
         {
-            // On D3D, default state is Less instead of our LessEqual
+            // On Direct3D, the default state is Less instead of our LessEqual
             // Let's update default pipeline state so that it correspond to D3D state after a "ClearState()"
             pipelineStateDescription.DepthStencilState.DepthBufferFunction = CompareFunction.Less;
         }
@@ -256,9 +233,7 @@ namespace Stride.Graphics
         private void ReleaseDevice()
         {
             foreach (var query in disjointQueries)
-            {
                 query.Dispose();
-            }
             disjointQueries.Clear();
 
             // Display D3D11 ref counting info
@@ -267,10 +242,10 @@ namespace Stride.Graphics
 
             if (IsDebugMode)
             {
-                var debugDevice = NativeDevice.QueryInterfaceOrNull<SharpDX.Direct3D11.DeviceDebug>();
+                var debugDevice = NativeDevice.QueryInterfaceOrNull<DeviceDebug>();
                 if (debugDevice != null)
                 {
-                    debugDevice.ReportLiveDeviceObjects(SharpDX.Direct3D11.ReportingLevel.Detail);
+                    debugDevice.ReportLiveDeviceObjects(ReportingLevel.Detail);
                     debugDevice.Dispose();
                 }
             }
@@ -279,9 +254,7 @@ namespace Stride.Graphics
             nativeDevice = null;
         }
 
-        internal void OnDestroyed()
-        {
-        }
+        internal void OnDestroyed() { }
 
         /// <summary>
         ///   Tags a resource to be discarded (and possibly renamed) as it is not goind to be used anymore.
@@ -292,11 +265,7 @@ namespace Stride.Graphics
             if (resourceLink.Resource is GraphicsResource resource)
                 resource.DiscardNextMap = true;
         }
-
-#if STRIDE_PLATFORM_WINDOWS_DESKTOP
-        [DllImport("kernel32.dll", EntryPoint = "GetModuleHandle", CharSet = CharSet.Unicode)]
-        private static extern IntPtr GetModuleHandle(string lpModuleName);
-#endif
     }
 }
+
 #endif

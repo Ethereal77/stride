@@ -33,9 +33,8 @@ namespace Stride.Input
             }
         }
 
-        public void Update(JoystickUpdate update)
-        {
-        }
+        public void Update(JoystickUpdate update) { }
     }
 }
+
 #endif

@@ -2,6 +2,8 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +28,7 @@ namespace Stride.Input
             Source = source;
             this.controller = controller;
 
-            // XBox controllers have a fixed index, given by the controller
+            // Xbox controllers have a fixed index, given by the controller
             CanChangeIndex = false;
 
             SetIndexInternal(index);
@@ -36,7 +38,7 @@ namespace Stride.Input
             // Taken from SDL 2.0.5 (src\joystick\windows\SDL_xinputjoystick.c:149)
             var subType = controller.GetCapabilities(DeviceQueryType.Any).SubType;
             var pidBytes = Encoding.ASCII.GetBytes("xinput").ToList();
-            pidBytes.Add((byte)subType);
+            pidBytes.Add((byte) subType);
 
             while (pidBytes.Count < 16)
             {
@@ -48,8 +50,8 @@ namespace Stride.Input
 
         public void Dispose()
         {
-            if (Disconnected == null)
-                throw new InvalidOperationException("Something should handle controller disconnect");
+            if (Disconnected is null)
+                throw new InvalidOperationException("Something should handle controller disconnect.");
         }
 
         public override string Name => $"XInput GamePad {Index}";
@@ -62,9 +64,9 @@ namespace Stride.Input
 
         public override void Update(List<InputEvent> inputEvents)
         {
-            if ((int)controller.UserIndex != Index)
+            if ((int) controller.UserIndex != Index)
             {
-                SetIndexInternal((int)controller.UserIndex);
+                SetIndexInternal((int) controller.UserIndex);
             }
 
             ClearButtonStates();
@@ -89,7 +91,7 @@ namespace Stride.Input
                         }
                     }
                 }
-                
+
                 // Axes
                 if (ChangeAxis(0, xinputState.Gamepad.LeftThumbX))
                     inputEvents.Add(CreateAxisEvent(GamePadAxis.LeftThumbX, xinputState.Gamepad.LeftThumbX / 32768.0f));
@@ -121,8 +123,8 @@ namespace Stride.Input
                 rightMotor = MathUtil.Clamp(rightMotor, 0.0f, 1.0f);
                 var vibration = new Vibration
                 {
-                    LeftMotorSpeed = (ushort)(leftMotor * 65535.0f),
-                    RightMotorSpeed = (ushort)(rightMotor * 65535.0f),
+                    LeftMotorSpeed = (ushort) (leftMotor * 65535.0f),
+                    RightMotorSpeed = (ushort) (rightMotor * 65535.0f),
                 };
                 controller.SetVibration(vibration);
             }
@@ -164,3 +166,5 @@ namespace Stride.Input
         }
     }
 }
+
+#endif

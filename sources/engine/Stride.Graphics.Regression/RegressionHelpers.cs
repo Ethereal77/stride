@@ -3,25 +3,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
-using System.Runtime.InteropServices;
-using System.Text;
 
-using Stride.Core.LZ4;
+using Stride.Core;
 
 namespace Stride.Graphics.Regression
 {
     public partial class TestRunner
     {
         public const string StrideVersion = "STRIDE_VERSION";
-
         public const string StrideBuildNumber = "STRIDE_BUILD_NUMBER";
-
         public const string StrideTestName = "STRIDE_TEST_NAME";
-
         public const string StrideBranchName = "STRIDE_BRANCH_NAME";
     }
 
@@ -29,10 +21,10 @@ namespace Stride.Graphics.Regression
     {
         ConnectionFinished = 0,
         SendImage = 1,
-        RequestImageComparisonStatus = 2,
+        RequestImageComparisonStatus = 2
     }
 
-    public class PlatformPermutator
+    public static class PlatformPermutator
     {
         public static ImageTestResultConnection GetDefaultImageTestResultConnection()
         {
@@ -41,7 +33,7 @@ namespace Stride.Graphics.Regression
             // TODO: Check build number in environment variables
             result.BuildNumber = -1;
 
-            result.Platform = "Windows";
+            result.Platform = Platform.Type.ToString();
             result.Serial = Environment.MachineName;
 #if STRIDE_GRAPHICS_API_DIRECT3D12
             result.DeviceName = "Direct3D12";
@@ -82,7 +74,7 @@ namespace Stride.Graphics.Regression
     [Flags]
     public enum ImageComparisonFlags
     {
-        CopyOnShare = 1,
+        CopyOnShare = 1
     }
 
     public class ImageTestResultConnection

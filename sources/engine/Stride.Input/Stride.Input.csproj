@@ -30,10 +30,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Stride.Games\Stride.Games.csproj" />
 
-    <PackageReference Include="SharpDX.RawInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4'))" />
-    <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
-    <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
+    <PackageReference Include="SharpDX.RawInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.EndsWith('-windows'))" />
+    <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.EndsWith('-windows'))" />
+    <PackageReference Include="SharpDX.XInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.EndsWith('-windows'))" />
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />

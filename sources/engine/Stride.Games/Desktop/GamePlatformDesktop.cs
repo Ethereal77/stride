@@ -14,8 +14,9 @@ namespace Stride.Games
         public GamePlatformDesktop(GameBase game) : base(game)
         {
             IsBlockingRun = true;
-#if STRIDE_RUNTIME_CORECLR
-            // This is required by the Audio subsystem of SharpDX.
+
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
+            // This is required by the Audio subsystem of SharpDX
             Win32Native.CoInitialize(IntPtr.Zero);
 #endif
         }
@@ -42,7 +43,7 @@ namespace Stride.Games
 
 #if STRIDE_UI_WPF
                  case AppContextType.DesktopWpf:
-                    // WPF is not supported yet.
+                    // WPF is not supported yet
                     return null;
 #endif
 

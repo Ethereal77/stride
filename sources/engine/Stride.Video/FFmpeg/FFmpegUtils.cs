@@ -23,14 +23,7 @@ namespace Stride.Video.FFmpeg
         private static volatile bool initialized = false;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool CheckPlatformSupport()
-        {
-#if !STRIDE_RUNTIME_CORECLR
-            return true;
-#else
-            return false;
-#endif
-        }
+        public static bool CheckPlatformSupport() => true;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void EnsurePlatformSupport()
@@ -40,7 +33,7 @@ namespace Stride.Video.FFmpeg
         }
 
         /// <summary>
-        /// Initialize FFmpeg.
+        ///   Initializes FFmpeg.
         /// </summary>
         public static void Initialize()
         {
@@ -54,10 +47,10 @@ namespace Stride.Video.FFmpeg
         }
 
         /// <summary>
-        /// Preload all FFmpeg libraries.
+        ///   Preloads all FFmpeg libraries.
         /// </summary>
         /// <remarks>
-        /// Must be called before any attempt to use FFmpeg API or this will have no effect.
+        ///   Must be called before any attempt to use FFmpeg API or this will have no effect.
         /// </remarks>
         public static void PreloadLibraries()
         {
@@ -91,9 +84,9 @@ namespace Stride.Video.FFmpeg
         }
 
         /// <summary>
-        /// Converts a <see cref="AVDictionary"/>* to a Dictionary&lt;string,string&gt;.
+        ///   Converts a <see cref="AVDictionary"/>* to a <see cref="Dictionary{string, string}"/>.
         /// </summary>
-        /// <param name="avDictionary">A pointer to a <see cref="AVDictionary"/> struct</param>
+        /// <param name="avDictionary">A pointer to a <see cref="AVDictionary"/> struct.</param>
         /// <returns>A new dictionary containing a copy of all entries.</returns>
         [NotNull]
         internal static unsafe Dictionary<string, string> ToDictionary(AVDictionary* avDictionary)
@@ -113,4 +106,5 @@ namespace Stride.Video.FFmpeg
         }
     }
 }
+
 #endif

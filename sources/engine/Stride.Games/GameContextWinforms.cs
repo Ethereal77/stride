@@ -13,7 +13,7 @@ namespace Stride.Games
     /// <summary>
     ///   Represents a <see cref="GameContext"/> that can be used for rendering to an existing WinForms <see cref="Control"/>.
     /// </summary>
-    public class GameContextWinforms : GameContextDesktop<Control>
+    public class GameContextWinforms : GameContext<Control>
     {
         /// <inheritDoc/>
         /// <param name="isUserManagingRun">A value indicating if the user will manage the event processing of <paramref name="control"/>.</param>
@@ -34,4 +34,5 @@ namespace Stride.Games
         }
     }
 }
+
 #endif

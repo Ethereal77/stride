@@ -2,45 +2,78 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+using System;
+using System.IO;
+
 namespace Stride.Core.IO
 {
     /// <summary>
-    /// File mode equivalent of <see cref="System.IO.FileMode"/>.
+    ///   Specifies how the operating system should open a file.
     /// </summary>
     public enum VirtualFileMode
     {
         /// <summary>
-        /// Creates a new file. The function fails if a specified file exists.
+        ///   Specifies that the operating system should create a new file.
         /// </summary>
+        /// <remarks>
+        ///   If the file already exists, an <see cref="IOException"/> exception is thrown.
+        /// </remarks>
         CreateNew = 1,
 
         /// <summary>
-        /// Creates a new file, always.
-        /// If a file exists, the function overwrites the file, clears the existing attributes, combines the specified file attributes,
-        /// and flags with FILE_ATTRIBUTE_ARCHIVE, but does not set the security descriptor that the SECURITY_ATTRIBUTES structure specifies.
+        ///   Specifies that the operating system should create a new file. If the file already
+        ///   exists, it will be overwritten.
         /// </summary>
+        /// <remarks>
+        ///   This is equivalent to requesting that if the file does not exist, use <see cref="CreateNew"/>;
+        ///   otherwise, use <see cref="Truncate"/>.
+        /// </remarks>
         Create = 2,
 
         /// <summary>
-        /// Opens a file. The function fails if the file does not exist.
+        ///   Specifies that the operating system should open an existing file. The ability to open the file is
+        ///   dependent on the value specified by the <see cref="VirtualFileAccess"/> enumeration.
         /// </summary>
+        /// <remarks>
+        ///   A <see cref="FileNotFoundException"/> exception is thrown if the file does not exist.
+        /// </remarks>
         Open = 3,
 
         /// <summary>
-        /// Opens a file, always.
-        /// If a file does not exist, the function creates a file as if dwCreationDisposition is CREATE_NEW.
+        ///   Specifies that the operating system should open a file if it exists; otherwise, a new file should be
+        ///   created.
         /// </summary>
+        /// <remarks>
+        ///   This is equivalent to requesting that if the file does not exist, use <see cref="CreateNew"/>;
+        ///   otherwise, use <see cref="Open"/>.
+        ///   <para/>
+        ///   A <see cref="FileNotFoundException"/> exception is thrown if the file does not exist.
+        /// </remarks>
         OpenOrCreate = 4,
 
         /// <summary>
-        /// Opens a file and truncates it so that its size is 0 (zero) bytes. The function fails if the file does not exist.
-        /// The calling process must open the file with the GENERIC_WRITE access right.
+        ///   Specifies that the operating system should open an existing file. When the file
+        ///   is opened, it should be truncated so that its size is zero bytes.
         /// </summary>
+        /// <remarks>
+        ///   A <see cref="FileNotFoundException"/> exception is thrown if the file does not exist.
+        ///   <para/>
+        ///   Attempts to read from a file opened with <see cref="Truncate"/> cause an <see cref="ArgumentException"/>
+        ///   exception. The file must be opened with <see cref="VirtualFileAccess.Write"/>.
+        /// </remarks>
         Truncate = 5,
 
         /// <summary>
-        /// Opens a file if it exists and go at the end, otherwise creates a new file.
+        ///   Opens the file if it exists and seeks to the end of the file, or creates a new file.
         /// </summary>
-        Append = 6,
+        /// <remarks>
+        ///   A <see cref="FileNotFoundException"/> exception is thrown if the file does not exist.
+        ///   <para/>
+        ///   <see cref="Append"/> can be used only in conjunction with <see cref="VirtualFileAccess.Write"/>.
+        ///   <para/>
+        ///   Trying to seek to a position before the end of the file throws an <see cref="IOException"/>
+        ///   exception, and any attempt to read fails and throws a <see cref="NotSupportedException"/> exception.
+        /// </remarks>
+        Append = 6
     }
 }

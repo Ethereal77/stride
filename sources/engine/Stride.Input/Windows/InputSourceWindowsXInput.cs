@@ -2,6 +2,8 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
+
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +12,7 @@ using SharpDX.XInput;
 namespace Stride.Input
 {
     /// <summary>
-    /// Provides support for XInput gamepads
+    ///   Represents an input source supporting XInput devices like gamepads.
     /// </summary>
     internal class InputSourceWindowsXInput : InputSourceBase
     {
@@ -32,7 +34,7 @@ namespace Stride.Input
             }
             catch (Exception ex)
             {
-                InputManager.Logger.Warning($"XInput dll was not found on the computer. GameController detection will not fully work for the current game instance. To fix the problem, please install or repair DirectX installation. [Exception details: {ex.Message}]");
+                InputManager.Logger.Warning($"XInput DLL was not found on the computer. GameController detection will not fully work for the current game instance. To fix the problem, please install or repair DirectX installation. [Exception details: {ex.Message}]");
                 return false;
             }
 
@@ -81,7 +83,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Scans for new devices
+        ///   Scans for new devices.
         /// </summary>
         public override void Scan()
         {
@@ -99,16 +101,16 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Opens a new gamepad
+        ///   Opens a new XInput device..
         /// </summary>
-        /// <param name="instance">The gamepad</param>
+        /// <param name="instance">The device index.</param>
         public void OpenDevice(int index)
         {
             if (index < 0 || index >= XInputGamePadCount)
-                throw new IndexOutOfRangeException($"Invalid XInput device index {index}");
+                throw new IndexOutOfRangeException($"Invalid XInput device index {index}.");
 
             if (devices[index] != null)
-                throw new InvalidOperationException($"XInput device already opened {index}");
+                throw new InvalidOperationException($"XInput device already opened {index}.");
 
             var newGamepad = new GamePadXInput(this, controllers[index], controllerIds[index], index);
             newGamepad.Disconnected += (sender, args) =>
@@ -122,3 +124,5 @@ namespace Stride.Input
         }
     }
 }
+
+#endif

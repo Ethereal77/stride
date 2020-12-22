@@ -1,6 +1,8 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-#if STRIDE_PLATFORM_WINDOWS_DESKTOP && (STRIDE_UI_WINFORMS || STRIDE_UI_WPF)
+
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
+
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -13,11 +15,8 @@ namespace Stride.Input.RawInput
         private struct RawInputDevice
         {
             public ushort UsagePage;
-
             public ushort Usage;
-
             public uint Flags;
-
             public IntPtr Target;
         }
 
@@ -112,7 +111,7 @@ namespace Stride.Input.RawInput
             var devices = new RawInputDevice[1] { device };
             fixed (void* ptr = devices)
             {
-                return Win32.RegisterRawInputDevices(ptr, 1, (uint)sizeof(RawInputDevice));
+                return Win32.RegisterRawInputDevices(ptr, 1, (uint) sizeof(RawInputDevice));
             }
         }
 
@@ -120,13 +119,14 @@ namespace Stride.Input.RawInput
         {
             var device = new RawInputDevice
             {
-                UsagePage = (ushort)usagePage,
-                Usage = (ushort)usageId,
-                Flags = (uint)flags,
+                UsagePage = (ushort) usagePage,
+                Usage = (ushort) usageId,
+                Flags = (uint) flags,
                 Target = target
             };
             return RegisterDevice(device);
         }
     }
 }
+
 #endif

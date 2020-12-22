@@ -18,7 +18,6 @@ namespace Stride.Graphics
     // TODO: Replace using System.Drawing, as it is not available on all platforms.
     partial class StandardImageHelper
     {
-#if USE_WIC
         public static unsafe Image LoadFromMemory(IntPtr pSource, int size, bool makeACopy, GCHandle? handle)
         {
             using (var memoryStream = new UnmanagedMemoryStream((byte*)pSource, size))
@@ -95,18 +94,20 @@ namespace Stride.Graphics
                 try
                 {
                     // Copy memory
-                    if (description.Format == PixelFormat.R8G8B8A8_UNorm || description.Format == PixelFormat.R8G8B8A8_UNorm_SRgb)
+                    if (description.Format == PixelFormat.R8G8B8A8_UNorm ||
+                        description.Format == PixelFormat.R8G8B8A8_UNorm_SRgb)
                     {
                         CopyMemoryBGRA(bitmapData.Scan0, pixelBuffers[0].DataPointer, pixelBuffers[0].BufferStride);
                     }
-                    else if (description.Format == PixelFormat.B8G8R8A8_UNorm || description.Format == PixelFormat.B8G8R8A8_UNorm_SRgb)
+                    else if (description.Format == PixelFormat.B8G8R8A8_UNorm ||
+                             description.Format == PixelFormat.B8G8R8A8_UNorm_SRgb)
                     {
                         Utilities.CopyMemory(bitmapData.Scan0, pixelBuffers[0].DataPointer, pixelBuffers[0].BufferStride);
                     }
                     else
                     {
-                        // TODO Ideally we will want to support grayscale images, but the SpriteBatch can only render RGBA for now
-                        //  so convert the grayscale image as an RGBA and save it
+                        // TODO: Ideally we will want to support grayscale images, but the SpriteBatch can only render RGBA for now,
+                        //       so we convert the grayscale image to RGBA and save it.
                         CopyMemoryRRR1(bitmapData.Scan0, pixelBuffers[0].DataPointer, pixelBuffers[0].BufferStride);
                     }
                 }
@@ -119,6 +120,5 @@ namespace Stride.Graphics
                 bitmap.Save(imageStream, imageFormat);
             }
         }
-#endif
     }
 }

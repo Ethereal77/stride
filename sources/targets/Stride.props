@@ -61,7 +61,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <StrideUI Condition="($(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('net5'))) AND ('$(StrideGraphicsApi)' == 'Direct3D11' Or '$(StrideGraphicsApi)' == 'Direct3D12')">WINFORMS;WPF</StrideUI>
+    <StrideUI Condition="($(TargetFramework.StartsWith('net4')) OR $(TargetFramework.EndsWith('-windows'))) AND ('$(StrideGraphicsApi)' == 'Direct3D11' Or '$(StrideGraphicsApi)' == 'Direct3D12')">WINFORMS;WPF</StrideUI>
 
     <DefineConstants Condition="$(StrideUI.Contains('WINFORMS'))">$(DefineConstants);STRIDE_UI_WINFORMS</DefineConstants>
     <DefineConstants Condition="$(StrideUI.Contains('WPF'))">$(DefineConstants);STRIDE_UI_WPF</DefineConstants>

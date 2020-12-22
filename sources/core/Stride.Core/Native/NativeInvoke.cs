@@ -12,15 +12,14 @@ namespace Stride.Core.Native
     public static class NativeInvoke
     {
         internal const string Library = "libcore";
-        internal const string LibraryName = "libcore.dll";
 
         static NativeInvoke()
         {
-            NativeLibrary.PreloadLibrary(LibraryName, typeof(NativeInvoke));
+            NativeLibrary.PreloadLibrary("libcore", typeof(NativeInvoke));
         }
 
         /// <summary>
-        /// Suspends current thread for <paramref name="ms"/> milliseconds.
+        ///   Suspends the current thread for a specified timespan.
         /// </summary>
         /// <param name="ms">Number of milliseconds to sleep.</param>
         [SuppressUnmanagedCodeSecurity]

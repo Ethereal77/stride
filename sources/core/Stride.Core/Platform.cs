@@ -2,7 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -10,23 +9,30 @@ using System.Reflection;
 namespace Stride.Core
 {
     /// <summary>
-    /// Platform specific queries and functions.
+    ///   Defines platform specific queries and functions.
     /// </summary>
     public static class Platform
     {
         /// <summary>
-        /// The current running <see cref="PlatformType"/>.
+        ///   The current running <see cref="PlatformType"/>.
         /// </summary>
         public static readonly PlatformType Type = PlatformType.Windows;
 
         /// <summary>
-        /// Gets a value indicating whether the running assembly is a debug assembly.
+        ///   Gets a value indicating whether the running platform is a desktop version of Windows.
+        /// </summary>
+        /// <value><c>true</c> if this instance is desktop Windows; otherwise, <c>false</c>.</value>
+        public static readonly bool IsWindowsDesktop = Type == PlatformType.Windows;
+
+        /// <summary>
+        ///   Gets a value indicating whether the running assembly is a debug assembly.
         /// </summary>
         public static readonly bool IsRunningDebugAssembly = GetIsRunningDebugAssembly();
 
+
         /// <summary>
-        /// Check if running assembly has the DebuggableAttribute set with the `DisableOptimizations` mode enabled.
-        /// This function is called only once.
+        ///   Checks if running assembly has the DebuggableAttribute set with the `DisableOptimizations` mode enabled.
+        ///   This function is called only once.
         /// </summary>
         private static bool GetIsRunningDebugAssembly()
         {
@@ -36,7 +42,7 @@ namespace Stride.Core
                 var debuggableAttribute = entryAssembly.GetCustomAttributes<DebuggableAttribute>().FirstOrDefault();
                 if (debuggableAttribute != null)
                 {
-                    return (debuggableAttribute.DebuggingFlags & DebuggableAttribute.DebuggingModes.DisableOptimizations) != 0;
+                    return debuggableAttribute.DebuggingFlags.HasFlag(DebuggableAttribute.DebuggingModes.DisableOptimizations);
                 }
             }
             return false;

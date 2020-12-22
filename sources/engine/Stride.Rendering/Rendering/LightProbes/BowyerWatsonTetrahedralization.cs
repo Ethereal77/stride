@@ -16,8 +16,10 @@ using Stride.Native;
 namespace Stride.Rendering.LightProbes
 {
     /// <summary>
-    /// Bowyer-Watson tetrahedralization algorithm. More details at http://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm.
+    ///   Represents a class that can compute the tetrahedralization of a set of vertices using
+    ///   the Bowyer-Watson tetrahedralization algorithm.
     /// </summary>
+    /// <see cref="http://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm"/>
     public class BowyerWatsonTetrahedralization
     {
         // Add 100 meters for extrapolation
@@ -47,10 +49,12 @@ namespace Stride.Rendering.LightProbes
         public struct Result
         {
             public Vector3[] Vertices;
+
             /// <summary>
-            /// Any vertex in <see cref="Vertices"/> after this index are added automatically for boundaries.
+            ///   Any vertex in <see cref="Vertices"/> after this index are added automatically for boundaries.
             /// </summary>
             public int UserVertexCount;
+
             public FastList<Tetrahedron> Tetrahedra;
             public FastList<Face> Faces;
         }
@@ -82,23 +86,25 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        /// Represents a tetrahedron output as created by the <see cref="BowyerWatsonTetrahedralization"/> algorithm.
+        ///   Represents a tetrahedron output as created by the <see cref="BowyerWatsonTetrahedralization"/> algorithm.
         /// </summary>
         [DataSerializer(typeof(Tetrahedron.Serializer))]
         public struct Tetrahedron
         {
             /// <summary>
-            /// The vertices (as indices).
+            ///   The indices of the four vertices of the tetrahedron.
             /// </summary>
             public unsafe fixed int Vertices[4];
 
             /// <summary>
-            /// The tetrahedron neighbours (as indices). They match opposite face of <see cref="Vertices"/> with same index.
+            ///   The indices of the tetrahedron neighbours.
+            ///   They match the opposite face of <see cref="Vertices"/> with the same index.
             /// </summary>
             public unsafe fixed int Neighbours[4];
 
             /// <summary>
-            /// The tetrahedron faces (as indices). If using bitwise complement (negative), it means the normal is reversed.
+            ///   The indices of the four faces of the tetrahedron.
+            ///   If using bitwise complement (negative), it means the normal is reversed.
             /// </summary>
             public unsafe fixed int Faces[4];
 
@@ -122,7 +128,7 @@ namespace Stride.Rendering.LightProbes
         static BowyerWatsonTetrahedralization()
         {
             // TODO: Add native to Stride.Engine?
-            NativeLibrary.PreloadLibrary(NativeInvoke.Library + ".dll", typeof(BowyerWatsonTetrahedralization));
+            NativeLibrary.PreloadLibrary(NativeInvoke.Library, typeof(BowyerWatsonTetrahedralization));
             exactinit();
         }
 
@@ -239,7 +245,7 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        /// Generate faces info and normal.
+        ///   Generates faces info and normal.
         /// </summary>
         private unsafe FastList<Face> GenerateFaces()
         {
@@ -312,7 +318,7 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        /// Cleanups the unused tetrahedra.
+        ///   Cleanups the unused tetrahedra.
         /// </summary>
         private unsafe void CleanupUnusedTetrahedra()
         {
@@ -366,7 +372,7 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        /// Removes the super tetrahedra, and any tetrahedra sharing its vertices.
+        ///   Removes the super tetrahedra, and any tetrahedra sharing its vertices.
         /// </summary>
         private unsafe void RemoveSuperTetrahedron(int startVertex, int endVertex)
         {
@@ -410,7 +416,7 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        /// Adds the super tetrahedron, which encompass every vertices.
+        ///   Adds the super tetrahedron, which encompass every vertices.
         /// </summary>
         private unsafe void AddSuperTetrahedron()
         {
@@ -546,7 +552,7 @@ namespace Stride.Rendering.LightProbes
                     if (!IsTetrahedronPositiveOrder(ref vertex, ref vertices[face->Vertex0], ref vertices[face->Vertex1], ref vertices[face->Vertex2]))
                         throw new InvalidOperationException();
 
-                    // Note: we use opposite direction for half-edge 
+                    // Note: we use opposite direction for half-edge
                     edges.Add(new HoleEdge(face->Vertex0, face->Vertex1, tetrahedronIndex));
                     edges.Add(new HoleEdge(face->Vertex1, face->Vertex2, tetrahedronIndex));
                     edges.Add(new HoleEdge(face->Vertex2, face->Vertex0, tetrahedronIndex));
@@ -674,9 +680,9 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        /// Determines whether the given point is in the tetraedra.
+        ///   Determines whether the given point is in the tetraedra.
         /// </summary>
-        /// <param name="p">The p.</param>
+        /// <param name="p">The point.</param>
         /// <param name="tetrahedron">The tetrahedron.</param>
         /// <returns></returns>
         private unsafe bool IsPointInCircumsphere(ref Vector3 p, Vector3[] points, ref Tetrahedron tetrahedron)
@@ -814,7 +820,7 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        /// Internal structure used when adding vertex.
+        ///   Internal structure used when adding vertex.
         /// </summary>
         private struct HoleFace
         {
@@ -842,7 +848,7 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        /// Internal structure used when adding vertex.
+        ///   Internal structure used when adding vertex.
         /// </summary>
         private struct HoleEdge : IComparable<HoleEdge>
         {

@@ -12,10 +12,14 @@ namespace Stride.Graphics
 {
     public static partial class GraphicsAdapterFactory
     {
+#if DIRECTX11_1
+        internal static Factory2 NativeFactory;
+#else
         internal static Factory1 NativeFactory;
+#endif
 
         /// <summary>
-        /// Initializes all adapters with the specified factory.
+        ///   Initializes all adapters with the specified factory.
         /// </summary>
         internal static void InitializeInternal()
         {
@@ -59,4 +63,5 @@ namespace Stride.Graphics
         }
     }
 }
+
 #endif

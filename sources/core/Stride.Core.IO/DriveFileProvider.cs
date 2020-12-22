@@ -9,8 +9,8 @@ using System.Text;
 namespace Stride.Core.IO
 {
     /// <summary>
-    ///   Represents a <see cref="FileSystemProvider"/> that exposes the whole file system through folder
-    ///   (similar to Cygwin) with paths in the form <c>"/c/Program Files/Test/Data.dat"</c>.
+    ///   Represents a <see cref="FileSystemProvider"/> that exposes the whole file system through a folder
+    ///   with paths in the form <c>"/c/Program Files/Test/Data.dat"</c>.
     /// </summary>
     public class DriveFileProvider : FileSystemProvider
     {
@@ -21,10 +21,10 @@ namespace Stride.Core.IO
 
 
         /// <summary>
-        ///   Resolves the VFS URL from a given file path.
+        ///   Resolves the virtual path from a given file path.
         /// </summary>
         /// <param name="filePath">The file path to resolve.</param>
-        /// <returns>The VFS local path of the corresponding file.</returns>
+        /// <returns>The virtual local path of the corresponding file.</returns>
         /// <exception cref="InvalidOperationException"></exception>
         public string GetLocalPath(string filePath)
         {

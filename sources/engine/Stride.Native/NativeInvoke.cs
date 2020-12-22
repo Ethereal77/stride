@@ -3,13 +3,11 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
-using Stride.Core.Reflection;
 
 namespace Stride.Native
 {
@@ -19,7 +17,7 @@ namespace Stride.Native
 
         internal static void PreLoad()
         {
-            NativeLibrary.PreloadLibrary(Library + ".dll", typeof(NativeInvoke));
+            NativeLibrary.PreloadLibrary("libstride", typeof(NativeInvoke));
         }
 
         static NativeInvoke()

@@ -39,7 +39,7 @@ namespace Stride.Physics.Tests
             testName = name;
             assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
-            // SaveScreenshot is only defined for Windows
+            // SaveTexture is only defined for Windows
             platformName = "Windows";
             Directory.CreateDirectory("screenshots\\");
 
@@ -58,12 +58,14 @@ namespace Stride.Physics.Tests
         protected override void PrepareContext()
         {
             base.PrepareContext();
+
             GraphicsDeviceManager.PreferredGraphicsProfile = new[] { overrideGraphicsProfile };
         }
 
         protected override void Initialize()
         {
             base.Initialize();
+
             GraphicsDeviceManager.PreferredGraphicsProfile = new[] { overrideGraphicsProfile };
         }
 
@@ -73,11 +75,11 @@ namespace Stride.Physics.Tests
 
             var assetManager = Services.GetSafeServiceAs<ContentManager>();
 
-            // Make sure you have created a Scene with the same name (testName) in your StrideGameStudio project.
+            // Make sure you have created a Scene with the same name (testName) in your Stride GameStudio project.
             // The scene should be included in the build as Root and copied together with the other
             // assets to the /GameAssets directory contained in this assembly's directory.
-            // Finally, make sure the scene is also added to the Stride.Physics.Tests.sdpkg and it has a proper
-            // uid. Example (for the VisualTestSpawners scene):
+            // Finally, make sure the scene is also added to the Stride.Physics.Tests.sdpkg and it has a proper uid.
+            // Example (for the VisualTestSpawners scene):
             //     - a9ba28ad-d83b-4957-8ed6-42863c1d903c:VisualTestSpawners
             SceneSystem.SceneInstance = new SceneInstance(Services, assetManager.Load<Scene>(testName));
         }

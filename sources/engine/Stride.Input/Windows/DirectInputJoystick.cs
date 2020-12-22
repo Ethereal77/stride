@@ -12,13 +12,10 @@ namespace Stride.Input
 {
     internal class DirectInputJoystick : CustomDevice<DirectInputState, RawJoystickState, JoystickUpdate>
     {
-        public DirectInputJoystick(IntPtr nativePtr) : base(nativePtr)
-        {
-        }
+        public DirectInputJoystick(IntPtr nativePtr) : base(nativePtr) { }
 
-        public DirectInputJoystick(DirectInput directInput, Guid deviceGuid) : base(directInput, deviceGuid)
-        {
-        }
+        public DirectInputJoystick(DirectInput directInput, Guid deviceGuid) : base(directInput, deviceGuid) { }
     }
 }
+
 #endif

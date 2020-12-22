@@ -15,13 +15,14 @@ namespace Stride.Input
     {
         public static bool HasFlags(this DeviceObjectId objectId, DeviceObjectTypeFlags flags)
         {
-            return ((int)objectId.Flags & (int)flags) == (int)flags;
+            return ((int) objectId.Flags & (int) flags) == (int) flags;
         }
 
         public static bool HasAnyFlag(this DeviceObjectId objectId, DeviceObjectTypeFlags flags)
         {
-            return ((int)objectId.Flags & (int)flags) != 0;
+            return ((int) objectId.Flags & (int) flags) != 0;
         }
     }
 }
+
 #endif

@@ -4,22 +4,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
-using Stride.Core.Serialization.Contents;
 using Stride.Core.Storage;
 using Stride.Rendering;
 using Stride.Graphics;
-using Stride.Core.Shaders.Ast;
-using Stride.Core.Shaders.Ast.Hlsl;
+using Stride.Core.Shaders.Writer.Hlsl;
 using Stride.Core.Shaders.Utility;
 using Stride.Shaders.Parser;
 
@@ -142,22 +137,20 @@ namespace Stride.Shaders.Compiler
 
             // Return directly if there are any errors
             if (parsingResult.HasErrors)
-            {
-                return new EffectBytecodeCompilerResult(null, log);
-            }
+                return new EffectBytecodeCompilerResult(bytecode: null, log);
 
             // Convert the AST to HLSL
-            var writer = new Stride.Core.Shaders.Writer.Hlsl.HlslWriter
+            var writer = new HlslWriter
             {
-                EnablePreprocessorLine = false, // Allow to output links to original pdxsl via #line pragmas
+                EnablePreprocessorLine = false  // Allow to output links to original SDSL via #line pragmas
             };
             writer.Visit(parsingResult.Shader);
             var shaderSourceText = writer.Text;
 
             if (string.IsNullOrEmpty(shaderSourceText))
             {
-                log.Error($"No code generated for effect [{fullEffectName}]");
-                return new EffectBytecodeCompilerResult(null, log);
+                log.Error($"No code generated for effect [{fullEffectName}].");
+                return new EffectBytecodeCompilerResult(bytecode: null, log);
             }
 
             // -------------------------------------------------------
@@ -184,7 +177,7 @@ namespace Stride.Shaders.Compiler
             var bytecode = new EffectBytecode { Reflection = parsingResult.Reflection, HashSources = parsingResult.HashSources };
 
             // Select the correct backend compiler
-            IShaderCompiler compiler = default;
+            IShaderCompiler compiler;
             switch (effectParameters.Platform)
             {
                 case GraphicsPlatform.Direct3D11:

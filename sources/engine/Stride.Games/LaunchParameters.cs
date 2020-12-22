@@ -9,21 +9,16 @@ using System.Collections.Generic;
 namespace Stride.Games
 {
     /// <summary>
-    /// Parameters used when launching an application.
+    ///   Represents the collection of parameters used when launching an application.
     /// </summary>
     public class LaunchParameters : Dictionary<string, string>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LaunchParameters" /> class.
+        ///   Initializes a new instance of the <see cref="LaunchParameters" /> class.
         /// </summary>
         public LaunchParameters()
         {
-#if !STRIDE_RUNTIME_CORECLR
             var args = Environment.GetCommandLineArgs();
-#else
-            // TODO: Manu: Currently we cannot get the command line arguments in CoreCLR.
-            string[] args = new string [] { };
-#endif
 
             if (args.Length > 1)
             {

@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Stride.Core.Assets;
 using Stride.Core;
+using Stride.Core.Assets;
 using Stride.Core.VisualStudio;
 
 namespace Stride.Assets
@@ -35,47 +35,33 @@ namespace Stride.Assets
         }
 
         /// <summary>
-        /// Registers the solution platforms supported by Stride.
+        ///   Registers the solution platforms supported by Stride.
         /// </summary>
         internal static void RegisterSolutionPlatforms()
         {
-            var solutionPlatforms = new List<SolutionPlatform>();
-
-            // Windows
-            var windowsPlatform = new SolutionPlatform()
+            AssetRegistry.RegisterSupportedPlatforms(new List<SolutionPlatform>
+            {
+                // Windows
+                new SolutionPlatform()
                 {
                     Name = PlatformType.Windows.ToString(),
                     IsAvailable = true,
-                    Alias = "Any CPU",
-                    TargetFramework = "net461",
+                    TargetFramework = "net5.0",
+                    RuntimeIdentifier = "win-x64",
                     Type = PlatformType.Windows
-                };
-            windowsPlatform.PlatformsPart.Add(new SolutionPlatformPart("Any CPU"));
-            windowsPlatform.PlatformsPart.Add(new SolutionPlatformPart("Mixed Platforms") { Alias = "Any CPU"});
-            windowsPlatform.Configurations.Add(new SolutionConfiguration("Testing"));
-            windowsPlatform.Configurations.Add(new SolutionConfiguration("AppStore"));
-
-            // Currently disabled
-            //windowsPlatform.Configurations.Add(coreClrDebug);
-            //windowsPlatform.Configurations.Add(coreClrRelease);
-            foreach (var part in windowsPlatform.PlatformsPart)
-            {
-                part.Configurations.Clear();
-                part.Configurations.AddRange(windowsPlatform.Configurations);
-            }
-            solutionPlatforms.Add(windowsPlatform);
-
-            AssetRegistry.RegisterSupportedPlatforms(solutionPlatforms);
+                }
+            });
         }
 
         /// <summary>
-        /// Checks if any of the provided component versions are available on this system
+        ///   Checks if any of the provided component versions are available on the system.
         /// </summary>
-        /// <param name="vsVersionToComponent">A dictionary of Visual Studio versions to their respective paths for a given component</param>
-        /// <returns>true if any of the components in the dictionary are available, false otherwise</returns>
+        /// <param name="vsVersionToComponent">A dictionary of Visual Studio versions to their respective paths for a given component.</param>
+        /// <returns><c>true</c> if any of the components in the dictionary are available, <c>false</c> otherwise.</returns>
         internal static bool IsVSComponentAvailableAnyVersion(IDictionary<Version, string> vsVersionToComponent)
         {
-            if (vsVersionToComponent == null) { throw new ArgumentNullException("vsVersionToComponent"); }
+            if (vsVersionToComponent is null)
+                throw new ArgumentNullException(nameof(vsVersionToComponent));
 
             foreach (var pair in vsVersionToComponent)
             {
@@ -86,26 +72,26 @@ namespace Stride.Assets
                 else
                 {
                     return VisualStudioVersions.AvailableVisualStudioInstances.Any(
-                        ideInfo => ideInfo.PackageVersions.ContainsKey(pair.Value)
-                    );
+                        ideInfo => ideInfo.PackageVersions.ContainsKey(pair.Value));
                 }
             }
             return false;
         }
 
         /// <summary>
-        /// Check if a particular component set for this IDE version
+        ///   Checks if a particular component set is available for the specified IDE version.
         /// </summary>
-        /// <param name="ideInfo">The IDE info to search for the components</param>
-        /// <param name="vsVersionToComponent">A dictionary of Visual Studio versions to their respective paths for a given component</param>
-        /// <returns>true if the IDE has any of the component versions available, false otherwise</returns>
+        /// <param name="ideInfo">The IDE info to search for the components.</param>
+        /// <param name="vsVersionToComponent">A dictionary of Visual Studio versions to their respective paths for a given component.</param>
+        /// <returns><c>true</c> if any of the components in the dictionary are available, <c>false</c> otherwise.</returns>
         internal static bool IsVSComponentAvailableForIDE(IDEInfo ideInfo, IDictionary<Version, string> vsVersionToComponent)
         {
-            if (ideInfo == null) { throw new ArgumentNullException("ideInfo"); }
-            if (vsVersionToComponent == null) { throw new ArgumentNullException("vsVersionToComponent"); }
+            if (ideInfo is null)
+                throw new ArgumentNullException(nameof(ideInfo));
+            if (vsVersionToComponent is null)
+                throw new ArgumentNullException(nameof(vsVersionToComponent));
 
-            string path = null;
-            if (vsVersionToComponent.TryGetValue(ideInfo.Version, out path))
+            if (vsVersionToComponent.TryGetValue(ideInfo.Version, out string path))
             {
                 if (ideInfo.Version == VS2015Version)
                 {
@@ -126,7 +112,7 @@ namespace Stride.Assets
         // For VS 2015
         internal static bool IsFileInProgramFilesx86Exist(string path)
         {
-            return (ProgramFilesX86 != null && File.Exists(Path.Combine(ProgramFilesX86, path)));
+            return ProgramFilesX86 != null && File.Exists(Path.Combine(ProgramFilesX86, path));
         }
     }
 }

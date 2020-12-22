@@ -3,13 +3,14 @@
 // Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
+
 #pragma warning disable SA1310 // Field names should not contain underscore
 #pragma warning disable SA1132 // Do not combine fields
 #pragma warning disable SA1307 // Accessible fields should begin with upper-case letter
 
 using System;
 using System.Runtime.InteropServices;
-using System.Windows;
 
 namespace Stride.Games
 {
@@ -56,13 +57,13 @@ namespace Stride.Games
 
         public enum WindowLongType : int
         {
-            WndProc = (-4),
-            HInstance = (-6),
-            HwndParent = (-8),
-            Style = (-16),
-            ExtendedStyle = (-20),
-            UserData = (-21),
-            Id = (-12),
+            WndProc = -4,
+            HInstance = -6,
+            HwndParent = -8,
+            Style = -16,
+            ExtendedStyle = -20,
+            UserData = -21,
+            Id = -12
         }
 
         public delegate IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
@@ -190,3 +191,5 @@ namespace Stride.Games
         public const int PM_REMOVE = 0x0001;
     }
 }
+
+#endif

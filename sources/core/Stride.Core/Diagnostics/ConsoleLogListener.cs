@@ -7,9 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
-using Stride.Core.Annotations;
-
 using Microsoft.Win32.SafeHandles;
+
+using Stride.Core.Annotations;
 
 namespace Stride.Core.Diagnostics
 {
@@ -19,8 +19,6 @@ namespace Stride.Core.Diagnostics
     /// </summary>
     public class ConsoleLogListener : LogListener
     {
-        private bool isConsoleActive;
-
         /// <summary>
         ///   Gets or sets the minimum log level handled by this listener.
         /// </summary>
@@ -38,7 +36,7 @@ namespace Stride.Core.Diagnostics
             // Filter logs with lower level
             if (!Debugger.IsAttached && // Always log when debugger is attached
                 (logMessage.Type < LogLevel || LogMode == ConsoleLogMode.None ||
-                (!(LogMode == ConsoleLogMode.Auto && Platform.IsRunningDebugAssembly) && LogMode != ConsoleLogMode.Always)))
+                ((LogMode != ConsoleLogMode.Auto || !Platform.IsRunningDebugAssembly) && LogMode != ConsoleLogMode.Always)))
             {
                 return;
             }
@@ -48,10 +46,10 @@ namespace Stride.Core.Diagnostics
 
             var exceptionMsg = GetExceptionText(logMessage);
 
-            // save initial console color
+            // Save initial console color
             var initialColor = Console.ForegroundColor;
 
-            // set the color depending on the message log level
+            // Set the color depending on the message log level
             switch (logMessage.Type)
             {
                 case LogMessageType.Debug:
@@ -99,6 +97,7 @@ namespace Stride.Core.Diagnostics
 
         // TODO: MOVE THIS CODE OUT IN A SEPARATE CLASS
 
+        private bool isConsoleActive;
         private void EnsureConsole()
         {
             if (isConsoleActive)

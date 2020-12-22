@@ -1,14 +1,14 @@
-// Copyright (c) Stride contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if STRIDE_PLATFORM_WINDOWS_DESKTOP && (STRIDE_UI_WINFORMS || STRIDE_UI_WPF)
+#if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
 
 using System;
 using System.Windows.Forms;
 
 namespace Stride.Input.RawInput
 {
-    internal class RawInputMouse: IDisposable
+    internal class RawInputMouse : IDisposable
     {
         private const ushort MOUSE_MOVE_ABSOLUTE_BIT = 1;
 
@@ -22,16 +22,14 @@ namespace Stride.Input.RawInput
         public RawInputMouse(IntPtr targetWindow)
         {
             this.targetWindow = targetWindow;
-            this.messageFilter = new RawInputMessageFilter(this.HandleInputMessage, null, null);
+            messageFilter = new RawInputMessageFilter(this.HandleInputMessage, null, null);
         }
 
         public void Start()
         {
             var result = RawInput.RegisterDevice(UsagePage.HID_USAGE_PAGE_GENERIC, UsageId.HID_USAGE_GENERIC_MOUSE, ModeFlags.RIDEV_INPUTSINK, targetWindow);
             if (!result)
-            {
-                throw new Exception("Failed to register a mouse device for raw input");
-            }
+                throw new Exception("Failed to register a mouse device for raw input.");
 
             Application.AddMessageFilter(messageFilter);
         }
@@ -42,9 +40,7 @@ namespace Stride.Input.RawInput
 
             var result = RawInput.RegisterDevice(UsagePage.HID_USAGE_PAGE_GENERIC, UsageId.HID_USAGE_GENERIC_MOUSE, ModeFlags.RIDEV_REMOVE, IntPtr.Zero);
             if (!result)
-            {
-                throw new Exception("Failed to unregister a mouse device for raw input");
-            }
+                throw new Exception("Failed to unregister a mouse device for raw input.");
         }
 
         public void HandleInputMessage(RawInput.RawMouse mouseInput)

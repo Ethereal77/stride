@@ -32,8 +32,8 @@ namespace Stride.Input
 
         public new int Index
         {
-            get { return base.Index; }
-            set { SetIndexInternal(value, false); }
+            get => base.Index;
+            set => SetIndexInternal(newIndex: value, isDeviceSideChange: false);
         }
 
         public override string Name { get; }
@@ -46,7 +46,7 @@ namespace Stride.Input
 
         public override void SetVibration(float smallLeft, float smallRight, float largeLeft, float largeRight)
         {
-            // No vibration support in directinput gamepads
+            // No vibration support in DirectInput gamepads
         }
     }
 }
