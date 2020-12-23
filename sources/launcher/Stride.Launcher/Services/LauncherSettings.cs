@@ -18,7 +18,7 @@ namespace Stride.LauncherApp.Services
 
         private static readonly SettingsKey<bool> CloseLauncherAutomaticallyKey = new SettingsKey<bool>("Internal/Launcher/CloseLauncherAutomatically", SettingsContainer, defaultValue: false);
         private static readonly SettingsKey<string> ActiveVersionKey = new SettingsKey<string>("Internal/Launcher/ActiveVersion", SettingsContainer, defaultValue: "");
-        private static readonly SettingsKey<string> PreferredFrameworkKey = new SettingsKey<string>("Internal/Launcher/PreferredFramework", SettingsContainer, defaultValue: "netcoreapp3.1");
+        private static readonly SettingsKey<string> PreferredFrameworkKey = new SettingsKey<string>("Internal/Launcher/PreferredFramework", SettingsContainer, defaultValue: "net5.0");
         private static readonly SettingsKey<int> CurrentTabKey = new SettingsKey<int>("Internal/Launcher/CurrentTabSessions", SettingsContainer, defaultValue: 0);
         private static readonly SettingsKey<List<UDirectory>> DeveloperVersionsKey = new SettingsKey<List<UDirectory>>("Internal/Launcher/DeveloperVersions", SettingsContainer, () => new List<UDirectory>());
 

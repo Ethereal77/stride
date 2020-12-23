@@ -7,22 +7,22 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Stride.Core;
+using Stride.Core.IO;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Compiler;
 using Stride.Core.BuildEngine;
-using Stride.Core;
-using Stride.Core.IO;
 using Stride.Core.Serialization;
 using Stride.Core.Serialization.Contents;
 using Stride.Graphics;
-using Stride.Rendering;
 using Stride.Shaders;
 using Stride.Shaders.Compiler;
+using Stride.Rendering;
 
 namespace Stride.Assets.Effect
 {
     /// <summary>
-    /// This command is responsible to compile a single permutation of an effect (sdfx or sdsl)
+    ///   A <see cref="Command"/> that compiles a single permutation of an effect (SDFX or SDSL).
     /// </summary>
     internal sealed class EffectCompileCommand : IndexFileCommand
     {
@@ -49,7 +49,9 @@ namespace Stride.Assets.Effect
         protected override void ComputeParameterHash(BinarySerializationWriter writer)
         {
             base.ComputeParameterHash(writer);
+
             uint effectbyteCodeMagicNumber = EffectBytecode.MagicHeader;
+
             writer.Serialize(ref effectbyteCodeMagicNumber, ArchiveMode.Serialize);
             writer.Serialize(ref effectName, ArchiveMode.Serialize);
             writer.Serialize(ref compilerParameters, ArchiveMode.Serialize);
@@ -67,8 +69,10 @@ namespace Stride.Assets.Effect
             var compiler = GetOrCreateEffectCompiler(context);
 
             // Get main effect name (before the first dot)
-            var isXkfx = ShaderMixinManager.Contains(effectName);
-            var source = isXkfx ? new ShaderMixinGeneratorSource(effectName) : (ShaderSource)new ShaderClassSource(effectName);
+            var isSdfx = ShaderMixinManager.Contains(effectName);
+            var source = isSdfx ?
+                new ShaderMixinGeneratorSource(effectName) :
+                (ShaderSource) new ShaderClassSource(effectName);
 
             int permutationCount;
             lock (PermutationCount)
@@ -88,7 +92,7 @@ namespace Stride.Assets.Effect
                 return Task.FromResult(ResultStatus.Failed);
             }
 
-            // wait for result an check compilation status
+            // Wait for result an check compilation status
             var completedTask = compilerResults.Bytecode.WaitForResult();
             completedTask.CompilationLog.CopyTo(commandContext.Logger);
             if (completedTask.CompilationLog.HasErrors)
@@ -97,7 +101,8 @@ namespace Stride.Assets.Effect
             }
 
             // Register all dependencies
-            var allSources = new HashSet<string>(completedTask.Bytecode.HashSources.Select(keyPair => keyPair.Key));
+            var allSources = new HashSet<string>(
+                completedTask.Bytecode.HashSources.Select(keyPair => keyPair.Key));
             foreach (var className in allSources)
             {
                 commandContext.RegisterInputDependency(new ObjectUrl(UrlType.Content, EffectCompilerBase.GetStoragePathFromShaderType(className)));
@@ -121,7 +126,7 @@ namespace Stride.Assets.Effect
                 var outputClassFile = effectName + "." + fieldName + "." + compilerParameters.EffectParameters.Platform + "." + compilerParameters.EffectParameters.Profile + ".cs";
                 var fullOutputClassFile = Path.Combine(outputDirectory.ToWindowsPath(), outputClassFile);
 
-                commandContext.Logger.Verbose($"Writing shader bytecode to .cs source [{fullOutputClassFile}]");
+                commandContext.Logger.Verbose($"Writing shader bytecode to .cs source [{fullOutputClassFile}].");
                 using (var stream = new FileStream(fullOutputClassFile, FileMode.Create, FileAccess.Write, FileShare.Write))
                     EffectByteCodeToSourceCodeWriter.Write(effectName, compilerParameters, compilerResults.Bytecode.WaitForResult().Bytecode, new StreamWriter(stream, System.Text.Encoding.UTF8));
             }
@@ -129,28 +134,25 @@ namespace Stride.Assets.Effect
             return Task.FromResult(ResultStatus.Successful);
         }
 
-        public override string ToString()
-        {
-            return Title;
-        }
+        public override string ToString() => Title;
 
         private static EffectCompilerBase GetOrCreateEffectCompiler(AssetCompilerContext context)
         {
             lock (context)
             {
                 var compiler = context.Properties.Get(CompilerKey);
-                if (compiler == null)
+                if (compiler is null)
                 {
                     // Create compiler
                     var effectCompiler = new EffectCompiler(MicrothreadLocalDatabases.DatabaseFileProvider);
                     effectCompiler.SourceDirectories.Add(EffectCompilerBase.DefaultSourceShaderFolder);
-                    compiler = new EffectCompilerCache(effectCompiler) { CurrentCache = EffectBytecodeCacheLoadSource.StartupCache };
+                    compiler = new EffectCompilerCache(effectCompiler, MicrothreadLocalDatabases.DatabaseFileProvider) { CurrentCache = EffectBytecodeCacheLoadSource.StartupCache };
                     context.Properties.Set(CompilerKey, compiler);
 
                     var shaderLocations = context.Properties.Get(EffectShaderAssetCompiler.ShaderLocationsKey);
 
                     // Temp copy URL to absolute file path to inform the compiler the absolute file location
-                    // of all sdsl files.
+                    // of all SDSL files.
                     if (shaderLocations != null)
                     {
                         foreach (var shaderLocation in shaderLocations)
@@ -167,9 +169,11 @@ namespace Stride.Assets.Effect
         public static BuildStep FromRequest(AssetCompilerContext context, Package package, UDirectory urlRoot, EffectCompileRequest effectCompileRequest)
         {
             var compilerParameters = new CompilerParameters(effectCompileRequest.UsedParameters);
+
             compilerParameters.EffectParameters.Platform = context.GetGraphicsPlatform(package);
             compilerParameters.EffectParameters.Profile = context.GetGameSettingsAsset().GetOrCreate<RenderingSettings>(context.Platform).DefaultGraphicsProfile;
             compilerParameters.EffectParameters.ApplyCompilationMode(context.GetCompilationMode());
+
             return new CommandBuildStep(new EffectCompileCommand(context, urlRoot, effectCompileRequest.EffectName, compilerParameters, package));
         }
     }

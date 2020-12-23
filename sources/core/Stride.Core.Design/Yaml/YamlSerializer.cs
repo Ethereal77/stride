@@ -14,7 +14,7 @@ using Stride.Core.Yaml.Serialization.Serializers;
 namespace Stride.Core.Yaml
 {
     /// <summary>
-    /// Default Yaml serializer used to serialize assets by default.
+    ///   Represents the default YAML serializer used to serialize assets.
     /// </summary>
     public class YamlSerializer : YamlSerializerBase
     {
@@ -22,17 +22,19 @@ namespace Stride.Core.Yaml
 
         public static YamlSerializer Default { get; set; } = new YamlSerializer();
 
-        public T Load<T>([NotNull] string filePath, ILogger log = null)
+        public static T Load<T>([NotNull] string filePath, ILogger log = null)
         {
-            if (filePath == null) throw new ArgumentNullException(nameof(filePath));
+            if (filePath is null)
+                throw new ArgumentNullException(nameof(filePath));
+
             using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                return (T)Default.Deserialize(stream);
+                return (T) Default.Deserialize(stream);
             }
         }
 
         /// <summary>
-        /// Deserializes an object from the specified stream (expecting a YAML string).
+        ///   Deserializes an object from the specified stream containing YAML data.
         /// </summary>
         /// <param name="stream">A YAML string from a stream.</param>
         /// <returns>An instance of the YAML data.</returns>
@@ -43,7 +45,7 @@ namespace Stride.Core.Yaml
         }
 
         /// <summary>
-        /// Reset the assembly cache used by this class.
+        ///   Resets the assembly cache used by this class.
         /// </summary>
         public override void ResetCache()
         {
@@ -77,7 +79,7 @@ namespace Stride.Core.Yaml
 
             lock (Lock)
             {
-                if (localSerializer == null)
+                if (localSerializer is null)
                 {
                     // var clock = Stopwatch.StartNew();
 

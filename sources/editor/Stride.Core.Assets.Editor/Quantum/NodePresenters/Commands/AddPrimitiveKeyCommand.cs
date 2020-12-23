@@ -7,16 +7,16 @@ using System.Linq;
 
 using Stride.Core.Annotations;
 using Stride.Core.Reflection;
+using Stride.Core.Quantum;
 using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Quantum.Presenters;
-using Stride.Core.Quantum;
 
 namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
 {
     public class AddPrimitiveKeyCommand : SyncNodePresenterCommandBase
     {
         /// <summary>
-        /// The name of this command.
+        ///   The name of this command.
         /// </summary>
         public const string CommandName = "AddPrimitiveKey";
 
@@ -29,22 +29,25 @@ namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
         /// <inheritdoc/>
         public override bool CanAttach(INodePresenter nodePresenter)
         {
-            // We are in a dictionary...
-            var dictionaryDescriptor = nodePresenter.Descriptor as DictionaryDescriptor;
-            if (dictionaryDescriptor == null)
+            // We are in a dictionary
+            if (!(nodePresenter.Descriptor is DictionaryDescriptor dictionaryDescriptor))
                 return false;
 
-            // ... that is not read-only...
-            var memberCollection = (nodePresenter as MemberNodePresenter)?.MemberAttributes.OfType<MemberCollectionAttribute>().FirstOrDefault()
-                                   ?? nodePresenter.Descriptor.Attributes.OfType<MemberCollectionAttribute>().FirstOrDefault();
+            // It is not read-only
+            var memberCollection = (nodePresenter as MemberNodePresenter)?.MemberAttributes
+                .OfType<MemberCollectionAttribute>()
+                .FirstOrDefault() ??
+                nodePresenter.Descriptor.Attributes
+                .OfType<MemberCollectionAttribute>()
+                .FirstOrDefault();
             if (memberCollection?.ReadOnly == true)
                 return false;
 
-            // ... can construct key type...
+            // It can construct the key type
             if (!AddNewItemCommand.CanConstruct(dictionaryDescriptor.KeyType))
                 return false;
 
-            // ... and can construct value type
+            // And it can construct the value type
             var elementType = dictionaryDescriptor.ValueType;
             return AddNewItemCommand.CanAdd(elementType);
         }
@@ -55,44 +58,52 @@ namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
             var assetNodePresenter = nodePresenter as IAssetNodePresenter;
             var dictionaryDescriptor = (DictionaryDescriptor)nodePresenter.Descriptor;
             var value = nodePresenter.Value;
-            var newKey = dictionaryDescriptor.KeyType != typeof(string) ? new NodeIndex(Activator.CreateInstance(dictionaryDescriptor.KeyType)) : GenerateStringKey(value, dictionaryDescriptor, parameter as string);
+
+            NodeIndex newKey;
+            if(dictionaryDescriptor.KeyType == typeof(string))
+                newKey = GenerateStringKey(value, dictionaryDescriptor, parameter as string);
+            else if (dictionaryDescriptor.KeyType.IsEnum)
+                newKey = new NodeIndex(parameter);
+            else
+                newKey = new NodeIndex(Activator.CreateInstance(dictionaryDescriptor.KeyType));
 
             var newItem = dictionaryDescriptor.ValueType.Default();
             var instance = CreateInstance(dictionaryDescriptor.ValueType);
-            if (!AddNewItemCommand.IsReferenceType(dictionaryDescriptor.ValueType) && (assetNodePresenter == null || !assetNodePresenter.IsObjectReference(instance)))
+            if (!AddNewItemCommand.IsReferenceType(dictionaryDescriptor.ValueType) &&
+                (assetNodePresenter is null || !assetNodePresenter.IsObjectReference(instance)))
                 newItem = instance;
 
             nodePresenter.AddItem(newItem, newKey);
         }
 
         /// <summary>
-        /// Creates an instance of the specified type using that type's default constructor.
+        ///   Creates an instance of the specified type using that type's default constructor.
         /// </summary>
         /// <param name="type">The type of object to create.</param>
         /// <returns>A reference to the newly created object.</returns>
         /// <seealso cref="Activator.CreateInstance(Type)"/>
-        /// <exception cref="ArgumentNullException">type is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="type"/> is a <c>null</c> reference.</exception>
         private static object CreateInstance(Type type)
         {
-            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (type is null)
+                throw new ArgumentNullException(nameof(type));
 
-            // abstract type cannot be instantiated
+            // Abstract type cannot be instantiated
             if (type.IsAbstract)
                 return null;
 
-            // string is a special case
+            // String is a special case
             if (type == typeof(string))
                 return string.Empty;
 
-            // note:
-            //      Type not having a public parameterless constructor will throw a MissingMethodException at this point.
-            //      This is intended as YAML serialization requires this constructor.
+            // NOTE: Types not having a public parameterless constructor will throw a MissingMethodException at this point.
+            //       This is intended as YAML serialization requires this constructor.
             return ObjectFactoryRegistry.NewInstance(type);
         }
 
         internal static NodeIndex GenerateStringKey(object dictionary, ITypeDescriptor descriptor, string baseValue)
         {
-            // TODO: use a dialog service and popup a message when the given key is invalid
+            // TODO: Use a dialog service and popup a message when the given key is invalid
             const string defaultKey = "Key";
 
             if (string.IsNullOrWhiteSpace(baseValue))
@@ -100,7 +111,7 @@ namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
 
             var i = 1;
             string baseName = baseValue;
-            var dictionaryDescriptor = (DictionaryDescriptor)descriptor;
+            var dictionaryDescriptor = (DictionaryDescriptor) descriptor;
             while (dictionaryDescriptor.ContainsKey(dictionary, baseValue))
             {
                 baseValue = baseName + " " + ++i;

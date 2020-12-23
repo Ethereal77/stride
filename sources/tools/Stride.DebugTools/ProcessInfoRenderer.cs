@@ -3,13 +3,9 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Media;
 using System.Windows.Controls;
-using System.Windows;
-using System.Windows.Input;
 using System.Globalization;
 
 using Stride.DebugTools.DataStructures;
@@ -38,7 +34,7 @@ namespace Stride.DebugTools
     }
 
     /// <summary>
-    /// Renders a full micro threading process.
+    ///   Renders a full microthreading process.
     /// </summary>
     public class ProcessInfoRenderer : Canvas
     {
@@ -86,20 +82,20 @@ namespace Stride.DebugTools
 
         public double ThreadLineHeight
         {
-            get { return (double)GetValue(ThreadLineHeightProperty); }
-            set { SetValue(ThreadLineHeightProperty, value); }
+            get => (double) GetValue(ThreadLineHeightProperty);
+            set => SetValue(ThreadLineHeightProperty, value);
         }
 
         public double ThreadLineHeightMargin
         {
-            get { return (double)GetValue(ThreadLineHeightMarginProperty); }
-            set { SetValue(ThreadLineHeightMarginProperty, value); }
+            get => (double) GetValue(ThreadLineHeightMarginProperty);
+            set => SetValue(ThreadLineHeightMarginProperty, value);
         }
 
         public double PixelsPerSecond
         {
-            get { return (double)GetValue(PixelsPerSecondProperty); }
-            set { SetValue(PixelsPerSecondProperty, value); }
+            get => (double) GetValue(PixelsPerSecondProperty);
+            set => SetValue(PixelsPerSecondProperty, value);
         }
 
         public ProcessInfoRenderer()
@@ -109,17 +105,18 @@ namespace Stride.DebugTools
         }
 
         /// <summary>
-        /// This method moves the previously rendered frame and only renders the newly added one.
-        /// It automatically removes the first frame when the maximum frame count is reached.
+        ///   This method moves the previously rendered frame and only renders the newly added one.
+        ///   It automatically removes the first frame when the maximum frame count is reached.
         /// </summary>
-        /// <param name="processInfo">Instance that stores the whole micro threading process data.</param>
-        /// <param name="alignRight">Indicates whether render is right aligned or left aligned.
-        /// <remarks>Right align produces more realistic time-related render.</remarks>
+        /// <param name="processInfo">A <see cref="ProcessInfo"/> that stores the whole micro threading process data.</param>
+        /// <param name="alignRight">
+        ///   Indicates whether render is right aligned or left aligned.
+        ///   Right align produces more realistic time-related render.
         /// </param>
         public void RenderLastFrame(ProcessInfo processInfo, bool alignRight = true)
         {
-            if (processInfo == null)
-                throw new ArgumentNullException("processInfo");
+            if (processInfo is null)
+                throw new ArgumentNullException(nameof(processInfo));
 
             if (processInfo.Frames.Count == 0)
                 return;
@@ -150,13 +147,13 @@ namespace Stride.DebugTools
         }
 
         /// <summary>
-        /// Clears any previous render and perform a new one from scratch.
+        ///   Clears any previous render and perform a new one from scratch.
         /// </summary>
-        /// <param name="processInfo">Instance that stores the whole micro threading process data.</param>
+        /// <param name="processInfo">A <see cref="ProcessInfo"/> that stores the whole micro threading process data.</param>
         public void RenderAllFrames(ProcessInfo processInfo)
         {
-            if (processInfo == null)
-                throw new ArgumentNullException("processInfo");
+            if (processInfo is null)
+                throw new ArgumentNullException(nameof(processInfo));
 
             if (processInfo.Frames.Count == 0)
                 return;
@@ -182,14 +179,17 @@ namespace Stride.DebugTools
         private int maxThreadCount = 0;
 
         /// <summary>
-        /// Creates the render elements of all threads over one frame.
+        ///   Creates the render elements of all threads over one frame.
         /// </summary>
-        /// <param name="frame">Instance that stores all thread data.</param>
-        /// <returns>Returns a <c>Panel</c> (<c>Canvas</c>) containing rendered thread elements for the given frame.</returns>
+        /// <param name="frame">A <see cref="FrameInfo"/> that stores all thread data.</param>
+        /// <returns>
+        ///   Returns a <see cref="Panel"/> (<see cref="Canvas"/>) containing rendered thread elements for the
+        ///   given frame.
+        /// </returns>
         private FrameworkElement CreateFrameElement(FrameInfo frame)
         {
-            if (frame == null)
-                throw new ArgumentNullException("frame");
+            if (frame is null)
+                throw new ArgumentNullException(nameof(frame));
 
             if (frame.ThreadItems.Count == 0)
                 return null;
@@ -238,15 +238,18 @@ namespace Stride.DebugTools
         }
 
         /// <summary>
-        /// Creates the render element for a thread over one frame.
+        ///   Creates the render element for a thread over one frame.
         /// </summary>
-        /// <param name="frameBeginTime">Time offset (in second) to align all micro threads render on the frame time.</param>
-        /// <param name="thread">Instance that stores all micro thread events.</param>
-        /// <returns>Returns a <c>UIElement</c> (<c>VisualContainerElement</c>) containing rendered micro thread elements for the given thread.</returns>
+        /// <param name="frameBeginTime">Time offset (in seconds) to align all microthreads render on the frame time.</param>
+        /// <param name="thread">A <see cref="ThreadInfo"/> that stores all microthread events.</param>
+        /// <returns>
+        ///   Returns a <see cref="UIElement"/> (<see cref="VisualContainerElement"/>) containing rendered microthread
+        ///   elements for the given thread.
+        /// </returns>
         private UIElement CreateFrameThreadElement(double frameBeginTime, ThreadInfo thread)
         {
-            if (thread == null)
-                throw new ArgumentNullException("thread");
+            if (thread is null)
+                throw new ArgumentNullException(nameof(thread));
 
             if (thread.MicroThreadItems.Count == 0)
                 return null;

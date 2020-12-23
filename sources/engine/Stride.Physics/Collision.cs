@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Stride.Core.MicroThreading;
-using Stride.Core.Threading;
 using Stride.Engine;
 
 namespace Stride.Physics
@@ -15,10 +14,9 @@ namespace Stride.Physics
     public class Collision
     {
         private static readonly Queue<Channel<ContactPoint>> ChannelsPool = new Queue<Channel<ContactPoint>>();
+        private bool destroyed;
 
-        internal Collision()
-        {
-        }
+        internal Collision() { }
 
         public void Initialize(PhysicsComponent colliderA, PhysicsComponent colliderB)
         {
@@ -32,8 +30,15 @@ namespace Stride.Physics
 
         internal void Destroy()
         {
-            ColliderA = null;
-            ColliderB = null;
+            // Because we raise CollisionEnded for removed components right before Simulation.BeginContactTesting()
+            // cleans up the ended collisions, we need to retain the collider information for an additional frame.
+            // The collision has been removed from PhysicsComponent.Collisions and the user should not store the
+            // collision object between frames.
+            if (!HasEndedFromComponentRemoval)
+            {
+                ColliderA = null;
+                ColliderB = null;
+            }
             NewContactChannel.Reset();
             ContactUpdateChannel.Reset();
             ContactEndedChannel.Reset();
@@ -41,6 +46,8 @@ namespace Stride.Physics
             ChannelsPool.Enqueue(ContactUpdateChannel);
             ChannelsPool.Enqueue(ContactEndedChannel);
             Contacts.Clear();
+
+            destroyed = true;
         }
 
         public PhysicsComponent ColliderA { get; private set; }
@@ -49,10 +56,24 @@ namespace Stride.Physics
 
         public HashSet<ContactPoint> Contacts = new HashSet<ContactPoint>(ContactPointEqualityComparer.Default);
 
+        /// <summary>
+        ///   Gets a value indicating whether the collision has ended because one of the colliders has been removed,
+        ///   either by removing the entity from the scene or by removing the physics component from the entity.
+        /// </summary>
+        /// <remarks>
+        ///   If the value of this property is <c>true</c>, it is not safe to invoke further actions on the
+        ///   colliders.
+        ///   Only use colliders information to identify the entity that has been removed.
+        /// </remarks>
+        public bool HasEndedFromComponentRemoval { get; internal set; }
+
         internal Channel<ContactPoint> NewContactChannel;
 
         public ChannelMicroThreadAwaiter<ContactPoint> NewContact()
         {
+            if (destroyed)
+                throw new InvalidOperationException("The collision object has been destroyed.");
+
             return NewContactChannel.Receive();
         }
 
@@ -60,6 +81,9 @@ namespace Stride.Physics
 
         public ChannelMicroThreadAwaiter<ContactPoint> ContactUpdate()
         {
+            if (destroyed)
+                throw new InvalidOperationException("The collision object has been destroyed.");
+
             return ContactUpdateChannel.Receive();
         }
 
@@ -67,11 +91,17 @@ namespace Stride.Physics
 
         public ChannelMicroThreadAwaiter<ContactPoint> ContactEnded()
         {
+            if (destroyed)
+                throw new InvalidOperationException("The collision object has been destroyed.");
+
             return ContactEndedChannel.Receive();
         }
 
         public async Task Ended()
         {
+            if (destroyed)
+                throw new InvalidOperationException("The collision object has been destroyed.");
+
             Collision endCollision;
             do
             {
@@ -82,8 +112,10 @@ namespace Stride.Physics
 
         public override bool Equals(object obj)
         {
-            var other = (Collision)obj;
-            return other != null && ((other.ColliderA == ColliderA && other.ColliderB == ColliderB) || (other.ColliderB == ColliderA && other.ColliderA == ColliderB));
+            var other = (Collision) obj;
+            return other != null &&
+                ((other.ColliderA == ColliderA && other.ColliderB == ColliderB) ||
+                 (other.ColliderB == ColliderA && other.ColliderA == ColliderB));
         }
 
         public override int GetHashCode()
@@ -98,7 +130,8 @@ namespace Stride.Physics
 
         internal bool InternalEquals(PhysicsComponent a, PhysicsComponent b)
         {
-            return (ColliderA == a && ColliderB == b) || (ColliderB == a && ColliderA == b);
+            return (ColliderA == a && ColliderB == b) ||
+                   (ColliderB == a && ColliderA == b);
         }
     }
 }

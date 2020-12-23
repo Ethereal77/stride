@@ -3,28 +3,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Reflection;
-using System.Text;
-using System.Threading;
 
 using EnvDTE;
 using EnvDTE80;
 
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-
-using VSLangProj;
-
-using Stride.Core;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Templates;
 using Stride.Core.Diagnostics;
-using Stride.Core.IO;
 using Stride.Core.Mathematics;
 using Stride.Core.VisualStudio;
 using Stride.Assets.Templates;
@@ -40,11 +29,18 @@ using Thread = System.Threading.Thread;
 namespace Stride.VisualStudio.Package.Tests
 {
     /// <summary>
-    /// Test class that runs experimental instance of Visual Studio to check our plugin works well.
+    ///   Test class that runs an experimental instance of Visual Studio to check our plugin works well.
     /// </summary>
     /// <remarks>
-    /// Right now it only has a test for .sdsl C# code generator, but it also tests a lot of things along the way: VSPackage properly have all dependencies (no missing .dll), IStrideCommands can be properly found, etc...
-    /// Also, it works against a dev version of Stride, but it could eventually be improved to test against package version as well.
+    ///   Right now it only has a test for .SDSL C# Code Generator, but it also tests a lot of things along
+    ///   the way:
+    ///   <list type="bullet">
+    ///     <item>VSPackage properly have all dependencies (no missing DLLs).</item>
+    ///     <item>IStrideCommands can be properly found.</item>
+    ///     <item>etc.</item>
+    ///   </list>
+    ///   Also, it works against a Dev version of Stride, but it could eventually be improved to test against
+    ///   package version as well.
     /// </remarks>
     public class IntegrationTests : IDisposable
     {
@@ -60,7 +56,8 @@ namespace Stride.VisualStudio.Package.Tests
         }
 
         /// <summary>
-        /// Start experimental instance of Visual Studio. This will be killed on cleanup, except if a debugger is attached (in which case it can reuse the existing instance).
+        ///   Starts an experimental instance of Visual Studio. This will be killed on cleanup, except if a
+        ///   debugger is attached (in which case it can reuse the existing instance).
         /// </summary>
         private static (DTE, Process, bool) InitDTE()
         {
@@ -74,7 +71,7 @@ namespace Stride.VisualStudio.Package.Tests
             var result = retObjectCollection.Cast<ManagementObject>().FirstOrDefault();
             if (result != null)
             {
-                var processId = (uint)result["ProcessId"];
+                var processId = (uint) result["ProcessId"];
                 process = Process.GetProcessById((int)processId);
                 killVisualStudioProcessDuringTearDown = false;
             }
@@ -89,8 +86,8 @@ namespace Stride.VisualStudio.Package.Tests
                 };
 
                 process = Process.Start(psi);
-                if (process == null)
-                    throw new InvalidOperationException("Could not start Visual Studio instance");
+                if (process is null)
+                    throw new InvalidOperationException("Could not start a Visual Studio instance.");
 
                 // Since we are the one starting it, let's close it when we are done
                 // (except if a debugger is attached, we assume developer want to iterate several time on it and will exit Visual Studio himself)
@@ -101,7 +98,7 @@ namespace Stride.VisualStudio.Package.Tests
             for (int i = 0; i < 60; ++i)
             {
                 if (process.HasExited)
-                    throw new InvalidOperationException($"Visual Studio process {process.Id} exited before we could connect to it");
+                    throw new InvalidOperationException($"Visual Studio process {process.Id} exited before we could connect to it.");
 
                 var matchingDte = VisualStudioDTE.GetDTEByProcess(process.Id);
                 if (matchingDte != null)
@@ -110,7 +107,7 @@ namespace Stride.VisualStudio.Package.Tests
                 Thread.Sleep(1000);
             }
 
-            throw new InvalidOperationException($"Could not find the Visual Studio DTE for process {process.Id}, or it didn't start in time");
+            throw new InvalidOperationException($"Could not find the Visual Studio DTE for process {process.Id}, or it didn't start in time.");
         }
 
         private static void CloseDTE(DTE dte, Process process)
@@ -144,7 +141,7 @@ namespace Stride.VisualStudio.Package.Tests
             Directory.CreateDirectory(tempDirectory);
 
             // Make sure solution is closed (i.e. previous test failure)
-            var solution = (Solution2)dte.Solution;
+            var solution = (Solution2) dte.Solution;
             solution.Close();
 
             // Create project
@@ -159,28 +156,29 @@ namespace Stride.VisualStudio.Package.Tests
                 var newGameFolder = solution.Projects.OfType<EnvDTE.Project>().First();
                 var newGameProject = newGameFolder.ProjectItems.OfType<ProjectItem>().Select(x => x.SubProject).First(x => x.Name == $"{session.Packages.First().Meta.Name}.Game");
 
-                // Add sdsl file
+                // Add SDSL file
                 var sdslItem = newGameProject.ProjectItems.AddFromFileCopy(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestGenerator.sdsl"));
 
                 // Make sure custom tool is properly set
                 Assert.Equal("StrideShaderKeyGenerator", sdslItem.Properties.Item("CustomTool").Value);
 
-                // Wait for cs file to be generated (up to 5 seconds)
+                // Wait for C# file to be generated (up to 5 seconds)
                 // TODO: Is there a better way to wait for it?
                 for (int i = 0; i < 50; ++i)
                 {
                     if (sdslItem.ProjectItems.Count > 0)
                         break;
+
                     Thread.Sleep(100);
                 }
 
-                // Get generated cs file
+                // Get generated .CS file
                 Assert.Equal(1, sdslItem.ProjectItems.Count);
                 var shaderGeneratedCsharpItem = sdslItem.ProjectItems.OfType<ProjectItem>().First();
                 var shaderGeneratedCsharpFile = shaderGeneratedCsharpItem.FileNames[0];
 
                 // Check content
-                // Note: we could do more advanced code analysis, but just check a few expected stuff is probably good enough to detect if there was no crash generating it
+                // NOTE: We could do more advanced code analysis, but just check a few expected stuff is probably good enough to detect if there was no crash generating it
                 var shaderGeneratedCsharpContent = File.ReadAllText(shaderGeneratedCsharpFile);
                 Assert.Contains($"{nameof(ValueParameterKey<float>)}<float> TestFloat", shaderGeneratedCsharpContent);
                 Assert.Contains($"{nameof(ValueParameterKey<Color3>)}<{nameof(Color3)}> TestColor", shaderGeneratedCsharpContent);
@@ -193,9 +191,7 @@ namespace Stride.VisualStudio.Package.Tests
                 {
                     Directory.Delete(tempDirectory, true);
                 }
-                catch
-                {
-                }
+                catch { }
             }
         }
 

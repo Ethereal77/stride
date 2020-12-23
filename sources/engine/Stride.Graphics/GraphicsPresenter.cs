@@ -17,6 +17,17 @@ namespace Stride.Graphics
     /// </remarks>
     public abstract class GraphicsPresenter : ComponentBase
     {
+        /// <summary>
+        ///   A presentation interval to use forcefully during a <see cref="Present"/> operation.
+        /// </summary>
+        /// <remarks>
+        ///   If the value is <c>null</c>, the original <see cref="Graphics.PresentInterval"/> will be used. If not
+        ///   <c>null</c>, this value will be used instead.
+        ///   <para/>
+        ///   This is currently only supported by the Direct3D graphics implementation.
+        /// </remarks>
+        internal static readonly PropertyKey<PresentInterval?> ForcedPresentInterval = new PropertyKey<PresentInterval?>(nameof(ForcedPresentInterval), typeof(GraphicsDevice));
+
         private Texture depthStencilBuffer;
 
         /// <summary>
@@ -29,23 +40,7 @@ namespace Stride.Graphics
             GraphicsDevice = device;
             var description = presentationParameters.Clone();
 
-            // If we are creating a GraphicsPresenter with linear colorspace
-            if (device.Features.HasSRgb && device.ColorSpace == ColorSpace.Linear)
-            {
-                // We use automatically a SRgb backbuffer
-                if (description.BackBufferFormat == PixelFormat.R8G8B8A8_UNorm)
-                    description.BackBufferFormat = PixelFormat.R8G8B8A8_UNorm_SRgb;
-                else if (description.BackBufferFormat == PixelFormat.B8G8R8A8_UNorm)
-                    description.BackBufferFormat = PixelFormat.B8G8R8A8_UNorm_SRgb;
-            }
-            else if (!device.Features.HasSRgb)
-            {
-                // The device does not support SRgb, but the backbuffer format asked is SRgb, convert it to non SRgb
-                if (description.BackBufferFormat == PixelFormat.R8G8B8A8_UNorm_SRgb)
-                    description.BackBufferFormat = PixelFormat.R8G8B8A8_UNorm;
-                else if (description.BackBufferFormat == PixelFormat.B8G8R8A8_UNorm_SRgb)
-                    description.BackBufferFormat = PixelFormat.B8G8R8A8_UNorm;
-            }
+            description.BackBufferFormat = NormalizeBackBufferFormat(description.BackBufferFormat);
 
             Description = description;
 
@@ -100,9 +95,12 @@ namespace Stride.Graphics
         public abstract bool IsFullScreen { get; set; }
 
         /// <summary>
-        ///   Gets or sets the <see cref="PresentInterval"/>. Default is to wait for one vertical blanking (VSync).
+        ///   Gets or sets the <see cref="Graphics.PresentInterval"/>.
         /// </summary>
-        /// <value>The present interval.</value>
+        /// <value>
+        ///   The interval to wait before presenting a frame to the screen. Default is to wait for one
+        ///   vertical blanking (VSync).
+        /// </value>
         public PresentInterval PresentInterval
         {
             get => Description.PresentationInterval;
@@ -130,12 +128,26 @@ namespace Stride.Graphics
 
             Description.BackBufferWidth = width;
             Description.BackBufferHeight = height;
-            Description.BackBufferFormat = format;
+            Description.BackBufferFormat = NormalizeBackBufferFormat(format);
 
             ResizeBackBuffer(width, height, format);
             ResizeDepthStencilBuffer(width, height, format);
 
             GraphicsDevice.End();
+        }
+
+        private PixelFormat NormalizeBackBufferFormat(PixelFormat backBufferFormat)
+        {
+            if (GraphicsDevice.Features.HasSRgb && GraphicsDevice.ColorSpace == ColorSpace.Linear)
+            {
+                // If the device support SRgb and ColorSpace is linear, we use automatically a SRgb backbuffer
+                return backBufferFormat.ToSRgb();
+            }
+            else
+            {
+                // If the device does not support SRgb or the ColorSpace is Gamma, but the backbuffer format asked is SRgb, convert it to non SRgb
+                return backBufferFormat.ToNonSRgb();
+            }
         }
 
         protected abstract void ResizeBackBuffer(int width, int height, PixelFormat format);
@@ -158,12 +170,12 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Methid called when this presenter has been destroyed.
+        ///   Method called when this presenter has been destroyed.
         /// </summary>
         protected internal virtual void OnDestroyed() { }
 
         /// <summary>
-        ///   Methid called when this presenter has been recreated.
+        ///   Method called when this presenter has been recreated.
         /// </summary>
         public virtual void OnRecreated() { }
 

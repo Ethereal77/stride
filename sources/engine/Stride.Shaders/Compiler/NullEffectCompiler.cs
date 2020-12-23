@@ -3,27 +3,27 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Threading.Tasks;
 
-using Stride.Core.Diagnostics;
 using Stride.Core.IO;
-using Stride.Core.Serialization.Contents;
 using Stride.Core.Storage;
 
 namespace Stride.Shaders.Compiler
 {
     public class NullEffectCompiler : EffectCompilerBase
     {
-        public NullEffectCompiler(IVirtualFileProvider fileProvider)
+        private readonly DatabaseFileProvider database;
+
+        public NullEffectCompiler(IVirtualFileProvider fileProvider, DatabaseFileProvider database)
         {
             FileProvider = fileProvider;
+            this.database = database;
         }
 
         public override ObjectId GetShaderSourceHash(string type)
         {
             var url = GetStoragePathFromShaderType(type);
             var shaderSourceId = ObjectId.Empty;
-            (FileProvider as DatabaseFileProvider)?.ContentIndexMap.TryGetValue(url, out shaderSourceId);
+            database?.ContentIndexMap.TryGetValue(url, out shaderSourceId);
             return shaderSourceId;
         }
 

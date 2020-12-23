@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 using Stride.Core;
 using Stride.Core.Collections;
@@ -16,7 +15,8 @@ using Stride.Core.Serialization;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Manage several effect parameters (resources and data). A specific data and resource layout can be forced (usually by the consuming effect).
+    ///   Represents a class that can manage a collection of effect parameters (resources and data).
+    ///   A specific data and resource layout can be forced (usually by the consuming effect).
     /// </summary>
     [DataSerializer(typeof(ParameterCollection.Serializer))]
     [DataSerializerGlobal(null, typeof(FastList<ParameterKeyInfo>))]
@@ -51,9 +51,7 @@ namespace Stride.Rendering
         [DataMemberIgnore]
         public bool HasLayout => layout != null;
 
-        public ParameterCollection()
-        {
-        }
+        public ParameterCollection() { }
 
         public unsafe ParameterCollection(ParameterCollection parameterCollection)
         {
@@ -81,7 +79,7 @@ namespace Stride.Rendering
                 fixed (byte* dataValuesSources = parameterCollection.DataValues)
                 fixed (byte* dataValuesDest = DataValues)
                 {
-                    Utilities.CopyMemory((IntPtr)dataValuesDest, (IntPtr)dataValuesSources, DataValues.Length);
+                    Utilities.CopyMemory((IntPtr) dataValuesDest, (IntPtr) dataValuesSources, DataValues.Length);
                 }
             }
         }
@@ -89,15 +87,19 @@ namespace Stride.Rendering
         public override string ToString()
         {
             var parameterKeysByType = ParameterKeyInfos.GroupBy(x => x.Key.Type);
-            return $"ParameterCollection: {string.Join(", ", parameterKeysByType.Select(x => $"{x.Count()} {x.Key}(s)"))}";
+            return "ParameterCollection: " +
+                   string.Join(", ", parameterKeysByType.Select(x => $"{x.Count()} {x.Key}(s)"));
         }
 
         /// <summary>
-        /// Gets an accessor to get and set objects more quickly.
+        ///   Gets an accessor to get and set objects more quickly.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameterKey"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of the parameter to access.</typeparam>
+        /// <param name="parameterKey">Key of the parameter to access.</param>
+        /// <param name="createIfNew">
+        ///   Value indicating whether to create a new accesor if none exists already.
+        /// </param>
+        /// <returns>An object that can be used to get and set the parameter quickly.</returns>
         public ObjectParameterAccessor<T> GetAccessor<T>(ObjectParameterKey<T> parameterKey, bool createIfNew = true)
         {
             var accessor = GetObjectParameterHelper(parameterKey, createIfNew);
@@ -105,11 +107,14 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Gets an accessor to get and set permutations more quickly.
+        ///   Gets an accessor to get and set effect permutations more quickly.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameterKey"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of the permutation parameter to access.</typeparam>
+        /// <param name="parameterKey">Key of the parameter to access.</param>
+        /// <param name="createIfNew">
+        ///   Value indicating whether to create a new accesor if none exists already.
+        /// </param>
+        /// <returns>An object that can be used to get and set the permutation parameter quickly.</returns>
         public PermutationParameter<T> GetAccessor<T>(PermutationParameterKey<T> parameterKey, bool createIfNew = true)
         {
             // Remap it as PermutationParameter
@@ -118,12 +123,14 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Gets an accessor to get and set blittable values more quickly.
+        ///   Gets an accessor to get and set values more quickly.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameterKey"></param>
-        /// <returns></returns>
-        public ValueParameter<T> GetAccessor<T>(ValueParameterKey<T> parameterKey, int elementCount = 1) where T : struct
+        /// <typeparam name="T">Type of the value parameter to access.</typeparam>
+        /// <param name="parameterKey">Key of the parameter to access.</param>
+        /// <param name="elementCount">Number of contiguous values to access. For scalar values it is 1 by default.</param>
+        /// <returns>An object that can be used to get and set the value parameter quickly.</returns>
+        public ValueParameter<T> GetAccessor<T>(ValueParameterKey<T> parameterKey, int elementCount = 1)
+            where T : struct
         {
             var accessor = GetValueAccessorHelper(parameterKey, elementCount);
             return new ValueParameter<T>(accessor.Offset, accessor.Count);
@@ -179,22 +186,22 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Sets an object.
+        ///   Sets the value of a parameter to an object.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type of the object.</typeparam>
+        /// <param name="parameter">Parameter to set.</param>
+        /// <param name="value">Value of the object.</param>
         public void Set<T>(ObjectParameterKey<T> parameter, T value)
         {
             Set(GetAccessor(parameter), value);
         }
 
         /// <summary>
-        /// Gets an object.
+        ///   Gets the value of a parameter as an object.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of the object.</typeparam>
+        /// <param name="parameter">Parameter to get.</param>
+        /// <returns>Value of the object.</returns>
         public T Get<T>(ObjectParameterKey<T> parameter, bool createIfNew = false)
         {
             var accessor = GetAccessor(parameter, createIfNew);
@@ -205,22 +212,22 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Sets a permutation.
+        ///   Sets the value of a permutation parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type of the permutation parameter.</typeparam>
+        /// <param name="parameter">Parameter to set.</param>
+        /// <param name="value">Value of the permutation parameter.</param>
         public void Set<T>(PermutationParameterKey<T> parameter, T value)
         {
             Set(GetAccessor(parameter), value);
         }
 
         /// <summary>
-        /// Gets a permutation.
+        ///   Gets the value of a permutation parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of the permutation parameter.</typeparam>
+        /// <param name="parameter">Parameter to get.</param>
+        /// <returns>Value of the permutation parameter.</returns>
         public T Get<T>(PermutationParameterKey<T> parameter, bool createIfNew = false)
         {
             var accessor = GetAccessor(parameter, createIfNew);
@@ -231,77 +238,78 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Sets a blittable value.
+        ///   Sets the value of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type of the value.</typeparam>
+        /// <param name="parameter">Parameter to set.</param>
+        /// <param name="value">Value of the parameter.</param>
         public void Set<T>(ValueParameterKey<T> parameter, T value) where T : struct
         {
             Set(GetAccessor(parameter), ref value);
         }
 
         /// <summary>
-        /// Sets a blittable value.
+        ///   Sets the value of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type of the value.</typeparam>
+        /// <param name="parameter">Parameter to set.</param>
+        /// <param name="value">Value of the parameter.</param>
         public void Set<T>(ValueParameterKey<T> parameter, ref T value) where T : struct
         {
             Set(GetAccessor(parameter), ref value);
         }
 
         /// <summary>
-        /// Sets blittable values.
+        ///   Sets the values of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="values"></param>
+        /// <typeparam name="T">Type of the values.</typeparam>
+        /// <param name="parameter">Parameter to set.</param>
+        /// <param name="values">Values of the parameter.</param>
         public void Set<T>(ValueParameterKey<T> parameter, T[] values) where T : struct
         {
             Set(GetAccessor(parameter, values.Length), values.Length, ref values[0]);
         }
 
         /// <summary>
-        /// Sets blittable values.
+        ///   Sets the values of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="values"></param>
+        /// <typeparam name="T">Type of the values.</typeparam>
+        /// <param name="parameter">Parameter to set.</param>
+        /// <param name="count">Number of parameters to set.</param>
+        /// <param name="firstValue">Reference to the first of the values of the parameter.</param>
         public void Set<T>(ValueParameterKey<T> parameter, int count, ref T firstValue) where T : struct
         {
             Set(GetAccessor(parameter, count), count, ref firstValue);
         }
 
         /// <summary>
-        /// Gets a blittable value.
+        ///   Gets the value of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of the value.</typeparam>
+        /// <param name="parameter">Parameter to read.</param>
+        /// <returns>Value of the parameter.</returns>
         public T Get<T>(ValueParameterKey<T> parameter) where T : struct
         {
             return Get(GetAccessor(parameter));
         }
 
         /// <summary>
-        /// Gets blittable values.
+        ///   Gets the values of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public unsafe T[] GetValues<T>(ValueParameterKey<T> key) where T : struct
+        /// <typeparam name="T">Type of the value.</typeparam>
+        /// <param name="parameter">Parameter to read.</param>
+        /// <returns>Values of the parameter as an array.</returns>
+        public unsafe T[] GetValues<T>(ValueParameterKey<T> parameter) where T : struct
         {
-            var parameter = GetAccessor(key);
+            var accesor = GetAccessor(parameter);
 
             // Align to float4
             var stride = (Utilities.SizeOf<T>() + 15) / 16 * 16;
-            var values = new T[parameter.Count];
+            var values = new T[accesor.Count];
 
             fixed (byte* dataValues = DataValues)
             {
-                var dataPtr = (IntPtr)dataValues + parameter.Offset;
+                var dataPtr = (IntPtr)dataValues + accesor.Offset;
 
                 for (int i = 0; i < values.Length; ++i)
                 {
@@ -314,20 +322,19 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Copies all blittable values of a given key to the specified <see cref="ParameterCollection"/>.
+        ///   Copies all values of a given parameter to another <see cref="ParameterCollection"/>.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key">The key for the values to copy.</param>
+        /// <typeparam name="T">Type of the values.</typeparam>
+        /// <param name="parameter">The parameter whose values are going to be copied.</param>
         /// <param name="destination">The collection to copy the values to.</param>
-        /// <param name="destinationKey">The key for the values of the destination collection.</param>
-        public unsafe void CopyTo<T>(ValueParameterKey<T> key, ParameterCollection destination, ValueParameterKey<T> destinationKey) where T : struct
+        /// <param name="destinationKey">The parameter key for the values of the destination collection.</param>
+        /// <exception cref="IndexOutOfRangeException"><paramref name="parameter"/> has more values than <paramref name="destinationKey"/>.</exception>
+        public unsafe void CopyTo<T>(ValueParameterKey<T> parameter, ParameterCollection destination, ValueParameterKey<T> destinationKey) where T : struct
         {
-            var sourceParameter = GetAccessor(key);
+            var sourceParameter = GetAccessor(parameter);
             var destParameter = destination.GetAccessor(destinationKey, sourceParameter.Count);
             if (sourceParameter.Count > destParameter.Count)
-            {
                 throw new IndexOutOfRangeException();
-            }
 
             // Align to float4
             var stride = (Utilities.SizeOf<T>() + 15) / 16 * 16;
@@ -336,56 +343,55 @@ namespace Stride.Rendering
             fixed (byte* sourceDataValues = DataValues)
             fixed (byte* destDataValues = destination.DataValues)
             {
-                var sourcePtr = (IntPtr)sourceDataValues + sourceParameter.Offset;
-                var destPtr = (IntPtr)destDataValues + destParameter.Offset;
+                var sourcePtr = (IntPtr) sourceDataValues + sourceParameter.Offset;
+                var destPtr = (IntPtr) destDataValues + destParameter.Offset;
                 Utilities.CopyMemory(destPtr, sourcePtr, sizeInBytes);
             }
         }
 
         /// <summary>
-        /// Sets a blittable value.
+        ///   Sets the value of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type of the value.</typeparam>
+        /// <param name="parameter">Parameter whose value is going to be set.</param>
+        /// <param name="value">New value for the parameter.</param>
         public unsafe void Set<T>(ValueParameter<T> parameter, T value) where T : struct
         {
             fixed (byte* dataValues = DataValues)
-                Utilities.Write((IntPtr)dataValues + parameter.Offset, ref value);
+                Utilities.Write((IntPtr) dataValues + parameter.Offset, ref value);
         }
 
         /// <summary>
-        /// Sets a blittable value.
+        ///   Sets the value of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type of the value.</typeparam>
+        /// <param name="parameter">Parameter whose value is going to be set.</param>
+        /// <param name="value">By reference. New value for the parameter.</param>
         public unsafe void Set<T>(ValueParameter<T> parameter, ref T value) where T : struct
         {
             fixed (byte* dataValues = DataValues)
-                Utilities.Write((IntPtr)dataValues + parameter.Offset, ref value);
+                Utilities.Write((IntPtr) dataValues + parameter.Offset, ref value);
         }
 
         /// <summary>
-        /// Sets blittable values.
+        ///   Sets the values of a parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="count"></param>
-        /// <param name="firstValue"></param>
+        /// <typeparam name="T">Type of the values.</typeparam>
+        /// <param name="parameter">Parameter whose values are going to be set.</param>
+        /// <param name="count">Number of values to set.</param>
+        /// <param name="firstValue">Reference of the first value to set.</param>
+        /// <exception cref="IndexOutOfRangeException"><paramref name="count"/> is greater than the number of values in <paramref name="parameter"/>.</exception>
         public unsafe void Set<T>(ValueParameter<T> parameter, int count, ref T firstValue) where T : struct
         {
             // Align to float4
             var stride = (Utilities.SizeOf<T>() + 15) / 16 * 16;
             var elementCount = parameter.Count;
             if (count > elementCount)
-            {
                 throw new IndexOutOfRangeException();
-            }
 
             fixed (byte* dataValues = DataValues)
             {
-                var dataPtr = (IntPtr)dataValues + parameter.Offset;
+                var dataPtr = (IntPtr) dataValues + parameter.Offset;
 
                 var value = Interop.Pin(ref firstValue);
                 for (int i = 0; i < count; ++i)
@@ -399,20 +405,18 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Sets a permutation.
+        ///   Sets a permutation.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type of the value of the permutation parameter.</typeparam>
+        /// <param name="parameter">Permutation parameter to set.</param>
+        /// <param name="value">Value for the permutation parameter.</param>
         public void Set<T>(PermutationParameter<T> parameter, T value)
         {
-            bool isSame = EqualityComparer<T>.Default.Equals((T)ObjectValues[parameter.BindingSlot], value);
+            bool isSame = EqualityComparer<T>.Default.Equals((T) ObjectValues[parameter.BindingSlot], value);
             if (!isSame)
-            {
                 PermutationCounter++;
-            }
 
-            // For value types, we don't assign again because this causes boxing.
+            // For value types, we don't assign again because this causes boxing
             if (!typeof(T).IsValueType || !isSame)
             {
                 ObjectValues[parameter.BindingSlot] = value;
@@ -420,62 +424,63 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Sets an object.
+        ///   Sets an object.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameterAccessor"></param>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type of the object to set.</typeparam>
+        /// <param name="parameterAccessor">Accesor to the parameter to set.</param>
+        /// <param name="value">Object to set.</param>
         public void Set<T>(ObjectParameterAccessor<T> parameterAccessor, T value)
         {
             ObjectValues[parameterAccessor.BindingSlot] = value;
         }
 
         /// <summary>
-        /// Gets a value.
+        ///   Gets a value.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of the value.</typeparam>
+        /// <param name="parameter">Parameter to get.</param>
+        /// <returns>Value of the parameter.</returns>
         public unsafe T Get<T>(ValueParameter<T> parameter) where T : struct
         {
             fixed (byte* dataValues = DataValues)
-                return Utilities.Read<T>((IntPtr)dataValues + parameter.Offset);
+                return Utilities.Read<T>((IntPtr) dataValues + parameter.Offset);
         }
 
         /// <summary>
-        /// Gets a permutation.
+        ///   Gets a permutation.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of the value of the permutation parameter.</typeparam>
+        /// <param name="parameter">Permutation parameter to get.</param>
+        /// <returns>Value of the permutation parameter.</returns>
         public T Get<T>(PermutationParameter<T> parameter)
         {
-            return (T)ObjectValues[parameter.BindingSlot];
+            return (T) ObjectValues[parameter.BindingSlot];
         }
 
         /// <summary>
-        /// Gets an object.
+        ///   Gets an object.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="parameterAccessor"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of object to get.</typeparam>
+        /// <param name="parameterAccessor">Accesor to the parameter to get.</param>
+        /// <returns>Object set in the parameter.</returns>
         public T Get<T>(ObjectParameterAccessor<T> parameterAccessor)
         {
-            return (T)ObjectValues[parameterAccessor.BindingSlot];
+            return (T) ObjectValues[parameterAccessor.BindingSlot];
         }
 
         public void SetObject(ParameterKey key, object value)
         {
-            if (key.Type != ParameterKeyType.Permutation && key.Type != ParameterKeyType.Object)
-                throw new InvalidOperationException("SetObject can only be used for Permutation or Object keys");
+            if (key.Type != ParameterKeyType.Permutation &&
+                key.Type != ParameterKeyType.Object)
+                throw new InvalidOperationException("SetObject can only be used for Permutation or Object keys.");
 
             var accessor = GetObjectParameterHelper(key);
 
             if (key.Type == ParameterKeyType.Permutation)
             {
                 var oldValue = ObjectValues[accessor.Offset];
-                if ((oldValue != null && (value == null || !oldValue.Equals(value))) // oldValue non null => check equality
-                    || (oldValue == null && value != null)) // oldValue null => check if value too
+                if ((oldValue != null && (value is null || !oldValue.Equals(value))) || // oldValue non-null => check equality
+                    (oldValue is null && value != null))                                // oldValue null => check if value too
                         PermutationCounter++;
             }
             ObjectValues[accessor.Offset] = value;
@@ -483,10 +488,11 @@ namespace Stride.Rendering
 
         public object GetObject(ParameterKey key)
         {
-            if (key.Type != ParameterKeyType.Permutation && key.Type != ParameterKeyType.Object)
-                throw new InvalidOperationException("GetObject can only be used for Permutation or Object keys");
+            if (key.Type != ParameterKeyType.Permutation &&
+                key.Type != ParameterKeyType.Object)
+                throw new InvalidOperationException("GetObject can only be used for Permutation or Object keys.");
 
-            var accessor = GetObjectParameterHelper(key, false);
+            var accessor = GetObjectParameterHelper(key, createIfNew: false);
             if (accessor.Offset == -1)
                 return null;
 
@@ -509,45 +515,41 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Clears the collection, including the layout.
+        ///   Clears the collection, including the layout.
         /// </summary>
         public void Clear()
         {
-            DataValues = null;
+            DataValues = EmptyData;
             ObjectValues = null;
             layout = null;
             parameterKeyInfos.Clear();
         }
 
         /// <summary>
-        /// Determines whether current collection contains a value for this key.
+        ///   Determines whether the collection contains a value.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">Parameter key of the value to look for.</param>
+        /// <returns><c>true</c> if the collection contains the value; otherwise, <c>false</c>.</returns>
         public bool ContainsKey(ParameterKey key)
         {
             for (int i = 0; i < parameterKeyInfos.Count; ++i)
-            {
                 if (parameterKeyInfos[i].Key == key)
-                {
                     return true;
-                }
-            }
 
             return false;
         }
 
         /// <summary>
-        /// Reorganizes internal data and resources to match the given objects, and append extra values at the end.
+        ///   Reorganizes the internal data and resources to match the given objects, and appends extra values at the end.
         /// </summary>
-        /// <param name="collectionLayout"></param>
+        /// <param name="collectionLayout">Layout of the parameter collection.</param>
         public unsafe void UpdateLayout(ParameterCollectionLayout collectionLayout)
         {
-            var oldLayout = this.layout;
-            this.layout = collectionLayout;
+            var oldLayout = layout;
+            layout = collectionLayout;
 
             // Same layout, or removed layout
-            if (oldLayout == collectionLayout || collectionLayout == null)
+            if (oldLayout == collectionLayout || collectionLayout is null)
                 return;
 
             var layoutParameterKeyInfos = collectionLayout.LayoutParameterKeyInfos;
@@ -616,7 +618,7 @@ namespace Stride.Rendering
                     if (defaultValueMetadata != null)
                     {
                         fixed (byte* newDataValuesPtr = newDataValues)
-                            defaultValueMetadata.WriteBuffer((IntPtr)newDataValuesPtr + bufferOffset + layoutParameterKeyInfo.Offset, 16);
+                            defaultValueMetadata.WriteBuffer((IntPtr) newDataValuesPtr + bufferOffset + layoutParameterKeyInfo.Offset, 16);
                     }
                 }
             }
@@ -636,7 +638,7 @@ namespace Stride.Rendering
                     // It's data
                     fixed (byte* dataValues = DataValues)
                     fixed (byte* newDataValuesPtr = newDataValues)
-                        Utilities.CopyMemory((IntPtr)newDataValuesPtr + newParameterKeyInfo.Offset, (IntPtr)dataValues + parameterKeyInfo.Offset, Math.Min(newTotalSize, totalSize));
+                        Utilities.CopyMemory((IntPtr) newDataValuesPtr + newParameterKeyInfo.Offset, (IntPtr)dataValues + parameterKeyInfo.Offset, Math.Min(newTotalSize, totalSize));
                 }
                 else if (newParameterKeyInfo.BindingSlot != -1)
                 {
@@ -695,7 +697,7 @@ namespace Stride.Rendering
                 ObjectValues[resourceValuesSize] = parameterKey.DefaultValueMetadata.GetDefaultValue();
             }
 
-            return new Accessor(resourceValuesSize, 1);
+            return new Accessor(resourceValuesSize, count: 1);
         }
 
         public class Serializer : ClassDataSerializer<ParameterCollection>
@@ -711,10 +713,10 @@ namespace Stride.Rendering
         public struct Copier
         {
             private CopyRange[] ranges;
-            private ParameterCollection destination;
-            private ParameterCollection source;
+            private readonly ParameterCollection destination;
+            private readonly ParameterCollection source;
             private int sourceLayoutCounter;
-            private string subKey;
+            private readonly string subKey;
 
             public Copier(ParameterCollection destination, ParameterCollection source, string subKey = null)
             {
@@ -729,8 +731,8 @@ namespace Stride.Rendering
             {
                 var destinationLayout = destination.Layout;
 
-                // Note: we should provide a slow version for first copy during Extract (layout isn't known yet)
-                if (destinationLayout == null)
+                // NOTE: We should provide a slow version for first copy during Extract (layout isn't known yet)
+                if (destinationLayout is null)
                     throw new NotImplementedException();
 
                 if (destinationLayout == source.Layout)
@@ -740,7 +742,7 @@ namespace Stride.Rendering
                 }
                 else
                 {
-                    if (ranges == null || sourceLayoutCounter != source.LayoutCounter)
+                    if (ranges is null || sourceLayoutCounter != source.LayoutCounter)
                     {
                         Compile();
 
@@ -766,7 +768,7 @@ namespace Stride.Rendering
                         {
                             fixed (byte* destDataValues = destination.DataValues)
                             fixed (byte* sourceDataValues = source.DataValues)
-                                Utilities.CopyMemory((IntPtr)destDataValues + range.DestStart, (IntPtr)sourceDataValues + range.SourceStart, range.Size);
+                                Utilities.CopyMemory((IntPtr) destDataValues + range.DestStart, (IntPtr) sourceDataValues + range.SourceStart, range.Size);
                         }
                     }
                 }
@@ -776,7 +778,7 @@ namespace Stride.Rendering
             {
                 fixed (byte* destPtr = destination.DataValues)
                 fixed (byte* sourcePtr = source.DataValues)
-                    Utilities.CopyMemory((IntPtr)destPtr, (IntPtr)sourcePtr, destinationLayout.BufferSize);
+                    Utilities.CopyMemory((IntPtr) destPtr, (IntPtr) sourcePtr, destinationLayout.BufferSize);
 
                 var resourceCount = destinationLayout.ResourceCount;
                 for (int i = 0; i < resourceCount; ++i)
@@ -786,14 +788,14 @@ namespace Stride.Rendering
             private void Compile()
             {
                 // If we are first, let's apply our layout!
-                if (source.Layout == null && subKey == null)
+                if (source.Layout is null && subKey is null)
                 {
                     source.UpdateLayout(destination.Layout);
                     return;
                 }
                 else
                 {
-                    // TODO GRAPHICS REFACTOR optim: check if layout are the same
+                    // TODO: GRAPHICS REFACTOR optim: check if layout is the same
                     //if (source.Layout.LayoutParameterKeyInfos == destination.Layout.LayoutParameterKeyInfos)
                 }
 
@@ -871,10 +873,10 @@ namespace Stride.Rendering
             }
 
             /// <summary>
-            /// Compute copy operations. Assumes destination layout is sequential.
+            ///   Computes the copy operations. Assumes destination layout is sequential.
             /// </summary>
-            /// <param name="dest"></param>
-            /// <param name="source"></param>
+            /// <param name="dest">Destination parameter collection where to copy to.</param>
+            /// <param name="source">Source parameter collection where to copy from.</param>
             /// <param name="keyRoot"></param>
             public void Compile(ParameterCollection dest, ParameterCollection source, string keyRoot)
             {
@@ -996,7 +998,7 @@ namespace Stride.Rendering
 
             public int PermutationCounter => collection.PermutationCounter;
 
-            // Note: this should be named "Parameters", but since its name is hidden and we want to to appear after PermutationCounter, we prepend ZZ
+            // NOTE: This should be named "Parameters", but since its name is hidden and we want to appear after PermutationCounter, we prepend ZZ
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
             public unsafe object[] ZZParameters
             {

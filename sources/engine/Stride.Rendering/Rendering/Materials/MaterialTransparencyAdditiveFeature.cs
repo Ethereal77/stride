@@ -6,26 +6,25 @@ using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
-using Stride.Rendering.Materials.ComputeColors;
 using Stride.Shaders;
+using Stride.Rendering.Materials.ComputeColors;
 
 namespace Stride.Rendering.Materials
 {
     /// <summary>
-    /// A transparent additive material.
+    ///   Represents a transparent additive material.
     /// </summary>
     [DataContract("MaterialTransparencyAdditiveFeature")]
     [Display("Additive")]
     public class MaterialTransparencyAdditiveFeature : MaterialFeature, IMaterialTransparencyFeature
     {
         private static readonly MaterialStreamDescriptor AlphaBlendStream = new MaterialStreamDescriptor("DiffuseSpecularAlphaBlend", "matDiffuseSpecularAlphaBlend", MaterialKeys.DiffuseSpecularAlphaBlendValue.PropertyType);
-
         private static readonly MaterialStreamDescriptor AlphaBlendColorStream = new MaterialStreamDescriptor("DiffuseSpecularAlphaBlend - Color", "matAlphaBlendColor", MaterialKeys.AlphaBlendColorValue.PropertyType);
 
         private static readonly PropertyKey<bool> HasFinalCallback = new PropertyKey<bool>("MaterialTransparencyAdditiveFeature.HasFinalCallback", typeof(MaterialTransparencyAdditiveFeature));
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaterialTransparencyAdditiveFeature"/> class.
+        ///   Initializes a new instance of the <see cref="MaterialTransparencyAdditiveFeature"/> class.
         /// </summary>
         public MaterialTransparencyAdditiveFeature()
         {
@@ -34,9 +33,9 @@ namespace Stride.Rendering.Materials
         }
 
         /// <summary>
-        /// Gets or sets the alpha.
+        ///   Gets or sets the alpha (oppacity) of the material.
         /// </summary>
-        /// <value>The alpha.</value>
+        /// <value>The alpha value.</value>
         /// <userdoc>The factor used to modulate alpha of the material. See documentation for more details.</userdoc>
         [NotNull]
         [DataMember(10)]
@@ -44,7 +43,7 @@ namespace Stride.Rendering.Materials
         public IComputeScalar Alpha { get; set; }
 
         /// <summary>
-        /// Gets or sets the tint color.
+        ///   Gets or sets the tint color.
         /// </summary>
         /// <value>The tint.</value>
         /// <userdoc>The tint color to apply on the material during the blend.</userdoc>
@@ -60,10 +59,15 @@ namespace Stride.Rendering.Materials
             alpha.ClampFloat(0, 1);
 
             // Use pre-multiplied alpha to support both additive and alpha blending
-            if (context.MaterialPass.BlendState == null)
+            if (context.MaterialPass.BlendState is null)
                 context.MaterialPass.BlendState = BlendStates.AlphaBlend;
+
             context.MaterialPass.HasTransparency = true;
-            // TODO GRAPHICS REFACTOR
+
+            // Disable alpha-to-coverage. We want to do alpha blending, not alpha testing
+            context.MaterialPass.AlphaToCoverage = false;
+
+            // TODO: GRAPHICS REFACTOR
             //context.Parameters.SetResourceSlow(Effect.BlendStateKey, BlendState.NewFake(blendDesc));
 
             var alphaColor = alpha.GenerateShaderSource(context, new MaterialComputeColorKeys(MaterialKeys.DiffuseSpecularAlphaBlendMap, MaterialKeys.DiffuseSpecularAlphaBlendValue, Color.White));

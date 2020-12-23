@@ -11,71 +11,88 @@ using Stride.Core;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// A description for <see cref="Image"/>.
+    ///   Describes the characteristics of an <see cref="Image"/>.
     /// </summary>
     [DataContract]
     [StructLayout(LayoutKind.Sequential)]
     public struct ImageDescription : IEquatable<ImageDescription>
     {
         /// <summary>
-        /// The dimension of a texture.
+        ///   Dimension of the image.
         /// </summary>
         public TextureDimension Dimension;
 
         /// <summary>
-        /// <dd> <p>Texture width (in texels). The  range is from 1 to <see cref="SharpDX.Direct3D11.Resource.MaximumTexture1DSize"/> (16384). However, the range is actually constrained by the feature level at which you create the rendering device. For more information about restrictions, see Remarks.</p> </dd>
+        ///   Texture width, in pixels.
+        ///   The range is from 1 to 16384 or whichever the maximum allowed width for an 2D image is supported by the GPU and graphics API.
+        ///   Also, the range is actually constrained by the feature level at which you create the rendering device.
         /// </summary>
         /// <remarks>
-        /// This field is valid for all textures: <see cref="Texture1D"/>, <see cref="Texture2D"/>, <see cref="Texture3D"/> and <see cref="TextureCube"/>.
+        ///   This field is valid for all textures: 1D, 2D, 3D and cube textures.
         /// </remarks>
         public int Width;
 
         /// <summary>
-        /// <dd> <p>Texture height (in texels). The  range is from 1 to <see cref="SharpDX.Direct3D11.Resource.MaximumTexture3DSize"/> (2048). However, the range is actually constrained by the feature level at which you create the rendering device. For more information about restrictions, see Remarks.</p> </dd>
+        ///   Texture height, in pixels.
+        ///   The range is from 1 to 16384 or whichever the maximum allowed height for an 2D image is supported by the GPU and graphics API.
+        ///   Also, the range is actually constrained by the feature level at which you create the rendering device.
         /// </summary>
         /// <remarks>
-        /// This field is only valid for <see cref="Texture2D"/>, <see cref="Texture3D"/> and <see cref="TextureCube"/>.
+        ///   This field is valid only for textures: 2D, 3D and cube textures.
         /// </remarks>
         public int Height;
 
         /// <summary>
-        /// <dd> <p>Texture depth (in texels). The  range is from 1 to <see cref="SharpDX.Direct3D11.Resource.MaximumTexture3DSize"/> (2048). However, the range is actually constrained by the feature level at which you create the rendering device. For more information about restrictions, see Remarks.</p> </dd>
+        ///   Texture depth, in pixels.
+        ///   The range is from 1 to 2048 or whichever the maximum allowed depth for an 3D image is supported by the GPU and graphics API.
+        ///   Also, the range is actually constrained by the feature level at which you create the rendering device.
         /// </summary>
         /// <remarks>
-        /// This field is only valid for <see cref="Texture3D"/>.
+        ///   This field is only valid for 3D textures.
         /// </remarks>
         public int Depth;
 
         /// <summary>
-        /// <dd> <p>Number of textures in the array. The  range is from 1 to <see cref="SharpDX.Direct3D11.Resource.MaximumTexture1DArraySize"/> (2048). However, the range is actually constrained by the feature level at which you create the rendering device. For more information about restrictions, see Remarks.</p> </dd>
+        ///   Number of textures in the array.
+        ///   The range is from 1 to 2048 or whichever the maximum allowed array size for an texture array is supported by the GPU and graphics API.
+        ///   Also, the range is actually constrained by the feature level at which you create the rendering device.
         /// </summary>
         /// <remarks>
-        /// This field is only valid for <see cref="Texture1D"/>, <see cref="Texture2D"/> and <see cref="TextureCube"/>
-        /// </remarks>
-        /// <remarks>
-        /// This field is only valid for textures: <see cref="Texture1D"/>, <see cref="Texture2D"/> and <see cref="TextureCube"/>.
+        ///   This field is only valid for textures: 1D, 2D and cube textures.
         /// </remarks>
         public int ArraySize;
 
         /// <summary>
-        /// <dd> <p>The maximum number of mipmap levels in the texture. See the remarks in <strong><see cref="SharpDX.Direct3D11.ShaderResourceViewDescription.Texture1DResource"/></strong>. Use 1 for a multisampled texture; or 0 to generate a full set of subtextures.</p> </dd>
+        ///   The maximum number of mipmap levels in the texture.
         /// </summary>
+        /// <remarks>
+        ///   Use a value of 1 for a multisampled texture; or 0 to generate a full set of subtextures.
+        /// </remarks>
         public int MipLevels;
 
         /// <summary>
-        /// <dd> <p>Texture format (see <strong><see cref="SharpDX.DXGI.Format"/></strong>).</p> </dd>
+        ///   Pixel format.
         /// </summary>
         public PixelFormat Format;
 
+
         public bool Equals(ImageDescription other)
         {
-            return Dimension.Equals(other.Dimension) && Width == other.Width && Height == other.Height && Depth == other.Depth && ArraySize == other.ArraySize && MipLevels == other.MipLevels && Format.Equals(other.Format);
+            return Dimension.Equals(other.Dimension) &&
+                   Width == other.Width &&
+                   Height == other.Height &&
+                   Depth == other.Depth &&
+                   ArraySize == other.ArraySize &&
+                   MipLevels == other.MipLevels &&
+                   Format.Equals(other.Format);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is ImageDescription && Equals((ImageDescription)obj);
+            if (obj is null)
+                return false;
+
+            return obj is ImageDescription description && Equals(description);
         }
 
         public override int GetHashCode()
@@ -105,7 +122,7 @@ namespace Stride.Graphics
 
         public override string ToString()
         {
-            return string.Format("Dimension: {0}, Width: {1}, Height: {2}, Depth: {3}, Format: {4}, ArraySize: {5}, MipLevels: {6}", Dimension, Width, Height, Depth, Format, ArraySize, MipLevels);
+            return $"Dimension: {Dimension}, Width: {Width}, Height: {Height}, Depth: {Depth}, Format: {Format}, ArraySize: {ArraySize}, MipLevels: {MipLevels}";
         }
     }
 }

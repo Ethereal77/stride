@@ -4,67 +4,75 @@
 
 using System;
 
-using Stride.Core.Collections;
-
 namespace Stride.Input
 {
     /// <summary>
-    /// A gamepad is a game controller that has a fixed button mapping, stored in <see cref="State"/>
+    ///   Defines the interface for interacting with a gamepad.
     /// </summary>
+    /// <remarks>
+    ///   A gamepad is a game controller that has a fixed button mapping, stored in <see cref="State"/>.
+    /// </remarks>
     public interface IGamePadDevice : IInputDevice
     {
         /// <summary>
-        /// Product Id of the device
+        ///   Gets the product Id of the device.
         /// </summary>
         Guid ProductId { get; }
 
         /// <summary>
-        /// The state of the gamepad
+        ///   Gets the state of the gamepad.
         /// </summary>
         GamePadState State { get; }
 
         /// <summary>
-        /// The index of the gamepad assigned by the input manager
+        ///   Gets or sets the index of the gamepad assigned by the input manager.
         /// </summary>
-        /// <remarks>
-        /// If <see cref="CanChangeIndex"/> is false, this value can not be changed
-        /// </remarks>
+        /// <value>
+        ///   Index of the gamepad. If <see cref="CanChangeIndex"/> is <c>false</c>, this value can not be changed.
+        /// </value>
         int Index { get; set; }
 
         /// <summary>
-        /// <c>true</c> if the index of this gamepad can be changed
+        ///   Gets a value indicating whether the index of this gamepad can be changed.
         /// </summary>
+        /// <value>
+        ///   <c>true</c> if the <see cref="Index"/> can be changed; <c>false</c> otherwise.
+        /// </value>
         bool CanChangeIndex { get; }
 
         /// <summary>
-        /// The gamepad buttons that have been pressed since the last frame
+        ///   Gets the gamepad buttons that have been pressed since the last frame.
         /// </summary>
-        IReadOnlySet<GamePadButton> PressedButtons { get; }
+        Core.Collections.IReadOnlySet<GamePadButton> PressedButtons { get; }
 
         /// <summary>
-        /// The gamepad buttons that have been released since the last frame
+        ///   Gets the gamepad buttons that have been released since the last frame.
         /// </summary>
-        IReadOnlySet<GamePadButton> ReleasedButtons { get; }
+        Core.Collections.IReadOnlySet<GamePadButton> ReleasedButtons { get; }
 
         /// <summary>
-        /// The gamepad buttons that are down
+        ///   Gets the gamepad buttons that are down.
         /// </summary>
-        IReadOnlySet<GamePadButton> DownButtons { get; }
+        Core.Collections.IReadOnlySet<GamePadButton> DownButtons { get; }
 
         /// <summary>
-        /// Raised if the index assigned to this gamepad changed
+        ///   Raised if the <see cref="Index"/> assigned to this gamepad has changed.
         /// </summary>
         event EventHandler<GamePadIndexChangedEventArgs> IndexChanged;
 
         /// <summary>
-        /// Sets 4 vibration motors one the device or approximates the effect if less are supported
+        ///   Sets the vibration of the gamepad.
         /// </summary>
-        /// <param name="smallLeft">The small left side motor</param>
-        /// <param name="smallRight">The small right side motor</param>
-        /// <param name="largeLeft">The large left side motor</param>
-        /// <param name="largeRight">The large right side motor</param>
-        /// <remarks>Values range from 0 to 1, where 0 is off and 1 is maximum vibration</remarks>
-        /// <remarks>Currently vibration is only supported on windows for XInput devices and supported gamepads.</remarks>
+        /// <param name="smallLeft">The small left side motor. Values range from 0 (off) to 1 (maximum vibration).</param>
+        /// <param name="smallRight">The small right side motor. Values range from 0 (off) to 1 (maximum vibration).</param>
+        /// <param name="largeLeft">The large left side motor. Values range from 0 (off) to 1 (maximum vibration).</param>
+        /// <param name="largeRight">The large right side motor. Values range from 0 (off) to 1 (maximum vibration).</param>
+        /// <remarks>
+        ///   This method sets 4 vibration values for the motors on the device. If less than 4 motors are available,
+        ///   it approximates the effect.
+        ///   <para/>
+        ///   Currently vibration is only supported on Windows for XInput devices and supported gamepads.
+        /// </remarks>
         void SetVibration(float smallLeft, float smallRight, float largeLeft, float largeRight);
     }
 }

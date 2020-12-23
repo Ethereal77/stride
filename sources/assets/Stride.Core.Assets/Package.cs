@@ -1073,11 +1073,11 @@ namespace Stride.Core.Assets
                 var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => string.Compare(x.GetName().Name, Path.GetFileNameWithoutExtension(assemblyPath), StringComparison.InvariantCultureIgnoreCase) == 0);
 
                 // Otherwise, load assembly from its file
-                if (assembly == null)
+                if (assembly is null)
                 {
                     assembly = assemblyContainer.LoadAssemblyFromPath(assemblyPath, log);
 
-                    if (assembly == null)
+                    if (assembly is null)
                     {
                         log.Error($"Unable to load assembly reference [{assemblyPath}]");
                     }
@@ -1158,7 +1158,7 @@ namespace Stride.Core.Assets
                             continue;
                         }
 
-                        var templateDescription = YamlSerializer.Default.Load<TemplateDescription>(file.FullName);
+                        var templateDescription = YamlSerializer.Load<TemplateDescription>(file.FullName);
                         templateDescription.FullPath = file.FullName;
                         Templates.Add(templateDescription);
                     }
@@ -1213,7 +1213,7 @@ namespace Stride.Core.Assets
 
                         // Make an absolute path from the root of this package
                         var fileUPath = new UFile(filePath.FullName);
-                        if (fileUPath.GetFileExtension() == null)
+                        if (fileUPath.GetFileExtension() is null)
                             continue;
 
                         // If this kind of file an asset file?

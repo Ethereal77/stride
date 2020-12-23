@@ -3,10 +3,6 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Stride.Framework.MicroThreading;
 using Stride.Extensions;
@@ -29,8 +25,8 @@ namespace Stride.DebugTools.ViewModels
 
         public ScriptMethodViewModel(ScriptEntry2 scriptEntry, ScriptTypeViewModel parent)
         {
-            if (parent == null)
-                throw new ArgumentNullException("parent");
+            if (parent is null)
+                throw new ArgumentNullException(nameof(parent));
 
             TypeParent = parent;
             AssemblyParent = TypeParent.Parent;
@@ -41,37 +37,13 @@ namespace Stride.DebugTools.ViewModels
             CloseMicroThreadView = new AnonymousCommand(_ => MicroThread = null);
         }
 
-        public string Name
-        {
-            get
-            {
-                return scriptEntry.MethodName;
-            }
-        }
+        public string Name => scriptEntry.MethodName;
 
-        public bool IsAssemblyStartup
-        {
-            get
-            {
-                return scriptEntry.Flags == ScriptFlags.AssemblyStartup;
-            }
-        }
+        public bool IsAssemblyStartup => scriptEntry.Flags == ScriptFlags.AssemblyStartup;
 
-        public bool HasNoFlags
-        {
-            get
-            {
-                return scriptEntry.Flags == ScriptFlags.None;
-            }
-        }
+        public bool HasNoFlags => scriptEntry.Flags == ScriptFlags.None;
 
-        public ScriptFlags FlagsDisplay
-        {
-            get
-            {
-                return scriptEntry.Flags;
-            }
-        }
+        public ScriptFlags FlagsDisplay => scriptEntry.Flags;
 
         private void OnRunScriptCommand()
         {
@@ -82,16 +54,14 @@ namespace Stride.DebugTools.ViewModels
         private MicroThreadViewModel microThread;
         public MicroThreadViewModel MicroThread
         {
-            get
-            {
-                return microThread;
-            }
+            get => microThread;
+
             private set
             {
                 if (microThread != value)
                 {
                     microThread = value;
-                    OnPropertyChanged("MicroThread");
+                    OnPropertyChanged(nameof(MicroThread));
                 }
             }
         }

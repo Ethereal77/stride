@@ -71,7 +71,7 @@ namespace Stride.Assets
         public Color SplashScreenColor { get; set; } = Color.Black;
 
         [DataMember(2000)]
-        [MemberCollection(ReadOnly = true, NotNullItems = true)]
+        [MemberCollection(ReadOnly = false, NotNullItems = true)]
         public List<Configuration> Defaults { get; } = new List<Configuration>();
 
         [DataMember(3000)]
@@ -103,14 +103,16 @@ namespace Stride.Assets
             Configuration first = null;
             foreach (var x in Defaults)
             {
-                if (x != null && x.GetType() == typeof(T))
+                if (x is T t)
                 {
-                    first = x;
+                    first = t;
                     break;
                 }
             }
-            var settings = (T)first;
-            if (settings != null) return settings;
+            var settings = (T) first;
+            if (settings != null)
+                return settings;
+
             settings = ObjectFactoryRegistry.NewInstance<T>();
             Defaults.Add(settings);
             return settings;
@@ -134,10 +136,12 @@ namespace Stride.Assets
                     throw new ArgumentOutOfRangeException(nameof(platform), platform, null);
             }
 
-            var platVersion = Overrides.FirstOrDefault(x => x != null && x.Platforms.HasFlag(configPlatform) && x.Configuration is T);
+            var platVersion = Overrides.FirstOrDefault(x => x != null &&
+                                                            x.Platforms.HasFlag(configPlatform) &&
+                                                            x.Configuration is T);
             if (platVersion != null)
             {
-                return (T)platVersion.Configuration;
+                return (T) platVersion.Configuration;
             }
 
             return GetOrCreate<T>();

@@ -5,7 +5,7 @@
 namespace Stride.Rendering.Lights
 {
     /// <summary>
-    /// Defines a point light
+    ///   Defines a point light.
     /// </summary>
     shader LightPoint : LightUtil, LightStream, PositionStream4
     {
@@ -13,6 +13,7 @@ namespace Stride.Rendering.Lights
         {
             float3 PositionWS;
             float  InvSquareRadius;
+
             [Color]
             float3 Color;
         };
@@ -22,8 +23,9 @@ namespace Stride.Rendering.Lights
             float3 lightVectorNorm;
             float attenuation = ComputeAttenuation(light, streams.PositionWS.xyz, lightVectorNorm);
 
-            streams.lightPositionWS = light.PositionWS;
-            streams.lightColor = light.Color * attenuation;
+            streams.lightPositionWS  = light.PositionWS;
+            streams.lightColor       = light.Color;
+            streams.lightAttenuation = attenuation;
             streams.lightDirectionWS = lightVectorNorm;
         }
 

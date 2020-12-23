@@ -1,41 +1,41 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 namespace Stride.Rendering.Materials
 {
     /// <summary>
-    /// Calculates the diffuse lighting for hair.
+    ///   Calculates the diffuse lighting for hair.
     /// </summary>
     shader MaterialSurfaceShadingDiffuseHair<bool TIsEnergyConservative, int ShadingModel, bool DebugRenderPasses> :
-        IMaterialSurfaceShading, // Required for "ComputeDirectLightContribution()" and the like.
+        IMaterialSurfaceShading,       // Required for "ComputeDirectLightContribution()" and the like.
         MaterialPixelShadingStream,
-        Math,   // Required for "PI".
-        LightStream,    // Required for "streams.lightColor" and "streams.lightDirectionWS". 
+        Math,                          // Required for "PI".
+        LightStream,                   // Required for "streams.lightColor" and "streams.lightDirectionWS".
         MaterialHairShared,
-        Transformation, // Required for "WorldInverseTranspose".
-        NormalStream // Required for "streams.normalWS", "streams.meshNormal", "streams.meshTangent".
+        Transformation,                // Required for "WorldInverseTranspose".
+        NormalStream                   // Required for "streams.normalWS", "streams.meshNormal", "streams.meshTangent".
     {
         compose IMaterialHairLightAttenuationFunction hairLightAttenuationFunction;
         compose IMaterialHairDirectionFunction hairDirectionFunction;
         compose IMaterialHairShadowingFunction hairShadowingFunction;
         compose IMaterialHairDiscardFunction hairDiscardFunction;
-        
+
         stream float3 hairDirection;
 
         override void PrepareForLightingAndShading()
         {
             streams.hairDirection = hairDirectionFunction.Compute(streams.meshNormal, streams.meshTangent, (float3x3)WorldInverseTranspose);
         }
-        
+
         float3 ComputeHairLightingDiffuse(float3 hairDirection, float3 toLightVec, float3 diffuseLighting)
         {
             float3 diffuse = diffuseLighting;
             //float4 diffuse = LambertBRDF(surfaceData); // Mizuchi version  // TODO: Can we delete this line?
-            
+
             if(ShadingModel == HAIR_SHADING_KAJIYAKAY_SHIFTED)
             {
-                // in Kajiya's model: diffuse component: sin(t, l)
+                // In Kajiya's model: diffuse component: sin(t, l)
                 float cosTL = dot(hairDirection, toLightVec);
                 float sinTL = sqrt(1.0 - cosTL * cosTL);
                 diffuse *= sinTL;
@@ -80,13 +80,13 @@ namespace Stride.Rendering.Materials
             }
 
             float3 diffuseLighting = diffuseColor / PI;
-            diffuseLighting *= streams.lightColor;  // Distance-attenuated light color. //diffuseLighting *= streams.lightColorNdotL;  // Distance- & normal-attenuated light color.
+            diffuseLighting *= streams.lightColor * streams.lightAttenuation; //diffuseLighting *= streams.lightColorNdotL;  // Distance- & normal-attenuated light color.
             diffuseLighting *= streams.matDiffuseSpecularAlphaBlend.x;
             diffuseLighting *= hairShadowingFunction.Compute(); // Apply shadowing/scattering.
             diffuseLighting *= streams.lightDirectAmbientOcclusion;
 
             const float NdotLUnsaturated = dot(streams.normalWS, streams.lightDirectionWS);
-            
+
             // TODO: Multiply by alpha or not?
             float3 finalLighting = ComputeHairLightingDiffuse(streams.hairDirection, streams.lightDirectionWS, diffuseLighting);
             finalLighting *= HairDiffuseAttenuation(NdotLUnsaturated);
@@ -112,7 +112,7 @@ namespace Stride.Rendering.Materials
             {
                 diffuseColor *= (1 - streams.matSpecularVisible);
             }
-            
+
             // TODO: Multiply by alpha or not?
             return diffuseColor * streams.envLightDiffuseColor;
             //return diffuseColor * streams.envLightDiffuseColor * streams.matAmbientOcclusion; // TODO: Does AO work without this?

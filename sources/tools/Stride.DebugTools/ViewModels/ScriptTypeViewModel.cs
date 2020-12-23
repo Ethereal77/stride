@@ -5,8 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Stride.Framework.MicroThreading;
 using Stride.Extensions;
@@ -26,14 +24,14 @@ namespace Stride.DebugTools.ViewModels
 
         public ScriptTypeViewModel(string typeName, IEnumerable<ScriptEntry2> scriptEntries, ScriptAssemblyViewModel parent)
         {
-            if (typeName == null)
-                throw new ArgumentNullException("typeName");
+            if (typeName is null)
+                throw new ArgumentNullException(nameof(typeName));
 
-            if (scriptEntries == null)
-                throw new ArgumentNullException("scriptEntries");
+            if (scriptEntries is null)
+                throw new ArgumentNullException(nameof(scriptEntries));
 
-            if (parent == null)
-                throw new ArgumentNullException("parent");
+            if (parent is null)
+                throw new ArgumentNullException(nameof(parent));
 
             Parent = parent;
             this.typeName = typeName;
@@ -57,34 +55,16 @@ namespace Stride.DebugTools.ViewModels
                 string[] elements = typeName.Split('.');
 
                 if (elements.Length == 1)
-                    return null; // namespace-less type
+                    return null; // Namespace-less type
 
                 return string.Join(".", elements.Take(elements.Length - 1));
             }
         }
 
-        public string[] TypeNames
-        {
-            get
-            {
-                return TypeName.Split('+'); // to get nested types
-            }
-        }
+        public string[] TypeNames => TypeName.Split('+'); // To get nested types
 
-        public string TypeName
-        {
-            get
-            {
-                return typeName.Split('.').Last();
-            }
-        }
+        public string TypeName => typeName.Split('.').Last();
 
-        public string FullName
-        {
-            get
-            {
-                return typeName;
-            }
-        }
+        public string FullName => typeName;
     }
 }

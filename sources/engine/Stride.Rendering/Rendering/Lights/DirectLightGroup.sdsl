@@ -5,15 +5,15 @@
 namespace Stride.Rendering.Lights
 {
     /// <summary>
-    /// Defines a group of similar lights (directional, spot...etc.)
+    ///   Defines a group of similar lights (directional, spot, etc).
     /// </summary>
     shader DirectLightGroup :
         LightStream,
-        ShadowGroup,    // Required for "ComputeShadow()".
-        TextureProjectionGroup,    // Required for "ComputeTextureProjection()".
-        NormalStream, // Required for "streams.normalWS".
-        PositionStream4, // Required for "streams.PositionWS".
-        MaterialPixelStream // Required for "streams.viewWS"
+        ShadowGroup,              // Required for "ComputeShadow()"
+        TextureProjectionGroup,   // Required for "ComputeTextureProjection()"
+        NormalStream,             // Required for "streams.normalWS"
+        PositionStream4,          // Required for "streams.PositionWS"
+        MaterialPixelStream       // Required for "streams.viewWS"
     {
         int GetMaxLightCount()
         {
@@ -21,7 +21,7 @@ namespace Stride.Rendering.Lights
         }
 
         /// <summary>
-        /// Gets the number of lights of this group
+        ///   Gets the number of lights in this group.
         /// </summary>
         int GetLightCount()
         {
@@ -29,33 +29,33 @@ namespace Stride.Rendering.Lights
         }
 
         /// <summary>
-        /// One-time initialization before the light loop.
+        ///   One-time initialization before the light loop.
         /// </summary>
         void PrepareDirectLights()
         {
         }
 
         /// <summary>
-        /// Compute the light color/direction for the specified index within this group
+        ///   Compute the light color/direction for the specified index within this group.
         /// </summary>
         void PrepareDirectLight(int lightIndex)
         {
             PrepareDirectLightCore(lightIndex);
 
-            // Compute NdotL
+            // Compute Normal dot Light
             streams.NdotL = max(dot(streams.normalWS, streams.lightDirectionWS), 0.0001f);
 
-            // Computes the shadowColor
+            // Computes the shadow color
             streams.shadowColor = ComputeShadow(streams.PositionWS.xyz, lightIndex);
 
             // Compute the final color with NdotL
-            streams.lightColorNdotL = streams.lightColor * streams.shadowColor * streams.NdotL * streams.lightDirectAmbientOcclusion;
+            streams.lightColorNdotL = streams.lightColor * streams.lightAttenuation * streams.shadowColor * streams.NdotL * streams.lightDirectAmbientOcclusion;
             streams.lightSpecularColorNdotL = streams.lightColorNdotL;
 
             // Mask the light by the color of the projected texture:
-            streams.lightColorNdotL *= ComputeTextureProjection(streams.PositionWS.xyz, lightIndex);    // TODO: Modify "streams.lightColor" instead?
+            // TODO: Modify "streams.lightColor" instead?
+            streams.lightColorNdotL *= ComputeTextureProjection(streams.PositionWS.xyz, lightIndex);
 
-            
             float3 reflectionVectorWS = reflect(-streams.viewWS, streams.normalWS);
             streams.lightSpecularColorNdotL *= ComputeSpecularTextureProjection(streams.PositionWS.xyz, reflectionVectorWS, lightIndex);
         }

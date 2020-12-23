@@ -7,7 +7,7 @@ using Stride.Core;
 namespace Stride.Rendering.Materials.ComputeColors
 {
     /// <summary>
-    /// A shader outputing a single scalar value.
+    ///   Represents a shader that computes a color / vector value.
     /// </summary>
     [DataContract("ComputeShaderClassColor")]
     [Display("Shader")]
@@ -20,10 +20,12 @@ namespace Stride.Rendering.Materials.ComputeColors
         {
             get
             {
-                if (hashCode != 0 && hashCode == (MixinReference?.GetHashCode() ?? 0))
+                var mixinHash = MixinReference?.GetHashCode() ?? 0;
+
+                if (hashCode != 0 && hashCode == mixinHash)
                     return false;
 
-                hashCode = (MixinReference?.GetHashCode() ?? 0);
+                hashCode = mixinHash;
                 return true;
             }
         }

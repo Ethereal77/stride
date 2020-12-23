@@ -9,6 +9,12 @@ using Stride.Core.Collections;
 
 namespace Stride.Input
 {
+    /// <summary>
+    ///   Represents the base class and common functionality for gamepad devices.
+    /// </summary>
+    /// <remarks>
+    ///   A gamepad is a game controller that has a fixed button mapping, stored in <see cref="State"/>.
+    /// </remarks>
     public abstract class GamePadDeviceBase : IGamePadDevice
     {
         private readonly HashSet<GamePadButton> releasedButtons = new HashSet<GamePadButton>();
@@ -25,11 +31,13 @@ namespace Stride.Input
 
         public int Index
         {
-            get { return index; }
+            get => index;
+
             set
             {
                 if (!CanChangeIndex)
-                    throw new InvalidOperationException("This GamePad's index can not be changed");
+                    throw new InvalidOperationException("This GamePad's index can not be changed.");
+
                 SetIndexInternal(value, false);
             }
         }
@@ -54,15 +62,15 @@ namespace Stride.Input
 
         protected void SetIndexInternal(int newIndex, bool isDeviceSideChange = true)
         {
-            if (this.index != newIndex)
+            if (index != newIndex)
             {
-                this.index = newIndex;
+                index = newIndex;
                 IndexChanged?.Invoke(this, new GamePadIndexChangedEventArgs() { Index = newIndex, IsDeviceSideChange = isDeviceSideChange });
             }
         }
-        
+
         /// <summary>
-        /// Clears previous Pressed/Released states
+        ///   Clears the previous pressed / released states.
         /// </summary>
         protected void ClearButtonStates()
         {
@@ -71,7 +79,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Updates Pressed/Released/Down collections
+        ///   Updates the pressed / released / down button states.
         /// </summary>
         protected void UpdateButtonState(GamePadButtonEvent evt)
         {

@@ -10,6 +10,8 @@ using System.Linq;
 using System.Windows.Forms;
 
 using Stride.Core.Mathematics;
+using Stride.Input.RawInput;
+
 using Point = System.Drawing.Point;
 
 namespace Stride.Input
@@ -24,19 +26,26 @@ namespace Stride.Input
         private Point targetPosition;
         private bool shouldSetPosition;
 
+        private RawInputMouse rawInputMouse = null;
+
         public MouseWinforms(InputSourceWinforms source, Control uiControl)
         {
             Source = source;
             this.uiControl = uiControl;
-            
+
             uiControl.MouseMove += OnMouseMove;
             uiControl.MouseDown += OnMouseDown;
             uiControl.MouseUp += OnMouseUp;
             uiControl.MouseWheel += OnMouseWheelEvent;
             uiControl.MouseCaptureChanged += OnLostMouseCapture;
             uiControl.SizeChanged += OnSizeChanged;
+            uiControl.GotFocus += OnGotFocus;
 
             OnSizeChanged(this, null);
+
+            BindRawInput();
+
+            Id = InputDeviceUtils.DeviceNameToGuid(uiControl.Handle.ToString() + Name);
         }
 
         public override IInputSource Source { get; }
@@ -49,10 +58,16 @@ namespace Stride.Input
             uiControl.MouseWheel -= OnMouseWheelEvent;
             uiControl.MouseCaptureChanged -= OnLostMouseCapture;
             uiControl.SizeChanged -= OnSizeChanged;
+
+            if (rawInputMouse != null)
+            {
+                rawInputMouse.events -= OnMouseMove;
+                rawInputMouse.Dispose();
+            }
         }
 
         public override string Name => "Windows Mouse";
-        public override Guid Id => new Guid("699e35c5-c363-4bb0-8e8b-0474ea1a5cf1");
+        public override Guid Id { get; }
         public override bool IsPositionLocked => isPositionLocked;
 
         public override void Update(List<InputEvent> inputEvents)
@@ -71,8 +86,8 @@ namespace Stride.Input
         {
             Vector2 position = normalizedPosition * SurfaceSize;
 
-            // Store setting of mouse position since it will keep the message loop goining infinitely otherwise
-            var targetPoint = new Point((int)position.X, (int)position.Y);
+            // Store setting of mouse position since it will keep the message loop going infinitely otherwise
+            var targetPoint = new Point((int) position.X, (int) position.Y);
             targetPosition = uiControl.PointToScreen(targetPoint);
             shouldSetPosition = true;
         }
@@ -81,12 +96,18 @@ namespace Stride.Input
         {
             if (!isPositionLocked)
             {
+                rawInputMouse.Start();
+                rawInputMouse.events += OnMouseMove;
                 capturedPosition = Cursor.Position;
                 if (forceCenter)
                 {
                     capturedPosition = uiControl.PointToScreen(new Point(uiControl.ClientSize.Width / 2, uiControl.ClientSize.Height / 2));
                     Cursor.Position = capturedPosition;
                 }
+
+                var rect = new Rect(capturedPosition.X, capturedPosition.Y, capturedPosition.X, capturedPosition.Y);
+                ClipCursor(rect);
+
                 isPositionLocked = true;
             }
         }
@@ -95,8 +116,14 @@ namespace Stride.Input
         {
             if (isPositionLocked)
             {
+                if (rawInputMouse != null)
+                {
+                    rawInputMouse.events -= OnMouseMove;
+                    rawInputMouse.End();
+                }
+                ClipCursor(null);
                 isPositionLocked = false;
-                capturedPosition = System.Drawing.Point.Empty;
+                capturedPosition = Point.Empty;
             }
         }
 
@@ -108,18 +135,29 @@ namespace Stride.Input
             }
         }
 
-        private void OnMouseMove(object sender, MouseEventArgs e)
+        private void OnGotFocus(object sender, EventArgs e)
         {
+            // reapply cursor clip when refocusing
             if (isPositionLocked)
             {
-                // Register mouse delta and reset
-                MouseState.HandleMouseDelta(new Vector2(Cursor.Position.X - capturedPosition.X, Cursor.Position.Y - capturedPosition.Y));
-                targetPosition = capturedPosition;
-                shouldSetPosition = true;
+                var rect = new Rect(capturedPosition.X, capturedPosition.Y, capturedPosition.X, capturedPosition.Y);
+                ClipCursor(rect);
             }
-            else
+        }
+
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isPositionLocked)
             {
                 MouseState.HandleMove(new Vector2(e.X, e.Y));
+            }
+        }
+
+        private void OnMouseMove(object sender, RawInputMouseEventArgs e)
+        {
+            if (isPositionLocked && e.isRelative)
+            {
+                MouseState.HandleMouseDelta(new Vector2(e.X, e.Y));
             }
         }
 
@@ -130,11 +168,11 @@ namespace Stride.Input
 
         private void OnMouseWheelEvent(object sender, MouseEventArgs mouseEventArgs)
         {
-            // The mouse wheel event are still received even when the mouse cursor is out of the control boundaries. Discard the event in this case.
+            // The mouse wheel event are still received even when the mouse cursor is out of the control boundaries. Discard the event in this case
             if (!uiControl.ClientRectangle.Contains(uiControl.PointToClient(Control.MousePosition)))
                 return;
 
-            MouseState.HandleMouseWheel((float)mouseEventArgs.Delta / (float)SystemInformation.MouseWheelScrollDelta);
+            MouseState.HandleMouseWheel((float) mouseEventArgs.Delta / (float) SystemInformation.MouseWheelScrollDelta);
         }
 
         private void OnMouseUp(object sender, MouseEventArgs mouseEventArgs)
@@ -174,6 +212,37 @@ namespace Stride.Input
             }
             return (MouseButton)(-1);
         }
+
+        private void BindRawInput()
+        {
+            if (uiControl.IsHandleCreated)
+            {
+                rawInputMouse = new RawInputMouse(uiControl.Handle);
+            }
+            else
+            {
+                uiControl.HandleCreated += (sender, args) =>
+                {
+                    if (uiControl.IsHandleCreated)
+                    {
+                        rawInputMouse = new RawInputMouse(uiControl.Handle);
+                    }
+                };
+            }
+        }
+
+        public static unsafe void ClipCursor(Rect? rect)
+        {
+            if (rect is Rect r)
+            {
+                Win32.ClipCursor((IntPtr)(&r));
+            }
+            else
+            {
+                Win32.ClipCursor(IntPtr.Zero);
+            }
+        }
     }
 }
+
 #endif

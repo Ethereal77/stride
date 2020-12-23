@@ -2,7 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -35,12 +34,6 @@ namespace Stride.Engine
     {
         protected static Logger logger = GlobalLogger.GetLogger("PhysicsComponent");
 
-        static PhysicsComponent()
-        {
-            // Preload proper libbulletc native library (depending on CPU type)
-            NativeLibrary.PreloadLibrary("libbulletc.dll", typeof(PhysicsComponent));
-        }
-
         protected PhysicsComponent()
         {
             CanScaleShape = true;
@@ -55,7 +48,7 @@ namespace Stride.Engine
         internal BulletSharp.CollisionObject NativeCollisionObject;
 
         /// <userdoc>
-        /// The reference to the collider shape of this element.
+        ///   Gets the collider shapes that compose this element.
         /// </userdoc>
         [DataMember(200)]
         [Category]
@@ -63,16 +56,17 @@ namespace Stride.Engine
         public ColliderShapeCollection ColliderShapes { get; }
 
         /// <summary>
-        /// Gets or sets the collision group.
+        ///   Gets or sets the collision group.
         /// </summary>
         /// <value>
-        /// The collision group.
+        ///   The collision group the Entity belongs to. The default value is <see cref="CollisionFilterGroups.DefaultFilter"/>.
         /// </value>
         /// <userdoc>
-        /// Which collision group the component belongs to. This can't be changed at runtime. The default is DefaultFilter.
+        ///   Which collision group the component belongs to. This can't be changed at runtime. The default is DefaultFilter.
         /// </userdoc>
         /// <remarks>
-        /// The collider will still produce events, to allow non trigger rigidbodies or static colliders to act as a trigger if required for certain filtering groups.
+        ///   The collider will still produce events, to allow non trigger rigidbodies or static colliders to act as a trigger
+        ///   if required for certain filtering groups.
         /// </remarks>
         [DataMember(30)]
         [Display("Collision group")]
@@ -80,16 +74,17 @@ namespace Stride.Engine
         public CollisionFilterGroups CollisionGroup { get; set; } = CollisionFilterGroups.DefaultFilter;
 
         /// <summary>
-        /// Gets or sets the can collide with.
+        ///   Gets or sets which collider groups this component collides with.
         /// </summary>
         /// <value>
-        /// The can collide with.
+        ///   The collider groups this component collides with. The default value is <see cref="CollisionFilterGroupFlags.AllFilter"/>.
         /// </value>
         /// <userdoc>
-        /// Which collider groups this component collides with. With nothing selected, it collides with all groups. This can't be changed at runtime.
+        ///   Which collider groups this component collides with. With nothing selected, it collides with all groups. This can't be changed at runtime.
         /// </userdoc>
-        /// /// <remarks>
-        /// The collider will still produce events, to allow non trigger rigidbodies or static colliders to act as a trigger if required for certain filtering groups.
+        /// <remarks>
+        ///   The collider will still produce events, to allow non trigger rigidbodies or static colliders to act as
+        ///   a trigger if required for certain filtering groups.
         /// </remarks>
         [DataMember(40)]
         [Display("Collides with...")]
@@ -97,99 +92,103 @@ namespace Stride.Engine
         public CollisionFilterGroupFlags CanCollideWith { get; set; } = CollisionFilterGroupFlags.AllFilter;
 
         /// <summary>
-        /// Gets or sets if this element will store collisions
+        ///   Gets or sets a value indicating if this element will store collisions to allow scripts to access them
+        ///   in case of collision events.
         /// </summary>
         /// <value>
-        /// true, false
+        ///   Value indicating if this element will store collisions.
         /// </value>
         /// <userdoc>
-        /// You can use collision events in scripts. If you have no scripts using collision events for this component, disable this option to save CPU. It has no effect on physics.
+        ///   You can use collision events in scripts. If you have no scripts using collision events for this component,
+        ///   disable this option to save CPU. It has no effect on physics.
         /// </userdoc>
         [Display("Record collision events")]
         [DataMemberIgnore]
         public bool ProcessCollisions { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets if this element is enabled in the physics engine
+        ///   Gets or sets a value indicating if this element is enabled in the physics engine.
         /// </summary>
         /// <value>
-        /// true, false
+        ///   Value indicating if this element is enabled in the physics engine.
         /// </value>
         /// <userdoc>
-        /// If this element is enabled in the physics engine
+        ///   If this element is enabled in the physics engine.
         /// </userdoc>
         [DataMember(-10)]
         [DefaultValue(true)]
         public override bool Enabled
         {
-            get
-            {
-                return base.Enabled;
-            }
+            get => base.Enabled;
+
             set
             {
                 base.Enabled = value;
 
-                if (NativeCollisionObject == null) return;
+                if (NativeCollisionObject is null)
+                    return;
 
                 if (value)
                 {
-                    //allow collisions
-                    if ((NativeCollisionObject.CollisionFlags & BulletSharp.CollisionFlags.NoContactResponse) != 0)
+                    // Enabled: Allow collisions
+                    if (NativeCollisionObject.CollisionFlags.HasFlag(BulletSharp.CollisionFlags.NoContactResponse))
                     {
                         NativeCollisionObject.CollisionFlags ^= BulletSharp.CollisionFlags.NoContactResponse;
                     }
 
-                    //allow simulation
-                    NativeCollisionObject.ForceActivationState(canSleep ? BulletSharp.ActivationState.ActiveTag : BulletSharp.ActivationState.DisableDeactivation);
+                    // Enabled: Allow simulation
+                    NativeCollisionObject.ForceActivationState(canSleep ?
+                        BulletSharp.ActivationState.ActiveTag :
+                        BulletSharp.ActivationState.DisableDeactivation);
                 }
                 else
                 {
-                    //prevent collisions
+                    // Disabled: Prevent collisions
                     NativeCollisionObject.CollisionFlags |= BulletSharp.CollisionFlags.NoContactResponse;
 
-                    //prevent simulation
+                    // Disabled: Prevent simulation
                     NativeCollisionObject.ForceActivationState(BulletSharp.ActivationState.DisableSimulation);
                 }
 
-                DebugEntity?.EnableAll(value, true);
+                DebugEntity?.EnableAll(enabled: value, applyOnChildren: true);
             }
         }
 
         private bool canSleep;
 
         /// <summary>
-        /// Gets or sets if this element can enter sleep state
+        ///   Gets or sets a value indicating if this element can enter sleep state.
         /// </summary>
         /// <value>
-        /// true, false
+        ///   Value indicating if this element can enter sleep state.
         /// </value>
         /// <userdoc>
-        /// Don't process this physics component when it's not moving. This saves CPU.
+        ///   Don't process this physics component when it's not moving. This saves CPU.
         /// </userdoc>
         [DataMember(55)]
         [Display("Can sleep")]
         public bool CanSleep
         {
-            get
-            {
-                return canSleep;
-            }
+            get => canSleep;
+
             set
             {
                 canSleep = value;
 
-                if (NativeCollisionObject == null) return;
+                if (NativeCollisionObject is null)
+                    return;
 
                 if (Enabled)
                 {
-                    NativeCollisionObject.ActivationState = value ? BulletSharp.ActivationState.ActiveTag : BulletSharp.ActivationState.DisableDeactivation;
+                    NativeCollisionObject.ActivationState = value ?
+                        BulletSharp.ActivationState.ActiveTag :
+                        BulletSharp.ActivationState.DisableDeactivation;
                 }
             }
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is active (awake).
+        ///   Gets a value indicating whether this instance is active (awake).
         /// </summary>
         /// <value>
         ///   <c>true</c> if this instance is active; otherwise, <c>false</c>.
@@ -197,9 +196,9 @@ namespace Stride.Engine
         public bool IsActive => NativeCollisionObject?.IsActive ?? false;
 
         /// <summary>
-        /// Attempts to awake the collider.
+        ///   Attempts to awake the collider.
         /// </summary>
-        /// <param name="forceActivation">if set to <c>true</c> [force activation].</param>
+        /// <param name="forceActivation">Value indicating whether to forcefully activate the collider.</param>
         public void Activate(bool forceActivation = false)
         {
             NativeCollisionObject?.Activate(forceActivation);
@@ -208,21 +207,23 @@ namespace Stride.Engine
         private float restitution;
 
         /// <summary>
-        /// Gets or sets if this element restitution
+        ///   Gets or sets the restitution of this element, that is, the amount of kinetic energy lost or gained
+        ///   after a collision.
         /// </summary>
         /// <value>
-        /// true, false
+        ///   The restitution of this element. A typical value is between 0 and 1.
         /// </value>
         /// <userdoc>
-        /// The amount of kinetic energy lost or gained after a collision. If the restitution of colliding entities is 0, the entities lose all energy and stop moving immediately on impact. If the restitution is 1, they lose no energy and rebound with the same velocity they collided at. Use this to change the component "bounciness". A typical value is between 0 and 1.
+        ///   The amount of kinetic energy lost or gained after a collision. If the restitution of colliding
+        ///   entities is 0, the entities lose all energy and stop moving immediately on impact. If the restitution
+        ///   is 1, they lose no energy and rebound with the same velocity they collided at. Use this to change the
+        ///   component "bounciness". A typical value is between 0 and 1.
         /// </userdoc>
         [DataMember(60)]
         public float Restitution
         {
-            get
-            {
-                return restitution;
-            }
+            get => restitution;
+
             set
             {
                 restitution = value;
@@ -237,25 +238,25 @@ namespace Stride.Engine
         private float friction = 0.5f;
 
         /// <summary>
-        /// Gets or sets the friction of this element
+        ///   Gets or sets the friction of this element
         /// </summary>
         /// <value>
-        /// true, false
+        ///   The friction of this element.
         /// </value>
         /// <userdoc>
-        /// The friction
+        ///   The friction.
         /// </userdoc>
         /// <remarks>
-        /// It's important to realise that friction and restitution are not values of any particular surface, but rather a value of the interaction of two surfaces.
-        /// So why is it defined for each object? In order to determine the overall friction and restitution between any two surfaces in a collision.
+        ///   It's important to realise that friction and restitution are not values of any particular surface, but
+        ///   rather a value of the interaction of two surfaces.
+        ///   So why is it defined for each object? In order to determine the overall friction and restitution
+        ///   between any two surfaces in a collision.
         /// </remarks>
         [DataMember(65)]
         public float Friction
         {
-            get
-            {
-                return friction;
-            }
+            get => friction;
+
             set
             {
                 friction = value;
@@ -270,21 +271,19 @@ namespace Stride.Engine
         private float rollingFriction;
 
         /// <summary>
-        /// Gets or sets the rolling friction of this element
+        ///   Gets or sets the rolling friction of this element.
         /// </summary>
         /// <value>
-        /// true, false
+        ///   The rolling friction of this element.
         /// </value>
         /// <userdoc>
-        /// The rolling friction
+        ///   The rolling friction.
         /// </userdoc>
         [DataMember(66)]
         public float RollingFriction
         {
-            get
-            {
-                return rollingFriction;
-            }
+            get => rollingFriction;
+
             set
             {
                 rollingFriction = value;
@@ -301,10 +300,8 @@ namespace Stride.Engine
         [DataMember(67)]
         public float CcdMotionThreshold
         {
-            get
-            {
-                return ccdMotionThreshold;
-            }
+            get => ccdMotionThreshold;
+
             set
             {
                 ccdMotionThreshold = value;
@@ -321,10 +318,8 @@ namespace Stride.Engine
         [DataMember(68)]
         public float CcdSweptSphereRadius
         {
-            get
-            {
-                return ccdSweptSphereRadius;
-            }
+            get => ccdSweptSphereRadius;
+
             set
             {
                 ccdSweptSphereRadius = value;
@@ -338,7 +333,6 @@ namespace Stride.Engine
 
 
         private Dictionary<PhysicsComponent, CollisionState> ignoreCollisionBuffer;
-        
 
         #region Ignore or Private/Internal
 
@@ -376,15 +370,13 @@ namespace Stride.Engine
         [DataMemberIgnore]
         public virtual ColliderShape ColliderShape
         {
-            get
-            {
-                return colliderShape;
-            }
+            get => colliderShape;
+
             set
             {
                 colliderShape = value;
 
-                if (value == null)
+                if (value is null)
                     return;
 
                 if (NativeCollisionObject != null)
@@ -398,22 +390,14 @@ namespace Stride.Engine
         [DataMemberIgnore]
         public Matrix PhysicsWorldTransform
         {
-            get
-            {
-                return NativeCollisionObject.WorldTransform;
-            }
-            set
-            {
-                NativeCollisionObject.WorldTransform = value;
-            }
+            get => NativeCollisionObject.WorldTransform;
+            set => NativeCollisionObject.WorldTransform = value;
         }
 
         /// <summary>
-        /// Gets or sets the tag.
+        ///   Gets or sets the tag.
         /// </summary>
-        /// <value>
-        /// The tag.
-        /// </value>
+        /// <value>The tag.</value>
         [DataMemberIgnore]
         public string Tag { get; set; }
 
@@ -434,19 +418,22 @@ namespace Stride.Engine
 
         public void AddDebugEntity(Scene scene, RenderGroup renderGroup = RenderGroup.Group0, bool alwaysAddOffset = false)
         {
-            if (DebugEntity != null) return;
+            if (DebugEntity != null)
+                return;
 
             var entity = Data?.PhysicsComponent?.DebugShapeRendering?.CreateDebugEntity(this, renderGroup, alwaysAddOffset);
             DebugEntity = entity;
 
-            if (DebugEntity == null) return;
+            if (DebugEntity is null)
+                return;
 
             scene.Entities.Add(entity);
         }
 
         public void RemoveDebugEntity(Scene scene)
         {
-            if (DebugEntity == null) return;
+            if (DebugEntity is null)
+                return;
 
             scene.Entities.Remove(DebugEntity);
             DebugEntity = null;
@@ -457,167 +444,158 @@ namespace Stride.Engine
         #region Utility
 
         /// <summary>
-        /// Computes the physics transformation from the TransformComponent values
+        ///   Computes the physics transformation from the TransformComponent values.
         /// </summary>
-        /// <returns></returns>
         internal void DerivePhysicsTransformation(out Matrix derivedTransformation)
         {
-            Matrix rotation;
-            Vector3 translation;
-            Vector3 scale;
-            Entity.Transform.WorldMatrix.Decompose(out scale, out rotation, out translation);
+            Entity.Transform.WorldMatrix.Decompose(out Vector3 scale, out Matrix rotation, out Vector3 translation);
 
             var translationMatrix = Matrix.Translation(translation);
             Matrix.Multiply(ref rotation, ref translationMatrix, out derivedTransformation);
 
-            //handle dynamic scaling if allowed (aka not using assets)
+            // Handle dynamic scaling if allowed (aka not using assets)
             if (CanScaleShape)
             {
                 if (ColliderShape.Scaling != scale)
-                {
                     ColliderShape.Scaling = scale;
-                }
             }
 
-            //Handle collider shape offset
-            if (ColliderShape.LocalOffset != Vector3.Zero || ColliderShape.LocalRotation != Quaternion.Identity)
+            // Handle collider shape offset
+            if (ColliderShape.LocalOffset != Vector3.Zero ||
+                ColliderShape.LocalRotation != Quaternion.Identity)
             {
                 derivedTransformation = Matrix.Multiply(ColliderShape.PositiveCenterMatrix, derivedTransformation);
             }
 
-            if (DebugEntity == null) return;
+            if (DebugEntity is null)
+                return;
 
-            derivedTransformation.Decompose(out scale, out rotation, out translation);
+            derivedTransformation.Decompose(out _, out rotation, out translation);
             DebugEntity.Transform.Position = translation;
             DebugEntity.Transform.Rotation = Quaternion.RotationMatrix(rotation);
         }
 
         /// <summary>
-        /// Computes the physics transformation from the TransformComponent values
+        ///   Computes the physics transformation from the bone matrices.
         /// </summary>
         /// <returns></returns>
         internal void DeriveBonePhysicsTransformation(out Matrix derivedTransformation)
         {
-            Matrix rotation;
-            Vector3 translation;
-            Vector3 scale;
-            BoneWorldMatrix.Decompose(out scale, out rotation, out translation);
+            BoneWorldMatrix.Decompose(out Vector3 scale, out Matrix rotation, out Vector3 translation);
 
             var translationMatrix = Matrix.Translation(translation);
             Matrix.Multiply(ref rotation, ref translationMatrix, out derivedTransformation);
 
-            //handle dynamic scaling if allowed (aka not using assets)
+            // Handle dynamic scaling if allowed (aka not using assets)
             if (CanScaleShape)
             {
                 if (ColliderShape.Scaling != scale)
-                {
                     ColliderShape.Scaling = scale;
-                }
             }
 
-            //Handle collider shape offset
-            if (ColliderShape.LocalOffset != Vector3.Zero || ColliderShape.LocalRotation != Quaternion.Identity)
+            // Handle collider shape offset
+            if (ColliderShape.LocalOffset != Vector3.Zero ||
+                ColliderShape.LocalRotation != Quaternion.Identity)
             {
                 derivedTransformation = Matrix.Multiply(ColliderShape.PositiveCenterMatrix, derivedTransformation);
             }
 
-            if (DebugEntity == null) return;
+            if (DebugEntity is null)
+                return;
 
-            derivedTransformation.Decompose(out scale, out rotation, out translation);
+            derivedTransformation.Decompose(out _, out rotation, out translation);
             DebugEntity.Transform.Position = translation;
             DebugEntity.Transform.Rotation = Quaternion.RotationMatrix(rotation);
         }
 
         /// <summary>
-        /// Updates the graphics transformation from the given physics transformation
+        ///   Updates the graphics transformation from the given physics transformation.
         /// </summary>
-        /// <param name="physicsTransform"></param>
+        /// <param name="physicsTransform">By reference. Physics transformation matrix.</param>
         internal void UpdateTransformationComponent(ref Matrix physicsTransform)
         {
             var entity = Entity;
 
-            if (ColliderShape.LocalOffset != Vector3.Zero || ColliderShape.LocalRotation != Quaternion.Identity)
+            if (ColliderShape.LocalOffset != Vector3.Zero ||
+                ColliderShape.LocalRotation != Quaternion.Identity)
             {
                 physicsTransform = Matrix.Multiply(ColliderShape.NegativeCenterMatrix, physicsTransform);
             }
 
-            //we need to extract scale only..
-            Vector3 scale, translation;
-            Matrix rotation;
-            entity.Transform.WorldMatrix.Decompose(out scale, out rotation, out translation);
+            // We need to extract scale only..
+            entity.Transform.WorldMatrix.Decompose(out Vector3 scale, out Matrix _, out _);
 
             var scaling = Matrix.Scaling(scale);
             Matrix.Multiply(ref scaling, ref physicsTransform, out entity.Transform.WorldMatrix);
 
             entity.Transform.UpdateLocalFromWorld();
 
-            Quaternion rotQuat;
-            entity.Transform.LocalMatrix.Decompose(out scale, out rotQuat, out translation);
+            entity.Transform.LocalMatrix.Decompose(out _, out Quaternion rotQuat, out Vector3 translation);
             entity.Transform.Position = translation;
             entity.Transform.Rotation = rotQuat;
 
-            if (DebugEntity == null) return;
+            if (DebugEntity is null)
+                return;
 
-            if (ColliderShape.LocalOffset != Vector3.Zero || ColliderShape.LocalRotation != Quaternion.Identity)
+            if (ColliderShape.LocalOffset != Vector3.Zero ||
+                ColliderShape.LocalRotation != Quaternion.Identity)
             {
                 physicsTransform = Matrix.Multiply(ColliderShape.PositiveCenterMatrix, physicsTransform);
             }
 
-            physicsTransform.Decompose(out scale, out rotation, out translation);
+            physicsTransform.Decompose(out _, out Matrix rotation, out translation);
             DebugEntity.Transform.Position = translation;
             DebugEntity.Transform.Rotation = Quaternion.RotationMatrix(rotation);
         }
 
         /// <summary>
-        /// Updates the graphics transformation from the given physics transformation
+        ///   Updates the graphics transformation from the given physics transformation.
         /// </summary>
         /// <param name="physicsTransform"></param>
         internal void UpdateBoneTransformation(ref Matrix physicsTransform)
         {
-            if (ColliderShape.LocalOffset != Vector3.Zero || ColliderShape.LocalRotation != Quaternion.Identity)
+            if (ColliderShape.LocalOffset != Vector3.Zero ||
+                ColliderShape.LocalRotation != Quaternion.Identity)
             {
                 physicsTransform = Matrix.Multiply(ColliderShape.NegativeCenterMatrix, physicsTransform);
             }
 
             //we need to extract scale only..
-            Vector3 scale, translation;
-            Matrix rotation;
-            BoneWorldMatrix.Decompose(out scale, out rotation, out translation);
+            BoneWorldMatrix.Decompose(out Vector3 scale, out Matrix _, out _);
 
             var scaling = Matrix.Scaling(scale);
             Matrix.Multiply(ref scaling, ref physicsTransform, out BoneWorldMatrixOut);
 
-            //todo propagate to other bones? need to review this.
+            // TODO: Propagate to other bones? need to review this.
 
-            if (DebugEntity == null) return;
+            if (DebugEntity is null)
+                return;
 
-            if (ColliderShape.LocalOffset != Vector3.Zero || ColliderShape.LocalRotation != Quaternion.Identity)
+            if (ColliderShape.LocalOffset != Vector3.Zero ||
+                ColliderShape.LocalRotation != Quaternion.Identity)
             {
                 physicsTransform = Matrix.Multiply(ColliderShape.PositiveCenterMatrix, physicsTransform);
             }
 
-            physicsTransform.Decompose(out scale, out rotation, out translation);
+            physicsTransform.Decompose(out _, out Matrix rotation, out Vector3 translation);
             DebugEntity.Transform.Position = translation;
             DebugEntity.Transform.Rotation = Quaternion.RotationMatrix(rotation);
         }
 
         /// <summary>
-        /// Forces an update from the TransformComponent to the Collider.PhysicsWorldTransform.
-        /// Useful to manually force movements.
-        /// In the case of dynamic rigidbodies a velocity reset should be applied first.
+        ///   Forces an update from the TransformComponent to the Collider.PhysicsWorldTransform.
+        ///   Useful to manually force movements.
+        ///   In the case of dynamic rigidbodies a velocity reset should be applied first.
         /// </summary>
         public void UpdatePhysicsTransformation()
         {
             Matrix transform;
             if (BoneIndex == -1)
-            {
                 DerivePhysicsTransformation(out transform);
-            }
             else
-            {
                 DeriveBonePhysicsTransformation(out transform);
-            }
-            //finally copy back to bullet
+
+            // Finally copy back to bullet
             PhysicsWorldTransform = transform;
         }
 
@@ -640,32 +618,35 @@ namespace Stride.Engine
 
             CanScaleShape = true;
 
-            if (ColliderShapes.Count == 1) //single shape case
+            // Single shape case
+            if (ColliderShapes.Count == 1)
             {
-                if (ColliderShapes[0] == null) return;
-                if (ColliderShapes[0].GetType() == typeof(ColliderShapeAssetDesc))
+                if (ColliderShapes[0] is null)
+                    return;
+
+                if (ColliderShapes[0] is ColliderShapeAssetDesc)
                 {
                     CanScaleShape = false;
                 }
 
                 ColliderShape = PhysicsColliderShape.CreateShape(ColliderShapes[0]);
             }
-            else if (ColliderShapes.Count > 1) //need a compound shape in this case
+            // Need a compound shape in this case
+            else if (ColliderShapes.Count > 1)
             {
                 var compound = new CompoundColliderShape();
                 foreach (var desc in ColliderShapes)
                 {
-                    if (desc == null) continue;
-                    if (desc.GetType() == typeof(ColliderShapeAssetDesc))
+                    if (desc is null)
+                        continue;
+                    if (desc is ColliderShapeAssetDesc)
                     {
                         CanScaleShape = false;
                     }
 
                     var subShape = PhysicsColliderShape.CreateShape(desc);
                     if (subShape != null)
-                    {
                         compound.AddChildShape(subShape);
-                    }
                 }
 
                 ColliderShape = compound;
@@ -684,27 +665,27 @@ namespace Stride.Engine
         {
             Data = data;
 
-            //this is mostly required for the game studio gizmos
+            // This is mostly required for the Game Studio gizmos
             if (Simulation.DisableSimulation)
-            {
                 return;
-            }
 
-            //this is not optimal as UpdateWorldMatrix will end up being called twice this frame.. but we need to ensure that we have valid data.
+            // Not optimal as UpdateWorldMatrix will end up being called twice this frame.. but we need to ensure that we have valid data
             Entity.Transform.UpdateWorldMatrix();
 
-            if (ColliderShapes.Count == 0 && ColliderShape == null)
+            if (ColliderShapes.Count == 0 && ColliderShape is null)
             {
+                // No shape, no purpose
                 logger.Error($"Entity {Entity.Name} has a PhysicsComponent without any collider shape.");
-                return; //no shape no purpose
+                return;
             }
-            else if (ColliderShape == null)
+            else if (ColliderShape is null)
             {
                 ComposeShape();
-                if (ColliderShape == null)
+                if (ColliderShape is null)
                 {
+                    // No shape, no purpose
                     logger.Error($"Entity {Entity.Name}'s PhysicsComponent failed to compose its collider shape.");
-                    return; //no shape no purpose
+                    return;
                 }
             }
 
@@ -726,11 +707,9 @@ namespace Stride.Engine
         {
             Data = null;
 
-            //this is mostly required for the game studio gizmos
+            // This is mostly required for the Game Studio gizmos
             if (Simulation.DisableSimulation)
-            {
                 return;
-            }
 
             // Actually call the detach
             OnDetach();
@@ -744,7 +723,7 @@ namespace Stride.Engine
 
         protected virtual void OnAttach()
         {
-            //set pre-set post deserialization properties
+            // Set pre-set post deserialization properties
             Enabled = base.Enabled;
             CanSleep = canSleep;
             Restitution = restitution;
@@ -756,7 +735,8 @@ namespace Stride.Engine
 
         protected virtual void OnDetach()
         {
-            if (NativeCollisionObject == null) return;
+            if (NativeCollisionObject is null)
+                return;
 
             NativeCollisionObject.UserObject = null;
             NativeCollisionObject.Dispose();
@@ -766,9 +746,7 @@ namespace Stride.Engine
         internal void UpdateBones()
         {
             if (!Enabled)
-            {
                 return;
-            }
 
             OnUpdateBones();
         }
@@ -776,20 +754,16 @@ namespace Stride.Engine
         internal void UpdateDraw()
         {
             if (!Enabled)
-            {
                 return;
-            }
 
             OnUpdateDraw();
         }
 
-        protected internal virtual void OnUpdateDraw()
-        {
-        }
+        protected internal virtual void OnUpdateDraw() { }
 
         protected virtual void OnUpdateBones()
         {
-            //read from ModelViewHierarchy
+            // Read from ModelViewHierarchy
             var model = Data.ModelComponent;
             BoneWorldMatrix = model.Skeleton.NodeTransformations[BoneIndex].WorldMatrix;
         }
@@ -797,11 +771,11 @@ namespace Stride.Engine
         public void IgnoreCollisionWith(PhysicsComponent other, CollisionState state)
         {
             var otherNative = other.NativeCollisionObject;
-            if(NativeCollisionObject == null || other.NativeCollisionObject == null)
+            if(NativeCollisionObject is null || other.NativeCollisionObject is null)
             {
-                if(ignoreCollisionBuffer != null || other.ignoreCollisionBuffer == null)
+                if(ignoreCollisionBuffer != null || other.ignoreCollisionBuffer is null)
                 {
-                    if(ignoreCollisionBuffer == null)
+                    if(ignoreCollisionBuffer is null)
                         ignoreCollisionBuffer = new Dictionary<PhysicsComponent, CollisionState>();
                     if(ignoreCollisionBuffer.ContainsKey(other))
                         ignoreCollisionBuffer[other] = state;
@@ -814,14 +788,13 @@ namespace Stride.Engine
                 }
                 return;
             }
-            
+
             switch(state)
             {
                 // Note that we're calling 'SetIgnoreCollisionCheck' on both objects as bullet doesn't
                 // do it itself ; One of the object in the pair will report that it doesn't ignore
                 // collision with the other even though you set the other as ignoring the former.
                 case CollisionState.Ignore:
-                {
                     // Bullet uses an array per collision object to store all of the objects to ignore,
                     // when calling this method it adds the referenced object without checking for duplicates,
                     // so if a user where to call 'Ignore' of this function on this object n-times he'll have to call it
@@ -833,13 +806,11 @@ namespace Stride.Engine
                     otherNative.SetIgnoreCollisionCheck(NativeCollisionObject, true);
                     NativeCollisionObject.SetIgnoreCollisionCheck(otherNative, true);
                     break;
-                }
+
                 case CollisionState.Detect:
-                {
                     otherNative.SetIgnoreCollisionCheck(NativeCollisionObject, false);
                     NativeCollisionObject.SetIgnoreCollisionCheck(otherNative, false);
                     break;
-                }
             }
         }
 
@@ -853,20 +824,20 @@ namespace Stride.Engine
             {
                 return other.IsIgnoringCollisionWith(this);
             }
-            else if(other.NativeCollisionObject == null || NativeCollisionObject == null)
+            else if(other.NativeCollisionObject is null || NativeCollisionObject is null)
             {
                 return false;
             }
             else
             {
-                return ! NativeCollisionObject.CheckCollideWith(other.NativeCollisionObject);
+                return !NativeCollisionObject.CheckCollideWith(other.NativeCollisionObject);
             }
         }
 
         [DataContract]
         public class ColliderShapeCollection : FastCollection<IInlineColliderShapeDesc>
         {
-            PhysicsComponent component;
+            private readonly PhysicsComponent component;
 
             public ColliderShapeCollection(PhysicsComponent componentParam)
             {

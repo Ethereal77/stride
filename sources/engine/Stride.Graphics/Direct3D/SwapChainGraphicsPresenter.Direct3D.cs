@@ -6,7 +6,6 @@
 #if STRIDE_GRAPHICS_API_DIRECT3D
 
 using System;
-using System.Reflection;
 
 using SharpDX;
 using SharpDX.DXGI;
@@ -23,7 +22,7 @@ using BackBufferResourceType = SharpDX.Direct3D12.Resource;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Graphics presenter for SwapChain.
+    ///   Represents a <see cref="GraphicsPresenter"/> implementation for a DXGI SwapChain.
     /// </summary>
     public class SwapChainGraphicsPresenter : GraphicsPresenter
     {
@@ -61,26 +60,27 @@ namespace Stride.Graphics
 
             set
             {
-                if (swapChain == null)
+                if (swapChain is null)
                     return;
 
                 var outputIndex = Description.PreferredFullScreenOutputIndex;
 
-                // no outputs connected to the current graphics adapter
+                // No outputs connected to the current graphics adapter
                 var output = GraphicsDevice.Adapter != null &&
-                             outputIndex < GraphicsDevice.Adapter.Outputs.Length
-                                ? GraphicsDevice.Adapter.Outputs[outputIndex] : null;
+                             outputIndex < GraphicsDevice.Adapter.Outputs.Length ?
+                                GraphicsDevice.Adapter.Outputs[outputIndex] :
+                                null;
 
                 Output currentOutput = null;
 
                 try
                 {
-                    RawBool isCurrentlyFullscreen;
-                    swapChain.GetFullscreenState(out isCurrentlyFullscreen, out currentOutput);
+                    swapChain.GetFullscreenState(out RawBool isCurrentlyFullscreen, out currentOutput);
 
-                    // check if the current fullscreen monitor is the same as new one
+                    // Check if the current fullscreen monitor is the same as the new one.
                     // If not fullscreen, currentOutput will be null but output won't be, so don't compare them
-                    if (isCurrentlyFullscreen == value && (isCurrentlyFullscreen == false || (output != null && currentOutput != null && currentOutput.NativePointer == output.NativeOutput.NativePointer)))
+                    if (isCurrentlyFullscreen == value &&
+                        (isCurrentlyFullscreen == false || (output != null && currentOutput != null && currentOutput.NativePointer == output.NativeOutput.NativePointer)))
                         return;
                 }
                 finally
@@ -88,9 +88,13 @@ namespace Stride.Graphics
                     currentOutput?.Dispose();
                 }
 
-                bool switchToFullScreen = value;
                 // If going to fullscreen mode: call 1) SwapChain.ResizeTarget 2) SwapChain.IsFullScreen
-                var description = new ModeDescription(backBuffer.ViewWidth, backBuffer.ViewHeight, Description.RefreshRate.ToSharpDX(), (SharpDX.DXGI.Format)Description.BackBufferFormat);
+                var description = new ModeDescription(
+                    backBuffer.ViewWidth,
+                    backBuffer.ViewHeight,
+                    Description.RefreshRate.ToSharpDX(),
+                    (Format) Description.BackBufferFormat);
+                bool switchToFullScreen = value;
                 if (switchToFullScreen)
                 {
                     OnDestroyed();
@@ -118,19 +122,18 @@ namespace Stride.Graphics
             }
         }
 
-        public override void BeginDraw(CommandList commandList)
-        {
-        }
+        public override void BeginDraw(CommandList commandList) { }
 
-        public override void EndDraw(CommandList commandList, bool present)
-        {
-        }
+        public override void EndDraw(CommandList commandList, bool present) { }
 
         public override void Present()
         {
             try
             {
-                swapChain.Present((int)PresentInterval, PresentFlags.None);
+                var presentInterval = GraphicsDevice.Tags.Get(ForcedPresentInterval) ?? PresentInterval;
+
+                swapChain.Present((int) presentInterval, PresentFlags.None);
+
 #if STRIDE_GRAPHICS_API_DIRECT3D12
                 // Manually swap back buffer
                 backBuffer.NativeResource.Dispose();
@@ -140,13 +143,14 @@ namespace Stride.Graphics
             catch (SharpDXException sharpDxException)
             {
                 var deviceStatus = GraphicsDevice.GraphicsDeviceStatus;
-                throw new GraphicsException($"Unexpected error on Present (device status: {deviceStatus})", sharpDxException, deviceStatus);
+                throw new GraphicsException($"Unexpected error on Present (device status: {deviceStatus}).", sharpDxException, deviceStatus);
             }
         }
 
         protected override void OnNameChanged()
         {
             base.OnNameChanged();
+
             if (Name != null && GraphicsDevice != null && GraphicsDevice.IsDebugMode && swapChain != null)
             {
                 swapChain.DebugName = Name;
@@ -194,7 +198,7 @@ namespace Stride.Graphics
             if (format == backBuffer.Format)
                 format = PixelFormat.None;
 
-            swapChain.ResizeBuffers(bufferCount, width, height, (SharpDX.DXGI.Format)format, SwapChainFlags.None);
+            swapChain.ResizeBuffers(bufferCount, width, height, (Format) format, SwapChainFlags.None);
 
             // Get newly created native texture
             var backBufferTexture = swapChain.GetBackBuffer<BackBufferResourceType>(0);
@@ -230,17 +234,16 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Calls <see cref="Texture.OnDestroyed"/> for all children of the specified texture
+        ///   Calls <see cref="Texture.OnDestroyed"/> for all children of the specified texture.
         /// </summary>
-        /// <param name="parentTexture">Specified parent texture</param>
-        /// <returns>A list of the children textures which were destroyed</returns>
+        /// <param name="parentTexture">Specified parent texture.</param>
+        /// <returns>A list of the children textures which were destroyed.</returns>
         private FastList<Texture> DestroyChildrenTextures(Texture parentTexture)
         {
             var fastList = new FastList<Texture>();
             foreach (var resource in GraphicsDevice.Resources)
             {
-                var texture = resource as Texture;
-                if (texture != null && texture.ParentTexture == parentTexture)
+                if (resource is Texture texture && texture.ParentTexture == parentTexture)
                 {
                     texture.OnDestroyed();
                     fastList.Add(texture);
@@ -253,57 +256,52 @@ namespace Stride.Graphics
         private SwapChain CreateSwapChain()
         {
             // Check for Window Handle parameter
-            if (Description.DeviceWindowHandle == null)
-            {
-                throw new ArgumentException("DeviceWindowHandle cannot be null");
-            }
+            if (Description.DeviceWindowHandle is null)
+                throw new ArgumentException("DeviceWindowHandle cannot be null.");
 
             return CreateSwapChainForWindows();
         }
 
         /// <summary>
-        /// Create the SwapChain on Windows. To avoid any hard dependency on a actual windowing system
-        /// we assume that the <c>Description.DeviceWindowHandle.NativeHandle</c> holds
-        /// a window type that exposes the <code>Handle</code> property of type <see cref="IntPtr"/>.
+        ///   Create the SwapChain on Windows.
         /// </summary>
         /// <returns></returns>
         private SwapChain CreateSwapChainForWindows()
         {
-            var nativeHandle = Description.DeviceWindowHandle.NativeWindow;
-            var handleProperty = nativeHandle.GetType().GetProperty("Handle", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            if (handleProperty != null && handleProperty.PropertyType == typeof(IntPtr))
-            {
-                var hwndPtr = (IntPtr)handleProperty.GetValue(nativeHandle);
-                if (hwndPtr != IntPtr.Zero)
-                {
-                    return CreateSwapChainForDesktop(hwndPtr);
-                }
-            }
-            throw new NotSupportedException($"Form of type [{Description.DeviceWindowHandle?.GetType().Name ?? "null"}] is not supported. Only System.Windows.Control is supported.");
+            var hwndPtr = Description.DeviceWindowHandle.Handle;
+            if (hwndPtr != IntPtr.Zero)
+                return CreateSwapChainForDesktop(hwndPtr);
+
+            throw new InvalidOperationException($"The {nameof(WindowHandle)}.{nameof(WindowHandle.Handle)} must not be zero.");
         }
 
         private SwapChain CreateSwapChainForDesktop(IntPtr handle)
         {
             bufferCount = 1;
             var backbufferFormat = Description.BackBufferFormat;
+
 #if STRIDE_GRAPHICS_API_DIRECT3D12
-            // TODO D3D12 (check if this setting make sense on D3D11 too?)
+            // TODO: D3D12 (check if this setting make sense on D3D11 too?)
             backbufferFormat = backbufferFormat.ToNonSRgb();
-            // TODO D3D12 Can we make it work with something else after?
+            // TODO: D3D12 Can we make it work with something else after?
             bufferCount = 2;
 #endif
             var description = new SwapChainDescription
                 {
-                    ModeDescription = new ModeDescription(Description.BackBufferWidth, Description.BackBufferHeight, Description.RefreshRate.ToSharpDX(), (SharpDX.DXGI.Format)backbufferFormat),
+                    ModeDescription = new ModeDescription(
+                        Description.BackBufferWidth,
+                        Description.BackBufferHeight,
+                        Description.RefreshRate.ToSharpDX(),
+                        (Format) backbufferFormat),
                     BufferCount = bufferCount, // TODO: Do we really need this to be configurable by the user?
                     OutputHandle = handle,
-                    SampleDescription = new SampleDescription((int)Description.MultisampleCount, 0),
+                    SampleDescription = new SampleDescription((int) Description.MultisampleCount, 0),
 #if STRIDE_GRAPHICS_API_DIRECT3D11
                     SwapEffect = SwapEffect.Discard,
 #elif STRIDE_GRAPHICS_API_DIRECT3D12
                     SwapEffect = SwapEffect.FlipDiscard,
 #endif
-                    Usage = SharpDX.DXGI.Usage.BackBuffer | SharpDX.DXGI.Usage.RenderTargetOutput,
+                    Usage = Usage.BackBuffer | Usage.RenderTargetOutput,
                     IsWindowed = true,
                     Flags = Description.IsFullScreen ? SwapChainFlags.AllowModeSwitch : SwapChainFlags.None,
                 };
@@ -314,7 +312,7 @@ namespace Stride.Graphics
             var newSwapChain = new SwapChain(GraphicsAdapterFactory.NativeFactory, GraphicsDevice.NativeCommandQueue, description);
 #endif
 
-            //prevent normal alt-tab
+            // Prevent normal Alt + Enter
             GraphicsAdapterFactory.NativeFactory.MakeWindowAssociation(handle, WindowAssociationFlags.IgnoreAltEnter);
 
             if (Description.IsFullScreen)

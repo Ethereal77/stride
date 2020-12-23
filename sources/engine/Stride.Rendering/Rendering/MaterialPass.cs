@@ -8,13 +8,13 @@ using Stride.Graphics;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Describes a single rendering pass of a <see cref="Rendering.Material"/>.
+    ///   Represents a single rendering pass of a <see cref="Rendering.Material"/>.
     /// </summary>
     [DataContract]
     public class MaterialPass
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaterialPass"/> class.
+        ///   Initializes a new instance of the <see cref="MaterialPass"/> class.
         /// </summary>
         public MaterialPass()
         {
@@ -22,7 +22,7 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaterialPass"/> class.
+        ///   Initializes a new instance of the <see cref="MaterialPass"/> class.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         public MaterialPass(ParameterCollection parameters)
@@ -30,50 +30,56 @@ namespace Stride.Rendering
             Parameters = parameters;
         }
 
+
         /// <summary>
-        /// The material that contains this pass.
+        ///   Gets the material that contains this pass.
         /// </summary>
         [DataMemberIgnore]
         public Material Material { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the parameters.
+        ///   Gets or sets the parameters.
         /// </summary>
         /// <value>The parameters.</value>
         public ParameterCollection Parameters { get; set; }
 
         /// <summary>
-        /// Overrides the cullmode for this material.
+        ///   The culling mode to use overriding the one defined by the material.
         /// </summary>
         public CullMode? CullMode;
 
         /// <summary>
-        /// Overrides the blend state for this material.
+        ///   The blending state to use overriding the one defined by the material.
         /// </summary>
         public BlendStateDescription? BlendState;
 
         /// <summary>
-        /// The tessellation method used by the material.
+        ///   The tessellation method used by the material.
         /// </summary>
         public StrideTessellationMethod TessellationMethod;
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance has transparent.
+        ///   Gets or sets a value indicating whether this material pass has transparency.
         /// </summary>
-        /// <value><c>true</c> if this instance has transparent; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if this instance has transparency; otherwise, <c>false</c>.</value>
         public bool HasTransparency { get; set; }
 
         /// <summary>
-        /// Determines if this material is affected by lighting.
+        ///   Gets or sets a value indicating whether to use the alpha-to-coverage multisampling technique.
         /// </summary>
-        /// <value><c>true</c> if this instance affects lighting; otherwise, <c>false</c>.</value>
+        public bool? AlphaToCoverage { get; set; }
+
+        /// <summary>
+        ///   Gets or sets a value indicating if this material is affected by lighting.
+        /// </summary>
+        /// <value><c>true</c> if this instance is affected by lighting; otherwise, <c>false</c>.</value>
         public bool IsLightDependent { get; set; }
 
         /// <summary>
-        /// The index of this pass as part of its containing <see cref="Material"/>.
+        ///   Gets or sets the index of this pass as part of its containing <see cref="Material"/>.
         /// </summary>
         /// <remarks>
-        /// Used for state sorting.
+        ///   The index is used for state sorting.
         /// </remarks>
         public int PassIndex { get; set; }
     }

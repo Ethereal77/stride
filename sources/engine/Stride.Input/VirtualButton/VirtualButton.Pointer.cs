@@ -4,17 +4,15 @@
 
 using System;
 
-using Stride.Core.Collections;
-
 namespace Stride.Input
 {
     /// <summary>
-    /// Describes a virtual button (a key from a keyboard, a mouse button, an axis of a joystick...etc.).
+    ///   Represents a virtual button (a key from a keyboard, a mouse button, an axis of a joystick, etc.).
     /// </summary>
     public partial class VirtualButton
     {
         /// <summary>
-        /// Mouse virtual button.
+        ///   Represents a mouse virtual button.
         /// </summary>
         public class Pointer : VirtualButton
         {
@@ -35,14 +33,14 @@ namespace Stride.Input
             }
 
             /// <summary>
-            /// The pad index.
+            ///   The pointer Id.
             /// </summary>
             public readonly int PointerId;
 
             /// <summary>
-            /// Return a pointer button for the given point Id.
+            ///   Returns a pointer button for the given pointer Id.
             /// </summary>
-            /// <param name="pointerId">the Id of the pointer</param>
+            /// <param name="pointerId">the Id of the pointer.</param>
             /// <returns>An pointer button for the given pointer Id.</returns>
             public Pointer WithId(int pointerId)
             {
@@ -50,27 +48,27 @@ namespace Stride.Input
             }
 
             /// <summary>
-            /// The current state of pointers.
+            ///   Gets the current state of pointers.
             /// </summary>
             public static readonly Pointer State = new Pointer("State", 0, false);
 
             /// <summary>
-            /// The X component of the Pointer <see cref="PointerPoint.Position"/>.
+            ///   Gets the X component of the Pointer <see cref="PointerPoint.Position"/>.
             /// </summary>
             public static readonly Pointer PositionX = new Pointer("PositionX", 1, true);
 
             /// <summary>
-            /// The Y component of the Pointer <see cref="PointerPoint.Position"/>.
+            ///   Gets the Y component of the Pointer <see cref="PointerPoint.Position"/>.
             /// </summary>
             public static readonly Pointer PositionY = new Pointer("PositionY", 2, true);
 
             /// <summary>
-            /// The X component of the Pointer <see cref="PointerPoint.Delta"/>.
+            ///   Gets the X component of the Pointer <see cref="PointerPoint.Delta"/>.
             /// </summary>
             public static readonly Pointer DeltaX = new Pointer("DeltaX", 3, true);
 
             /// <summary>
-            /// The Y component of the Pointer <see cref="PointerPoint.Delta"/>.
+            ///   Gets the Y component of the Pointer <see cref="PointerPoint.Delta"/>.
             /// </summary>
             public static readonly Pointer DeltaY = new Pointer("DeltaY", 4, true);
 
@@ -81,11 +79,11 @@ namespace Stride.Input
 
             public override float GetValue(InputManager manager)
             {
-                int index = (Id & TypeIdMask);
+                int index = Id & TypeIdMask;
                 switch (index)
                 {
                     case 0:
-                        return IsDown(manager) ? 1f : 0f;
+                        return IsDown(manager) ? 1.0f : 0.0f;
                     case 1:
                         return FromFirstMatchingEvent(manager, GetPositionX);
                     case 2:
@@ -101,17 +99,17 @@ namespace Stride.Input
 
             public override bool IsDown(InputManager manager)
             {
-                return Index == 0 ? AnyPointerInState(manager, GetDownPointers) : false;
+                return Index == 0 && AnyPointerInState(manager, GetDownPointers);
             }
 
             public override bool IsPressed(InputManager manager)
             {
-                return Index == 0 ? AnyPointerInState(manager, GetPressedPointers) : false;
+                return Index == 0 && AnyPointerInState(manager, GetPressedPointers);
             }
 
             public override bool IsReleased(InputManager manager)
             {
-                return Index == 0 ? AnyPointerInState(manager, GetReleasedPointers) : false;
+                return Index == 0 && AnyPointerInState(manager, GetReleasedPointers);
             }
 
             private float FromFirstMatchingEvent(InputManager manager, Func<PointerEvent, float> valueGetter)
@@ -121,10 +119,10 @@ namespace Stride.Input
                     if (PointerId < 0 || pointerEvent.PointerId == PointerId)
                         return valueGetter(pointerEvent);
                 }
-                return 0f;
+                return 0.0f;
             }
 
-            private bool AnyPointerInState(InputManager manager, Func<IPointerDevice, IReadOnlySet<PointerPoint>> stateGetter)
+            private bool AnyPointerInState(InputManager manager, Func<IPointerDevice, Core.Collections.IReadOnlySet<PointerPoint>> stateGetter)
             {
                 foreach (var pointerDevice in manager.Pointers)
                 {
@@ -137,17 +135,17 @@ namespace Stride.Input
                 return false;
             }
 
-            private IReadOnlySet<PointerPoint> GetDownPointers(IPointerDevice device)
+            private Core.Collections.IReadOnlySet<PointerPoint> GetDownPointers(IPointerDevice device)
             {
                 return device.DownPointers;
             }
 
-            private IReadOnlySet<PointerPoint> GetPressedPointers(IPointerDevice device)
+            private Core.Collections.IReadOnlySet<PointerPoint> GetPressedPointers(IPointerDevice device)
             {
                 return device.DownPointers;
             }
 
-            private IReadOnlySet<PointerPoint> GetReleasedPointers(IPointerDevice device)
+            private Core.Collections.IReadOnlySet<PointerPoint> GetReleasedPointers(IPointerDevice device)
             {
                 return device.DownPointers;
             }

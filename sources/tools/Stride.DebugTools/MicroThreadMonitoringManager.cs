@@ -5,12 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Stride.Framework;
 using Stride.Framework.MicroThreading;
 using Stride.Core.Extensions;
-using System.Diagnostics;
 using System.Threading;
 
 using Stride.Framework.Time;
@@ -20,19 +18,21 @@ using Stride.Core.Presentation.Observable;
 namespace Stride.DebugTools
 {
     /// <summary>
-    /// Manager class that monitors the micro threads executions.
-    /// <remarks>This class registers to <c>Scheduler</c> events and listen to <c>MicroThread</c>s state changes.
-    /// It provides monitoring information through <c>IObservable</c> notifications.</remarks>
+    ///   Manager class that monitors the microthreads executions.
     /// </summary>
+    /// <remarks>
+    ///   This class registers to <c>Scheduler</c> events and listen to <c>MicroThread</c>s state changes.
+    ///   It provides monitoring information through <c>IObservable</c> notifications.
+    /// </remarks>
     public class MicroThreadMonitoringManager : IObservable<FrameInfo>
     {
         /// <summary>
-        /// Maximum number of micro threads execution frames stored by the monitoring manager.
+        ///   Maximum number of microthreads execution frames stored by the monitoring manager.
         /// </summary>
         public const int MaximumCapturedFrames = 30;
 
         public Scheduler Scheduler { get; private set; }
-        public uint CurrentFrameNumber { get { return frameNumber; } }
+        public uint CurrentFrameNumber => frameNumber;
 
         private readonly AbsoluteStopwatch stopwatch = new AbsoluteStopwatch();
         private readonly ObserverContainer<FrameInfo> observerContainer = new ObserverContainer<FrameInfo>();
@@ -46,16 +46,16 @@ namespace Stride.DebugTools
 
         public MicroThreadMonitoringManager(Scheduler scheduler)
         {
-            if (scheduler == null)
-                throw new ArgumentNullException("scheduler");
+            if (scheduler is null)
+                throw new ArgumentNullException(nameof(scheduler));
 
             Scheduler = scheduler;
         }
 
         /// <summary>
-        /// Registers an observer for further <c>FrameInfo</c> notifications.
+        ///   Registers an observer for further <see cref="FrameInfo"/> notifications.
         /// </summary>
-        /// <param name="observer">Observer that will receive outgoing <c>FrameInfo</c> notifications.</param>
+        /// <param name="observer">Observer that will receive outgoing notifications.</param>
         /// <returns>Returns the subscription token.</returns>
         public IDisposable Subscribe(IObserver<FrameInfo> observer)
         {
@@ -63,13 +63,15 @@ namespace Stride.DebugTools
         }
 
         /// <summary>
-        /// Starts the micro threads monitoring.
-        /// <remarks>It resets the time and the frame number.</remarks>
+        ///   Starts the microthreads monitoring.
         /// </summary>
+        /// <remarks>
+        ///   This method resets the time and the frame number.
+        /// </remarks>
         public void StartMonitoring()
         {
             frameNumber = 0;
-            // New MicroThread system doesn't have any PropertyChanged event yet.
+            // New MicroThread system doesn't have any PropertyChanged event yet
             throw new NotImplementedException();
             //Scheduler.MicroThreadStateChanged += OnMicroThreadStateChanged;
             //Scheduler.MessageLoopBegin += OnMessageLoopBegin;
@@ -77,20 +79,22 @@ namespace Stride.DebugTools
         }
 
         /// <summary>
-        /// Stops the micro threads monitoring.
+        ///   Stops the microthreads monitoring.
         /// </summary>
         public void StopMonitoring()
         {
-            // New MicroThread system doesn't have any PropertyChanged event yet.
+            // New MicroThread system doesn't have any PropertyChanged event yet
             throw new NotImplementedException();
             //Scheduler.MessageLoopBegin -= OnMessageLoopBegin;
             //Scheduler.MicroThreadStateChanged -= OnMicroThreadStateChanged;
         }
 
         /// <summary>
-        /// Deletes all the previously monitored frame data.
-        /// <remarks>It also resets time and the frame number.</remarks>
+        ///   Deletes all the previously monitored frame data.
         /// </summary>
+        /// <remarks>
+        ///   This method also resets time and the frame number.
+        /// </remarks>
         public void ClearMonitoringData()
         {
             frameNumber = 0;
@@ -103,30 +107,28 @@ namespace Stride.DebugTools
         }
 
         /// <summary>
-        /// Retrieves the already monitored and stored data.
-        /// <remarks>Beware of using these data due to non thread-safety!</remarks>
+        ///   Retrieves the already monitored and stored data.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        ///   Please be careful while using this data as it is not thread-safe.
+        /// </remarks>
         public ProcessInfo GetProcessInfoData()
         {
             return processInfo;
         }
 
         /// <summary>
-        /// Take a snapshot of the monitored data.
-        /// <remarks>This set of data is thread-safely acquired.</remarks>
+        ///   Takes a snapshot of the monitored data.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        ///   This set of data is acquired in a thread-safe manner.
+        /// </remarks>
         public ProcessInfo TakeProcessInfoDataSnapshot()
         {
-            ProcessInfo duplicate;
-
             lock (processInfoLock)
             {
-                duplicate = processInfo.Duplicate();
+                return processInfo.Duplicate();
             }
-
-            return duplicate;
         }
 
         private void OnMicroThreadStateChanged(object sender, SchedulerEventArgs e)
@@ -134,7 +136,7 @@ namespace Stride.DebugTools
             if (e.MicroThreadPreviousState == MicroThreadState.None)
                 return;
 
-            if (frameInfo == null)
+            if (frameInfo is null)
                 return;
 
             double currentTime = stopwatch.Elapsed;
@@ -143,16 +145,15 @@ namespace Stride.DebugTools
             long microThreadId = e.MicroThread.Id;
 
             ThreadInfo threadInfo = frameInfo.ThreadItems.FirstOrDefault(ti => ti.Id == threadId);
-            if (threadInfo == null)
+            if (threadInfo is null)
             {
                 threadInfo = new ThreadInfo { Id = threadId };
                 frameInfo.ThreadItems.Add(threadInfo);
             }
 
-            // pending state is used to keep trace of the micro threads recently added as 'running'
-            // in order to create a proper MicroThreadInfo item when then receiving a 'waiting' notification
-            MicroThreadPendingState pendingState;
-            if (pendingMicroThreads.TryGetValue(microThreadId, out pendingState))
+            // Pending state is used to keep trace of the microthreads recently added as 'Running'
+            // In order to create a proper MicroThreadInfo item when then receiving a 'Waiting' notification
+            if (pendingMicroThreads.TryGetValue(microThreadId, out MicroThreadPendingState pendingState))
             {
                 threadInfo.MicroThreadItems.Add(new MicroThreadInfo
                 {
@@ -188,8 +189,8 @@ namespace Stride.DebugTools
                 foreach (MicroThreadPendingState pendingState in pendingMicroThreads.Values)
                 {
                     ThreadInfo th = frameInfo.ThreadItems.FirstOrDefault(ti => ti.Id == pendingState.ThreadId);
-                    if (th == null)
-                        throw new InvalidOperationException("Thread " + pendingState.ThreadId + " is not referenced in frame " + frameInfo.FrameNumber);
+                    if (th is null)
+                        throw new InvalidOperationException($"Thread {pendingState.ThreadId} is not referenced in frame {frameInfo.FrameNumber}.");
 
                     th.MicroThreadItems.Add(new MicroThreadInfo
                     {
@@ -201,13 +202,13 @@ namespace Stride.DebugTools
                     });
                 }
 
-                // end of the previous frame
+                // End of the previous frame
                 lock (observerContainer.SyncRoot)
                 {
                     observerContainer.Observers.ForEach(observer => observer.OnNext(frameInfo));
                 }
 
-                // begining of the new frame
+                // Begining of the new frame
                 lock (processInfoLock)
                 {
                     processInfo.Frames.Add(frameInfo);

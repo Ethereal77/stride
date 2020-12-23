@@ -188,7 +188,8 @@ namespace Stride.Engine
 
             // If the width or height changed, we have to recycle all temporary allocated resources.
             // NOTE: We assume that they are mostly resolution dependent.
-            if (previousWidth != renderTarget.ViewWidth || previousHeight != renderTarget.ViewHeight)
+            if (previousWidth != renderTarget.ViewWidth ||
+                previousHeight != renderTarget.ViewHeight)
             {
                 // Force a recycle of all allocated temporary textures
                 renderContext.Allocator.Recycle(link => true);
@@ -200,9 +201,13 @@ namespace Stride.Engine
             // Update the entities at draw time.
             renderContext.Time = gameTime;
 
-            // Execute Draw step of SceneInstance
-            // This will run entity processors
-            SceneInstance?.Draw(renderContext);
+            // The camera processor needs the graphics compositor
+            using (renderContext.PushTagAndRestore(GraphicsCompositor.Current, GraphicsCompositor))
+            {
+                // Execute Draw step of SceneInstance
+                // This will run entity processors
+                SceneInstance?.Draw(renderContext);
+            }
 
             // Render phase
             // TODO: GRAPHICS REFACTOR

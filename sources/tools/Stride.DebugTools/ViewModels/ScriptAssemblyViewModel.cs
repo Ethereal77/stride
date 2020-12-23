@@ -5,9 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Collections.ObjectModel;
 
 using Stride.Core.Presentation;
 
@@ -21,11 +18,11 @@ namespace Stride.DebugTools.ViewModels
 
         public ScriptAssemblyViewModel(ScriptAssembly scriptAssembly, RootViewModel parent)
         {
-            if (scriptAssembly == null)
-                throw new ArgumentNullException("scriptAssembly");
+            if (scriptAssembly is null)
+                throw new ArgumentNullException(nameof(scriptAssembly));
 
-            if (parent == null)
-                throw new ArgumentNullException("parent");
+            if (parent is null)
+                throw new ArgumentNullException(nameof(parent));
 
             Parent = parent;
             this.scriptAssembly = scriptAssembly;
@@ -33,25 +30,11 @@ namespace Stride.DebugTools.ViewModels
             UpdateScripts();
         }
 
-        public string Url
-        {
-            get
-            {
-                if (scriptAssembly.Url == null)
-                    return "<anonymous assembly>";
-                return scriptAssembly.Url.TrimStart('/');
-            }
-        }
+        public string Url => scriptAssembly.Url is null ?
+            "<anonymous assembly>" :
+            scriptAssembly.Url.TrimStart('/');
 
-        public string Assembly
-        {
-            get
-            {
-                if (scriptAssembly.Assembly == null)
-                    return "-";
-                return scriptAssembly.Assembly.ToString();
-            }
-        }
+        public string Assembly => scriptAssembly.Assembly is null ? "-" : scriptAssembly.Assembly.ToString();
 
         public IEnumerable<ScriptTypeViewModel> Types { get; private set; }
 

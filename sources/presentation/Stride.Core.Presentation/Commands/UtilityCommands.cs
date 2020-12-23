@@ -22,7 +22,7 @@ namespace Stride.Core.Presentation.Commands
         [NotNull]
         private static ICommandBase OpenHyperlinkCommandFactory()
         {
-            // TODO: have a proper way to initialize the services (maybe at application startup)
+            // TODO: Have a proper way to initialize the services (maybe at application startup)
             var serviceProvider = new ViewModelServiceProvider(new[] { new DispatcherService(Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher) });
             return new AnonymousCommand<string>(serviceProvider, OpenHyperlink, CanOpenHyperlink);
         }
@@ -34,10 +34,10 @@ namespace Stride.Core.Presentation.Commands
 
         private static void OpenHyperlink([NotNull] string url)
         {
-            // see https://support.microsoft.com/en-us/kb/305703
+            // See https://support.microsoft.com/en-us/kb/305703
             try
             {
-                Process.Start(url);
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             }
             catch (System.ComponentModel.Win32Exception e)
             {

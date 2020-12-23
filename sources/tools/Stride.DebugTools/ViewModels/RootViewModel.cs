@@ -5,8 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 
 using Stride.Framework.Time;
 using Stride.Core.Presentation.Extensions;
@@ -16,7 +14,6 @@ using Stride.Framework.MicroThreading;
 using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Controls;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -44,14 +41,12 @@ namespace Stride.DebugTools.ViewModels
         private int increment;
         public int Increment
         {
-            get
-            {
-                return increment;
-            }
+            get => increment;
+
             set
             {
                 increment = value;
-                OnPropertyChanged("Increment");
+                OnPropertyChanged(nameof(Increment));
             }
         }
 
@@ -60,7 +55,7 @@ namespace Stride.DebugTools.ViewModels
         {
             get
             {
-                if (testBehavior == null)
+                if (testBehavior is null)
                     testBehavior = new AnonymousCommand(prm => MessageBox.Show(string.Format("CommandParameter: {0}", prm)));
                 return testBehavior;
             }
@@ -70,10 +65,10 @@ namespace Stride.DebugTools.ViewModels
 
         public RootViewModel(EngineContext engineContext, ProcessInfoRenderer processInfoRenderer)
         {
-            if (engineContext == null)
-                throw new ArgumentNullException("engineContext");
+            if (engineContext is null)
+                throw new ArgumentNullException(nameof(engineContext));
 
-            if (engineContext.Scheduler == null)
+            if (engineContext.Scheduler is null)
                 throw new InvalidOperationException("The provided EngineContext must have a Scheduler.");
 
             timer = new DispatcherTimer
@@ -106,7 +101,7 @@ namespace Stride.DebugTools.ViewModels
 
         private void SetupMicroThreadWatching()
         {
-            if (EngineContext.Scheduler == null || EngineContext.Scheduler.MicroThreads == null)
+            if (EngineContext.Scheduler is null || EngineContext.Scheduler.MicroThreads is null)
                 return;
 
             foreach (MicroThread mt in EngineContext.Scheduler.MicroThreads)
@@ -118,7 +113,7 @@ namespace Stride.DebugTools.ViewModels
 
         private void AddMicroThread(MicroThread microThread)
         {
-            Dispatcher.BeginInvoke((Action)delegate
+            Dispatcher.BeginInvoke(delegate
             {
                 microThreads.Add(new MicroThreadViewModel(microThread));
             }, null);
@@ -126,7 +121,7 @@ namespace Stride.DebugTools.ViewModels
 
         private void RemoveMicroThread(long microThreadId)
         {
-            Dispatcher.BeginInvoke((Action)delegate
+            Dispatcher.BeginInvoke(delegate
             {
                 MicroThreadViewModel foundViewModel = microThreads.FirstOrDefault(vm => vm.Id == microThreadId);
                 if (foundViewModel != null)
@@ -135,13 +130,13 @@ namespace Stride.DebugTools.ViewModels
         }
 
         private readonly ObservableCollection<ScriptAssemblyViewModel> scriptAssemblies = new ObservableCollection<ScriptAssemblyViewModel>();
-        public IEnumerable<ScriptAssemblyViewModel> ScriptAssemblies { get { return scriptAssemblies; } }
+        public IEnumerable<ScriptAssemblyViewModel> ScriptAssemblies => scriptAssemblies;
 
         private ScriptAssemblyViewModel orphanScriptsAssembly;
 
         private void SetupScriptWatching()
         {
-            if (EngineContext.ScriptManager == null)
+            if (EngineContext.ScriptManager is null)
                 return;
 
             foreach (ScriptAssembly scriptAssembly in EngineContext.ScriptManager.ScriptAssemblies)
@@ -150,7 +145,7 @@ namespace Stride.DebugTools.ViewModels
             }
 
             List<ScriptEntry2> orphanScripts = EngineContext.ScriptManager.Scripts
-                .Where(s => s.Assembly == null)
+                .Where(s => s.Assembly is null)
                 .ToList();
 
             if (orphanScripts.Count > 0)
@@ -162,11 +157,10 @@ namespace Stride.DebugTools.ViewModels
 
         private void AddScriptAssembly(ScriptAssembly scriptAssembly)
         {
-            ScriptAssemblyViewModel vm = null;
-
-            if (scriptAssembly.Assembly == null)
+            ScriptAssemblyViewModel vm;
+            if (scriptAssembly.Assembly is null)
             {
-                if (orphanScriptsAssembly == null)
+                if (orphanScriptsAssembly is null)
                 {
                     orphanScriptsAssembly = new ScriptAssemblyViewModel(scriptAssembly, this);
                     scriptAssemblies.Add(orphanScriptsAssembly);
@@ -192,7 +186,7 @@ namespace Stride.DebugTools.ViewModels
         {
             ProcessInfo processInfo = microThreadMonitoringManager.TakeProcessInfoDataSnapshot();
 
-            Window snapshotWindow = new Window
+            var snapshotWindow = new Window
             {
                 Content = new ProcessSnapshotControl(processInfo)
             };

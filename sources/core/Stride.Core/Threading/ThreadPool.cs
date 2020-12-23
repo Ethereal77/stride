@@ -11,11 +11,12 @@ using Stride.Core.Annotations;
 namespace Stride.Core.Threading
 {
     /// <summary>
-    ///   Thread pool for scheduling sub-millisecond actions.
+    ///   Represents a pool of threads tuned for scheduling sub-millisecond actions.
     /// </summary>
     /// <remarks>
     ///   The implementation of <see cref="ThreadPool"/> is oriented towards low latency and very short
     ///   jobs (sub-millisecond). Try not to schedule long-running tasks in this pool.
+    ///   <para/>
     ///   Also, this class can be instantiated. It generates less garbage than <see cref="System.Threading.ThreadPool"/>.
     /// </remarks>
     public sealed partial class ThreadPool
@@ -26,10 +27,11 @@ namespace Stride.Core.Threading
         /// <remarks>Use this instance where possible instead of creating new ones to avoid wasting process memory.</remarks>
         public static readonly ThreadPool Instance = new ThreadPool();
 
-        private static readonly bool isSingleCore;
+        private static readonly bool isSingleCore = Environment.ProcessorCount < 2;
 
         /// <summary>
-        ///   Gets a value that indicates if the current <see cref="Thread"/> is a worker thread of this <see cref="ThreadPool"/>.</summary>
+        ///   Gets a value that indicates if the current <see cref="Thread"/> is a worker thread of this <see cref="ThreadPool"/>.
+        /// </summary>
         public static bool IsWorkedThread => isWorkedThread;
         [ThreadStatic]
         private static bool isWorkedThread;
@@ -63,19 +65,18 @@ namespace Stride.Core.Threading
 
         public ThreadPool(int? threadCount = null)
         {
-            WorkerThreadsCount = threadCount ?? Environment.ProcessorCount;
+            WorkerThreadsCount =
+                threadCount ??
+                (Environment.ProcessorCount == 1 ? 1 : Environment.ProcessorCount - 1);
+
             for (int i = 0; i < WorkerThreadsCount; i++)
                 CreateWorkerThread();
 
-            // Benchmark this on multiple computers at different work frequency
+            // TODO: Benchmark this on multiple computers at different work frequency
             const int SpinDuration = 140;
             semaphore = new SemaphoreW(0, SpinDuration);
         }
 
-        static ThreadPool()
-        {
-            isSingleCore = Environment.ProcessorCount < 2;
-        }
 
 
         /// <summary>

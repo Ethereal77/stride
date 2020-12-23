@@ -5,11 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
-using System.Threading;
 using System.Threading.Tasks;
 
 using Stride.Core;
-using Stride.Core.Collections;
 using Stride.Core.Diagnostics;
 using Stride.Core.MicroThreading;
 using Stride.Core.Serialization.Contents;
@@ -18,7 +16,7 @@ using Stride.Games;
 namespace Stride.Engine.Processors
 {
     /// <summary>
-    /// The script system handles scripts scheduling in a game.
+    ///   Represents a system that handles the scheduling of the scripts in a game.
     /// </summary>
     public sealed class ScriptSystem : GameSystemBase
     {
@@ -27,7 +25,7 @@ namespace Stride.Engine.Processors
         internal static readonly Logger Log = GlobalLogger.GetLogger("ScriptSystem");
 
         /// <summary>
-        /// Contains all currently executed scripts
+        ///   Contains all currently executed scripts.
         /// </summary>
         private readonly HashSet<ScriptComponent> registeredScripts = new HashSet<ScriptComponent>();
         private readonly HashSet<ScriptComponent> scriptsToStart = new HashSet<ScriptComponent>();
@@ -36,16 +34,18 @@ namespace Stride.Engine.Processors
         private readonly List<SyncScript> syncScriptsCopy = new List<SyncScript>();
 
         /// <summary>
-        /// Gets the scheduler.
+        ///   Gets the scheduler that manages the execution of the scripts.
         /// </summary>
         /// <value>The scheduler.</value>
         public Scheduler Scheduler { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameSystemBase" /> class.
+        ///   Initializes a new instance of the <see cref="ScriptSystem"/> class.
         /// </summary>
-        /// <param name="registry">The registry.</param>
-        /// <remarks>The GameSystem is expecting the following services to be registered: <see cref="IGame" /> and <see cref="ContentManager" />.</remarks>
+        /// <param name="registry">The service registry.</param>
+        /// <remarks>
+        ///   The script system is expecting the following services to be registered: <see cref="IGame"/> and <see cref="ContentManager"/>.
+        /// </remarks>
         public ScriptSystem(IServiceRegistry registry)
             : base(registry)
         {
@@ -76,18 +76,16 @@ namespace Stride.Engine.Processors
             foreach (var script in scriptsToStartCopy)
             {
                 // Start the script
-                var startupScript = script as StartupScript;
-                if (startupScript != null)
+                if (script is StartupScript startupScript)
                 {
                     startupScript.StartSchedulerNode = Scheduler.Add(startupScript.Start, startupScript.Priority, startupScript, startupScript.ProfilingKey);
                 }
                 else
                 {
                     // Start a microthread with execute method if it's an async script
-                    var asyncScript = script as AsyncScript;
-                    if (asyncScript != null)
+                    if (script is AsyncScript asyncScript)
                     {
-                        asyncScript.MicroThread = AddTask(asyncScript.Execute, asyncScript.Priority & UpdateBit);
+                        asyncScript.MicroThread = AddTask(asyncScript.Execute, asyncScript.Priority | UpdateBit);
                         asyncScript.MicroThread.ProfilingKey = asyncScript.ProfilingKey;
                     }
                 }
@@ -111,8 +109,7 @@ namespace Stride.Engine.Processors
             foreach (var script in scriptsToStartCopy)
             {
                 // Remove the start node after it got executed
-                var startupScript = script as StartupScript;
-                if (startupScript != null)
+                if (script is StartupScript startupScript)
                 {
                     startupScript.StartSchedulerNode = null;
                 }
@@ -126,19 +123,20 @@ namespace Stride.Engine.Processors
         }
 
         /// <summary>
-        /// Allows to wait for next frame.
+        ///   Allows to wait for next frame.
         /// </summary>
-        /// <returns>ChannelMicroThreadAwaiter&lt;System.Int32&gt;.</returns>
+        /// <returns>An awaiter that can be used to wait for the next frame.</returns>
         public ChannelMicroThreadAwaiter<int> NextFrame()
         {
             return Scheduler.NextFrame();
         }
 
         /// <summary>
-        /// Adds the specified micro thread function.
+        ///   Adds the specified microthread function.
         /// </summary>
-        /// <param name="microThreadFunction">The micro thread function.</param>
-        /// <returns>MicroThread.</returns>
+        /// <param name="microThreadFunction">The microthread function.</param>
+        /// <param name="priority">Priority for the scheduling of the function.</param>
+        /// <returns>A microthread encapsulating the execution of the provided function.</returns>
         public MicroThread AddTask(Func<Task> microThreadFunction, long priority = 0)
         {
             var microThread = Scheduler.Create();
@@ -148,19 +146,19 @@ namespace Stride.Engine.Processors
         }
 
         /// <summary>
-        /// Waits all micro thread finished their task completion.
+        ///   Waits for when all the specified microthreads have ran their tasks to completion.
         /// </summary>
-        /// <param name="microThreads">The micro threads.</param>
-        /// <returns>Task.</returns>
+        /// <param name="microThreads">The microthreads to await.</param>
+        /// <returns>A task that can be awaited.</returns>
         public async Task WhenAll(params MicroThread[] microThreads)
         {
             await Scheduler.WhenAll(microThreads);
         }
 
         /// <summary>
-        /// Add the provided script to the script system.
+        ///   Add the provided script to the script system.
         /// </summary>
-        /// <param name="script">The script to add</param>
+        /// <param name="script">The script to add.</param>
         public void Add(ScriptComponent script)
         {
             script.Initialize(Services);
@@ -170,10 +168,9 @@ namespace Stride.Engine.Processors
             scriptsToStart.Add(script);
 
             // If it's a synchronous script, add it to the list as well
-            var syncScript = script as SyncScript;
-            if (syncScript != null)
+            if (script is SyncScript syncScript)
             {
-                syncScript.UpdateSchedulerNode = Scheduler.Create(syncScript.Update, syncScript.Priority & UpdateBit);
+                syncScript.UpdateSchedulerNode = Scheduler.Create(syncScript.Update, syncScript.Priority | UpdateBit);
                 syncScript.UpdateSchedulerNode.Value.Token = syncScript;
                 syncScript.UpdateSchedulerNode.Value.ProfilingKey = syncScript.ProfilingKey;
                 syncScripts.Add(syncScript);
@@ -181,9 +178,9 @@ namespace Stride.Engine.Processors
         }
 
         /// <summary>
-        /// Remove the provided script from the script system.
+        ///   Remove the provided script from the script system.
         /// </summary>
-        /// <param name="script">The script to remove</param>
+        /// <param name="script">The script to remove.</param>
         public void Remove(ScriptComponent script)
         {
             // Make sure it's not registered in any pending list
@@ -197,9 +194,9 @@ namespace Stride.Engine.Processors
                 {
                     script.Cancel();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    HandleSynchronousException(script, e);
+                    HandleSynchronousException(script, ex);
                 }
 
                 var asyncScript = script as AsyncScript;
@@ -207,8 +204,7 @@ namespace Stride.Engine.Processors
             }
 
             // Remove script from the scheduler, in case it was removed during scheduler execution
-            var startupScript = script as StartupScript;
-            if (startupScript != null)
+            if (script is StartupScript startupScript)
             {
                 if (startupScript.StartSchedulerNode != null)
                 {
@@ -216,8 +212,7 @@ namespace Stride.Engine.Processors
                     startupScript.StartSchedulerNode = null;
                 }
 
-                var syncScript = script as SyncScript;
-                if (syncScript != null)
+                if (script is SyncScript syncScript)
                 {
                     syncScripts.Remove(syncScript);
                     Scheduler?.Unschedule(syncScript.UpdateSchedulerNode);
@@ -227,10 +222,10 @@ namespace Stride.Engine.Processors
         }
 
         /// <summary>
-        /// Called by a live scripting debugger to notify the ScriptSystem about reloaded scripts.
+        ///   Method called by a live scripting debugger to notify the script system about reloaded scripts.
         /// </summary>
-        /// <param name="oldScript">The old script</param>
-        /// <param name="newScript">The new script</param>
+        /// <param name="oldScript">The old script.</param>
+        /// <param name="newScript">The new script.</param>
         public void LiveReload(ScriptComponent oldScript, ScriptComponent newScript)
         {
             // Set live reloading mode for the rest of it's lifetime
@@ -242,7 +237,7 @@ namespace Stride.Engine.Processors
 
         private void Scheduler_ActionException(Scheduler scheduler, SchedulerEntry schedulerEntry, Exception e)
         {
-            HandleSynchronousException((ScriptComponent)schedulerEntry.Token, e);
+            HandleSynchronousException((ScriptComponent) schedulerEntry.Token, e);
         }
 
         private void HandleSynchronousException(ScriptComponent script, Exception e)
@@ -254,8 +249,7 @@ namespace Stride.Engine.Processors
                 ExceptionDispatchInfo.Capture(e).Throw();
 
             // Remove script from all lists
-            var syncScript = script as SyncScript;
-            if (syncScript != null)
+            if (script is SyncScript syncScript)
             {
                 syncScripts.Remove(syncScript);
             }

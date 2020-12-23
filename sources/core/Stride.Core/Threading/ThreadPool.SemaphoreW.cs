@@ -1,4 +1,5 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Diagnostics;
@@ -13,9 +14,7 @@ namespace Stride.Core.Threading
 {
     public sealed partial class ThreadPool
     {
-        /// <summary>
-        ///   Mostly lifted from .NET's LowLevelLifoSemaphore
-        /// </summary>
+        // This implementation is based mostly on .NET's LowLevelLifoSemaphore
         private class SemaphoreW
         {
             private static readonly int OptimalMaxSpinWaitsPerSpinIteration;
@@ -31,7 +30,7 @@ namespace Stride.Core.Threading
                 var prop = typeof(Thread).GetProperty("OptimalMaxSpinWaitsPerSpinIteration", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
                 int optimal = 7;
                 if (prop != null)
-                    optimal = (int)prop.GetValue(null);
+                    optimal = (int) prop.GetValue(null);
 
                 OptimalMaxSpinWaitsPerSpinIteration = optimal;
             }

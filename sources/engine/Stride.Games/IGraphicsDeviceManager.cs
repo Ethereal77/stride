@@ -15,7 +15,7 @@ namespace Stride.Games
         /// <summary>
         ///   Starts the drawing of a frame.
         /// </summary>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise</returns>
+        /// <returns><c>true</c> if the device is ready and drawing operations can start; <c>false</c> otherwise</returns>
         bool BeginDraw();
 
         /// <summary>

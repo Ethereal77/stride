@@ -38,7 +38,7 @@ using Stride.Rendering.Compositing;
 namespace Stride.Assets.Presentation.Templates
 {
     /// <summary>
-    /// Generator to create a whole package, game library and game executables
+    ///   Represents a generator that can create a whole package, game library and game executables.
     /// </summary>
     public class NewGameTemplateGenerator : SessionTemplateGenerator
     {
@@ -56,7 +56,7 @@ namespace Stride.Assets.Presentation.Templates
         public static readonly Guid TemplateId = new Guid("81d2adea-37b1-4711-834c-0d73a05c206c");
 
         /// <summary>
-        /// Sets the parameters required by this template when running in <see cref="TemplateGeneratorParameters.Unattended"/> mode.
+        ///   Sets the parameters required by this template when running in <see cref="TemplateGeneratorParameters.Unattended"/> mode.
         /// </summary>
         public static void SetParameters([NotNull] SessionTemplateGeneratorParameters parameters, [NotNull] IEnumerable<SelectedSolutionPlatform> platforms, GraphicsProfile graphicsProfile = GraphicsProfile.Level_11_0, bool isHDR = true, DisplayOrientation orientation = DisplayOrientation.Default, IEnumerable<UDirectory> assets = null)
         {
@@ -144,6 +144,8 @@ namespace Stride.Assets.Presentation.Templates
 
             // Write gitignore
             WriteGitIgnore(parameters);
+
+            WriteGlobalJson(parameters);
 
             // Setup the assets folder
             //Directory.CreateDirectory(UPath.Combine(package.RootDirectory, (UDirectory)"Assets/Shared"));
@@ -244,12 +246,13 @@ namespace Stride.Assets.Presentation.Templates
         }
 
         /// <summary>
-        /// Creates default scene, with a ground plane, sphere, directional light and camera.
-        /// If graphicsProfile is 11+, add cubemap light, otherwise ambient light.
-        /// Also properly setup graphics pipeline depending on if HDR is set or not
+        ///   Creates the default scene, with a ground plane, a sphere, a directional light and a camera.
+        ///   If the graphics profile is Direct3D 11 or later, adds a cubemap light, otherwise an ambient light.
+        ///   Also, it properly prepares the graphics pipeline depending on if HDR is set or not.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <param name="package">The package in which to create these assets.</param>
+        /// <param name="projectGameName">Name of the project.</param>
         private void CreateAndSetNewScene(SessionTemplateGeneratorParameters parameters, Package package, string projectGameName)
         {
             var logger = parameters.Logger;
@@ -349,7 +352,7 @@ namespace Stride.Assets.Presentation.Templates
             }
             catch (Exception ex)
             {
-                logger.Error("Unexpected exception while copying cubemap", ex);
+                logger.Error("Unexpected exception while copying cubemap.", ex);
             }
 
             // Create the texture asset
@@ -407,16 +410,16 @@ namespace Stride.Assets.Presentation.Templates
         }
 
         /// <summary>
-        /// Copy any referenced asset packages to the project's folder
+        ///   Copy any referenced asset packages to the project's folder
         /// </summary>
         private static void CopyAssetPacks(SessionTemplateGeneratorParameters parameters, Package package)
         {
             var logger = parameters.Logger;
 
-            var presentationPackageFile = PackageStore.Instance.GetPackageFileName("Stride.Samples.Templates", new PackageVersionRange(new PackageVersion(Stride.Samples.Templates.ThisPackageVersion.Current)));
+            var presentationPackageFile = PackageStore.Instance.GetPackageFileName("Stride.Samples.Templates", new PackageVersionRange(new PackageVersion(Samples.Templates.ThisPackageVersion.Current)));
             var assetPackagesDir = UDirectory.Combine(presentationPackageFile.GetFullDirectory(), @"Templates\Samples\Templates\Packs");
             var assetPacks = parameters.TryGetTag(AssetsKey);
-            if (assetPacks == null)
+            if (assetPacks is null)
                 return;
 
             try
@@ -469,7 +472,7 @@ namespace Stride.Assets.Presentation.Templates
             }
             catch (Exception ex)
             {
-                logger.Error("Unexpected exception while copying asset packages", ex);
+                logger.Error("Unexpected exception while copying asset packages.", ex);
             }
 
         }
@@ -484,16 +487,16 @@ namespace Stride.Assets.Presentation.Templates
             try
             {
                 var gameAssembly = package.LoadedAssemblies.FirstOrDefault()?.Assembly;
-                if (gameAssembly == null)
+                if (gameAssembly is null)
                 {
-                    logger.Warning("Can't load Game assembly");
+                    logger.Warning("Can't load Game assembly.");
                     return;
                 }
 
                 var cameraScriptType = gameAssembly.GetType($"{parameters.Namespace}.{CameraScriptDefaultOutputName}");
-                if (cameraScriptType == null)
+                if (cameraScriptType is null)
                 {
-                    logger.Warning($"Could not find script '{CameraScriptDefaultOutputName}' in Game assembly");
+                    logger.Warning($"Could not find script '{CameraScriptDefaultOutputName}' in Game assembly.");
                     return;
                 }
 
@@ -502,7 +505,7 @@ namespace Stride.Assets.Presentation.Templates
             }
             catch (Exception e)
             {
-                logger.Warning($"Could not instantiate {CameraScriptDefaultOutputName} script", e);
+                logger.Warning($"Could not instantiate {CameraScriptDefaultOutputName} script.", e);
             }
         }
     }

@@ -20,17 +20,17 @@ namespace Stride.Physics
         public class AssociatedData
         {
             /// <summary>
-            ///   The associated PhysicsComponent of the Entity.
+            ///   The associated <see cref="Stride.Engine.PhysicsComponent"/> of the Entity.
             /// </summary>
             public PhysicsComponent PhysicsComponent;
 
             /// <summary>
-            ///   The associated Transform of the Entity.
+            ///   The associated <see cref="Stride.Engine.TransformComponent"/> of the Entity.
             /// </summary>
             public TransformComponent TransformComponent;
 
             /// <summary>
-            ///   The associated Model of the Entity.
+            ///   The associated <see cref="Stride.Engine.ModelComponent"/> of the Entity.
             /// </summary>
             /// <remarks>
             ///   This component is not mandatory. It can be <c>null</c> (for example, for invisible triggers).
@@ -48,7 +48,7 @@ namespace Stride.Physics
         private readonly List<CharacterComponent> characters = new List<CharacterComponent>();
 
         private Bullet2PhysicsSystem physicsSystem;
-        private SceneSystem sceneSystem;
+        private Scene parentScene;
         private Scene debugScene;
 
         private bool colliderShapesRendering;
@@ -59,6 +59,35 @@ namespace Stride.Physics
             : base(typeof(TransformComponent))
         {
             Order = 0xFFFF;
+        }
+
+        /// <summary>
+        ///   Gets or sets the associated parent scene to render the physics debug shapes on.
+        /// </summary>
+        /// <value>
+        ///   The parent scene. By default, this is the default scene when the Physics system is initialized.
+        /// </value>
+        public Scene ParentScene
+        {
+            get => parentScene;
+
+            set
+            {
+                if (value != parentScene)
+                {
+                    if (parentScene != null && debugShapeRendering.Enabled)
+                    {
+                        // If debug rendering is running, disable it and re-enable for new scene system
+                        RenderColliderShapes(false);
+                        parentScene = value;
+                        RenderColliderShapes(true);
+                    }
+                    else
+                    {
+                        parentScene = value;
+                    }
+                }
+            }
         }
 
         public Simulation Simulation { get; private set; }
@@ -80,7 +109,8 @@ namespace Stride.Physics
                         element.RemoveDebugEntity(debugScene);
                     }
 
-                    sceneSystem.SceneInstance.RootScene.Children.Remove(debugScene);
+                    // Remove from parent scene
+                    debugScene.Parent = null;
                 }
             }
             else
@@ -95,7 +125,7 @@ namespace Stride.Physics
                     }
                 }
 
-                sceneSystem.SceneInstance.RootScene.Children.Add(debugScene);
+                debugScene.Parent = parentScene;
             }
         }
 
@@ -203,7 +233,7 @@ namespace Stride.Physics
 
             Simulation = physicsSystem.Create(this);
 
-            sceneSystem = Services.GetSafeServiceAs<SceneSystem>();
+            parentScene = Services.GetSafeServiceAs<SceneSystem>()?.SceneInstance?.RootScene;
         }
 
         protected override void OnSystemRemove()

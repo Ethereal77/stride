@@ -7,8 +7,12 @@ using Stride.Graphics;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Pipeline processor for <see cref="RenderMesh"/> with materials. It will set blend and depth-stencil state for transparent objects, and properly set culling according to material and negative scaling.
+    ///   Represents a rendering pipeline processor for <see cref="RenderMesh"/> with materials.
     /// </summary>
+    /// <remarks>
+    ///   This rendering pipeline processor will set blend and depth-stencil states for transparent objects, and
+    ///   properly set culling according to material and negative scaling.
+    /// </remarks>
     public class MeshPipelineProcessor : PipelineProcessor
     {
         public RenderStage TransparentRenderStage { get; set; }
@@ -17,7 +21,7 @@ namespace Stride.Rendering
         {
             var output = renderNode.RenderStage.Output;
             var isMultisample = output.MultisampleCount != MultisampleCount.None;
-            var renderMesh = (RenderMesh)renderObject;
+            var renderMesh = (RenderMesh) renderObject;
 
             // Make object in transparent stage use AlphaBlend and DepthRead
             if (renderNode.RenderStage == TransparentRenderStage)
@@ -25,7 +29,7 @@ namespace Stride.Rendering
                 pipelineState.BlendState = renderMesh.MaterialPass.BlendState ?? BlendStates.AlphaBlend;
                 pipelineState.DepthStencilState = DepthStencilStates.DepthRead;
                 if (isMultisample)
-                    pipelineState.BlendState.AlphaToCoverageEnable = true;
+                    pipelineState.BlendState.AlphaToCoverageEnable = renderMesh.MaterialPass.AlphaToCoverage ?? true;
             }
 
             var cullMode = pipelineState.RasterizerState.CullMode;

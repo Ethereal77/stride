@@ -16,16 +16,17 @@ using Stride.Games;
 namespace Stride.Input
 {
     /// <summary>
-    /// Manages collecting input from connected input device in the form of <see cref="IInputDevice"/> objects. Also provides some convenience functions for most commonly used devices
+    ///   Represents a class that manages the collecting of input from connected input devices.
+    ///   Also provides some convenience functions for most commonly used devices.
     /// </summary>
-    public partial class InputManager : GameSystemBase
+    public partial class InputManager : ComponentBase
     {
-        //this is used in some mobile platform for accelerometer stuff
+        // This is used in some mobile platform for accelerometer stuff
         internal const float G = 9.81f;
         internal const float DesiredSensorUpdateRate = 60;
 
         /// <summary>
-        /// The deadzone amount applied to all game controller axes
+        ///   Deadzone amount applied to all game controller axis.
         /// </summary>
         public static float GameControllerAxisDeadZone = 0.05f;
 
@@ -39,10 +40,10 @@ namespace Stride.Input
         private readonly Dictionary<GestureConfig, GestureRecognizer> gestureConfigToRecognizer = new Dictionary<GestureConfig, GestureRecognizer>();
         private readonly List<Dictionary<object, float>> virtualButtonValues = new List<Dictionary<object, float>>();
 
-        // Mapping of device guid to device
+        // Mapping of device GUID to device
         private readonly Dictionary<Guid, IInputDevice> devicesById = new Dictionary<Guid, IInputDevice>();
 
-        // List mapping GamePad index to the guid of the device
+        // List mapping GamePad index to the GUID of the device
         private readonly List<List<IGamePadDevice>> gamePadRequestedIndex = new List<List<IGamePadDevice>>();
 
         private readonly List<IKeyboardDevice> keyboards = new List<IKeyboardDevice>();
@@ -53,6 +54,8 @@ namespace Stride.Input
 
         private readonly Dictionary<Type, IInputEventRouter> eventRouters = new Dictionary<Type, IInputEventRouter>();
 
+        private GameContext gameContext;
+
         private Dictionary<IInputSource, EventHandler<TrackingCollectionChangedEventArgs>> devicesCollectionChangedActions = new Dictionary<IInputSource, EventHandler<TrackingCollectionChangedEventArgs>>();
 
 #if STRIDE_INPUT_RAWINPUT
@@ -60,12 +63,11 @@ namespace Stride.Input
 #endif
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InputManager"/> class.
+        ///   Initializes a new instance of the <see cref="InputManager"/> class.
         /// </summary>
-        internal InputManager(IServiceRegistry registry) : base(registry)
+        /// <param name="gameContext">The game context.</param>
+        public InputManager()
         {
-            Enabled = true;
-
             Gestures = new TrackingCollection<GestureConfig>();
             Gestures.CollectionChanged += GesturesOnCollectionChanged;
 
@@ -74,178 +76,191 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Gets or sets the configuration for virtual buttons.
+        ///   Gets or sets the configuration for virtual buttons.
         /// </summary>
-        /// <value>The current binding.</value>
+        /// <value>The current virtual buttons bindings.</value>
         public VirtualButtonConfigSet VirtualButtonConfigSet { get; set; }
 
         /// <summary>
-        /// List of the gestures to recognize.
+        ///   List of the gestures to recognize.
         /// </summary>
         public TrackingCollection<GestureConfig> Gestures { get; }
 
         /// <summary>
-        /// Input sources
+        ///   Gets the registered input sources.
         /// </summary>
         public TrackingCollection<IInputSource> Sources { get; }
 
         /// <summary>
-        /// Gets the reference to the accelerometer sensor. The accelerometer measures all the acceleration forces applied on the device.
+        ///   Gets the accelerometer sensor. The accelerometer measures all the acceleration forces
+        ///   applied on the device.
         /// </summary>
         public IAccelerometerSensor Accelerometer { get; private set; }
 
         /// <summary>
-        /// Gets the reference to the compass sensor. The compass measures the angle between the device top and the north.
+        ///   Gets the compass sensor. The compass measures the angle between the device top and the north.
         /// </summary>
         public ICompassSensor Compass { get; private set; }
 
         /// <summary>
-        /// Gets the reference to the gyroscope sensor. The gyroscope measures the rotation speed of the device.
+        ///   Gets the gyroscope sensor. The gyroscope measures the rotation speed of the device.
         /// </summary>
         public IGyroscopeSensor Gyroscope { get; private set; }
 
         /// <summary>
-        /// Gets the reference to the user acceleration sensor. The user acceleration sensor measures the acceleration produce by the user on the device (no gravity).
+        ///   Gets the user acceleration sensor. The user acceleration sensor measures the acceleration produced by
+        ///   the user on the device (no gravity).
         /// </summary>
         public IUserAccelerationSensor UserAcceleration { get; private set; }
 
         /// <summary>
-        /// Gets the reference to the gravity sensor. The gravity sensor measures the gravity vector applied to the device.
+        ///   Gets the gravity sensor. The gravity sensor measures the gravity vector applied to
+        ///   the device.
         /// </summary>
         public IGravitySensor Gravity { get; private set; }
 
         /// <summary>
-        /// Gets the reference to the orientation sensor. The orientation sensor measures orientation of device in the world.
+        ///   Gets the orientation sensor. The orientation sensor measures the orientation of the device in the world.
         /// </summary>
         public IOrientationSensor Orientation { get; private set; }
 
         /// <summary>
-        /// Gets the value indicating if the mouse position is currently locked or not.
+        ///   Gets a value indicating if the mouse position is currently locked.
         /// </summary>
         public bool IsMousePositionLocked => HasMouse && Mouse.IsPositionLocked;
 
         /// <summary>
-        /// All input events that happened since the last frame
+        ///   Gets all input events that have been registered since the last frame.
         /// </summary>
         public IReadOnlyList<InputEvent> Events => events;
 
         /// <summary>
-        /// Gets the collection of gesture events since the previous updates.
+        ///   Gets the collection of gesture events that have been registered since the previous updates.
         /// </summary>
         /// <value>The gesture events.</value>
         public IReadOnlyList<GestureEvent> GestureEvents => currentGestureEvents;
 
         /// <summary>
-        /// Gets a value indicating whether pointer device is available.
+        ///   Gets a value indicating whether a pointer device is available.
         /// </summary>
         /// <value><c>true</c> if pointer devices are available; otherwise, <c>false</c>.</value>
         public bool HasPointer { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether the mouse is available.
+        ///   Gets a value indicating whether a mouse is available.
         /// </summary>
-        /// <value><c>true</c> if the mouse is available; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if a mouse is available; otherwise, <c>false</c>.</value>
         public bool HasMouse { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether the keyboard is available.
+        ///   Gets a value indicating whether a keyboard is available.
         /// </summary>
-        /// <value><c>true</c> if the keyboard is available; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if a keyboard is available; otherwise, <c>false</c>.</value>
         public bool HasKeyboard { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether game controllers are available.
+        ///   Gets a value indicating whether game controllers are available.
         /// </summary>
         /// <value><c>true</c> if game controllers are available; otherwise, <c>false</c>.</value>
         public bool HasGameController { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether gamepads are available.
+        ///   Gets a value indicating whether gamepads are available.
         /// </summary>
         /// <value><c>true</c> if gamepads are available; otherwise, <c>false</c>.</value>
         public bool HasGamePad { get; private set; }
 
         /// <summary>
-        /// Gets the number of game controllers connected.
+        ///   Gets the number of game controllers connected.
         /// </summary>
         /// <value>The number of game controllers connected.</value>
         public int GameControllerCount { get; private set; }
 
         /// <summary>
-        /// Gets the number of gamepads connected.
+        ///   Gets the number of gamepads connected.
         /// </summary>
         /// <value>The number of gamepads connected.</value>
         public int GamePadCount { get; private set; }
 
         /// <summary>
-        /// Gets the first pointer device, or null if there is none
+        ///   Gets the first pointer device.
         /// </summary>
+        /// <value>
+        ///   The first pointer device, or <c>null</c> if there is none.
+        /// </value>
         public IPointerDevice Pointer { get; private set; }
 
         /// <summary>
-        /// Gets the first mouse pointer device, or null if there is none
+        ///   Gets the first mouse pointer device.
         /// </summary>
+        /// <value>
+        ///   The first mouse pointer device, or <c>null</c> if there is none.
+        /// </value>
         public IMouseDevice Mouse { get; private set; }
 
         /// <summary>
-        /// Gets the first keyboard device, or null if there is none
+        ///   Gets the first keyboard device.
         /// </summary>
+        /// <value>
+        ///   The first keyboard device, or <c>null</c> if there is none.
+        /// </value>
         public IKeyboardDevice Keyboard { get; private set; }
 
         /// <summary>
-        /// First device that supports text input, or null if there is none
+        ///   Gets the first device that supports text input.
         /// </summary>
+        /// <value>
+        ///   The first device that supports text input, or <c>null</c> if there is none.
+        /// </value>
         public ITextInputDevice TextInput { get; private set; }
 
         /// <summary>
-        /// Gets the first gamepad that was added to the device
+        ///   Gets the first gamepad that was added to the device.
         /// </summary>
         public IGamePadDevice DefaultGamePad { get; private set; }
 
         /// <summary>
-        /// Gets the collection of connected game controllers
+        ///   Gets the collection of connected game controllers.
         /// </summary>
         public IReadOnlyList<IGameControllerDevice> GameControllers => gameControllers;
 
         /// <summary>
-        /// Gets the collection of connected gamepads
+        ///   Gets the collection of connected gamepads.
         /// </summary>
         public IReadOnlyList<IGamePadDevice> GamePads => gamePads;
 
         /// <summary>
-        /// Gets the collection of connected pointing devices (mouses, touchpads, etc)
+        ///   Gets the collection of connected pointing devices (mouses, touchpads, etc).
         /// </summary>
         public IReadOnlyList<IPointerDevice> Pointers => pointers;
 
         /// <summary>
-        /// Gets the collection of connected keyboard inputs
+        ///   Gets the collection of connected keyboard inputs.
         /// </summary>
         public IReadOnlyList<IKeyboardDevice> Keyboards => keyboards;
 
         /// <summary>
-        /// Gets the collection of connected sensor devices
+        ///   Gets the collection of connected sensor devices.
         /// </summary>
         public IReadOnlyList<ISensorDevice> Sensors => sensors;
 
         /// <summary>
-        /// Should raw input be used on Windows
+        ///   Gets a value indicating whether Raw Input should be used on Windows.
         /// </summary>
         public bool UseRawInput
         {
 #if STRIDE_INPUT_RAWINPUT
-            get
-            {
-                return rawInputEnabled;
-            }
+            get => rawInputEnabled;
+
             set
             {
                 InputSourceWindowsRawInput rawInputSource = Sources.OfType<InputSourceWindowsRawInput>().FirstOrDefault();
 
                 if (value)
                 {
-                    if (rawInputSource == null)
+                    if (rawInputSource is null && gameContext is GameContextWinforms gameContextWinforms)
                     {
-                        rawInputSource = new InputSourceWindowsRawInput();
+                        rawInputSource = new InputSourceWindowsRawInput(gameContextWinforms.Control);
                         Sources.Add(rawInputSource);
                     }
                 }
@@ -260,50 +275,51 @@ namespace Stride.Input
                 rawInputEnabled = value;
             }
 #else
-            get { return false; }
+            get => false;
             set { }
 #endif
         }
 
         /// <summary>
-        /// Raised before new input is sent to their respective event listeners
+        ///   Raised before new input is sent to their respective event listeners.
         /// </summary>
         public event EventHandler<InputPreUpdateEventArgs> PreUpdateInput;
 
         /// <summary>
-        /// Raised when a device was removed from the system
+        ///   Raised when a device was removed from the system.
         /// </summary>
         public event EventHandler<DeviceChangedEventArgs> DeviceRemoved;
 
         /// <summary>
-        /// Raised when a device was added to the system
+        ///   Raised when a device was added to the system.
         /// </summary>
         public event EventHandler<DeviceChangedEventArgs> DeviceAdded;
 
         /// <summary>
-        /// Helper method to transform mouse and pointer event positions to sub rectangles
+        ///   Transforms mouse and pointer event positions to sub rectangles.
         /// </summary>
-        /// <param name="fromSize">the size of the source rectangle</param>
-        /// <param name="destinationRectangle">The destination viewport rectangle</param>
-        /// <param name="screenCoordinates">The normalized screen coordinates</param>
-        /// <returns></returns>
+        /// <param name="fromSize">The size of the source rectangle.</param>
+        /// <param name="destinationRectangle">The destination viewport rectangle.</param>
+        /// <param name="screenCoordinates">The normalized screen coordinates.</param>
+        /// <returns>
+        ///   The coordinates transformed to be relative to the <paramref name="destinationRectangle"/> and
+        ///   proportional to its size.
+        /// </returns>
         public static Vector2 TransformPosition(Size2F fromSize, RectangleF destinationRectangle, Vector2 screenCoordinates)
         {
-            return new Vector2((screenCoordinates.X * fromSize.Width - destinationRectangle.X) / destinationRectangle.Width,
+            return new Vector2(
+                (screenCoordinates.X * fromSize.Width - destinationRectangle.X) / destinationRectangle.Width,
                 (screenCoordinates.Y * fromSize.Height - destinationRectangle.Y) / destinationRectangle.Height);
         }
 
-        public override void Initialize()
+        public void Initialize(GameContext gameContext)
         {
-            base.Initialize();
-
-            Game.Activated += OnApplicationResumed;
-            Game.Deactivated += OnApplicationPaused;
+            this.gameContext = gameContext ?? throw new ArgumentNullException(nameof(gameContext));
 
             AddSources();
 
-            // After adding initial devices, reassign gamepad id's
-            // this creates a beter index assignment in the case where you have both an xbox controller and another controller at startup
+            // After adding initial devices, reassign gamepad Ids.
+            // This creates a beter index assignment in the case where you have both an Xbox Controller and another controller at startup
             var sortedGamePads = GamePads.OrderBy(x => x.CanChangeIndex);
 
             foreach (var gamePad in sortedGamePads)
@@ -329,64 +345,70 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Lock the mouse's position and hides it until the next call to <see cref="UnlockMousePosition"/>.
+        ///   Locks the mouse position and hides it until the next call to <see cref="UnlockMousePosition"/>.
         /// </summary>
-        /// <param name="forceCenter">If true will make sure that the mouse cursor position moves to the center of the client window</param>
-        /// <remarks>This function has no effects on devices that does not have mouse</remarks>
+        /// <param name="forceCenter">A value indicating whether to force the mouse cursor position to stay in the center of the client window.</param>
+        /// <remarks>
+        ///   This function has no effects on devices that does not have mouse.
+        /// </remarks>
         public void LockMousePosition(bool forceCenter = false)
         {
             // Lock primary mouse
             if (HasMouse)
-            {
                 Mouse.LockPosition(forceCenter);
-            }
         }
 
         /// <summary>
-        /// Unlock the mouse's position previously locked by calling <see cref="LockMousePosition"/> and restore the mouse visibility.
+        ///   Unlocks the mouse position previously locked by calling <see cref="LockMousePosition"/> and restores
+        ///   the mouse visibility.
         /// </summary>
-        /// <remarks>This function has no effects on devices that does not have mouse</remarks>
+        /// <remarks>
+        ///   This function has no effects on devices that does not have mouse.
+        /// </remarks>
         public void UnlockMousePosition()
         {
             if (HasMouse)
-            {
                 Mouse.UnlockPosition();
-            }
         }
 
         /// <summary>
-        /// Gets the first gamepad with a specific index
+        ///   Gets the first gamepad with a specific index.
         /// </summary>
-        /// <param name="gamePadIndex">The index of the gamepad</param>
-        /// <returns>The gamepad, or null if no gamepad has this index</returns>
-        /// <exception cref="IndexOutOfRangeException">When <paramref name="gamePadIndex"/> is less than 0</exception>
+        /// <param name="gamePadIndex">The index of the gamepad.</param>
+        /// <returns>The gamepad, or <c>null</c> if no gamepad is found with this index.</returns>
+        /// <exception cref="IndexOutOfRangeException"><paramref name="gamePadIndex"/> is less than 0.</exception>
         public IGamePadDevice GetGamePadByIndex(int gamePadIndex)
         {
-            if (gamePadIndex < 0) throw new IndexOutOfRangeException(nameof(gamePadIndex));
+            if (gamePadIndex < 0)
+                throw new IndexOutOfRangeException(nameof(gamePadIndex));
             if (gamePadIndex >= gamePadRequestedIndex.Count)
                 return null;
+
             return gamePadRequestedIndex[gamePadIndex].FirstOrDefault();
         }
 
         /// <summary>
-        /// Gets all the gamepads with a specific index
+        ///   Gets all the gamepads with a specific index.
         /// </summary>
-        /// <param name="gamePadIndex">The index of the gamepad</param>
-        /// <returns>The gamepads, or null if no gamepad has this index</returns>
-        /// <exception cref="IndexOutOfRangeException">When <paramref name="gamePadIndex"/> is less than 0</exception>
+        /// <param name="gamePadIndex">The index of the gamepad.</param>
+        /// <returns>The gamepads, or <c>null</c> if no gamepad is found with this index.</returns>
+        /// <exception cref="IndexOutOfRangeException"><paramref name="gamePadIndex"/> is less than 0.</exception>
         public IEnumerable<IGamePadDevice> GetGamePadsByIndex(int gamePadIndex)
         {
-            if (gamePadIndex < 0) throw new IndexOutOfRangeException(nameof(gamePadIndex));
+            if (gamePadIndex < 0)
+                throw new IndexOutOfRangeException(nameof(gamePadIndex));
             if (gamePadIndex >= gamePadRequestedIndex.Count)
                 return null;
+
             return gamePadRequestedIndex[gamePadIndex];
         }
 
         /// <summary>
-        /// Rescans all input devices in order to query new device connected. See remarks.
+        ///   Rescans all input devices in order to detect new devices connected to the system.
         /// </summary>
         /// <remarks>
-        /// This method could take several milliseconds and should be used at specific time in a game where performance is not crucial (pause, configuration screen...etc.)
+        ///   This method could take several milliseconds and should be used at specific time in a game where
+        ///   performance is not crucial (pause, configuration screens, etc.).
         /// </remarks>
         public void Scan()
         {
@@ -396,14 +418,15 @@ namespace Stride.Input
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             ResetGlobalInputState();
 
             // Recycle input event to reduce garbage generation
             foreach (var evt in events)
             {
-                // The router takes care of putting the event back in its respective InputEventPool since it already has the type information
+                // The router takes care of putting the event back in its respective InputEventPool
+                // since it already has the type information
                 eventRouters[evt.GetType()].PoolEvent(evt);
             }
             events.Clear();
@@ -414,7 +437,7 @@ namespace Stride.Input
                 source.Update();
             }
 
-            // Update all input sources so they can send events and update their state
+            // Update all input devices so they can send events and update their state
             foreach (var inputDevice in devices)
             {
                 inputDevice.Update(events);
@@ -426,9 +449,8 @@ namespace Stride.Input
             // Send events to input listeners
             foreach (var evt in events)
             {
-                IInputEventRouter router;
-                if (!eventRouters.TryGetValue(evt.GetType(), out router))
-                    throw new InvalidOperationException($"The event type {evt.GetType()} was not registered with the input manager and cannot be processed");
+                if (!eventRouters.TryGetValue(evt.GetType(), out IInputEventRouter router))
+                    throw new InvalidOperationException($"The event type {evt.GetType()} was not registered with the input manager and cannot be processed.");
 
                 router.RouteEvent(evt);
             }
@@ -441,9 +463,10 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Registers an object that listens for certain types of events using the specialized versions of <see cref="IInputEventListener&lt;"/>
+        ///   Registers an object that listens for certain types of events using the specialized versions of
+        ///   <see cref="IInputEventListener{T}"/>
         /// </summary>
-        /// <param name="listener">The listener to register</param>
+        /// <param name="listener">The listener to register.</param>
         public void AddListener(IInputEventListener listener)
         {
             foreach (var router in eventRouters)
@@ -453,9 +476,9 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Removes a previously registered event listener
+        ///   Removes a previously registered event listener.
         /// </summary>
-        /// <param name="listener">The listener to remove</param>
+        /// <param name="listener">The listener to remove.</param>
         public void RemoveListener(IInputEventListener listener)
         {
             foreach (var pair in eventRouters)
@@ -465,35 +488,37 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Gets a binding value for the specified name and the specified config extract from the current <see cref="VirtualButtonConfigSet"/>.
+        ///   Gets a binding value for the specified name and the specified config extract from the current
+        ///   <see cref="VirtualButtonConfigSet"/>.
         /// </summary>
         /// <param name="configIndex">An index to a <see cref="VirtualButtonConfig"/> stored in the <see cref="VirtualButtonConfigSet"/></param>
         /// <param name="bindingName">Name of the binding.</param>
         /// <returns>The value of the binding.</returns>
         public virtual float GetVirtualButton(int configIndex, object bindingName)
         {
-            if (VirtualButtonConfigSet == null || configIndex < 0 || configIndex >= virtualButtonValues.Count)
-            {
+            if (VirtualButtonConfigSet is null || configIndex < 0 || configIndex >= virtualButtonValues.Count)
                 return 0.0f;
-            }
 
-            float value;
-            virtualButtonValues[configIndex].TryGetValue(bindingName, out value);
+            virtualButtonValues[configIndex].TryGetValue(bindingName, out float value);
             return value;
         }
 
-        private void OnApplicationPaused(object sender, EventArgs e)
+        /// <summary>
+        ///   Pauses all input sources.
+        /// </summary>
+        public void Pause()
         {
-            // Pause sources
             foreach (var source in Sources)
             {
                 source.Pause();
             }
         }
 
-        private void OnApplicationResumed(object sender, EventArgs e)
+        /// <summary>
+        ///   Resumes all input sources.
+        /// </summary>
+        public void Resume()
         {
-            // Resume sources
             foreach (var source in Sources)
             {
                 source.Resume();
@@ -502,32 +527,34 @@ namespace Stride.Input
 
         private void SourcesOnCollectionChanged(object o, TrackingCollectionChangedEventArgs e)
         {
-            var source = (IInputSource)e.Item;
+            var source = (IInputSource) e.Item;
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
                     if (Sources.Count(x => x == source) > 1)
-                        throw new InvalidOperationException("Input Source already added");
+                        throw new InvalidOperationException("Input Source already added.");
 
                     EventHandler<TrackingCollectionChangedEventArgs> eventHandler = (sender, args) => InputDevicesOnCollectionChanged(source, args);
                     devicesCollectionChangedActions.Add(source, eventHandler);
                     source.Devices.CollectionChanged += eventHandler;
                     source.Initialize(this);
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     source.Dispose();
                     source.Devices.CollectionChanged -= devicesCollectionChangedActions[source];
                     devicesCollectionChangedActions.Remove(source);
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(e.Action));
             }
         }
 
         /// <summary>
-        /// Registers an input event type to process
+        /// Registers an input event type to process.
         /// </summary>
-        /// <typeparam name="TEventType">The event type to process</typeparam>
+        /// <typeparam name="TEventType">The event type to process.</typeparam>
         public void RegisterEventType<TEventType>() where TEventType : InputEvent, new()
         {
             var type = typeof(TEventType);
@@ -535,16 +562,16 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Inserts any registered event back into it's <see cref="InputEventPool&lt;"/>.
+        ///   Inserts any registered event back into it's <see cref="InputEventPool{T}"/>.
         /// </summary>
-        /// <param name="inputEvent">The event to insert into it's event pool</param>
+        /// <param name="inputEvent">The event to insert into it's event pool.</param>
         public void PoolInputEvent(InputEvent inputEvent)
         {
             eventRouters[inputEvent.GetType()].PoolEvent(inputEvent);
         }
 
         /// <summary>
-        /// Resets the <see cref="Sources"/> collection back to it's default values
+        ///   Resets the <see cref="Sources"/> collection back to it's default values.
         /// </summary>
         public void ResetSources()
         {
@@ -553,16 +580,16 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Suggests an index that is unused for a given <see cref="IGamePadDevice"/>
+        ///   Suggests an index that is unused for a given <see cref="IGamePadDevice"/>.
         /// </summary>
-        /// <param name="gamePad">The gamepad to find an index for</param>
-        /// <returns>The unused gamepad index</returns>
+        /// <param name="gamePad">The gamepad to find an index for.</param>
+        /// <returns>The unused gamepad index.</returns>
         public int GetFreeGamePadIndex(IGamePadDevice gamePad)
         {
-            if (gamePad == null)
+            if (gamePad is null)
                 throw new ArgumentNullException(nameof(gamePad));
             if (!GamePads.Contains(gamePad))
-                throw new InvalidOperationException("Not a valid gamepad");
+                throw new InvalidOperationException("Not a valid gamepad.");
 
             // Find a new index for this game controller
             int targetIndex = 0;
@@ -582,23 +609,29 @@ namespace Stride.Input
 
         private void AddSources()
         {
-            // Create input sources
-            switch (Game.Context.ContextType)
+            var context = gameContext;
+
+            // Add window specific input source
+            var windowInputSource = InputSourceFactory.NewWindowInputSource(context);
+            Sources.Add(windowInputSource);
+
+            // Add platform specific input sources
+            switch (context.ContextType)
             {
                 case AppContextType.Desktop:
 #if STRIDE_UI_WINFORMS || STRIDE_UI_WPF
-                    Sources.Add(new InputSourceWinforms());
                     Sources.Add(new InputSourceWindowsDirectInput());
                     if (InputSourceWindowsXInput.IsSupported())
                         Sources.Add(new InputSourceWindowsXInput());
-#endif
 #if STRIDE_INPUT_RAWINPUT
-                    if (rawInputEnabled)
-                        Sources.Add(new InputSourceWindowsRawInput());
+                    if (rawInputEnabled && context is GameContextWinforms gameContextWinforms)
+                        Sources.Add(new InputSourceWindowsRawInput(gameContextWinforms.Control));
+#endif
 #endif
                     break;
+
                 default:
-                    throw new InvalidOperationException("GameContext type is not supported by the InputManager");
+                    throw new InvalidOperationException("GameContext type is not supported by the InputManager.");
             }
         }
 
@@ -614,12 +647,6 @@ namespace Stride.Input
             {
                 source.Dispose();
             }
-
-            Game.Activated -= OnApplicationResumed;
-            Game.Deactivated -= OnApplicationPaused;
-
-            // ensure that OnApplicationPaused is called before destruction, when Game.Deactivated event is not triggered.
-            OnApplicationPaused(this, EventArgs.Empty);
         }
 
         private void GesturesOnCollectionChanged(object sender, TrackingCollectionChangedEventArgs trackingCollectionChangedEventArgs)
@@ -629,14 +656,18 @@ namespace Stride.Input
                 case NotifyCollectionChangedAction.Add:
                     StartGestureRecognition((GestureConfig)trackingCollectionChangedEventArgs.Item);
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     StopGestureRecognition((GestureConfig)trackingCollectionChangedEventArgs.Item);
                     break;
+
                 case NotifyCollectionChangedAction.Replace:
                 case NotifyCollectionChangedAction.Reset:
                     throw new NotSupportedException("ActivatedGestures collection was modified but the action was not supported by the system.");
+
                 case NotifyCollectionChangedAction.Move:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -657,9 +688,7 @@ namespace Stride.Input
         {
             // Set mouse position for first mouse device
             if (HasMouse)
-            {
                 Mouse.SetPosition(normalizedPosition);
-            }
         }
 
         private void InputDevicesOnCollectionChanged(IInputSource source, TrackingCollectionChangedEventArgs e)
@@ -669,11 +698,13 @@ namespace Stride.Input
                 case NotifyCollectionChangedAction.Add:
                     OnInputDeviceAdded(source, (IInputDevice)e.Item);
                     break;
+
                 case NotifyCollectionChangedAction.Remove:
                     OnInputDeviceRemoved((IInputDevice)e.Item);
                     break;
+
                 default:
-                    throw new InvalidOperationException("Unsupported collection operation");
+                    throw new InvalidOperationException("Unsupported collection operation.");
             }
         }
 
@@ -681,33 +712,33 @@ namespace Stride.Input
         {
             devices.Add(device);
             if (devicesById.ContainsKey(device.Id))
-                throw new InvalidOperationException($"Device with Id {device.Id}({device.Name}) already registered to {devicesById[device.Id].Name}");
+                throw new InvalidOperationException($"Device with Id {device.Id} ({device.Name}) already registered to {devicesById[device.Id].Name}.");
 
             devicesById.Add(device.Id, device);
 
-            if (device is IKeyboardDevice)
+            if (device is IKeyboardDevice keyboard)
             {
-                RegisterKeyboard((IKeyboardDevice)device);
+                RegisterKeyboard(keyboard);
                 keyboards.Sort((l, r) => -l.Priority.CompareTo(r.Priority));
             }
-            else if (device is IPointerDevice)
+            else if (device is IPointerDevice pointer)
             {
-                RegisterPointer((IPointerDevice)device);
+                RegisterPointer(pointer);
                 pointers.Sort((l, r) => -l.Priority.CompareTo(r.Priority));
             }
-            else if (device is IGameControllerDevice)
+            else if (device is IGameControllerDevice controller)
             {
-                RegisterGameController((IGameControllerDevice)device);
+                RegisterGameController(controller);
                 gameControllers.Sort((l, r) => -l.Priority.CompareTo(r.Priority));
             }
-            else if (device is IGamePadDevice)
+            else if (device is IGamePadDevice gamePad)
             {
-                RegisterGamePad((IGamePadDevice)device);
+                RegisterGamePad(gamePad);
                 gamePads.Sort((l, r) => -l.Priority.CompareTo(r.Priority));
             }
-            else if (device is ISensorDevice)
+            else if (device is ISensorDevice sensor)
             {
-                RegisterSensor((ISensorDevice)device);
+                RegisterSensor(sensor);
             }
             UpdateConnectedDevices();
 
@@ -717,31 +748,31 @@ namespace Stride.Input
         private void OnInputDeviceRemoved(IInputDevice device)
         {
             if (!devices.Contains(device))
-                throw new InvalidOperationException("Input device was not registered");
+                throw new InvalidOperationException("Input device was not registered.");
 
             var source = device.Source;
             devices.Remove(device);
             devicesById.Remove(device.Id);
 
-            if (device is IKeyboardDevice)
+            if (device is IKeyboardDevice keyboard)
             {
-                UnregisterKeyboard((IKeyboardDevice)device);
+                UnregisterKeyboard(keyboard);
             }
-            else if (device is IPointerDevice)
+            else if (device is IPointerDevice pointer)
             {
-                UnregisterPointer((IPointerDevice)device);
+                UnregisterPointer(pointer);
             }
-            else if (device is IGameControllerDevice)
+            else if (device is IGameControllerDevice controller)
             {
-                UnregisterGameController((IGameControllerDevice)device);
+                UnregisterGameController(controller);
             }
-            else if (device is IGamePadDevice)
+            else if (device is IGamePadDevice gamePad)
             {
-                UnregisterGamePad((IGamePadDevice)device);
+                UnregisterGamePad(gamePad);
             }
-            else if (device is ISensorDevice)
+            else if (device is ISensorDevice sensor)
             {
-                UnregisterSensor((ISensorDevice)device);
+                UnregisterSensor(sensor);
             }
             UpdateConnectedDevices();
 
@@ -816,10 +847,10 @@ namespace Stride.Input
 
         private void UnregisterGamePad(IGamePadDevice gamePad)
         {
-            // Free the gamepad index in the gamepad list
-            // this will allow another gamepad to use this index again
+            // Free the gamepad index in the gamepad list.
+            //   This will allow another gamepad to use this index again
             if (gamePadRequestedIndex.Count <= gamePad.Index || gamePad.Index < 0)
-                throw new IndexOutOfRangeException("Gamepad index was out of range");
+                throw new IndexOutOfRangeException("Gamepad index was out of range.");
 
             gamePadRequestedIndex[gamePad.Index].Remove(gamePad);
 
@@ -853,7 +884,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Updates the <see cref="gamePadRequestedIndex"/> collection to contains every gamepad with a given index
+        ///   Updates the <see cref="gamePadRequestedIndex"/> collection to contains every gamepad with a given index.
         /// </summary>
         private void UpdateGamePadRequestedIndices()
         {
@@ -940,8 +971,7 @@ namespace Stride.Input
 
             public void TryAddListener(IInputEventListener listener)
             {
-                var specific = listener as IInputEventListener<TEventType>;
-                if (specific != null)
+                if (listener is IInputEventListener<TEventType> specific)
                 {
                     Listeners.Add(specific);
                 }

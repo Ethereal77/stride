@@ -6,18 +6,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
+using Stride.Core;
+using Stride.Core.IO;
+using Stride.Core.Diagnostics;
+using Stride.Core.Extensions;
+using Stride.Core.ProjectTemplating;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Templates;
-using Stride.Core;
-using Stride.Core.Diagnostics;
-using Stride.Core.IO;
-using Stride.Core.ProjectTemplating;
 using Stride.Graphics;
 using Stride.Shaders.Parser.Mixins;
-using Stride.Core.VisualStudio;
-using Stride.Core.Extensions;
 
 namespace Stride.Assets.Templates
 {
@@ -32,24 +32,26 @@ namespace Stride.Assets.Templates
 
         public static void AddOption(TemplateGeneratorParameters parameters, string optionName, object optionValue)
         {
-            Dictionary<string, object> options;
-            if (!parameters.Tags.TryGetValue(OptionsKey, out options))
+            if (!parameters.Tags.TryGetValue(OptionsKey, out Dictionary<string, object> options))
             {
                 options = new Dictionary<string, object>();
                 parameters.Tags.Add(OptionsKey, options);
             }
+
             options[optionName] = optionValue;
         }
 
         public static IReadOnlyDictionary<string, object> GetOptions(TemplateGeneratorParameters parameters)
         {
-            Dictionary<string, object> options;
-            return parameters.Tags.TryGetValue(OptionsKey, out options) ? options : new Dictionary<string, object>();
+            return parameters.Tags.TryGetValue(OptionsKey, out Dictionary<string, object> options) ?
+                options : new Dictionary<string, object>();
         }
 
         public static IEnumerable<SolutionProject> UpdatePackagePlatforms(PackageTemplateGeneratorParameters packageParameters, ICollection<SelectedSolutionPlatform> platforms, DisplayOrientation orientation, bool forcePlatformRegeneration)
         {
-            if (platforms == null) throw new ArgumentNullException(nameof(platforms));
+            if (platforms is null)
+                throw new ArgumentNullException(nameof(platforms));
+
             var logger = packageParameters.Logger;
             var package = packageParameters.Package;
             var name = packageParameters.Name;
@@ -107,7 +109,8 @@ namespace Stride.Assets.Templates
                 var projectName = projectFullPath.GetFileNameWithoutExtension();
 
                 // Don't add a platform that is already in the package
-                var existingProject = package.Session.Projects.OfType<SolutionProject>().FirstOrDefault(x => x.FullPath == projectFullPath);
+                var existingProject = package.Session.Projects.OfType<SolutionProject>()
+                                                              .FirstOrDefault(x => x.FullPath == projectFullPath);
 
                 var projectGuid = Guid.NewGuid();
 
@@ -122,6 +125,12 @@ namespace Stride.Assets.Templates
                     package.Session.Projects.Remove(existingProject);
                 }
 
+                if (platform.Platform.Type == PlatformType.Windows)
+                {
+                    var isNETCore = RuntimeInformation.FrameworkDescription.StartsWith(".NET Core");
+                    AddOption(parameters, "TargetFramework", isNETCore ? "netcoreapp3.1" : "net461");
+                }
+
                 var projectDirectory = Path.GetDirectoryName(projectFullPath.ToWindowsPath());
                 if (projectDirectory != null && Directory.Exists(projectDirectory))
                 {
@@ -131,7 +140,7 @@ namespace Stride.Assets.Templates
                     }
                     catch (Exception)
                     {
-                        logger.Warning($"Unable to delete directory [{projectDirectory}]");
+                        logger.Warning($"Unable to delete directory [{projectDirectory}].");
                     }
                 }
 
@@ -162,7 +171,7 @@ namespace Stride.Assets.Templates
                     }
                     catch (Exception)
                     {
-                        logger.Warning($"Unable to delete directory [{projectDirectory}]");
+                        logger.Warning($"Unable to delete directory [{projectDirectory}].");
                     }
                 }
 
@@ -189,15 +198,14 @@ namespace Stride.Assets.Templates
             AddOption(parameters, "CurrentPlatform", platformType);
             AddOption(parameters, "Orientation", orientation);
 
-            List<string> generatedFiles;
-            var project = GenerateTemplate(parameters, templateRelativePath, projectName, platformType, graphicsPlatform, projectType, out generatedFiles, projectGuid);
+            var project = GenerateTemplate(parameters, templateRelativePath, projectName, platformType, graphicsPlatform, projectType, out List<string> generatedFiles, projectGuid);
 
             // Special case for sdfx files
             foreach (var file in generatedFiles)
             {
                 if (file.EndsWith(".sdfx"))
                 {
-                    ConvertXkfxToCSharp(file);
+                    ConvertSdfxToCSharp(file);
                 }
             }
 
@@ -207,15 +215,15 @@ namespace Stride.Assets.Templates
         public static SolutionProject GenerateTemplate(TemplateGeneratorParameters parameters, UFile templateRelativePath, string projectName, PlatformType platformType, GraphicsPlatform? graphicsPlatform, ProjectType projectType, out List<string> generatedFiles, Guid? projectGuidArg = null)
         {
             var options = GetOptions(parameters);
-            var outputDirectoryPath = UPath.Combine(parameters.OutputDirectory, (UDirectory)projectName);
+            var outputDirectoryPath = UPath.Combine(parameters.OutputDirectory, (UDirectory) projectName);
             Directory.CreateDirectory(outputDirectoryPath);
 
             generatedFiles = new List<string>();
             parameters.Logger.Verbose($"Generating {projectName}...");
 
             var projectGuid = projectGuidArg ?? Guid.NewGuid();
-            var packagePath = UPath.Combine(outputDirectoryPath, (UFile)(projectName + Package.PackageFileExtension));
-            var projectFullPath = UPath.Combine(outputDirectoryPath, (UFile)(projectName + ".csproj"));
+            var packagePath = UPath.Combine(outputDirectoryPath, (UFile) (projectName + Package.PackageFileExtension));
+            var projectFullPath = UPath.Combine(outputDirectoryPath, (UFile) (projectName + ".csproj"));
 
             var package = new Package
             {
@@ -245,14 +253,14 @@ namespace Stride.Assets.Templates
         {
             if (platformType != PlatformType.Shared && !graphicsPlatform.HasValue)
             {
-                throw new ArgumentException(@"Expecting a value for GraphicsPlatform when platformType is specified", nameof(graphicsPlatform));
+                throw new ArgumentException(@"Expecting a value for GraphicsPlatform when platformType is specified.", nameof(graphicsPlatform));
             }
 
             var rootTemplateDir = parameters.Description.TemplateDirectory;
 
             var templateFilePath = UPath.Combine(rootTemplateDir, templateRelativePath);
             var projectTemplate = ProjectTemplate.Load(templateFilePath);
-            // TODO assemblies are not configurable from the outside
+            // TODO: Assemblies are not configurable from the outside
             projectTemplate.Assemblies.Add(typeof(ProjectType).Assembly.FullName);
             projectTemplate.Assemblies.Add(typeof(StrideConfig).Assembly.FullName);
             projectTemplate.Assemblies.Add(typeof(GraphicsPlatform).Assembly.FullName);
@@ -262,7 +270,9 @@ namespace Stride.Assets.Templates
             AddOption(parameters, "PackageName", package.Meta.Name);
 
             // PackageNameCode, same as PackageName without '.' and ' '.
-            AddOption(parameters, "PackageNameCode", package.Meta.Name.Replace(" ", string.Empty).Replace(".", string.Empty));
+            AddOption(parameters, "PackageNameCode",
+                package.Meta.Name.Replace(" ", string.Empty)
+                                 .Replace(".", string.Empty));
 
             AddOption(parameters, "PackageDisplayName", package.Meta.Title ?? package.Meta.Name);
             // Escape illegal characters for the short name
@@ -277,17 +287,25 @@ namespace Stride.Assets.Templates
             AddOption(parameters, "ProjectType", projectType);
             AddOption(parameters, "Namespace", parameters.Namespace ?? Utilities.BuildValidNamespaceName(package.Meta.Name));
 
+            if (platformType == PlatformType.Windows)
+            {
+                var isNETCore = RuntimeInformation.FrameworkDescription.StartsWith(".NET Core");
+                AddOption(parameters, "TargetFramework", isNETCore ? "netcoreapp3.1" : "net461");
+            }
+
             return projectTemplate;
         }
 
         public static void Progress(ILogger log, string message, int stepIndex, int stepCount)
         {
-            if (message == null) throw new ArgumentNullException(nameof(message));
+            if (message is null)
+                throw new ArgumentNullException(nameof(message));
+
             var progress = log as IProgressStatus;
             progress?.OnProgressChanged(new ProgressStatusEventArgs(message, stepIndex, stepCount));
         }
 
-        private static void ConvertXkfxToCSharp(string sdfxfile)
+        private static void ConvertSdfxToCSharp(string sdfxfile)
         {
             var sdfileContent = File.ReadAllText(sdfxfile);
             var result = ShaderMixinCodeGen.GenerateCsharp(sdfileContent, sdfxfile);
@@ -306,7 +324,7 @@ namespace Stride.Assets.Templates
                 }
                 catch (Exception)
                 {
-                    logger.Warning($"Unable to delete directory [{projectDirectory}]");
+                    logger.Warning($"Unable to delete directory [{projectDirectory}].");
                 }
             }
         }

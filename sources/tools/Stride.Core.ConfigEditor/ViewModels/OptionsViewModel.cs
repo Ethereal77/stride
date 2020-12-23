@@ -3,12 +3,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Input;
 using System.IO;
-using System.Windows;
+using System.Windows.Input;
 
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.ViewModel;
@@ -71,10 +67,10 @@ namespace Stride.ConfigEditor.ViewModels
         private string stridePath;
         public string StridePath
         {
-            get { return stridePath; }
+            get => stridePath;
             set
             {
-                if (SetValue(ref stridePath, value, "StridePath"))
+                if (SetValue(ref stridePath, value, nameof(StridePath)))
                     CheckStridePath();
             }
         }
@@ -82,8 +78,8 @@ namespace Stride.ConfigEditor.ViewModels
         private bool isStridePathValid;
         public bool IsStridePathValid
         {
-            get { return isStridePathValid; }
-            set { SetValue(ref isStridePathValid, value, "IsStridePathValid"); }
+            get => isStridePathValid;
+            set => SetValue(ref isStridePathValid, value, nameof(IsStridePathValid));
         }
 
         private void CheckStridePath()
@@ -94,10 +90,10 @@ namespace Stride.ConfigEditor.ViewModels
         private string strideConfigFilename;
         public string StrideConfigFilename
         {
-            get { return strideConfigFilename; }
+            get => strideConfigFilename;
             set
             {
-                if (SetValue(ref strideConfigFilename, value, "StrideConfigFilename"))
+                if (SetValue(ref strideConfigFilename, value, nameof(StrideConfigFilename)))
                     CheckStrideConfigFilename();
             }
         }
@@ -105,8 +101,8 @@ namespace Stride.ConfigEditor.ViewModels
         private bool isStrideConfigFilenameValid;
         public bool IsStrideConfigFilenameValid
         {
-            get { return isStrideConfigFilenameValid; }
-            set { SetValue(ref isStrideConfigFilenameValid, value, "IsStrideConfigFilenameValid"); }
+            get => isStrideConfigFilenameValid;
+            set => SetValue(ref isStrideConfigFilenameValid, value, nameof(IsStrideConfigFilenameValid));
         }
 
         private void CheckStrideConfigFilename()
@@ -130,7 +126,7 @@ namespace Stride.ConfigEditor.ViewModels
         {
             get
             {
-                if (acceptCommand == null)
+                if (acceptCommand is null)
                     acceptCommand = new AnonymousCommand(Accept);
                 return acceptCommand;
             }

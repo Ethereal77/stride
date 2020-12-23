@@ -7,11 +7,10 @@ using Stride.Core;
 namespace Stride.Rendering.Materials.ComputeColors
 {
     /// <summary>
-    /// A shader outputing a color/vector value.
+    ///   Represents a shader that computes a single scalar value.
     /// </summary>
     [DataContract("ComputeShaderClassScalar")]
     [Display("Shader")]
-    // TODO: This class has been made abstract to be removed from the editor - unabstract it to re-enable it!
     public class ComputeShaderClassScalar : ComputeShaderClassBase<IComputeScalar>, IComputeScalar
     {
     }

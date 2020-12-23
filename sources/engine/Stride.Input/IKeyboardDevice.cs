@@ -2,30 +2,26 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Collections.Generic;
-
-using Stride.Core.Collections;
-
 namespace Stride.Input
 {
     /// <summary>
-    /// A keyboard device
+    ///   Defines the interface for interacting with a keyboard device.
     /// </summary>
     public interface IKeyboardDevice : IInputDevice
     {
         /// <summary>
-        /// The keys that have been pressed since the last frame
+        ///   Gets the keys that have been pressed since the last frame.
         /// </summary>
-        IReadOnlySet<Keys> PressedKeys { get; }
+        Core.Collections.IReadOnlySet<Keys> PressedKeys { get; }
 
         /// <summary>
-        /// The keys that have been released since the last frame
+        ///   Gets the keys that have been released since the last frame.
         /// </summary>
-        IReadOnlySet<Keys> ReleasedKeys { get; }
+        Core.Collections.IReadOnlySet<Keys> ReleasedKeys { get; }
 
         /// <summary>
-        /// List of keys that are currently down on this keyboard
+        ///   Gets the keys that are currently down on this keyboard.
         /// </summary>
-        IReadOnlySet<Keys> DownKeys { get; }
+        Core.Collections.IReadOnlySet<Keys> DownKeys { get; }
     }
 }

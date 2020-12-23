@@ -14,7 +14,7 @@ using Stride.Games;
 namespace Stride.UI.Controls
 {
     /// <summary>
-    /// A text viewer that scrolls automatically the text from right to left.
+    ///   Represents a text viewer that scrolls automatically the text from right to left.
     /// </summary>
     [DataContract(nameof(ScrollingText))]
     [DebuggerDisplay("ScrollingText - Name={Name}")]
@@ -25,7 +25,8 @@ namespace Stride.UI.Controls
         private float elementWidth;
 
         /// <summary>
-        /// The index in <see cref="TextBlock.Text"/> defining the position of the next letter to add to <see cref="TextToDisplay"/>.
+        ///   The index in <see cref="TextBlock.Text"/> defining the position of the next letter to add to
+        ///   <see cref="TextToDisplay"/>.
         /// </summary>
         private int nextLetterIndex;
 
@@ -35,12 +36,12 @@ namespace Stride.UI.Controls
         private bool repeatText = true;
 
         /// <summary>
-        /// The current offset of the text in the Ox axis.
+        ///   Gets the current offset of the text in the X axis.
         /// </summary>
         public float ScrollingOffset { get; private set; }
 
         /// <summary>
-        /// The total accumulated width of the scrolling text since the last call the <see cref="ResetDisplayingText"/>
+        ///   Gets the total accumulated width of the scrolling text since the last call the <see cref="ResetDisplayingText"/>.
         /// </summary>
         public float AccumulatedWidth { get; private set; }
 
@@ -51,34 +52,39 @@ namespace Stride.UI.Controls
         }
 
         /// <summary>
-        /// Gets or sets the scrolling speed of the text. The unit is in virtual pixels.
+        ///   Gets or sets the scrolling speed of the text, in virtual pixels.
         /// </summary>
         /// <remarks>The value is coerced in the range [0, <see cref="float.MaxValue"/>].</remarks>
-        /// <userdoc>The scrolling speed of the text. The unit is in virtual pixels.</userdoc>
+        /// <userdoc>The scrolling speed of the text, in virtual pixels.</userdoc>
         [DataMember]
         [DataMemberRange(0.0f, 3)]
         [Display(category: BehaviorCategory)]
         [DefaultValue(40.0f)]
         public float ScrollingSpeed
         {
-            get { return scrollingSpeed; }
+            get => scrollingSpeed;
+
             set
             {
                 if (float.IsNaN(value))
                     return;
-                scrollingSpeed = MathUtil.Clamp(value, 0.0f, float.MaxValue); }
+
+                scrollingSpeed = MathUtil.Clamp(value, 0.0f, float.MaxValue);
+            }
         }
 
         /// <summary>
-        /// Gets or sets the desired number of character in average to display at a given time. This value is taken in account during the measurement stage of the element.
+        ///   Gets or sets the desired number of characters in average to display at a given time.
+        ///   This value is taken in account during the measurement stage of the element.
         /// </summary>
-        /// <userdoc>The desired number of character in average to display at a given time. This value is taken in account during the measurement stage of the element.</userdoc>
+        /// <userdoc>The desired number of character in average to display at a given time.</userdoc>
         [DataMember]
         [Display(category: BehaviorCategory)]
         [DefaultValue((uint)10)]
         public uint DesiredCharacterNumber
         {
-            get { return desiredCharacterNumber; }
+            get => desiredCharacterNumber;
+
             set
             {
                 if (desiredCharacterNumber == value)
@@ -90,15 +96,16 @@ namespace Stride.UI.Controls
         }
 
         /// <summary>
-        /// Gets or sets the a value indicating if the text message must be repeated (wrapped) or not.
+        ///   Gets or sets a value indicating if the text message must be repeated (wrapped) or not.
         /// </summary>
-        /// <userdoc>True if the text message must be repeated (wrapped), false otherwise.</userdoc>
+        /// <userdoc>Whether the text message must be repeated (wrapped).</userdoc>
         [DataMember]
         [Display(category: BehaviorCategory)]
         [DefaultValue(true)]
         public bool RepeatText
         {
-            get { return repeatText; }
+            get => repeatText;
+
             set
             {
                 if (repeatText == value)
@@ -110,19 +117,21 @@ namespace Stride.UI.Controls
         }
 
         /// <summary>
-        /// Append the provided text to the end of the current <see cref="TextBlock.Text"/> without restarting the display to the begin of the <see cref="TextBlock.Text"/>.
+        ///   Append the provided text to the end of the current <see cref="TextBlock.Text"/> without restarting
+        ///   the display to the beginning of the <see cref="TextBlock.Text"/>.
         /// </summary>
         /// <param name="text">The text to append</param>
         public void AppendText(string text)
         {
-            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
 
             textHasBeenAppended = true;
             Text += text;
         }
 
         /// <summary>
-        /// Clear the currently scrolling text.
+        ///   Clears the currently scrolling text.
         /// </summary>
         public void ClearText()
         {
@@ -131,7 +140,8 @@ namespace Stride.UI.Controls
 
         protected override void OnTextChanged()
         {
-            if (!textHasBeenAppended) // Text has been modified by the user -> reset scrolling offsets
+            // Text has been modified by the user: Reset scrolling offsets
+            if (!textHasBeenAppended)
                 ResetDisplayingText();
 
             textHasBeenAppended = false;
@@ -148,9 +158,9 @@ namespace Stride.UI.Controls
         public override string TextToDisplay => textToDisplay;
 
         /// <summary>
-        /// Calculate the width of the text to display in virtual pixels size.
+        ///   Calculates the width of the text to display, in virtual pixels.
         /// </summary>
-        /// <returns>The size of the text in virtual pixels</returns>
+        /// <returns>The size of the text, in virtual pixels</returns>
         private float CalculateTextToDisplayWidth()
         {
             return CalculateTextSize(TextToDisplay).X;
@@ -168,18 +178,18 @@ namespace Stride.UI.Controls
 
         private void UpdateAndAdjustDisplayText(GameTime time = null)
         {
-            if (string.IsNullOrEmpty(Text))
+            if (string.IsNullOrEmpty(Text) || Font is null || CalculateTextSize(Text).X <= float.Epsilon)
                 return;
 
-            var elapsedSeconds = time != null ? (float)time.Elapsed.TotalSeconds : 0f;
+            var elapsedSeconds = time != null ? (float) time.Elapsed.TotalSeconds : 0f;
 
-            // calculate the shift offset
+            // Calculate the shift offset
             var nextOffsetShift = elapsedSeconds * ScrollingSpeed - ScrollingOffset;
 
-            // calculate the size of the next TextToDisplay required
+            // Calculate the size of the next TextToDisplay required
             var sizeNextTextToDisplay = nextOffsetShift + elementWidth;
 
-            // append characters to TextToDisplay so that it measures more than 'sizeNextTextToDisplay'
+            // Append characters to TextToDisplay so that it measures more than 'sizeNextTextToDisplay'
             var textToDisplayWidth = CalculateTextToDisplayWidth();
             while (textToDisplayWidth < sizeNextTextToDisplay && nextLetterIndex < Text.Length)
             {
@@ -198,7 +208,7 @@ namespace Stride.UI.Controls
             if (CalculateTextSize(textToDisplay).X < nextOffsetShift)
                 textToDisplay = "";
 
-            // remove characters at the beginning of TextToDisplay as long as possible
+            // Remove characters at the beginning of TextToDisplay as long as possible
             var fontSize = new Vector2(ActualTextSize, ActualTextSize);
             while (textToDisplay.Length > 1 && Font.MeasureString(textToDisplay, ref fontSize, 1).X < nextOffsetShift)
             {
@@ -227,9 +237,9 @@ namespace Stride.UI.Controls
         }
 
         /// <summary>
-        /// Measure the size of the <see cref="ScrollingText"/> element.
+        ///   Measures the size of the <see cref="ScrollingText"/> element.
         /// </summary>
-        /// <returns>The size of the element</returns>
+        /// <returns>The size of the element.</returns>
         public Vector3 MeasureSize()
         {
             if (Font == null)

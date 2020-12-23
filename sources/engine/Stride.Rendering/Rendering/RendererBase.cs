@@ -5,44 +5,39 @@
 using System;
 
 using Stride.Core;
-using Stride.Rendering.Compositing;
 
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Base implementation of <see cref="IGraphicsRenderer"/>
+    ///   Represents the base implementation of <see cref="IGraphicsRenderer"/>.
     /// </summary>
     [DataContract]
     public abstract class RendererBase : RendererCoreBase, IGraphicsRenderer
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RendererBase"/> class.
+        ///   Initializes a new instance of the <see cref="RendererBase"/> class.
         /// </summary>
-        protected RendererBase() : this(null)
-        {
-        }
+        protected RendererBase() : this(name: null) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ComponentBase" /> class.
+        ///   Initializes a new instance of the <see cref="RendererBase"/> class.
         /// </summary>
-        /// <param name="name">The name attached to this component</param>
-        protected RendererBase(string name)
-            : base(name)
-        {
-        }
+        /// <param name="name">The name attached to this renderer. Specify <c>null</c> to use the type name automatically.</param>
+        protected RendererBase(string name) : base(name) { }
+
 
         /// <summary>
-        /// Main drawing method for this renderer that must be implemented. 
+        ///   Main drawing method for this renderer that must be implemented.
         /// </summary>
-        /// <param name="context">The context.</param>
+        /// <param name="context">The remdering context.</param>
         protected abstract void DrawCore(RenderDrawContext context);
 
         /// <summary>
-        /// Draws this renderer with the specified context.
+        ///   Draws this renderer with the specified context.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <exception cref="System.ArgumentNullException">context</exception>
-        /// <exception cref="System.InvalidOperationException">Cannot use a different context between Load and Draw</exception>
+        /// <param name="context">The rendering context.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="context"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="InvalidOperationException">Cannot use a different context between Load and Draw.</exception>
         public void Draw(RenderDrawContext context)
         {
             if (Enabled)

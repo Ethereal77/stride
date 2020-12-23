@@ -7,45 +7,46 @@ using System;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// A resource allocated by <see cref="GraphicsResourceAllocator"/> providing allocation informations.
+    ///   Represents a resource allocated by <see cref="GraphicsResourceAllocator"/> providing allocation information.
     /// </summary>
     public sealed class GraphicsResourceLink
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GraphicsResourceLink"/> class.
+        ///   Initializes a new instance of the <see cref="GraphicsResourceLink"/> class.
         /// </summary>
         /// <param name="resource">The graphics resource.</param>
-        /// <exception cref="System.ArgumentNullException">resource</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="resource"/> is a <c>null</c> reference.</exception>
         internal GraphicsResourceLink(GraphicsResourceBase resource)
         {
             Resource = resource ?? throw new ArgumentNullException(nameof(resource));
         }
 
+
         /// <summary>
-        /// The graphics resource.
+        ///   Gets the graphics resource.
         /// </summary>
         public GraphicsResourceBase Resource { get; }
 
         /// <summary>
-        /// Gets the last time this resource was accessed.
+        ///   Gets the last time this resource was accessed.
         /// </summary>
         /// <value>The last access time.</value>
         public DateTime LastAccessTime { get; internal set; }
 
         /// <summary>
-        /// Gets the total count of access to this resource (include Increment and Decrement)
+        ///   Gets the total count of access to this resource (include incrementing / decrementing its reference count).
         /// </summary>
         /// <value>The access total count.</value>
         public long AccessTotalCount { get; internal set; }
 
         /// <summary>
-        /// Gets the access count since last recycle policy was run.
+        ///   Gets the access count since the last recycle policy was run.
         /// </summary>
         /// <value>The access count since last recycle.</value>
         public long AccessCountSinceLastRecycle { get; internal set; }
 
         /// <summary>
-        /// The number of active reference to this resource.
+        ///   Gets the number of active references to this resource.
         /// </summary>
         public int ReferenceCount { get; internal set; }
     }

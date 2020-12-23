@@ -5,6 +5,7 @@
 using System;
 
 using Stride.Core.Annotations;
+using Stride.Core.Settings;
 
 namespace Stride.Core.Diagnostics
 {
@@ -14,12 +15,28 @@ namespace Stride.Core.Diagnostics
     /// </summary>
     public abstract partial class Logger : ILogger
     {
-        private static object _lock = new object();
+        private static readonly object _lock = new object();
+
+        private static LogMessageType? minimumLevelEnabled;
 
         /// <summary>
-        ///   Gets the minimum <see cref="LogMessageType"/> level enabled for this logger.
+        ///   Gets the minimum log level enabled from the configuration.
         /// </summary>
-        public static readonly LogMessageType MinimumLevelEnabled = LogMessageType.Info; // AppConfig.GetConfiguration<LoggerConfig>("Logger").Level;
+        public static LogMessageType MinimumLevelEnabled
+        {
+            get
+            {
+                if (minimumLevelEnabled.HasValue)
+                    return minimumLevelEnabled.Value;
+
+                var loggerConfig = AppSettingsManager.Settings.GetSettings<LoggerConfig>();
+                minimumLevelEnabled = loggerConfig?.Level ?? LogMessageType.Info; // Default value
+                return minimumLevelEnabled.Value;
+            }
+
+            set => minimumLevelEnabled = value;
+        }
+
         /// <summary>
         ///   Value that indicates whether the debug message logging is enabled at a global level.
         /// </summary>

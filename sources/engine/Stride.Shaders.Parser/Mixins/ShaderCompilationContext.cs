@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Stride.Core;
-using Stride.Core.Extensions;
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Ast.Stride;
@@ -20,51 +19,38 @@ namespace Stride.Shaders.Parser.Mixins
 {
     internal class ShaderCompilationContext
     {
-        #region Private static members
-
         /// <summary>
-        /// A lock to perform a thread safe analysis of the mixins.
+        ///   Lock to perform a thread safe analysis of the mixins.
         /// </summary>
-        private static readonly Object AnalysisLock = new Object();
+        private static readonly object AnalysisLock = new object();
 
-        #endregion
-
-        #region Public members
 
         /// <summary>
-        /// List of all the mixins
+        ///   List of all the mixins.
         /// </summary>
         public HashSet<ModuleMixinInfo> MixinInfos = new HashSet<ModuleMixinInfo>();
 
         /// <summary>
-        /// Log of all the warnings and errors
+        ///   Logger to log all the shaders warnings and errors.
         /// </summary>
         private LoggerResult ErrorWarningLog;
 
-        #endregion
-
-        #region Constructor
 
         /// <summary>
-        /// Default constructor for cloning
+        ///   Initializes a new instance of the <see cref="ShaderCompilationContext"/> class.
         /// </summary>
         public ShaderCompilationContext(LoggerResult log)
         {
-            if (log == null) throw new ArgumentNullException("log");
-
-            ErrorWarningLog = log;
+            ErrorWarningLog = log ?? throw new ArgumentNullException(nameof(log));
         }
 
-        #endregion
 
-        #region Public methods
-
-        public void Run(){}
+        public void Run() { }
 
         /// <summary>
-        /// Runs the first step of the analysis on the context
+        ///   Runs the first step of the analysis on the context.
         /// </summary>
-        /// <param name="mixinInfos">the context</param>
+        /// <param name="mixinInfos">The mixins to preprocess.</param>
         public void Preprocess(HashSet<ModuleMixinInfo> mixinInfos)
         {
             MixinInfos = mixinInfos;
@@ -73,36 +59,33 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Specifically analyze a module
+        ///   Analyzes a specific module.
         /// </summary>
-        /// <param name="mixinInfo">the ModuleMixinInfo</param>
+        /// <param name="mixinInfo">The ModuleMixinInfo.</param>
         public void Analyze(ModuleMixinInfo mixinInfo)
         {
             ModuleSemanticAnalysisPerMixin(mixinInfo);
         }
-        
+
         /// <summary>
-        /// Get the module mixin based on the ShaderSource
+        ///   Gets the module mixin based on the ShaderSource.
         /// </summary>
-        /// <param name="shaderSource">the ShaderSource</param>
-        /// <returns>the ModuleMixin</returns>
+        /// <param name="shaderSource">The ShaderSource.</param>
+        /// <returns>The ModuleMixin.</returns>
         public ModuleMixin GetModuleMixinFromShaderSource(ShaderSource shaderSource)
         {
             var found = MixinInfos.FirstOrDefault(x => x.ShaderSource.Equals(shaderSource));
-            return found == null ? null : found.Mixin;
+            return found?.Mixin;
         }
 
-        #endregion
 
-        #region Private methods
-        
         /// <summary>
-        /// Get all the declarations of all the mixins
+        ///   Gets all the declarations of all the mixins.
         /// </summary>
-        /// <param name="mixinInfos">list of ModuleMixinInfo</param>
+        /// <param name="mixinInfos">List of ModuleMixinInfo.</param>
         private void BuildModuleMixins(HashSet<ModuleMixinInfo> mixinInfos)
         {
-            // type analysis
+            // Type analysis
             foreach (var mixinInfo in mixinInfos)
                 PerformTypeAnalysis(mixinInfo);
             foreach (var mixinInfo in mixinInfos)
@@ -110,28 +93,38 @@ namespace Stride.Shaders.Parser.Mixins
 
             lock (AnalysisLock)
             {
+                // Reset error status of mixins so we get the same error messages for each compilation
+                foreach (var mixinInfo in mixinInfos)
+                {
+                    var mixin = mixinInfo.Mixin;
+                    if (mixin.DependenciesStatus == AnalysisStatus.Error ||
+                        mixin.DependenciesStatus == AnalysisStatus.Cyclic)
+
+                        mixin.DependenciesStatus = AnalysisStatus.None;
+                }
+
                 foreach (var mixinInfo in mixinInfos)
                     BuildMixinDependencies(mixinInfo);
 
-                // build Virtual tables
+                // Build virtual tables
                 foreach (var mixinInfo in mixinInfos)
                     BuildVirtualTables(mixinInfo);
             }
         }
 
         /// <summary>
-        /// Get all the declarations in the mixin
+        ///   Gets all the declarations in the mixin.
         /// </summary>
-        /// <param name="mixinInfo">The mixin info</param>
+        /// <param name="mixinInfo">The mixin info.</param>
         private void BuildModuleMixin(ModuleMixinInfo mixinInfo)
         {
             lock (mixinInfo)
             {
                 if (mixinInfo.Mixin.ModuleMixinBuildStatus == AnalysisStatus.Complete)
                     return;
-                
+
                 if (mixinInfo.Mixin.ModuleMixinBuildStatus != AnalysisStatus.None)
-                    throw new Exception("BuildModuleMixin failed for mixin " + mixinInfo.MixinName);
+                    throw new Exception($"BuildModuleMixin failed for mixin {mixinInfo.MixinName}.");
 
                 mixinInfo.Mixin.ModuleMixinBuildStatus = AnalysisStatus.InProgress;
 
@@ -146,29 +139,28 @@ namespace Stride.Shaders.Parser.Mixins
                     var vtindex = 0;
                     foreach (var member in mixinAst.Members)
                     {
-                        if (member is MethodDeclaration)
+                        if (member is MethodDeclaration methodDeclaration)
                         {
-                            moduleMixin.LocalVirtualTable.Methods.Add(new MethodDeclarationShaderCouple(member as MethodDeclaration, mixinAst));
+                            moduleMixin.LocalVirtualTable.Methods.Add(new MethodDeclarationShaderCouple(methodDeclaration, mixinAst));
                             member.SetTag(StrideTags.VirtualTableReference, new VTableReference { Shader = mixinInfo.MixinName, Slot = vtindex++ });
                         }
-                        else if (member is Variable)
+                        else if (member is Variable variable)
                         {
-                            var variable = member as Variable;
                             moduleMixin.LocalVirtualTable.Variables.Add(new VariableShaderCouple(variable, mixinAst));
-                            // remove null initial values
+                            // Remove null initial values
                             var initValue = variable.InitialValue as VariableReferenceExpression;
                             if (initValue != null && initValue.Name.Text == "null")
                                 variable.InitialValue = null;
 
                         }
-                        else if (member is Typedef)
-                            moduleMixin.LocalVirtualTable.Typedefs.Add(member as Typedef);
-                        else if (member is StructType)
-                            moduleMixin.LocalVirtualTable.StructureTypes.Add(member as StructType);
+                        else if (member is Typedef typedef)
+                            moduleMixin.LocalVirtualTable.Typedefs.Add(typedef);
+                        else if (member is StructType structType)
+                            moduleMixin.LocalVirtualTable.StructureTypes.Add(structType);
                         else
                             moduleMixin.RemainingNodes.Add(member);
 
-                        // set a tag on the members to easily recognize them from the local declarations/definitions
+                        // Set a tag on the members to easily recognize them from the local declarations/definitions
                         member.SetTag(StrideTags.ShaderScope, moduleMixin);
                         member.SetTag(StrideTags.BaseDeclarationMixin, mixinInfo.MixinName);
                     }
@@ -199,32 +191,35 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Get the list of dependencies for the mixin (base classes only)
+        ///   Gets the list of dependencies for the mixin (base classes only).
         /// </summary>
-        /// <param name="mixinInfo">the mixin info</param>
-        /// <returns>A collection of class names</returns>
+        /// <param name="mixinInfo">The mixin info.</param>
+        /// <returns>A collection of class names.</returns>
         private void BuildMixinDependencies(ModuleMixinInfo mixinInfo)
         {
             var mixin = mixinInfo.Mixin;
 
-            if (mixin.DependenciesStatus == AnalysisStatus.Cyclic || mixin.DependenciesStatus == AnalysisStatus.Error || mixinInfo.Mixin.DependenciesStatus == AnalysisStatus.Complete)
+            if (mixin.DependenciesStatus == AnalysisStatus.Cyclic ||
+                mixin.DependenciesStatus == AnalysisStatus.Error ||
+                mixinInfo.Mixin.DependenciesStatus == AnalysisStatus.Complete)
                 return;
+
             if (mixin.DependenciesStatus == AnalysisStatus.InProgress)
             {
                 ErrorWarningLog.Error(StrideMessageCode.ErrorCyclicDependency, mixin.Shader.Span, mixin.Shader);
                 mixin.DependenciesStatus = AnalysisStatus.Cyclic;
                 return;
             }
+
             if (mixin.DependenciesStatus == AnalysisStatus.None)
             {
                 mixin.DependenciesStatus = AnalysisStatus.InProgress;
 
                 foreach (var baseClass in mixin.Shader.BaseClasses)
                 {
-                    // search based on class name and macros. It is enough since a ShaderMixinSource only have ShaderClassSource as base mixin (and no ShaderMixinSource that may redefine the macros)
+                    // Search based on class name and macros. It is enough since a ShaderMixinSource only have ShaderClassSource as base mixin (and no ShaderMixinSource that may redefine the macros)
                     var bcInfo = MixinInfos.FirstOrDefault(x => x.MixinName == baseClass.Name.Text && AreMacrosEqual(x.Macros, mixinInfo.Macros));
-
-                    if (bcInfo == null)
+                    if (bcInfo is null)
                     {
                         ErrorWarningLog.Error(StrideMessageCode.ErrorDependencyNotInModule, baseClass.Span, baseClass, mixin.MixinName);
                         mixin.DependenciesStatus = AnalysisStatus.Error;
@@ -234,7 +229,8 @@ namespace Stride.Shaders.Parser.Mixins
                     var bc = bcInfo.Mixin;
 
                     BuildMixinDependencies(bcInfo);
-                    if (bc.DependenciesStatus == AnalysisStatus.Error || bc.DependenciesStatus == AnalysisStatus.Cyclic)
+                    if (bc.DependenciesStatus == AnalysisStatus.Error ||
+                        bc.DependenciesStatus == AnalysisStatus.Cyclic)
                     {
                         mixin.DependenciesStatus = AnalysisStatus.Error;
                         return;
@@ -255,25 +251,25 @@ namespace Stride.Shaders.Parser.Mixins
                         mixinInfo.Instanciated = false;
                 }
 
-                // do not look for extern keyword but for type name
+                // Do not look for extern keyword but for type name
                 foreach (var variable in mixin.LocalVirtualTable.Variables)
                 {
                     var variableTypeName = variable.Variable.Type.Name.Text;
-                    if (variable.Variable.Type is ArrayType) // support for array of externs
-                        variableTypeName = (variable.Variable.Type as ArrayType).Type.Name.Text;
-                    
+                    // Support for array of externs
+                    if (variable.Variable.Type is ArrayType arrayType)
+                        variableTypeName = arrayType.Type.Name.Text;
+
                     var baseClassInfo = MixinInfos.FirstOrDefault(x => x.MixinName == variableTypeName);
                     if (baseClassInfo != null)
                     {
                         variable.Variable.Qualifiers |= Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Extern; // add the extern keyword but simpler analysis in the future
-                        if (variable.Variable.InitialValue is VariableReferenceExpression && (variable.Variable.InitialValue as VariableReferenceExpression).Name.Text == "stage")
+                        if (variable.Variable.InitialValue is VariableReferenceExpression variableReferenceExpression && variableReferenceExpression.Name.Text == "stage")
                             mixin.StageInitVariableDependencies.Add(variable.Variable, baseClassInfo.Mixin);
                         else
                             mixin.VariableDependencies.Add(variable.Variable, baseClassInfo.Mixin);
 
-                        if (variable.Variable.Type is ArrayType)
+                        if (variable.Variable.Type is ArrayType typeArray)
                         {
-                            var typeArray = variable.Variable.Type as ArrayType;
                             typeArray.Type.TypeInference.Declaration = baseClassInfo.MixinAst;
                         }
                         else
@@ -288,9 +284,9 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Performs type analysis for each mixin
+        ///   Performs type analysis for each mixin.
         /// </summary>
-        /// <param name="mixinInfo">the ModuleMixinInfo</param>
+        /// <param name="mixinInfo">The ModuleMixinInfo.</param>
         private void PerformTypeAnalysis(ModuleMixinInfo mixinInfo)
         {
             lock (mixinInfo)
@@ -299,27 +295,29 @@ namespace Stride.Shaders.Parser.Mixins
                 {
                     mixinInfo.Mixin.TypeAnalysisStatus = AnalysisStatus.InProgress;
 
-                    // TODO: order + typedef
+                    // TODO: Order + typedef
                     var typeAnalyzer = new StrideTypeAnalysis(new ParsingResult());
                     typeAnalyzer.Run(mixinInfo.MixinAst);
                     mixinInfo.Mixin.TypeAnalysisStatus = AnalysisStatus.Complete;
                 }
                 else if (mixinInfo.Mixin.TypeAnalysisStatus != AnalysisStatus.Complete)
                 {
-                    throw new Exception("Type analysis failed for mixin " + mixinInfo.MixinName);
+                    throw new Exception($"Type analysis failed for mixin {mixinInfo.MixinName}.");
                 }
             }
         }
 
         /// <summary>
-        /// Build the virtual table for the specified mixin
+        ///   Builds the virtual table for the specified mixin.
         /// </summary>
-        /// <param name="mixinInfo">the mixin</param>
+        /// <param name="mixinInfo">The mixin.</param>
         private void BuildVirtualTables(ModuleMixinInfo mixinInfo)
         {
             var mixin = mixinInfo.Mixin;
 
-            if (mixin.VirtualTableStatus == AnalysisStatus.Error || mixin.VirtualTableStatus == AnalysisStatus.Cyclic || mixin.VirtualTableStatus == AnalysisStatus.Complete)
+            if (mixin.VirtualTableStatus == AnalysisStatus.Error ||
+                mixin.VirtualTableStatus == AnalysisStatus.Cyclic ||
+                mixin.VirtualTableStatus == AnalysisStatus.Complete)
                 return;
 
             if (!mixinInfo.Instanciated)
@@ -331,7 +329,7 @@ namespace Stride.Shaders.Parser.Mixins
                 BuildVirtualTables(depInfo);
             }
 
-            // merge the virtual tables
+            // Merge the virtual tables
             foreach (var dep in mixin.InheritanceList)
                 mixin.VirtualTable.MergeWithLocalVirtualTable(dep.LocalVirtualTable, mixin.MixinName, ErrorWarningLog);
 
@@ -364,9 +362,9 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Check if the class is stage
+        ///   Checks if the class is stage.
         /// </summary>
-        /// <param name="mixin">the ModuleMixin to check</param>
+        /// <param name="mixin">The ModuleMixin to check.</param>
         private void CheckStageClass(ModuleMixin mixin)
         {
             mixin.StageOnlyClass = mixin.VirtualTable.Variables.All(x => x.Variable.Qualifiers.Contains(StrideStorageQualifier.Stage)
@@ -376,21 +374,23 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Performs an semantic analysis of the mixin inside its own context
+        ///   Performs an semantic analysis of the mixin inside its own context.
         /// </summary>
-        /// <param name="mixinInfo">The mixin to analyze</param>
+        /// <param name="mixinInfo">The mixin to analyze.</param>
         private void ModuleSemanticAnalysisPerMixin(ModuleMixinInfo mixinInfo)
         {
-            if (mixinInfo == null)
+            if (mixinInfo is null)
                 return;
 
             var mixin = mixinInfo.Mixin;
 
-            if (mixin.DependenciesStatus != AnalysisStatus.Complete || mixin.VirtualTableStatus != AnalysisStatus.Complete)
+            if (mixin.DependenciesStatus != AnalysisStatus.Complete ||
+                mixin.VirtualTableStatus != AnalysisStatus.Complete)
                 return;
 
             if (mixin.SemanticAnalysisStatus == AnalysisStatus.Complete)
                 return;
+
             if (mixin.SemanticAnalysisStatus == AnalysisStatus.InProgress)
             {
                 ErrorWarningLog.Error(StrideMessageCode.ErrorCyclicDependency, mixin.Shader.Span, mixin.Shader);
@@ -398,16 +398,17 @@ namespace Stride.Shaders.Parser.Mixins
             }
             if (!mixinInfo.Instanciated)
                 return;
-            
+
             mixin.SemanticAnalysisStatus = AnalysisStatus.InProgress;
 
-            // analyze the base mixins
+            // Analyze the base mixins
             foreach (var baseClass in mixin.BaseMixins)
             {
                 var baseClassInfo = MixinInfos.FirstOrDefault(x => x.Mixin == baseClass);
                 ModuleSemanticAnalysisPerMixin(baseClassInfo);
 
-                if (baseClassInfo.Mixin.SemanticAnalysisStatus == AnalysisStatus.Error || baseClassInfo.Mixin.SemanticAnalysisStatus == AnalysisStatus.Cyclic)
+                if (baseClassInfo.Mixin.SemanticAnalysisStatus == AnalysisStatus.Error ||
+                    baseClassInfo.Mixin.SemanticAnalysisStatus == AnalysisStatus.Cyclic)
                 {
                     mixin.SemanticAnalysisStatus = AnalysisStatus.Error;
                     return;
@@ -427,12 +428,13 @@ namespace Stride.Shaders.Parser.Mixins
                 }
             }
 
-            // analyze the extern mixins
+            // Analyze the extern mixins
             foreach (var externMixin in mixin.VariableDependencies)
             {
                 var externMixinInfo = MixinInfos.FirstOrDefault(x => x.Mixin == externMixin.Value);
                 ModuleSemanticAnalysisPerMixin(externMixinInfo);
-                if (externMixinInfo.Mixin.SemanticAnalysisStatus == AnalysisStatus.Error || externMixinInfo.Mixin.SemanticAnalysisStatus == AnalysisStatus.Cyclic)
+                if (externMixinInfo.Mixin.SemanticAnalysisStatus == AnalysisStatus.Error ||
+                    externMixinInfo.Mixin.SemanticAnalysisStatus == AnalysisStatus.Cyclic)
                 {
                     mixin.SemanticAnalysisStatus = AnalysisStatus.Error;
                     return;
@@ -454,17 +456,18 @@ namespace Stride.Shaders.Parser.Mixins
             {
                 var depInfo = MixinInfos.FirstOrDefault(x => x.Mixin == dep);
                 ModuleSemanticAnalysisPerMixin(depInfo);
-                if (dep.SemanticAnalysisStatus == AnalysisStatus.Error || dep.SemanticAnalysisStatus == AnalysisStatus.Cyclic)
+                if (dep.SemanticAnalysisStatus == AnalysisStatus.Error ||
+                    dep.SemanticAnalysisStatus == AnalysisStatus.Cyclic)
                 {
                     mixin.SemanticAnalysisStatus = AnalysisStatus.Error;
                     return;
                 }
             }
 
-            // check the extern stage references (but do not change the type inference)
+            // Check the extern stage references (but do not change the type inference)
             var externList = new List<ModuleMixin>();
 
-            // NOTE: we cannot use the members .Values of .Keys because it internally modifies the dictionary, creating a Dictionary<K,T>.ValueCollection which cannot be cloned (no default constructor).
+            // NOTE: We cannot use the members .Values of .Keys because it internally modifies the dictionary, creating a Dictionary<K,T>.ValueCollection which cannot be cloned (no default constructor)
             // This results in a exception in the DeepClone code.
             mixin.InheritanceList.ForEach(dep => externList.AddRange(dep.VariableDependencies.Select(x => x.Value)));
             externList.AddRange(mixin.VariableDependencies.Select(x => x.Value));
@@ -476,13 +479,13 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Check that the stage function calls are possible and that the stage declared variable have a correct type
+        ///   Checks that the stage function calls are possible and that the stage declared variable have a correct type.
         /// </summary>
-        /// <param name="externMixin">the mixin to look into</param>
-        /// <param name="contextMixin">the root mixin</param>
+        /// <param name="externMixin">The mixin to look into.</param>
+        /// <param name="contextMixin">The root mixin.</param>
         private void CheckReferencesFromExternMixin(ModuleMixin externMixin, ModuleMixin contextMixin)
         {
-            // test that the root mixin has the correct type
+            // Test that the root mixin has the correct type
             foreach (var variable in externMixin.ParsingInfo.StageInitializedVariables)
             {
                 if (variable.Type.Name.Text != contextMixin.MixinName && contextMixin.InheritanceList.All(x => x.MixinName == variable.Type.Name.Text)) // since it is the same AST, compare the object?
@@ -492,11 +495,11 @@ namespace Stride.Shaders.Parser.Mixins
             foreach (var stageCall in externMixin.ParsingInfo.StageMethodCalls)
             {
                 var decl = contextMixin.FindTopThisFunction(stageCall).FirstOrDefault();
-                if (decl == null)
+                if (decl is null)
                     ErrorWarningLog.Error(StrideMessageCode.ErrorExternStageFunctionNotFound, stageCall.Span, stageCall, externMixin.MixinName, contextMixin.MixinName);
             }
 
-            // recursive calls
+            // Recursive calls
             foreach (var mixin in externMixin.InheritanceList)
             {
                 CheckReferencesFromExternMixin(mixin, contextMixin);
@@ -509,23 +512,19 @@ namespace Stride.Shaders.Parser.Mixins
                 CheckReferencesFromExternMixin(externModule.Value, contextMixin);
         }
 
-        #endregion
-
-        #region Private static methods
 
         /// <summary>
-        /// Tests the equality of the macro sets.
+        ///   Tests the equality of two sets of macros .
         /// </summary>
         /// <param name="macros0">The first set of macros.</param>
         /// <param name="macros1">The second set of macros.</param>
-        /// <returns>True if the sets match, false otherwise.</returns>
+        /// <returns><c>true</c> if the sets match; <c>false</c> otherwise.</returns>
         private static bool AreMacrosEqual(Stride.Core.Shaders.Parser.ShaderMacro[] macros0, Stride.Core.Shaders.Parser.ShaderMacro[] macros1)
         {
             return macros0.All(macro => macros1.Any(x => x.Name == macro.Name && x.Definition == macro.Definition)) && macros1.All(macro => macros0.Any(x => x.Name == macro.Name && x.Definition == macro.Definition));
         }
-
-        #endregion
     }
+
 
     [DataContract]
     internal class VTableReference
@@ -536,8 +535,7 @@ namespace Stride.Shaders.Parser.Mixins
 
         public override bool Equals(object obj)
         {
-            var vtr = obj as VTableReference;
-            if (vtr == null)
+            if (!(obj is VTableReference vtr))
                 return false;
 
             return Slot == vtr.Slot && Shader == vtr.Shader;

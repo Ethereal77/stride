@@ -13,33 +13,40 @@ using Stride.Core.Serialization;
 namespace Stride.Core.Reflection
 {
     /// <summary>
-    /// Provides a basic infrastructure to associate an assembly with some categories and to
-    /// query and register on new registered assembly event.
+    ///   Provides basic infrastructure to associate categories to an assembly and to query and register on new
+    ///   registered assembly event.
     /// </summary>
     public static class AssemblyRegistry
     {
-        private static readonly Logger Log = GlobalLogger.GetLogger("AssemblyRegistry");
+        private static readonly Lazy<Logger> Log = new Lazy<Logger>(() => GlobalLogger.GetLogger("AssemblyRegistry"));
+
         private static readonly object Lock = new object();
+
         private static readonly Dictionary<string, HashSet<Assembly>> MapCategoryToAssemblies = new Dictionary<string, HashSet<Assembly>>();
         private static readonly Dictionary<Assembly, HashSet<string>> MapAssemblyToCategories = new Dictionary<Assembly, HashSet<string>>();
+
         private static readonly Dictionary<Assembly, ScanTypes> AssemblyToScanTypes = new Dictionary<Assembly, ScanTypes>();
         private static readonly Dictionary<string, Assembly> AssemblyNameToAssembly = new Dictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
 
+        static AssemblyRegistry()
+        {
+            Register(typeof(AssemblyRegistry).Assembly, "core"); // To be included in FindAll()
+        }
+
         /// <summary>
-        /// Occurs when an assembly is registered.
+        ///   Occurs when an assembly is registered.
         /// </summary>
         public static event EventHandler<AssemblyRegisteredEventArgs> AssemblyRegistered;
 
         /// <summary>
-        /// Occurs when an assembly is registered.
+        ///   Occurs when an assembly is unregistered.
         /// </summary>
         public static event EventHandler<AssemblyRegisteredEventArgs> AssemblyUnregistered;
 
         /// <summary>
-        /// Finds all registered assemblies.
+        ///   Finds all registered assemblies.
         /// </summary>
         /// <returns>A set of all assembly registered.</returns>
-        /// <exception cref="System.ArgumentNullException">categories</exception>
         [NotNull]
         public static HashSet<Assembly> FindAll()
         {
@@ -50,10 +57,10 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Gets a type from its <see cref="DataContractAttribute.Alias"/> or <see cref="DataAliasAttribute.Name"/>.
+        ///   Gets a type from its <see cref="DataContractAttribute.Alias"/> or <see cref="DataAliasAttribute.Name"/>.
         /// </summary>
-        /// <param name="alias"></param>
-        /// <returns></returns>
+        /// <param name="alias">The alias of the type.</param>
+        /// <returns>The type with the specified alias; or <c>null</c> if not found.</returns>
         [CanBeNull]
         public static Type GetTypeFromAlias([NotNull] string alias)
         {
@@ -64,56 +71,57 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Gets a type by its typename already loaded in the assembly registry.
+        ///   Gets a type by its typename already loaded in the assembly registry.
         /// </summary>
-        /// <param name="fullyQualifiedTypeName">The typename</param>
-        /// <param name="throwOnError"></param>
-        /// <returns>The type instance or null if not found.</returns>
+        /// <param name="fullyQualifiedTypeName">The type name, fully qualified (including namespaces).</param>
+        /// <param name="throwOnError">A value indicating whether to throw an exception in case the type can't be resolved.</param>
+        /// <returns>The queried type; or <c>null</c> if not found.</returns>
         /// <seealso cref="Type.GetType(string,bool)"/>
         /// <seealso cref="Assembly.GetType(string,bool)"/>
         public static Type GetType([NotNull] string fullyQualifiedTypeName, bool throwOnError = true)
         {
-            if (fullyQualifiedTypeName == null) throw new ArgumentNullException(nameof(fullyQualifiedTypeName));
+            if (fullyQualifiedTypeName is null)
+                throw new ArgumentNullException(nameof(fullyQualifiedTypeName));
+
             var assemblyIndex = fullyQualifiedTypeName.IndexOf(",");
             if (assemblyIndex < 0)
-            {
-                throw new ArgumentException($"Invalid fulltype name [{fullyQualifiedTypeName}], expecting an assembly name", nameof(fullyQualifiedTypeName));
-            }
+                throw new ArgumentException($"Invalid fulltype name [{fullyQualifiedTypeName}], expecting an assembly name.", nameof(fullyQualifiedTypeName));
+
             var typeName = fullyQualifiedTypeName.Substring(0, assemblyIndex);
             var assemblyName = new AssemblyName(fullyQualifiedTypeName.Substring(assemblyIndex + 1));
             lock (Lock)
             {
-                Assembly assembly;
-                if (AssemblyNameToAssembly.TryGetValue(assemblyName.Name, out assembly))
+                if (AssemblyNameToAssembly.TryGetValue(assemblyName.Name, out Assembly assembly))
                 {
                     return assembly.GetType(typeName, throwOnError, false);
                 }
             }
 
             // Fallback to default lookup
-            return Type.GetType(fullyQualifiedTypeName, throwOnError, false);
+            return Type.GetType(fullyQualifiedTypeName, throwOnError, ignoreCase: false);
         }
 
         /// <summary>
-        /// Finds registered assemblies that are associated with the specified categories.
+        ///   Finds all the registered assemblies that are associated with the specified categories.
         /// </summary>
         /// <param name="categories">The categories.</param>
-        /// <returns>A set of assembly associated with the specified categories.</returns>
-        /// <exception cref="System.ArgumentNullException">categories</exception>
+        /// <returns>A set of assemblies associated with the specified categories.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="categories"/> is a <c>null</c> reference.</exception>
         [NotNull]
         public static HashSet<Assembly> Find([NotNull] IEnumerable<string> categories)
         {
-            if (categories == null) throw new ArgumentNullException(nameof(categories));
+            if (categories is null)
+                throw new ArgumentNullException(nameof(categories));
+
             var assemblies = new HashSet<Assembly>();
             lock (Lock)
             {
                 foreach (var category in categories)
                 {
-                    if (category == null)
+                    if (category is null)
                         continue;
 
-                    HashSet<Assembly> assembliesFound;
-                    if (MapCategoryToAssemblies.TryGetValue(category, out assembliesFound))
+                    if (MapCategoryToAssemblies.TryGetValue(category, out HashSet<Assembly> assembliesFound))
                     {
                         foreach (var assembly in assembliesFound)
                             assemblies.Add(assembly);
@@ -124,11 +132,11 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Finds registered assemblies that are associated with the specified categories.
+        ///   Finds all the registered assemblies that are associated with the specified categories.
         /// </summary>
         /// <param name="categories">The categories.</param>
         /// <returns>A set of assemblies associated with the specified categories.</returns>
-        /// <exception cref="System.ArgumentNullException">categories</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="categories"/> is a <c>null</c> reference.</exception>
         [NotNull]
         public static HashSet<Assembly> Find([NotNull] params string[] categories)
         {
@@ -136,20 +144,21 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Finds registered categories that are associated with the specified assembly.
+        ///   Finds the categories that are associated with the specified assembly.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        /// <returns>A set of category associated with the specified assembly.</returns>
-        /// <exception cref="System.ArgumentNullException">categories</exception>
+        /// <returns>A set of categories associated with the specified assembly.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="assembly"/> is a <c>null</c> reference.</exception>
         [NotNull]
         public static HashSet<string> FindCategories([NotNull] Assembly assembly)
         {
-            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+            if (assembly is null)
+                throw new ArgumentNullException(nameof(assembly));
+
             var categories = new HashSet<string>();
             lock (Lock)
             {
-                HashSet<string> categoriesFound;
-                if (MapAssemblyToCategories.TryGetValue(assembly, out categoriesFound))
+                if (MapAssemblyToCategories.TryGetValue(assembly, out HashSet<string> categoriesFound))
                 {
                     foreach (var category in categoriesFound)
                         categories.Add(category);
@@ -166,33 +175,33 @@ namespace Stride.Core.Reflection
 
         public static ScanTypes GetScanTypes([NotNull] Assembly assembly)
         {
-            ScanTypes assemblyScanTypes;
-            AssemblyToScanTypes.TryGetValue(assembly, out assemblyScanTypes);
+            AssemblyToScanTypes.TryGetValue(assembly, out ScanTypes assemblyScanTypes);
 
             return assemblyScanTypes;
         }
 
         /// <summary>
-        /// Registers an assembly with the specified categories.
+        ///   Registers an assembly with the specified categories.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        /// <param name="categories">The categories to associate with this assembly.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// assembly
-        /// or
-        /// categories
+        /// <param name="categories">The categories to associate this assembly with.</param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="assembly"/> is a <c>null</c> reference;
+        ///   or
+        ///   <paramref name="categories"/> is a <c>null</c> reference.
         /// </exception>
         public static void Register([NotNull] Assembly assembly, [NotNull] IEnumerable<string> categories)
         {
-            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
-            if (categories == null) throw new ArgumentNullException(nameof(categories));
+            if (assembly is null)
+                throw new ArgumentNullException(nameof(assembly));
+            if (categories is null)
+                throw new ArgumentNullException(nameof(categories));
 
             HashSet<string> currentRegisteredCategories = null;
 
             lock (Lock)
             {
-                HashSet<string> registeredCategoriesPerAssembly;
-                if (!MapAssemblyToCategories.TryGetValue(assembly, out registeredCategoriesPerAssembly))
+                if (!MapAssemblyToCategories.TryGetValue(assembly, out HashSet<string> registeredCategoriesPerAssembly))
                 {
                     registeredCategoriesPerAssembly = new HashSet<string>();
                     MapAssemblyToCategories.Add(assembly, registeredCategoriesPerAssembly);
@@ -206,21 +215,20 @@ namespace Stride.Core.Reflection
                 {
                     if (string.IsNullOrWhiteSpace(category))
                     {
-                        Log.Error($"Invalid empty category for assembly [{assembly}]");
+                        Log.Value.Error($"Invalid empty category for assembly [{assembly}].");
                         continue;
                     }
 
                     if (registeredCategoriesPerAssembly.Add(category))
                     {
-                        if (currentRegisteredCategories == null)
+                        if (currentRegisteredCategories is null)
                         {
                             currentRegisteredCategories = new HashSet<string>();
                         }
                         currentRegisteredCategories.Add(category);
                     }
 
-                    HashSet<Assembly> registeredAssembliesPerCategory;
-                    if (!MapCategoryToAssemblies.TryGetValue(category, out registeredAssembliesPerCategory))
+                    if (!MapCategoryToAssemblies.TryGetValue(category, out HashSet<Assembly> registeredAssembliesPerCategory))
                     {
                         registeredAssembliesPerCategory = new HashSet<Assembly>();
                         MapCategoryToAssemblies.Add(category, registeredAssembliesPerCategory);
@@ -237,22 +245,22 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Registers an assembly with the specified categories.
+        ///   Registers an assembly with the specified categories.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        /// <param name="categories">The categories to associate with this assembly.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// assembly
-        /// or
-        /// categories
+        /// <param name="categories">The categories to associate this assembly with.</param>
+        /// <exception cref="ArgumentNullException">
+        ///   <paramref name="assembly"/> is a <c>null</c> reference;
+        ///   or
+        ///   <paramref name="categories"/> is a <c>null</c> reference.
         /// </exception>
         public static void Register([NotNull] Assembly assembly, [NotNull] params string[] categories)
         {
-            Register(assembly, (IEnumerable<string>)categories);
+            Register(assembly, (IEnumerable<string>) categories);
         }
 
         /// <summary>
-        /// Unregisters the specified assembly.
+        ///   Unregisters the specified assembly.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
         public static void Unregister([NotNull] Assembly assembly)
@@ -264,14 +272,13 @@ namespace Stride.Core.Reflection
             {
                 if (MapAssemblyToCategories.TryGetValue(assembly, out categoriesFound))
                 {
-                    // Remove assembly=>categories entry
+                    // Remove Assembly => Categories entry
                     MapAssemblyToCategories.Remove(assembly);
 
-                    // Remove reverse category=>assemblies entries
+                    // Remove reverse Category => Assemblies entries
                     foreach (var category in categoriesFound)
                     {
-                        HashSet<Assembly> assembliesFound;
-                        if (MapCategoryToAssemblies.TryGetValue(category, out assembliesFound))
+                        if (MapCategoryToAssemblies.TryGetValue(category, out HashSet<Assembly> assembliesFound))
                         {
                             assembliesFound.Remove(assembly);
                         }
@@ -296,7 +303,8 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// List types that matches a given <see cref="AssemblyScanAttribute"/> for a given assembly.
+        ///   Represents a list of the types that matches a given <see cref="AssemblyScanAttribute"/> for a given
+        ///   assembly.
         /// </summary>
         public class ScanTypes
         {

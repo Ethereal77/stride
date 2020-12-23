@@ -8,29 +8,29 @@ using Stride.Core;
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Defines the dimension of a texture.
+    ///   Defines the dimensions of a texture.
     /// </summary>
     [DataContract]
     public enum TextureDimension
     {
         /// <summary>
-        /// The texture dimension is 1D.
+        ///   The texture is a one-dimensional buffer.
         /// </summary>
         Texture1D,
 
         /// <summary>
-        /// The texture dimension is 2D.
+        ///   The texture is a two-dimensional image.
         /// </summary>
         Texture2D,
 
         /// <summary>
-        /// The texture dimension is 3D.
+        ///   The texture is a three-dimensional volume texture.
         /// </summary>
         Texture3D,
 
         /// <summary>
-        /// The texture dimension is a CubeMap.
+        ///   The texture is an array of six two-dimensional images forming a cube.
         /// </summary>
-        TextureCube,
+        TextureCube
     }
 }

@@ -2,18 +2,16 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.ComponentModel;
 
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Rendering.Materials.ComputeColors;
-using Stride.Shaders;
 
 namespace Stride.Rendering.Materials
 {
     /// <summary>
-    /// A material blend layer
+    ///   Represents a blend layer of a <see cref="Rendering.Material"/>.
     /// </summary>
     [DataContract("MaterialBlendLayer")]
     [Display("Material Layer")]
@@ -22,7 +20,7 @@ namespace Stride.Rendering.Materials
         internal const string BlendStream = "matBlend";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaterialBlendLayer"/> class.
+        ///   Initializes a new instance of the <see cref="MaterialBlendLayer"/> class.
         /// </summary>
         public MaterialBlendLayer()
         {
@@ -32,7 +30,7 @@ namespace Stride.Rendering.Materials
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="MaterialBlendLayer"/> is enabled.
+        ///   Gets or sets a value indicating whether this <see cref="MaterialBlendLayer"/> is enabled.
         /// </summary>
         /// <value><c>true</c> if enabled; otherwise, <c>false</c>.</value>
         /// <userdoc>Take the layer into account; otherwise ignore it</userdoc>
@@ -41,7 +39,7 @@ namespace Stride.Rendering.Materials
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of this blend layer.
+        ///   Gets or sets the name of this blend layer.
         /// </summary>
         /// <value>The name.</value>
         /// <userdoc>The name of the material layer</userdoc>
@@ -50,7 +48,7 @@ namespace Stride.Rendering.Materials
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the material.
+        ///   Gets or sets the material.
         /// </summary>
         /// <value>The material.</value>
         /// <userdoc>The reference to the material asset to layer.</userdoc>
@@ -60,7 +58,7 @@ namespace Stride.Rendering.Materials
         public Material Material { get; set; }
 
         /// <summary>
-        /// Gets or sets the blend map.
+        ///   Gets or sets the blend map.
         /// </summary>
         /// <value>The blend map.</value>
         /// <userdoc>The blend map specifying how to blend the material with the previous layer.</userdoc>
@@ -71,7 +69,7 @@ namespace Stride.Rendering.Materials
         public IComputeScalar BlendMap { get; set; }
 
         /// <summary>
-        /// Gets or sets the material overrides.
+        ///   Gets or sets the material overrides.
         /// </summary>
         /// <value>The overrides.</value>
         /// <userdoc>Can be used to override properties of the referenced material.</userdoc>
@@ -82,25 +80,21 @@ namespace Stride.Rendering.Materials
         public virtual void Visit(MaterialGeneratorContext context)
         {
             // If not enabled, or Material or BlendMap are null, skip this layer
-            if (!Enabled || Material == null || BlendMap == null || context.FindAsset == null)
-            {
+            if (!Enabled || Material is null || BlendMap is null || context.FindAsset is null)
                 return;
-            }
 
             // Find the material from the reference
-            var material = context.FindAsset(Material) as IMaterialDescriptor;
-            if (material == null)
+            var material = Material.Descriptor ?? context.FindAsset(Material) as IMaterialDescriptor;
+            if (material is null)
             {
-                context.Log.Error($"Unable to find material [{Material}]");
+                context.Log.Error($"Unable to find material [{Material}].");
                 return;
             }
 
             // Check that material is valid
             var materialName = context.GetAssetFriendlyName(Material);
             if (!context.PushMaterial(material, materialName))
-            {
                 return;
-            }
 
             try
             {

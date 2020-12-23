@@ -4,13 +4,12 @@
 
 using System.Collections.Generic;
 
-using Stride.Core.Collections;
 using Stride.Core.Mathematics;
 
 namespace Stride.Input
 {
     /// <summary>
-    /// Base class for mouse devices, implements some common functionality of <see cref="IMouseDevice"/>, inherits from <see cref="PointerDeviceBase"/>
+    ///   Represents the base class and common functionality for mouse devices.
     /// </summary>
     public abstract class MouseDeviceBase : PointerDeviceBase, IMouseDevice
     {
@@ -23,9 +22,9 @@ namespace Stride.Input
 
         public abstract bool IsPositionLocked { get; }
 
-        public IReadOnlySet<MouseButton> PressedButtons => MouseState.PressedButtons;
-        public IReadOnlySet<MouseButton> ReleasedButtons => MouseState.ReleasedButtons;
-        public IReadOnlySet<MouseButton> DownButtons => MouseState.DownButtons;
+        public Core.Collections.IReadOnlySet<MouseButton> PressedButtons => MouseState.PressedButtons;
+        public Core.Collections.IReadOnlySet<MouseButton> ReleasedButtons => MouseState.ReleasedButtons;
+        public Core.Collections.IReadOnlySet<MouseButton> DownButtons => MouseState.DownButtons;
 
         public Vector2 Position => MouseState.Position;
         public Vector2 Delta => MouseState.Delta;
@@ -35,11 +34,11 @@ namespace Stride.Input
             base.Update(inputEvents);
             MouseState.Update(inputEvents);
         }
-        
+
         public abstract void SetPosition(Vector2 normalizedPosition);
-        
+
         public abstract void LockPosition(bool forceCenter = false);
-        
+
         public abstract void UnlockPosition();
     }
 }

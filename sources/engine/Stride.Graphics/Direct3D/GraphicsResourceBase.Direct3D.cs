@@ -13,29 +13,22 @@ using SharpDX;
 
 namespace Stride.Graphics
 {
-    /// <summary>
-    /// GraphicsResource class
-    /// </summary>
     public abstract partial class GraphicsResourceBase
     {
         private SharpDX.Direct3D11.DeviceChild nativeDeviceChild;
 
         protected internal SharpDX.Direct3D11.Resource NativeResource { get; private set; }
 
-        private void Initialize()
-        {
-        }
+        private void Initialize() { }
 
         /// <summary>
-        /// Gets or sets the device child.
+        ///   Gets or sets the device child.
         /// </summary>
         /// <value>The device child.</value>
         protected internal SharpDX.Direct3D11.DeviceChild NativeDeviceChild
         {
-            get
-            {
-                return nativeDeviceChild;
-            }
+            get => nativeDeviceChild;
+
             set
             {
                 nativeDeviceChild = value;
@@ -46,7 +39,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Associates the private data to the device child, useful to get the name in PIX debugger.
+        ///   Associates a debug name as private data to the device child. Useful to get the name in debuggers.
         /// </summary>
         internal static void SetDebugName(GraphicsDevice graphicsDevice, SharpDX.Direct3D11.DeviceChild deviceChild, string name)
         {
@@ -57,42 +50,41 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Called when graphics device has been detected to be internally destroyed.
+        ///   Method called when the graphics device has been detected to be internally destroyed.
         /// </summary>
         protected internal virtual void OnDestroyed()
         {
+            Destroyed?.Invoke(this, EventArgs.Empty);
+
             ReleaseComObject(ref nativeDeviceChild);
             NativeResource = null;
         }
 
         /// <summary>
-        /// Called when graphics device has been recreated.
+        ///   Method called when the graphics device has been recreated.
         /// </summary>
-        /// <returns>True if item transitioned to a <see cref="GraphicsResourceLifetimeState.Active"/> state.</returns>
+        /// <returns>
+        ///   <c>true</c> if the resource has transitioned to a <see cref="GraphicsResourceLifetimeState.Active"/> state.
+        /// </returns>
         protected internal virtual bool OnRecreate()
         {
             return false;
         }
 
-        protected SharpDX.Direct3D11.Device NativeDevice
-        {
-            get
-            {
-                return GraphicsDevice != null ? GraphicsDevice.NativeDevice : null;
-            }
-        }
+        protected SharpDX.Direct3D11.Device NativeDevice => GraphicsDevice?.NativeDevice;
 
         /// <summary>
-        /// Gets the cpu access flags from resource usage.
+        ///   Determines the CPU access flags for a specific resource usage.
         /// </summary>
-        /// <param name="usage">The usage.</param>
-        /// <returns></returns>
+        /// <param name="usage">The intended usage for the resource.</param>
+        /// <returns>The appropriate access flags.</returns>
         internal static SharpDX.Direct3D11.CpuAccessFlags GetCpuAccessFlagsFromUsage(GraphicsResourceUsage usage)
         {
             switch (usage)
             {
                 case GraphicsResourceUsage.Dynamic:
                     return SharpDX.Direct3D11.CpuAccessFlags.Write;
+
                 case GraphicsResourceUsage.Staging:
                     return SharpDX.Direct3D11.CpuAccessFlags.Read | SharpDX.Direct3D11.CpuAccessFlags.Write;
             }
@@ -102,8 +94,7 @@ namespace Stride.Graphics
         internal static void ReleaseComObject<T>(ref T comObject) where T : class
         {
             // We can't put IUnknown as a constraint on the generic as it would break compilation (trying to import SharpDX in projects with InternalVisibleTo)
-            var iUnknownObject = comObject as IUnknown;
-            if (iUnknownObject != null)
+            if (comObject is IUnknown iUnknownObject)
             {
                 var refCountResult = iUnknownObject.Release();
                 Debug.Assert(refCountResult >= 0);
@@ -112,5 +103,5 @@ namespace Stride.Graphics
         }
     }
 }
- 
+
 #endif

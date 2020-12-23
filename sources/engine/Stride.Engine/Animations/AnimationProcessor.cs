@@ -3,7 +3,6 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 
 using Stride.Core.Collections;
 using Stride.Core.Threading;
@@ -14,7 +13,8 @@ namespace Stride.Animations
 {
     public class AnimationProcessor : EntityProcessor<AnimationComponent, AnimationProcessor.AssociatedData>
     {
-        private readonly ConcurrentPool<FastList<AnimationOperation>> animationOperationPool = new ConcurrentPool<FastList<AnimationOperation>>(() => new FastList<AnimationOperation>());
+        private readonly ConcurrentPool<FastList<AnimationOperation>> animationOperationPool =
+            new ConcurrentPool<FastList<AnimationOperation>>(() => new FastList<AnimationOperation>());
 
         public AnimationProcessor()
         {
@@ -23,10 +23,7 @@ namespace Stride.Animations
 
         protected override AssociatedData GenerateComponentData(Entity entity, AnimationComponent component)
         {
-            return new AssociatedData
-            {
-                AnimationComponent = component,
-            };
+            return new AssociatedData { AnimationComponent = component };
         }
 
         protected override bool IsAssociatedDataValid(Entity entity, AnimationComponent component, AssociatedData associatedData)
@@ -62,7 +59,10 @@ namespace Stride.Animations
             var time = context.Time;
 
             //foreach (var entity in ComponentDatas.Values)
-            Dispatcher.ForEach(ComponentDatas, () => animationOperationPool.Acquire(), (entity, animationOperations) =>
+            Dispatcher.ForEach(ComponentDatas,
+                initializeLocal: () => animationOperationPool.Acquire(),
+                finalizeLocal: animationOperations => animationOperationPool.Release(animationOperations),
+                action: (entity, animationOperations) =>
             {
                 var associatedData = entity.Value;
 
@@ -78,25 +78,27 @@ namespace Stride.Animations
                     // Advance time for all playing animations with AutoPlay set to on
                     foreach (var playingAnimation in animationComponent.PlayingAnimations)
                     {
-                        if (!playingAnimation.Enabled || playingAnimation.Clip == null)
+                        if (!playingAnimation.Enabled || playingAnimation.Clip is null)
                             continue;
 
                         switch (playingAnimation.RepeatMode)
                         {
                             case AnimationRepeatMode.PlayOnceHold:
                             case AnimationRepeatMode.PlayOnce:
-                                playingAnimation.CurrentTime = TimeSpan.FromTicks(playingAnimation.CurrentTime.Ticks + (long)(time.Elapsed.Ticks * (double)playingAnimation.TimeFactor));
+                                playingAnimation.CurrentTime = TimeSpan.FromTicks(playingAnimation.CurrentTime.Ticks + (long)(time.WarpElapsed.Ticks * (double)playingAnimation.TimeFactor));
                                 if (playingAnimation.CurrentTime > playingAnimation.Clip.Duration)
                                     playingAnimation.CurrentTime = playingAnimation.Clip.Duration;
                                 else if (playingAnimation.CurrentTime < TimeSpan.Zero)
                                     playingAnimation.CurrentTime = TimeSpan.Zero;
                                 break;
+
                             case AnimationRepeatMode.LoopInfinite:
                                 playingAnimation.CurrentTime = playingAnimation.Clip.Duration == TimeSpan.Zero
                                     ? TimeSpan.Zero
                                     : TimeSpan.FromTicks((playingAnimation.CurrentTime.Ticks + playingAnimation.Clip.Duration.Ticks
-                                        + (long)(time.Elapsed.Ticks * (double)playingAnimation.TimeFactor)) % playingAnimation.Clip.Duration.Ticks);
+                                        + (long)(time.WarpElapsed.Ticks * (double)playingAnimation.TimeFactor)) % playingAnimation.Clip.Duration.Ticks);
                                 break;
+
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
@@ -110,8 +112,8 @@ namespace Stride.Animations
                         var playingAnimation = animationComponent.PlayingAnimations[index];
                         var animationWeight = playingAnimation.Weight;
 
-                        // Skip animation with 0.0f weight
-                        if (animationWeight == 0.0f || playingAnimation.Clip == null)
+                        // Skip animation with zero weight
+                        if (animationWeight == 0.0f || playingAnimation.Clip is null)
                             continue;
 
                         // Default behavior for linea blending (it will properly accumulate multiple blending with their cumulative weight)
@@ -127,7 +129,7 @@ namespace Stride.Animations
 
                         // Create evaluator
                         var evaluator = playingAnimation.Evaluator;
-                        if (evaluator == null)
+                        if (evaluator is null)
                         {
                             evaluator = animationComponent.Blender.CreateEvaluator(playingAnimation.Clip);
                             playingAnimation.Evaluator = evaluator;
@@ -136,7 +138,7 @@ namespace Stride.Animations
                         animationOperations.Add(CreatePushOperation(playingAnimation));
 
                         if (animationOperations.Count >= 2)
-                            animationOperations.Add(AnimationOperation.NewBlend((CoreAnimationOperation)playingAnimation.BlendOperation, currentBlend));
+                            animationOperations.Add(AnimationOperation.NewBlend((CoreAnimationOperation) playingAnimation.BlendOperation, currentBlend));
                     }
                 }
 
@@ -149,7 +151,7 @@ namespace Stride.Animations
                     animationUpdater.Update(animationComponent.Entity, associatedData.AnimationClipResult);
                 }
 
-                if (animationComponent.BlendTreeBuilder == null)
+                if (animationComponent.BlendTreeBuilder is null)
                 {
                     // Update weight animation
                     for (int index = 0; index < animationComponent.PlayingAnimations.Count; index++)
@@ -158,9 +160,9 @@ namespace Stride.Animations
                         bool removeAnimation = false;
                         if (playingAnimation.CrossfadeRemainingTime > TimeSpan.Zero)
                         {
-                            playingAnimation.Weight += (playingAnimation.WeightTarget - playingAnimation.Weight)
-                                                       * ((float)time.Elapsed.Ticks / playingAnimation.CrossfadeRemainingTime.Ticks);
-                            playingAnimation.CrossfadeRemainingTime -= time.Elapsed;
+                            playingAnimation.Weight += (playingAnimation.WeightTarget - playingAnimation.Weight) *
+                                                       ((float) time.WarpElapsed.Ticks / playingAnimation.CrossfadeRemainingTime.Ticks);
+                            playingAnimation.CrossfadeRemainingTime -= time.WarpElapsed;
                             if (playingAnimation.CrossfadeRemainingTime <= TimeSpan.Zero)
                             {
                                 playingAnimation.Weight = playingAnimation.WeightTarget;
@@ -186,7 +188,7 @@ namespace Stride.Animations
                 }
 
                 animationOperations.Clear();
-            }, animationOperations => animationOperationPool.Release(animationOperations));
+            });
         }
 
         private AnimationOperation CreatePushOperation(PlayingAnimation playingAnimation)

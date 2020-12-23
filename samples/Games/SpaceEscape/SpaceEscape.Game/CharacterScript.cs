@@ -14,13 +14,13 @@ using Stride.Input;
 namespace SpaceEscape
 {
     /// <summary>
-    /// CharacterScript is the main character that is controllable by a user.
-    /// It could change lane to left and right, and slide.
+    ///   Represents the main character that is controllable by a user.
+    ///   It could change lane to left and right, and slide.
     /// </summary>
     public class CharacterScript : AsyncScript
     {
         /// <summary>
-        /// The sprite component containing the shadow of the vessel.
+        ///   The sprite component containing the shadow of the vessel.
         /// </summary>
         public SpriteComponent CharacterShadow;
 
@@ -30,7 +30,7 @@ namespace SpaceEscape
             ChangeLaneLeft,
             ChangeLaneRight,
             Slide,
-            Die,
+            Die
         }
 
         private enum InputState
@@ -38,7 +38,7 @@ namespace SpaceEscape
             None,
             Left,
             Right,
-            Down,
+            Down
         }
 
         private enum AgentAnimationKeys
@@ -47,13 +47,13 @@ namespace SpaceEscape
             DodgeLeft,
             DodgeRight,
             Slide,
-            Crash,
+            Crash
         }
 
         private enum BoundingBoxKeys
         {
             Normal,
-            Slide,
+            Slide
         }
 
         private const int LeftLane = 0;
@@ -66,7 +66,7 @@ namespace SpaceEscape
         private BoundingBox activeBoundingBox;
         private AgentState State
         {
-            get { return state; }
+            get => state;
             set
             {
                 state = value;
@@ -75,33 +75,35 @@ namespace SpaceEscape
         }
 
         private bool shouldProcessInput;
-        private AgentState state; // Current state of the agent
-        private PlayingAnimation playingAnimation; // Current active animation
-        private float startChangeLanePosX; // Position of X before changing lane
-        private float targetChangeLanePosX; // Position of X after changning lane
+        private bool started;
+        private AgentState state;                   // Current state of the agent
+        private PlayingAnimation playingAnimation;  // Current active animation
+        private float startChangeLanePosX;          // X position before changing lane
+        private float targetChangeLanePosX;         // X position after changning lane
         private readonly Dictionary<BoundingBoxKeys, BoundingBox> boundingBoxes = new Dictionary<BoundingBoxKeys, BoundingBox>();
-        
-        public bool IsDead { get { return State == AgentState.Die; } }
+
+        public bool IsDead => State == AgentState.Die;
 
         public void Start()
         {
             // Configure Gestures for controlling the agent
-            if (!IsLiveReloading) // Live scripting: add the gesture only once (on first load).
+            if (!IsLiveReloading) // Live scripting: add the gesture only once (on first load)
                 Input.Gestures.Add(new GestureConfigDrag(GestureShape.Free) { MinimumDragDistance = 0.02f, RequiredNumberOfFingers = 1 });
 
-            // Setup Normal pose BoundingBox with that of obtained by ModelComponent.
+            // Setup Normal pose BoundingBox with that of obtained by ModelComponent
             boundingBoxes[BoundingBoxKeys.Normal] = Entity.Get<ModelComponent>().Model.BoundingBox;
 
-            // Create a slide pose BoundingBox by substracting it with a threshold for making the box, smaller in Y axis.
+            // Create a slide pose BoundingBox by substracting it with a threshold for making the box, smaller in Y axis
             var modelMinBB = boundingBoxes[BoundingBoxKeys.Normal].Minimum;
             var modelMaxBB = boundingBoxes[BoundingBoxKeys.Normal].Maximum;
             boundingBoxes[BoundingBoxKeys.Slide] = new BoundingBox(modelMinBB, new Vector3(modelMaxBB.X, modelMaxBB.Y - 0.7f, modelMaxBB.Z));
+
+            started = true;
         }
 
         /// <summary>
-        /// Script Function which awaits each frame and update the CharacterScript.
+        ///   Script function which awaits each frame and updates the CharacterScript.
         /// </summary>
-        /// <returns></returns>
         public override async Task Execute()
         {
             Start();
@@ -114,7 +116,7 @@ namespace SpaceEscape
             {
                 await Script.NextFrame();
 
-                // Get input state from gesture, if none check from the keyboard.
+                // Get input state from gesture, if none check from the keyboard
                 var inputState = GetInputFromGesture();
 
                 if (inputState == InputState.None)
@@ -129,7 +131,7 @@ namespace SpaceEscape
         }
 
         /// <summary>
-        /// Activate the character.
+        ///   Activates the character.
         /// </summary>
         public void Activate()
         {
@@ -137,10 +139,13 @@ namespace SpaceEscape
         }
 
         /// <summary>
-        /// Reset internal state of the agent.
+        ///   Resets the internal state of the agent.
         /// </summary>
         public void Reset()
         {
+            if (!started)
+                return;
+
             shouldProcessInput = false;
             State = AgentState.Run;
             CurLane = MiddleLane;
@@ -150,7 +155,7 @@ namespace SpaceEscape
         }
 
         /// <summary>
-        /// Invoke from its user to indicate that the agent has died.
+        ///   This method is invoked from its user to indicate that the agent has died.
         /// </summary>
         public void OnDied(float floorHeight)
         {
@@ -160,9 +165,9 @@ namespace SpaceEscape
         }
 
         /// <summary>
-        /// Calculate and returns the current bounding box of the character
+        ///   Calculates and returns the current bounding box of the character.
         /// </summary>
-        /// <returns>The bounding box</returns>
+        /// <returns>The bounding box.</returns>
         public BoundingBox CalculateCurrentBoundingBox()
         {
             var agentWorldPosition = Entity.Transform.Position;
@@ -176,58 +181,55 @@ namespace SpaceEscape
 
         private void SetShadowTransparency(float transparency)
         {
-            CharacterShadow.Color = transparency*Color.White;
+            CharacterShadow.Color = transparency * Color.White;
         }
 
         /// <summary>
-        /// Retrieve input from the user by his/her keyboard, and transform to one of the agent's input state.
+        ///   Retrieves keyboard input from the user, and transitions to one of the agent's input state.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The new input state.</returns>
         private InputState GetInputFromKeyboard()
         {
             if (Input.IsKeyPressed(Keys.Left))
-            {
                 return InputState.Left;
-            }
+
             if (Input.IsKeyPressed(Keys.Right))
-            {
                 return InputState.Right;
-            }
+
             if (Input.IsKeyPressed(Keys.Down))
-            {
                 return InputState.Down;
-            }
+
             return InputState.None;
         }
 
         /// <summary>
-        /// Retrieve input from the user by Drag gesture, and determine the input state by 
-        /// calculating the direction of drag by  ProcessInputFromDragGesture().
+        ///   Retrieves input from the user by Drag gesture, and determines the input state by
+        ///   calculating the direction of drag by calling <see cref="ProcessInputFromDragGesture"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The new input state.</returns>
         private InputState GetInputFromGesture()
         {
             // Gesture recognition
             foreach (var gestureEvent in Input.GestureEvents)
             {
-                // Select only Drag gesture with Began state.
+                // Select only Drag gesture with Began state
                 if (gestureEvent.Type == GestureType.Drag && gestureEvent.State == GestureState.Began)
-                    // From Draw gesture, determine the InputState from direction of the swipe.
-                    return ProcessInputFromDragGesture((GestureEventDrag)gestureEvent);
+                    // From Draw gesture, determine the InputState from direction of the swipe
+                    return ProcessInputFromDragGesture((GestureEventDrag) gestureEvent);
             }
 
             return InputState.None;
         }
 
         /// <summary>
-        /// Process gestureEvent to determine the input state.
+        ///   Processes a gesture input event to determine the input state.
         /// </summary>
-        /// <param name="gestureEvent"></param>
-        /// <returns></returns>
+        /// <param name="gestureEvent">The input event.</param>
+        /// <returns>The new input state.</returns>
         private InputState ProcessInputFromDragGesture(GestureEventDrag gestureEvent)
         {
-            // Get drag vector and multiply by the screenRatio of the screen, also flip y (-screenRatio).
-            var screenRatio = (float)GraphicsDevice.Presenter.BackBuffer.Height / GraphicsDevice.Presenter.BackBuffer.Width;
+            // Get drag vector and multiply by the screenRatio of the screen, also flip y (-screenRatio)
+            var screenRatio = (float) GraphicsDevice.Presenter.BackBuffer.Height / GraphicsDevice.Presenter.BackBuffer.Width;
             var dragVector = (gestureEvent.CurrentPosition - gestureEvent.StartPosition) * new Vector2(1f, -screenRatio);
             var dragDirection = Vector2.Normalize(dragVector);
 
@@ -235,7 +237,7 @@ namespace SpaceEscape
             float xDeg;
             float yDeg;
 
-            // Head of dragDirection is in Quadrant 1.
+            // Head of dragDirection is in Quadrant 1
             if (dragDirection.X >= 0 && dragDirection.Y >= 0)
             {
                 comparedAxis = Vector2.UnitX;
@@ -246,7 +248,7 @@ namespace SpaceEscape
                 return xDeg <= yDeg ? InputState.Right : InputState.None;
             }
 
-            // Head of dragDirection is in Quadrant 2. 
+            // Head of dragDirection is in Quadrant 2
             if (dragDirection.X <= 0 && dragDirection.Y >= 0)
             {
                 comparedAxis = -Vector2.UnitX;
@@ -257,7 +259,7 @@ namespace SpaceEscape
                 return xDeg <= yDeg ? InputState.Left : InputState.None;
             }
 
-            // Head of dragDirection is in Quadrant 3, check if the input is left or down.
+            // Head of dragDirection is in Quadrant 3, check if the input is left or down
             if (dragDirection.X <= 0 && dragDirection.Y <= 0)
             {
                 comparedAxis = -Vector2.UnitX;
@@ -268,7 +270,7 @@ namespace SpaceEscape
                 return xDeg <= yDeg ? InputState.Left : InputState.Down;
             }
 
-            // Head of dragDirection is in Quadrant 4, check if the input is right or down.
+            // Head of dragDirection is in Quadrant 4, check if the input is right or down
             comparedAxis = Vector2.UnitX;
             xDeg = FindAngleBetweenVector(ref dragDirection, ref comparedAxis);
             comparedAxis = -Vector2.UnitY;
@@ -279,16 +281,15 @@ namespace SpaceEscape
 
         private static float FindAngleBetweenVector(ref Vector2 v1, ref Vector2 v2)
         {
-            float dotProd;
-            Vector2.Dot(ref v1, ref v2, out dotProd);
-            return (float)Math.Acos(dotProd);
+            Vector2.Dot(ref v1, ref v2, out float dotProd);
+            return (float) Math.Acos(dotProd);
         }
 
         /// <summary>
-        /// Process user's input, according to the current state.
-        /// It might change state of the agent.
+        ///   Processes the user's input, according to the current state.
+        ///   It might change state of the agent.
         /// </summary>
-        /// <param name="currentInputState"></param>
+        /// <param name="currentInputState">Current state of the agent.</param>
         private void ProcessInput(InputState currentInputState)
         {
             if (!shouldProcessInput)
@@ -300,10 +301,12 @@ namespace SpaceEscape
                     if (CurLane != LeftLane && (State == AgentState.Run|| State == AgentState.Slide))
                         State = AgentState.ChangeLaneLeft;
                     break;
+
                 case InputState.Right:
                     if (CurLane != RightLane && (State == AgentState.Run || State == AgentState.Slide))
                         State = AgentState.ChangeLaneRight;
                     break;
+
                 case InputState.Down:
                     if (State == AgentState.Run)
                         State = AgentState.Slide;
@@ -312,42 +315,48 @@ namespace SpaceEscape
         }
 
         /// <summary>
-        /// Invoke upon enter each state. It sets initial behaviour of the CharacterScript for that state.
+        ///   This method is invoked upon entering each state. It sets initial behaviour of the CharacterScript for
+        ///   that state.
         /// </summary>
-        /// <param name="agentState"></param>
+        /// <param name="agentState">Current state of the agent.</param>
         private void OnEnter(AgentState agentState)
         {
-            activeBoundingBox = (agentState == AgentState.Slide) 
-                ? boundingBoxes[BoundingBoxKeys.Slide] :
-                  boundingBoxes[BoundingBoxKeys.Normal];
+            activeBoundingBox = (agentState == AgentState.Slide) ?
+                boundingBoxes[BoundingBoxKeys.Slide] :
+                boundingBoxes[BoundingBoxKeys.Normal];
 
             switch (agentState)
             {
                 case AgentState.Run:
                     PlayAnimation(AgentAnimationKeys.Active);
                     break;
+
                 case AgentState.ChangeLaneLeft:
                     OnEnterChangeLane(true);
                     break;
+
                 case AgentState.ChangeLaneRight:
                     OnEnterChangeLane(false);
                     break;
+
                 case AgentState.Slide:
                     PlayAnimation(AgentAnimationKeys.Slide);
                     break;
+
                 case AgentState.Die:
                     PlayAnimation(AgentAnimationKeys.Crash);
                     break;
+
                 default:
-                    throw new ArgumentOutOfRangeException("agentState");
+                    throw new ArgumentOutOfRangeException(nameof(agentState));
             }
         }
 
         /// <summary>
-        /// Upon Enter ChangeLane state, cache the start X position, and determine X position that will arrive for interpolation.
-        /// And play animation accordingly.
+        ///   Method invoked upon entering ChangeLane state. It caches the start X position, and determines
+        ///   X position that will arrive for interpolation and play an animation accordingly.
         /// </summary>
-        /// <param name="isChangeLaneLeft"></param>
+        /// <param name="isChangeLaneLeft">A value indicating if the change is to the left lane.</param>
         private void OnEnterChangeLane(bool isChangeLaneLeft)
         {
             if (isChangeLaneLeft)
@@ -365,7 +374,7 @@ namespace SpaceEscape
         }
 
         /// <summary>
-        /// UpdateState updates the agent according to its state.
+        ///   Updates the agent according to its state.
         /// </summary>
         private void UpdateState()
         {
@@ -375,6 +384,7 @@ namespace SpaceEscape
                 case AgentState.ChangeLaneRight:
                     UpdateChangeLane();
                     break;
+
                 case AgentState.Slide:
                     if (playingAnimation.CurrentTime.TotalSeconds >= playingAnimation.Clip.Duration.TotalSeconds)
                         State = AgentState.Run;
@@ -382,38 +392,39 @@ namespace SpaceEscape
             }
         }
         /// <summary>
-        /// In ChangeLane state, the agent's X position is determined by Linear interpolation of the current animation process.
+        ///   In ChangeLane state, the agent's X position is determined by Linear interpolation of the current
+        ///   animation process.
         /// </summary>
         private void UpdateChangeLane()
         {
-            var t = (float)(playingAnimation.CurrentTime.TotalSeconds / playingAnimation.Clip.Duration.TotalSeconds);
+            var t = (float) (playingAnimation.CurrentTime.TotalSeconds / playingAnimation.Clip.Duration.TotalSeconds);
 
-            // Interpolate new X position in World coordinate.
+            // Interpolate new X position in World coordinate
             var newPosX = MathUtil.Lerp(startChangeLanePosX, targetChangeLanePosX, t);
             Entity.Transform.Position.X = newPosX;
 
-            // Animation ends, changing state.
+            // Animation ends, changing state
             if (t >= 1.0f)
                 State = AgentState.Run;
         }
 
         /// <summary>
-        /// Helper function for playing animation given AgentAnimationKey.
+        ///   Helper function for playing an animation given AgentAnimationKey.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">The animation to play.</param>
         private void PlayAnimation(AgentAnimationKeys key)
         {
             var animationComponent = Entity.Get<AnimationComponent>();
-           
+
             animationComponent.Play(key.ToString());
             playingAnimation = animationComponent.PlayingAnimations[0];
         }
 
         /// <summary>
-        /// Returns world position in X axis for the giving lane index.
+        ///   Returns world X position for the given lane index.
         /// </summary>
-        /// <param name="lane"></param>
-        /// <returns></returns>
+        /// <param name="lane">Index of the lane.</param>
+        /// <returns>Position of the lane in the X axis.</returns>
         private static float GetXPosition(int lane)
         {
             return (1 - lane) * LaneLength;

@@ -34,41 +34,41 @@ namespace Stride.LauncherApp.ViewModels
         {
             try
             {
-                Process.Start(Url);
+                Process.Start(new ProcessStartInfo(Url) { UseShellExecute = true });
             }
-            catch (Exception)
+            catch
             {
                 await ServiceProvider.Get<IDialogService>().MessageBox(Strings.ErrorOpeningBrowser, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// Gets the root url of the documentation that should be opened when the user want to open Stride help.
+        ///   Gets the root URL of the documentation that should be opened when the user want to open Stride help.
         /// </summary>
         public string DocumentationRootUrl => GetDocumentationRootUrl(Version);
 
         /// <summary>
-        /// Gets the version related to this documentation page.
+        ///   Gets the version related to this documentation page.
         /// </summary>
         public string Version { get; }
 
         /// <summary>
-        /// Gets or sets the title of this documentation page.
+        ///   Gets or sets the title of this documentation page.
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the description of this documentation page.
+        ///   Gets or sets the description of this documentation page.
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets or sets the url of this documentation page.
+        ///   Gets or sets the URL of this documentation page.
         /// </summary>
         public string Url { get; set; }
 
         /// <summary>
-        /// Gets a command that will open the documentation page in the default web browser.
+        ///   Gets a command that will open the documentation page in the default web browser.
         /// </summary>
         public ICommandBase OpenUrlCommand { get; private set; }
 
@@ -79,27 +79,21 @@ namespace Stride.LauncherApp.ViewModels
             try
             {
                 WebRequest request = WebRequest.Create(string.Format(Urls.GettingStarted, version));
-                using (var reponse = await request.GetResponseAsync())
+                using WebResponse reponse = await request.GetResponseAsync();
+                using Stream str = reponse.GetResponseStream();
+                if (str != null)
                 {
-                    using (var str = reponse.GetResponseStream())
-                    {
-                        if (str != null)
-                        {
-                            using (var reader = new StreamReader(str))
-                            {
-                                urlData = reader.ReadToEnd();
-                            }
-                        }
-                    }
+                    using var reader = new StreamReader(str);
+                    urlData = reader.ReadToEnd();
                 }
             }
-            catch (Exception)
+            catch
             {
-                // Unable to reach the url, return an empty list.
+                // Unable to reach the URL: return an empty list
                 return result;
             }
 
-            if (urlData == null)
+            if (urlData is null)
                 return result;
 
             try
@@ -113,7 +107,7 @@ namespace Stride.LauncherApp.ViewModels
                         var link = match.Groups[3].Value;
                         if (link.StartsWith(DocPageScheme))
                         {
-                            link = GetDocumentationPageUrl(version, link.Substring(DocPageScheme.Length));
+                            link = GetDocumentationPageUrl(version, link[DocPageScheme.Length..]);
                         }
                         var page = new DocumentationPageViewModel(serviceProvider, version)
                         {
@@ -125,7 +119,7 @@ namespace Stride.LauncherApp.ViewModels
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
                 result.Clear();
             }
@@ -133,11 +127,11 @@ namespace Stride.LauncherApp.ViewModels
         }
 
         /// <summary>
-        /// Compute the url of a documentation page, given the page name.
+        ///   Computes the URL of a documentation page, given the page name.
         /// </summary>
         /// <param name="version">The version related to this documentation page.</param>
         /// <param name="pageName">The name of the page.</param>
-        /// <returns>The complete url of the documentation page.</returns>
+        /// <returns>The complete URL of the documentation page.</returns>
         private static string GetDocumentationPageUrl(string version, string pageName)
         {
             return string.Format(PageUrlFormatString, GetDocumentationRootUrl(version), pageName);

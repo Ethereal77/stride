@@ -5,23 +5,23 @@
 namespace Stride.Rendering.Materials
 {
     /// <summary>
-    /// Enumerates the different possible material shader stages.
+    ///   Defines the different possible material shader stages.
     /// </summary>
     public enum MaterialShaderStage
     {
         /// <summary>
-        /// The vertex shader
+        ///   The vertex shader
         /// </summary>
         Vertex,
-        
+
         /// <summary>
-        /// The domain shader
+        ///   The domain shader
         /// </summary>
         Domain,
 
         /// <summary>
-        /// The pixel shader
+        ///   The pixel shader
         /// </summary>
-        Pixel,
+        Pixel
     }
 }

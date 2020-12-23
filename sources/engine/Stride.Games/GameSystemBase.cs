@@ -13,58 +13,64 @@ using Stride.Graphics;
 namespace Stride.Games
 {
     /// <summary>
-    /// Base class for a <see cref="GameSystemBase"/> component.
+    ///   Represents the base class for a game system.
     /// </summary>
     /// <remarks>
-    /// A <see cref="GameSystemBase"/> component can be used to 
+    ///   A game system is a component of a game that can be updated and/or rendered in a frequent basis,
+    ///   can load and unload content, can register services and do any kind of processing for the game.
     /// </remarks>
     public abstract class GameSystemBase : ComponentBase, IGameSystemBase, IUpdateable, IDrawable, IContentable
     {
-        private int drawOrder;
-        private bool enabled;
-        private int updateOrder;
-        private bool visible;
+        private int updateOrder, drawOrder;
+        private bool enabled, visible;
+
         private IGraphicsDeviceService graphicsDeviceService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameSystemBase" /> class.
+        ///   Initializes a new instance of the <see cref="GameSystemBase" /> class.
         /// </summary>
-        /// <param name="registry">The registry.</param>
+        /// <param name="registry">The service registry.</param>
         /// <remarks>
-        /// The GameSystem is expecting the following services to be registered: <see cref="IGame"/> and <see cref="IContentManager"/>.
+        ///   The <c>GameSystemBase</c> is expecting the following services to be registered: <see cref="IGame"/> and <see cref="IContentManager"/>.
         /// </remarks>
         protected GameSystemBase([NotNull] IServiceRegistry registry)
         {
             Services = registry ?? throw new ArgumentNullException(nameof(registry));
-            Game = (GameBase)Services.GetService<IGame>();
+            Game = (GameBase) Services.GetService<IGame>();
         }
 
         /// <summary>
-        /// Gets the <see cref="Game"/> associated with this <see cref="GameSystemBase"/>. This value can be null in a mock environment.
+        ///   Gets the <see cref="IGame"/> associated with this <see cref="GameSystemBase"/>.
         /// </summary>
-        /// <value>The game.</value>
-        /// <remarks>This value can be null</remarks>
+        /// <value>The game. This value can be <c>null</c> in a mock environment.</value>
         [CanBeNull]
         public GameBase Game { get; }
 
         /// <summary>
-        /// Gets the services registry.
+        ///   Gets the services registry.
         /// </summary>
         /// <value>The services registry.</value>
+        /// <remarks>
+        ///   This registry can be used to query for services registered by other systems, or to register
+        ///   services that can be consumed by other parts of the game.
+        /// </remarks>
         [NotNull]
         public IServiceRegistry Services { get; }
 
         /// <summary>
-        /// Gets the content manager. This value can be null in a mock environment.
+        ///   Gets the content manager.
         /// </summary>
-        /// <value>The content.</value>
+        /// <value>The content manager. This value can be <c>null</c> in a mock environment.</value>
+        /// <remarks>
+        ///   The content manager can be used to load and unload content and data needed by the system.
+        /// </remarks>
         [CanBeNull]
         protected IContentManager Content { get; private set; }
 
         /// <summary>
-        /// Gets the graphics device.
+        ///   Gets the graphics device.
         /// </summary>
-        /// <value>The graphics device.</value>
+        /// <value>The graphics device. This can be <c>null</c> if the graphics device has not yet been initialized.</value>
         protected GraphicsDevice GraphicsDevice => graphicsDeviceService?.GraphicsDevice;
 
         #region IDrawable Members
@@ -78,17 +84,14 @@ namespace Stride.Games
             return true;
         }
 
-        public virtual void Draw(GameTime gameTime)
-        {
-        }
+        public virtual void Draw(GameTime gameTime) { }
 
-        public virtual void EndDraw()
-        {
-        }
+        public virtual void EndDraw() { }
 
         public bool Visible
         {
             get => visible;
+
             set
             {
                 if (visible != value)
@@ -102,6 +105,7 @@ namespace Stride.Games
         public int DrawOrder
         {
             get => drawOrder;
+
             set
             {
                 if (drawOrder != value)
@@ -116,16 +120,12 @@ namespace Stride.Games
 
         #region IGameSystemBase Members
 
-        public virtual void Initialize()
-        {
-        }
+        public virtual void Initialize() { }
 
-        private void InitGraphicsDeviceService()
+        protected void InitGraphicsDeviceService()
         {
-            if (graphicsDeviceService == null)
-            {
+            if (graphicsDeviceService is null)
                 graphicsDeviceService = Services.GetService<IGraphicsDeviceService>();
-            }
         }
 
         #endregion
@@ -136,13 +136,12 @@ namespace Stride.Games
 
         public event EventHandler<EventArgs> UpdateOrderChanged;
 
-        public virtual void Update(GameTime gameTime)
-        {
-        }
+        public virtual void Update(GameTime gameTime) { }
 
         public bool Enabled
         {
             get => enabled;
+
             set
             {
                 if (enabled != value)
@@ -156,6 +155,7 @@ namespace Stride.Games
         public int UpdateOrder
         {
             get => updateOrder;
+
             set
             {
                 if (updateOrder != value)
@@ -204,13 +204,9 @@ namespace Stride.Games
             UnloadContent();
         }
 
-        protected virtual void LoadContent()
-        {
-        }
+        protected virtual void LoadContent() { }
 
-        protected virtual void UnloadContent()
-        {
-        }
+        protected virtual void UnloadContent() { }
 
         #endregion
     }

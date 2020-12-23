@@ -6,18 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using Stride.Core;
+using Stride.Core.IO;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
-using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
 using Stride.Core.Assets.Templates;
-using Stride.Core;
-using Stride.Core.Diagnostics;
-using Stride.Core.Extensions;
-using Stride.Core.IO;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions;
 using Stride.Core.Presentation.Services;
 using Stride.Assets.Templates;
 using Stride.Graphics;
@@ -33,7 +30,7 @@ namespace Stride.Assets.Presentation.Templates
         public static readonly TemplateSampleGenerator Default = new TemplateSampleGenerator();
 
         /// <summary>
-        /// Sets the parameters required by this template when running in <see cref="TemplateGeneratorParameters.Unattended"/> mode.
+        ///   Sets the parameters required by this template when running in <see cref="TemplateGeneratorParameters.Unattended"/> mode.
         /// </summary>
         public static void SetParameters(SessionTemplateGeneratorParameters parameters, IEnumerable<SelectedSolutionPlatform> platforms, bool addGamesTesting = false)
         {
@@ -43,13 +40,17 @@ namespace Stride.Assets.Presentation.Templates
 
         public override bool IsSupportingTemplate(TemplateDescription templateDescription)
         {
-            if (templateDescription == null) throw new ArgumentNullException(nameof(templateDescription));
+            if (templateDescription is null)
+                throw new ArgumentNullException(nameof(templateDescription));
+
             return templateDescription is TemplateSampleDescription;
         }
 
         public override async Task<bool> PrepareForRun(SessionTemplateGeneratorParameters parameters)
         {
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            if (parameters is null)
+                throw new ArgumentNullException(nameof(parameters));
+
             parameters.Validate();
 
             if (!parameters.Unattended)
@@ -66,15 +67,18 @@ namespace Stride.Assets.Presentation.Templates
 
                 parameters.SetTag(PlatformsKey, new List<SelectedSolutionPlatform>(window.SelectedPlatforms));
             }
+
             return true;
         }
 
         protected override bool Generate(SessionTemplateGeneratorParameters parameters)
         {
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            if (parameters is null)
+                throw new ArgumentNullException(nameof(parameters));
+
             parameters.Validate();
 
-            var description = (TemplateSampleDescription)parameters.Description;
+            var description = (TemplateSampleDescription) parameters.Description;
             var log = parameters.Logger;
 
             // The package might depend on other packages which need to be copied together when instanciating it.
@@ -85,8 +89,9 @@ namespace Stride.Assets.Presentation.Templates
             var regexes = new List<Tuple<Regex, MatchEvaluator>>();
             var patternName = description.PatternName ?? description.DefaultOutputName;
 
-            // Samples don't support spaces and dot in name (we would need to separate package name, package short name and namespace renaming for that).
-            var parametersName = parameters.Name.Replace(" ", string.Empty).Replace(".", string.Empty);
+            // Samples don't support spaces / dot in name (we would need to separate package name, package short name and namespace renaming for that)
+            var parametersName = parameters.Name.Replace(" ", string.Empty)
+                                                .Replace(".", string.Empty);
             if (patternName != parametersName)
             {
                 // Make sure the target name is a safe for use everywhere, since both an asset or script might reference a filename
@@ -95,20 +100,20 @@ namespace Stride.Assets.Presentation.Templates
 
                 // Rename for general occurences of template name
                 regexes.Add(new Tuple<Regex, MatchEvaluator>(new Regex($@"\b{patternName}\b"), match => validNamespaceName));
-                
+
                 // Rename App as well (used in code) -- this is the only pattern of "package short name" that we have so far in Windows samples
                 regexes.Add(new Tuple<Regex, MatchEvaluator>(new Regex($@"\b{patternName}App\b"), match => validNamespaceName));
             }
 
             var outputDirectory = parameters.OutputDirectory;
-
             if (!Directory.Exists(outputDirectory))
-            {
                 Directory.CreateDirectory(outputDirectory);
-            }
 
-            //write gitignore
+            // Write .gitignore
             WriteGitIgnore(parameters);
+
+            // Write global.json
+            WriteGlobalJson(parameters);
 
             UFile projectOutputFile = null;
             UFile projectInputFile = null;
@@ -124,7 +129,7 @@ namespace Stride.Assets.Presentation.Templates
                     {
                         continue;
                     }
-                    
+
                     var relativeFile = new UFile(file.FullName).MakeRelative(description.TemplateDirectory);
 
                     // Replace the name in the files if necessary
@@ -138,7 +143,9 @@ namespace Stride.Assets.Presentation.Templates
                     var outputFileDirectory = outputFile.GetParent();
 
                     // Determine if we are processing the main game project
-                    var isPackageFile = (projectOutputFile == null && Path.GetExtension(file.FullName).ToLowerInvariant() == ".csproj" && !Path.GetFileNameWithoutExtension(file.FullName).EndsWith(".Windows"));
+                    var isPackageFile = projectOutputFile is null &&
+                                        Path.GetExtension(file.FullName).ToLowerInvariant() == ".csproj" &&
+                                        !Path.GetFileNameWithoutExtension(file.FullName).EndsWith(".Windows");
 
                     if (isPackageFile)
                     {
@@ -147,9 +154,7 @@ namespace Stride.Assets.Presentation.Templates
                     }
 
                     if (!Directory.Exists(outputFileDirectory))
-                    {
                         Directory.CreateDirectory(outputFileDirectory);
-                    }
 
                     if (IsBinaryFile(file.FullName))
                     {
@@ -212,12 +217,11 @@ namespace Stride.Assets.Presentation.Templates
                             }
 
                             var outputFile = UPath.Combine(outputDirectory, relativeFile);
-                            {   // Create the output directory if needed
+                            {
+                                // Create the output directory if needed
                                 var outputFileDirectory = outputFile.GetParent();
                                 if (!Directory.Exists(outputFileDirectory))
-                                {
                                     Directory.CreateDirectory(outputFileDirectory);
-                                }
                             }
 
                             if (IsBinaryFile(file.FullName))
@@ -253,10 +257,10 @@ namespace Stride.Assets.Presentation.Templates
             }
             else
             {
-                log.Error("Unable to find generated package for this template");
+                log.Error("Unable to find generated package for this template.");
             }
 
-            // Make sure we transfer overrides, etc. from what we deserialized to the asset graphs that we are going to save right after.
+            // Make sure we transfer overrides, etc. from what we deserialized to the asset graphs that we are going to save right after
             ApplyMetadata(parameters);
             return true;
         }
@@ -266,7 +270,8 @@ namespace Stride.Assets.Presentation.Templates
             List<AssetItem> assetsToRemove = new List<AssetItem>();
             foreach (var asset in loadedPackage.Assets)
             {
-                var assetIsRequired = (asset.Asset is SourceCodeAsset || asset.Asset.GetType().IsAssignableFrom(typeof(SourceCodeAsset)));
+                var assetIsRequired = asset.Asset is SourceCodeAsset ||
+                                      asset.Asset.GetType().IsAssignableFrom(typeof(SourceCodeAsset));
                 assetIsRequired |= AssetRegistry.IsAssetTypeAlwaysMarkAsRoot(asset.Asset.GetType());
                 assetIsRequired |= loadedPackage.RootAssets.ContainsKey(asset.Id);
 
@@ -301,20 +306,19 @@ namespace Stride.Assets.Presentation.Templates
         protected override async Task<bool> AfterSave(SessionTemplateGeneratorParameters parameters)
         {
             // If package was not generated
-            Package package;
-            parameters.Tags.TryGetValue(GeneratedPackageKey, out package);
-            if (package == null)
-            {
+            parameters.Tags.TryGetValue(GeneratedPackageKey, out Package package);
+            if (package is null)
                 return false;
-            }
+
             // Update platforms for the sample
-            var updateSample = TemplateManager.FindTemplates(package.Session).FirstOrDefault(template => template.Id == UpdatePlatformsTemplateGenerator.TemplateId);
+            var updateSample = TemplateManager.FindTemplates(package.Session)
+                                              .FirstOrDefault(template => template.Id == UpdatePlatformsTemplateGenerator.TemplateId);
             parameters.Description = updateSample;
 
             var updateParameters = new PackageTemplateGeneratorParameters(parameters, package);
             updateParameters.Unattended = true;
             var orientation = package.GetGameSettingsAsset()?.GetOrCreate<RenderingSettings>().DisplayOrientation ?? RequiredDisplayOrientation.Default;
-            UpdatePlatformsTemplateGenerator.SetOrientation(updateParameters, (DisplayOrientation)orientation);
+            UpdatePlatformsTemplateGenerator.SetOrientation(updateParameters, (DisplayOrientation) orientation);
             UpdatePlatformsTemplateGenerator.SetPlatforms(updateParameters, parameters.GetTag(PlatformsKey));
 
             // We want to force regeneration of Windows platform in case the sample .csproj is outdated
@@ -360,15 +364,14 @@ namespace Stride.Assets.Presentation.Templates
             }
 
             if (replaceParentDir)
-            {
                 content = content.Replace("../", string.Empty);
-            }
 
             File.WriteAllText(outputFile, content);
         }
 
         private static bool IsBinaryFile(string file)
         {
+            // TODO: Replace this for a better way to distinguish binary files from text files.
             var buffer = new byte[8192];
             using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
             {

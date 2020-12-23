@@ -5,22 +5,22 @@
 namespace Stride.Input
 {
     /// <summary>
-    /// Does not listen to any event but is used to pass around a type that might potentially listen for input events
+    ///   Defines a marker interface for a class that does not listen to any event but is used to pass around
+    ///   a type that might potentially listen for input events.
     /// </summary>
-    public interface IInputEventListener
-    {
-    }
+    public interface IInputEventListener { }
 
     /// <summary>
-    /// Interface for classes that want to listen to input event of a certain type
+    ///   Defines the interface for a class that wants to listen to input events of a certain type.
     /// </summary>
-    /// <typeparam name="TEventType">The type of <see cref="InputEvent"/> that will be sent to this event listener</typeparam>
-    public interface IInputEventListener<TEventType> : IInputEventListener where TEventType : InputEvent
+    /// <typeparam name="TEventType">The type of <see cref="InputEvent"/> that will be sent to this event listener.</typeparam>
+    public interface IInputEventListener<TEventType> : IInputEventListener
+        where TEventType : InputEvent
     {
         /// <summary>
-        /// Processes a new input event
+        ///   Processes a new input event.
         /// </summary>
-        /// <param name="inputEvent">the input event</param>
+        /// <param name="inputEvent">The input event.</param>
         void ProcessEvent(TEventType inputEvent);
     }
 }

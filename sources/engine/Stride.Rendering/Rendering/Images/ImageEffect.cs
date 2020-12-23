@@ -10,7 +10,7 @@ using Stride.Graphics;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Post effect base class.
+    ///   Represents a class that serves as a base for rendering image processing effects.
     /// </summary>
     [DataContract]
     public abstract class ImageEffect : DrawEffect, IImageEffect
@@ -25,11 +25,12 @@ namespace Stride.Rendering.Images
 
         private Viewport? viewport;
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageEffect" /> class.
+        ///   Initializes a new instance of the <see cref="ImageEffect"/> class.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <exception cref="System.ArgumentNullException">context</exception>
+        /// <param name="name">The name to set for this image effect. Specify <c>null</c> to use the type name automatically.</param>
+        /// <param name="supersample">A value indicating whether to use a supersampling pattern when scaling images.</param>
         protected ImageEffect(string name, bool supersample = false)
             : base(name)
         {
@@ -40,36 +41,35 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageEffect" /> class.
+        ///   Initializes a new instance of the <see cref="ImageEffect"/> class.
         /// </summary>
-        protected ImageEffect()
-            : this(null, false)
-        {
-        }
+        protected ImageEffect() : this(name: null, supersample: false) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageEffect" /> class.
+        ///   Initializes a new instance of the <see cref="ImageEffect"/> class.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="name">The name.</param>
-        /// <exception cref="System.ArgumentNullException">context</exception>
-        protected ImageEffect(RenderContext context, string name = null) 
-            : this(name)
+        /// <param name="context">The render context.</param>
+        /// <param name="name">The name to set for this image effect. Specify <c>null</c> to use the type name automatically.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="context"/> is a <c>null</c> reference.</exception>
+        protected ImageEffect(RenderContext context, string name = null) : this(name)
         {
             Initialize(context);
         }
 
+
         /// <summary>
-        /// Gets or sets a boolean to enable GraphicsDevice.SetDepthAndRenderTargets from output. Default is <c>true</c>.
+        ///   Gets or sets a value indicating whether to set the depth and render targets from the output with
+        ///   <see cref="CommandList.SetRenderTarget"/>.
         /// </summary>
-        /// <value>A boolean to enable GraphicsDevice.SetDepthAndRenderTargets from output. Default is <c>true</c></value>
+        /// <value>A value indicating whether to set the depth and render targets from the output. The default value is <c>true</c>.</value>
         protected bool EnableSetRenderTargets { get; set; }
 
         /// <summary>
-        /// Sets an input texture
+        ///   Sets an input texture.
         /// </summary>
         /// <param name="slot">The slot.</param>
         /// <param name="texture">The texture.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="slot"/> must be in the range [0, 15].</exception>
         public void SetInput(int slot, Texture texture)
         {
             if (slot < 0 || slot >= inputTextures.Length)
@@ -83,7 +83,7 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Resets the state of this effect.
+        ///   Resets the state of this effect.
         /// </summary>
         public override void Reset()
         {
@@ -97,30 +97,33 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Sets the render target output.
+        ///   Sets the render target output.
         /// </summary>
         /// <param name="view">The render target output view.</param>
-        /// <exception cref="System.ArgumentNullException">view</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="view"/> is a <c>null</c> reference.</exception>
         public void SetOutput(Texture view)
         {
-            if (view == null) throw new ArgumentNullException("view");
+            if (view is null)
+                throw new ArgumentNullException(nameof(view));
 
             SetOutputInternal(view);
         }
 
         /// <summary>
-        /// Sets the render target outputs.
+        ///   Sets the render target output.
         /// </summary>
         /// <param name="views">The render target output views.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="views"/> is a <c>null</c> reference.</exception>
         public void SetOutput(params Texture[] views)
         {
-            if (views == null) throw new ArgumentNullException("views");
+            if (views is null)
+                throw new ArgumentNullException(nameof(views));
 
             SetOutputInternal(views);
         }
 
         /// <summary>
-        /// Sets the render target output.
+        ///   Sets the render target output.
         /// </summary>
         /// <param name="depthStencilView">The depth stencil output view.</param>
         /// <param name="renderTargetView">The render target output view.</param>
@@ -132,7 +135,7 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Sets the render target outputs.
+        ///   Sets the render target outputs.
         /// </summary>
         /// <param name="depthStencilView">The depth stencil output view.</param>
         /// <param name="renderTargetViews">The render target output views.</param>
@@ -144,12 +147,13 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Sets the viewport to use .
+        ///   Sets the viewport to use.
         /// </summary>
-        /// <param name="viewport">The viewport.</param>
+        /// <param name="viewport">The viewport. Specify <c>null</c> to not set a specific viewport.</param>
         public void SetViewport(Viewport? viewport)
         {
-            this.viewport = viewport; // TODO: support multiple viewport?
+            // TODO: Support multiple viewport?
+            this.viewport = viewport;
         }
 
         protected override void PreDrawCore(RenderDrawContext context)
@@ -157,15 +161,13 @@ namespace Stride.Rendering.Images
             base.PreDrawCore(context);
 
             if (EnableSetRenderTargets)
-            {
                 SetRenderTargets(context);
-            }
         }
 
         /// <summary>
-        /// Set the render targets for the image effect.
+        ///   Set the render targets for the image effect.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">The rendering context.</param>
         protected virtual void SetRenderTargets(RenderDrawContext context)
         {
             // Transtion inputs to read sources
@@ -185,7 +187,7 @@ namespace Stride.Rendering.Images
 
                 if (outputRenderTargetView.ViewDimension == TextureDimension.TextureCube)
                 {
-                    if (createdOutputRenderTargetViews == null)
+                    if (createdOutputRenderTargetViews is null)
                         createdOutputRenderTargetViews = new Texture[6];
 
                     for (int i = 0; i < createdOutputRenderTargetViews.Length; i++)
@@ -220,19 +222,17 @@ namespace Stride.Rendering.Images
         protected override void PostDrawCore(RenderDrawContext context)
         {
             if (EnableSetRenderTargets)
-            {
                 DisposeCreatedRenderTargetViews(context);
-            }
 
             base.PostDrawCore(context);
         }
 
         /// <summary>
-        /// Dispose the render target views that have been created.
+        ///   Dispose the render target views that have been created.
         /// </summary>
         protected virtual void DisposeCreatedRenderTargetViews(RenderDrawContext context)
         {
-            if (createdOutputRenderTargetViews == null)
+            if (createdOutputRenderTargetViews is null)
                 return;
 
             for (int i = 0; i < createdOutputRenderTargetViews.Length; i++)
@@ -243,155 +243,142 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Gets the number of input textures.
+        ///   Gets the number of input textures.
         /// </summary>
         /// <value>The input count.</value>
-        protected int InputCount
-        {
-            get
-            {
-                return maxInputTextureIndex + 1;
-            }
-        }
+        public int InputCount => maxInputTextureIndex + 1;
 
         /// <summary>
-        /// Gets an input texture by the specified index.
+        ///   Gets an input texture by the specified index.
         /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>Texture.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">index</exception>
-        protected Texture GetInput(int index)
+        /// <param name="index">The index of the input texture.</param>
+        /// <returns>The texture, or <c>null</c> if there is no input texture set for <paramref name="index"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is an invald texture input index.</exception>
+        public Texture GetInput(int index)
         {
             if (index < 0 || index > maxInputTextureIndex)
-            {
-                throw new ArgumentOutOfRangeException("index", string.Format("Invald texture input index [{0}]. Max value is [{1}]", index, maxInputTextureIndex));
-            }
+                throw new ArgumentOutOfRangeException(nameof(index), $"Invald texture input index [{index}]. Max value is [{maxInputTextureIndex}].");
+
             return inputTextures[index];
         }
 
         /// <summary>
-        /// Gets a non-null input texture by the specified index.
+        ///   Gets a non-null input texture by the specified index.
         /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>Texture.</returns>
-        /// <exception cref="System.InvalidOperationException"></exception>
+        /// <param name="index">The index of the input texture.</param>
+        /// <returns>The texture.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is an invald texture input index.</exception>
+        /// <exception cref="InvalidOperationException">The input texture specified by <paramref name="index"/> is not set (is <c>null</c>).</exception>
         protected Texture GetSafeInput(int index)
         {
             var input = GetInput(index);
-            if (input == null)
-            {
-                throw new InvalidOperationException(string.Format("Expecting texture input on slot [{0}]", index));
-            }
+            if (input is null)
+                throw new InvalidOperationException($"Expecting texture input on slot [{index}].");
 
             return input;
         }
 
         /// <summary>
-        /// Gets the output depth stencil texture.
+        ///   Gets the output depth stencil texture.
         /// </summary>
-        /// <value>
-        /// The depth stencil output.
-        /// </value>
+        /// <value>The depth stencil output.</value>
         protected Texture DepthStencil => outputDepthStencilView;
 
         /// <summary>
-        /// Gets a value indicating whether this effect has depth stencil output texture binded.
+        ///   Gets a value indicating whether this effect has depth stencil output texture binded.
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance has depth stencil output; otherwise, <c>false</c>.
-        /// </value>
+        /// <value><c>true</c> if this instance has depth stencil output; otherwise, <c>false</c>.</value>
         protected bool HasDepthStencilOutput => outputDepthStencilView != null;
 
         /// <summary>
-        /// Gets the number of output render target.
+        ///   Gets the number of output render targets.
         /// </summary>
         /// <value>The output count.</value>
-        protected int OutputCount
-        {
-            get
-            {
-                return outputRenderTargetView != null ? 1 : outputRenderTargetViews != null ? outputRenderTargetViews.Length : 0;
-            }
-        }
+        public int OutputCount =>
+            outputRenderTargetView != null ? 1 :
+            outputRenderTargetViews != null ? outputRenderTargetViews.Length : 0;
 
         /// <summary>
-        /// Gets an output render target for the specified index.
+        ///   Gets an output render target for the specified index.
         /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>RenderTarget.</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">index</exception>
-        protected Texture GetOutput(int index)
+        /// <param name="index">The index of the output texture.</param>
+        /// <returns>The texture, or <c>null</c> if there is no output texture set for <paramref name="index"/>.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is an invald texture output index.</exception>
+        public Texture GetOutput(int index)
         {
             if (index < 0)
-            {
-                throw new ArgumentOutOfRangeException("index", string.Format("Invald texture outputindex [{0}] cannot be negative for effect [{1}]", index, Name));
-            }
+                throw new ArgumentOutOfRangeException(nameof(index), $"Invald texture output index [{index}] cannot be negative for effect [{Name}].");
 
-            return outputRenderTargetView ?? (outputRenderTargetViews != null ? outputRenderTargetViews[index] : null);
+            return outputRenderTargetView ??
+                   (outputRenderTargetViews != null ? outputRenderTargetViews[index] : null);
         }
 
         /// <summary>
-        /// Gets an non-null output render target for the specified index.
+        ///   Gets an non-null output render target for the specified index.
         /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>RenderTarget.</returns>
-        /// <exception cref="System.InvalidOperationException"></exception>
+        /// <param name="index">The index of the output texture.</param>
+        /// <returns>The texture.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is an invald texture output index.</exception>
+        /// <exception cref="InvalidOperationException">The output texture specified by <paramref name="index"/> is not set (is <c>null</c>).</exception>
         protected Texture GetSafeOutput(int index)
         {
             var output = GetOutput(index);
-            if (output == null)
-            {
-                throw new InvalidOperationException(string.Format("Expecting texture output on slot [{0}]", index));
-            }
+            if (output is null)
+                throw new InvalidOperationException($"Expecting texture output on slot [{index}].");
 
             return output;
         }
 
         /// <summary>
-        /// Gets a render target with the specified description, scoped for the duration of the <see cref="DrawEffect.DrawCore"/>.
+        ///   Gets a render target for the specified description, scoped for the duration of the <see cref="RendererBase.DrawCore"/>.
         /// </summary>
         /// <returns>A new instance of texture.</returns>
         protected Texture NewScopedRenderTarget2D(TextureDescription description)
         {
-            // TODO: Check if we should introduce an enum for the kind of scope (per DrawCore, per Frame...etc.)
             CheckIsInDrawCore();
+
+            // TODO: Check if we should introduce an enum for the kind of scope (per DrawCore, per Frame...etc.)
             return PushScopedResource(Context.Allocator.GetTemporaryTexture2D(description));
         }
 
         /// <summary>
-        /// Gets a render target output for the specified description with a single mipmap, scoped for the duration of the <see cref="DrawEffect.DrawCore"/>.
+        ///   Gets a render target for the specified description with a single mipmap, scoped for the duration of the <see cref="RendererBase.DrawCore"/>.
         /// </summary>
-        /// <param name="width">The width.</param>
-        /// <param name="height">The height.</param>
-        /// <param name="format">Describes the format to use.</param>
-        /// <param name="flags">Sets the texture flags (for unordered access...etc.)</param>
-        /// <param name="arraySize">Size of the texture 2D array, default to 1.</param>
-        /// <returns>A new instance of texture class.</returns>
-        /// <msdn-id>ff476521</msdn-id>
-        ///   <unmanaged>HRESULT ID3D11Device::CreateTexture2D([In] const D3D11_TEXTURE2D_DESC* pDesc,[In, Buffer, Optional] const D3D11_SUBRESOURCE_DATA* pInitialData,[Out, Fast] ID3D11Texture2D** ppTexture2D)</unmanaged>
-        ///   <unmanaged-short>ID3D11Device::CreateTexture2D</unmanaged-short>
+        /// <param name="width">The width of the render target.</param>
+        /// <param name="height">The height of the render target.</param>
+        /// <param name="format">The pixel format to use.</param>
+        /// <param name="flags">
+        ///   The texture flags (for unordered access, render targets, etc). Default value is <see cref="TextureFlags.RenderTarget"/>
+        ///   and <see cref="TextureFlags.ShaderResource"/>.
+        /// </param>
+        /// <param name="arraySize">Size of the texture array. Default value is 1.</param>
+        /// <returns>A new instance of texture.</returns>
         protected Texture NewScopedRenderTarget2D(int width, int height, PixelFormat format, TextureFlags flags = TextureFlags.RenderTarget | TextureFlags.ShaderResource, int arraySize = 1)
         {
             CheckIsInDrawCore();
+
             return PushScopedResource(Context.Allocator.GetTemporaryTexture2D(width, height, format, flags, arraySize));
         }
 
         /// <summary>
-        /// Gets a render target output for the specified description, scoped for the duration of the <see cref="DrawEffect.DrawCore"/>.
+        ///   Gets a render target for the specified description, scoped for the duration of the <see cref="RendererBase.DrawCore"/>.
         /// </summary>
-        /// <param name="width">The width.</param>
-        /// <param name="height">The height.</param>
-        /// <param name="format">Describes the format to use.</param>
-        /// <param name="mipCount">Number of mipmaps, set to true to have all mipmaps, set to an int &gt;=1 for a particular mipmap count.</param>
-        /// <param name="flags">Sets the texture flags (for unordered access...etc.)</param>
-        /// <param name="arraySize">Size of the texture 2D array, default to 1.</param>
-        /// <returns>A new instance of texture class.</returns>
-        /// <msdn-id>ff476521</msdn-id>
-        ///   <unmanaged>HRESULT ID3D11Device::CreateTexture2D([In] const D3D11_TEXTURE2D_DESC* pDesc,[In, Buffer, Optional] const D3D11_SUBRESOURCE_DATA* pInitialData,[Out, Fast] ID3D11Texture2D** ppTexture2D)</unmanaged>
-        ///   <unmanaged-short>ID3D11Device::CreateTexture2D</unmanaged-short>
+        /// <param name="width">The width of the render target.</param>
+        /// <param name="height">The height of the render target.</param>
+        /// <param name="format">The pixel format to use.</param>
+        /// <param name="mipCount">
+        ///   Number of mipmaps. Set to <c>true</c> to have all mipmaps, to an integer greater than 1 for a particular mipmap count.
+        /// </param>
+        /// <param name="flags">
+        ///   The texture flags (for unordered access, render targets, etc). Default value is <see cref="TextureFlags.RenderTarget"/>
+        ///   and <see cref="TextureFlags.ShaderResource"/>.
+        /// </param>
+        /// <param name="arraySize">Size of the texture array. Default value is 1.</param>
+        /// <returns>A new instance of texture.</returns>
         protected Texture NewScopedRenderTarget2D(int width, int height, PixelFormat format, MipMapCount mipCount, TextureFlags flags = TextureFlags.RenderTarget | TextureFlags.ShaderResource, int arraySize = 1)
         {
             CheckIsInDrawCore();
+
             return PushScopedResource(Context.Allocator.GetTemporaryTexture2D(width, height, format, mipCount, flags, arraySize));
         }
 

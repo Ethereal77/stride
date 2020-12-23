@@ -4,57 +4,46 @@
 
 #if STRIDE_GRAPHICS_API_DIRECT3D11
 
-using System;
-
 using SharpDX.Direct3D11;
 
 namespace Stride.Graphics
 {
-    /// <summary>
-    /// GraphicsResource class
-    /// </summary>
     public abstract partial class GraphicsResource
     {
         private ShaderResourceView shaderResourceView;
         private UnorderedAccessView unorderedAccessView;
-        internal bool DiscardNextMap; // Used to internally force a WriteDiscard (to force a rename) with the GraphicsResourceAllocator
 
-        protected bool IsDebugMode
-        {
-            get
-            {
-                return GraphicsDevice != null && GraphicsDevice.IsDebugMode;
-            }
-        }
+        // Used to internally to force a WriteDiscard (to force a rename) with the GraphicsResourceAllocator
+        internal bool DiscardNextMap;
+
+        protected bool IsDebugMode => GraphicsDevice?.IsDebugMode ?? false;
 
         protected override void OnNameChanged()
         {
             base.OnNameChanged();
+
             if (IsDebugMode)
             {
-                if (this.shaderResourceView != null)
-                {
-                    shaderResourceView.DebugName = Name == null ? null : $"{Name} SRV";
-                }
+                if (shaderResourceView != null)
+                    shaderResourceView.DebugName = Name is null ? null : $"{Name} SRV";
 
-                if (this.unorderedAccessView != null)
-                {
-                    unorderedAccessView.DebugName = Name == null ? null : $"{Name} UAV";
-                }
+                if (unorderedAccessView != null)
+                    unorderedAccessView.DebugName = Name is null ? null : $"{Name} UAV";
             }
         }
 
         /// <summary>
-        /// Gets or sets the ShaderResourceView attached to this GraphicsResource.
-        /// Note that only Texture, Texture3D, RenderTarget2D, RenderTarget3D, DepthStencil are using this ShaderResourceView
+        ///   Gets or sets the shader resource view attached to this graphics resource.
         /// </summary>
-        /// <value>The device child.</value>
-        protected internal SharpDX.Direct3D11.ShaderResourceView NativeShaderResourceView
+        /// <value>The shader resource view.</value>
+        /// <remarks>
+        ///   Note that only Texture, Texture3D, RenderTarget2D, RenderTarget3D, and DepthStencil are using this
+        ///   ShaderResourceView.
+        /// </remarks>
+        protected internal ShaderResourceView NativeShaderResourceView
         {
-            get
-            {
-                return shaderResourceView;
-            }
+            get => shaderResourceView;
+
             set
             {
                 shaderResourceView = value;
@@ -67,15 +56,13 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Gets or sets the UnorderedAccessView attached to this GraphicsResource.
+        ///   Gets or sets the unordered access view attached to this graphics resource.
         /// </summary>
-        /// <value>The device child.</value>
+        /// <value>The unordered access view.</value>
         protected internal UnorderedAccessView NativeUnorderedAccessView
         {
-            get
-            {
-                return unorderedAccessView;
-            }
+            get => unorderedAccessView;
+
             set
             {
                 unorderedAccessView = value;
@@ -96,5 +83,5 @@ namespace Stride.Graphics
         }
     }
 }
- 
+
 #endif

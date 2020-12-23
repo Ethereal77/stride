@@ -4,6 +4,10 @@
 
 namespace Stride.Rendering
 {
+    /// <summary>
+    ///   Represents a structure that defines a direct way of accesing a value parameter in an effect.
+    /// </summary>
+    /// <typeparam name="T">Type of the value.</typeparam>
     public struct ValueParameter<T> where T : struct
     {
         internal readonly int Offset;
@@ -11,8 +15,8 @@ namespace Stride.Rendering
 
         internal ValueParameter(int offset, int count)
         {
-            this.Offset = offset;
-            this.Count = count;
+            Offset = offset;
+            Count = count;
         }
     }
 }

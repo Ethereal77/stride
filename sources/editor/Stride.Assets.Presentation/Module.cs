@@ -31,7 +31,7 @@ namespace Stride.Assets.Presentation
             AssemblyRegistry.Register(thisAssembly, AssemblyCommonCategories.Assets);
 
             // We need access to the AssetQuantumRegistry from the SessionTemplateGenerator.
-            // For now we register graph types in the module initializer.
+            // For now we register graph types in the module initializer
             AssetQuantumRegistry.RegisterAssembly(thisAssembly);
 
             // Register the default templates

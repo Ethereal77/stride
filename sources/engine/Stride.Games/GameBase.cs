@@ -17,12 +17,10 @@ using Stride.Graphics;
 namespace Stride.Games
 {
     /// <summary>
-    /// The game.
+    ///   Represents the base class for a game application.
     /// </summary>
     public abstract class GameBase : ComponentBase, IGame
     {
-        #region Fields
-
         private readonly GamePlatform gamePlatform;
         private IGraphicsDeviceService graphicsDeviceService;
         protected IGraphicsDeviceManager graphicsDeviceManager;
@@ -43,12 +41,9 @@ namespace Stride.Games
 
         internal object TickLock = new object();
 
-        #endregion
-
-        #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameBase" /> class.
+        ///   Initializes a new instance of the <see cref="GameBase" /> class.
         /// </summary>
         protected GameBase()
         {
@@ -59,11 +54,11 @@ namespace Stride.Games
             autoTickTimer = new TimerTick();
             IsFixedTimeStep = false;
             maximumElapsedTime = TimeSpan.FromMilliseconds(500.0);
-            TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60); // target elapsed time is by default 60Hz
-            
+            TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 60); // By default 60Hz
+
             TreatNotFocusedLikeMinimized = true;
-            WindowMinimumUpdateRate = new ThreadThrottler(TimeSpan.FromSeconds(0d));
-            MinimizedMinimumUpdateRate = new ThreadThrottler(15); // by default 15 updates per second while minimized
+            WindowMinimumUpdateRate = new ThreadThrottler(TimeSpan.FromSeconds(0));
+            MinimizedMinimumUpdateRate = new ThreadThrottler(15); // By default 15 updates per second
 
             isMouseVisible = true;
 
@@ -92,77 +87,62 @@ namespace Stride.Games
             IsActive = true;
         }
 
-        #endregion
 
-        #region Public Events
-
-        /// <summary>
-        /// Occurs when [activated].
-        /// </summary>
         public event EventHandler<EventArgs> Activated;
-
-        /// <summary>
-        /// Occurs when [deactivated].
-        /// </summary>
         public event EventHandler<EventArgs> Deactivated;
 
-        /// <summary>
-        /// Occurs when [exiting].
-        /// </summary>
         public event EventHandler<EventArgs> Exiting;
 
-        /// <summary>
-        /// Occurs when [window created].
-        /// </summary>
         public event EventHandler<EventArgs> WindowCreated;
 
         public event EventHandler<GameUnhandledExceptionEventArgs> UnhandledException;
 
-        #endregion
-
-        #region Public Properties
 
         /// <summary>
-        /// The total and delta time to be used for logic running in the update loop.
+        ///   Gets the total and delta time to be used for logic running in the update loop.
         /// </summary>
         public GameTime UpdateTime { get; }
 
         /// <summary>
-        /// The total and delta time to be used for logic running in the draw loop.
+        ///   Gets the total and delta time to be used for logic running in the draw loop.
         /// </summary>
         public GameTime DrawTime { get; }
 
         /// <summary>
-        /// Is used when we draw without running an update beforehand, so when both <see cref="IsFixedTimeStep"/> 
-        /// and <see cref="IsDrawDesynchronized"/> are set.<br/>
-        /// It returns a number between 0 and 1 which represents the current position our DrawTime is in relation 
-        /// to the previous and next step.<br/>
-        /// 0.5 would mean that we are rendering at a time halfway between the previous and next fixed-step.
+        ///   Gets the draw interpolation factor,
         /// </summary>
         /// <value>
-        /// The draw interpolation factor.
+        ///   The draw interpolation factor.
+        ///   <para/>
+        ///   It returns a number between 0 and 1 which represents the current position our DrawTime is in relation
+        ///   to the previous and next step. <br/>
+        ///   0.5 would mean that we are rendering at a time halfway between the previous and next fixed-step.
         /// </value>
+        /// <remarks>
+        ///   The draw interpolation factor is used when we draw without running an update beforehand, so when both
+        ///   <see cref="IsFixedTimeStep"/> and <see cref="IsDrawDesynchronized"/> are set.
+        /// </remarks>
         public float DrawInterpolationFactor { get; private set; }
 
         /// <summary>
-        /// Gets the <see cref="ContentManager"/>.
+        ///   Gets the <see cref="ContentManager"/>.
         /// </summary>
         public ContentManager Content { get; private set; }
 
         /// <summary>
-        /// Gets the game components registered by this game.
+        ///   Gets the game systems registered by this game.
         /// </summary>
-        /// <value>The game components.</value>
+        /// <value>The game systems.</value>
         public GameSystemCollection GameSystems { get; private set; }
 
         /// <summary>
-        /// Gets the game context.
+        ///   Gets the game context.
         /// </summary>
         /// <value>The game context.</value>
         public GameContext Context { get; private set; }
 
         /// <summary>
-        /// Gets the graphics device.
+        ///   Gets the graphics device.
         /// </summary>
         /// <value>The graphics device.</value>
         public GraphicsDevice GraphicsDevice { get; private set; }
@@ -170,52 +150,51 @@ namespace Stride.Games
         public GraphicsContext GraphicsContext { get; private set; }
 
         /// <summary>
-        /// Gets or sets the time between each <see cref="Tick"/> when <see cref="IsActive"/> is false.
+        ///   Gets or sets the time between each <see cref="Tick"/> when the application is not focused.
         /// </summary>
-        /// <value>The inactive sleep time.</value>
+        /// <value>The inactive sleep time when <see cref="IsActive"/> is false.</value>
         public TimeSpan InactiveSleepTime { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is active.
+        ///   Gets a value indicating whether this instance is active.
         /// </summary>
         /// <value><c>true</c> if this instance is active; otherwise, <c>false</c>.</value>
         public bool IsActive { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is exiting.
+        ///   Gets a value indicating whether this instance is exiting.
         /// </summary>
         /// <value><c>true</c> if this instance is exiting; otherwise, <c>false</c>.</value>
         public bool IsExiting{ get; private set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the elapsed time between each update should be constant,
-        /// see <see cref="TargetElapsedTime"/> to configure the duration.
+        ///   Gets or sets a value indicating whether the elapsed time between each update should be constant
+        ///   and the interval should be <see cref="TargetElapsedTime"/>.
         /// </summary>
-        /// <value><c>true</c> if this instance is fixed time step; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if this instance should use a fixed time step; otherwise, <c>false</c>.</value>
         public bool IsFixedTimeStep { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance should force exactly one update step per one draw step
+        ///   Gets or sets a value indicating whether this instance should force exactly one update step per one
+        ///   draw step.
         /// </summary>
         /// <value><c>true</c> if this instance forces one update step per one draw step; otherwise, <c>false</c>.</value>
         protected internal bool ForceOneUpdatePerDraw { get; set; }
 
         /// <summary>
-        /// When <see cref="IsFixedTimeStep"/> is set, is it allowed to render frames between two steps when we have time to do so.
+        ///   Gets or sets a value indicating whether it is allowed to render frames between two steps when we have
+        ///   time to do so and <see cref="IsFixedTimeStep"/> is <c>true</c>.
         /// </summary>
-        /// <value><c>true</c> if this instance's drawing is desychronized ; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if this instance's drawing is desychronized; otherwise, <c>false</c>.</value>
         public bool IsDrawDesynchronized { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the mouse should be visible.
+        ///   Gets or sets a value indicating whether the mouse pointer should be visible.
         /// </summary>
-        /// <value><c>true</c> if the mouse should be visible; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if the mouse pointer should be visible; otherwise, <c>false</c>.</value>
         public bool IsMouseVisible
         {
-            get
-            {
-                return Window?.IsMouseVisible ?? isMouseVisible;
-            }
+            get => Window?.IsMouseVisible ?? isMouseVisible;
             set
             {
                 isMouseVisible = value;
@@ -228,85 +207,76 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets the launch parameters.
+        ///   Gets the launch parameters.
         /// </summary>
         /// <value>The launch parameters.</value>
         public LaunchParameters LaunchParameters { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is running.
+        ///   Gets a value indicating whether this instance is running.
         /// </summary>
         public bool IsRunning { get; private set; }
 
         /// <summary>
-        /// Gets the service container.
+        ///   Gets the service container.
         /// </summary>
         /// <value>The service container.</value>
         [NotNull]
         public ServiceRegistry Services { get; }
 
         /// <summary>
-        /// Gets or sets the target elapsed time, this is the duration of each tick/update
-        /// when <see cref="IsFixedTimeStep"/> is enabled.
+        ///   Gets or sets the target elapsed time, this is the duration of each tick/update when
+        ///   <see cref="IsFixedTimeStep"/> is enabled.
         /// </summary>
         /// <value>The target elapsed time.</value>
         public TimeSpan TargetElapsedTime { get; set; }
 
         /// <summary>
-        /// Access to the throttler used to set the minimum time allowed between each updates.
+        ///   Gets the throttler used to set the minimum time allowed between each updates.
         /// </summary>
         public ThreadThrottler WindowMinimumUpdateRate { get; }
 
         /// <summary>
-        /// Access to the throttler used to set the minimum time allowed between each updates while the window is minimized and,
-        /// depending on <see cref="TreatNotFocusedLikeMinimized"/>, while unfocused.
+        ///   Gets the throttler used to set the minimum time allowed between each updates while the window is
+        ///   minimized and, depending on <see cref="TreatNotFocusedLikeMinimized"/>, while on the background.
         /// </summary>
         public ThreadThrottler MinimizedMinimumUpdateRate { get; }
 
         /// <summary>
-        /// Considers windows without user focus like a minimized window for <see cref="MinimizedMinimumUpdateRate"/> 
+        ///   Gets or sets a value indicating whether to consider a window not in the foreground like a minimized
+        ///   window for <see cref="MinimizedMinimumUpdateRate"/>.
         /// </summary>
         public bool TreatNotFocusedLikeMinimized { get; set; }
 
         /// <summary>
-        /// Should this instance still render/draw when the window is minimized. Updates are still going to run regardless of the value set.
+        ///   Gets or sets a value indicating whether to still render / draw when the window is minimized.
         /// </summary>
+        /// <remarks>
+        ///   Updates are still going to run regardless of the value of this property.
+        /// </remarks>
         public bool DrawWhileMinimized { get; set; }
 
         /// <summary>
-        /// Gets the abstract window.
+        ///   Gets the main window.
         /// </summary>
-        /// <value>The window.</value>
-        public GameWindow Window
-        {
-            get
-            {
-                if (gamePlatform != null)
-                {
-                    return gamePlatform.MainWindow;
-                }
-                return null;
-            }
-        }
+        /// <value>The main window.</value>
+        public GameWindow Window => gamePlatform?.MainWindow;
 
         public abstract void ConfirmRenderingSettings(bool gameCreation);
 
         /// <summary>
-        /// Gets the full name of the device this game is running if available
+        ///   Gets the full name of the device this game is running on (if available).
         /// </summary>
         public string FullPlatformName => gamePlatform.FullName;
-
-        #endregion
 
         internal EventHandler<GameUnhandledExceptionEventArgs> UnhandledExceptionInternal
         {
             get { return UnhandledException; }
         }
 
-        #region Public Methods and Operators
 
         /// <summary>
-        /// Exits the game.
+        ///   Exits the game.
         /// </summary>
         public void Exit()
         {
@@ -315,7 +285,7 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Resets the elapsed time counter.
+        ///   Resets the elapsed time counter.
         /// </summary>
         public void ResetElapsedTime()
         {
@@ -328,7 +298,7 @@ namespace Stride.Games
             {
                 using (var profile = Profiler.Begin(GameProfilingKeys.GameInitialize))
                 {
-                    // Initialize this instance and all game systems before trying to create the device.
+                    // Initialize this instance and all game systems before trying to create the device
                     Initialize();
 
                     // Make sure that the device is already created
@@ -336,18 +306,14 @@ namespace Stride.Games
 
                     // Gets the graphics device service
                     graphicsDeviceService = Services.GetService<IGraphicsDeviceService>();
-                    if (graphicsDeviceService == null)
-                    {
-                        throw new InvalidOperationException("No GraphicsDeviceService found");
-                    }
+                    if (graphicsDeviceService is null)
+                        throw new InvalidOperationException("No GraphicsDeviceService found.");
 
                     // Checks the graphics device
-                    if (graphicsDeviceService.GraphicsDevice == null)
-                    {
-                        throw new InvalidOperationException("No GraphicsDevice found");
-                    }
+                    if (graphicsDeviceService.GraphicsDevice is null)
+                        throw new InvalidOperationException("No GraphicsDevice found.");
 
-                    // Setup the graphics device if it was not already setup.
+                    // Setup the graphics device if it was not already setup
                     SetupGraphicsDeviceEvents();
 
                     // Bind Graphics Context enabling initialize to use GL API eg. SetData to texture ...etc
@@ -374,29 +340,25 @@ namespace Stride.Games
             }
             catch (Exception ex)
             {
-                Log.Error("Unexpected exception", ex);
+                Log.Error("Unexpected exception.", ex);
                 throw;
             }
         }
 
         /// <summary>
-        /// Call this method to initialize the game, begin running the game loop, and start processing events for the game.
+        ///   Initializes the game, begins running the game loop, and starts processing events.
         /// </summary>
-        /// <param name="gameContext">The window Context for this game.</param>
-        /// <exception cref="System.InvalidOperationException">Cannot run this instance while it is already running</exception>
+        /// <param name="gameContext">The window context for this game.</param>
+        /// <exception cref="InvalidOperationException">This instance is already running.</exception>
         public void Run(GameContext gameContext = null)
         {
             if (IsRunning)
-            {
-                throw new InvalidOperationException("Cannot run this instance while it is already running");
-            }
+                throw new InvalidOperationException("Cannot run this instance while it is already running.");
 
             // Gets the graphics device manager
             graphicsDeviceManager = Services.GetService<IGraphicsDeviceManager>();
-            if (graphicsDeviceManager == null)
-            {
-                throw new InvalidOperationException("No GraphicsDeviceManager found");
-            }
+            if (graphicsDeviceManager is null)
+                throw new InvalidOperationException("No GraphicsDeviceManager found.");
 
             // Gets the GameWindow Context
             Context = gameContext ?? GameContextFactory.NewDefaultGameContext();
@@ -405,8 +367,8 @@ namespace Stride.Games
 
             try
             {
-                // TODO temporary workaround as the engine doesn't support yet resize
-                var graphicsDeviceManagerImpl = (GraphicsDeviceManager)graphicsDeviceManager;
+                // TODO: Temporary workaround as the engine doesn't support yet resize
+                var graphicsDeviceManagerImpl = (GraphicsDeviceManager) graphicsDeviceManager;
                 Context.RequestedWidth = graphicsDeviceManagerImpl.PreferredBackBufferWidth;
                 Context.RequestedHeight = graphicsDeviceManagerImpl.PreferredBackBufferHeight;
                 Context.RequestedBackBufferFormat = graphicsDeviceManagerImpl.PreferredBackBufferFormat;
@@ -418,7 +380,7 @@ namespace Stride.Games
 
                 if (gamePlatform.IsBlockingRun)
                 {
-                    // If the previous call was blocking, then we can call Endrun
+                    // If the previous call was blocking, then we can call EndRun
                     EndRun();
                 }
                 else
@@ -437,7 +399,7 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Creates or updates <see cref="Context"/> before window and device are created.
+        ///   Creates or updates the <see cref="Context"/> before the window and the graphics device are created.
         /// </summary>
         protected virtual void PrepareContext()
         {
@@ -448,7 +410,7 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Prevents calls to Draw until the next Update.
+        ///   Prevents calls to <see cref="Draw"/> until the next <see cref="Update"/>.
         /// </summary>
         public void SuppressDraw()
         {
@@ -456,7 +418,7 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Updates the game's clock and calls Update and Draw.
+        ///   Updates the game's clock and calls Update and Draw.
         /// </summary>
         public void Tick()
         {
@@ -481,7 +443,8 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Calls <see cref="RawTick"/> automatically based on this game's setup, override it to implement your own system.
+        ///   Calls <see cref="RawTick"/> automatically based on this game's setup.
+        ///   Override it to implement your own system.
         /// </summary>
         protected virtual void RawTickProducer()
         {
@@ -499,9 +462,7 @@ namespace Stride.Games
                 }
 
                 if (elapsedAdjustedTime > maximumElapsedTime)
-                {
                     elapsedAdjustedTime = maximumElapsedTime;
-                }
 
                 bool drawFrame = true;
                 int updateCount = 1;
@@ -552,12 +513,15 @@ namespace Stride.Games
                     singleFrameElapsedTime = TargetElapsedTime;
                 }
 
-                RawTick(singleFrameElapsedTime, updateCount, drawLag / (float)TargetElapsedTime.Ticks, drawFrame);
+                RawTick(singleFrameElapsedTime, updateCount, drawLag / (float) TargetElapsedTime.Ticks, drawFrame);
 
                 var window = gamePlatform.MainWindow;
-                if (gamePlatform.IsBlockingRun) // throttle fps if Game.Tick() called from internal main loop
+                if (gamePlatform.IsBlockingRun)
                 {
-                    if (window.IsMinimized || window.Visible == false || (window.Focused == false && TreatNotFocusedLikeMinimized))
+                    // Throttle FPS if Game.Tick() called from internal main loop
+                    if (window.IsMinimized ||
+                        window.Visible == false ||
+                        (window.Focused == false && TreatNotFocusedLikeMinimized))
                     {
                         MinimizedMinimumUpdateRate.Throttle(out long _);
                     }
@@ -569,30 +533,31 @@ namespace Stride.Games
             }
             catch (Exception ex)
             {
-                Log.Error("Unexpected exception", ex);
+                Log.Error("Unexpected exception.", ex);
                 throw;
             }
         }
 
         /// <summary>
-        /// Call this method within your overriden <see cref="RawTickProducer"/> to update and draw the game yourself. <br/>
-        /// As this version is manual, there are a lot of functionallity purposefully skipped: <br/>
-        /// clamping elapsed time to a maximum, skipping drawing when the window is minimized, <see cref="ResetElapsedTime"/>, <see cref="SuppressDraw"/>, <see cref="IsFixedTimeStep"/>, <br/>
-        /// <see cref="IsDrawDesynchronized"/>, <see cref="MinimizedMinimumUpdateRate"/> / <see cref="WindowMinimumUpdateRate"/> / <see cref="TreatNotFocusedLikeMinimized"/>.
+        ///   Call this method within your overriden <see cref="RawTickProducer"/> to update and draw the game yourself.<br/>
+        ///   As this version is manual, there are a lot of functionality purposefully skipped:
+        ///   <list type="bullet">
+        ///     <item>Clamping elapsed time to a maximum.</item>
+        ///     <item>Skipping drawing when the window is minimized.</item>
+        ///     <item><see cref="ResetElapsedTime"/>.</item>
+        ///     <item><see cref="SuppressDraw"/>.</item>
+        ///     <item><see cref="IsFixedTimeStep"/>.</item>
+        ///     <item><see cref="IsDrawDesynchronized"/>.</item>
+        ///     <item><see cref="MinimizedMinimumUpdateRate"/> / <see cref="WindowMinimumUpdateRate"/> / <see cref="TreatNotFocusedLikeMinimized"/>.</item>
+        ///   </list>
         /// </summary>
         /// <param name="elapsedTimePerUpdate">
-        /// The amount of time passed between each update of the game's system, 
-        /// the total time passed would be <paramref name="elapsedTimePerUpdate"/> * <paramref name="updateCount"/>.
+        ///   Amount of time between each update of the game.
+        ///   The total time would be <paramref name="elapsedTimePerUpdate"/> * <paramref name="updateCount"/>.
         /// </param>
-        /// <param name="updateCount">
-        /// The amount of updates that will be executed on the game's systems.
-        /// </param>
-        /// <param name="drawInterpolationFactor">
-        /// See <see cref="DrawInterpolationFactor"/>
-        /// </param>
-        /// <param name="skipDrawFrame">
-        /// Do not draw for this tick.
-        /// </param>
+        /// <param name="updateCount">Amount of updates that will be executed on the game.</param>
+        /// <param name="drawInterpolationFactor">See <see cref="DrawInterpolationFactor"/>.</param>
+        /// <param name="drawFrame">A value indicating whether to draw a frame.</param>
         protected void RawTick(TimeSpan elapsedTimePerUpdate, int updateCount = 1, float drawInterpolationFactor = 0, bool drawFrame = true)
         {
             bool beginDrawSuccessful = false;
@@ -615,6 +580,7 @@ namespace Stride.Games
                 if (drawFrame && !IsExiting && GameSystems.IsFirstUpdateDone)
                 {
                     DrawInterpolationFactor = drawInterpolationFactor;
+                    DrawTime.Factor = UpdateTime.Factor;
                     DrawTime.Update(DrawTime.Total + totalElapsedTime, totalElapsedTime, true);
 
                     var profilingDraw = Profiler.Begin(GameProfilingKeys.GameDrawFPS);
@@ -652,21 +618,18 @@ namespace Stride.Games
             }
         }
 
-        #endregion
 
         #region Methods
 
         /// <summary>
-        /// Called after all components are initialized, before the game loop starts.
+        ///   Called after all components are initialized, before the game loop starts.
         /// </summary>
-        protected virtual void BeginRun()
-        {
-        }
+        protected virtual void BeginRun() { }
 
-        /// <summary>Called after the game loop has stopped running before exiting.</summary>
-        protected virtual void EndRun()
-        {
-        }
+        /// <summary>
+        ///   Called after the game loop has stopped running before exiting.
+        /// </summary>
+        protected virtual void EndRun() { }
 
         protected override void Destroy()
         {
@@ -674,7 +637,8 @@ namespace Stride.Games
 
             lock (this)
             {
-                if (Window != null && Window.IsActivated) // force the window to be in an correct state during destroy (Deactivated events are sometimes dropped on windows)
+                // Force the window to be in an correct state during destroy (Deactivated events are sometimes dropped on windows)
+                if (Window != null && Window.IsActivated)
                 {
                     Window.OnPause();
                 }
@@ -683,8 +647,7 @@ namespace Stride.Games
                 GameSystems.CopyTo(array, 0);
                 for (int i = 0; i < array.Length; i++)
                 {
-                    var disposable = array[i] as IDisposable;
-                    if (disposable != null)
+                    if (array[i] is IDisposable disposable)
                     {
                         disposable.Dispose();
                     }
@@ -693,8 +656,7 @@ namespace Stride.Games
                 // Reset graphics context
                 GraphicsContext = null;
 
-                var disposableGraphicsManager = graphicsDeviceManager as IDisposable;
-                if (disposableGraphicsManager != null)
+                if (graphicsDeviceManager is IDisposable disposableGraphicsManager)
                 {
                     disposableGraphicsManager.Dispose();
                 }
@@ -709,9 +671,10 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Starts the drawing of a frame. This method is followed by calls to <see cref="Update"/>, <see cref="Draw"/> and <see cref="EndDraw"/>.
+        ///   Starts the drawing of a frame. This method is followed by calls to <see cref="Update"/>,
+        ///   <see cref="Draw"/> and <see cref="EndDraw"/>.
         /// </summary>
-        /// <returns><c>true</c> to continue drawing, false to not call <see cref="Draw"/> and <see cref="EndDraw"/></returns>
+        /// <returns><c>true</c> to continue drawing, <c>false</c> to not call <see cref="Draw"/> and <see cref="EndDraw"/></returns>
         protected virtual bool BeginDraw()
         {
             beginDrawOk = false;
@@ -722,7 +685,7 @@ namespace Stride.Games
             }
 
             // Setup default command list
-            if (GraphicsContext == null)
+            if (GraphicsContext is null)
             {
                 GraphicsContext = new GraphicsContext(GraphicsDevice);
                 Services.AddService(GraphicsContext);
@@ -752,28 +715,31 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Reference page contains code sample.
+        ///   Draws the frame by telling the systems to draw themselves. This method will always be preceeded by a
+        ///   call to <see cref="BeginDraw"/>.
         /// </summary>
-        /// <param name="gameTime">
-        /// Time passed since the last call to Draw.
-        /// </param>
+        /// <param name="gameTime">Time passed since the last call to Draw.</param>
         protected virtual void Draw(GameTime gameTime)
         {
             GameSystems.Draw(gameTime);
 
-            // Make sure that the render target is set back to the back buffer
-            // From a user perspective this is better. From an internal point of view,
-            // this code is already present in GraphicsDeviceManager.BeginDraw()
-            // but due to the fact that a GameSystem can modify the state of GraphicsDevice
-            // we need to restore the default render targets
+            // Make sure that the render target is set back to the back buffer.
+            //   From a user perspective this is better. From an internal point of view,
+            //   this code is already present in GraphicsDeviceManager.BeginDraw()
+            //   but due to the fact that a GameSystem can modify the state of GraphicsDevice
+            //   we need to restore the default render targets
             // TODO: Check how we can handle this more cleanly
-            if (GraphicsDevice != null && GraphicsDevice.Presenter.BackBuffer != null)
+            if (GraphicsDevice != null &&
+                GraphicsDevice.Presenter.BackBuffer != null)
             {
                 GraphicsContext.CommandList.SetRenderTargetAndViewport(GraphicsDevice.Presenter.DepthStencilBuffer, GraphicsDevice.Presenter.BackBuffer);
             }
         }
 
-        /// <summary>Ends the drawing of a frame. This method will always be preceeded by calls to <see cref="BeginDraw"/> and perhaps <see cref="Draw"/> depending on if we had to do so. </summary>
+        /// <summary>
+        ///   Ends the drawing of a frame. This method will always be preceeded by calls to <see cref="BeginDraw"/> and
+        ///   perhaps <see cref="Draw"/> depending on if we had to do so.
+        /// </summary>
         protected virtual void EndDraw(bool present)
         {
             if (beginDrawOk)
@@ -799,17 +765,18 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Reference page contains links to related conceptual articles.
+        ///   Updates the state of the game and lets the systems update themselves.
         /// </summary>
-        /// <param name="gameTime">
-        /// Time passed since the last call to Update.
-        /// </param>
+        /// <param name="gameTime">Time passed since the last call to Update.</param>
         protected virtual void Update(GameTime gameTime)
         {
             GameSystems.Update(gameTime);
         }
 
-        /// <summary>Called after the Game is created, but before <see cref="GraphicsDevice"/> is available and before LoadContent(). Reference page contains code sample.</summary>
+        /// <summary>
+        ///   Called after the Game is created, but before <see cref="GraphicsDevice"/> is available and before
+        ///   LoadContent().
+        /// </summary>
         protected virtual void Initialize()
         {
             GameSystems.Initialize();
@@ -821,7 +788,8 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Raises the Activated event. Override this method to add code to handle when the game gains focus.
+        ///   Raises the <see cref="Activated"/> event. Override this method to add code to handle when the game
+        ///   gains focus.
         /// </summary>
         /// <param name="sender">The Game.</param>
         /// <param name="args">Arguments for the Activated event.</param>
@@ -831,7 +799,8 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Raises the Deactivated event. Override this method to add code to handle when the game loses focus.
+        ///   Raises the <see cref="Deactivated"/> event. Override this method to add code to handle when the game
+        ///   loses focus.
         /// </summary>
         /// <param name="sender">The Game.</param>
         /// <param name="args">Arguments for the Deactivated event.</param>
@@ -841,7 +810,8 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Raises an Exiting event. Override this method to add code to handle when the game is exiting.
+        ///   Raises the <see cref="Exiting"/> event. Override this method to add code to handle when the game is
+        ///   exiting.
         /// </summary>
         /// <param name="sender">The Game.</param>
         /// <param name="args">Arguments for the Exiting event.</param>
@@ -862,17 +832,17 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// This is used to display an error message if there is no suitable graphics device or sound card.
+        ///   This is used to display an error message if there is no suitable graphics device or sound card.
         /// </summary>
         /// <param name="exception">The exception to display.</param>
-        /// <returns>The <see cref="bool" />.</returns>
         protected virtual bool ShowMissingRequirementMessage(Exception exception)
         {
             return true;
         }
 
         /// <summary>
-        /// Called when graphics resources need to be unloaded. Override this method to unload any game-specific graphics resources.
+        ///   Called when graphics resources need to be unloaded. Override this method to unload any game-specific
+        ///   graphics resources.
         /// </summary>
         protected virtual void UnloadContent()
         {
@@ -908,15 +878,11 @@ namespace Stride.Games
             graphicsDeviceService = Services.GetService<IGraphicsDeviceService>();
 
             // If there is no graphics device service, don't go further as the whole Game would not work
-            if (graphicsDeviceService == null)
-            {
-                throw new InvalidOperationException("Unable to create a IGraphicsDeviceService");
-            }
+            if (graphicsDeviceService is null)
+                throw new InvalidOperationException("Unable to create a IGraphicsDeviceService.");
 
-            if (graphicsDeviceService.GraphicsDevice == null)
-            {
-                throw new InvalidOperationException("Unable to find a GraphicsDevice instance");
-            }
+            if (graphicsDeviceService.GraphicsDevice is null)
+                throw new InvalidOperationException("Unable to find a GraphicsDevice instance.");
 
             resumeManager = new ResumeManager(Services);
 

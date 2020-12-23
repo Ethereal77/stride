@@ -5,12 +5,13 @@
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// Configuration for <see cref="GlobalLogger"/>.
+    ///   Contains configuration values for <see cref="GlobalLogger"/>.
     /// </summary>
+    [DataContract("GlobalLoggerConfig")]
     public class LoggerConfig
     {
         /// <summary>
-        /// Gets or sets the minimum level to allow logging.
+        ///   Gets or sets the minimum log level to allow.
         /// </summary>
         /// <value>The level.</value>
         public LogMessageType Level { get; set; }

@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Stride.Core.Collections;
 using Stride.Core.Mathematics;
@@ -12,217 +11,238 @@ using Stride.Core.Mathematics;
 namespace Stride.Input
 {
     /// <summary>
-    /// Class that keeps track of the the global input state of all devices
+    ///   Represents a class that keeps track of the the global input state of all devices.
     /// </summary>
-    public partial class InputManager : IInputEventListener<KeyEvent>, 
-        IInputEventListener<PointerEvent>, 
+    public partial class InputManager :
+        IInputEventListener<KeyEvent>,
+        IInputEventListener<PointerEvent>,
         IInputEventListener<MouseWheelEvent>
     {
         private Vector2 mousePosition;
-
         private Vector2 absoluteMousePosition;
-        
+
         private readonly ReadOnlySet<MouseButton> NoButtons = new ReadOnlySet<MouseButton>(new HashSet<MouseButton>());
         private readonly ReadOnlySet<Keys> NoKeys = new ReadOnlySet<Keys>(new HashSet<Keys>());
 
         private readonly List<KeyEvent> keyEvents = new List<KeyEvent>();
-        
+
         private readonly List<PointerEvent> pointerEvents = new List<PointerEvent>();
-        
+
         /// <summary>
-        /// The mouse position in normalized coordinates.
+        ///   Gets or sets the mouse position in normalized coordinates.
         /// </summary>
         public Vector2 MousePosition
         {
-            get { return mousePosition; }
-            set { SetMousePosition(value); }
+            get => mousePosition;
+            set => SetMousePosition(value);
         }
 
         /// <summary>
-        /// Mouse coordinates in device coordinates
+        ///   Gets the mouse position in device coordinates.
         /// </summary>
-        public Vector2 AbsoluteMousePosition
-        {
-            get { return absoluteMousePosition; }
-        }
+        public Vector2 AbsoluteMousePosition => absoluteMousePosition;
 
         /// <summary>
-        /// Mouse delta in normalized coordinate space
+        ///   Gets the mouse delta in normalized coordinates since the last frame.
         /// </summary>
         public Vector2 MouseDelta { get; private set; }
 
         /// <summary>
-        /// Mouse movement in device coordinates
+        ///   Gets the mouse delta in device coordinates since the last frame.
         /// </summary>
         public Vector2 AbsoluteMouseDelta { get; private set; }
-        
+
         /// <summary>
-        /// The delta value of the mouse wheel button since last frame.
+        ///   Gets the delta value of the mouse wheel button since the last frame.
         /// </summary>
         public float MouseWheelDelta { get; private set; }
 
         /// <summary>
-        /// Device that is responsible for setting the current <see cref="MouseDelta"/> and <see cref="MousePosition"/>
+        ///   Gets the pointer device that is responsible for setting the current <see cref="MouseDelta"/> and <see cref="MousePosition"/>.
         /// </summary>
         public IPointerDevice LastPointerDevice { get; private set; }
 
         /// <summary>
-        /// Determines whether one or more keys are pressed
+        ///   Determines whether one or more keys are pressed.
         /// </summary>
         /// <returns><c>true</c> if one or more keys are pressed; otherwise, <c>false</c>.</returns>
         public bool HasPressedKeys
         {
             get
             {
-                if (!HasKeyboard) return false;
+                if (!HasKeyboard)
+                    return false;
+
                 return Keyboard.PressedKeys.Count > 0;
             }
         }
 
         /// <summary>
-        /// Determines whether one or more keys are released
+        ///   Determines whether one or more keys are released.
         /// </summary>
         /// <returns><c>true</c> if one or more keys are released; otherwise, <c>false</c>.</returns>
         public bool HasReleasedKeys
         {
             get
             {
-                if (!HasKeyboard) return false;
+                if (!HasKeyboard)
+                    return false;
+
                 return Keyboard.ReleasedKeys.Count > 0;
             }
         }
 
         /// <summary>
-        /// Determines whether one or more keys are down
+        ///   Determines whether one or more keys are currently down.
         /// </summary>
         /// <returns><c>true</c> if one or more keys are down; otherwise, <c>false</c>.</returns>
         public bool HasDownKeys
         {
             get
             {
-                if (!HasKeyboard) return false;
+                if (!HasKeyboard)
+                    return false;
+
                 return Keyboard.DownKeys.Count > 0;
             }
         }
 
         /// <summary>
-        /// The keys that have been pressed since the last frame
+        ///   Gets the keys that have been pressed since the last frame.
         /// </summary>
         public IReadOnlySet<Keys> PressedKeys
         {
             get
             {
-                if (!HasKeyboard) return NoKeys;
+                if (!HasKeyboard)
+                    return NoKeys;
+
                 return Keyboard.PressedKeys;
             }
         }
 
         /// <summary>
-        /// The keys that have been released since the last frame
+        ///   Gets the keys that have been released since the last frame.
         /// </summary>
         public IReadOnlySet<Keys> ReleasedKeys
         {
             get
             {
-                if (!HasKeyboard) return NoKeys;
+                if (!HasKeyboard)
+                    return NoKeys;
+
                 return Keyboard.ReleasedKeys;
             }
         }
 
         /// <summary>
-        /// The keys that are down
+        ///   Gets the keys that are currently down.
         /// </summary>
         public IReadOnlySet<Keys> DownKeys
         {
             get
             {
-                if (!HasKeyboard) return NoKeys;
+                if (!HasKeyboard)
+                    return NoKeys;
+
                 return Keyboard.DownKeys;
             }
         }
 
         /// <summary>
-        /// The mouse buttons that have been pressed since the last frame
+        ///   Gets the mouse buttons that have been pressed since the last frame.
         /// </summary>
         public IReadOnlySet<MouseButton> PressedButtons
         {
             get
             {
-                if (!HasMouse) return NoButtons;
+                if (!HasMouse)
+                    return NoButtons;
+
                 return Mouse.PressedButtons;
             }
         }
 
         /// <summary>
-        /// The mouse buttons that have been released since the last frame
+        ///   Gets the mouse buttons that have been released since the last frame.
         /// </summary>
         public IReadOnlySet<MouseButton> ReleasedButtons
         {
             get
             {
-                if (!HasMouse) return NoButtons;
+                if (!HasMouse)
+                    return NoButtons;
+
                 return Mouse.ReleasedButtons;
             }
         }
 
         /// <summary>
-        /// The mouse buttons that are down
+        ///   Gets the mouse buttons that are currently down.
         /// </summary>
         public IReadOnlySet<MouseButton> DownButtons
         {
             get
             {
-                if (!HasMouse) return NoButtons;
+                if (!HasMouse)
+                    return NoButtons;
+
                 return Mouse.DownButtons;
             }
         }
 
         /// <summary>
-        /// Determines whether one or more of the mouse buttons are pressed
+        ///   Determines whether one or more of the mouse buttons are pressed.
         /// </summary>
         /// <returns><c>true</c> if one or more of the mouse buttons are pressed; otherwise, <c>false</c>.</returns>
         public bool HasPressedMouseButtons
         {
             get
             {
-                if (!HasMouse) return false;
+                if (!HasMouse)
+                    return false;
+
                 return Mouse.PressedButtons.Count > 0;
             }
         }
 
         /// <summary>
-        /// Determines whether one or more of the mouse buttons are released
+        ///   Determines whether one or more of the mouse buttons are released.
         /// </summary>
         /// <returns><c>true</c> if one or more of the mouse buttons are released; otherwise, <c>false</c>.</returns>
         public bool HasReleasedMouseButtons
         {
             get
             {
-                if (!HasMouse) return false;
+                if (!HasMouse)
+                    return false;
+
                 return Mouse.ReleasedButtons.Count > 0;
             }
         }
 
         /// <summary>
-        /// Determines whether one or more of the mouse buttons are down
+        ///   Determines whether one or more of the mouse buttons are currently down.
         /// </summary>
         /// <returns><c>true</c> if one or more of the mouse buttons are down; otherwise, <c>false</c>.</returns>
         public bool HasDownMouseButtons
         {
             get
             {
-                if (!HasMouse) return false;
+                if (!HasMouse)
+                    return false;
+
                 return Mouse.DownButtons.Count > 0;
             }
         }
 
         /// <summary>
-        /// Pointer events that happened since the last frame
+        ///   Gets the pointer events that have been registered since the last frame.
         /// </summary>
         public IReadOnlyList<PointerEvent> PointerEvents => pointerEvents;
 
         /// <summary>
-        /// Key events that happened since the last frame
+        ///   Gets the key events that have been registered since the last frame.
         /// </summary>
         public IReadOnlyList<KeyEvent> KeyEvents => keyEvents;
 
@@ -258,7 +278,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Determines whether the specified key is pressed since the previous update.
+        ///   Determines whether the specified key has been pressed since the previous update.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns><c>true</c> if the specified key is pressed; otherwise, <c>false</c>.</returns>
@@ -268,7 +288,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Determines whether the specified key is released since the previous update.
+        ///   Determines whether the specified key has been released since the previous update.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns><c>true</c> if the specified key is released; otherwise, <c>false</c>.</returns>
@@ -278,7 +298,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Determines whether the specified key is being pressed down.
+        ///   Determines whether the specified key is being pressed down.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns><c>true</c> if the specified key is being pressed down; otherwise, <c>false</c>.</returns>
@@ -288,7 +308,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Determines whether the specified mouse button is pressed since the previous update.
+        ///   Determines whether the specified mouse button has been pressed since the previous update.
         /// </summary>
         /// <param name="mouseButton">The mouse button.</param>
         /// <returns><c>true</c> if the specified mouse button is pressed since the previous update; otherwise, <c>false</c>.</returns>
@@ -298,7 +318,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Determines whether the specified mouse button is released.
+        ///   Determines whether the specified mouse button has been released since the previous update.
         /// </summary>
         /// <param name="mouseButton">The mouse button.</param>
         /// <returns><c>true</c> if the specified mouse button is released; otherwise, <c>false</c>.</returns>
@@ -308,7 +328,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Determines whether the specified mouse button is being pressed down.
+        ///   Determines whether the specified mouse button is being pressed down.
         /// </summary>
         /// <param name="mouseButton">The mouse button.</param>
         /// <returns><c>true</c> if the specified mouse button is being pressed down; otherwise, <c>false</c>.</returns>
@@ -318,7 +338,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Resets the state before updating
+        ///   Resets the state before updating.
         /// </summary>
         private void ResetGlobalInputState()
         {

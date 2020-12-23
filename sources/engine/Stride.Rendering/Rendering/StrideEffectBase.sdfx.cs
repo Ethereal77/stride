@@ -50,13 +50,21 @@ namespace Stride.Rendering
                 }
                 context.Mixin(mixin, "TransformationBase");
                 context.Mixin(mixin, "NormalStream");
+                var extensionTessellationShader = context.GetParam(MaterialKeys.TessellationShader);
                 if (context.GetParam(StrideEffectBaseKeys.HasInstancing))
                 {
                     mixin.AddMacro("ModelTransformUsage", context.GetParam(StrideEffectBaseKeys.ModelTransformUsage));
                     context.Mixin(mixin, "TransformationWAndVPInstanced");
                     if (context.GetParam(MaterialKeys.HasNormalMap))
                     {
-                        context.Mixin(mixin, "NormalFromNormalMappingInstanced");
+                        if (extensionTessellationShader != null)
+                        {
+                            context.Mixin(mixin, "NormalFromNormalMappingTessellationInstanced");
+                        }
+                        else
+                        {
+                            context.Mixin(mixin, "NormalFromNormalMappingInstanced");
+                        }
                     }
                     else
                     {
@@ -68,7 +76,14 @@ namespace Stride.Rendering
                     context.Mixin(mixin, "TransformationWAndVP");
                     if (context.GetParam(MaterialKeys.HasNormalMap))
                     {
-                        context.Mixin(mixin, "NormalFromNormalMapping");
+                        if (extensionTessellationShader != null)
+                        {
+                            context.Mixin(mixin, "NormalFromNormalMappingTessellation");
+                        }
+                        else
+                        {
+                            context.Mixin(mixin, "NormalFromNormalMapping");
+                        }
                     }
                     else
                     {
@@ -98,7 +113,14 @@ namespace Stride.Rendering
                     {
                         if (context.GetParam(MaterialKeys.HasNormalMap))
                         {
-                            context.Mixin(mixin, "NormalVSSkinningNormalMapping");
+                            if (extensionTessellationShader != null)
+                            {
+                                context.Mixin(mixin, "NormalVSSkinningNormalMappingTessellation");
+                            }
+                            else
+                            {
+                                context.Mixin(mixin, "NormalVSSkinningNormalMapping");
+                            }
                         }
                         else
                         {
@@ -106,7 +128,6 @@ namespace Stride.Rendering
                         }
                     }
                 }
-                var extensionTessellationShader = context.GetParam(MaterialKeys.TessellationShader);
                 if (extensionTessellationShader != null)
                 {
                     context.Mixin(mixin, (extensionTessellationShader));

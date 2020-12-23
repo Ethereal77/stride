@@ -10,7 +10,7 @@ using Stride.Core.Collections;
 namespace Stride.Input
 {
     /// <summary>
-    /// Base class for keyboard devices
+    ///   Represents the base class for keyboard devices.
     /// </summary>
     public abstract class KeyboardDeviceBase : IKeyboardDevice
     {
@@ -45,12 +45,12 @@ namespace Stride.Input
         {
             pressedKeys.Clear();
             releasedKeys.Clear();
-            
+
             // Fire events
             foreach (var keyEvent in Events)
             {
                 inputEvents.Add(keyEvent);
-                
+
                 if (keyEvent != null)
                 {
                     if (keyEvent.IsDown)
@@ -65,7 +65,7 @@ namespace Stride.Input
             }
             Events.Clear();
         }
-        
+
         public void HandleKeyDown(Keys key)
         {
             // Increment repeat count on subsequent down events

@@ -2,10 +2,10 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Collections.Generic;
+using System;
 
-using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Quantum.ViewModels;
+using Stride.Core.Assets.Editor.Quantum.NodePresenters.Updaters;
 
 namespace Stride.Core.Assets.Editor.View.TemplateProviders
 {
@@ -14,9 +14,13 @@ namespace Stride.Core.Assets.Editor.View.TemplateProviders
         public override string Name => "DictionaryStringKey";
 
         /// <summary>
-        /// If set to true, this provider will accept nodes representing entries of a string-keyed dictionary.
-        /// Otherwise, it will accept nodes representing the string-keyed dictionary itself.
+        ///   Gets or sets a value indicating whether this provider should accept nodes representing entries
+        ///   of a string-keyed dictionary.
         /// </summary>
+        /// <value>
+        ///   <c>true</c> to accept nodes representing entries of a string-keyed dictionary;
+        ///   <c>false</c> to accept nodes representing the string-keyed dictionary itself.
+        /// </value>
         public bool ApplyForItems { get; set; }
 
         public override bool MatchNode(NodeViewModel node)
@@ -24,26 +28,17 @@ namespace Stride.Core.Assets.Editor.View.TemplateProviders
             if (ApplyForItems)
             {
                 node = node.Parent;
-                if (node == null)
+                if (node is null)
                     return false;
             }
 
             if (!base.MatchNode(node))
                 return false;
 
-            if (node.Type.IsGenericType)
+            if (node.AssociatedData.TryGetValue(DictionaryNodeUpdater.DictionaryNodeKeyType.Name, out var value))
             {
-                var genericArguments = node.Type.GetGenericArguments();
-                return genericArguments[0] == typeof(string);
-            }
-
-            foreach (var typeInterface in node.Type.GetInterfaces())
-            {
-                if (!typeInterface.IsGenericType || typeInterface.GetGenericTypeDefinition() != typeof(IDictionary<,>))
-                    continue;
-
-                var genericArguments = typeInterface.GetGenericArguments();
-                return genericArguments[0] == typeof(string);
+                var type = (Type) value;
+                return type == typeof(string);
             }
 
             return false;

@@ -39,7 +39,9 @@ namespace Stride.Core.Reflection
         [ItemNotNull, NotNull]
         private readonly List<LoadedAssembly> loadedAssemblies = new List<LoadedAssembly>();
         private readonly Dictionary<string, LoadedAssembly> loadedAssembliesByName = new Dictionary<string, LoadedAssembly>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly HashSet<string> dependencies = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
         private static readonly string[] KnownAssemblyExtensions = { ".dll", ".exe" };
+
         [ThreadStatic]
         private static AssemblyContainer currentContainer;
 
@@ -52,7 +54,7 @@ namespace Stride.Core.Reflection
         private static readonly ConditionalWeakTable<Assembly, LoadedAssembly> assemblyToContainers = new ConditionalWeakTable<Assembly, LoadedAssembly>();
 
         /// <summary>
-        /// The default assembly container loader.
+        ///   The default assembly container loader.
         /// </summary>
         public static readonly AssemblyContainer Default = new AssemblyContainer();
 
@@ -62,10 +64,10 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
-        /// Gets a copy of the list of loaded assemblies.
+        ///   Gets a copy of the list of loaded assemblies.
         /// </summary>
         /// <value>
-        /// The loaded assemblies.
+        ///   The loaded assemblies.
         /// </value>
         [ItemNotNull, NotNull]
         public IList<LoadedAssembly> LoadedAssemblies
@@ -82,17 +84,16 @@ namespace Stride.Core.Reflection
         [CanBeNull]
         public Assembly LoadAssemblyFromPath([NotNull] string assemblyFullPath, ILogger outputLog = null)
         {
-            if (assemblyFullPath == null) throw new ArgumentNullException(nameof(assemblyFullPath));
+            if (assemblyFullPath is null)
+                throw new ArgumentNullException(nameof(assemblyFullPath));
 
             log = new LoggerResult();
 
             assemblyFullPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, assemblyFullPath));
             var assemblyDirectory = Path.GetDirectoryName(assemblyFullPath);
 
-            if (assemblyDirectory == null || !Directory.Exists(assemblyDirectory))
-            {
-                throw new ArgumentException("Invalid assembly path. Doesn't contain directory information");
-            }
+            if (assemblyDirectory is null || !Directory.Exists(assemblyDirectory))
+                throw new ArgumentException("Invalid assembly path. Doesn't contain directory information.", nameof(assemblyFullPath));
 
             try
             {
@@ -112,7 +113,7 @@ namespace Stride.Core.Reflection
             lock (loadedAssemblies)
             {
                 var loadedAssembly = loadedAssemblies.FirstOrDefault(x => x.Assembly == assembly);
-                if (loadedAssembly == null)
+                if (loadedAssembly is null)
                     return false;
 
                 loadedAssemblies.Remove(loadedAssembly);
@@ -122,10 +123,22 @@ namespace Stride.Core.Reflection
             }
         }
 
+        public void RegisterDependency([NotNull] string assemblyFullPath)
+        {
+            if (assemblyFullPath is null)
+                throw new ArgumentNullException(nameof(assemblyFullPath));
+
+            lock (dependencies)
+            {
+                dependencies.Add(assemblyFullPath);
+            }
+        }
+
         [CanBeNull]
         private Assembly LoadAssemblyByName([NotNull] AssemblyName assemblyName, [NotNull] string searchDirectory)
         {
-            if (assemblyName == null) throw new ArgumentNullException(nameof(assemblyName));
+            if (assemblyName is null)
+                throw new ArgumentNullException(nameof(assemblyName));
 
             // First, check the list of already loaded assemblies
             {
@@ -150,12 +163,35 @@ namespace Stride.Core.Reflection
             foreach (var loadedAssembly in loadedAssemblies)
             {
                 var dependencies = loadedAssembly.Dependencies;
-                if (dependencies == null)
+                if (dependencies is null)
                     continue;
 
                 if (dependencies.TryGetValue(assemblyName.Name, out var fullPath))
                 {
                     return LoadAssemblyFromPathInternal(fullPath);
+                }
+            }
+
+            // See if it was registered
+            lock (dependencies)
+            {
+                foreach (var dependency in dependencies)
+                {
+                    // Check by simple name first
+                    var otherName = Path.GetFileNameWithoutExtension(dependency);
+                    if (string.Equals(assemblyName.Name, otherName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            var otherAssemblyName = AssemblyName.GetAssemblyName(dependency);
+                            if (otherAssemblyName.FullName == assemblyName.FullName)
+                                return LoadAssemblyFromPathInternal(dependency);
+                        }
+                        catch
+                        {
+                            // Ignore
+                        }
+                    }
                 }
             }
 
@@ -165,7 +201,8 @@ namespace Stride.Core.Reflection
         [CanBeNull]
         private Assembly LoadAssemblyFromPathInternal([NotNull] string assemblyFullPath)
         {
-            if (assemblyFullPath == null) throw new ArgumentNullException(nameof(assemblyFullPath));
+            if (assemblyFullPath is null)
+                throw new ArgumentNullException(nameof(assemblyFullPath));
 
             assemblyFullPath = Path.GetFullPath(assemblyFullPath);
 
@@ -173,11 +210,8 @@ namespace Stride.Core.Reflection
             {
                 lock (loadedAssemblies)
                 {
-                    LoadedAssembly loadedAssembly;
-                    if (loadedAssembliesByName.TryGetValue(assemblyFullPath, out loadedAssembly))
-                    {
+                    if (loadedAssembliesByName.TryGetValue(assemblyFullPath, out LoadedAssembly loadedAssembly))
                         return loadedAssembly.Assembly;
-                    }
 
                     if (!File.Exists(assemblyFullPath))
                         return null;
@@ -222,7 +256,7 @@ namespace Stride.Core.Reflection
                             dependenciesMapping = new Dictionary<string, string>();
                             foreach (var library in dependencies.RuntimeLibraries)
                             {
-                                if (library.Path == null)
+                                if (library.Path is null)
                                     continue;
 
                                 foreach (var runtimeAssemblyGroup in library.RuntimeAssemblyGroups)
@@ -327,7 +361,7 @@ namespace Stride.Core.Reflection
             string searchDirectory = currentSearchDirectory;
 
             // If it's a dependent assembly loaded later, find container and path
-            if (container == null && args.RequestingAssembly != null && assemblyToContainers.TryGetValue(args.RequestingAssembly, out var loadedAssembly))
+            if (container is null && args.RequestingAssembly != null && assemblyToContainers.TryGetValue(args.RequestingAssembly, out var loadedAssembly))
             {
                 // Assembly reference requested after initial resolve, we need to setup context temporarily
                 container = loadedAssembly.Container;

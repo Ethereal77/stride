@@ -11,23 +11,16 @@ using Stride.Core.Annotations;
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// A logger that redirect messages to a global handler and handle instantiated MapModuleNameToLogger.
+    ///   Represents an <see cref="ILogger"/> that redirects messages to a global handler and
+    ///   associates itself to the name of a module.
     /// </summary>
     public sealed class GlobalLogger : Logger
     {
-        #region Constants and Fields
-
         /// <summary>
-        /// By default, the minimum level for a GlobalLogger is info.
+        ///   Dictionary of instantiated loggers by module name.
         /// </summary>
-        public const LogMessageType MinimumLevel = LogMessageType.Info;
+        private static readonly Dictionary<string, Logger> g_LoggersByModuleName = new Dictionary<string, Logger>();
 
-        /// <summary>
-        /// Map for all instantiated loggers. Map a module name to a logger.
-        /// </summary>
-        private static readonly Dictionary<string, Logger> MapModuleNameToLogger = new Dictionary<string, Logger>();
-
-        #endregion
 
         private GlobalLogger(string module)
         {
@@ -37,17 +30,17 @@ namespace Stride.Core.Diagnostics
         public delegate void MessageFilterDelegate(ref ILogMessage logMessage);
 
         /// <summary>
-        /// Occurs before a message is logged.
+        ///   Event raised before a message is logged. Used to filter log messages before they are written.
         /// </summary>
         public static event MessageFilterDelegate GlobalMessageFilter;
 
         /// <summary>
-        /// Occurs when a message is logged.
+        ///   Event raised when a message is logged.
         /// </summary>
         public static event Action<ILogMessage> GlobalMessageLogged;
 
         /// <summary>
-        /// Gets all registered loggers.
+        ///   Gets all registered loggers.
         /// </summary>
         /// <value>The registered loggers.</value>
         [NotNull]
@@ -55,57 +48,57 @@ namespace Stride.Core.Diagnostics
         {
             get
             {
-                lock (MapModuleNameToLogger)
+                lock (g_LoggersByModuleName)
                 {
-                    var loggers = new Logger[MapModuleNameToLogger.Count];
-                    MapModuleNameToLogger.Values.CopyTo(loggers, 0);
+                    var loggers = new Logger[g_LoggersByModuleName.Count];
+                    g_LoggersByModuleName.Values.CopyTo(loggers, 0);
                     return loggers;
                 }
             }
         }
 
         /// <summary>
-        /// Activates the log for all loggers using the specified action..
+        ///   Activates all the loggers using the specified action.
         /// </summary>
-        /// <param name="activator">The activator.</param>
-        /// <exception cref="ArgumentNullException">If activator is null</exception>
+        /// <param name="activator">An action to perform for each log.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="activator"/> is a <c>null</c> reference.</exception>
         public static void ActivateLog([NotNull] Action<Logger> activator)
         {
-            if (activator == null)
+            if (activator is null)
                 throw new ArgumentNullException(nameof(activator));
 
-            foreach (var logger in MapModuleNameToLogger.Values)
+            foreach (var logger in g_LoggersByModuleName.Values)
                 activator(logger);
         }
 
         /// <summary>
-        /// Activates the log for loggers that match a regex pattern on the module name.
+        ///   Activates the loggers that match a pattern on the module name.
         /// </summary>
         /// <param name="regexPatternModule">The regex pattern to match a module name.</param>
-        /// <param name="minimumLevel">The minimum level.</param>
-        /// <param name="maximumLevel">The maximum level.</param>
-        /// <param name="enabledFlag">if set to <c>true</c> enaable the log, else disable.</param>
-        /// <exception cref="ArgumentNullException">If regexPatternModule is null</exception>
+        /// <param name="minimumLevel">The minimum log level.</param>
+        /// <param name="maximumLevel">The maximum log level.</param>
+        /// <param name="enabledFlag"><c>true</c> to enaable the logs; <c>false</c> to disable them.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="regexPatternModule"/> is a <c>null</c> reference.</exception>
         public static void ActivateLog([NotNull] string regexPatternModule, LogMessageType minimumLevel, LogMessageType maximumLevel = LogMessageType.Fatal, bool enabledFlag = true)
         {
-            if (regexPatternModule == null)
+            if (regexPatternModule is null)
                 throw new ArgumentNullException(nameof(regexPatternModule));
 
             var regex = new Regex(regexPatternModule);
-            ActivateLog(regex, minimumLevel, maximumLevel);
+            ActivateLog(regex, minimumLevel, maximumLevel, enabledFlag);
         }
 
         /// <summary>
-        /// Activates the log for loggers that match a regex pattern on the module name.
+        ///   Activates the loggers that match a pattern on the module name.
         /// </summary>
         /// <param name="regexPatternModule">The regex pattern to match a module name.</param>
-        /// <param name="minimumLevel">The minimum level.</param>
-        /// <param name="maximumLevel">The maximum level.</param>
-        /// <param name="enabledFlag">if set to <c>true</c> enaable the log, else disable.</param>
-        /// <exception cref="ArgumentNullException">If regexPatternModule is null</exception>
+        /// <param name="minimumLevel">The minimum log level.</param>
+        /// <param name="maximumLevel">The maximum log level.</param>
+        /// <param name="enabledFlag"><c>true</c> to enaable the logs; <c>false</c> to disable them.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="regexPatternModule"/> is a <c>null</c> reference.</exception>
         public static void ActivateLog([NotNull] Regex regexPatternModule, LogMessageType minimumLevel, LogMessageType maximumLevel = LogMessageType.Fatal, bool enabledFlag = true)
         {
-            if (regexPatternModule == null)
+            if (regexPatternModule is null)
                 throw new ArgumentNullException(nameof(regexPatternModule));
 
             ActivateLog(
@@ -119,27 +112,39 @@ namespace Stride.Core.Diagnostics
         }
 
         /// <summary>
-        /// Gets the <see cref="GlobalLogger"/> associated to the specified module.
+        ///   Gets the <see cref="Logger"/> associated to the specified module.
         /// </summary>
         /// <param name="module">The module name.</param>
-        /// <exception cref="ArgumentNullException">If module name is null</exception>
-        /// <returns>An instance of a <see cref="Logger"/></returns>
+        /// <returns>A <see cref="Logger"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="module"/> is a <c>null</c> reference.</exception>
         public static Logger GetLogger([NotNull] string module)
         {
-            if (module == null)
+            return GetLogger(module, MinimumLevelEnabled);
+        }
+
+        /// <summary>
+        ///   Gets the <see cref="Logger"/> associated to the specified module.
+        /// </summary>
+        /// <param name="module">The module name.</param>
+        /// <param name="minimumLevel">Minimum log level (only applied if a new logger is created).</param>
+        /// <returns>A <see cref="Logger"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="module"/> is a <c>null</c> reference.</exception>
+        public static Logger GetLogger([NotNull] string module, LogMessageType minimumLevel)
+        {
+            if (module is null)
                 throw new ArgumentNullException(nameof(module));
 
-            Logger logger;
-            lock (MapModuleNameToLogger)
+            lock (g_LoggersByModuleName)
             {
-                if (!MapModuleNameToLogger.TryGetValue(module, out logger))
-                {
-                    logger = new GlobalLogger(module);
-                    logger.ActivateLog(MinimumLevel);
-                    MapModuleNameToLogger.Add(module, logger);
-                }
+                if (g_LoggersByModuleName.TryGetValue(module, out Logger logger))
+                    return logger;
+
+                logger = new GlobalLogger(module);
+                logger.ActivateLog(minimumLevel);
+                g_LoggersByModuleName.Add(module, logger);
+
+                return logger;
             }
-            return logger;
         }
 
         protected override void LogRaw(ILogMessage logMessage)
@@ -148,7 +153,7 @@ namespace Stride.Core.Diagnostics
             if (filterHandler != null)
             {
                 filterHandler(ref logMessage);
-                if (logMessage == null)
+                if (logMessage is null)
                     return;
             }
 

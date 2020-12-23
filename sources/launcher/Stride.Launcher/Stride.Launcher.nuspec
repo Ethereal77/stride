@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Stride.Launcher</id>
-    <version>5.0.2</version>
+    <version>5.0.4</version>
     <authors>Stride</authors>
     <owners>Stride</owners>
     <licenseUrl>https://stride3d.net/license.txt</licenseUrl>
@@ -15,7 +15,7 @@ force-reinstall: 5.0.1 https://stride3d.net/files/StrideSetup.exe (note: used in
     <tags>internal</tags>
   </metadata>
   <files>
-    <!-- Note: we still have Stride.exe for backward compatibility -->
+    <!-- NOTE: We still have 'Stride.exe' for backwards compatibility -->
     <file src="Stride.Launcher.exe" target="tools" />
     <file src="..\..\..\..\Prerequisites\launcher-prerequisites.exe" target="tools\Prerequisites" />
   </files>

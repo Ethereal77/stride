@@ -5,12 +5,12 @@
 namespace Stride.Rendering.Lights
 {
     /// <summary>
-    /// Defines a spot light
+    ///   Defines a spot light.
     /// </summary>
     shader LightSpot :
-        LightStream,    // Required for "streams.lightColor" and "streams.lightDirectionWS".
-        PositionStream4,    // Required for "streams.PositionWS".
-        SpotLightDataInternalShader,    // Required for "SpotLightDataInternal"
+        LightStream,                   // Required for "streams.lightColor" and "streams.lightDirectionWS".
+        PositionStream4,               // Required for "streams.PositionWS".
+        SpotLightDataInternalShader,   // Required for "SpotLightDataInternal"
         LightSpotAttenuationDefault    // Required for "ComputeAttenuation()"
     {
         struct SpotLightData
@@ -18,20 +18,24 @@ namespace Stride.Rendering.Lights
             float3 PositionWS;
             float3 DirectionWS;
             float3 AngleOffsetAndInvSquareRadius;
+
             [Color]
             float3 Color;
         };
-        
+
         void ProcessLight(SpotLightDataInternal light)
         {
             float3 lightVectorNorm;
             //float attenuation = ComputeAttenuation(light, streams.PositionWS.xyz, lightVectorNorm);
-            float attenuation = ComputeAttenuation(light.PositionWS,  // TODO: Revert to the above line as soon as the shader compiler is fixed.
+            // TODO: Revert to the above line as soon as the shader compiler is fixed.
+            float attenuation = ComputeAttenuation(light.PositionWS,
                                                    light.AngleOffsetAndInvSquareRadius,
                                                    light.DirectionWS,
-                                                   streams.PositionWS.xyz, lightVectorNorm);
+                                                   streams.PositionWS.xyz,
+                                                   lightVectorNorm);
 
-            streams.lightColor = light.Color * attenuation;
+            streams.lightColor = light.Color;
+            streams.lightAttenuation = attenuation;
             streams.lightDirectionWS = lightVectorNorm;
         }
     };

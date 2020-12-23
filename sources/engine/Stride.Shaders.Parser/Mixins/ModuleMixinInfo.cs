@@ -16,109 +16,96 @@ namespace Stride.Shaders.Parser.Mixins
     [DebuggerDisplay("Mixin: {mixinName}")]
     internal class ModuleMixinInfo
     {
-        #region Private members
-
-        /// <summary>
-        /// The name of the mixin
-        /// </summary>
-        private string mixinName = "";
-
-        /// <summary>
-        /// The ShaderClassType
-        /// </summary>
         private ShaderClassType mixinAst;
 
-        #endregion
-
-        #region Public members and properties
 
         /// <summary>
-        /// The ShaderClassSource to load
+        ///   Gets or sets the shader source code.
         /// </summary>
         public ShaderSource ShaderSource { get; set; }
 
         /// <summary>
-        /// The name of the mixin (property)
+        ///   Gets the name of the mixin.
         /// </summary>
-        public string MixinName { get { return mixinName; } }
+        public string MixinName { get; private set; } = "";
 
         /// <summary>
-        /// The name of the mixin with its hashed code (property)
+        ///   Name of the mixin with its hashed code.
         /// </summary>
         public string MixinGenericName;
 
         /// <summary>
-        /// The log stored by this mixin info.
+        ///   The log stored by this mixin info.
         /// </summary>
         public readonly LoggerResult Log;
 
         /// <summary>
-        /// The ShaderClassType (property)
+        ///   Gets or sets the shader class type.
         /// </summary>
         public ShaderClassType MixinAst
         {
-            get
-            {
-                return mixinAst;
-            }
+            get => mixinAst;
+
             set
             {
                 mixinAst = value;
-                mixinName = mixinAst.Name.Text;
+                MixinName = mixinAst.Name.Text;
             }
         }
 
         /// <summary>
-        /// Tests if this instance is a <see cref="ShaderClassCode"/> of the specified type name 
+        ///   Tests if this instance is a <see cref="ShaderClassCode"/> of the specified type name.
         /// </summary>
-        /// <param name="typeName">The type name to test</param>
-        /// <returns><c>true</c> if same type name</returns>
+        /// <param name="typeName">The type name to test.</param>
+        /// <returns><c>true</c> if it has the same type name.</returns>
         public bool IsShaderClass(string typeName)
         {
-            var classSource = ShaderSource as ShaderClassCode;
-            if (classSource == null)
-            {
+            if (!(ShaderSource is ShaderClassCode classSource))
                 return false;
-            }
+
             return classSource.ClassName == typeName;
         }
 
         /// <summary>
-        /// The ModuleMixin
+        ///   The module mixin.
         /// </summary>
         public ModuleMixin Mixin = new ModuleMixin();
 
         /// <summary>
-        /// A flag stating that the mixin is instanciated
+        ///   Gets or sets a value indicating whether the mixin is instanciated.
         /// </summary>
         public bool Instanciated { get; set; }
 
         /// <summary>
-        /// a flag checking that the check for replacement has be done
+        ///   Value indicating if the check for replacement has been done.
         /// </summary>
         public bool ReplacementChecked = false;
 
         /// <summary>
-        /// the source hash
+        ///   The source hash.
         /// </summary>
         public ObjectId SourceHash;
 
         /// <summary>
-        /// the SHA1 hash of the source
+        ///   The SHA1 hash of the source.
         /// </summary>
         public ObjectId HashPreprocessSource;
 
         /// <summary>
-        /// The macros used for this mixin
+        ///   The macros used for this mixin.
         /// </summary>
-        public Stride.Core.Shaders.Parser.ShaderMacro[] Macros = new Stride.Core.Shaders.Parser.ShaderMacro[0];
+        public Core.Shaders.Parser.ShaderMacro[] Macros = new Core.Shaders.Parser.ShaderMacro[0];
 
         /// <summary>
-        /// the list of all the necessary MixinInfos to compile the shader
+        ///   List of all the necessary MixinInfos to compile the shader.
         /// </summary>
         public HashSet<ModuleMixinInfo> MinimalContext = new HashSet<ModuleMixinInfo>();
-        
-        #endregion
+
+        /// <summary>
+        ///   The referenced shaders. Used to invalidate shaders.
+        /// </summary>
+        public HashSet<string> ReferencedShaders = new HashSet<string>();
+
 
         public ModuleMixinInfo()
         {
@@ -126,35 +113,36 @@ namespace Stride.Shaders.Parser.Mixins
             Instanciated = true;
         }
 
-        #region Public methods
 
-        public ModuleMixinInfo Copy(Stride.Core.Shaders.Parser.ShaderMacro[] macros)
+        public ModuleMixinInfo Copy(Core.Shaders.Parser.ShaderMacro[] macros)
         {
-            var mixinInfo = new ModuleMixinInfo();
-            mixinInfo.ShaderSource = ShaderSource;
-            mixinInfo.MixinAst = MixinAst;
-            mixinInfo.MixinGenericName = MixinGenericName;
-            mixinInfo.Mixin = Mixin;
-            mixinInfo.Instanciated = Instanciated;
-            mixinInfo.HashPreprocessSource = HashPreprocessSource;
-            mixinInfo.Macros = macros;
-
-            return mixinInfo;
+            return new ModuleMixinInfo
+            {
+                ShaderSource = ShaderSource,
+                MixinAst = MixinAst,
+                MixinGenericName = MixinGenericName,
+                Mixin = Mixin,
+                Instanciated = Instanciated,
+                HashPreprocessSource = HashPreprocessSource,
+                Macros = macros
+            };
         }
 
         public bool AreEqual(ShaderSource shaderSource, Stride.Core.Shaders.Parser.ShaderMacro[] macros)
         {
-            return ShaderSource.Equals(shaderSource) && macros.All(macro => Macros.Any(x => x.Name == macro.Name && x.Definition == macro.Definition)) && Macros.All(macro => macros.Any(x => x.Name == macro.Name && x.Definition == macro.Definition));
+            return ShaderSource.Equals(shaderSource) &&
+                   macros.All(macro => Macros.Any(x => x.Name == macro.Name &&
+                                                       x.Definition == macro.Definition)) &&
+                   Macros.All(macro => macros.Any(x => x.Name == macro.Name &&
+                                                       x.Definition == macro.Definition));
         }
-
-        #endregion
 
         #region Static members
 
         /// <summary>
-        /// Cleans the identifiers (i.e. make them use the minimal string)
+        ///   Cleans the identifiers (i.e. make them use the minimal string).
         /// </summary>
-        /// <param name="genList">The list of identifier</param>
+        /// <param name="genList">The list of identifiers.</param>
         public static void CleanIdentifiers(List<Identifier> genList)
         {
             foreach (var gen in genList.OfType<LiteralIdentifier>())

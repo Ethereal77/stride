@@ -5,7 +5,7 @@
 namespace Stride.Core
 {
     /// <summary>
-    /// Base class for a framework component.
+    ///   Represents the base class for framework components.
     /// </summary>
     [DataContract]
     public abstract class ComponentBase : DisposeBase, IComponent, ICollectorHolder
@@ -14,17 +14,14 @@ namespace Stride.Core
         private ObjectCollector collector;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ComponentBase"/> class.
+        ///   Initializes a new instance of the <see cref="ComponentBase"/> class.
         /// </summary>
-        protected ComponentBase()
-            : this(null)
-        {
-        }
+        protected ComponentBase() : this(name: null) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ComponentBase"/> class.
+        ///   Initializes a new instance of the <see cref="ComponentBase"/> class.
         /// </summary>
-        /// <param name="name">The name attached to this component</param>
+        /// <param name="name">The name attached to this component. Specify <c>null</c> to use the name of the type automatically.</param>
         protected ComponentBase(string name)
         {
             collector = new ObjectCollector();
@@ -33,36 +30,34 @@ namespace Stride.Core
         }
 
         /// <summary>
-        /// Gets the attached properties to this component.
+        ///   Gets the attached properties to this component.
         /// </summary>
-        [DataMemberIgnore] // Do not try to recreate object (preserve Tags.Owner)
+        // Do not try to recreate object (preserve Tags.Owner)
+        [DataMemberIgnore]
         public PropertyContainer Tags;
 
         /// <summary>
-        /// Gets or sets the name of this component.
+        ///   Gets or sets the name of this component.
         /// </summary>
-        /// <value>
-        /// The name.
-        /// </value>
-        [DataMemberIgnore] // By default don't store it, unless derived class are overriding this member
+        /// <value>The name.</value>
+        // By default don't store it, unless derived class are overriding this member
+        [DataMemberIgnore]
         public virtual string Name
         {
-            get
-            {
-                return name;
-            }
+            get => name;
+
             set
             {
-                if (value == name) return;
+                if (value == name)
+                    return;
 
                 name = value;
-
                 OnNameChanged();
             }
         }
 
         /// <summary>
-        /// Disposes of object resources.
+        ///   Disposes the resources associated with this object.
         /// </summary>
         protected override void Destroy()
         {
@@ -79,15 +74,10 @@ namespace Stride.Core
         }
 
         /// <summary>
-        /// Called when <see cref="Name"/> property was changed.
+        ///   Method called when the <see cref="Name"/> property has changed.
         /// </summary>
-        protected virtual void OnNameChanged()
-        {
-        }
+        protected virtual void OnNameChanged() { }
 
-        public override string ToString()
-        {
-            return $"{GetType().Name}: {name}";
-        }
+        public override string ToString() => $"{GetType().Name}: {name}";
     }
 }

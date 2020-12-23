@@ -22,7 +22,7 @@ using Stride.Rendering.SubsurfaceScattering;
 namespace Stride.Rendering.Compositing
 {
     /// <summary>
-    ///   Represents a scene renderer that renders using "Forward Rendering".
+    ///   Represents a scene renderer that renders using a "Forward Rendering" technique.
     /// </summary>
     /// <remarks>
     ///   The renderer should use the current <see cref="RenderContext.RenderView"/> and <see cref="CameraComponentRendererExtensions.GetCurrentCamera"/>.
@@ -30,10 +30,10 @@ namespace Stride.Rendering.Compositing
     [Display("Forward renderer")]
     public partial class ForwardRenderer : SceneRendererBase, ISharedRenderer
     {
-        // TODO: should we use GraphicsDeviceManager.PreferredBackBufferFormat?
+        // TODO: Should we use GraphicsDeviceManager.PreferredBackBufferFormat?
         public const PixelFormat DepthBufferFormat = PixelFormat.D24_UNorm_S8_UInt;
 
-        private ImageScaler Scaler = new ImageScaler();
+        private readonly ImageScaler Scaler = new ImageScaler();
 
         private IShadowMapRenderer shadowMapRenderer;
         private Texture depthStencilROCached;
@@ -56,64 +56,67 @@ namespace Stride.Rendering.Compositing
         public ClearRenderer Clear { get; set; } = new ClearRenderer();
 
         /// <summary>
-        /// Enable Light Probe.
+        ///   Gets or sets a value indicating whether to enable Light Probe based indirect illumination.
         /// </summary>
         public bool LightProbes { get; set; } = true;
 
         /// <summary>
-        /// The main render stage for opaque geometry.
+        ///   Gets or sets the main render stage for opaque geometry.
         /// </summary>
         public RenderStage OpaqueRenderStage { get; set; }
 
         /// <summary>
-        /// The transparent render stage for transparent geometry.
+        ///   Gets or sets the render stage for transparent geometry.
         /// </summary>
         public RenderStage TransparentRenderStage { get; set; }
 
         /// <summary>
-        /// The shadow map render stages for shadow casters. No shadow rendering will happen if null.
+        ///   Gets the shadow map render stages for shadow casters. No shadow rendering will happen if <c>null</c>.
         /// </summary>
         [MemberCollection(NotNullItems = true)]
         public List<RenderStage> ShadowMapRenderStages { get; } = new List<RenderStage>();
 
         /// <summary>
-        /// The G-Buffer render stage to render depth buffer and possibly some other extra info to buffers (i.e. normals)
+        ///   Gets or sets the G-Buffer render stage where depth and possibly some other extra info are rendered to
+        ///   buffers (i.e. normals).
         /// </summary>
         public RenderStage GBufferRenderStage { get; set; }
 
         /// <summary>
-        /// The post effects renderer.
+        ///   Gets or sets the post-processing effects renderer.
         /// </summary>
         public IPostProcessingEffects PostEffects { get; set; }
 
         /// <summary>
-        /// Light shafts effect
+        ///   Gets or sets the volumetric light shafts effect renderer.
         /// </summary>
         public LightShafts LightShafts { get; set; }
 
         /// <summary>
-        /// Separable subsurface scattering effect
+        ///   Gets or sets the subsurface scattering effect renderer.
         /// </summary>
         public SubsurfaceScatteringBlur SubsurfaceScatteringBlurEffect { get; set; }
 
         /// <summary>
-        /// The level of multi-sampling
+        ///   Gets or sets the level of multi-sampling anti-aliasing.
         /// </summary>
         public MultisampleCount MSAALevel { get; set; } = MultisampleCount.None;
 
         /// <summary>
-        /// MSAA Resolver is used to resolve multi-sampled render targets into normal render targets
+        ///   Gets the MSAA Resolver used to resolve multi-sampled render targets into normal render targets.
         /// </summary>
         [NotNull]
         public MSAAResolver MSAAResolver { get; } = new MSAAResolver();
 
         /// <summary>
-        /// If true, depth buffer generated during <see cref="OpaqueRenderStage"/> will be available as a shader resource named DepthBase.DepthStencil during <see cref="TransparentRenderStage"/>.
+        ///   Gets or sets a value indicating whether the depth buffer generated during <see cref="OpaqueRenderStage"/>
+        ///   will be available as a shader resource named <c>DepthBase.DepthStencil</c> during <see cref="TransparentRenderStage"/>.
         /// </summary>
         /// <remarks>
-        /// This is needed by some effects such as particles soft edges.
-        ///
-        /// On recent platforms that can bind depth buffer as read-only (<see cref="GraphicsDeviceFeatures.HasDepthAsReadOnlyRT"/>), depth buffer will be used as is. Otherwise, a copy will be generated.
+        ///   This is needed by some effects such as soft-edged particles.
+        ///   <para/>
+        ///   On recent platforms that can bind the depth buffer as read-only (<see cref="GraphicsDeviceFeatures.HasDepthAsReadOnlyRT"/>),
+        ///   the depth buffer will be used as is. Otherwise, a copy will be generated.
         /// </remarks>
         [DefaultValue(true)]
         public bool BindDepthAsResourceDuringTransparentRendering { get; set; } = true;
@@ -122,20 +125,22 @@ namespace Stride.Rendering.Compositing
         {
             base.InitializeCore();
 
-            shadowMapRenderer = Context.RenderSystem.RenderFeatures.OfType<MeshRenderFeature>().FirstOrDefault()?.RenderFeatures.OfType<ForwardLightingRenderFeature>().FirstOrDefault()?.ShadowMapRenderer;
+            shadowMapRenderer = Context.RenderSystem.RenderFeatures
+                .OfType<MeshRenderFeature>().FirstOrDefault()?.RenderFeatures
+                .OfType<ForwardLightingRenderFeature>().FirstOrDefault()?.ShadowMapRenderer;
 
             if (MSAALevel != MultisampleCount.None)
             {
-                actualMultisampleCount = (MultisampleCount)Math.Min((int)MSAALevel, (int)GraphicsDevice.Features[PixelFormat.R16G16B16A16_Float].MultisampleCountMax);
-                actualMultisampleCount = (MultisampleCount)Math.Min((int)actualMultisampleCount, (int)GraphicsDevice.Features[DepthBufferFormat].MultisampleCountMax);
+                actualMultisampleCount = (MultisampleCount) Math.Min((int) MSAALevel, (int) GraphicsDevice.Features[PixelFormat.R16G16B16A16_Float].MultisampleCountMax);
+                actualMultisampleCount = (MultisampleCount) Math.Min((int) actualMultisampleCount, (int) GraphicsDevice.Features[DepthBufferFormat].MultisampleCountMax);
 
-                // TODO: we cannot support MSAA on DX10 now
-                // Direct3D has MSAA support starting from version 11 because it requires multisample depth buffers as shader resource views.
-                // Therefore we force-disable MSAA on any platform that doesn't support MSAA.
+                // TODO: We cannot support MSAA on DX10 now
+                //   Direct3D has MSAA support starting from version 11 because it requires multisample depth buffers as shader resource views.
+                //   Therefore we force-disable MSAA on any platform that doesn't support MSAA.
 
                 if (actualMultisampleCount != MSAALevel)
                 {
-                    logger.Warning("Multisample count of " + (int)MSAALevel + " samples not supported. Falling back to highest supported sample count of " + (int)actualMultisampleCount + " samples.");
+                    logger.Warning($"Multisample count of {(int) MSAALevel} samples is not supported. Falling back to highest supported sample count of {(int) actualMultisampleCount} samples.");
                 }
             }
 
@@ -215,7 +220,7 @@ namespace Stride.Rendering.Compositing
         {
             var camera = context.GetCurrentCamera();
 
-            if (context.RenderView == null)
+            if (context.RenderView is null)
                 throw new NullReferenceException(nameof(context.RenderView) + " is null. Please make sure you have your camera correctly set.");
 
             // Setup pixel formats for RenderStage
@@ -238,9 +243,9 @@ namespace Stride.Rendering.Compositing
                 PostEffects?.Collect(context);
 
                 // Set depth format for shadow map render stages
-                // TODO: This format should be acquired from the ShadowMapRenderer instead of being fixed here
                 foreach (var shadowMapRenderStage in ShadowMapRenderStages)
                 {
+                    // TODO: This format should be acquired from the ShadowMapRenderer instead of being fixed here
                     if (shadowMapRenderStage != null)
                         shadowMapRenderStage.Output = new RenderOutputDescription(PixelFormat.None, PixelFormat.D32_Float);
                 }
@@ -251,42 +256,37 @@ namespace Stride.Rendering.Compositing
 
         protected static PixelFormat ComputeNonMSAADepthFormat(PixelFormat format)
         {
-            PixelFormat result;
-
             switch (format)
             {
                 case PixelFormat.R16_Float:
                 case PixelFormat.R16_Typeless:
                 case PixelFormat.D16_UNorm:
-                    result = PixelFormat.R16_Float;
-                    break;
+                    return PixelFormat.R16_Float;
+
                 case PixelFormat.R32_Float:
                 case PixelFormat.R32_Typeless:
                 case PixelFormat.D32_Float:
-                    result = PixelFormat.R32_Float;
-                    break;
+                    return PixelFormat.R32_Float;
 
-                // Note: for those formats we lose stencil buffer information during MSAA -> non-MSAA conversion
+                // NOTE: For these formats we lose stencil buffer information during MSAA -> non-MSAA conversion
                 case PixelFormat.R24G8_Typeless:
                 case PixelFormat.D24_UNorm_S8_UInt:
                 case PixelFormat.R24_UNorm_X8_Typeless:
-                    result = PixelFormat.R32_Float;
-                    break;
+                    return PixelFormat.R32_Float;
+
                 case PixelFormat.R32G8X24_Typeless:
                 case PixelFormat.D32_Float_S8X24_UInt:
                 case PixelFormat.R32_Float_X8X24_Typeless:
-                    result = PixelFormat.R32_Float;
-                    break;
+                    return PixelFormat.R32_Float;
 
                 default:
-                    throw new NotSupportedException($"Unsupported depth format [{format}]");
+                    throw new NotSupportedException($"Unsupported depth format [{format}].");
             }
-
-            return result;
         }
 
         /// <summary>
-        /// Resolves the MSAA textures. Converts MSAA currentRenderTargets and currentDepthStencil into currentRenderTargetsNonMSAA and currentDepthStencilNonMSAA.
+        ///   Resolves the MSAA textures. Converts MSAA currentRenderTargets and currentDepthStencil into
+        ///   currentRenderTargetsNonMSAA and currentDepthStencilNonMSAA.
         /// </summary>
         /// <param name="drawContext">The draw context.</param>
         private void ResolveMSAA(RenderDrawContext drawContext)
@@ -309,15 +309,15 @@ namespace Stride.Rendering.Compositing
             MSAAResolver.Resolve(drawContext, currentDepthStencil, currentDepthStencilNonMSAA);
         }
 
-        protected virtual void DrawView(RenderContext context, RenderDrawContext drawContext, int eyeIndex, int eyeCount)
+        protected virtual void DrawView(RenderContext context, RenderDrawContext drawContext)
         {
             var renderSystem = context.RenderSystem;
 
-            // Z Prepass
+            // Z-Prepass
             var lightProbes = LightProbes && GBufferRenderStage != null;
             if (lightProbes)
             {
-                // Note: Baking lightprobe before GBuffer prepass because we are updating some cbuffer parameters needed by Opaque pass that GBuffer pass might upload early
+                // NOTE: Baking light probes before GBuffer prepass because we are updating some cbuffer parameters needed by Opaque pass that GBuffer pass might upload early
                 PrepareLightprobeConstantBuffer(context);
 
                 // TODO: Temporarily using ShadowMap shader
@@ -327,7 +327,7 @@ namespace Stride.Rendering.Compositing
                     drawContext.CommandList.Clear(drawContext.CommandList.DepthStencilBuffer, DepthStencilClearOptions.DepthBuffer);
                     drawContext.CommandList.SetRenderTarget(drawContext.CommandList.DepthStencilBuffer, null);
 
-                    // Draw [main view | z-prepass stage]
+                    // Draw [Main view | Z-Prepass stage]
                     renderSystem.Draw(drawContext, context.RenderView, GBufferRenderStage);
                 }
 
@@ -337,7 +337,7 @@ namespace Stride.Rendering.Compositing
 
             using (drawContext.PushRenderTargetsAndRestore())
             {
-                // Draw [main view | main stage]
+                // Draw [Main view | Main stage]
                 if (OpaqueRenderStage != null)
                 {
                     using (drawContext.QueryManager.BeginProfile(Color.Green, CompositingProfilingKeys.Opaque))
@@ -348,7 +348,7 @@ namespace Stride.Rendering.Compositing
 
                 Texture depthStencilSRV = null;
 
-                // Draw [main view | subsurface scattering post process]
+                // Draw [Main view | SubSurface Scattering Post-process]
                 if (SubsurfaceScatteringBlurEffect != null)
                 {
                     var materialIndex = OpaqueRenderStage?.OutputValidator.Find<MaterialIndexTargetSemantic>() ?? -1;
@@ -366,14 +366,14 @@ namespace Stride.Rendering.Compositing
                     }
                 }
 
-                // Draw [main view | transparent stage]
+                // Draw [Main view | Transparent stage]
                 if (TransparentRenderStage != null)
                 {
                     // Some transparent shaders will require the depth as a shader resource - resolve it only once and set it here
                     using (drawContext.QueryManager.BeginProfile(Color.Green, CompositingProfilingKeys.Transparent))
                     using (drawContext.PushRenderTargetsAndRestore())
                     {
-                        if (depthStencilSRV == null)
+                        if (depthStencilSRV is null)
                             depthStencilSRV = ResolveDepthAsSRV(drawContext);
 
                         renderSystem.Draw(drawContext, context.RenderView, TransparentRenderStage);
@@ -398,7 +398,7 @@ namespace Stride.Rendering.Compositing
                     depthStencil = currentDepthStencilNonMSAA;
                 }
 
-                // Shafts if we have them
+                // Draw [Main view | Light Shafts]
                 if (LightShafts != null)
                 {
                     using (drawContext.QueryManager.BeginProfile(Color.Green, CompositingProfilingKeys.LightShafts))
@@ -407,10 +407,10 @@ namespace Stride.Rendering.Compositing
                     }
                 }
 
+                // Draw Post-Processing effects
                 if (PostEffects != null)
                 {
-                    // Run post effects
-                    // Note: OpaqueRenderStage can't be null otherwise colorTargetIndex would be -1
+                    // NOTE: OpaqueRenderStage can't be null otherwise colorTargetIndex would be -1
                     PostEffects.Draw(drawContext, OpaqueRenderStage.OutputValidator, renderTargets.Items, depthStencil, viewOutputTarget);
                 }
                 else
@@ -441,10 +441,7 @@ namespace Stride.Rendering.Compositing
                 // Render Shadow maps
                 shadowMapRenderer?.Draw(drawContext);
 
-                PrepareRenderTargets(drawContext, new Size2((int)viewport.Width, (int)viewport.Height));
-
-                ViewCount = 1;
-                ViewIndex = 0;
+                PrepareRenderTargets(drawContext, new Size2((int) viewport.Width, (int) viewport.Height));
 
                 //var sssMaterialIndexRenderTarget = GenerateSSSMaterialIndexRenderTarget(context, viewport);
 
@@ -455,7 +452,7 @@ namespace Stride.Rendering.Compositing
                     // Clear render target and depth stencil
                     Clear?.Draw(drawContext);
 
-                    DrawView(context, drawContext, 0, 1);
+                    DrawView(context, drawContext);
                 }
             }
 
@@ -507,14 +504,20 @@ namespace Stride.Rendering.Compositing
                     if (depthLogicalGroup.Hash == ObjectId.Empty)
                         continue;
 
-                    // Might want to use ProcessLogicalGroup if more than 1 Recource
+                    // Might want to use ProcessLogicalGroup if more than one Recource
                     resourceGroup.DescriptorSet.SetShaderResourceView(depthLogicalGroup.DescriptorSlotStart, depthStencilSRV);
                 }
             }
 
             context.CommandList.SetRenderTargets(null, context.CommandList.RenderTargetCount, context.CommandList.RenderTargets);
 
-            depthStencilROCached = context.Resolver.GetDepthStencilAsRenderTarget(depthStencil, depthStencilROCached);
+            var depthStencilROCached = context.Resolver.GetDepthStencilAsRenderTarget(depthStencil, this.depthStencilROCached);
+            if (depthStencilROCached != this.depthStencilROCached)
+            {
+                // Dispose cached view
+                this.depthStencilROCached?.Dispose();
+                this.depthStencilROCached = depthStencilROCached;
+            }
             context.CommandList.SetRenderTargets(depthStencilROCached, context.CommandList.RenderTargetCount, context.CommandList.RenderTargets);
 
             return depthStencilSRV;
@@ -522,7 +525,7 @@ namespace Stride.Rendering.Compositing
 
         private void PrepareRenderTargets(RenderDrawContext drawContext, Texture outputRenderTarget, Texture outputDepthStencil)
         {
-            if (OpaqueRenderStage == null)
+            if (OpaqueRenderStage is null)
                 return;
 
             var renderTargets = OpaqueRenderStage.OutputValidator.RenderTargets;
@@ -531,7 +534,7 @@ namespace Stride.Rendering.Compositing
 
             for (int index = 0; index < renderTargets.Count; index++)
             {
-                if (renderTargets[index].Semantic is ColorTargetSemantic && PostEffects == null && actualMultisampleCount == MultisampleCount.None)
+                if (renderTargets[index].Semantic is ColorTargetSemantic && PostEffects is null && actualMultisampleCount == MultisampleCount.None)
                 {
                     currentRenderTargets[index] = outputRenderTarget;
                 }
@@ -560,7 +563,7 @@ namespace Stride.Rendering.Compositing
         }
 
         /// <summary>
-        /// Prepares targets per frame, caching and handling MSAA etc.
+        ///   Prepares the render targets per frame, caching and handling MSAA, etc.
         /// </summary>
         /// <param name="drawContext">The current draw context</param>
         /// <param name="renderTargetsSize">The render target size</param>
@@ -572,7 +575,7 @@ namespace Stride.Rendering.Compositing
             viewDepthStencil = drawContext.CommandList.DepthStencilBuffer;
 
             // Create output if needed
-            if (viewOutputTarget == null || viewOutputTarget.MultisampleCount != MultisampleCount.None)
+            if (viewOutputTarget is null || viewOutputTarget.MultisampleCount != MultisampleCount.None)
             {
                 viewOutputTarget = PushScopedResource(drawContext.GraphicsContext.Allocator.GetTemporaryTexture2D(
                     TextureDescription.New2D(renderTargetsSize.Width, renderTargetsSize.Height, 1, PixelFormat.R8G8B8A8_UNorm_SRgb,
@@ -580,7 +583,7 @@ namespace Stride.Rendering.Compositing
             }
 
             // Create depth if needed
-            if (viewDepthStencil == null || viewDepthStencil.MultisampleCount != MultisampleCount.None)
+            if (viewDepthStencil is null || viewDepthStencil.MultisampleCount != MultisampleCount.None)
             {
                 viewDepthStencil = PushScopedResource(drawContext.GraphicsContext.Allocator.GetTemporaryTexture2D(
                     TextureDescription.New2D(renderTargetsSize.Width, renderTargetsSize.Height, 1, DepthBufferFormat,
@@ -593,6 +596,7 @@ namespace Stride.Rendering.Compositing
         protected override void Destroy()
         {
             PostEffects?.Dispose();
+            depthStencilROCached?.Dispose();
         }
     }
 }

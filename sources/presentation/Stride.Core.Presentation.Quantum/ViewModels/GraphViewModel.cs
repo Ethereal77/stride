@@ -4,21 +4,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
 
 using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
-using Stride.Core.Presentation.Quantum.Presenters;
+using Stride.Core.Quantum;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
-using Stride.Core.Quantum;
+using Stride.Core.Presentation.Quantum.Presenters;
 
 namespace Stride.Core.Presentation.Quantum.ViewModels
 {
     /// <summary>
-    /// A view model class representing one or multiple trees of <see cref="INodePresenter"/> instances.
+    ///   Represents a view model for one or multiple trees of <see cref="INodePresenter"/> instances.
     /// </summary>
     public class GraphViewModel : DispatcherViewModel
     {
@@ -26,40 +24,55 @@ namespace Stride.Core.Presentation.Quantum.ViewModels
         public const string HasChildPrefix = "HasChild_";
         public const string HasCommandPrefix = "HasCommand_";
         public const string HasAssociatedDataPrefix = "HasAssociatedData_";
+
         private NodeViewModel rootNode;
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="GraphViewModel"/> class.
+        ///  Initializes a new instance of the <see cref="GraphViewModel"/> class.
         /// </summary>
-        /// <param name="serviceProvider">A service provider that can provide a <see cref="IDispatcherService"/> and an <see cref="GraphViewModelService"/> to use for this view model.</param>
-        /// <param name="type"></param>
+        /// <param name="serviceProvider">
+        ///   A service provider that can provide a <see cref="IDispatcherService"/> and a
+        ///   <see cref="Quantum.GraphViewModelService"/> to use for this view model.
+        /// </param>
+        /// <param name="type">The type for which to generate the graph view model.</param>
         /// <param name="rootPresenters">The root <see cref="INodePresenter"/> instances.</param>
         private GraphViewModel([NotNull] IViewModelServiceProvider serviceProvider, [NotNull] Type type, [NotNull] IEnumerable<INodePresenter> rootPresenters)
             : base(serviceProvider)
         {
-            if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-            if (type == null) throw new ArgumentNullException(nameof(type));
-            if (rootPresenters == null) throw new ArgumentNullException(nameof(rootPresenters));
+            if (serviceProvider is null)
+                throw new ArgumentNullException(nameof(serviceProvider));
+            if (type is null)
+                throw new ArgumentNullException(nameof(type));
+            if (rootPresenters is null)
+                throw new ArgumentNullException(nameof(rootPresenters));
+
             GraphViewModelService = serviceProvider.TryGet<GraphViewModelService>();
-            if (GraphViewModelService == null) throw new InvalidOperationException($"{nameof(GraphViewModel)} requires a {nameof(GraphViewModelService)} in the service provider.");
+            if (GraphViewModelService is null)
+                throw new InvalidOperationException($"{nameof(GraphViewModel)} requires a {nameof(GraphViewModelService)} in the service provider.");
+
             Logger = GlobalLogger.GetLogger(DefaultLoggerName);
-            if (rootPresenters == null) throw new ArgumentNullException(nameof(rootNode));
-            var viewModelFactory = serviceProvider.Get<GraphViewModelService>().NodeViewModelFactory;
+
+            var viewModelFactory = GraphViewModelService.NodeViewModelFactory;
             viewModelFactory.CreateGraph(this, type, rootPresenters);
         }
 
         /// <inheritdoc/>
         public override void Destroy()
         {
-            RootNode.Children.SelectDeep(x => x.Children).ForEach(x => x.Destroy());
+            RootNode.Children.SelectDeep(x => x.Children)
+                             .ForEach(x => x.Destroy());
+
             RootNode.Destroy();
         }
 
         [CanBeNull]
         public static GraphViewModel Create([NotNull] IViewModelServiceProvider serviceProvider, [NotNull] IReadOnlyCollection<IPropertyProviderViewModel> propertyProviders)
         {
-            if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-            if (propertyProviders == null) throw new ArgumentNullException(nameof(propertyProviders));
+            if (serviceProvider is null)
+                throw new ArgumentNullException(nameof(serviceProvider));
+            if (propertyProviders is null)
+                throw new ArgumentNullException(nameof(propertyProviders));
 
             var rootNodes = new List<INodePresenter>();
             Type type = null;
@@ -70,10 +83,10 @@ namespace Stride.Core.Presentation.Quantum.ViewModels
                     return null;
 
                 var rootNode = propertyProvider.GetRootNode();
-                if (rootNode == null)
+                if (rootNode is null)
                     return null;
 
-                if (type == null)
+                if (type is null)
                     type = rootNode.Type;
                 else if (type != rootNode.Type)
                     return null;
@@ -82,27 +95,33 @@ namespace Stride.Core.Presentation.Quantum.ViewModels
                 rootNodes.Add(node);
             }
 
-            if (propertyProviders.Count == 0 || type == null) throw new ArgumentException($@"{nameof(propertyProviders)} cannot be empty.", nameof(propertyProviders));
+            if (propertyProviders.Count == 0 || type is null)
+                throw new ArgumentException($@"{nameof(propertyProviders)} cannot be empty.", nameof(propertyProviders));
+
             return new GraphViewModel(serviceProvider, type, rootNodes);
         }
 
         /// <summary>
-        /// Gets the root node of this <see cref="GraphViewModel"/>.
+        ///   Gets or sets the root node of this <see cref="GraphViewModel"/>.
         /// </summary>
-        public NodeViewModel RootNode { get { return rootNode; } set { SetValue(ref rootNode, value); } }
+        public NodeViewModel RootNode
+        {
+            get => rootNode;
+            set => SetValue(ref rootNode, value);
+        }
 
         /// <summary>
-        /// Gets the <see cref="GraphViewModelService"/> associated to this view model.
+        ///   Gets the <see cref="Quantum.GraphViewModelService"/> associated to this view model.
         /// </summary>
         public GraphViewModelService GraphViewModelService { get; }
 
         /// <summary>
-        /// Gets the <see cref="Logger"/> associated to this view model.
+        ///   Gets the <see cref="Stride.Core.Diagnostics.Logger"/> associated to this view model.
         /// </summary>
         public Logger Logger { get; private set; }
 
         /// <summary>
-        /// Raised when the value of an <see cref="NodeViewModel"/> contained into this view model has changed.
+        ///   Event raised when the value of an <see cref="NodeViewModel"/> contained into this view model has changed.
         /// </summary>
         public event EventHandler<NodeViewModelValueChangedArgs> NodeValueChanged;
 

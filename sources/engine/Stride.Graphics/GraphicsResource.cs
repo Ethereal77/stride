@@ -3,22 +3,16 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 namespace Stride.Graphics
-{ 
+{
     /// <summary>
-    /// GraphicsResource abstract class
+    ///   Represents a resource that depends on the graphics device.
     /// </summary>
     public abstract partial class GraphicsResource : GraphicsResourceBase
     {
-        protected GraphicsResource()
-        {
-        }
+        protected GraphicsResource() { }
 
-        protected GraphicsResource(GraphicsDevice device) : base(device)
-        {
-        }
+        protected GraphicsResource(GraphicsDevice device) : base(device) { }
 
-        protected GraphicsResource(GraphicsDevice device, string name) : base(device, name)
-        {
-        }
+        protected GraphicsResource(GraphicsDevice device, string name) : base(device, name) { }
     }
 }

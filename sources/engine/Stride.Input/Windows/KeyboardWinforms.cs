@@ -45,6 +45,8 @@ namespace Stride.Input
             wndProcDelegate = WndProc;
             var windowProc = Marshal.GetFunctionPointerForDelegate(wndProcDelegate);
             oldWndProc = Win32Native.SetWindowLong(richTextBox.Handle, Win32Native.WindowLongType.WndProc, windowProc);
+
+            Id = InputDeviceUtils.DeviceNameToGuid(uiControl.Handle.ToString() + Name);
         }
 
         public void Dispose()
@@ -54,7 +56,7 @@ namespace Stride.Input
 
         public override string Name => "Windows Keyboard";
 
-        public override Guid Id => new Guid("027cf994-681f-4ed5-b38f-ce34fc295b8f");
+        public override Guid Id { get; }
 
         public override IInputSource Source { get; }
 
@@ -69,9 +71,8 @@ namespace Stride.Input
 
         internal void HandleKeyDown(System.Windows.Forms.Keys winFormsKey)
         {
-            // Translate from windows key enum to Stride key enum
-            Keys strideKey;
-            if (WinKeys.MapKeys.TryGetValue(winFormsKey, out strideKey) && strideKey != Keys.None)
+            // Translate from Windows Keys enum to Stride Keys enum
+            if (WinKeys.MapKeys.TryGetValue(winFormsKey, out Keys strideKey) && strideKey != Keys.None)
             {
                 HandleKeyDown(strideKey);
             }
@@ -79,9 +80,8 @@ namespace Stride.Input
 
         internal void HandleKeyUp(System.Windows.Forms.Keys winFormsKey)
         {
-            // Translate from windows key enum to Stride key enum
-            Keys strideKey;
-            if (WinKeys.MapKeys.TryGetValue(winFormsKey, out strideKey) && strideKey != Keys.None)
+            // Translate from Windows Keys enum to Stride Keys enum
+            if (WinKeys.MapKeys.TryGetValue(winFormsKey, out Keys strideKey) && strideKey != Keys.None)
             {
                 HandleKeyUp(strideKey);
             }
@@ -133,7 +133,7 @@ namespace Stride.Input
                     winformSource.HandleKeyDown(wParam, lParam);
                     if (richTextBox.TextLength == 0)
                     {
-                        var virtualKey = (System.Windows.Forms.Keys)wParam.ToInt64();
+                        var virtualKey = (System.Windows.Forms.Keys) wParam.ToInt64();
                         if (virtualKey == System.Windows.Forms.Keys.Back ||
                             virtualKey == System.Windows.Forms.Keys.Left ||
                             virtualKey == System.Windows.Forms.Keys.Right ||
@@ -142,7 +142,9 @@ namespace Stride.Input
                             virtualKey == System.Windows.Forms.Keys.End ||
                             virtualKey == System.Windows.Forms.Keys.Up ||
                             virtualKey == System.Windows.Forms.Keys.Down)
-                            return new IntPtr(0); // Swallow some keys when the text box is empty to prevent ding sound
+
+                            // Swallow some keys when the text box is empty to prevent ding sound
+                            return new IntPtr(0);
                     }
                     break;
 
@@ -152,7 +154,7 @@ namespace Stride.Input
                     break;
 
                 case Win32Native.WM_IME_COMPOSITION:
-                    OnComposition(hWnd, (int)lParam);
+                    OnComposition(hWnd, (int) lParam);
                     break;
 
                 case Win32Native.WM_NCPAINT:
@@ -160,7 +162,9 @@ namespace Stride.Input
                     var paintStruct = new Win32Native.PAINTSTRUCT();
                     Win32Native.BeginPaint(hWnd, ref paintStruct);
                     Win32Native.EndPaint(hWnd, ref paintStruct);
-                    return new IntPtr(0); // Don't paint the control
+
+                    // Don't paint the control
+                    return new IntPtr(0);
             }
             return Win32Native.CallWindowProc(oldWndProc, hWnd, msg, wParam, lParam);
         }
@@ -223,4 +227,5 @@ namespace Stride.Input
         }
     }
 }
+
 #endif

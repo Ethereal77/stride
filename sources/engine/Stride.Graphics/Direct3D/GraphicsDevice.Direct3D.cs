@@ -283,6 +283,10 @@ namespace Stride.Graphics
         {
         }
 
+        /// <summary>
+        ///   Tags a resource to be discarded (and possibly renamed) as it is not goind to be used anymore.
+        /// </summary>
+        /// <param name="resourceLink">The resource to discard.</param>
         internal void TagResource(GraphicsResourceLink resourceLink)
         {
             if (resourceLink.Resource is GraphicsResource resource)

@@ -22,24 +22,34 @@ namespace Stride.Rendering.Images
         private BlendStateDescription blendState = BlendStateDescription.Default;
         private DepthStencilStateDescription depthStencilState = DepthStencilStateDescription.Default;
         private EffectBytecode previousBytecode;
-        private bool delaySetRenderTargets;
+        private readonly bool delaySetRenderTargets;
 
         [DataMemberIgnore]
         public BlendStateDescription BlendState
         {
-            get { return blendState; }
-            set { blendState = value; pipelineStateDirty = true; }
+            get => blendState;
+
+            set
+            {
+                blendState = value;
+                pipelineStateDirty = true;
+            }
         }
 
         [DataMemberIgnore]
         public DepthStencilStateDescription DepthStencilState
         {
-            get { return depthStencilState; }
-            set { depthStencilState = value; pipelineStateDirty = true; }
+            get => depthStencilState;
+
+            set
+            {
+                depthStencilState = value;
+                pipelineStateDirty = true;
+            }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ImageEffectShader" /> class.
+        ///   Initializes a new instance of the <see cref="ImageEffectShader" /> class.
         /// </summary>
         public ImageEffectShader(string effectName = null, bool delaySetRenderTargets = false)
         {
@@ -60,7 +70,8 @@ namespace Stride.Rendering.Images
             pipelineState.State.InputElements = PrimitiveQuad.VertexDeclaration.CreateInputElements();
             pipelineState.State.PrimitiveType = PrimitiveQuad.PrimitiveType;
 
-            if (EffectName == null) throw new ArgumentNullException("No EffectName specified");
+            if (EffectName is null)
+                throw new ArgumentNullException(nameof(EffectName), "No effect name specified.");
 
             // Setup the effect compiler
             EffectInstance.Initialize(Context.Services);
@@ -72,23 +83,23 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// The current effect instance.
+        ///   Gets the current effect instance.
         /// </summary>
         [DataMemberIgnore]
         public DynamicEffectInstance EffectInstance { get; private set; }
 
         /// <summary>
-        /// Effect name.
+        ///   Gets the name of the effect.
         /// </summary>
         [DataMemberIgnore]
         public string EffectName
         {
-            get { return EffectInstance.EffectName; }
-            protected set { EffectInstance.EffectName = value; }
+            get => EffectInstance.EffectName;
+            protected set => EffectInstance.EffectName = value;
         }
 
         /// <summary>
-        /// Sets the default parameters (called at constructor time and if <see cref="Reset"/> is called)
+        ///   Sets the default parameters. Called at constructor time and if <see cref="Reset"/> is called.
         /// </summary>
         protected override void SetDefaultParameters()
         {
@@ -105,10 +116,13 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Updates the effect <see cref="ImageEffectShader.Parameters" /> from properties defined in this instance. See remarks.
+        ///   Updates the effect <see cref="ImageEffectShader.Parameters" /> from properties defined in this
+        ///   instance.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">Expecting less than 10 textures in input</exception>
-        /// <remarks>By default, all the input textures will be remapped to <see cref="TexturingKeys.Texture0" />...etc.</remarks>
+        /// <exception cref="InvalidOperationException">Expecting less than 10 textures in input.</exception>
+        /// <remarks>
+        ///   By default, all the input textures will be remapped to <see cref="TexturingKeys.Texture0" />, etc.
+        /// </remarks>
         protected virtual void UpdateParameters()
         {
             // By default, we are copying all input textures to TexturingKeys.Texture#
@@ -118,15 +132,19 @@ namespace Stride.Rendering.Images
                 var texture = GetInput(i);
                 if (i < TexturingKeys.DefaultTextures.Count)
                 {
-                    var texturingKeys = texture.ViewDimension == TextureDimension.TextureCube ? TexturingKeys.TextureCubes : TexturingKeys.DefaultTextures;
-                    // TODO GRAPHICS REFACTOR Do not use slow version
+                    var texturingKeys = texture != null && texture.ViewDimension == TextureDimension.TextureCube ?
+                        TexturingKeys.TextureCubes :
+                        TexturingKeys.DefaultTextures;
+                    var texelSize = texture != null ?
+                        new Vector2(1.0f / texture.ViewWidth, 1.0f / texture.ViewHeight) :
+                        default;
+
+                    // TODO: GRAPHICS REFACTOR Do not use slow version
                     Parameters.Set(texturingKeys[i], texture);
-                    Parameters.Set(TexturingKeys.TexturesTexelSize[i], new Vector2(1.0f / texture.ViewWidth, 1.0f / texture.ViewHeight));
+                    Parameters.Set(TexturingKeys.TexturesTexelSize[i], texelSize);
                 }
                 else
-                {
-                    throw new InvalidOperationException("Expecting less than {0} textures in input".ToFormat(TexturingKeys.DefaultTextures.Count));
-                }
+                    throw new InvalidOperationException($"Expecting less than {TexturingKeys.DefaultTextures.Count} textures in input.");
             }
         }
 

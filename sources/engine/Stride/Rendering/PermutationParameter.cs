@@ -4,6 +4,10 @@
 
 namespace Stride.Rendering
 {
+    /// <summary>
+    ///   Represents a structure that defines a direct way of accesing a permutation parameter in an effect.
+    /// </summary>
+    /// <typeparam name="T">Type of the permutation parametter.</typeparam>
     public struct PermutationParameter<T>
     {
         internal readonly int BindingSlot;
@@ -11,8 +15,8 @@ namespace Stride.Rendering
 
         internal PermutationParameter(int bindingSlot, int count)
         {
-            this.BindingSlot = bindingSlot;
-            this.Count = count;
+            BindingSlot = bindingSlot;
+            Count = count;
         }
     }
 }

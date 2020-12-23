@@ -16,127 +16,116 @@ namespace Stride.Games
     /// </summary>
     public abstract class GameWindow : ComponentBase
     {
-        #region Fields
-
         private string title;
-
-        #endregion
-
-        #region Public Events
 
         /// <summary>
         /// Indicate if the window is currently activated.
         /// </summary>
         public bool IsActivated;
 
+        #region Public Events
+
         /// <summary>
-        /// Occurs when this window is activated.
+        ///   Occurs when this window is activated.
         /// </summary>
         public event EventHandler<EventArgs> Activated;
 
         /// <summary>
-        /// Occurs when device client size is changed.
+        ///   Occurs when the window client size has changed.
         /// </summary>
         public event EventHandler<EventArgs> ClientSizeChanged;
 
         /// <summary>
-        /// Occurs when this window is deactivated.
+        ///   Occurs when this window is deactivated.
         /// </summary>
         public event EventHandler<EventArgs> Deactivated;
 
         /// <summary>
-        /// Occurs when device orientation is changed.
+        ///   Occurs when device orientation has changed.
         /// </summary>
         public event EventHandler<EventArgs> OrientationChanged;
 
         /// <summary>
-        /// Occurs when device fullscreen mode is changed.
+        ///   Occurs when the device fullscreen mode has changed.
         /// </summary>
         public event EventHandler<EventArgs> FullscreenChanged;
 
         /// <summary>
-        /// Occurs before the window gets destroyed.
+        ///   Occurs when the window is being closed, before it gets destroyed.
         /// </summary>
         public event EventHandler<EventArgs> Closing;
 
         #endregion
 
-        #region Public Properties
-
         /// <summary>
-        /// Gets or sets, user possibility to resize this window.
+        ///   Gets or sets a value indicating whether the user can resize this window.
         /// </summary>
         public abstract bool AllowUserResizing { get; set; }
 
         /// <summary>
-        /// Gets the client bounds.
+        ///   Gets the client bounds of the window.
         /// </summary>
         /// <value>The client bounds.</value>
         public abstract Rectangle ClientBounds { get; }
 
         /// <summary>
-        /// Gets the current orientation.
+        ///   Gets the current orientation.
         /// </summary>
         /// <value>The current orientation.</value>
         public abstract DisplayOrientation CurrentOrientation { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is minimized.
+        ///   Gets a value indicating whether this window is minimized.
         /// </summary>
-        /// <value><c>true</c> if this instance is minimized; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if the window is minimized; otherwise, <c>false</c>.</value>
         public abstract bool IsMinimized { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is in focus.
+        ///   Gets a value indicating whether this window has focus.
         /// </summary>
-        /// <value><c>true</c> if this instance is in focus; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if the window is in focus; otherwise, <c>false</c>.</value>
         public abstract bool Focused { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the mouse pointer is visible over this window.
+        ///   Gets or sets a value indicating whether the mouse pointer is visible over this window.
         /// </summary>
-        /// <value><c>true</c> if this instance is mouse visible; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> if the mouse pointer is visible; otherwise, <c>false</c>.</value>
         public abstract bool IsMouseVisible { get; set; }
 
         /// <summary>
-        /// Gets the native window.
+        ///   Gets the native window handle.
         /// </summary>
         /// <value>The native window.</value>
         public abstract WindowHandle NativeWindow { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="GameWindow" /> is visible.
+        ///   Gets or sets a value indicating whether this window is visible.
         /// </summary>
         /// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
         public abstract bool Visible { get; set; }
 
         /// <summary>
-        /// Gets or sets the position of the window on the screen.
+        ///   Gets or sets the position of the window on the screen.
         /// </summary>
         public virtual Int2 Position { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this window has a border
+        ///   Gets or sets a value indicating whether this window has a border.
         /// </summary>
         /// <value><c>true</c> if this window has a border; otherwise, <c>false</c>.</value>
         public abstract bool IsBorderLess { get; set; }
 
         /// <summary>
-        /// Gets or sets the title of the window.
+        ///   Gets or sets the title of the window.
         /// </summary>
         public string Title
         {
-            get
-            {
-                return title;
-            }
+            get => title;
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                if (value is null)
+                    throw new ArgumentNullException(nameof(Title));
 
                 if (title != value)
                 {
@@ -147,24 +136,39 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// The size the window should have when switching from fullscreen to windowed mode.
-        /// To get the current actual size use <see cref="ClientBounds"/>.
-        /// This gets overwritten when the user resizes the window.
+        ///   Gets or sets the size the window should have when switching from fullscreen to windowed mode.
         /// </summary>
+        /// <remarks>
+        ///   To get the current actual size use <see cref="ClientBounds"/>.
+        ///   This gets overwritten when the user resizes the window.
+        /// </remarks>
         public Int2 PreferredWindowedSize { get; set; } = new Int2(768, 432);
 
         /// <summary>
-        /// The size the window should have when switching from windowed to fullscreen mode.
-        /// To get the current actual size use <see cref="ClientBounds"/>.
+        ///   Gets or sets the size the window should have when switching from windowed to fullscreen mode.
         /// </summary>
+        /// <remarks>
+        ///   To get the current actual size use <see cref="ClientBounds"/>.
+        /// </remarks>
         public Int2 PreferredFullscreenSize { get; set; } = new Int2(1920, 1080);
 
         /// <summary>
-        /// Switches between fullscreen and windowed mode.
+        ///   Gets or sets a value indicating whether the fullscreen mode should be a borderless window matching the
+        ///   desktop size.
         /// </summary>
+        /// <remarks>
+        ///   This flag is currently ignored on all game platforms other than SDL.
+        /// </remarks>
+        public bool FullscreenIsBorderlessWindow { get; set; } = false;
+
+        /// <summary>
+        ///   Gets or sets a value indicating whether to switch to fullscreen or windowed mode.
+        /// </summary>
+        /// <value><c>true</c> for fullscreen mode. <c>false</c> for windowed mode.</value>
         public bool IsFullscreen
         {
             get => isFullscreen;
+
             set
             {
                 if (value != isFullscreen)
@@ -176,17 +180,14 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Allow the GraphicsDeviceMagnager to set the actual window state after applying the device changes.
+        ///   Allows the GraphicsDeviceMagnager to set the actual window state after applying the device changes.
         /// </summary>
-        /// <param name="isReallyFullscreen"></param>
+        /// <param name="isReallyFullscreen">Device configuration about fullscreen.</param>
         internal void SetIsReallyFullscreen(bool isReallyFullscreen)
         {
             isFullscreen = isReallyFullscreen;
         }
 
-        #endregion
-
-        #region Public Methods and Operators
 
         public abstract void BeginScreenDeviceChange(bool willBeFullScreen);
 
@@ -197,24 +198,33 @@ namespace Stride.Games
 
         public abstract void EndScreenDeviceChange(int clientWidth, int clientHeight);
 
-        #endregion
-
-        #region Methods
 
         protected internal abstract void Initialize(GameContext gameContext);
 
         internal bool Exiting;
 
         internal Action InitCallback;
-
         internal Action RunCallback;
-
         internal Action ExitCallback;
 
         private bool isFullscreen;
 
         internal abstract void Run();
 
+        /// <summary>
+        ///   Sets the size of the client area and triggers the <see cref="ClientSizeChanged"/> event.
+        ///   This will trigger a backbuffer resize too.
+        /// </summary>
+        public void SetSize(Int2 size)
+        {
+            Resize(size.X, size.Y);
+            OnClientSizeChanged(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        ///   Only used internally by the device managers when they adapt the window size to the backbuffer size.
+        ///   Resizes the window, without sending the resized event.
+        /// </summary>
         internal abstract void Resize(int width, int height);
 
         public virtual IMessageLoop CreateUserManagedMessageLoop()
@@ -273,8 +283,6 @@ namespace Stride.Games
         }
 
         protected abstract void SetTitle(string title);
-
-        #endregion
 
         internal void OnPause()
         {

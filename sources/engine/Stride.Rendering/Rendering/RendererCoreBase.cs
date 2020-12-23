@@ -17,38 +17,38 @@ using Buffer = Stride.Graphics.Buffer;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Base implementation of <see cref="IGraphicsRenderer"/>
+    ///   Represents the base implementation of <see cref="IGraphicsRenderer"/>.
     /// </summary>
     [DataContract]
     public abstract class RendererCoreBase : ComponentBase, IGraphicsRendererCore
     {
-        private bool isInDrawCore;
         private ProfilingKey profilingKey;
+
         private readonly List<GraphicsResource> scopedResources = new List<GraphicsResource>();
         private readonly List<IGraphicsRendererCore> subRenderersToUnload;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RendererBase"/> class.
-        /// </summary>
-        protected RendererCoreBase()
-            : this(null)
-        {
-        }
+        private bool isInDrawCore;
+
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ComponentBase" /> class.
+        ///   Initializes a new instance of the <see cref="RendererCoreBase"/> class.
         /// </summary>
-        /// <param name="name">The name attached to this component</param>
-        protected RendererCoreBase(string name)
-            : base(name)
+        protected RendererCoreBase() : this(name: null) { }
+
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="RendererCoreBase" /> class.
+        /// </summary>
+        /// <param name="name">The name attached to this component. Specify <c>null</c> to use the name of the type automatically.</param>
+        protected RendererCoreBase(string name) : base(name)
         {
             Enabled = true;
             subRenderersToUnload = new List<IGraphicsRendererCore>();
             Profiling = true;
         }
 
+
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="EntityComponentRendererBase"/> is enabled.
+        ///   Gets or sets a value indicating whether this <see cref="RendererCoreBase"/> is enabled.
         /// </summary>
         /// <value><c>true</c> if enabled; otherwise, <c>false</c>.</value>
         /// <userdoc>Enabled if checked, disabled otherwise</userdoc>
@@ -66,28 +66,28 @@ namespace Stride.Rendering
         protected RenderContext Context { get; private set; }
 
         /// <summary>
-        /// Gets the <see cref="IServiceRegistry"/>.
+        ///   Gets the registry of services.
         /// </summary>
         /// <value>The service registry.</value>
         [DataMemberIgnore]
         protected IServiceRegistry Services { get; private set; }
 
         /// <summary>
-        /// Gets the <see cref="ContentManager"/>.
+        ///   Gets the content manager.
         /// </summary>
-        /// <value>The asset manager.</value>
+        /// <value>The content manager.</value>
         [DataMemberIgnore]
         protected ContentManager Content { get; private set; }
 
         /// <summary>
-        /// Gets the graphics device.
+        ///   Gets the graphics device.
         /// </summary>
         /// <value>The graphics device.</value>
         [DataMemberIgnore]
         protected GraphicsDevice GraphicsDevice { get; private set; }
 
         /// <summary>
-        /// Gets the effect system.
+        ///   Gets the effect system.
         /// </summary>
         /// <value>The effect system.</value>
         [DataMemberIgnore]
@@ -97,7 +97,8 @@ namespace Stride.Rendering
 
         public void Initialize(RenderContext context)
         {
-            if (context == null) throw new ArgumentNullException("context");
+            if (context is null)
+                throw new ArgumentNullException("context");
 
             // Unload the previous context if any
             if (Context != null)
@@ -122,12 +123,10 @@ namespace Stride.Rendering
             context.OnRendererInitialized(this);
         }
 
-        protected virtual void InitializeCore()
-        {
-        }
+        protected virtual void InitializeCore() { }
 
         /// <summary>
-        /// Unloads this instance on dispose.
+        ///   Unloads this instance on dispose.
         /// </summary>
         protected virtual void Unload()
         {
@@ -140,40 +139,47 @@ namespace Stride.Rendering
             Context = null;
         }
 
-        protected virtual void PreDrawCore(RenderDrawContext context)
-        {
-        }
+        protected virtual void PreDrawCore(RenderDrawContext context) { }
 
-        protected virtual void PostDrawCore(RenderDrawContext context)
-        {
-        }
+        protected virtual void PostDrawCore(RenderDrawContext context) { }
 
         /// <summary>
-        /// Gets a render target with the specified description, scoped for the duration of the <see cref="DrawEffect.DrawCore"/>.
+        ///   Gets a buffer with the specified description, scoped for the duration of the <see cref="DrawEffect.DrawCore"/>.
         /// </summary>
-        /// <param name="description">The description of the buffer to allocate</param>
-        /// <param name="viewFormat">The pixel format seen in shader</param>
-        /// <returns>A new instance of texture.</returns>
+        /// <param name="description">The description of the buffer to allocate.</param>
+        /// <param name="viewFormat">The element format seen in the shader.</param>
+        /// <returns>The new buffer.</returns>
         protected Buffer NewScopedBuffer(BufferDescription description, PixelFormat viewFormat = PixelFormat.None)
         {
             CheckIsInDrawCore();
+
             return PushScopedResource(Context.Allocator.GetTemporaryBuffer(description, viewFormat));
         }
 
         /// <summary>
-        /// Gets a render target with the specified description, scoped for the duration of the <see cref="DrawEffect.DrawCore"/>.
+        ///   Gets a typed buffer with the specified description, scoped for the duration of the <see cref="DrawEffect.DrawCore"/>.
         /// </summary>
-        /// <returns>A new instance of texture.</returns>
+        /// <param name="count">Number of elements in the buffer.</param>
+        /// <param name="viewFormat">The element format seen in the shader.</param>
+        /// <param name="isUnorderedAccess">A value indicating whether the buffer can be accessed in unordered mode.</param>
+        /// <param name="usage">The usage flags for the buffer.</param>
+        /// <returns>The new buffer.</returns>
         protected Buffer NewScopedTypedBuffer(int count, PixelFormat viewFormat, bool isUnorderedAccess, GraphicsResourceUsage usage = GraphicsResourceUsage.Default)
         {
-            return NewScopedBuffer(new BufferDescription(count * viewFormat.SizeInBytes(), BufferFlags.ShaderResource | (isUnorderedAccess ? BufferFlags.UnorderedAccess : BufferFlags.None), usage), viewFormat);
+            return NewScopedBuffer(
+                new BufferDescription(
+                    sizeInBytes: count * viewFormat.SizeInBytes(),
+                    bufferFlags: BufferFlags.ShaderResource |
+                                 (isUnorderedAccess ? BufferFlags.UnorderedAccess : BufferFlags.None),
+                    usage),
+                viewFormat);
         }
 
         /// <summary>
-        /// Pushes a new scoped resource to the current Draw.
+        ///   Pushes a new scoped resource to the current Draw.
         /// </summary>
         /// <param name="resource">The scoped resource</param>
-        /// <returns></returns>
+        /// <returns>The scoped resource.</returns>
         protected T PushScopedResource<T>(T resource) where T : GraphicsResource
         {
             scopedResources.Add(resource);
@@ -181,19 +187,18 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Checks that the current execution path is between a PreDraw/PostDraw sequence and throws and exception if not.
+        ///   Checks that the current execution path is between a PreDraw / PostDraw sequence and throws and
+        ///   exception if not.
         /// </summary>
         protected void CheckIsInDrawCore()
         {
             if (!isInDrawCore)
-            {
-                throw new InvalidOperationException("The method execution path is not within a DrawCore operation");
-            }
+                throw new InvalidOperationException("The method execution path is not within a DrawCore operation.");
         }
 
         protected override void Destroy()
         {
-            // If this instance is destroyed and not unload, force an unload before destryoing it completely
+            // If this instance is destroyed and not unloaded, force an unload before destryoing it completely
             if (Context != null)
             {
                 Unload();
@@ -203,7 +208,9 @@ namespace Stride.Rendering
 
         protected T ToLoadAndUnload<T>(T effect) where T : class, IGraphicsRendererCore
         {
-            if (effect == null) throw new ArgumentNullException("effect");
+            if (effect is null)
+                throw new ArgumentNullException(nameof(effect));
+
             effect.Initialize(Context);
             subRenderersToUnload.Add(effect);
             return effect;
@@ -220,10 +227,8 @@ namespace Stride.Rendering
 
         protected void PreDrawCoreInternal(RenderDrawContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
 
             EnsureContext(context.RenderContext);
 
@@ -240,13 +245,13 @@ namespace Stride.Rendering
 
         protected void EnsureContext(RenderContext context)
         {
-            if (Context == null)
+            if (Context is null)
             {
                 Initialize(context);
             }
             else if (Context != context)
             {
-                throw new InvalidOperationException("Cannot use a different context between Load and Draw");
+                throw new InvalidOperationException("Cannot use a different context between Load and Draw.");
             }
         }
 

@@ -99,7 +99,7 @@ namespace Stride.VisualStudio.Commands
 
                     var startInfo = new ProcessStartInfo
                     {
-                        // NITE: Try to get exec server if it exists, otherwise use CompilerApp.exe
+                        // NOTE: Try to get exec server if it exists, otherwise use CompilerApp.exe
                         FileName = commandExecutable,
                         Arguments = $"--pipe=\"{address}\"",
                         WorkingDirectory = Environment.CurrentDirectory,
@@ -172,9 +172,9 @@ namespace Stride.VisualStudio.Commands
             // Try to find the package with the expected version
             if (packageInfo.ExpectedVersion != null && packageInfo.ExpectedVersion >= MinimumVersion)
             {
-                // Try both netcoreapp3.1 and net472
+                // Try both net5.0 and net472
                 var success = false;
-                foreach (var framework in new[] { ".NETCoreApp,Version=v3.1", ".NETFramework,Version=v4.7.2" })
+                foreach (var framework in new[] { ".NET,Version=v5.0", ".NETFramework,Version=v4.7.2" })
                 {
                     var logger = new Logger();
                     var solutionRoot = Path.GetDirectoryName(solution);

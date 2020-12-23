@@ -12,7 +12,7 @@ using Stride.Core.Reflection;
 namespace Stride.Core.Yaml
 {
     /// <summary>
-    /// Base class for Yaml serializer
+    ///   Represents the base class for a YAML serializer.
     /// </summary>
     public abstract class YamlSerializerBase : IDisposable
     {
@@ -41,11 +41,9 @@ namespace Stride.Core.Yaml
         }
 
         /// <summary>
-        /// Reset the assembly cache used by this class.
+        ///   Resets the assembly cache used by this class.
         /// </summary>
-        public virtual void ResetCache()
-        {
-        }
+        public virtual void ResetCache() { }
 
         private void AssemblyRegistered(object sender, [NotNull] AssemblyRegisteredEventArgs e)
         {

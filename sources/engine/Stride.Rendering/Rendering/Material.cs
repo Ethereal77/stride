@@ -13,7 +13,7 @@ using Stride.Rendering.Materials;
 namespace Stride.Rendering
 {
     /// <summary>
-    /// A compiled version of <see cref="MaterialDescriptor"/>.
+    ///   Represents a rendering material, a compiled version of <see cref="MaterialDescriptor"/>.
     /// </summary>
     [ReferenceSerializer, DataSerializerGlobal(typeof(ReferenceSerializer<Material>), Profile = "Content")]
     [ContentSerializer(typeof(DataContentSerializer<Material>))]
@@ -21,7 +21,7 @@ namespace Stride.Rendering
     public class Material
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Material"/> class.
+        ///   Initializes a new instance of the <see cref="Material"/> class.
         /// </summary>
         public Material()
         {
@@ -29,38 +29,41 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// The passes contained in this material (usually one).
+        ///   The passes contained in this material (usually one).
         /// </summary>
         public MaterialPassCollection Passes { get; }
 
         /// <summary>
-        /// Gets or sets the descriptor (this field is null at runtime).
+        ///   Gets or sets the descriptor.
         /// </summary>
-        /// <value>The descriptor.</value>
+        /// <value>The descriptor of the material. This property is <c>null</c> at runtime.</value>
         [DataMemberIgnore]
         public MaterialDescriptor Descriptor { get; set; }
 
         /// <summary>
-        /// Creates a new material from the specified descriptor.
+        ///   Creates a new material from the specified descriptor.
         /// </summary>
-        /// <param name="device"></param>
+        /// <param name="device">The graphics device.</param>
         /// <param name="descriptor">The material descriptor.</param>
         /// <returns>An instance of a <see cref="Material"/>.</returns>
-        /// <exception cref="System.ArgumentNullException">descriptor</exception>
-        /// <exception cref="System.InvalidOperationException">If an error occurs with the material description</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="descriptor"/> is a <c>null</c> reference.</exception>
+        /// <exception cref="InvalidOperationException">An error has occured with the material description.</exception>
         public static Material New(GraphicsDevice device, MaterialDescriptor descriptor)
         {
-            if (descriptor == null) throw new ArgumentNullException("descriptor");
-            var context = new MaterialGeneratorContext(new Material())
+            if (descriptor is null)
+                throw new ArgumentNullException(nameof(descriptor));
+
+            // The descriptor is not assigned to the material because:
+            //  1) We don't know whether it will mutate and be used to generate another material.
+            //  2) We don't want to hold on to memory we actually don't need.
+            var context = new MaterialGeneratorContext(new Material(), device)
             {
                 GraphicsProfile = device.Features.RequestedProfile,
             };
-            var result = MaterialGenerator.Generate(descriptor, context, string.Format("{0}:RuntimeMaterial", descriptor.MaterialId));
+            var result = MaterialGenerator.Generate(descriptor, context, $"{descriptor.MaterialId}:RuntimeMaterial");
 
             if (result.HasErrors)
-            {
-                throw new InvalidOperationException(string.Format("Error when creating the material [{0}]", result.ToText()));
-            }
+                throw new InvalidOperationException($"Error when creating the material [{result.ToText()}].");
 
             return result.Material;
         }

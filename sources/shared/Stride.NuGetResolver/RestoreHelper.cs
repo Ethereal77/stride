@@ -65,25 +65,25 @@ namespace Stride.Core.Assets
             {
                 if (libPaths.TryGetValue(ValueTuple.Create(lib.Name, lib.Version), out var libPath))
                 {
-                    foreach (var a in lib.RuntimeAssemblies)
+                    foreach (var runtimeAssembly in lib.RuntimeAssemblies)
                     {
-                        var assemblyFile = Path.Combine(libPath, a.Path.Replace('/', Path.DirectorySeparatorChar));
+                        var assemblyFile = Path.Combine(libPath, runtimeAssembly.Path.Replace('/', Path.DirectorySeparatorChar));
 
                         // Check if StrideGraphicsApi specific files exist
-                        if (ReferenceEquals(a, lib.RuntimeAssemblies[0]) // first iteration?
-                            && TryCollectGraphicsApiDependentAssemblies(assemblyFile))
+                        if (ReferenceEquals(runtimeAssembly, lib.RuntimeAssemblies[0]) && // First iteration?
+                            TryCollectGraphicsApiDependentAssemblies(assemblyFile))
                             break;
 
                         assemblies.Add(assemblyFile);
 
                     }
-                    foreach (var a in lib.RuntimeTargets)
+                    foreach (var runtimeTarget in lib.RuntimeTargets)
                     {
-                        var assemblyFile = Path.Combine(libPath, a.Path.Replace('/', Path.DirectorySeparatorChar));
+                        var assemblyFile = Path.Combine(libPath, runtimeTarget.Path.Replace('/', Path.DirectorySeparatorChar));
 
                         // Check if StrideGraphicsApi specific files exist
-                        if (ReferenceEquals(a, lib.RuntimeTargets[0]) // first iteration?
-                            && TryCollectGraphicsApiDependentAssemblies(assemblyFile))
+                        if (ReferenceEquals(runtimeTarget, lib.RuntimeTargets[0]) && // First iteration?
+                            TryCollectGraphicsApiDependentAssemblies(assemblyFile))
                             break;
 
                         assemblies.Add(assemblyFile);
@@ -141,9 +141,7 @@ namespace Stride.Core.Assets
                 context.IgnoreFailedSources = true;
 
                 var dependencyGraphSpec = new DependencyGraphSpec();
-
                 dependencyGraphSpec.AddProject(spec);
-
                 dependencyGraphSpec.AddRestore(spec.RestoreMetadata.ProjectUniqueName);
 
                 IPreLoadedRestoreRequestProvider requestProvider = new DependencyGraphSpecRequestProvider(new RestoreCommandProvidersCache(), dependencyGraphSpec);
@@ -174,7 +172,7 @@ namespace Stride.Core.Assets
                         var mainResult = results.First();
                         return (mainResult.SummaryRequest.Request, mainResult.Result);
                     }
-                    catch (Exception e) when (e is UnauthorizedAccessException || e is IOException)
+                    catch (Exception e) when (e is UnauthorizedAccessException || e is IOException || ((e is AggregateException ae) && ae.InnerExceptions.Any(e2 => e2 is UnauthorizedAccessException || e2 is IOException)))
                     {
                         // If we have an unauthorized access exception, it means assemblies are locked by running Stride process
                         // During first try, kill some known harmless processes, and try again

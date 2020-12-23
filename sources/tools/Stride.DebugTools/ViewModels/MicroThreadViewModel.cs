@@ -3,12 +3,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using Stride.Framework.MicroThreading;
-using System.Windows.Input;
 
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation;
@@ -21,10 +17,10 @@ namespace Stride.DebugTools.ViewModels
 
         public MicroThreadViewModel(MicroThread microThread)
         {
-            if (microThread == null)
-                throw new ArgumentNullException("microThread");
+            if (microThread is null)
+                throw new ArgumentNullException(nameof(microThread));
 
-            if (microThread.Scheduler == null)
+            if (microThread.Scheduler is null)
                 throw new ArgumentException("Invalid Scheduler in MicroThread " + microThread.Id);
 
             this.microThread = microThread;
@@ -42,36 +38,12 @@ namespace Stride.DebugTools.ViewModels
             }
         }
 
-        public long Id
-        {
-            get
-            {
-                return microThread.Id;
-            }
-        }
+        public long Id => microThread.Id;
 
-        public string Name
-        {
-            get
-            {
-                return microThread.Name;
-            }
-        }
+        public string Name => microThread.Name;
 
-        public MicroThreadState State
-        {
-            get
-            {
-                return microThread.State;
-            }
-        }
+        public MicroThreadState State => microThread.State;
 
-        public Exception Exception
-        {
-            get
-            {
-                return microThread.Exception;
-            }
-        }
+        public Exception Exception => microThread.Exception;
     }
 }

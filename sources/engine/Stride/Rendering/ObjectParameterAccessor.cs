@@ -4,6 +4,10 @@
 
 namespace Stride.Rendering
 {
+    /// <summary>
+    ///   Represents a structure that defines a direct way of accesing an object parameter in an effect.
+    /// </summary>
+    /// <typeparam name="T">Type of the object.</typeparam>
     public struct ObjectParameterAccessor<T>
     {
         internal readonly int BindingSlot;
@@ -11,8 +15,8 @@ namespace Stride.Rendering
 
         internal ObjectParameterAccessor(int bindingSlot, int count)
         {
-            this.BindingSlot = bindingSlot;
-            this.Count = count;
+            BindingSlot = bindingSlot;
+            Count = count;
         }
     }
 }

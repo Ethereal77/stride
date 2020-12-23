@@ -15,8 +15,8 @@ namespace Stride.Physics
 {
     public class Simulation : IDisposable
     {
-        const CollisionFilterGroups DefaultGroup = (CollisionFilterGroups)BulletSharp.CollisionFilterGroups.DefaultFilter;
-        const CollisionFilterGroupFlags DefaultFlags = (CollisionFilterGroupFlags)BulletSharp.CollisionFilterGroups.AllFilter;
+        const CollisionFilterGroups DefaultGroup = (CollisionFilterGroups) BulletSharp.CollisionFilterGroups.DefaultFilter;
+        const CollisionFilterGroupFlags DefaultFlags = (CollisionFilterGroupFlags) BulletSharp.CollisionFilterGroups.AllFilter;
 
         private readonly PhysicsProcessor processor;
 
@@ -43,48 +43,45 @@ namespace Stride.Physics
             get
             {
                 if (!CanCcd)
-                {
                     throw new Exception("ContinuousCollisionDetection must be enabled at physics engine initialization using the proper flag.");
-                }
 
                 return dispatchInfo.UseContinuous;
             }
             set
             {
                 if (!CanCcd)
-                {
                     throw new Exception("ContinuousCollisionDetection must be enabled at physics engine initialization using the proper flag.");
-                }
 
                 dispatchInfo.UseContinuous = value;
             }
         }
 
         /// <summary>
-        /// Totally disable the simulation if set to true
+        ///   Value indicating whether to disable the physics simulation completely.
         /// </summary>
         public static bool DisableSimulation = false;
 
         public delegate PhysicsEngineFlags OnSimulationCreationDelegate();
 
         /// <summary>
-        /// Temporary solution to inject engine flags
+        ///   Called to configure physics engine flags upon initialization.
         /// </summary>
+        // NOTE: Temporary solution to inject engine flags
         public static OnSimulationCreationDelegate OnSimulationCreation;
 
         /// <summary>
-        /// Initializes the Physics engine using the specified flags.
+        ///   Initializes the Physics engine using the specified flags.
         /// </summary>
-        /// <param name="processor"></param>
-        /// <param name="configuration"></param>
-        /// <exception cref="System.NotImplementedException">SoftBody processing is not yet available</exception>
+        /// <param name="processor">The physics entities processor.</param>
+        /// <param name="configuration">Physics engine settings.</param>
+        /// <exception cref="NotImplementedException">SoftBody processing is not yet available.</exception>
         internal Simulation(PhysicsProcessor processor, PhysicsSettings configuration)
         {
             this.processor = processor;
 
             if (configuration.Flags == PhysicsEngineFlags.None)
             {
-                configuration.Flags = OnSimulationCreation?.Invoke() ?? configuration.Flags;              
+                configuration.Flags = OnSimulationCreation?.Invoke() ?? configuration.Flags;
             }
 
             MaxSubSteps = configuration.MaxSubSteps;
@@ -94,10 +91,10 @@ namespace Stride.Physics
             dispatcher = new BulletSharp.CollisionDispatcher(collisionConfiguration);
             broadphase = new BulletSharp.DbvtBroadphase();
 
-            //this allows characters to have proper physics behavior
+            // Allows characters to have proper physics behavior
             broadphase.OverlappingPairCache.SetInternalGhostPairCallback(new BulletSharp.GhostPairCallback());
 
-            //2D pipeline
+            // 2D pipeline
             var simplex = new BulletSharp.VoronoiSimplexSolver();
             var pdSolver = new BulletSharp.MinkowskiPenetrationDepthSolver();
             var convexAlgo = new BulletSharp.Convex2DConvex2DAlgorithm.CreateFunc(simplex, pdSolver);
@@ -108,7 +105,7 @@ namespace Stride.Physics
             //dispatcher.RegisterCollisionCreateFunc(BulletSharp.BroadphaseNativeType.Box2DShape, BulletSharp.BroadphaseNativeType.Box2DShape, new BulletSharp.Box2DBox2DCollisionAlgorithm.CreateFunc());
             //~2D pipeline
 
-            //default solver
+            // Default solver
             var solver = new BulletSharp.SequentialImpulseConstraintSolver();
 
             if (configuration.Flags.HasFlag(PhysicsEngineFlags.CollisionsOnly))
@@ -130,10 +127,12 @@ namespace Stride.Physics
 
             if (discreteDynamicsWorld != null)
             {
-                solverInfo = discreteDynamicsWorld.SolverInfo; //we are required to keep this reference, or the GC will mess up
+                // We are required to keep this reference, or the GC will mess up
+                solverInfo = discreteDynamicsWorld.SolverInfo;
                 dispatchInfo = discreteDynamicsWorld.DispatchInfo;
 
-                solverInfo.SolverMode |= BulletSharp.SolverModes.CacheFriendly; //todo test if helps with performance or not
+                // TODO: Test if helps with performance or not
+                solverInfo.SolverMode |= BulletSharp.SolverModes.CacheFriendly;
 
                 if (configuration.Flags.HasFlag(PhysicsEngineFlags.ContinuousCollisionDetection))
                 {
@@ -184,8 +183,7 @@ namespace Stride.Physics
 
             foreach (var contactPoint in newContactsFastCache)
             {
-                Collision collision;
-                if (contactToCollision.TryGetValue(contactPoint, out collision))
+                if (contactToCollision.TryGetValue(contactPoint, out Collision collision))
                 {
                     while (collision.NewContactChannel.Balance < 0)
                     {
@@ -196,8 +194,7 @@ namespace Stride.Physics
 
             foreach (var contactPoint in updatedContactsCache)
             {
-                Collision collision;
-                if (contactToCollision.TryGetValue(contactPoint, out collision))
+                if (contactToCollision.TryGetValue(contactPoint, out Collision collision))
                 {
                     while (collision.ContactUpdateChannel.Balance < 0)
                     {
@@ -208,8 +205,7 @@ namespace Stride.Physics
 
             foreach (var contactPoint in removedContactsCache)
             {
-                Collision collision;
-                if (contactToCollision.TryGetValue(contactPoint, out collision))
+                if (contactToCollision.TryGetValue(contactPoint, out Collision collision))
                 {
                     while (collision.ContactEndedChannel.Balance < 0)
                     {
@@ -222,7 +218,8 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        ///   Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
+        ///   resources.
         /// </summary>
         public void Dispose()
         {
@@ -242,14 +239,11 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Enables or disables the rendering of collider shapes
+        ///   Enables or disables the rendering of collider shapes.
         /// </summary>
         public bool ColliderShapesRendering
         {
-            set
-            {
-                processor.RenderColliderShapes(value);
-            }
+            set => processor.RenderColliderShapes(value);
         }
 
         public RenderGroup ColliderShapesRenderGroup { get; set; } = RenderGroup.Group0;
@@ -266,21 +260,24 @@ namespace Stride.Physics
 
         internal void AddRigidBody(RigidbodyComponent rigidBody, CollisionFilterGroupFlags group, CollisionFilterGroupFlags mask)
         {
-            if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+            if (discreteDynamicsWorld is null)
+                throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
 
-            discreteDynamicsWorld.AddRigidBody(rigidBody.InternalRigidBody, (short)group, (short)mask);
+            discreteDynamicsWorld.AddRigidBody(rigidBody.InternalRigidBody, (short) group, (short) mask);
         }
 
         internal void RemoveRigidBody(RigidbodyComponent rigidBody)
         {
-            if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+            if (discreteDynamicsWorld is null)
+                throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
 
             discreteDynamicsWorld.RemoveRigidBody(rigidBody.InternalRigidBody);
         }
 
         internal void AddCharacter(CharacterComponent character, CollisionFilterGroupFlags group, CollisionFilterGroupFlags mask)
         {
-            if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+            if (discreteDynamicsWorld is null)
+                throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
 
             var collider = character.NativeCollisionObject;
             var action = character.KinematicCharacter;
@@ -292,7 +289,8 @@ namespace Stride.Physics
 
         internal void RemoveCharacter(CharacterComponent character)
         {
-            if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+            if (discreteDynamicsWorld is null)
+                throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
 
             var collider = character.NativeCollisionObject;
             var action = character.KinematicCharacter;
@@ -303,51 +301,55 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Creates the constraint.
+        ///   Creates a constraint.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="rigidBodyA">The rigid body a.</param>
-        /// <param name="frameA">The frame a.</param>
-        /// <param name="useReferenceFrameA">if set to <c>true</c> [use reference frame a].</param>
-        /// <returns></returns>
-        /// <exception cref="System.Exception">
-        /// Cannot perform this action when the physics engine is set to CollisionsOnly
-        /// or
-        /// Both RigidBodies must be valid
-        /// or
-        /// A Gear constraint always needs two rigidbodies to be created.
+        /// <param name="type">The type of constraint to create.</param>
+        /// <param name="rigidBody">The rigid body.</param>
+        /// <param name="frame">The frame of reference of the rigid body.</param>
+        /// <param name="useReferenceFrame">Value indicating whether to use the reference frame.</param>
+        /// <returns>The created constraint.</returns>
+        /// <exception cref="Exception">
+        ///   <list type="bullet">
+        ///     <item>Cannot perform this action when the physics engine is set to process only collisions.</item>
+        ///     <item>Both RigidBodies must be valid.</item>
+        ///     <item>A gear constraint always needs two rigidbodies to be created.</item>
+        ///   </list>
         /// </exception>
-        public static Constraint CreateConstraint(ConstraintTypes type, RigidbodyComponent rigidBodyA, Matrix frameA, bool useReferenceFrameA = false)
+        public static Constraint CreateConstraint(ConstraintTypes type, RigidbodyComponent rigidBody, Matrix frame, bool useReferenceFrame = false)
         {
-            return CreateConstraintInternal(type, rigidBodyA, frameA, useReferenceFrameA:useReferenceFrameA);
+            return CreateConstraintInternal(type, rigidBody, frame, useReferenceFrameA:useReferenceFrame);
         }
-        
+
         /// <summary>
-        /// Creates the constraint.
+        ///   Creates a constraint between two rigid bodies.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="rigidBodyA">The rigid body a.</param>
-        /// <param name="rigidBodyB">The rigid body b.</param>
-        /// <param name="frameA">The frame a.</param>
-        /// <param name="frameB">The frame b.</param>
-        /// <param name="useReferenceFrameA">if set to <c>true</c> [use reference frame a].</param>
+        /// <param name="type">The type of constraint to create.</param>
+        /// <param name="rigidBodyA">The rigid body A.</param>
+        /// <param name="rigidBodyB">The rigid body B.</param>
+        /// <param name="frameA">The frame of reference of rigid body A.</param>
+        /// <param name="frameB">The frame of reference of rigid body B.</param>
+        /// <param name="useReferenceFrameA">Value indicating whether to use the reference frame of <paramref name="rigidBodyA"/>.</param>
         /// <returns></returns>
-        /// <exception cref="System.Exception">
-        /// Cannot perform this action when the physics engine is set to CollisionsOnly
-        /// or
-        /// Both RigidBodies must be valid
+        /// <exception cref="Exception">
+        ///   <list type="bullet">
+        ///     <item>Cannot perform this action when the physics engine is set to process only collisions.</item>
+        ///     <item>Both RigidBodies must be valid.</item>
+        ///   </list>
         /// </exception>
         public static Constraint CreateConstraint(ConstraintTypes type, RigidbodyComponent rigidBodyA, RigidbodyComponent rigidBodyB, Matrix frameA, Matrix frameB, bool useReferenceFrameA = false)
         {
-            if (rigidBodyA == null || rigidBodyB == null) throw new Exception("Both RigidBodies must be valid");
+            if (rigidBodyA is null || rigidBodyB is null)
+                throw new Exception("Both RigidBodies must be valid.");
+
             return CreateConstraintInternal(type, rigidBodyA, frameA, rigidBodyB, frameB, useReferenceFrameA);
         }
 
-
         static Constraint CreateConstraintInternal(ConstraintTypes type, RigidbodyComponent rigidBodyA, Matrix frameA, RigidbodyComponent rigidBodyB = null, Matrix frameB = default, bool useReferenceFrameA = false)
         {
-            if (rigidBodyA == null) throw new Exception($"{nameof(rigidBodyA)} must be valid");
-            if (rigidBodyB != null && rigidBodyB.Simulation != rigidBodyA.Simulation) throw new Exception("Both RigidBodies must be on the same simulation");
+            if (rigidBodyA is null)
+                throw new Exception($"{nameof(rigidBodyA)} must be valid.");
+            if (rigidBodyB != null && rigidBodyB.Simulation != rigidBodyA.Simulation)
+                throw new Exception("Both RigidBodies must be on the same simulation.");
 
             Constraint constraintBase;
             var rbA = rigidBodyA.InternalRigidBody;
@@ -358,8 +360,8 @@ namespace Stride.Physics
                 {
                     var constraint = new Point2PointConstraint
                     {
-                        InternalPoint2PointConstraint = 
-                            rigidBodyB == null ? 
+                        InternalPoint2PointConstraint =
+                            rigidBodyB is null ?
                             new BulletSharp.Point2PointConstraint(rbA, frameA.TranslationVector ) :
                             new BulletSharp.Point2PointConstraint(rbA, rbB, frameA.TranslationVector, frameB.TranslationVector),
                     };
@@ -372,8 +374,8 @@ namespace Stride.Physics
                 {
                     var constraint = new HingeConstraint
                     {
-                        InternalHingeConstraint = 
-                            rigidBodyB == null ? 
+                        InternalHingeConstraint =
+                            rigidBodyB is null ?
                                 new BulletSharp.HingeConstraint(rbA, frameA ) :
                                 new BulletSharp.HingeConstraint(rbA, rbB, frameA, frameB, useReferenceFrameA),
                     };
@@ -386,8 +388,8 @@ namespace Stride.Physics
                 {
                     var constraint = new SliderConstraint
                     {
-                        InternalSliderConstraint = 
-                            rigidBodyB == null ? 
+                        InternalSliderConstraint =
+                            rigidBodyB is null ?
                                 new BulletSharp.SliderConstraint(rbA, frameA, useReferenceFrameA ) :
                                 new BulletSharp.SliderConstraint(rbA, rbB, frameA, frameB, useReferenceFrameA),
                     };
@@ -400,8 +402,8 @@ namespace Stride.Physics
                 {
                     var constraint = new ConeTwistConstraint
                     {
-                        InternalConeTwistConstraint =  
-                            rigidBodyB == null ? 
+                        InternalConeTwistConstraint =
+                            rigidBodyB is null ?
                                 new BulletSharp.ConeTwistConstraint(rbA, frameA) :
                                 new BulletSharp.ConeTwistConstraint(rbA, rbB, frameA, frameB),
                     };
@@ -414,8 +416,8 @@ namespace Stride.Physics
                 {
                     var constraint = new Generic6DoFConstraint
                     {
-                        InternalGeneric6DofConstraint =  
-                            rigidBodyB == null ? 
+                        InternalGeneric6DofConstraint =
+                            rigidBodyB is null ?
                                 new BulletSharp.Generic6DofConstraint(rbA, frameA, useReferenceFrameA) :
                                 new BulletSharp.Generic6DofConstraint(rbA, rbB, frameA, frameB, useReferenceFrameA),
                     };
@@ -428,8 +430,8 @@ namespace Stride.Physics
                 {
                     var constraint = new Generic6DoFSpringConstraint
                     {
-                        InternalGeneric6DofSpringConstraint =  
-                            rigidBodyB == null ? 
+                        InternalGeneric6DofSpringConstraint =
+                            rigidBodyB is null ?
                                 new BulletSharp.Generic6DofSpringConstraint(rbA, frameA, useReferenceFrameA) :
                                 new BulletSharp.Generic6DofSpringConstraint(rbA, rbB, frameA, frameB, useReferenceFrameA),
                     };
@@ -442,8 +444,8 @@ namespace Stride.Physics
                 {
                     var constraint = new GearConstraint
                     {
-                        InternalGearConstraint =  
-                            rigidBodyB == null ? 
+                        InternalGearConstraint =
+                            rigidBodyB is null ?
                                 throw new Exception("A Gear constraint always needs two rigidbodies to be created.") :
                                 new BulletSharp.GearConstraint(rbA, rbB, frameA.TranslationVector, frameB.TranslationVector),
                     };
@@ -466,55 +468,57 @@ namespace Stride.Physics
             return constraintBase;
         }
 
-
         /// <summary>
-        /// Adds the constraint to the engine processing pipeline.
+        ///   Adds the constraint to the engine processing pipeline.
         /// </summary>
         /// <param name="constraint">The constraint.</param>
-        /// <exception cref="System.Exception">Cannot perform this action when the physics engine is set to CollisionsOnly</exception>
+        /// <exception cref="Exception">Cannot perform this action when the physics engine is set to CollisionsOnly.</exception>
         public void AddConstraint(Constraint constraint)
         {
-            if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+            if (discreteDynamicsWorld is null)
+                throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
 
             discreteDynamicsWorld.AddConstraint(constraint.InternalConstraint);
             constraint.Simulation = this;
         }
 
         /// <summary>
-        /// Adds the constraint to the engine processing pipeline.
+        ///   Adds the constraint to the engine processing pipeline.
         /// </summary>
         /// <param name="constraint">The constraint.</param>
-        /// <param name="disableCollisionsBetweenLinkedBodies">if set to <c>true</c> [disable collisions between linked bodies].</param>
-        /// <exception cref="System.Exception">Cannot perform this action when the physics engine is set to CollisionsOnly</exception>
+        /// <param name="disableCollisionsBetweenLinkedBodies">Value indicating whether to disable collisions between linked bodies.</param>
+        /// <exception cref="Exception">Cannot perform this action when the physics engine is set to CollisionsOnly.</exception>
         public void AddConstraint(Constraint constraint, bool disableCollisionsBetweenLinkedBodies)
         {
-            if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+            if (discreteDynamicsWorld is null)
+                throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
 
             discreteDynamicsWorld.AddConstraint(constraint.InternalConstraint, disableCollisionsBetweenLinkedBodies);
             constraint.Simulation = this;
         }
 
         /// <summary>
-        /// Removes the constraint from the engine processing pipeline.
+        ///   Removes a constraint from the engine processing pipeline.
         /// </summary>
-        /// <param name="constraint">The constraint.</param>
-        /// <exception cref="System.Exception">Cannot perform this action when the physics engine is set to CollisionsOnly</exception>
+        /// <param name="constraint">The constraint to remove.</param>
+        /// <exception cref="Exception">Cannot perform this action when the physics engine is set to CollisionsOnly</exception>
         public void RemoveConstraint(Constraint constraint)
         {
-            if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+            if (discreteDynamicsWorld is null)
+                throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
 
             discreteDynamicsWorld.RemoveConstraint(constraint.InternalConstraint);
             constraint.Simulation = null;
         }
 
         /// <summary>
-        /// Raycasts and returns the closest hit
+        ///   Traces a ray through the scene and returns the closest hit.
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="filterGroup">The collision group of this raycast</param>
-        /// <param name="filterFlags">The collision group that this raycast can collide with</param>
-        /// <returns>The list with hit results.</returns>
+        /// <param name="from">Starting point of the ray.</param>
+        /// <param name="to">Ending point of the ray.</param>
+        /// <param name="filterGroup">The collision group of this raycast.</param>
+        /// <param name="filterFlags">The collision group the ray can collide with.</param>
+        /// <returns>The hit results.</returns>
         public HitResult Raycast(Vector3 from, Vector3 to, CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterFlags = DefaultFlags)
         {
             var callback = StrideClosestRayResultCallback.Shared(ref from, ref to, filterGroup, filterFlags);
@@ -523,14 +527,14 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Raycasts, returns true when it hit something
+        ///   Traces a ray through the scene and determines if it hits something.
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="result">Raycast info</param>
-        /// <param name="filterGroup">The collision group of this raycast</param>
-        /// <param name="filterFlags">The collision group that this raycast can collide with</param>
-        /// <returns>The list with hit results.</returns>
+        /// <param name="from">Starting point of the ray.</param>
+        /// <param name="to">Ending point of the ray.</param>
+        /// <param name="result">When returning from this method, contains the closest hit.</param>
+        /// <param name="filterGroup">The collision group of this raycast.</param>
+        /// <param name="filterFlags">The collision group the ray can collide with.</param>
+        /// <returns><c>true</c> if the ray has intersected with something in the scene; otherwise, <c>false</c>.</returns>
         public bool Raycast(Vector3 from, Vector3 to, out HitResult result, CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterFlags = DefaultFlags)
         {
             var callback = StrideClosestRayResultCallback.Shared(ref from, ref to, filterGroup, filterFlags);
@@ -540,14 +544,14 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Raycasts penetrating any shape the ray encounters.
-        /// Filtering by CollisionGroup
+        ///   Traces a ray through the scene and returns any shape it intersects with.
         /// </summary>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="resultsOutput">The list to fill with results.</param>
-        /// <param name="filterGroup">The collision group of this raycast</param>
-        /// <param name="filterFlags">The collision group that this raycast can collide with</param>
+        /// <param name="from">Starting point of the ray.</param>
+        /// <param name="to">Ending point of the ray.</param>
+        /// <param name="resultsOutput">When returning from this method, contains the list of hits.</param>
+        /// <param name="filterGroup">The collision group of this raycast.</param>
+        /// <param name="filterFlags">The collision group the ray can collide with.</param>
+        /// <returns><c>true</c> if the ray has intersected with something in the scene; otherwise, <c>false</c>.</returns>
         public void RaycastPenetrating(Vector3 from, Vector3 to, IList<HitResult> resultsOutput, CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterFlags = DefaultFlags)
         {
             var callback = StrideAllHitsRayResultCallback.Shared(ref from, ref to, resultsOutput, filterGroup, filterFlags);
@@ -555,19 +559,20 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Performs a sweep test using a collider shape and returns the closest hit
+        ///   Performs a sweep test using a collider shape and returns the closest hit.
         /// </summary>
         /// <param name="shape">The shape.</param>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="filterGroup">The collision group of this shape sweep</param>
-        /// <param name="filterFlags">The collision group that this shape sweep can collide with</param>
-        /// <returns></returns>
-        /// <exception cref="System.Exception">This kind of shape cannot be used for a ShapeSweep.</exception>
+        /// <param name="from">Starting point of the ray.</param>
+        /// <param name="to">Ending point of the ray.</param>
+        /// <param name="filterGroup">The collision group of this raycast.</param>
+        /// <param name="filterFlags">The collision group the ray can collide with.</param>
+        /// <returns>The hit results.</returns>
+        /// <exception cref="Exception"><paramref name="shape"/> cannot be used for a shape sweep.</exception>
         public HitResult ShapeSweep(ColliderShape shape, Matrix from, Matrix to, CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterFlags = DefaultFlags)
         {
             var sh = shape.InternalShape as BulletSharp.ConvexShape;
-            if (sh == null) throw new Exception("This kind of shape cannot be used for a ShapeSweep.");
+            if (sh is null)
+                throw new Exception("This kind of shape cannot be used for a ShapeSweep.");
 
             var callback = StrideClosestConvexResultCallback.Shared(filterGroup, filterFlags);
             collisionWorld.ConvexSweepTest(sh, from, to, callback);
@@ -575,68 +580,74 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Performs a sweep test using a collider shape and never stops until "to"
+        ///   Performs a sweep test using a collider shape and returns any shape it intersects with.
         /// </summary>
         /// <param name="shape">The shape.</param>
-        /// <param name="from">From.</param>
-        /// <param name="to">To.</param>
-        /// <param name="resultsOutput">The list to fill with results.</param>
-        /// <param name="filterGroup">The collision group of this shape sweep</param>
-        /// <param name="filterFlags">The collision group that this shape sweep can collide with</param>
-        /// <exception cref="System.Exception">This kind of shape cannot be used for a ShapeSweep.</exception>
+        /// <param name="from">Starting point of the ray.</param>
+        /// <param name="to">Ending point of the ray.</param>
+        /// <param name="resultsOutput">When returning from this method, contains the list of hits.</param>
+        /// <param name="filterGroup">The collision group of this raycast.</param>
+        /// <param name="filterFlags">The collision group the ray can collide with.</param>
+        /// <exception cref="Exception"><paramref name="shape"/> cannot be used for a shape sweep.</exception>
         public void ShapeSweepPenetrating(ColliderShape shape, Matrix from, Matrix to, IList<HitResult> resultsOutput, CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterFlags = DefaultFlags)
         {
-            var sh = shape.InternalShape as BulletSharp.ConvexShape;
-            if (sh == null)
-            {
+            if (!(shape.InternalShape is BulletSharp.ConvexShape convexShape))
                 throw new Exception("This kind of shape cannot be used for a ShapeSweep.");
-            }
-            
+
             var rcb = StrideAllHitsConvexResultCallback.Shared(resultsOutput, filterGroup, filterFlags);
-            collisionWorld.ConvexSweepTest(sh, from, to, rcb);
+            collisionWorld.ConvexSweepTest(convexShape, from, to, rcb);
         }
 
         /// <summary>
-        /// Gets or sets the gravity.
+        ///   Gets or sets the gravity.
         /// </summary>
-        /// <value>
-        /// The gravity.
-        /// </value>
-        /// <exception cref="System.Exception">
-        /// Cannot perform this action when the physics engine is set to CollisionsOnly
-        /// or
-        /// Cannot perform this action when the physics engine is set to CollisionsOnly
-        /// </exception>
+        /// <value>The gravity vector.</value>
+        /// <exception cref="Exception">Cannot perform this action when the physics engine is set to CollisionsOnly</exception>
         public Vector3 Gravity
         {
             get
             {
-                if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+                if (discreteDynamicsWorld is null)
+                    throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
+
                 return discreteDynamicsWorld.Gravity;
             }
             set
             {
-                if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+                if (discreteDynamicsWorld is null)
+                    throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
+
                 discreteDynamicsWorld.Gravity = value;
             }
         }
 
         /// <summary>
-        /// The maximum number of steps that the Simulation is allowed to take each tick.
-        /// If the engine is running slow (large deltaTime), then you must increase the number of maxSubSteps to compensate for this, otherwise your simulation is “losing” time.
-        /// It's important that frame DeltaTime is always less than MaxSubSteps*FixedTimeStep, otherwise you are losing time.
+        ///   Gets or sets the maximum number of steps that the physics simulation is allowed to take each tick.
         /// </summary>
+        /// <remarks>
+        ///   If the engine is running slow (large deltaTime), then you must increase this number to compensate,
+        ///   otherwise your simulation is “losing” time.<br/>
+        ///   It's important that frame delta time is always less than <c>MaxSubSteps * FixedTimeStep</c>, otherwise
+        ///   you are losing time.
+        /// </remarks>
         public int MaxSubSteps { get; set; }
 
         /// <summary>
-        /// By decreasing the size of fixedTimeStep, you are increasing the “resolution” of the simulation.
-        /// Default is 1.0f / 60.0f or 60fps
+        ///   Gets or sets the time step of the simulation.
         /// </summary>
+        /// <value>
+        ///   Time step of the simulation. Default value is 1/60 or 60 Hz.
+        /// </value>
+        /// <remarks>
+        ///   By decreasing the size of the fixed time step, you are increasing the “resolution” of the simulation.
+        /// </remarks>
         public float FixedTimeStep { get; set; }
 
         public void ClearForces()
         {
-            if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+            if (discreteDynamicsWorld is null)
+                throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
+
             discreteDynamicsWorld.ClearForces();
         }
 
@@ -644,12 +655,16 @@ namespace Stride.Physics
         {
             get
             {
-                if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+                if (discreteDynamicsWorld is null)
+                    throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
+
                 return discreteDynamicsWorld.ApplySpeculativeContactRestitution;
             }
             set
             {
-                if (discreteDynamicsWorld == null) throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly");
+                if (discreteDynamicsWorld is null)
+                    throw new Exception("Cannot perform this action when the physics engine is set to CollisionsOnly.");
+
                 discreteDynamicsWorld.ApplySpeculativeContactRestitution = value;
             }
         }
@@ -660,9 +675,11 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Called right before the physics simulation.
-        /// This event might not be fired by the main thread.
+        ///   Raised right before the physics simulation starts.
         /// </summary>
+        /// <remarks>
+        ///   This event might not be fired by the main thread.
+        /// </remarks>
         public event EventHandler<SimulationArgs> SimulationBegin;
 
         protected virtual void OnSimulationBegin(SimulationArgs e)
@@ -679,7 +696,8 @@ namespace Stride.Physics
 
         internal void Simulate(float deltaTime)
         {
-            if (collisionWorld == null) return;
+            if (collisionWorld is null)
+                return;
 
             simulationArgs.DeltaTime = deltaTime;
 
@@ -689,8 +707,10 @@ namespace Stride.Physics
 
             SimulationProfiler = Profiler.Begin(PhysicsProfilingKeys.SimulationProfilingKey);
 
-            if (discreteDynamicsWorld != null) discreteDynamicsWorld.StepSimulation(deltaTime, MaxSubSteps, FixedTimeStep);
-            else collisionWorld.PerformDiscreteCollisionDetection();
+            if (discreteDynamicsWorld != null)
+                discreteDynamicsWorld.StepSimulation(deltaTime, MaxSubSteps, FixedTimeStep);
+            else
+                collisionWorld.PerformDiscreteCollisionDetection();
 
             SimulationProfiler.End("Alive rigidbodies: {0}", UpdatedRigidbodies);
 
@@ -698,9 +718,11 @@ namespace Stride.Physics
         }
 
         /// <summary>
-        /// Called right after the physics simulation.
-        /// This event might not be fired by the main thread.
+        ///   Raised right after the physics simulation ends.
         /// </summary>
+        /// <remarks>
+        ///   This event might not be fired by the main thread.
+        /// </remarks>
         public event EventHandler<SimulationArgs> SimulationEnd;
 
         protected virtual void OnSimulationEnd(SimulationArgs e)
@@ -717,21 +739,21 @@ namespace Stride.Physics
 
         internal void BeginContactTesting()
         {
-            //remove previous frame removed collisions
+            // Remove previous frame removed collisions
             foreach (var collision in removedCollisionsCache)
             {
                 collision.Destroy();
                 collisionsPool.Enqueue(collision);
             }
 
-            //clean caches
+            // Clean caches
             newCollisionsCache.Clear();
             removedCollisionsCache.Clear();
             newContactsFastCache.Clear();
             updatedContactsCache.Clear();
             removedContactsCache.Clear();
 
-            //swap the lists
+            // Swap the lists
             var previous = currentFrameContacts;
             currentFrameContacts = previousFrameContacts;
             currentFrameContacts.Clear();
@@ -749,10 +771,10 @@ namespace Stride.Physics
                     break;
                 }
             }
-            if (existingPair == null)
+            if (existingPair is null)
             {
 #if DEBUG
-                //should not happen?
+                // Should not happen?
                 Log.Warning("Pair not present.");
 #endif
                 return;
@@ -775,7 +797,7 @@ namespace Stride.Physics
             else
             {
 #if DEBUG
-                //should not happen?
+                // Should not happen?
                 Log.Warning("Contact not in pair.");
 #endif
             }
@@ -783,9 +805,9 @@ namespace Stride.Physics
 
         internal void EndContactTesting()
         {
-            newContacts.Clear(true);
-            updatedContacts.Clear(true);
-            removedContacts.Clear(true);
+            newContacts.Clear(fastClear: true);
+            updatedContacts.Clear(fastClear: true);
+            removedContacts.Clear(fastClear: true);
 
             foreach (var currentFrameContact in currentFrameContacts)
             {
@@ -826,7 +848,7 @@ namespace Stride.Physics
                     if (existingPair.Contacts.Contains(contact))
                     {
 #if DEBUG
-                        //should not happen?
+                        // Should not happen?
                         Log.Warning("Contact already added.");
 #endif
                         continue;
@@ -867,7 +889,7 @@ namespace Stride.Physics
                 {
                     if (existingPair.Contacts.Contains(contact))
                     {
-                        //update data values (since comparison is only at pointer level internally)
+                        // Update data values (since comparison is only at pointer level internally)
                         existingPair.Contacts.Remove(contact);
                         existingPair.Contacts.Add(contact);
                         updatedContactsCache.Add(contact);
@@ -875,7 +897,7 @@ namespace Stride.Physics
                     else
                     {
 #if DEBUG
-                        //should not happen?
+                        // Should not happen?
                         Log.Warning("Contact not in pair.");
 #endif
                     }
@@ -883,7 +905,7 @@ namespace Stride.Physics
                 else
                 {
 #if DEBUG
-                    //should not happen?
+                    // Should not happen?
                     Log.Warning("Pair not present.");
 #endif
                 }
@@ -895,7 +917,7 @@ namespace Stride.Physics
                 var component1 = contact.ColliderB;
 
                 ContactRemoval(contact, component0, component1);
-            }     
+            }
         }
 
         private DefaultContactResultCallback currentFrameContacts = new DefaultContactResultCallback();
@@ -903,16 +925,17 @@ namespace Stride.Physics
 
         class DefaultContactResultCallback : BulletSharp.ContactResultCallback
         {
-            HashSet<ContactPoint> contacts = new HashSet<ContactPoint>(ContactPointEqualityComparer.Default);
+            readonly HashSet<ContactPoint> contacts = new HashSet<ContactPoint>(ContactPointEqualityComparer.Default);
 
             public override float AddSingleResult(BulletSharp.ManifoldPoint contact, BulletSharp.CollisionObjectWrapper obj0, int partId0, int index0, BulletSharp.CollisionObjectWrapper obj1, int partId1, int index1)
             {
-                var component0 = (PhysicsComponent)obj0.CollisionObject.UserObject;
-                var component1 = (PhysicsComponent)obj1.CollisionObject.UserObject;
+                var component0 = (PhysicsComponent) obj0.CollisionObject.UserObject;
+                var component1 = (PhysicsComponent) obj1.CollisionObject.UserObject;
 
-                //disable static-static
-                if ((component0 is StaticColliderComponent && component1 is StaticColliderComponent) || !component0.Enabled || !component1.Enabled)
-                    return 0f;
+                // Disable static-static
+                if ((component0 is StaticColliderComponent && component1 is StaticColliderComponent) ||
+                    !component0.Enabled || !component1.Enabled)
+                    return 0;
 
                 contacts.Add(new ContactPoint
                 {
@@ -934,16 +957,18 @@ namespace Stride.Physics
 
         internal unsafe void ContactTest(PhysicsComponent component)
         {
-            currentFrameContacts.CollisionFilterMask = (int)component.CanCollideWith;
-            currentFrameContacts.CollisionFilterGroup = (int)component.CollisionGroup;
+            currentFrameContacts.CollisionFilterMask = (int) component.CanCollideWith;
+            currentFrameContacts.CollisionFilterGroup = (int) component.CollisionGroup;
             collisionWorld.ContactTest( component.NativeCollisionObject, currentFrameContacts );
         }
 
         private readonly FastList<ContactPoint> currentToRemove = new FastList<ContactPoint>();
+        private readonly HashSet<Collision> collisionsRemovedDueToComponentRemoval = new HashSet<Collision>();
 
         internal void CleanContacts(PhysicsComponent component)
         {
             currentToRemove.Clear(true);
+            collisionsRemovedDueToComponentRemoval.Clear();
 
             foreach (var currentFrameContact in currentFrameContacts)
             {
@@ -952,6 +977,7 @@ namespace Stride.Physics
                 if (component == component0 || component == component1)
                 {
                     currentToRemove.Add(currentFrameContact);
+                    collisionsRemovedDueToComponentRemoval.Add(contactToCollision[currentFrameContact]);
                     ContactRemoval(currentFrameContact, component0, component1);
                 }
             }
@@ -960,12 +986,26 @@ namespace Stride.Physics
             {
                 currentFrameContacts.Remove(contactPoint);
             }
+
+            foreach (var collision in collisionsRemovedDueToComponentRemoval)
+            {
+                collision.HasEndedFromComponentRemoval = true;
+                while (collision.ColliderA.PairEndedChannel.Balance < 0)
+                {
+                    collision.ColliderA.PairEndedChannel.Send(collision);
+                }
+
+                while (collision.ColliderB.PairEndedChannel.Balance < 0)
+                {
+                    collision.ColliderB.PairEndedChannel.Send(collision);
+                }
+            }
         }
 
         private class StrideAllHitsConvexResultCallback : StrideReusableConvexResultCallback
         {
             [ThreadStatic]
-            static StrideAllHitsConvexResultCallback shared;
+            private static StrideAllHitsConvexResultCallback shared;
 
             public IList<HitResult> ResultsList { get; set; }
 
@@ -982,10 +1022,9 @@ namespace Stride.Physics
 
             public static StrideAllHitsConvexResultCallback Shared(IList<HitResult> buffer, CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterMask = DefaultFlags)
             {
-                if (shared == null)
-                {
+                if (shared is null)
                     shared = new StrideAllHitsConvexResultCallback(buffer);
-                }
+
                 shared.ResultsList = buffer;
                 shared.Recycle(filterGroup, filterMask);
                 return shared;
@@ -1000,13 +1039,15 @@ namespace Stride.Physics
             BulletSharp.LocalConvexResult closestHit;
             bool normalInWorldSpace;
             float? closestFraction;
+
             public HitResult Result => ComputeHitResult(ref closestHit, normalInWorldSpace);
 
             public override float AddSingleResult(ref BulletSharp.LocalConvexResult convexResult, bool normalInWorldSpaceParam)
             {
                 float fraction = convexResult.m_hitFraction;
+
                 // First hit or closest hit yet
-                if (closestFraction == null || closestFraction > fraction)
+                if (closestFraction is null || closestFraction > fraction)
                 {
                     closestHit = convexResult;
                     closestFraction = fraction;
@@ -1024,10 +1065,9 @@ namespace Stride.Physics
 
             public static StrideClosestConvexResultCallback Shared(CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterMask = DefaultFlags)
             {
-                if (shared == null)
-                {
+                if (shared is null)
                     shared = new StrideClosestConvexResultCallback();
-                }
+
                 shared.Recycle(filterGroup, filterMask);
                 return shared;
             }
@@ -1036,7 +1076,7 @@ namespace Stride.Physics
         private class StrideAllHitsRayResultCallback : StrideReusableRayResultCallback
         {
             [ThreadStatic]
-            static StrideAllHitsRayResultCallback shared;
+            private static StrideAllHitsRayResultCallback shared;
 
             public IList<HitResult> ResultsList { get; set; }
 
@@ -1053,10 +1093,9 @@ namespace Stride.Physics
 
             public static StrideAllHitsRayResultCallback Shared(ref Vector3 from, ref Vector3 to, IList<HitResult> buffer, CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterMask = DefaultFlags)
             {
-                if (shared == null)
-                {
+                if (shared is null)
                     shared = new StrideAllHitsRayResultCallback(ref from, ref to, buffer);
-                }
+
                 shared.ResultsList = buffer;
                 shared.Recycle(ref from, ref to, filterGroup, filterMask);
                 return shared;
@@ -1066,11 +1105,12 @@ namespace Stride.Physics
         private class StrideClosestRayResultCallback : StrideReusableRayResultCallback
         {
             [ThreadStatic]
-            static StrideClosestRayResultCallback shared;
+            private static StrideClosestRayResultCallback shared;
 
             BulletSharp.LocalRayResult closestHit;
             bool normalInWorldSpace;
             float? closestFraction;
+
             public HitResult Result => ComputeHitResult(ref closestHit, normalInWorldSpace);
 
             public StrideClosestRayResultCallback(ref Vector3 from, ref Vector3 to) : base(ref from, ref to)
@@ -1080,8 +1120,9 @@ namespace Stride.Physics
             public override float AddSingleResult(ref BulletSharp.LocalRayResult rayResult, bool normalInWorldSpaceParam)
             {
                 float fraction = rayResult.m_hitFraction;
+
                 // First hit or closest hit yet
-                if (closestFraction == null || closestFraction > fraction)
+                if (closestFraction is null || closestFraction > fraction)
                 {
                     closestHit = rayResult;
                     closestFraction = fraction;
@@ -1101,10 +1142,9 @@ namespace Stride.Physics
 
             public static StrideClosestRayResultCallback Shared(ref Vector3 from, ref Vector3 to, CollisionFilterGroups filterGroup = DefaultGroup, CollisionFilterGroupFlags filterMask = DefaultFlags)
             {
-                if (shared == null)
-                {
+                if (shared is null)
                     shared = new StrideClosestRayResultCallback(ref from, ref to);
-                }
+
                 shared.Recycle(ref from, ref to, filterGroup, filterMask);
                 return shared;
             }
@@ -1124,10 +1164,8 @@ namespace Stride.Physics
             public HitResult ComputeHitResult(ref BulletSharp.LocalRayResult rayResult, bool normalInWorldSpace)
             {
                 var obj = rayResult.CollisionObject;
-                if (obj == null)
-                {
+                if (obj is null)
                     return new HitResult() { Succeeded = false };
-                }
 
                 Vector3 normal = rayResult.m_hitNormalLocal;
                 if (!normalInWorldSpace)
@@ -1152,8 +1190,8 @@ namespace Stride.Physics
                 ClosestHitFraction = float.PositiveInfinity;
                 CollisionObject = null;
                 Flags = 0;
-                CollisionFilterGroup = (int)filterGroup;
-                CollisionFilterMask = (int)filterMask;
+                CollisionFilterGroup = (int) filterGroup;
+                CollisionFilterMask = (int) filterMask;
             }
         }
 
@@ -1162,10 +1200,8 @@ namespace Stride.Physics
             public HitResult ComputeHitResult(ref BulletSharp.LocalConvexResult convexResult, bool normalInWorldSpace)
             {
                 var obj = convexResult.HitCollisionObject;
-                if ( obj == null )
-                {
+                if (obj is null)
                     return new HitResult() { Succeeded = false };
-                }
 
                 Vector3 normal = convexResult.m_hitNormalLocal;
                 if (!normalInWorldSpace)

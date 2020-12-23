@@ -1,49 +1,49 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 namespace Stride.Rendering.Materials
 {
     /// <summary>
-    /// Performs hair shading.
+    ///   Performs hair shading.
     /// </summary>
     shader MaterialSurfaceShadingSpecularHair<int ShadingModel, bool DebugRenderPasses> :
-        IMaterialSurfaceShading, // Required for "ComputeDirectLightContribution()" and the like.
+        IMaterialSurfaceShading,     // Required for "ComputeDirectLightContribution()" and the like.
         MaterialPixelShadingStream,
         MaterialHairShared,
-        NormalStream, // Required for "streams.normalWS", "streams.meshNormal", "streams.meshTangent".
-        Transformation, // Required for "WorldInverseTranspose".
-        MaterialPixelStream    // Required for "streams.matDiffuse".
+        NormalStream,                // Required for "streams.normalWS", "streams.meshNormal", "streams.meshTangent".
+        Transformation,              // Required for "WorldInverseTranspose".
+        MaterialPixelStream          // Required for "streams.matDiffuse".
     {
         compose ComputeColor SpecularHighlightsShiftNoiseTexture;
         compose ComputeColor SecondarySpecularGlintsNoiseTexture;
-        
+
         compose IMaterialHairLightAttenuationFunction hairLightAttenuationFunction;
         compose IMaterialHairDirectionFunction hairDirectionFunction;
         compose IMaterialHairShadowingFunction hairShadowingFunction;
         compose IMaterialHairDiscardFunction hairDiscardFunction;
         compose IMaterialSpecularMicrofacetEnvironmentFunction environmentFunction;
-        
+
         cbuffer PerMaterial
         {
             [Color]
             stage float3 HairSpecularColor1;    // The color of the primary specular reflection.
-      
+
             [Color]
             stage float3 HairSpecularColor2;    // The color of the secondary specular reflection.
-            
+
             stage float HairScalesAngle;
             stage float HairSpecularShiftRatio;
             stage float HairSpecularExponent1;
             stage float HairSpecularExponent2;
             stage float HairSpecularScale1;
             stage float HairSpecularScale2;
-            stage float HairShiftNoiseScale;    // Controls how much the noise should affect the specular highlight direction.
-            stage float HairGlintsNoiseStrength;    // Controls how much the glints noise should affect the secondary reflections.
+            stage float HairShiftNoiseScale;       // Controls how much the noise should affect the specular highlight direction.
+            stage float HairGlintsNoiseStrength;   // Controls how much the glints noise should affect the secondary reflections.
         }
-        
+
         /// <summary>
-        /// Holds all the required input data for hair shading.
+        ///   Holds all the required input data for hair shading.
         /// </summary>
         struct SurfaceData
         {
@@ -73,10 +73,10 @@ namespace Stride.Rendering.Materials
             result.hairSpecularShiftRatio = HairSpecularShiftRatio;
             result.WViewDir = streams.viewWS;
             result.WNormal = streams.normalWS;
-            
+
             // TODO: Use mesh normal or normal map normal?
             result.WBinormal = hairDirectionFunction.Compute(streams.meshNormal, streams.meshTangent, (float3x3)WorldInverseTranspose); // TODO: PERFORMANCE: Get rid of the float3x3 cast?
-            
+
             result.hairSpecularExponent1 = HairSpecularExponent1;
             result.hairSpecularExponent2 = HairSpecularExponent2;
 
@@ -88,15 +88,18 @@ namespace Stride.Rendering.Materials
 
             // We can't use "streams.matSpecularVisible" here because it is multiplied by the specular color.
             result.cavity = lerp(1.0, streams.matCavity, streams.matCavitySpecular);
-            
+
             result.hairSpecularHighlightsShiftNoise = (SpecularHighlightsShiftNoiseTexture.Compute().r - 0.5) * HairShiftNoiseScale;
             //result.hairSpecularHighlightsShiftNoise = SpecularHighlightsShiftNoiseTexture.Compute().r * HairShiftNoiseScale;
             result.hairSecondarySpecularGlintsNoise = lerp(1.0, SecondarySpecularGlintsNoiseTexture.Compute().r, HairGlintsNoiseStrength);
-            
+
             return result;
         }
 
-        override void PrepareForLightingAndShading()    // This gets executed only once for the entire shader.
+        //
+        // This gets executed only once for the entire shader.
+        //
+        override void PrepareForLightingAndShading()
         {
             surfaceData = GenerateSurfaceData();
         }
@@ -111,7 +114,6 @@ namespace Stride.Rendering.Materials
 
             shiftAngle1 += surfaceData.hairSpecularHighlightsShiftNoise;
             shiftAngle2 += surfaceData.hairSpecularHighlightsShiftNoise;    // I think Mizuchi subtracts the noise from the 2nd shift angle. That isn't correct according to my research, so I changed it.
-            
         }
 
         float HairSingleSpecularTerm_Kajiya(float3 T, float3 toLightVec, float3 viewDir, float shiftAngle)
@@ -119,7 +121,7 @@ namespace Stride.Rendering.Materials
             float cosTL = dot(T, toLightVec);
             float sinTL = sqrt(1.0 - cosTL * cosTL);
 
-            // in Kajiya's model: specular component: cos(t, rl) * cos(t, e) + sin(t, rl)sin(t, e)
+            // In Kajiya's model: specular component: cos(t, rl) * cos(t, e) + sin(t, rl)sin(t, e)
             float cosT_RL = -cosTL;
             float sinT_RL = sinTL;
             float cosTE   = dot(T, viewDir);
@@ -139,7 +141,7 @@ namespace Stride.Rendering.Materials
         float HairSingleSpecularTerm_Scheuermann(float3 T, float3 H, float exponent)
         {
             float dotTH = dot(T, H);
-            //float sinTH = sqrt(1.0 - dotTH * dotTH);  // Original version from Mizuchi. Causes artifacts with Scheuermann approximation because of the mathematically correct rotation. The original implementation doesn't suffer from that issue.
+            //float sinTH = sqrt(1.0 - dotTH * dotTH);          // Original version from Mizuchi. Causes artifacts with Scheuermann approximation because of the mathematically correct rotation. The original implementation doesn't suffer from that issue.
             float sinTH = sqrt(max(1.0 - dotTH * dotTH, 0.0));  // We limit the value above 0.0 so it doesn't cause NaN errors with the Scheuermann approximation (because of the mathematically correct rotation).
             return pow(sinTH, exponent);
         }
@@ -221,7 +223,7 @@ namespace Stride.Rendering.Materials
             float shiftedSpecular = HairSingleSpecularTerm_Kajiya(surfaceData.WBinormal, toLightVec, surfaceData.WViewDir, shiftAngle);
             return(specularScale * specularColor * pow(shiftedSpecular, specularExponent));
         }
-        
+
         float3 ComputeSpecularScheuermann(SurfaceData surfaceData, float3 halfVector, float shiftAngle,
                                           float specularScale, float specularExponent, float3 specularColor)
         {
@@ -231,7 +233,7 @@ namespace Stride.Rendering.Materials
             // From Shader X3, Chapter 2.14 (Hair Rendering and Shading), P.245 :
             // "The lack of real self-shadowing will cause the specular highlights to be
             //  too bright on the hair facing away from the light"
-            // "To fade out the specular highlight on the shadowed side of the hair, we 
+            // "To fade out the specular highlight on the shadowed side of the hair, we
             //  multiply by an attenuation term that is similar to the diffuse term."
             //--------------------------------------------------------------------------
 
@@ -252,7 +254,7 @@ namespace Stride.Rendering.Materials
             // specular term
             return(specularScale * specularColor * HairSingleSpecularTerm_Scheuermann(T, halfVector, specularExponent));
         }
-                
+
         //==============================================================================
         // Specular term for hair (for Direct Lighting)
         //==============================================================================
@@ -262,10 +264,10 @@ namespace Stride.Rendering.Materials
             float shiftAngle1;
             float shiftAngle2;
             CalculateShiftAngles(surfaceData, shiftAngle1, shiftAngle2);
-            
+
             float hairSpecularExponent1 = surfaceData.hairSpecularExponent1;    // We already make sure on the CPU side that "surfaceData.hairSpecularExponent1" can't be "0.0".
             float hairSpecularExponent2 = surfaceData.hairSpecularExponent2;    // We already make sure on the CPU side that "surfaceData.hairSpecularExponent2" can't be "0.0".
-            
+
             float3 specular1;
             float3 specular2;
             if(ShadingModel == HAIR_SHADING_KAJIYAKAY_SHIFTED)
@@ -281,10 +283,10 @@ namespace Stride.Rendering.Materials
                 specular1 = ComputeSpecularScheuermann(surfaceData, halfVector, shiftAngle1, surfaceData.hairSpecularScale1, hairSpecularExponent1, surfaceData.hairSpecularColor1);
                 specular2 = ComputeSpecularScheuermann(surfaceData, halfVector, shiftAngle2, surfaceData.hairSpecularScale2, hairSpecularExponent2, surfaceData.hairSpecularColor2);
             }
-            
+
             // modulate secondary specular term with noise
             specular2 *= surfaceData.hairSecondarySpecularGlintsNoise;
-            
+
             float3 specular = (specular1 + specular2) * hairShadowingFunction.Compute(); // Used to apply shadowing/scattering.
             return specular * surfaceData.cavity;
         }
@@ -292,19 +294,19 @@ namespace Stride.Rendering.Materials
         float3 ComputeSpecularIndirectLighting(SurfaceData surfaceData, float shiftAngle, float3 specularColor)
         {
             const float3 shiftedNormal = ShiftTangent(surfaceData.WBinormal, surfaceData.WNormal, shiftAngle);
-            
+
             // specular term
             const float shiftedNdotV = max(dot(shiftedNormal, surfaceData.WViewDir), 0.0);
-            
+
             float3 specular = environmentFunction.Compute(specularColor, streams.alphaRoughness, shiftedNdotV) * streams.envLightSpecularColor;
-            
+
             // Since "SpecularTerm_IBL()", which is replaced by "environmentFunction.Compute()",
             // applies the cavity parameter internally, we do it too:
             specular *= surfaceData.cavity;
-            
+
             return specular;
         }
-       
+
         //==============================================================================
         // Specular term for hair (for Indirect Lighting)
         //------------------------------------------------------------------------------
@@ -321,19 +323,19 @@ namespace Stride.Rendering.Materials
             float shiftAngle1;
             float shiftAngle2;
             CalculateShiftAngles(surfaceData, shiftAngle1, shiftAngle2);
-            
+
             float3 specular1 = ComputeSpecularIndirectLighting(surfaceData, shiftAngle1, surfaceData.hairSpecularColor1);
             float3 specular2 = ComputeSpecularIndirectLighting(surfaceData, shiftAngle2, surfaceData.hairSpecularColor2);
-            
+
             specular1 *= surfaceData.hairSpecularScale1;    // TODO: This is a workaround to make the indirect lighting look better. Not sure if we should keep it as it basically scales the specular reflection like it does for the direct lighting.
             specular2 *= surfaceData.hairSpecularScale2;    // TODO: This is a workaround to make the indirect lighting look better. Not sure if we should keep it as it basically scales the specular reflection like it does for the direct lighting.
-            
+
             // modulate secondary specular term with noise
             specular2 *= surfaceData.hairSecondarySpecularGlintsNoise;
 
             return specular1 + specular2;
         }
-        
+
         override float3 ComputeDirectLightContribution()
         {
             if(DebugRenderPasses)
@@ -344,15 +346,15 @@ namespace Stride.Rendering.Materials
             float3 specular = ComputeHairLightingSpecular(surfaceData,
                                                           streams.H,    // Half vector
                                                           streams.lightDirectionWS);    // Vector pointing from the pixel towards the light.
-            
+
             const float NdotLUnsaturated = dot(normalize(streams.normalWS), normalize(streams.lightDirectionWS));   // TODO: PERFORMANCE: Normalization necessary?
-            
+
             //specular *= saturate(NdotLUnsaturated * 0.5 + 0.5);   // This could be used in combination with hair SSS.
             specular *= HairSpecularAttenuation(NdotLUnsaturated);
             specular *= hairLightAttenuationFunction.Compute();
-            specular *= streams.lightColor * streams.matDiffuseSpecularAlphaBlend.y; // Distance-attenuated light color.
+            specular *= streams.lightColor * streams.lightAttenuation * streams.matDiffuseSpecularAlphaBlend.y;
             //specular *= streams.lightDirectAmbientOcclusion;
-            
+
             // TODO: Multiply by alpha or not?
             return specular * streams.matDiffuse.a; // TODO: Technically we should use "streams.shadingColorAlpha" but its value is assigned AFTER the shading, which makes it useless.
         }

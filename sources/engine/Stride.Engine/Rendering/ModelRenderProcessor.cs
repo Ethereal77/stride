@@ -39,7 +39,7 @@ namespace Stride.Rendering
                 Attributes =
                 {
                     Diffuse = new MaterialDiffuseMapFeature(new ComputeTextureColor()),
-                    DiffuseModel = new MaterialDiffuseLambertModelFeature(),
+                    DiffuseModel = new MaterialDiffuseLambertModelFeature()
                 },
             });
         }
@@ -125,16 +125,22 @@ namespace Stride.Rendering
         {
             renderMesh.MaterialPass = materialPass;
 
-            renderMesh.IsShadowCaster = modelComponent.IsShadowCaster;
+            var isShadowCaster = modelComponent.IsShadowCaster;
             if (modelMaterialInstance != null)
+                isShadowCaster &= modelMaterialInstance.IsShadowCaster;
+
+            if (isShadowCaster != renderMesh.IsShadowCaster)
             {
-                renderMesh.IsShadowCaster = renderMesh.IsShadowCaster && modelMaterialInstance.IsShadowCaster;
+                renderMesh.IsShadowCaster = isShadowCaster;
+                VisibilityGroup.NeedActiveRenderStageReevaluation = true;
             }
         }
 
         private Material FindMaterial(Material materialOverride, MaterialInstance modelMaterialInstance)
         {
-            return materialOverride ?? modelMaterialInstance?.Material ?? fallbackMaterial;
+            return materialOverride ??
+                   modelMaterialInstance?.Material ??
+                   fallbackMaterial;
         }
 
         private void CheckMeshes(ModelComponent modelComponent, RenderModel renderModel)

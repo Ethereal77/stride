@@ -9,7 +9,7 @@ using Stride.Core.Mathematics;
 namespace Stride.Input
 {
     /// <summary>
-    ///   Simulation of PointerEvents
+    ///   Represents a simulated pointer device.
     /// </summary>
     public class PointerSimulated : PointerDeviceBase
     {
@@ -18,11 +18,13 @@ namespace Stride.Input
             Priority = -1000;
             SetSurfaceSize(Vector2.One);
             Source = source;
+
+            Id = Guid.NewGuid();
         }
 
         public override string Name => "Simulated Pointer";
 
-        public override Guid Id => new Guid("8D527970-EB53-4392-AFBB-CB08CFF95143");
+        public override Guid Id { get; }
 
         public override IInputSource Source { get; }
 
@@ -38,7 +40,7 @@ namespace Stride.Input
             PointerState.PointerInputEvents.Add(new PointerDeviceState.InputEvent { Id = id, Position = position, Type = pointerEventType });
         }
 
-        //shortcuts for convenience
+        // Shortcuts for convenience
         public void MovePointer(Vector2 position, int id = 0)
         {
             SimulatePointer(PointerEventType.Moved, position, id);

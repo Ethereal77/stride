@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -45,7 +44,7 @@ namespace Stride.Core.Packages
         public const string DefaultPackageSource = "https://packages.stride3d.net/nuget";
 
         private IPackagesLogger logger;
-        private readonly ISettings settings, localSettings;
+        private readonly ISettings settings;
         private ProgressReport currentProgressReport;
 
         private readonly string oldRootDirectory;
@@ -53,19 +52,11 @@ namespace Stride.Core.Packages
         private static Regex powerShellProgressRegex = new Regex(@".*\[ProgressReport:\s*(\d*)%\].*");
 
         /// <summary>
-        /// Initialize a new instance of <see cref="NugetStore"/>.
+        ///   Initialize a new instance of the <see cref="NugetStore"/> class.
         /// </summary>
         /// <param name="oldRootDirectory">The location of the Nuget store.</param>
         public NugetStore(string oldRootDirectory)
         {
-            // Workaround for https://github.com/NuGet/Home/issues/8120
-            //  set timeout to something much higher than 100 sec
-            var defaultRequestTimeoutField = typeof(HttpSourceRequest).GetField(nameof(HttpSourceRequest.DefaultRequestTimeout), BindingFlags.Static | BindingFlags.Public);
-            if (defaultRequestTimeoutField != null)
-            {
-                defaultRequestTimeoutField.SetValue(null, TimeSpan.FromMinutes(60));
-            }
-
             // Used only for versions before 3.0
             this.oldRootDirectory = oldRootDirectory;
 
@@ -90,7 +81,7 @@ namespace Stride.Core.Packages
             packageSources.AddRange(availableSources);
             PackageSources = packageSources;
 
-            // Setup source provider as a V3 only.
+            // Setup source provider as a V3 only
             sourceRepositoryProvider = new NugetSourceRepositoryProvider(packageSourceProvider, this);
         }
 
@@ -121,9 +112,9 @@ namespace Stride.Core.Packages
                 {
                     var path = packageSource.GetValueAsPath();
 
-                    if (packageSource.Key.StartsWith(prefixName)
-                        && Uri.TryCreate(path, UriKind.Absolute, out var uri) && uri.IsFile // make sure it's a valid file URI
-                        && !Directory.Exists(path)) // detect if directory has been deleted
+                    if (packageSource.Key.StartsWith(prefixName) &&
+                        Uri.TryCreate(path, UriKind.Absolute, out var uri) && uri.IsFile && // Make sure it's a valid file URI
+                        !Directory.Exists(path))                                            // Detect if directory has been deleted
                     {
                         // Remove entry from packageSources
                         settings.Remove("packageSources", packageSource);
@@ -140,36 +131,34 @@ namespace Stride.Core.Packages
         private readonly NugetSourceRepositoryProvider sourceRepositoryProvider;
 
         /// <summary>
-        /// Path where all packages are installed.
-        /// Usually `InstallPath = RootDirectory/RepositoryPath`.
+        ///   Gets the path where all packages are installed.
+        ///   Usually it is <c>RootDirectory/RepositoryPath</c>.
         /// </summary>
         public string InstallPath { get; }
 
         /// <summary>
-        /// List of package Ids under which the main package is known. Usually just one entry, but
-        /// we could have several in case there is a product name change.
+        ///   Gets a list of Package Ids under which the main package is known. Usually just one entry, but
+        ///   we could have several in case there is a product name change.
         /// </summary>
-        public IReadOnlyCollection<string> MainPackageIds { get; } = new[] { "Stride.GameStudio", "Xenko.GameStudio", "Xenko" };
+        public IReadOnlyCollection<string> MainPackageIds { get; } = new[]
+            {
+                "Stride.GameStudio",
+                "Xenko.GameStudio",
+                "Xenko"
+            };
 
         /// <summary>
-        /// Package Id of the Visual Studio Integration plugin.
+        ///   Gets the Package Id of the Visual Studio Integration plugin.
         /// </summary>
         public string VsixPluginId { get; } = "Stride.VisualStudio.Package";
 
         /// <summary>
-        /// Logger for all operations of the package manager.
+        ///   Gets or sets the logger for all operations of the package manager.
         /// </summary>
         public IPackagesLogger Logger
         {
-            get
-            {
-                return logger ?? NullPackagesLogger.Instance;
-            }
-
-            set
-            {
-                logger = value;
-            }
+            get => logger ?? NullPackagesLogger.Instance;
+            set => logger = value;
         }
 
         private ILogger NativeLogger => new NugetLogger(Logger);
@@ -177,50 +166,52 @@ namespace Stride.Core.Packages
         private IEnumerable<PackageSource> PackageSources { get; }
 
         /// <summary>
-        /// Helper to locate packages.
+        ///   Helper to locate packages.
         /// </summary>
         private FallbackPackagePathResolver InstalledPathResolver { get; }
 
         /// <summary>
-        /// Event executed when a package's installation has completed.
+        ///   Event executed when a package's installation has completed.
         /// </summary>
         public event EventHandler<PackageOperationEventArgs> NugetPackageInstalled;
 
         /// <summary>
-        /// Event executed when a package's uninstallation has completed.
+        ///   Event executed when a package's uninstallation has completed.
         /// </summary>
         public event EventHandler<PackageOperationEventArgs> NugetPackageUninstalled;
 
         /// <summary>
-        /// Event executed when a package's uninstallation is in progress.
+        ///   Event executed when a package's uninstallation is in progress.
         /// </summary>
         public event EventHandler<PackageOperationEventArgs> NugetPackageUninstalling;
 
         /// <summary>
-        /// Installation path of <paramref name="package"/>
+        ///   Gets the installation path of a package.
         /// </summary>
         /// <param name="id">Id of package to query.</param>
         /// <param name="version">Version of package to query.</param>
-        /// <returns>The installation path if installed, null otherwise.</returns>
+        /// <returns>The installation path if installed, <c>null</c> otherwise.</returns>
         public string GetInstalledPath(string id, PackageVersion version)
         {
             return InstalledPathResolver.GetPackageDirectory(id, version.ToNuGetVersion());
         }
 
         /// <summary>
-        /// Get the most recent version associated to <paramref name="packageIds"/>. To make sense
-        /// it is assumed that packageIds represent the same package under a different name.
+        ///   Get the most recent version associated to a package.
         /// </summary>
-        /// <param name="packageIds">List of Ids representing a package name.</param>
-        /// <returns>The most recent version of `GetPackagesInstalled (packageIds)`.</returns>
+        /// <param name="packageIds">
+        ///   List of Package Ids representing a package name. It is assumed that all the Package Ids represent the same
+        ///   package under a different name.
+        /// </param>
+        /// <returns>The most recent version of the package.</returns>
         public NugetLocalPackage GetLatestPackageInstalled(IEnumerable<string> packageIds)
         {
             return GetPackagesInstalled(packageIds).FirstOrDefault();
         }
 
         /// <summary>
-        /// List of all packages represented by <paramref name="packageIds"/>. The list is ordered
-        /// from the most recent version to the oldest.
+        ///   Gets a list of all the packages represented by a Package Id. The list is ordered
+        ///   from the most recent version to the oldest.
         /// </summary>
         /// <param name="packageIds">List of Ids representing the package names to retrieve.</param>
         /// <returns>The list of packages sorted from the most recent to the oldest.</returns>
@@ -230,7 +221,7 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// List of all installed packages.
+        ///   Gets a list of all installed packages.
         /// </summary>
         /// <returns>A list of packages.</returns>
         public IEnumerable<NugetLocalPackage> GetLocalPackages(string packageId)
@@ -241,7 +232,7 @@ namespace Stride.Core.Packages
             foreach (var installPath in new[] { InstallPath, oldRootDirectory })
             {
                 // oldRootDirectory might be null
-                if (installPath == null)
+                if (installPath is null)
                     continue;
 
                 var localResource = new FindLocalPackagesResourceV3(installPath);
@@ -256,34 +247,39 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// Name of variable used to hold the version of <paramref name="packageId"/>.
+        ///   Gets the name of the variable used to hold the version of a package.
         /// </summary>
         /// <param name="packageId">The package Id.</param>
-        /// <returns>The name of the variable holding the version of <paramref name="packageId"/>.</returns>
+        /// <returns>The name of the variable holding the version.</returns>
         public static string GetPackageVersionVariable(string packageId, string packageVariablePrefix = "StridePackage")
         {
-            if (packageId == null) throw new ArgumentNullException(nameof(packageId));
+            if (packageId is null)
+                throw new ArgumentNullException(nameof(packageId));
+
             var newPackageId = packageId.Replace(".", string.Empty);
             return packageVariablePrefix + newPackageId + "Version";
         }
 
         /// <summary>
-        /// Lock to ensure atomicity of updates to the local repository.
+        ///   Gets the lock to ensure atomicity of updates to the local repository.
         /// </summary>
-        /// <returns>A Lock.</returns>
+        /// <returns>A lock.</returns>
         private IDisposable GetLocalRepositoryLock()
         {
             return FileLock.Wait("nuget.lock");
         }
 
-#region Manager
+        #region Manager
+
         /// <summary>
-        /// Fetch, if not already downloaded, and install the package represented by
-        /// (<paramref name="packageId"/>, <paramref name="version"/>).
+        ///   Fetch, if not already downloaded, and installs the package represented by
+        ///   (<paramref name="packageId"/>, <paramref name="version"/>).
         /// </summary>
-        /// <remarks>It is safe to call it concurrently be cause we operations are done using the FileLock.</remarks>
         /// <param name="packageId">Name of package to install.</param>
         /// <param name="version">Version of package to install.</param>
+        /// <remarks>
+        ///   It is safe to call it concurrently because the operations are done by acquiring a lock.
+        /// </remarks>
         public async Task<NugetLocalPackage> InstallPackage(string packageId, PackageVersion version, ProgressReport progress)
         {
             using (GetLocalRepositoryLock())
@@ -304,7 +300,7 @@ namespace Stride.Core.Packages
                     var projectContext = new EmptyNuGetProjectContext()
                     {
                         ActionType = NuGetActionType.Install,
-                        PackageExtractionContext = new PackageExtractionContext(PackageSaveMode.Defaultv3, XmlDocFileSaveMode.Skip, null, NativeLogger),
+                        PackageExtractionContext = new PackageExtractionContext(PackageSaveMode.Defaultv3, XmlDocFileSaveMode.Skip, null, NativeLogger)
                     };
 
                     ActivityCorrelationId.StartNew();
@@ -313,7 +309,9 @@ namespace Stride.Core.Packages
                         var installPath = SettingsUtility.GetGlobalPackagesFolder(settings);
 
                         // Old version expects to be installed in GamePackages
-                        if (packageId == "Xenko" && version < new PackageVersion(3, 0, 0, 0) && oldRootDirectory != null)
+                        if (packageId == "Xenko" &&
+                            version < new PackageVersion(3, 0, 0, 0) &&
+                            oldRootDirectory != null)
                         {
                             installPath = oldRootDirectory;
                         }
@@ -321,20 +319,21 @@ namespace Stride.Core.Packages
                         var projectPath = Path.Combine("StrideLauncher.json");
                         var spec = new PackageSpec()
                         {
-                            Name = Path.GetFileNameWithoutExtension(projectPath), // make sure this package never collides with a dependency
+                            // Make sure this package never collides with a dependency
+                            Name = Path.GetFileNameWithoutExtension(projectPath),
                             FilePath = projectPath,
                             Dependencies = new List<LibraryDependency>()
                             {
                                 new LibraryDependency
                                 {
-                                    LibraryRange = new LibraryRange(packageId, new VersionRange(version.ToNuGetVersion()), LibraryDependencyTarget.Package),
+                                    LibraryRange = new LibraryRange(packageId, new VersionRange(version.ToNuGetVersion()), LibraryDependencyTarget.Package)
                                 }
                             },
                             TargetFrameworks =
                             {
                                 new TargetFrameworkInformation
                                 {
-                                    FrameworkName = NuGetFramework.Parse("net472"),
+                                    FrameworkName = NuGetFramework.Parse("net472")
                                 }
                             },
                             RestoreMetadata = new ProjectRestoreMetadata
@@ -349,7 +348,7 @@ namespace Stride.Core.Packages
                                 PackagesPath = installPath,
                                 Sources = SettingsUtility.GetEnabledSources(settings).ToList(),
                                 FallbackFolders = SettingsUtility.GetFallbackPackageFolders(settings).ToList()
-                            },
+                            }
                         };
 
                         using (var context = new SourceCacheContext { MaxAge = DateTimeOffset.UtcNow })
@@ -369,7 +368,7 @@ namespace Stride.Core.Packages
                                 AllowNoOp = true,
                                 CacheContext = context,
                                 CachingSourceProvider = new CachingSourceProvider(new PackageSourceProvider(settings)),
-                                Log = NativeLogger,
+                                Log = NativeLogger
                             };
 
                             // Create requests from the arguments
@@ -386,9 +385,8 @@ namespace Stride.Core.Packages
                                 var result = await command.ExecuteAsync();
 
                                 if (!result.Success)
-                                {
-                                    throw new InvalidOperationException($"Could not restore package {packageId}");
-                                }
+                                    throw new InvalidOperationException($"Could not restore package {packageId}.");
+
                                 foreach (var install in result.RestoreGraphs.Last().Install)
                                 {
                                     var package = result.LockFile.Libraries.FirstOrDefault(x => x.Name == install.Library.Name && x.Version == install.Library.Version);
@@ -401,7 +399,8 @@ namespace Stride.Core.Packages
                             }
                         }
 
-                        if (packageId == "Xenko" && version < new PackageVersion(3, 0, 0, 0))
+                        if (packageId == "Xenko" &&
+                            version < new PackageVersion(3, 0, 0, 0))
                         {
                             UpdateTargetsHelper();
                         }
@@ -419,10 +418,12 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// Uninstall <paramref name="package"/>, while still keeping the downloaded file in the cache.
+        ///   Uninstalls a package, while still keeping the downloaded file in the cache.
         /// </summary>
-        /// <remarks>It is safe to call it concurrently be cause we operations are done using the FileLock.</remarks>
         /// <param name="package">Package to uninstall.</param>
+        /// <remarks>
+        ///   It is safe to call it concurrently because the operations are done by acquiring a lock.
+        /// </remarks>
         public async Task UninstallPackage(NugetPackage package, ProgressReport progress)
         {
 #if DEBUG
@@ -436,22 +437,23 @@ namespace Stride.Core.Packages
                 {
                     var identity = new PackageIdentity(package.Id, package.Version.ToNuGetVersion());
 
-                    // Notify that uninstallation started.
+                    // Notify that uninstallation started
                     var installPath = GetInstalledPath(identity.Id, identity.Version.ToPackageVersion());
-                    if (installPath == null)
-                        throw new InvalidOperationException($"Could not find installation path for package {identity}");
+                    if (installPath is null)
+                        throw new InvalidOperationException($"Could not find installation path for package {identity}.");
+
                     OnPackageUninstalling(this, new PackageOperationEventArgs(new PackageName(package.Id, package.Version), installPath));
 
                     var projectContext = new EmptyNuGetProjectContext()
                     {
                         ActionType = NuGetActionType.Uninstall,
-                        PackageExtractionContext = new PackageExtractionContext(PackageSaveMode.Defaultv3, XmlDocFileSaveMode.Skip, null, NativeLogger),
+                        PackageExtractionContext = new PackageExtractionContext(PackageSaveMode.Defaultv3, XmlDocFileSaveMode.Skip, null, NativeLogger)
                     };
 
-                    // Simply delete the installed package and its .nupkg installed in it.
-                    await Task.Run(() => FileSystemUtility.DeleteDirectorySafe(installPath, true, projectContext));
+                    // Simply delete the installed package and its .nupkg installed in it
+                    await Task.Run(() => FileSystemUtility.DeleteDirectorySafe(installPath, recursive: true, projectContext));
 
-                    // Notify that uninstallation completed.
+                    // Notify that uninstallation completed
                     OnPackageUninstalled(this, new PackageOperationEventArgs(new PackageName(package.Id, package.Version), installPath));
                     //currentProgressReport = progress;
                     //try
@@ -463,7 +465,8 @@ namespace Stride.Core.Packages
                     //    currentProgressReport = null;
                     //}
 
-                    if (package.Id == "Xenko" && package.Version < new PackageVersion(3, 0, 0, 0))
+                    if (package.Id == "Xenko" &&
+                        package.Version < new PackageVersion(3, 0, 0, 0))
                     {
                         UpdateTargetsHelper();
                     }
@@ -476,17 +479,16 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// Find the installed package <paramref name="packageId"/> using the version <paramref name="versionRange"/> if not null, otherwise the <paramref name="constraintProvider"/> if specified.
-        /// If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
+        ///   Finds a installed package matching a version or some constraints.
+        ///   If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
         /// </summary>
         /// <param name="packageId">Name of the package.</param>
-        /// <param name="versionRange">The version range.</param>
+        /// <param name="version">The version range.</param>
         /// <param name="constraintProvider">The package constraint provider.</param>
-        /// <param name="allowPrereleaseVersions">if set to <c>true</c> [allow prelease version].</param>
-        /// <param name="allowUnlisted">if set to <c>true</c> [allow unlisted].</param>
-        /// <returns>A Package matching the search criterion or null if not found.</returns>
-        /// <exception cref="System.ArgumentNullException">packageIdentity</exception>
-        /// <returns></returns>
+        /// <param name="allowPrereleaseVersions">A value indicating whether to allow prerelease versions.</param>
+        /// <param name="allowUnlisted">A value indicating whether to allow unlisted packages.</param>
+        /// <returns>A package matching the search criteria; or <c>null</c> if not found.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="packageId"/> is a <c>null</c> reference.</exception>
         public NugetPackage FindLocalPackage(string packageId, PackageVersion version = null, ConstraintProvider constraintProvider = null, bool allowPrereleaseVersions = true, bool allowUnlisted = false)
         {
             var versionRange = new PackageVersionRange(version);
@@ -494,26 +496,24 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// Find the installed package <paramref name="packageId"/> using the version <paramref name="versionRange"/> if not null, otherwise the <paramref name="constraintProvider"/> if specified.
-        /// If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
+        ///   Finds a installed package using a version range or some constraints.
+        ///   If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
         /// </summary>
         /// <param name="packageId">Name of the package.</param>
         /// <param name="versionRange">The version range.</param>
         /// <param name="constraintProvider">The package constraint provider.</param>
-        /// <param name="allowPrereleaseVersions">if set to <c>true</c> [allow prelease version].</param>
-        /// <param name="allowUnlisted">if set to <c>true</c> [allow unlisted].</param>
-        /// <returns>A Package matching the search criterion or null if not found.</returns>
-        /// <exception cref="System.ArgumentNullException">packageIdentity</exception>
-        /// <returns></returns>
+        /// <param name="allowPrereleaseVersions">A value indicating whether to allow prerelease versions.</param>
+        /// <param name="allowUnlisted">A value indicating whether to allow unlisted packages.</param>
+        /// <returns>A package matching the search criteria; or <c>null</c> if not found.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="packageId"/> is a <c>null</c> reference.</exception>
         public NugetLocalPackage FindLocalPackage(string packageId, PackageVersionRange versionRange = null, ConstraintProvider constraintProvider = null, bool allowPrereleaseVersions = true, bool allowUnlisted = false)
         {
-            // if an explicit version is specified, disregard the 'allowUnlisted' argument
-            // and always allow unlisted packages.
+            // If an explicit version is specified, disregard the 'allowUnlisted' argument and always allow unlisted packages.
             if (versionRange != null)
             {
                 allowUnlisted = true;
             }
-            else if (!allowUnlisted && ((constraintProvider == null) || !constraintProvider.HasConstraints))
+            else if (!allowUnlisted && ((constraintProvider is null) || !constraintProvider.HasConstraints))
             {
                 // Simple case, we just get the most recent version based on `allowPrereleaseVersions`.
                 return GetPackagesInstalled(new[] { packageId }).FirstOrDefault(p => allowPrereleaseVersions || string.IsNullOrEmpty(p.Version.SpecialVersion));
@@ -538,14 +538,17 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// Find available packages from source ith Ids matching <paramref name="packageIds"/>.
+        ///   Finds available packages from source with matching <paramref name="packageIds"/>.
         /// </summary>
         /// <param name="packageIds">List of package Ids we are looking for.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
-        /// <returns>A list of packages matching <paramref name="packageIds"/> or an empty list if none is found.</returns>
+        /// <returns>
+        ///   A list of packages matching <paramref name="packageIds"/>; or an empty list if none is found.
+        /// </returns>
         public async Task<IEnumerable<NugetServerPackage>> FindSourcePackages(IReadOnlyCollection<string> packageIds, CancellationToken cancellationToken)
         {
             var repositories = PackageSources.Select(sourceRepositoryProvider.CreateRepository).ToArray();
+
             var res = new List<NugetServerPackage>();
             foreach (var packageId in packageIds)
             {
@@ -555,14 +558,17 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// Find available packages from source with Id matching <paramref name="packageId"/>.
+        ///   Finds available packages from source with matching <paramref name="packageId"/>.
         /// </summary>
         /// <param name="packageId">Id of package we are looking for.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
-        /// <returns>A list of packages matching <paramref name="packageId"/> or an empty list if none is found.</returns>
+        /// <returns>
+        ///   A list of packages matching <paramref name="packageIds"/>; or an empty list if none is found.
+        /// </returns>
         public async Task<IEnumerable<NugetServerPackage>> FindSourcePackagesById(string packageId, CancellationToken cancellationToken)
         {
             var repositories = PackageSources.Select(sourceRepositoryProvider.CreateRepository).ToArray();
+
             var res = new List<NugetServerPackage>();
             await FindSourcePackagesByIdHelper(packageId, res, repositories, cancellationToken);
             return res;
@@ -593,14 +599,15 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// Look for available packages from source containing <paramref name="searchTerm"/> in either the Id or description of the package.
+        ///   Looks for available packages from source containing a <paramref name="searchTerm"/> in either the Id or description of the package.
         /// </summary>
         /// <param name="searchTerm">Term used for search.</param>
-        /// <param name="allowPrereleaseVersions">Are we looking in pre-release versions too?</param>
+        /// <param name="allowPrereleaseVersions">A value indicating whether to allow prerelease versions.</param>
         /// <returns>A list of packages matching <paramref name="searchTerm"/>.</returns>
         public async Task<IQueryable<NugetPackage>> SourceSearch(string searchTerm, bool allowPrereleaseVersions)
         {
             var repositories = PackageSources.Select(sourceRepositoryProvider.CreateRepository).ToArray();
+
             var res = new List<NugetPackage>();
             foreach (var repo in repositories)
             {
@@ -633,13 +640,13 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        /// Returns updates for packages from the repository
+        ///   Returns updates for packages from the repository.
         /// </summary>
         /// <param name="packageName">Package to look for updates</param>
-        /// <param name="includePrerelease">Indicates whether to consider prerelease updates.</param>
-        /// <param name="includeAllVersions">Indicates whether to include all versions of an update as opposed to only including the latest version.</param>
+        /// <param name="includePrerelease">A value indicating whether to consider prerelease updates.</param>
+        /// <param name="includeAllVersions">A value indicating whether to include all versions of an update as opposed to only including the latest version.</param>
         /// <param name="cancellationToken">A cancellation token.</param>
-        /// <returns></returns>
+        /// <returns>List of package updates.</returns>
         public async Task<IEnumerable<NugetPackage>> GetUpdates(PackageName packageName, bool includePrerelease, bool includeAllVersions, CancellationToken cancellationToken)
         {
             var resolutionContext = new ResolutionContext(
@@ -673,23 +680,23 @@ namespace Stride.Core.Packages
             }
             return res;
         }
-#endregion
 
+        #endregion
 
         /// <summary>
-        /// Clean all temporary files created thus far during store operations.
+        ///   Cleans all temporary files created thus far during store operations.
         /// </summary>
-        public void PurgeCache()
-        {
-        }
+        public void PurgeCache() { }
 
         public string GetRealPath(NugetLocalPackage package)
         {
-            if (IsDevRedirectPackage(package) && package.Version < new PackageVersion(3, 1, 0, 0))
+            if (IsDevRedirectPackage(package) &&
+                package.Version < new PackageVersion(3, 1, 0, 0))
             {
                 var realPath = File.ReadAllText(GetRedirectFile(package));
                 if (!Directory.Exists(realPath))
                     throw new DirectoryNotFoundException();
+
                 return realPath;
             }
 
@@ -703,14 +710,16 @@ namespace Stride.Core.Packages
 
         public bool IsDevRedirectPackage(NugetLocalPackage package)
         {
-            return package.Version < new PackageVersion(3, 1, 0, 0)
-                ? File.Exists(GetRedirectFile(package))
-                : (package.Version.SpecialVersion != null && package.Version.SpecialVersion.StartsWith("dev") && !package.Version.SpecialVersion.Contains('.'));
+            return package.Version < new PackageVersion(3, 1, 0, 0) ?
+                File.Exists(GetRedirectFile(package)) :
+                (package.Version.SpecialVersion != null && package.Version.SpecialVersion.StartsWith("dev") && !package.Version.SpecialVersion.Contains('.'));
         }
 
         public bool IsDevRedirectPackage(NugetServerPackage package)
         {
-            return (package.Version.SpecialVersion != null && package.Version.SpecialVersion.StartsWith("dev") && !package.Version.SpecialVersion.Contains('.'));
+            return package.Version.SpecialVersion != null &&
+                   package.Version.SpecialVersion.StartsWith("dev") &&
+                   !package.Version.SpecialVersion.Contains('.');
         }
 
         private void OnPackageInstalled(object sender, PackageOperationEventArgs args)
@@ -736,10 +745,13 @@ namespace Stride.Core.Packages
                     RunPackageInstall(packageInstallPath, "/uninstall", currentProgressReport);
                 }
             }
-            catch (Exception)
+            catch
             {
-                // We mute errors during uninstall since they are usually non-fatal (OTOH, if we don't catch the exception, the NuGet package isn't uninstalled, which is probably not what we want)
-                // If we really wanted to deal with them at some point, we should use another mechanism than exception (i.e. log)
+                // We mute errors during uninstall since they are usually non-fatal
+                //   (OTOH, if we don't catch the exception, the NuGet package isn't uninstalled, which is probably
+                //   not what we want)
+                //   If we really wanted to deal with them at some point, we should use another mechanism than
+                //   exception (i.e. log)
             }
         }
 
@@ -750,7 +762,7 @@ namespace Stride.Core.Packages
 
         void INugetDownloadProgress.DownloadProgress(long contentPosition, long contentLength)
         {
-            currentProgressReport?.UpdateProgress(ProgressAction.Download, (int)(contentPosition * 100 / contentLength));
+            currentProgressReport?.UpdateProgress(ProgressAction.Download, (int) (contentPosition * 100 / contentLength));
         }
 
         private static void RunPackageInstall(string packageInstall, string arguments, ProgressReport progress)
@@ -765,8 +777,8 @@ namespace Stride.Core.Packages
                 WorkingDirectory = Path.GetDirectoryName(packageInstall),
             }))
             {
-                if (process == null)
-                    throw new InvalidOperationException($"Could not start install package process [{packageInstall}] with options {arguments}");
+                if (process is null)
+                    throw new InvalidOperationException($"Could not start install package process [{packageInstall}] with options {arguments}.");
 
                 var errorOutput = new StringBuilder();
 
@@ -775,8 +787,7 @@ namespace Stride.Core.Packages
                     if (!string.IsNullOrEmpty(args.Data))
                     {
                         var matches = powerShellProgressRegex.Match(args.Data);
-                        int percentageResult;
-                        if (matches.Success && int.TryParse(matches.Groups[1].Value, out percentageResult))
+                        if (matches.Success && int.TryParse(matches.Groups[1].Value, out int percentageResult))
                         {
                             // Report progress
                             progress?.UpdateProgress(ProgressAction.Install, percentageResult);
@@ -810,16 +821,14 @@ namespace Stride.Core.Packages
                 // Check exit code
                 var exitCode = process.ExitCode;
                 if (exitCode != 0)
-                {
-                    throw new InvalidOperationException($"Error code {exitCode} while running install package process [{packageInstall}]\n\n" + errorOutput);
-                }
+                    throw new InvalidOperationException($"Error code {exitCode} while running install package process [{packageInstall}].\n\n" + errorOutput);
             }
         }
 
         // Used only for Stride 1.x and 2.x
         private void UpdateTargetsHelper()
         {
-            if (oldRootDirectory == null)
+            if (oldRootDirectory is null)
                 return;
 
             // Get latest package only for each MainPackageIds (up to 2.x)
@@ -841,7 +850,7 @@ namespace Stride.Core.Packages
 
         private class PackagePathResolverV3 : PackagePathResolver
         {
-            private VersionFolderPathResolver pathResolver;
+            private readonly VersionFolderPathResolver pathResolver;
 
             public PackagePathResolverV3(string rootDirectory) : base(rootDirectory, true)
             {

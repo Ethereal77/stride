@@ -4,10 +4,8 @@
 
 using System.Collections.Generic;
 
-using Stride.Core.Mathematics;
 using Stride.Core.Threading;
 using Stride.Engine;
-using Stride.Games;
 using Stride.Rendering;
 
 namespace Stride.Particles.Components
@@ -15,10 +13,10 @@ namespace Stride.Particles.Components
     class ParticleSystemSimulationProcessor : EntityProcessor<ParticleSystemComponent, ParticleSystemSimulationProcessor.ParticleSystemComponentState>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParticleSystemSimulationProcessor"/> class.
+        ///   Initializes a new instance of the <see cref="ParticleSystemSimulationProcessor"/> class.
         /// </summary>
         public ParticleSystemSimulationProcessor()
-            : base(typeof(TransformComponent))  //  Only list the additional required components
+            : base(typeof(TransformComponent))  // Only list the additional required components
         {
             ParticleSystems = new List<ParticleSystemComponentState>();
         }
@@ -64,20 +62,17 @@ namespace Stride.Particles.Components
             // We must update the TRS location of the particle system prior to updating the system itself.
             // Particles only handle uniform scale.
 
-            if (transformComponent.Parent == null)
+            if (transformComponent.Parent is null)
             {
                 // The transform doesn't have a parent. Local transform IS world transform
 
-                particleSystem.Translation = transformComponent.Position;   // This is the local position!
-
-                particleSystem.UniformScale = transformComponent.Scale.X;   // This is the local scale!
-
-                particleSystem.Rotation = transformComponent.Rotation;      // This is the local rotation!
+                particleSystem.Translation = transformComponent.Position;   // Local position
+                particleSystem.UniformScale = transformComponent.Scale.X;   // Local scale
+                particleSystem.Rotation = transformComponent.Rotation;      // Local rotation
             }
             else
             {
-                Vector3 dummyVector;
-                transformComponent.WorldMatrix.Decompose(out dummyVector, out particleSystem.Rotation, out particleSystem.Translation);
+                transformComponent.WorldMatrix.Decompose(out _, out particleSystem.Rotation, out particleSystem.Translation);
 
                 // Rotation breaks uniform scaling, so only inherit the X-scaling manually
                 float xScale = transformComponent.Scale.X;
@@ -96,7 +91,7 @@ namespace Stride.Particles.Components
         /// <inheritdoc />
         public override void Draw(RenderContext context)
         {
-            float deltaTime = (float) context.Time.Elapsed.TotalSeconds;
+            float deltaTime = (float) context.Time.WarpElapsed.TotalSeconds;
 
             ParticleSystems.Clear();
             foreach (var particleSystemStateKeyPair in ComponentDatas)

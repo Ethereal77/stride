@@ -3,13 +3,9 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.IO;
 using System.Xml.Serialization;
-using System.ComponentModel;
 
 namespace Stride.ConfigEditor
 {
@@ -20,11 +16,12 @@ namespace Stride.ConfigEditor
         [XmlElement]
         public string StridePath
         {
-            get { return stridePath; }
+            get => stridePath;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Invalid 'StridePath' property value");
+                    throw new ArgumentException($"Invalid '{nameof(StridePath)}' property value.");
+
                 stridePath = value;
             }
         }
@@ -39,7 +36,7 @@ namespace Stride.ConfigEditor
             try
             {
                 var filename = Path.ChangeExtension(Assembly.GetEntryAssembly().Location, ".config");
-                return (Options)serializer.Deserialize(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                return (Options) serializer.Deserialize(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
             }
             catch
             {

@@ -1,8 +1,7 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -12,7 +11,8 @@ using Stride.Core.Mathematics;
 namespace Stride.Input
 {
     /// <summary>
-    /// Contains logic to generate pointer events and store the resulting state
+    ///   Represents the state of a pointer device and contains logic to generate pointer events and store the
+    ///   resulting state.
     /// </summary>
     public class PointerDeviceState
     {
@@ -26,7 +26,7 @@ namespace Stride.Input
         private Vector2 surfaceSize;
         private Vector2 invSurfaceSize;
         private float aspectRatio;
-        
+
         public PointerDeviceState(IPointerDevice pointerDevice)
         {
             this.SourceDevice = pointerDevice;
@@ -45,9 +45,6 @@ namespace Stride.Input
 
         public IPointerDevice SourceDevice;
 
-        /// <summary>
-        /// Generate input events
-        /// </summary>
         public void Update(List<Input.InputEvent> inputEvents)
         {
             Reset();
@@ -61,7 +58,8 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Updates the surface size of the pointing device, updates <see cref="SurfaceSize"/>, <see cref="SurfaceAspectRatio"/>, <see cref="invSurfaceSize"/> and calls <see cref="SurfaceSizeChanged"/>
+        ///   Updates the surface size of the pointing device, updates <see cref="SurfaceSize"/>, <see cref="SurfaceAspectRatio"/>,
+        ///   <see cref="invSurfaceSize"/> and calls <see cref="SurfaceSizeChanged"/>.
         /// </summary>
         /// <param name="newSize">New size of the surface</param>
         public void SetSurfaceSize(Vector2 newSize)
@@ -72,7 +70,8 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Processes a <see cref="InputEvent"/>, converting it to a <see cref="PointerEvent"/>. Also calls <see cref="OnPointer"/> and updates <see cref="CurrentPointerEvents"/>
+        ///   Processes a <see cref="InputEvent"/>, converting it to a <see cref="PointerEvent"/>.
+        ///   Also calls <see cref="OnPointer"/> and updates <see cref="CurrentPointerEvents"/>.
         /// </summary>
         /// <param name="evt"></param>
         public PointerEvent ProcessPointerEvent(InputEvent evt)
@@ -87,7 +86,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Updates a pointer event with position / type / id set and updates the storted pointer data
+        ///   Updates a pointer event with position / type / id and updates the stored pointer data.
         /// </summary>
         /// <param name="evt"></param>
         public void UpdatePointerState(PointerEvent evt, bool updateDelta = true)
@@ -130,7 +129,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Retrueves a pointer data structure unqiue to the given pointer ID
+        ///   Retrieves a pointer data structure unqiue to the given pointer ID.
         /// </summary>
         /// <param name="pointerId"></param>
         /// <returns></returns>
@@ -144,7 +143,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Resets the state before processing input
+        ///   Resets the state before processing input.
         /// </summary>
         private void Reset()
         {
@@ -159,7 +158,8 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Some additional data kept on top of <see cref="PointerPoint"/> for the purpose of generating <see cref="PointerEvent"/>
+        ///   Represents additional data kept on top of <see cref="PointerPoint"/> for the purpose of generating
+        ///   <see cref="PointerEvent"/>s.
         /// </summary>
         public class PointerData : PointerPoint
         {
@@ -167,7 +167,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Simplified event data used to generate the full events when <see cref="Update"/> gets called
+        ///   Represents simplified event data used to generate the full events when <see cref="Update"/> gets called.
         /// </summary>
         public struct InputEvent
         {

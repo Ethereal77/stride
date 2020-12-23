@@ -11,7 +11,7 @@ using Stride.Core.Mathematics;
 namespace Stride.Input
 {
     /// <summary>
-    /// Base class for pointer devices
+    ///   Represents the base class for pointer devices.
     /// </summary>
     public abstract class PointerDeviceBase : IPointerDevice
     {
@@ -41,9 +41,9 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Calls <see cref="PointerDeviceState.SetSurfaceSize"/> and invokes the <see cref="SurfaceSizeChanged"/> event
+        ///   Calls <see cref="PointerDeviceState.SetSurfaceSize"/> and invokes the <see cref="SurfaceSizeChanged"/> event.
         /// </summary>
-        /// <param name="newSize">New size of the surface</param>
+        /// <param name="newSize">New size of the surface.</param>
         protected void SetSurfaceSize(Vector2 newSize)
         {
             PointerState.SetSurfaceSize(newSize);

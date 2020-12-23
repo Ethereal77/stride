@@ -10,7 +10,7 @@ using Stride.Core.Collections;
 namespace Stride.Input
 {
     /// <summary>
-    /// Base class for gamepads, contains common functionality for gamepad devices
+    ///   Represents the base class and common functionality for game controller devices.
     /// </summary>
     public abstract class GameControllerDeviceBase : IGameControllerDevice
     {
@@ -47,7 +47,8 @@ namespace Stride.Input
         public IReadOnlySet<int> DownButtons { get; }
 
         /// <summary>
-        /// Creates the correct amount of states based on the amount of object infos that are set
+        ///   Creates the correct amount of states based on the amount of input object information structures
+        ///   provided by the underlying device,
         /// </summary>
         protected void InitializeButtonStates()
         {
@@ -55,7 +56,7 @@ namespace Stride.Input
             AxisStates = new float[AxisInfos.Count];
             DirectionStates = new Direction[DirectionInfos.Count];
         }
-        
+
         public virtual float GetAxis(int index)
         {
             if (index < 0 || index > AxisStates.Length)
@@ -63,14 +64,15 @@ namespace Stride.Input
 
             return AxisStates[index];
         }
-        
+
         public virtual Direction GetDirection(int index)
         {
             return DirectionStates[index];
         }
 
         /// <summary>
-        /// Raise gamepad events collected by Handle... functions
+        ///   Raises the gamepad events that have been collected by the <see cref="HandleButton"/>,
+        ///   <see cref="HandleAxis"/>, and <see cref="HandleDirection"/> functions.
         /// </summary>
         public virtual void Update(List<InputEvent> inputEvents)
         {
@@ -82,8 +84,7 @@ namespace Stride.Input
             {
                 inputEvents.Add(evt);
 
-                var buttonEvent = evt as GameControllerButtonEvent;
-                if (buttonEvent != null)
+                if (evt is GameControllerButtonEvent buttonEvent)
                 {
                     if (buttonEvent.IsDown)
                     {

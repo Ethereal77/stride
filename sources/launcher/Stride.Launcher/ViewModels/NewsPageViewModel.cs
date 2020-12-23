@@ -30,7 +30,7 @@ namespace Stride.LauncherApp.ViewModels
         {
             try
             {
-                Process.Start(Url);
+                Process.Start(new ProcessStartInfo(Url) { UseShellExecute = true });
             }
             catch (Exception)
             {
@@ -39,27 +39,27 @@ namespace Stride.LauncherApp.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the title of this documentation page.
+        ///   Gets or sets the title of this documentation page.
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the description of this documentation page.
+        ///   Gets or sets the description of this documentation page.
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets or sets the url of this documentation page.
+        ///   Gets or sets the URL of this documentation page.
         /// </summary>
         public string Url { get; set; }
 
         /// <summary>
-        /// Gets or sets the url of this documentation page.
+        ///   Gets or sets the publishing date of this documentation page.
         /// </summary>
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// Gets a command that will open the documentation page in the default web browser.
+        ///   Gets a command that will open the documentation page in the default web browser.
         /// </summary>
         public ICommandBase OpenUrlCommand { get; private set; }
 
@@ -70,17 +70,13 @@ namespace Stride.LauncherApp.ViewModels
             try
             {
                 WebRequest request = WebRequest.Create(Urls.RssFeed);
-                using (var reponse = await request.GetResponseAsync())
-                {
-                    using (var str = reponse.GetResponseStream())
-                    {
-                        str?.CopyTo(rss);
-                    }
-                }
+                using var reponse = await request.GetResponseAsync();
+                using var str = reponse.GetResponseStream();
+                str?.CopyTo(rss);
             }
-            catch (Exception)
+            catch
             {
-                // Unable to reach the url, return an empty list.
+                // Unable to reach the URL, return an empty list
                 return result;
             }
 
@@ -91,36 +87,34 @@ namespace Stride.LauncherApp.ViewModels
             try
             {
                 int count = 0;
-                using (XmlReader rssReader = XmlReader.Create(rss))
+                using XmlReader rssReader = XmlReader.Create(rss);
+                rssReader.MoveToContent();
+                while (rssReader.ReadToFollowing("item") && count < maxCount)
                 {
-                    rssReader.MoveToContent();
-                    while (rssReader.ReadToFollowing("item") && count < maxCount)
+                    rssReader.ReadToFollowing("title");
+                    string title = rssReader.Read() ? rssReader.Value : null;
+                    rssReader.ReadToFollowing("description");
+                    string description = rssReader.Read() ? rssReader.Value : null;
+                    rssReader.ReadToFollowing("pubDate");
+                    var date = new DateTime();
+                    bool dateValid = rssReader.Read() && DateTime.TryParseExact(rssReader.Value, "ddd, dd MMM yyyy HH:mm:ss zz00", CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+                    rssReader.ReadToFollowing("link");
+                    string link = rssReader.Read() ? rssReader.Value : null;
+                    if (dateValid && title != null && link != null && description != null)
                     {
-                        rssReader.ReadToFollowing("title");
-                        string title = rssReader.Read() ? rssReader.Value : null;
-                        rssReader.ReadToFollowing("description");
-                        string description = rssReader.Read() ? rssReader.Value : null;
-                        rssReader.ReadToFollowing("pubDate");
-                        var date = new DateTime();
-                        bool dateValid = rssReader.Read() && DateTime.TryParseExact(rssReader.Value, "ddd, dd MMM yyyy HH:mm:ss zz00", CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
-                        rssReader.ReadToFollowing("link");
-                        string link = rssReader.Read() ? rssReader.Value : null;
-                        if (dateValid && title != null && link != null && description != null)
+                        var page = new NewsPageViewModel(serviceProvider)
                         {
-                            var page = new NewsPageViewModel(serviceProvider)
-                            {
-                                Title = title,
-                                Url = link,
-                                Description = description,
-                                Date = date
-                            };
-                            result.Add(page);
-                            ++count;
-                        }
+                            Title = title,
+                            Url = link,
+                            Description = description,
+                            Date = date
+                        };
+                        result.Add(page);
+                        ++count;
                     }
                 }
             }
-            catch (Exception)
+            catch
             {
                 result.Clear();
             }

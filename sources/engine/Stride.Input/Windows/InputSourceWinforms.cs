@@ -21,7 +21,7 @@ using WinFormsKeys = System.Windows.Forms.Keys;
 namespace Stride.Input
 {
     /// <summary>
-    ///   Provides support for mouse and keyboard input on Windows Forms.
+    ///   Represents an input source providing support for mouse and keyboard input on Windows Forms.
     /// </summary>
     internal class InputSourceWinforms : InputSourceBase
     {
@@ -34,9 +34,7 @@ namespace Stride.Input
         private IntPtr defaultWndProc;
         private Win32Native.WndProc inputWndProc;
 
-        // My input devices
-        private GameContext<Control> gameContext;
-        private Control uiControl;
+        private readonly Control uiControl;
         private InputManager input;
 
         /// <summary>
@@ -44,17 +42,21 @@ namespace Stride.Input
         /// </summary>
         public bool IsMousePositionLocked { get; protected set; }
 
+        public InputSourceWinforms(Control uiControl)
+        {
+            this.uiControl = uiControl ?? throw new ArgumentNullException(nameof(uiControl));
+        }
+
         public override void Initialize(InputManager inputManager)
         {
             input = inputManager;
-            gameContext = inputManager.Game.Context as GameContext<Control>;
-            uiControl = gameContext.Control;
+
             uiControl.LostFocus += UIControlOnLostFocus;
             MissingInputHack();
 
             // Hook window proc
             defaultWndProc = Win32Native.GetWindowLong(uiControl.Handle, Win32Native.WindowLongType.WndProc);
-            // This is needed to prevent garbage collection of the delegate.
+            // This is needed to prevent garbage collection of the delegate
             inputWndProc = WndProc;
             var inputWndProcPtr = Marshal.GetFunctionPointerForDelegate(inputWndProc);
             Win32Native.SetWindowLong(uiControl.Handle, Win32Native.WindowLongType.WndProc, inputWndProcPtr);
@@ -193,20 +195,20 @@ namespace Stride.Input
         {
             if (virtualKey == WinFormsKeys.ControlKey)
             {
-                // We check if the key is an extended key. Extended keys are R-keys, non-extended are L-keys.
+                // We check if the key is an extended key. Extended keys are R-keys, non-extended are L-keys
                 return (lParam & 0x01000000) == 0 ? WinFormsKeys.LControlKey : WinFormsKeys.RControlKey;
             }
 
             if (virtualKey == WinFormsKeys.ShiftKey)
             {
-                // We need to check the scan code to check which SHIFT key it is.
+                // We need to check the scan code to check which SHIFT key it is
                 var scanCode = (lParam & 0x00FF0000) >> 16;
-                return (scanCode != 36) ? WinFormsKeys.LShiftKey : WinFormsKeys.RShiftKey;
+                return (scanCode != 0x36) ? WinFormsKeys.LShiftKey : WinFormsKeys.RShiftKey;
             }
 
             if (virtualKey == WinFormsKeys.Menu)
             {
-                // We check if the key is an extended key. Extended keys are R-keys, non-extended are L-keys.
+                // We check if the key is an extended key. Extended keys are R-keys, non-extended are L-keys
                 return (lParam & 0x01000000) == 0 ? WinFormsKeys.LMenu : WinFormsKeys.RMenu;
             }
 
@@ -217,15 +219,16 @@ namespace Stride.Input
         ///   Windows keeps sending KEYDOWN messages while the user holds down the key.
         ///   This function is used to find out if the received message is a repeated KEYDOWN.
         /// </summary>
-        /// <param name="lParam">lParam of the KEYDOWN message</param>
+        /// <param name="lParam">lParam of the KEYDOWN message.</param>
         /// <returns><c>true</c> if this message is a repeated KeyDown, <c>false</c> if it's an actual keydown.</returns>
         private static bool MessageIsDownAutoRepeat(long lParam)
         {
-            // According to the microsoft docs on WM_KEYDOWN
+            // According to the Microsoft docs on WM_KEYDOWN
             // (https://docs.microsoft.com/en-us/windows/desktop/inputdev/wm-keydown)
             // The second to last bit is 0 when the last keyboard message was up and 1 if it was already down
             return (lParam & (1 << 30)) != 0;
         }
     }
 }
+
 #endif

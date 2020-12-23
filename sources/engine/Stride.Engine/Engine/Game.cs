@@ -29,7 +29,7 @@ using Stride.Games;
 namespace Stride.Engine
 {
     /// <summary>
-    ///   Represents the main Game system.
+    ///   Represents a game application.
     /// </summary>
     public class Game : GameBase, ISceneRendererContext, IGameSettingsService
     {
@@ -126,7 +126,7 @@ namespace Stride.Engine
             get
             {
                 if (gameFontSystem.FontSystem is null)
-                    throw new InvalidOperationException("The font system is not initialized yet");
+                    throw new InvalidOperationException("The font system is not initialized yet.");
 
                 return gameFontSystem.FontSystem;
             }
@@ -331,19 +331,20 @@ namespace Stride.Engine
 
             // Add the input manager
             // Add it first so that it can obtained by the UI system
-            Input = new InputManager(Services);
+            var inputSystem = new InputSystem(Services);
+            Input = inputSystem.Manager;
             Services.AddService(Input);
-            GameSystems.Add(Input);
+            GameSystems.Add(inputSystem);
 
             // Initialize the systems
             base.Initialize();
 
             Content.Serializer.LowLevelSerializerSelector = ParameterContainerExtensions.DefaultSceneSerializerSelector;
 
-            // Add the scheduler system
+            // Add the script system
             // - Must be after Input, so that scripts are able to get latest input
             // - Must be before Entities/Camera/Audio/UI, so that scripts can apply
-            // changes in the same frame they will be applied
+            //   changes in the same frame they will be applied.
             GameSystems.Add(Script);
 
             // Add the Font system
@@ -359,9 +360,14 @@ namespace Stride.Engine
             Services.AddService(EffectSystem);
 
             // If requested in game settings, compile effects remotely and/or notify new shader requests
-            EffectSystem.Compiler = EffectCompilerFactory.CreateEffectCompiler(Content.FileProvider, EffectSystem, Settings?.PackageName, Settings?.EffectCompilation ?? EffectCompilationMode.Local, Settings?.RecordUsedEffects ?? false);
+            EffectSystem.Compiler = EffectCompilerFactory.CreateEffectCompiler(
+                Content.FileProvider,
+                EffectSystem,
+                Settings?.PackageName,
+                Settings?.EffectCompilation ?? EffectCompilationMode.Local,
+                Settings?.RecordUsedEffects ?? false);
 
-            // Setup shader compiler settings from a compilation mode.
+            // Setup shader compiler settings from compilation mode.
             // TODO: We might want to provide overrides on the GameSettings to specify debug and/or optim level specifically.
             if (Settings != null)
                 EffectSystem.SetCompilationMode(Settings.CompilationMode);
@@ -390,7 +396,7 @@ namespace Stride.Engine
                 var objDatabase = ObjectDatabase.CreateDefaultDatabase();
 
                 // Only set a mount path if not mounted already
-                var mountPath = VirtualFileSystem.ResolveProviderUnsafe("/asset", true).Provider == null ? "/asset" : null;
+                var mountPath = VirtualFileSystem.ResolveProviderUnsafe("/asset", resolveTop: true).Provider == null ? "/asset" : null;
                 var result = new DatabaseFileProvider(objDatabase, mountPath);
 
                 return result;

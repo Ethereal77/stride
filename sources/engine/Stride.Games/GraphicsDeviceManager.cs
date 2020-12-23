@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 using Stride.Core;
 using Stride.Core.Diagnostics;
+using Stride.Core.Mathematics;
 using Stride.Graphics;
 
 namespace Stride.Games
@@ -17,15 +18,12 @@ namespace Stride.Games
     /// </summary>
     public class GraphicsDeviceManager : ComponentBase, IGraphicsDeviceManager, IGraphicsDeviceService
     {
-        #region Fields
-
         /// <summary>
-        /// Default width for the back buffer.
+        ///   Default width for the back buffer.
         /// </summary>
         public static readonly int DefaultBackBufferWidth = 1280;
-
         /// <summary>
-        /// Default height for the back buffer.
+        ///   Default height for the back buffer.
         /// </summary>
         public static readonly int DefaultBackBufferHeight = 720;
 
@@ -38,15 +36,10 @@ namespace Stride.Games
         private bool isFullScreen;
 
         private MultisampleCount preferredMultisampleCount;
-
         private PixelFormat preferredBackBufferFormat;
-
         private int preferredBackBufferHeight;
-
         private int preferredBackBufferWidth;
-
         private Rational preferredRefreshRate;
-
         private PixelFormat preferredDepthStencilFormat;
 
         private DisplayOrientation supportedOrientations;
@@ -58,7 +51,6 @@ namespace Stride.Games
         private bool isChangingDevice;
 
         private int resizedBackBufferWidth;
-
         private int resizedBackBufferHeight;
 
         private bool isBackBufferToResize = false;
@@ -73,22 +65,17 @@ namespace Stride.Games
 
         private ColorSpace preferredColorSpace;
 
-        #endregion
-
-        #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GraphicsDeviceManager" /> class.
+        ///   Initializes a new instance of the <see cref="GraphicsDeviceManager"/> class.
         /// </summary>
         /// <param name="game">The game.</param>
-        /// <exception cref="System.ArgumentNullException">The game instance cannot be null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="game"/> cannot be a <c>null</c> reference.</exception>
         internal GraphicsDeviceManager(GameBase game)
         {
             this.game = game;
-            if (this.game == null)
-            {
-                throw new ArgumentNullException("game");
-            }
+            if (this.game is null)
+                throw new ArgumentNullException(nameof(game));
 
             lockDeviceCreation = new object();
 
@@ -109,10 +96,8 @@ namespace Stride.Games
                 };
 
             graphicsDeviceFactory = game.Services.GetService<IGraphicsDeviceFactory>();
-            if (graphicsDeviceFactory == null)
-            {
+            if (graphicsDeviceFactory is null)
                 throw new InvalidOperationException("IGraphicsDeviceFactory is not registered as a service");
-            }
 
             game.WindowCreated += GameOnWindowCreated;
         }
@@ -124,66 +109,62 @@ namespace Stride.Games
             game.Window.FullscreenChanged += Window_FullscreenChanged;
         }
 
-        #endregion
 
         #region Public Events
 
         public event EventHandler<EventArgs> DeviceCreated;
-
         public event EventHandler<EventArgs> DeviceDisposing;
-
         public event EventHandler<EventArgs> DeviceReset;
-
         public event EventHandler<EventArgs> DeviceResetting;
 
         public event EventHandler<PreparingDeviceSettingsEventArgs> PreparingDeviceSettings;
 
         #endregion
 
-        #region Public Properties
-
         public GraphicsDevice GraphicsDevice { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the list of graphics profile to select from the best feature to the lower feature. See remarks.
+        ///   Gets or sets the list of graphics profiles to select from the best feature to the lower feature.
         /// </summary>
-        /// <value>The graphics profile.</value>
+        /// <value>The graphics profiles in order of preference, from most preferred to least preferred.</value>
         /// <remarks>
-        /// By default, the PreferredGraphicsProfile is set to { <see cref="GraphicsProfile.Level_11_2"/>,
-        /// <see cref="GraphicsProfile.Level_11_1"/>
-        /// <see cref="GraphicsProfile.Level_11_0"/>}
+        ///   By default, the preferred graphics profile is set to <see cref="GraphicsProfile.Level_11_2"/> &gt;
+        ///   <see cref="GraphicsProfile.Level_11_1"/> &gt; <see cref="GraphicsProfile.Level_11_0"/>.
         /// </remarks>
         public GraphicsProfile[] PreferredGraphicsProfile { get; set; }
 
         /// <summary>
-        /// Gets or sets the shader graphics profile that will be used to compile shaders. See remarks.
+        ///   Gets or sets the shader graphics profile that will be used to compile shaders.
         /// </summary>
         /// <value>The shader graphics profile.</value>
-        /// <remarks>If this property is not set, the profile used to compile the shader will be taken from the <see cref="GraphicsDevice"/>
-        /// based on the list provided by <see cref="PreferredGraphicsProfile"/></remarks>
+        /// <remarks>
+        ///   If this property is not set, the profile used to compile the shader will be taken from the <see cref="GraphicsDevice"/>
+        ///   based on the list provided by <see cref="PreferredGraphicsProfile"/>.
+        /// </remarks>
         public GraphicsProfile? ShaderProfile { get; set; }
 
         /// <summary>
-        /// Gets or sets the device creation flags that will be used to create the <see cref="GraphicsDevice"/>
+        ///   Gets or sets the device creation flags that will be used to create the <see cref="GraphicsDevice"/>.
         /// </summary>
         /// <value>The device creation flags.</value>
         public DeviceCreationFlags DeviceCreationFlags { get; set; }
 
         /// <summary>
-        /// If populated the engine will try to initialize the device with the same unique id
+        ///   Gets or sets a string representing the unique Id of an adapter the engine will try to initialize.
         /// </summary>
+        /// <value>
+        ///   Unique Id of the adapter the engine will try to initialize; or <c>null</c>.
+        /// </value>
         public string RequiredAdapterUid { get; set; }
 
         /// <summary>
-        /// Gets or sets the default color space.
+        ///   Gets or sets the default color space.
         /// </summary>
         /// <value>The default color space.</value>
         public ColorSpace PreferredColorSpace
         {
-            get
-            {
-                return preferredColorSpace;
-            }
+            get => preferredColorSpace;
+
             set
             {
                 if (preferredColorSpace != value)
@@ -195,9 +176,9 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Sets the preferred graphics profile.
+        ///   Sets the preferred graphics profiles.
         /// </summary>
-        /// <param name="levels">The levels.</param>
+        /// <param name="levels">The graphics profiles.</param>
         /// <seealso cref="PreferredGraphicsProfile"/>
         public void SetPreferredGraphicsProfile(params GraphicsProfile[] levels)
         {
@@ -205,19 +186,17 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is full screen.
+        ///   Gets or sets a value indicating whether to render in full screen.
         /// </summary>
-        /// <value><c>true</c> if this instance is full screen; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> to render in full screen; otherwise, <c>false</c>.</value>
         public bool IsFullScreen
         {
-            get
-            {
-                return isFullScreen;
-            }
+            get => isFullScreen;
 
             set
             {
-                if (isFullScreen == value) return;
+                if (isFullScreen == value)
+                    return;
 
                 isFullScreen = value;
                 deviceSettingsChanged = true;
@@ -225,15 +204,15 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [prefer multi sampling].
+        /// Gets or sets the preferred sample count for Multi-Sample Anti-Aliasing (MSAA).
         /// </summary>
-        /// <value><c>true</c> if [prefer multi sampling]; otherwise, <c>false</c>.</value>
+        /// <value>
+        ///   A value of <see cref="MultisampleCount"/> defining the number of samples. Specify
+        ///   <see cref="MultisampleCount.None"/> to disable multi-sampling.
+        /// </value>
         public MultisampleCount PreferredMultisampleCount
         {
-            get
-            {
-                return preferredMultisampleCount;
-            }
+            get => preferredMultisampleCount;
 
             set
             {
@@ -246,15 +225,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the preferred back buffer format.
+        ///   Gets or sets the preferred back buffer format.
         /// </summary>
         /// <value>The preferred back buffer format.</value>
         public PixelFormat PreferredBackBufferFormat
         {
-            get
-            {
-                return preferredBackBufferFormat;
-            }
+            get => preferredBackBufferFormat;
 
             set
             {
@@ -267,15 +243,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the height of the preferred back buffer.
+        ///   Gets or sets the preferred height of the back buffer.
         /// </summary>
-        /// <value>The height of the preferred back buffer.</value>
+        /// <value>The preferred height of the back buffer.</value>
         public int PreferredBackBufferHeight
         {
-            get
-            {
-                return preferredBackBufferHeight;
-            }
+            get => preferredBackBufferHeight;
 
             set
             {
@@ -289,15 +262,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the width of the preferred back buffer.
+        ///   Gets or sets the preferred width of the back buffer.
         /// </summary>
-        /// <value>The width of the preferred back buffer.</value>
+        /// <value>The preferred width of the back buffer.</value>
         public int PreferredBackBufferWidth
         {
-            get
-            {
-                return preferredBackBufferWidth;
-            }
+            get => preferredBackBufferWidth;
 
             set
             {
@@ -311,15 +281,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the preferred depth stencil format.
+        ///   Gets or sets the preferred depth stencil format.
         /// </summary>
         /// <value>The preferred depth stencil format.</value>
         public PixelFormat PreferredDepthStencilFormat
         {
-            get
-            {
-                return preferredDepthStencilFormat;
-            }
+            get => preferredDepthStencilFormat;
 
             set
             {
@@ -332,15 +299,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the preferred refresh rate.
+        ///   Gets or sets the preferred refresh rate.
         /// </summary>
         /// <value>The preferred refresh rate.</value>
         public Rational PreferredRefreshRate
         {
-            get
-            {
-                return preferredRefreshRate;
-            }
+            get => preferredRefreshRate;
 
             set
             {
@@ -353,14 +317,14 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// The output (monitor) index to use when switching to fullscreen mode. Doesn't have any effect when windowed mode is used.
+        ///   Gets or sets the output (monitor) index to use when switching to fullscreen mode.
         /// </summary>
+        /// <remarks>
+        ///   Doesn't have any effect when windowed mode is used.
+        /// </remarks>
         public int PreferredFullScreenOutputIndex
         {
-            get
-            {
-                return preferredFullScreenOutputIndex;
-            }
+            get => preferredFullScreenOutputIndex;
 
             set
             {
@@ -373,15 +337,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets the supported orientations.
+        ///   Gets or sets the supported orientations.
         /// </summary>
         /// <value>The supported orientations.</value>
         public DisplayOrientation SupportedOrientations
         {
-            get
-            {
-                return supportedOrientations;
-            }
+            get => supportedOrientations;
 
             set
             {
@@ -394,15 +355,14 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [synchronize with vertical retrace].
+        ///   Gets or sets a value indicating whether to synchronize drawing with the vertical retrace, also known
+        ///   as VSync.
         /// </summary>
-        /// <value><c>true</c> if [synchronize with vertical retrace]; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> to synchronize with vertical retrace; otherwise, <c>false</c>.</value>
         public bool SynchronizeWithVerticalRetrace
         {
-            get
-            {
-                return synchronizeWithVerticalRetrace;
-            }
+            get => synchronizeWithVerticalRetrace;
+
             set
             {
                 if (synchronizeWithVerticalRetrace != value)
@@ -413,27 +373,23 @@ namespace Stride.Games
             }
         }
 
-        #endregion
-
-        #region Public Methods and Operators
 
         /// <summary>
-        /// Applies the changes from this instance and change or create the <see cref="GraphicsDevice"/> according to the new values.
+        ///   Applies the changes made to the configuration and changes or creates the <see cref="GraphicsDevice"/>
+        ///   according to the new values.
         /// </summary>
         public void ApplyChanges()
         {
             if (GraphicsDevice != null && deviceSettingsChanged)
             {
-                ChangeOrCreateDevice(false);
+                ChangeOrCreateDevice(forceCreate: false);
             }
         }
 
         bool IGraphicsDeviceManager.BeginDraw()
         {
-            if (GraphicsDevice == null)
-            {
+            if (GraphicsDevice is null)
                 return false;
-            }
 
             beginDrawOk = false;
 
@@ -442,9 +398,9 @@ namespace Stride.Games
 
             GraphicsDevice.Begin();
 
-            // TODO GRAPHICS REFACTOR
-            //// Before drawing, we should clear the state to make sure that there is no unstable graphics device states (On some WP8 devices for example)
-            //// An application should not rely on previous state (last frame...etc.) after BeginDraw.
+            // TODO: GRAPHICS REFACTOR
+            //   Before drawing, we should clear the state to make sure that there is no unstable graphics device states (On some WP8 devices for example)
+            //   An application should not rely on previous state (last frame...etc.) after BeginDraw.
             //GraphicsDevice.ClearState();
             //
             //// By default, we setup the render target to the back buffer, and the viewport as well.
@@ -464,13 +420,14 @@ namespace Stride.Games
                 case GraphicsDeviceStatus.Removed:
                     Utilities.Sleep(TimeSpan.FromMilliseconds(20));
                     return false;
+
                 case GraphicsDeviceStatus.Reset:
                     Utilities.Sleep(TimeSpan.FromMilliseconds(20));
                     try
                     {
                         ChangeOrCreateDevice(true);
                     }
-                    catch (Exception)
+                    catch
                     {
                         return false;
                     }
@@ -483,7 +440,7 @@ namespace Stride.Games
         void IGraphicsDeviceManager.CreateDevice()
         {
             // Force the creation of the device
-            ChangeOrCreateDevice(true);
+            ChangeOrCreateDevice(forceCreate: true);
         }
 
         void IGraphicsDeviceManager.EndDraw(bool present)
@@ -498,8 +455,9 @@ namespace Stride.Games
                     }
                     catch (GraphicsException ex)
                     {
-                        // If this is not a DeviceRemoved or DeviceReset, than throw an exception
-                        if (ex.Status != GraphicsDeviceStatus.Removed && ex.Status != GraphicsDeviceStatus.Reset)
+                        // If this is not a DeviceRemoved or DeviceReset, then throw an exception
+                        if (ex.Status != GraphicsDeviceStatus.Removed &&
+                            ex.Status != GraphicsDeviceStatus.Reset)
                         {
                             throw;
                         }
@@ -518,7 +476,6 @@ namespace Stride.Games
             }
         }
 
-        #endregion
 
         protected static DisplayOrientation SelectOrientation(DisplayOrientation orientation, int width, int height, bool allowLandscapeLeftAndRight)
         {
@@ -545,13 +502,10 @@ namespace Stride.Games
             if (game != null)
             {
                 if (game.Services.GetService<IGraphicsDeviceService>() == this)
-                {
                     game.Services.RemoveService<IGraphicsDeviceService>();
-                }
+
                 if (game.Services.GetService<IGraphicsDeviceManager>() == this)
-                {
                     game.Services.RemoveService<IGraphicsDeviceManager>();
-                }
 
                 game.WindowCreated -= GameOnWindowCreated;
                 if (game.Window != null)
@@ -585,10 +539,10 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Determines whether this instance is compatible with the the specified new <see cref="GraphicsDeviceInformation"/>.
+        ///   Determines whether this instance is compatible with the the specified new <see cref="GraphicsDeviceInformation"/>.
         /// </summary>
         /// <param name="newDeviceInfo">The new device info.</param>
-        /// <returns><c>true</c> if this instance this instance is compatible with the the specified new <see cref="GraphicsDeviceInformation"/>; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if this instance is compatible with the the specified <see cref="GraphicsDeviceInformation"/>; otherwise, <c>false</c>.</returns>
         protected virtual bool CanResetDevice(GraphicsDeviceInformation newDeviceInfo)
         {
             // By default, a reset is compatible when we stay under the same graphics profile.
@@ -596,9 +550,12 @@ namespace Stride.Games
         }
 
         /// <summary>
-        /// Finds the best device that is compatible with the preferences defined in this instance.
+        ///   Finds the best device that is compatible with the preferences defined in the configuration.
         /// </summary>
-        /// <param name="anySuitableDevice">if set to <c>true</c> a device can be selected from any existing adapters, otherwise, it will select only from default adapter.</param>
+        /// <param name="anySuitableDevice">
+        ///   <c>true</c> to select a device from any existing adapters;
+        ///   <c>false</c> to select only from the default adapter.
+        /// </param>
         /// <returns>The graphics device information.</returns>
         protected virtual GraphicsDeviceInformation FindBestDevice(bool anySuitableDevice)
         {
@@ -614,35 +571,21 @@ namespace Stride.Games
                     IsFullScreen = IsFullScreen,
                     PreferredMultisampleCount = PreferredMultisampleCount,
                     SynchronizeWithVerticalRetrace = SynchronizeWithVerticalRetrace,
-                    PreferredGraphicsProfile = (GraphicsProfile[])PreferredGraphicsProfile.Clone(),
+                    PreferredGraphicsProfile = (GraphicsProfile[]) PreferredGraphicsProfile.Clone(),
                     ColorSpace = PreferredColorSpace,
                     RequiredAdapterUid = RequiredAdapterUid,
             };
 
-            // Remap to Srgb backbuffer if necessary
+            // Remap to sRGB backbuffer if necessary
             if (PreferredColorSpace == ColorSpace.Linear)
             {
-                // If the device support SRgb and ColorSpace is linear, we use automatically a SRgb backbuffer
-                if (preferredParameters.PreferredBackBufferFormat == PixelFormat.R8G8B8A8_UNorm)
-                {
-                    preferredParameters.PreferredBackBufferFormat = PixelFormat.R8G8B8A8_UNorm_SRgb;
-                }
-                else if (preferredParameters.PreferredBackBufferFormat == PixelFormat.B8G8R8A8_UNorm)
-                {
-                    preferredParameters.PreferredBackBufferFormat = PixelFormat.B8G8R8A8_UNorm_SRgb;
-                }
+                // If the device support sRGB and ColorSpace is linear, we use automatically a sRGB backbuffer
+                preferredParameters.PreferredBackBufferFormat = preferredParameters.PreferredBackBufferFormat.ToSRgb();
             }
             else
             {
-                // If we are looking for gamma and the backbuffer format is SRgb, switch back to non srgb
-                if (preferredParameters.PreferredBackBufferFormat == PixelFormat.R8G8B8A8_UNorm_SRgb)
-                {
-                    preferredParameters.PreferredBackBufferFormat = PixelFormat.R8G8B8A8_UNorm;
-                }
-                else if (preferredParameters.PreferredBackBufferFormat == PixelFormat.B8G8R8A8_UNorm_SRgb)
-                {
-                    preferredParameters.PreferredBackBufferFormat = PixelFormat.B8G8R8A8_UNorm;
-                }
+                // If we are looking for gamma and the backbuffer format is sRGB, switch back to non-sRGB
+                preferredParameters.PreferredBackBufferFormat = preferredParameters.PreferredBackBufferFormat.ToNonSRgb();
             }
 
             // Setup resized value if there is a resize pending
@@ -656,37 +599,31 @@ namespace Stride.Games
             if (devices.Count == 0)
             {
                 // Nothing was found; first, let's check if graphics profile was actually supported
-                // Note: we don't do this preemptively because in some cases it seems to take lot of time (happened on a test machine, several seconds freeze on ID3D11Device.Release())
-                GraphicsProfile availableGraphicsProfile;
-                if (!IsPreferredProfileAvailable(preferredParameters.PreferredGraphicsProfile, out availableGraphicsProfile))
-                {
+                // NOTE: We don't do this preemptively because in some cases it seems to take lot of time (happened on a test machine, several seconds freeze on ID3D11Device.Release())
+                if (!IsPreferredProfileAvailable(preferredParameters.PreferredGraphicsProfile, out GraphicsProfile availableGraphicsProfile))
                     throw new InvalidOperationException($"Graphics profiles [{string.Join(", ", preferredParameters.PreferredGraphicsProfile)}] are not supported by the device. The highest available profile is [{availableGraphicsProfile}].");
-                }
 
                 // Otherwise, there was just no screen mode
-                throw new InvalidOperationException("No screen modes found");
+                throw new InvalidOperationException("No screen modes found.");
             }
 
             RankDevices(devices);
 
             if (devices.Count == 0)
-            {
-                throw new InvalidOperationException("No screen modes found after ranking");
-            }
+                throw new InvalidOperationException("No screen modes found after ranking.");
+
             return devices[0];
         }
 
         /// <summary>
-        /// Ranks a list of <see cref="GraphicsDeviceInformation"/> before creating a new device.
+        ///   Ranks a list of <see cref="GraphicsDeviceInformation"/> before creating a new device.
         /// </summary>
-        /// <param name="foundDevices">The list of devices that can be reorder.</param>
+        /// <param name="foundDevices">The list of devices that can be reordered.</param>
         protected virtual void RankDevices(List<GraphicsDeviceInformation> foundDevices)
         {
             // Don't sort if there is a single device (mostly for XAML/WP8)
             if (foundDevices.Count == 1)
-            {
                 return;
-            }
 
             foundDevices.Sort(
                 (left, right) =>
@@ -815,14 +752,10 @@ namespace Stride.Games
         private int CalculateRankForFormat(PixelFormat format)
         {
             if (format == PreferredBackBufferFormat)
-            {
                 return 0;
-            }
 
             if (CalculateFormatSize(format) == CalculateFormatSize(PreferredBackBufferFormat))
-            {
                 return 1;
-            }
 
             return int.MaxValue;
         }
@@ -873,30 +806,34 @@ namespace Stride.Games
 
         private void Window_ClientSizeChanged(object sender, EventArgs e)
         {
-            if (!isChangingDevice && ((game.Window.ClientBounds.Height != 0) || (game.Window.ClientBounds.Width != 0)))
+            Rectangle clientBounds = game.Window.ClientBounds;
+
+            if (!isChangingDevice &&
+                (clientBounds.Height != 0 || clientBounds.Width != 0))
             {
-                resizedBackBufferWidth = game.Window.ClientBounds.Width;
-                resizedBackBufferHeight = game.Window.ClientBounds.Height;
+                resizedBackBufferWidth = clientBounds.Width;
+                resizedBackBufferHeight = clientBounds.Height;
                 isBackBufferToResize = true;
+
                 if (GraphicsDevice != null)
-                {
                     ChangeOrCreateDevice(false);
-                }
             }
         }
 
         private void Window_OrientationChanged(object sender, EventArgs e)
         {
-            if ((!isChangingDevice && ((game.Window.ClientBounds.Height != 0) || (game.Window.ClientBounds.Width != 0))) && (game.Window.CurrentOrientation != currentWindowOrientation))
+            Rectangle clientBounds = game.Window.ClientBounds;
+
+            if (!isChangingDevice &&
+                (clientBounds.Height != 0 || clientBounds.Width != 0) &&
+                (game.Window.CurrentOrientation != currentWindowOrientation))
             {
-                if ((game.Window.ClientBounds.Height > game.Window.ClientBounds.Width && preferredBackBufferWidth > preferredBackBufferHeight) ||
-                    (game.Window.ClientBounds.Width > game.Window.ClientBounds.Height && preferredBackBufferHeight > preferredBackBufferWidth))
+                if ((clientBounds.Height > clientBounds.Width && preferredBackBufferWidth > preferredBackBufferHeight) ||
+                    (clientBounds.Width > clientBounds.Height && preferredBackBufferHeight > preferredBackBufferWidth))
                 {
                     // Client size and Back Buffer size are different things
-                    // in this case all we care is if orientation changed, if so we swap width and height
-                    var w = PreferredBackBufferWidth;
-                    PreferredBackBufferWidth = PreferredBackBufferHeight;
-                    PreferredBackBufferHeight = w;
+                    // In this case all we care is if orientation changed, if so we swap width and height
+                    (PreferredBackBufferWidth, PreferredBackBufferHeight) = (PreferredBackBufferHeight, PreferredBackBufferWidth);
                     ApplyChanges();
                 }
             }
@@ -946,7 +883,7 @@ namespace Stride.Games
             // Use the shader profile returned by the GraphicsDeviceInformation otherwise use the one coming from the GameSettings
             GraphicsDevice.ShaderProfile = ShaderProfile;
 
-            // TODO HANDLE Device Resetting/Reset/Lost
+            // TODO: HANDLE Device Resetting/Reset/Lost
             //GraphicsDevice.DeviceResetting += GraphicsDevice_DeviceResetting;
             //GraphicsDevice.DeviceReset += GraphicsDevice_DeviceReset;
             //GraphicsDevice.DeviceLost += GraphicsDevice_DeviceLost;
@@ -958,17 +895,17 @@ namespace Stride.Games
 
         private void GraphicsDevice_DeviceResetting(object sender, EventArgs e)
         {
-            // TODO what to do?
+            // TODO: What to do?
         }
 
         private void GraphicsDevice_DeviceReset(object sender, EventArgs e)
         {
-            // TODO what to do?
+            // TODO: What to do?
         }
 
         private void GraphicsDevice_DeviceLost(object sender, EventArgs e)
         {
-            // TODO what to do?
+            // TODO: What to do?
         }
 
         private void GraphicsDevice_Disposing(object sender, EventArgs e)
@@ -983,24 +920,23 @@ namespace Stride.Games
             {
                 using (Profiler.Begin(GraphicsDeviceManagerProfilingKeys.CreateDevice))
                 {
-                    game.ConfirmRenderingSettings(GraphicsDevice == null); //if Device is null we assume we are still at game creation phase
+                    // If Device is null we assume we are still at game creation phase
+                    game.ConfirmRenderingSettings(GraphicsDevice is null);
 
                     isChangingDevice = true;
                     var width = game.Window.ClientBounds.Width;
                     var height = game.Window.ClientBounds.Height;
 
-                    //If the orientation is free to be changed from portrait to landscape we actually need this check now,
-                    //it is mostly useful only at initialization actually tho because Window_OrientationChanged does the same logic on runtime change
+                    // If the orientation is free to be changed from portrait to landscape we actually need this check now,
+                    // it is mostly useful only at initialization actually tho because Window_OrientationChanged does the same logic on runtime change
                     if (game.Window.CurrentOrientation != currentWindowOrientation)
                     {
                         if ((game.Window.ClientBounds.Height > game.Window.ClientBounds.Width && preferredBackBufferWidth > preferredBackBufferHeight) ||
                             (game.Window.ClientBounds.Width > game.Window.ClientBounds.Height && preferredBackBufferHeight > preferredBackBufferWidth))
                         {
-                            //Client size and Back Buffer size are different things
-                            //in this case all we care is if orientation changed, if so we swap width and height
-                            var w = preferredBackBufferWidth;
-                            preferredBackBufferWidth = preferredBackBufferHeight;
-                            preferredBackBufferHeight = w;
+                            // Client size and Back Buffer size are different things
+                            // In this case all we care is if orientation changed, if so we swap width and height
+                            (preferredBackBufferWidth, preferredBackBufferHeight) = (preferredBackBufferHeight, preferredBackBufferWidth);
                         }
                     }
 
@@ -1044,36 +980,28 @@ namespace Stride.Games
                                 }
                                 catch
                                 {
-                                    // ignored
+                                    // Ignored
                                 }
                             }
                         }
 
                         // If we still need to create a device, then we need to create it
                         if (needToCreateNewDevice)
-                        {
                             CreateDevice(graphicsDeviceInformation);
-                        }
 
-                        if (GraphicsDevice == null)
-                        {
-                            throw new InvalidOperationException("Unexpected null GraphicsDevice");
-                        }
+                        if (GraphicsDevice is null)
+                            throw new InvalidOperationException("Unexpected null GraphicsDevice.");
 
-                        // Make sure to copy back coolor space to GraphicsDevice
+                        // Make sure to copy back color space to GraphicsDevice
                         GraphicsDevice.ColorSpace = graphicsDeviceInformation.PresentationParameters.ColorSpace;
 
                         var presentationParameters = GraphicsDevice.Presenter.Description;
                         isReallyFullScreen = presentationParameters.IsFullScreen;
                         if (presentationParameters.BackBufferWidth != 0)
-                        {
                             width = presentationParameters.BackBufferWidth;
-                        }
-
                         if (presentationParameters.BackBufferHeight != 0)
-                        {
                             height = presentationParameters.BackBufferHeight;
-                        }
+
                         deviceSettingsChanged = false;
                     }
                     finally

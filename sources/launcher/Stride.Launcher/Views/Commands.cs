@@ -36,11 +36,11 @@ namespace Stride.LauncherApp.Views
 
         private static void OpenHyperlink([NotNull] string url)
         {
-            // see https://support.microsoft.com/en-us/kb/305703
+            // See https://support.microsoft.com/en-us/kb/305703
             try
             {
                 // Make sure we open proper HTML pages
-                Process.Start(url.ReplaceLast(".md", ".html"));
+                Process.Start(new ProcessStartInfo(url.ReplaceLast(".md", ".html")) { UseShellExecute = true });
             }
             catch (System.ComponentModel.Win32Exception e)
             {

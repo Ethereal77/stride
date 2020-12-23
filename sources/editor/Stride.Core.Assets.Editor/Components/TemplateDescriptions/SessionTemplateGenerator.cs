@@ -2,28 +2,36 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
+using Microsoft.Build.Locator;
+
+using System.IO;
+using Stride.Core.IO;
+using Stride.Core.Yaml;
 using Stride.Core.Assets.Quantum;
 using Stride.Core.Assets.Templates;
-using Stride.Core.Yaml;
-using System.IO;
-
-using Stride.Core.IO;
 
 namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions
 {
     /// <summary>
-    /// An implementation of <see cref="ITemplateGenerator"/> that will save the session and update the assembly references.
-    /// An <see cref="AfterSave"/> protected method is provided to do additional work after saving.
+    ///   Represents an <see cref="ITemplateGenerator"/> that will save the session and update the assembly
+    ///   references.
     /// </summary>
+    /// <remarks>
+    ///   An <see cref="AfterSave"/> protected method is provided to do additional work after saving.
+    /// </remarks>
     public abstract class SessionTemplateGenerator : TemplateGeneratorBase<SessionTemplateGeneratorParameters>
     {
-        private readonly AssetPropertyGraphContainer graphContainer = new AssetPropertyGraphContainer(new AssetNodeContainer { NodeBuilder = { NodeFactory = new AssetNodeFactory() } });
-        // TODO: move .gitignore content into an external file
+        private readonly AssetPropertyGraphContainer graphContainer =
+            new AssetPropertyGraphContainer(
+                new AssetNodeContainer { NodeBuilder = { NodeFactory = new AssetNodeFactory() } });
+
+        // TODO: Move .gitignore content into an external file.
+        //  Sadly templates and new games are different. Templates are basically a copy; New games are more
+        //  programatically generated. Our best bet to have something easy to mantain is this for now.
         private static readonly string GitIgnore = @"
 *.user
 *.lock
@@ -38,7 +46,9 @@ _ReSharper*
 [Bb]in/
 obj/
 Cache/
-"; //sadly templates and new games are different, the first ones are basically a copy the second is more programatically, so our best bet to have something easy to mantain is this for now.
+";
+
+        private static string GlobalJson(string version) => $"{{ \"sdk\": {{ \"version\": \"{version}\" }} }}";
 
         public sealed override bool Run(SessionTemplateGeneratorParameters parameters)
         {
@@ -60,21 +70,24 @@ Cache/
         }
 
         /// <summary>
-        /// Generates the template. This method is called by <see cref="SessionTemplateGenerator.Run"/>, and the session is saved afterward
-        /// if the generation is successful.
+        ///   Generates the template.
         /// </summary>
         /// <param name="parameters">The parameters for the template generator.</param>
+        /// <returns><c>true</c> if the generation was successful; <c>false</c> otherwise.</returns>
         /// <remarks>
-        /// This method should work in unattended mode and should not ask user for information anymore.
+        ///   This method is called by <see cref="Run"/>, and the session is saved afterwards  if the
+        ///   generation is successful.
+        ///   <para/>
+        ///   This method should work in unattended mode and should not ask user for information anymore.
         /// </remarks>
-        /// <returns><c>True</c> if the generation was successful, <c>false</c> otherwise.</returns>
         protected abstract bool Generate(SessionTemplateGeneratorParameters parameters);
 
         /// <summary>
-        /// Does additional work after the session has been saved.
+        ///   Method called after the session has been saved. Override in a subclass to do additional work
+        ///   after the session is saved.
         /// </summary>
-        /// <param name="parameters">The parameters for the template generator.</param>
-        /// <returns>True if the method succeeded, False otherwise.</returns>
+        /// <param name="parameters">The parameters passed to the template generator.</param>
+        /// <returns><c>true</c> if the method succeeded; <c>false</c> otherwise.</returns>
         protected virtual Task<bool> AfterSave(SessionTemplateGeneratorParameters parameters)
         {
             return Task.FromResult(true);
@@ -87,16 +100,17 @@ Cache/
 
             // Then apply metadata from each asset item to the graph
             foreach (var package in parameters.Session.LocalPackages)
+            foreach (var asset in package.Assets)
             {
-                foreach (var asset in package.Assets)
-                {                    
-                    var graph = graphContainer.TryGetGraph(asset.Id) ?? graphContainer.InitializeAsset(asset, parameters.Logger);
-                    var overrides = asset.YamlMetadata.RetrieveMetadata(AssetObjectSerializerBackend.OverrideDictionaryKey);
-                    if (graph != null && overrides != null)
-                    {
-                        graph.RefreshBase();
-                        AssetPropertyGraph.ApplyOverrides(graph.RootNode, overrides);
-                    }
+                var graph = graphContainer.TryGetGraph(asset.Id) ??
+                            graphContainer.InitializeAsset(asset, parameters.Logger);
+
+                var overrides = asset.YamlMetadata.RetrieveMetadata(AssetObjectSerializerBackend.OverrideDictionaryKey);
+
+                if (graph != null && overrides != null)
+                {
+                    graph.RefreshBase();
+                    AssetPropertyGraph.ApplyOverrides(graph.RootNode, overrides);
                 }
             }
         }
@@ -108,12 +122,10 @@ Cache/
 
             // Then run a PrepareForSave pass to prepare asset items to be saved (override, object references, etc.)
             foreach (var package in parameters.Session.LocalPackages)
+            foreach (var asset in package.Assets)
             {
-                foreach (var asset in package.Assets)
-                {
-                    var graph = graphContainer.TryGetGraph(asset.Id);
-                    graph?.PrepareForSave(parameters.Logger, asset);
-                }
+                var graph = graphContainer.TryGetGraph(asset.Id);
+                graph?.PrepareForSave(parameters.Logger, asset);
             }
 
             // Finally actually save the session.
@@ -130,15 +142,24 @@ Cache/
             File.WriteAllText(fileName.ToWindowsPath(), GitIgnore);
         }
 
+        protected void WriteGlobalJson(SessionTemplateGeneratorParameters parameters)
+        {
+            if (!RuntimeInformation.FrameworkDescription.StartsWith(".NET Core"))
+                return;
+
+            var sdkVersion = MSBuildLocator.QueryVisualStudioInstances()
+                .First(vs => vs.DiscoveryType == DiscoveryType.DotNetSdk && vs.Version.Major >= 3).Version;
+            var fileName = UFile.Combine(parameters.OutputDirectory, "global.json");
+            File.WriteAllText(fileName.ToWindowsPath(), GlobalJson(sdkVersion.ToString()));
+        }
+
         private void EnsureGraphs(SessionTemplateGeneratorParameters parameters)
         {
             foreach (var package in parameters.Session.Packages)
+            foreach (var asset in package.Assets)
             {
-                foreach (var asset in package.Assets)
-                {
-                    if (graphContainer.TryGetGraph(asset.Id) == null)
-                        graphContainer.InitializeAsset(asset, parameters.Logger);
-                }
+                if (graphContainer.TryGetGraph(asset.Id) is null)
+                    graphContainer.InitializeAsset(asset, parameters.Logger);
             }
         }
     }

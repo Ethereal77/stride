@@ -1,8 +1,7 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 
 using Stride.Core.Collections;
@@ -11,7 +10,8 @@ using Stride.Core.Mathematics;
 namespace Stride.Input
 {
     /// <summary>
-    /// An extension to <see cref="PointerDeviceState"/> that handle mouse input and translates it to pointer input
+    ///   Represents an extension to <see cref="PointerDeviceState"/> that handles mouse input and translates it to
+    ///   pointer input.
     /// </summary>
     public class MouseDeviceState
     {
@@ -28,8 +28,8 @@ namespace Stride.Input
 
         public MouseDeviceState(PointerDeviceState pointerState, IMouseDevice mouseDevice)
         {
-            this.PointerState = pointerState;
-            this.MouseDevice = mouseDevice;
+            PointerState = pointerState;
+            MouseDevice = mouseDevice;
 
             DownButtons = new ReadOnlySet<MouseButton>(downButtons);
             PressedButtons = new ReadOnlySet<MouseButton>(pressedButtons);
@@ -39,24 +39,20 @@ namespace Stride.Input
         public IReadOnlySet<MouseButton> PressedButtons { get; }
         public IReadOnlySet<MouseButton> ReleasedButtons { get; }
         public IReadOnlySet<MouseButton> DownButtons { get; }
-        
+
         public Vector2 Position { get; set; }
         public Vector2 Delta { get; set; }
 
-        /// <summary>
-        /// Generate input events
-        /// </summary>
         public void Update(List<InputEvent> inputEvents)
         {
             Reset();
-            
+
             // Collect events from queue
             foreach (var evt in Events)
             {
                 inputEvents.Add(evt);
 
-                var mouseButtonEvent = evt as MouseButtonEvent;
-                if (mouseButtonEvent != null)
+                if (evt is MouseButtonEvent mouseButtonEvent)
                 {
                     if (mouseButtonEvent.IsDown)
                     {
@@ -70,8 +66,7 @@ namespace Stride.Input
 
                 // Pass mouse-side generate pointer events through the pointer state
                 // These should only be delta movement events so don't update it from this functions
-                var pointerEvent = evt as PointerEvent;
-                if (pointerEvent != null)
+                if (evt is PointerEvent pointerEvent)
                 {
                     PointerState.UpdatePointerState(pointerEvent, false);
                 }
@@ -82,11 +77,11 @@ namespace Stride.Input
             Delta = nextDelta;
             nextDelta = Vector2.Zero;
         }
-        
+
         /// <summary>
-        /// Special move that generates pointer events with just delta
+        ///   Special move that generates pointer events with just delta.
         /// </summary>
-        /// <param name="delta">The movement delta</param>
+        /// <param name="delta">The movement delta.</param>
         public void HandleMouseDelta(Vector2 delta)
         {
             if (delta == Vector2.Zero)
@@ -94,7 +89,7 @@ namespace Stride.Input
 
             // Normalize delta
             delta *= PointerState.InverseSurfaceSize;
-            
+
             nextDelta += delta;
 
             var pointerEvent = InputEventPool<PointerEvent>.GetOrCreate(MouseDevice);
@@ -150,7 +145,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Handles a single pointer down
+        ///   Handles a single pointer down.
         /// </summary>
         public void HandlePointerDown()
         {
@@ -158,7 +153,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Handles a single pointer up
+        ///   Handles a single pointer up.
         /// </summary>
         public void HandlePointerUp()
         {
@@ -166,7 +161,7 @@ namespace Stride.Input
         }
 
         /// <summary>
-        /// Handles a single pointer move
+        ///   Handles a single pointer move.
         /// </summary>
         /// <param name="newPosition">New position of the pointer</param>
         public void HandleMove(Vector2 newPosition)

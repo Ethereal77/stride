@@ -38,14 +38,18 @@ namespace Stride.Core.Assets.Quantum.Internal
 
         public event EventHandler<EventArgs> OverrideChanged;
 
-        public AssetPropertyGraph PropertyGraph { get => propertyGraph; internal set => propertyGraph = value ?? throw new ArgumentNullException(nameof(value)); }
+        public AssetPropertyGraph PropertyGraph
+        {
+            get => propertyGraph;
+            internal set => propertyGraph = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
         public IGraphNode BaseNode { get; private set; }
 
-        public new IAssetObjectNode Parent => (IAssetObjectNode)base.Parent;
+        public new IAssetObjectNode Parent => (IAssetObjectNode) base.Parent;
 
         [CanBeNull]
-        public new IAssetObjectNode Target => (IAssetObjectNode)base.Target;
+        public new IAssetObjectNode Target => (IAssetObjectNode) base.Target;
 
         public void SetContent([NotNull] string key, IGraphNode node)
         {
@@ -77,19 +81,22 @@ namespace Stride.Core.Assets.Quantum.Internal
 
         private void ContentChanged(object sender, [NotNull] MemberNodeChangeEventArgs e)
         {
-            // Make sure that we have item ids everywhere we're supposed to.
-            AssetCollectionItemIdHelper.GenerateMissingItemIds(e.Member.Retrieve());
-
-            var node = (AssetMemberNode)e.Member;
+            var node = (AssetMemberNode) e.Member;
             if (node.IsNonIdentifiableCollectionContent)
                 return;
 
-            // Don't update override if propagation from base is disabled.
-            if (PropertyGraph?.Container == null || PropertyGraph?.Container?.PropagateChangesFromBase == false)
+            // Make sure that we have item ids everywhere we're supposed to
+            AssetCollectionItemIdHelper.GenerateMissingItemIds(e.Member.Retrieve());
+
+            // Don't update override if propagation from base is disabled
+            if (PropertyGraph?.Container == null ||
+                PropertyGraph?.Container?.PropagateChangesFromBase == false)
                 return;
 
             // Mark it as New if it does not come from the base
-            if (BaseNode != null && !PropertyGraph.UpdatingPropertyFromBase && !ResettingOverride)
+            if (BaseNode != null &&
+                !PropertyGraph.UpdatingPropertyFromBase &&
+                !ResettingOverride)
             {
                 OverrideContent(!ResettingOverride);
             }
@@ -98,9 +105,7 @@ namespace Stride.Core.Assets.Quantum.Internal
         internal void SetContentOverride(OverrideType overrideType)
         {
             if (CanOverride)
-            {
                 contentOverride = overrideType;
-            }
         }
 
         public OverrideType GetContentOverride()
@@ -110,7 +115,7 @@ namespace Stride.Core.Assets.Quantum.Internal
 
         public bool IsContentOverridden()
         {
-            return (contentOverride & OverrideType.New) == OverrideType.New;
+            return contentOverride.HasFlag(OverrideType.New);
         }
 
         public bool IsContentInherited()
@@ -122,7 +127,9 @@ namespace Stride.Core.Assets.Quantum.Internal
 
         void IAssetNodeInternal.SetPropertyGraph(AssetPropertyGraph assetPropertyGraph)
         {
-            if (assetPropertyGraph == null) throw new ArgumentNullException(nameof(assetPropertyGraph));
+            if (assetPropertyGraph is null)
+                throw new ArgumentNullException(nameof(assetPropertyGraph));
+
             PropertyGraph = assetPropertyGraph;
         }
 

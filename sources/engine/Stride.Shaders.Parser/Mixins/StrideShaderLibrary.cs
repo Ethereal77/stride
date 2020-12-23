@@ -10,10 +10,10 @@ using System.Text;
 using Stride.Core.Extensions;
 using Stride.Core.Storage;
 using Stride.Core.Shaders.Ast.Stride;
-using Stride.Shaders.Parser.Utility;
 using Stride.Core.Shaders.Ast;
 using Stride.Core.Shaders.Ast.Hlsl;
 using Stride.Core.Shaders.Utility;
+using Stride.Shaders.Parser.Utility;
 
 namespace Stride.Shaders.Parser.Mixins
 {
@@ -24,72 +24,61 @@ namespace Stride.Shaders.Parser.Mixins
         public delegate ShaderClassType LoadClassSourceDelegate(ShaderClassSource shaderClassSource, Stride.Core.Shaders.Parser.ShaderMacro[] shaderMacros, out ObjectId hash, out ObjectId hashPreprocessSource);
 
         #endregion
-        
-        #region Public members
 
         /// <summary>
-        /// List of all the mixin infos
+        ///   List of all the mixin infos.
         /// </summary>
         public HashSet<ModuleMixinInfo> MixinInfos = new HashSet<ModuleMixinInfo>();
 
         /// <summary>
-        /// Load function
+        ///   Gets the shader loading function.
         /// </summary>
         public ShaderLoader ShaderLoader { get; private set; }
 
         /// <summary>
-        /// Log of all the warnings and errors
+        ///   Logger to log all the shaders warnings and errors.
         /// </summary>
         public LoggerResult ErrorWarningLog = new LoggerResult();
 
         /// <summary>
-        /// The source hashes
+        ///   The shaders source hashes.
         /// </summary>
         public HashSourceCollection SourceHashes = new HashSourceCollection();
 
-        #endregion
-
-        #region Private members
 
         private int lastMixIndex = 0;
 
         /// <summary>
-        /// List of contexts per macros
+        ///   List of contexts per macros.
         /// </summary>
         private readonly Dictionary<string, List<ModuleMixinInfo>> mapMacrosToMixins = new Dictionary<string, List<ModuleMixinInfo>>();
 
-        #endregion
-
-        #region Constructor
 
         public StrideShaderLibrary(ShaderLoader loader)
         {
             ShaderLoader = loader;
         }
 
-        #endregion
-
-        #region Public methods
-
 
         public bool AllowNonInstantiatedGenerics { get; set; }
 
         /// <summary>
-        /// Explore the ShaderSource and add the necessary shaders
+        ///   Loads and analyzes a ShaderSource to extract the necessary shaders.
         /// </summary>
-        /// <param name="shaderSource">the ShaderSource to explore</param>
-        /// <param name="macros">the macros used</param>
-        /// <returns></returns>
+        /// <param name="shaderSource">The ShaderSource to explore.</param>
+        /// <param name="macros">The macros used.</param>
+        /// <returns>Set of resulting mixins.</returns>
         public HashSet<ModuleMixinInfo> LoadShaderSource(ShaderSource shaderSource, Stride.Core.Shaders.Parser.ShaderMacro[] macros)
         {
             var mixinsToAnalyze = new HashSet<ModuleMixinInfo>();
             ExtendLibrary(shaderSource, macros, mixinsToAnalyze);
-            ReplaceMixins(mixinsToAnalyze); // no longer replace mixin, redo analysis everytime since there is no way to correctly detect something changed
+            // No longer replace mixin, redo analysis everytime since there is no way to correctly detect something changed
+            ReplaceMixins(mixinsToAnalyze);
             return mixinsToAnalyze;
         }
 
         /// <summary>
-        /// Deletes the shader cache for the specified shaders.
+        ///   Deletes the shader cache for the specified shaders.
         /// </summary>
         /// <param name="modifiedShaders">The modified shaders.</param>
         public void DeleteObsoleteCache(HashSet<string> modifiedShaders)
@@ -98,31 +87,21 @@ namespace Stride.Shaders.Parser.Mixins
 
             foreach (var shaderName in modifiedShaders)
             {
-                // find the mixin that depends on this shader
+                // Find the mixin that depends on this shader
                 foreach (var mixin in MixinInfos)
-                {
-                    if (mixin.IsShaderClass(shaderName))
+                    if (mixin.ReferencedShaders.Contains(shaderName))
                         mixinsToDelete.Add(mixin);
-                    else
-                    {
-                        foreach (var dep in mixin.MinimalContext)
-                        {
-                            if (dep.IsShaderClass(shaderName))
-                                mixinsToDelete.Add(mixin);
-                        }
-                    }
-                }
 
-                // remove the source hash
+                // Remove the source hash
                 SourceHashes.Remove(shaderName);
             }
 
-            // delete the mixins
+            // Delete the mixins
             foreach (var mixin in mixinsToDelete)
             {
                 MixinInfos.Remove(mixin);
 
-                // delete the mixin from the map
+                // Delete the mixin from the map
                 foreach (var macroMap in mapMacrosToMixins)
                     macroMap.Value.Remove(mixin);
             }
@@ -131,67 +110,62 @@ namespace Stride.Shaders.Parser.Mixins
 
             ShaderLoader.DeleteObsoleteCache(modifiedShaders);
         }
-        
-        #endregion
 
-        #region Private methods
 
         /// <summary>
-        /// Explore the ShaderSource and add the necessary shaders
+        ///   Explores a ShaderSource to add the necessary shaders.
         /// </summary>
-        /// <param name="shaderSource">the ShaderSource to explore</param>
-        /// <param name="macros">the macros used</param>
+        /// <param name="shaderSource">The ShaderSource to explore.</param>
+        /// <param name="macros">The macros used.</param>
+        /// <param name="mixinToAnalyze">Set of mixins to analyze.</param>
         private void ExtendLibrary(ShaderSource shaderSource, Stride.Core.Shaders.Parser.ShaderMacro[] macros, HashSet<ModuleMixinInfo> mixinToAnalyze)
         {
-            if (shaderSource is ShaderMixinSource)
+            if (shaderSource is ShaderMixinSource shaderMixin)
             {
-                var newMacros = MergeMacroSets((ShaderMixinSource)shaderSource, macros);
+                var newMacros = MergeMacroSets(shaderMixin, macros);
                 mixinToAnalyze.Add(GetModuleMixinInfo(shaderSource, newMacros));
-                foreach (var composition in ((ShaderMixinSource)shaderSource).Compositions)
+                foreach (var composition in shaderMixin.Compositions)
                     ExtendLibrary(composition.Value, newMacros, mixinToAnalyze);
             }
             else if (shaderSource is ShaderClassCode)
                 mixinToAnalyze.Add(GetModuleMixinInfo(shaderSource, macros));
-            else if (shaderSource is ShaderArraySource)
+            else if (shaderSource is ShaderArraySource shaderArray)
             {
-                foreach (var shader in ((ShaderArraySource)shaderSource).Values)
+                foreach (var shader in shaderArray.Values)
                     ExtendLibrary(shader, macros, mixinToAnalyze);
             }
         }
 
         /// <summary>
-        /// Get the ModuleMixinInfo based on the ShaderSource and the macros. Creates the needed shader if necessary
+        ///   Gets the ModuleMixinInfo based on the ShaderSource and the macros, creates the needed shaders if necessary.
         /// </summary>
-        /// <param name="shaderSource">the ShaderSource</param>
-        /// <param name="macros">the macros</param>
-        /// <param name="macrosString">the name of the macros</param>
+        /// <param name="shaderSource">The ShaderSource.</param>
+        /// <param name="macros">The macros.</param>
+        /// <param name="macrosString">The name of the macros.</param>
         /// <returns>ModuleMixinInfo.</returns>
         private ModuleMixinInfo GetModuleMixinInfo(ShaderSource shaderSource, Stride.Core.Shaders.Parser.ShaderMacro[] macros, string macrosString = null)
         {
-            if (macros == null)
+            if (macros is null)
                 macros = new Stride.Core.Shaders.Parser.ShaderMacro[0];
 
-            if (macrosString == null)
-            {
+            if (macrosString is null)
                 macrosString =  string.Join(",", macros.OrderBy(x => x.Name));
-            }
 
-            List<ModuleMixinInfo> context;
-            if (!mapMacrosToMixins.TryGetValue(macrosString, out context))
+            if (!mapMacrosToMixins.TryGetValue(macrosString, out List<ModuleMixinInfo> context))
             {
                 context = new List<ModuleMixinInfo>();
                 mapMacrosToMixins.Add(macrosString, context);
             }
 
             var mixinInfo = context.FirstOrDefault(x => x.AreEqual(shaderSource, macros));
-            if (mixinInfo == null)
+            if (mixinInfo is null)
             {
                 mixinInfo = BuildMixinInfo(shaderSource, macros);
 
                 if (mixinInfo.Instanciated)
                 {
                     MixinInfos.Add(mixinInfo);
-                    mapMacrosToMixins[macrosString].Add(mixinInfo);
+                    context.Add(mixinInfo);
 
                     mixinInfo.MinimalContext.Add(mixinInfo);
 
@@ -199,7 +173,6 @@ namespace Stride.Shaders.Parser.Mixins
                     {
                         LoadNecessaryShaders(mixinInfo, macros, macrosString);
                     }
-                    mixinInfo.MinimalContext = new HashSet<ModuleMixinInfo>(mixinInfo.MinimalContext.Distinct());
                 }
             }
 
@@ -207,9 +180,9 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Replace the mixins
+        ///   Replaces the mixins.
         /// </summary>
-        /// <param name="mixinInfos">the mixins to verify</param>
+        /// <param name="mixinInfos">The mixins to verify.</param>
         private void ReplaceMixins(HashSet<ModuleMixinInfo> mixinInfos)
         {
             foreach (var mixinInfo in mixinInfos)
@@ -217,19 +190,19 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Check if a previously analyzed instance of the shader can be used
+        ///   Checks if a previously analyzed instance of the shader can be used.
         /// </summary>
-        /// <param name="mixinInfo">the ModuleMixinInfo</param>
+        /// <param name="mixinInfo">The ModuleMixinInfo.</param>
         private void CheckMixinForReplacement(ModuleMixinInfo mixinInfo)
         {
-            // TODO: infinite loop when cross reference (composition & =stage for example)
-            // TODO: change ReplacementChecked to enum None/InProgress/Done
+            // TODO: Infinite loop when cross reference (composition & =stage for example)
+            // TODO: Change ReplacementChecked to enum None/InProgress/Done
             if (mixinInfo.ReplacementChecked)
                 return;
 
             // Check parents and dependencies
             mixinInfo.MinimalContext.Where(x => x != mixinInfo).ForEach(CheckMixinForReplacement);
-            
+
             foreach (var replaceCandidateMixinInfo in MixinInfos.Where(x => x != mixinInfo && x.ShaderSource.Equals(mixinInfo.ShaderSource) && x.HashPreprocessSource == mixinInfo.HashPreprocessSource))
             {
                 if (replaceCandidateMixinInfo.Mixin.DependenciesStatus != AnalysisStatus.None)
@@ -254,25 +227,27 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Build the ModuleMixinInfo class
+        ///   Builds the ModuleMixinInfo class.
         /// </summary>
-        /// <param name="shaderSource">the ShaderSource to load</param>
-        /// <param name="macros">the macros applied on the source</param>
-        /// <returns>the ModuleMixinInfo</returns>
+        /// <param name="shaderSource">The ShaderSource to load.</param>
+        /// <param name="macros">The macros applied on the source.</param>
+        /// <returns>The ModuleMixinInfo.</returns>
         private ModuleMixinInfo BuildMixinInfo(ShaderSource shaderSource, Stride.Core.Shaders.Parser.ShaderMacro[] macros)
         {
             ModuleMixinInfo mixinInfo = null;
-            
-            if (shaderSource is ShaderClassCode)
+
+            if (shaderSource is ShaderClassCode shaderClassSource)
             {
-                var shaderClassSource = shaderSource as ShaderClassCode;
-                mixinInfo = new ModuleMixinInfo { ShaderSource = shaderClassSource, Macros = macros };
+                mixinInfo = new ModuleMixinInfo
+                {
+                    ShaderSource = shaderClassSource,
+                    Macros = macros,
+                    ReferencedShaders = { shaderClassSource.ClassName }
+                };
                 LoadMixinFromClassSource(mixinInfo);
             }
-            else if (shaderSource is ShaderMixinSource)
+            else if (shaderSource is ShaderMixinSource shaderMixinSource)
             {
-                var shaderMixinSource = shaderSource as ShaderMixinSource;
-
                 var shaderName = "Mix" + lastMixIndex;
                 ++lastMixIndex;
                 var fakeAst = new ShaderClassType(shaderName);
@@ -290,10 +265,10 @@ namespace Stride.Shaders.Parser.Mixins
                 mixinInfo = new ModuleMixinInfo
                     {
                         MixinGenericName = shaderName,
-                        Macros = macros, 
-                        MixinAst = fakeAst, 
+                        Macros = macros,
+                        MixinAst = fakeAst,
                         ShaderSource =  shaderSource,
-                        SourceHash = ObjectId.FromBytes(Encoding.UTF8.GetBytes(shaderName)), 
+                        SourceHash = ObjectId.FromBytes(Encoding.UTF8.GetBytes(shaderName)),
                         Instanciated = true
                     };
             }
@@ -302,18 +277,18 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Loads the mixin based on its ShaderSource
+        ///   Loads the mixin based on its ShaderSource.
         /// </summary>
-        /// <param name="mixinInfo">the ModuleMixinInfo</param>
+        /// <param name="mixinInfo">The ModuleMixinInfo.</param>
         private void LoadMixinFromClassSource(ModuleMixinInfo mixinInfo)
         {
-            var classSource = (ShaderClassCode)mixinInfo.ShaderSource;
+            var classSource = (ShaderClassCode) mixinInfo.ShaderSource;
 
             // If we allow to parse non instantiated generics, put empty generic arguments to let the ShaderLoader correctly expand the class
             var shaderClass = ShaderLoader.LoadClassSource(classSource, mixinInfo.Macros, mixinInfo.Log, AllowNonInstantiatedGenerics);
 
             // If result is null, there was some errors while parsing.
-            if (shaderClass == null)
+            if (shaderClass is null)
                 return;
 
             var shaderType = shaderClass.Type.DeepClone();
@@ -327,10 +302,12 @@ namespace Stride.Shaders.Parser.Mixins
             if (!SourceHashes.ContainsKey(classSource.ClassName))
                 SourceHashes.Add(classSource.ClassName, shaderClass.SourceHash);
 
-            // check if it was a generic class and find out if the instanciation was correct
+            // Check if it was a generic class and find out if the instanciation was correct
             if (shaderType.GenericParameters.Count > 0)
             {
-                if (classSource.GenericArguments == null || classSource.GenericArguments.Length == 0 || shaderType.GenericParameters.Count > classSource.GenericArguments.Length)
+                if (classSource.GenericArguments is null ||
+                    classSource.GenericArguments.Length == 0 ||
+                    shaderType.GenericParameters.Count > classSource.GenericArguments.Length)
                 {
                     mixinInfo.Instanciated = false;
                     mixinInfo.Log.Error(StrideMessageCode.ErrorClassSourceNotInstantiated, shaderType.Span, classSource.ClassName);
@@ -346,9 +323,9 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Loads generic classes that may appear in the mixin
+        ///   Loads generic classes that may appear in the mixin.
         /// </summary>
-        /// <param name="mixinInfo">The mixin to investigate</param>
+        /// <param name="mixinInfo">The mixin to investigate.</param>
         /// <param name="macros">The macros.</param>
         /// <param name="macrosString">The macros string.</param>
         private void LoadNecessaryShaders(ModuleMixinInfo mixinInfo, Stride.Core.Shaders.Parser.ShaderMacro[] macros, string macrosString)
@@ -365,6 +342,7 @@ namespace Stride.Shaders.Parser.Mixins
                 var classSource = new ShaderClassSource(foundClass, null);
                 var foundMixinInfo = GetModuleMixinInfo(classSource, macros, macrosString);
                 mixinInfo.MinimalContext.UnionWith(foundMixinInfo.MinimalContext);
+                mixinInfo.ReferencedShaders.UnionWith(foundMixinInfo.ReferencedShaders);
             }
 
             foreach (var id in shaderDependencyVisitor.FoundIdentifiers)
@@ -376,26 +354,27 @@ namespace Stride.Shaders.Parser.Mixins
 
                 var instanciatedClassInfo = GetModuleMixinInfo(classSource, macros, macrosString);
                 mixinInfo.MinimalContext.UnionWith(instanciatedClassInfo.MinimalContext);
+                mixinInfo.ReferencedShaders.UnionWith(instanciatedClassInfo.ReferencedShaders);
 
                 var newId = new Identifier(instanciatedClassInfo.MixinName);
-                if (id.Item2 is TypeName) // in the baseclass list or in a variable declaration
-                    (id.Item2 as TypeName).Name = newId;
-                else if (id.Item2 is VariableReferenceExpression)
-                    (id.Item2 as VariableReferenceExpression).Name = newId;
-                else if (id.Item2 is MemberReferenceExpression)
-                    (id.Item2 as MemberReferenceExpression).Member = newId;
+                // In the baseclass list or in a variable declaration
+                if (id.Item2 is TypeName typeName)
+                    typeName.Name = newId;
+                else if (id.Item2 is VariableReferenceExpression variableReferenceExpression)
+                    variableReferenceExpression.Name = newId;
+                else if (id.Item2 is MemberReferenceExpression memberReferenceExpression)
+                    memberReferenceExpression.Member = newId;
             }
         }
 
-        #endregion
 
         #region Private static methods
 
         /// <summary>
-        /// Build the array of generic parameters
+        ///   Builds the array of generic parameters.
         /// </summary>
-        /// <param name="genericClass">the shader with its generics</param>
-        /// <returns>the array of generic parameters</returns>
+        /// <param name="genericClass">The shader with its generics.</param>
+        /// <returns>The array of generic parameters.</returns>
         private static string[] BuildShaderGenericParameters(IdentifierGeneric genericClass)
         {
             var genericParameters = new List<string>();
@@ -410,49 +389,49 @@ namespace Stride.Shaders.Parser.Mixins
         }
 
         /// <summary>
-        /// Helper function to get the complete name of an identifier
+        ///   Helper function to get the complete name of an identifier.
         /// </summary>
-        /// <param name="identifier">the identifier</param>
-        /// <returns>the identifier name</returns>
+        /// <param name="identifier">The identifier.</param>
+        /// <returns>The identifier name.</returns>
         private static string GetIdentifierName(Identifier identifier)
         {
             string genericName;
-            if (identifier is LiteralIdentifier)
-                genericName = (identifier as LiteralIdentifier).Value.Value.ToString();
-            else if (identifier is IdentifierDot)
+            if (identifier is LiteralIdentifier literalIdentifier)
+                genericName = literalIdentifier.Value.Value.ToString();
+            else if (identifier is IdentifierDot idDot)
             {
-                var idDot = identifier as IdentifierDot;
                 genericName = idDot.Identifiers.Aggregate("", (current, id) => current + (GetIdentifierName(id) + idDot.Separator));
                 genericName = genericName.Substring(0, genericName.Length - idDot.Separator.Length);
             }
             else
                 genericName = identifier.Text;
 
-            if (genericName == null)
-                throw new Exception(string.Format("Unable to find the name of the generic [{0}]", identifier));
+            if (genericName is null)
+                throw new Exception(string.Format("Unable to find the name of the generic [{0}].", identifier));
 
             return genericName;
         }
 
         /// <summary>
-        /// Merge the set of macros in the mixin. The top level macros are always overidden by the child's ones (the one defined in the current ShaderMixinSource).
-        /// Also update the macros of the mixin.
+        ///   Merges the set of macros in the mixin. The top level macros are always overidden by the child's ones
+        ///   (the one defined in the current ShaderMixinSource).
+        ///   Also update the macros of the mixin.
         /// </summary>
         /// <param name="mixin">The mixin that will be looked at with the macros.</param>
         /// <param name="macros">The external macros.</param>
-        /// <returns>An array with all the macros</returns>
+        /// <returns>An array with all the macros.</returns>
         private Stride.Core.Shaders.Parser.ShaderMacro[] MergeMacroSets(ShaderMixinSource mixin, Stride.Core.Shaders.Parser.ShaderMacro[] macros)
         {
             var newMacros = new List<Stride.Core.Shaders.Parser.ShaderMacro>();
 
-            // get the parent macros
+            // Get the parent macros
             foreach (var macro in macros)
             {
                 newMacros.RemoveAll(x => x.Name == macro.Name);
                 newMacros.Add(macro);
             }
 
-            // override with child macros, the mixin's ones
+            // Override with child macros, the mixin's ones
             foreach (var macro in mixin.Macros)
             {
                 newMacros.RemoveAll(x => x.Name == macro.Name);
@@ -463,7 +442,7 @@ namespace Stride.Shaders.Parser.Mixins
             mixin.Macros = newMacros.Select(x => new ShaderMacro(x.Name, x.Definition)).ToList();
             return newMacros.ToArray();
         }
-        
+
         #endregion
     }
 }

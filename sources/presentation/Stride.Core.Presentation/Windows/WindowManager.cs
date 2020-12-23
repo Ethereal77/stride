@@ -18,8 +18,9 @@ using Stride.Core.Presentation.Interop;
 namespace Stride.Core.Presentation.Windows
 {
     /// <summary>
-    /// A singleton class to manage the windows of an application and their relation to each other. It introduces the concept of blocking window,
-    /// which can block the main window of the application but does not interact with modal windows.
+    ///   Represents a singleton class that manages the windows of an application and their relation to each other.
+    ///   It introduces the concept of <strong>blocking window</strong>, which can block the main window of the
+    ///   application but does not interact with modal windows.
     /// </summary>
     public class WindowManager : IDisposable
     {
@@ -45,17 +46,20 @@ namespace Stride.Core.Presentation.Windows
         private static bool initialized;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WindowManager"/> class.
+        ///   Initializes a new instance of the <see cref="WindowManager"/> class.
         /// </summary>
         public WindowManager([NotNull] Dispatcher dispatcher)
         {
-            if (dispatcher == null) throw new ArgumentNullException(nameof(dispatcher));
-            if (initialized) throw new InvalidOperationException("An instance of WindowManager is already existing.");
+            if (dispatcher is null)
+                throw new ArgumentNullException(nameof(dispatcher));
+
+            if (initialized)
+                throw new InvalidOperationException("An instance of WindowManager is already existing.");
 
             initialized = true;
             winEventProc = WinEventProc;
             WindowManager.dispatcher = dispatcher;
-            uint processId = (uint)Process.GetCurrentProcess().Id;
+            uint processId = (uint) Process.GetCurrentProcess().Id;
             hook = NativeHelper.SetWinEventHook(NativeHelper.EVENT_OBJECT_SHOW, NativeHelper.EVENT_OBJECT_HIDE, IntPtr.Zero, winEventProc, processId, 0, NativeHelper.WINEVENT_OUTOFCONTEXT);
             if (hook == IntPtr.Zero)
                 throw new InvalidOperationException("Unable to initialize the window manager.");
@@ -70,17 +74,17 @@ namespace Stride.Core.Presentation.Windows
 #endif
 
         /// <summary>
-        /// Gets the current main window.
+        ///   Gets the current main window.
         /// </summary>
         public static WindowInfo MainWindow { get; private set; }
 
         /// <summary>
-        /// Gets the collection of currently visible modal windows.
+        ///   Gets the collection of currently visible modal windows.
         /// </summary>
         public static IReadOnlyList<WindowInfo> ModalWindows => ModalWindowsList;
 
         /// <summary>
-        /// Gets the collection of currently visible blocking windows.
+        ///   Gets the collection of currently visible blocking windows.
         /// </summary>
         public static IReadOnlyList<WindowInfo> BlockingWindows => BlockingWindowsList;
 
@@ -98,17 +102,20 @@ namespace Stride.Core.Presentation.Windows
             ModalWindowsList.Clear();
             BlockingWindowsList.Clear();
 
-            Logger.Info($"{nameof(WindowManager)} disposed");
+            Logger.Info($"{nameof(WindowManager)} disposed.");
             initialized = false;
         }
 
         /// <summary>
-        /// Shows the given window as the main window of the application. It is mandatory to use this method for the main window to use features of the <see cref="WindowManager"/>.
+        ///   Shows the given window as the main window of the application. It is mandatory to use this method for
+        ///   the main window to use features of the <see cref="WindowManager"/>.
         /// </summary>
         /// <param name="window">The main window to show.</param>
         public static void ShowMainWindow([NotNull] Window window)
         {
-            if (window == null) throw new ArgumentNullException(nameof(window));
+            if (window is null)
+                throw new ArgumentNullException(nameof(window));
+
             CheckDispatcher();
 
             if (MainWindow != null)
@@ -127,13 +134,16 @@ namespace Stride.Core.Presentation.Windows
         }
 
         /// <summary>
-        /// Shows the given window as blocking window. A blocking window will always block the main window of the application, even if shown before it, but does not
-        /// affect modal windows. However it can still be blocked by them..
+        ///   Shows the given window as a blocking window. A blocking window will always block the main window of
+        ///   the application, even if shown before it, but does not affect modal windows. However it can still be
+        ///   blocked by them.
         /// </summary>
         /// <param name="window">The blocking window to show.</param>
         public static void ShowBlockingWindow([NotNull] Window window)
         {
-            if (window == null) throw new ArgumentNullException(nameof(window));
+            if (window is null)
+                throw new ArgumentNullException(nameof(window));
+
             CheckDispatcher();
 
             var windowInfo = new WindowInfo(window) { IsBlocking = true };
@@ -162,21 +172,24 @@ namespace Stride.Core.Presentation.Windows
         }
 
         /// <summary>
-        /// Displays the given window at the mouse cursor position when <see cref="Window.Show"/> will be called.
+        ///   Displays the given window at the mouse cursor position when <see cref="Window.Show"/> is called.
         /// </summary>
         /// <param name="window">The window to place at cursor position.</param>
         /// <remarks>This method must be called before <see cref="Window.Show"/>.</remarks>
         public static void ShowAtCursorPosition([NotNull] Window window)
         {
-            if (window == null) throw new ArgumentNullException(nameof(window));
+            if (window is null)
+                throw new ArgumentNullException(nameof(window));
+
             window.WindowStartupLocation = WindowStartupLocation.Manual;
             window.Loaded += PositionWindowToMouseCursor;
         }
 
         private static void PositionWindowToMouseCursor(object sender, RoutedEventArgs e)
         {
-            var window = (Window)sender;
-            // dispatch with one frame delay to make sure WPF layout passes are completed (if not, actual width and height might be incorrect)
+            var window = (Window) sender;
+
+            // Dispatch with one frame delay to make sure WPF layout passes are completed (if not, actual width and height might be incorrect)
             window.Dispatcher.InvokeAsync(() =>
             {
                 var area = window.GetWorkArea();
@@ -203,7 +216,7 @@ namespace Stride.Core.Presentation.Windows
         {
             if (dispatcher.Thread != Thread.CurrentThread)
             {
-                const string message = "This method must be invoked from the dispatcher thread";
+                const string message = "This method must be invoked from the dispatcher thread.";
                 Logger.Error(message);
                 throw new InvalidOperationException(message);
             }
@@ -242,15 +255,19 @@ namespace Stride.Core.Presentation.Windows
         {
             if (!HwndHelper.HasStyleFlag(hwnd, NativeHelper.WS_VISIBLE))
             {
-                Logger.Debug($"Discarding non-visible window ({hwnd})");
+                Logger.Debug($"Discarding non-visible window ({hwnd}).");
                 return;
             }
 
             Logger.Verbose($"Processing newly shown window ({hwnd})...");
             var windowInfo = Find(hwnd);
-            if (windowInfo == null)
+            if (windowInfo is null)
             {
                 windowInfo = new WindowInfo(hwnd);
+
+                // Ignore window created on separate UI threads
+                if (windowInfo.Window?.Dispatcher != dispatcher)
+                    return;
 
                 if (Debugger.IsAttached)
                 {
@@ -263,6 +280,13 @@ namespace Stride.Core.Presentation.Windows
                             return;
                         }
                     }
+                }
+
+                // Make sure first window is activated (modal windows is not auto activated after splash screen)
+                if (AllWindowsList.Count == 0)
+                {
+                    windowInfo.Window?.Activate();
+                    windowInfo.Window?.Focus();
                 }
 
                 AllWindowsList.Add(windowInfo);
@@ -309,9 +333,9 @@ namespace Stride.Core.Presentation.Windows
             Logger.Verbose($"Processing newly hidden window ({hwnd})...");
 
             var windowInfo = Find(hwnd);
-            if (windowInfo == null)
+            if (windowInfo is null)
             {
-                var message = $"This window was not handled by the {nameof(WindowManager)} ({hwnd})";
+                var message = $"This window was not handled by the {nameof(WindowManager)} ({hwnd}).";
                 Logger.Verbose(message);
                 return;
             }
@@ -330,6 +354,7 @@ namespace Stride.Core.Presentation.Windows
                 var index = BlockingWindowsList.IndexOf(windowInfo);
                 if (index < 0)
                     throw new InvalidOperationException("An unregistered blocking window has been closed.");
+
                 BlockingWindowsList.RemoveAt(index);
                 windowInfo.IsBlocking = false;
                 if (MainWindow != null && MainWindow.IsShown && BlockingWindowsList.Count == 0 && ModalWindows.Count == 0)
@@ -379,7 +404,12 @@ namespace Stride.Core.Presentation.Windows
                 return result;
 
             var window = WindowInfo.FromHwnd(hwnd);
-            return window != null ? AllWindowsList.FirstOrDefault(x => Equals(x.Window, window)) : null;
+
+            // Ignore window created on separate UI threads
+            if (window is null || window.Dispatcher != dispatcher)
+                return null;
+
+            return AllWindowsList.FirstOrDefault(x => Equals(x.Window, window));
         }
     }
 }

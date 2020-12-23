@@ -11,7 +11,14 @@ namespace Stride.Shaders.Compiler
 {
     public static class EffectCompilerFactory
     {
-        public static IEffectCompiler CreateEffectCompiler(IVirtualFileProvider fileProvider, EffectSystem effectSystem = null, string packageName = null, EffectCompilationMode effectCompilationMode = EffectCompilationMode.Local, bool recordEffectRequested = false, TaskSchedulerSelector taskSchedulerSelector = null)
+        public static IEffectCompiler CreateEffectCompiler(
+            IVirtualFileProvider fileProvider,
+            EffectSystem effectSystem = null,
+            string packageName = null,
+            EffectCompilationMode effectCompilationMode = EffectCompilationMode.Local,
+            bool recordEffectRequested = false,
+            TaskSchedulerSelector taskSchedulerSelector = null,
+            DatabaseFileProvider database = null)
         {
             EffectCompilerBase compiler = null;
 
@@ -20,12 +27,15 @@ namespace Stride.Shaders.Compiler
                 // Local allowed and available, let's use that
                 compiler = new EffectCompiler(fileProvider)
                 {
-                    SourceDirectories = { EffectCompilerBase.DefaultSourceShaderFolder },
+                    SourceDirectories = { EffectCompilerBase.DefaultSourceShaderFolder }
                 };
             }
 
+            // Select database - needed for caching
+            var selectedDatabase = database ?? fileProvider as DatabaseFileProvider;
+
             // Nothing to do remotely
-            bool needRemoteCompiler = (compiler is null && effectCompilationMode.HasFlag(EffectCompilationMode.Remote));
+            bool needRemoteCompiler = compiler is null && effectCompilationMode.HasFlag(EffectCompilationMode.Remote);
             if (needRemoteCompiler || recordEffectRequested)
             {
                 // Create the object that handles the connection
@@ -41,7 +51,7 @@ namespace Stride.Shaders.Compiler
                 if (needRemoteCompiler)
                 {
                     // Create a remote compiler
-                    compiler = new RemoteEffectCompiler(fileProvider, shaderCompilerTarget);
+                    compiler = new RemoteEffectCompiler(fileProvider, selectedDatabase, shaderCompilerTarget);
                 }
                 else
                 {
@@ -52,9 +62,9 @@ namespace Stride.Shaders.Compiler
 
             // Local not possible or allowed, and remote not allowed either => switch back to null compiler
             if (compiler is null)
-                compiler = new NullEffectCompiler(fileProvider);
+                compiler = new NullEffectCompiler(fileProvider, selectedDatabase);
 
-            return new EffectCompilerCache(compiler, taskSchedulerSelector);
+            return new EffectCompilerCache(compiler, selectedDatabase, taskSchedulerSelector);
         }
     }
 }

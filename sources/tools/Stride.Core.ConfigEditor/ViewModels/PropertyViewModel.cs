@@ -3,12 +3,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
-using System.Configuration;
-using System.Xml;
 
 using Stride.Core.Presentation.ViewModel;
 
@@ -22,12 +17,12 @@ namespace Stride.ConfigEditor.ViewModels
 
         public PropertyViewModel(SectionViewModel parent, PropertyInfo property, ConfigurationPropertyAttribute attribute)
         {
-            if (parent == null)
-                throw new ArgumentNullException("parent");
-            if (property == null)
-                throw new ArgumentNullException("property");
-            if (attribute == null)
-                throw new ArgumentNullException("attribute");
+            if (parent is null)
+                throw new ArgumentNullException(nameof(parent));
+            if (property is null)
+                throw new ArgumentNullException(nameof(property));
+            if (attribute is null)
+                throw new ArgumentNullException(nameof(attribute));
 
             Parent = parent;
 
@@ -41,22 +36,22 @@ namespace Stride.ConfigEditor.ViewModels
         private bool isUsed;
         public bool IsUsed
         {
-            get { return isUsed; }
-            set { SetValue(ref isUsed, value, "IsUsed"); }
+            get => isUsed;
+            set => SetValue(ref isUsed, value, nameof(IsUsed));
         }
 
-        public string PropertyName { get { return Property.Name; } }
-        public string PropertyTypeName { get { return Property.PropertyType.FullName; } }
+        public string PropertyName => Property.Name;
+        public string PropertyTypeName => Property.PropertyType.FullName;
 
         public object DefaultValue { get; private set; }
 
         private object value;
         public object Value
         {
-            get { return value; }
-            set { SetValue(ref this.value, value, "Value"); }
+            get => value;
+            set => SetValue(ref this.value, value, nameof(Value));
         }
 
-        public bool IsRequired { get { return Attribute.IsRequired; } }
+        public bool IsRequired => Attribute.IsRequired;
     }
 }

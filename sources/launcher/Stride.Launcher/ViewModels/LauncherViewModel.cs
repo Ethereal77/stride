@@ -36,22 +36,22 @@ namespace Stride.LauncherApp.ViewModels
         private readonly UninstallHelper uninstallHelper;
         private readonly object objectLock = new object();
         private ObservableList<NewsPageViewModel> newsPages;
-        private ReleaseNotesViewModel activeReleaseNotes;
-        private StrideVersionViewModel activeVersion;
-        private bool isOffline;
-        private bool isSynchronizing = true;
-        private string currentToolTip;
-        private List<(DateTime Time, MessageLevel Level, string Message)> logMessages = new List<(DateTime, MessageLevel, string)>();
-        private bool autoCloseLauncher = LauncherSettings.CloseLauncherAutomatically;
+        private readonly ReleaseNotesViewModel activeReleaseNotes;
+        private readonly StrideVersionViewModel activeVersion;
+        private readonly bool isOffline;
+        private readonly bool isSynchronizing = true;
+        private readonly string currentToolTip;
+        private readonly List<(DateTime Time, MessageLevel Level, string Message)> logMessages = new List<(DateTime, MessageLevel, string)>();
+        private readonly bool autoCloseLauncher = LauncherSettings.CloseLauncherAutomatically;
         private bool lastActiveVersionRestored;
-        private AnnouncementViewModel announcement;
-        private bool isVisible;
-        private bool showBetaVersions;
+        private readonly AnnouncementViewModel announcement;
+        private readonly bool isVisible;
+        private readonly bool showBetaVersions;
 
         internal LauncherViewModel(IViewModelServiceProvider serviceProvider, NugetStore store)
             : base(serviceProvider)
         {
-            if (store == null)
+            if (store is null)
                 throw new ArgumentNullException(nameof(store));
 
             DependentProperties.Add("ActiveVersion", new[] { "ActiveDocumentationPages" });
@@ -94,29 +94,65 @@ namespace Stride.LauncherApp.ViewModels
 
         public IEnumerable<StrideVersionViewModel> StrideVersions => strideVersions;
 
-        public bool ShowBetaVersions { get { return showBetaVersions; } set { SetValue(ref showBetaVersions, value); } }
+        public bool ShowBetaVersions
+        {
+            get => showBetaVersions;
+            set => SetValue(ref showBetaVersions, value);
+        }
 
         public VsixVersionViewModel VsixPackage { get; }
 
         public VsixVersionViewModel VsixPackageXenko { get; }
 
-        public StrideVersionViewModel ActiveVersion { get { return activeVersion; } set { SetValue(ref activeVersion, value); Dispatcher.InvokeAsync(() => StartStudioCommand.IsEnabled = (value != null) && value.CanStart); } }
+        public StrideVersionViewModel ActiveVersion
+        {
+            get => activeVersion;
+            set
+            {
+                SetValue(ref activeVersion, value);
+                Dispatcher.InvokeAsync(() => StartStudioCommand.IsEnabled = (value != null) && value.CanStart);
+            }
+        }
 
         public ObservableList<RecentProjectViewModel> RecentProjects { get; } = new ObservableList<RecentProjectViewModel>();
 
-        public ObservableList<NewsPageViewModel> NewsPages { get { return newsPages; } private set { SetValue(ref newsPages, value); } }
+        public ObservableList<NewsPageViewModel> NewsPages
+        {
+            get => newsPages;
+            private set => SetValue(ref newsPages, value);
+        }
 
-        public ReleaseNotesViewModel ActiveReleaseNotes { get { return activeReleaseNotes; } set { SetValue(ref activeReleaseNotes, value); } }
+        public ReleaseNotesViewModel ActiveReleaseNotes
+        {
+            get => activeReleaseNotes;
+            set => SetValue(ref activeReleaseNotes, value);
+        }
 
         public ObservableList<DocumentationPageViewModel> ActiveDocumentationPages => ActiveVersion.Yield().Concat(StrideVersions).OfType<StrideStoreVersionViewModel>().FirstOrDefault()?.DocumentationPages;
 
-        public AnnouncementViewModel Announcement { get { return announcement; } set { SetValue(ref announcement, value); } }
+        public AnnouncementViewModel Announcement
+        {
+            get => announcement;
+            set => SetValue(ref announcement, value);
+        }
 
-        public bool IsOffline { get { return isOffline; } set { SetValue(ref isOffline, value); } }
+        public bool IsOffline
+        {
+            get => isOffline;
+            set => SetValue(ref isOffline, value);
+        }
 
-        public bool IsSynchronizing { get { return isSynchronizing; } set { SetValue(ref isSynchronizing, value); } }
+        public bool IsSynchronizing
+        {
+            get => isSynchronizing;
+            set => SetValue(ref isSynchronizing, value);
+        }
 
-        public string CurrentToolTip { get { return currentToolTip; } set { SetValue(ref currentToolTip, value); } }
+        public string CurrentToolTip
+        {
+            get => currentToolTip;
+            set => SetValue(ref currentToolTip, value);
+        }
 
         public string LogMessages
         {
@@ -127,7 +163,8 @@ namespace Stride.LauncherApp.ViewModels
                     if (logMessages.Count == 0)
                         return "Empty";
 
-                    return string.Join(Environment.NewLine, logMessages.Select(msg => $"[{msg.Time:HH:mm:ss}] {msg.Level}: {msg.Message}"));
+                    return string.Join(Environment.NewLine,
+                        logMessages.Select(msg => $"[{msg.Time:HH:mm:ss}] {msg.Level}: {msg.Message}"));
                 }
             }
         }
@@ -157,7 +194,7 @@ namespace Stride.LauncherApp.ViewModels
 
         private async Task FetchOnlineData()
         {
-            // We ensure that the self-updater task starts once the app is running because it might invoke dialogs.
+            // We ensure that the self-updater task starts once the app is running because it might invoke dialogs
             IsSynchronizing = true;
             await Task.Run(async () =>
             {
@@ -227,11 +264,17 @@ namespace Stride.LauncherApp.ViewModels
             }
             try
             {
-                var localPackages = await RunLockTask(() => store.GetPackagesInstalled(store.MainPackageIds).FilterStrideMainPackages().OrderByDescending(p => p.Version).ToList());
+                var localPackages = await RunLockTask(() =>
+                    store.GetPackagesInstalled(store.MainPackageIds)
+                         .FilterStrideMainPackages()
+                         .OrderByDescending(p => p.Version)
+                         .ToList());
+
                 lock (objectLock)
                 {
                     // Retrieve all local packages
-                    var packages = localPackages.Where(p => !store.IsDevRedirectPackage(p)).GroupBy(p => $"{p.Version.Version.Major}.{p.Version.Version.Minor}", p => p);
+                    var packages = localPackages.Where(p => !store.IsDevRedirectPackage(p))
+                                                .GroupBy(p => $"{p.Version.Version.Major}.{p.Version.Version.Minor}", p => p);
                     var updatedLocalPackages = new HashSet<StrideStoreVersionViewModel>();
                     foreach (var package in packages)
                     {
@@ -249,7 +292,7 @@ namespace Stride.LauncherApp.ViewModels
                             }
                             else
                             {
-                                version = (StrideStoreVersionViewModel)strideVersions[index];
+                                version = (StrideStoreVersionViewModel) strideVersions[index];
                             }
                             version.UpdateLocalPackage(localPackage, package);
                             updatedLocalPackages.Add(version);
@@ -259,17 +302,22 @@ namespace Stride.LauncherApp.ViewModels
                     // Update versions that are not installed locally anymore
                     Dispatcher.Invoke(() =>
                     {
-                        foreach (var strideUninstalledVersion in strideVersions.OfType<StrideStoreVersionViewModel>().Where(x => !updatedLocalPackages.Contains(x)))
+                        var notInstalledVersions = strideVersions.OfType<StrideStoreVersionViewModel>()
+                                                                 .Where(x => !updatedLocalPackages.Contains(x));
+                        foreach (var strideUninstalledVersion in notInstalledVersions)
                             strideUninstalledVersion.UpdateLocalPackage(null, new NugetLocalPackage[0]);
                     });
 
-                    // Update the active version if it is now invalid.
-                    if (ActiveVersion == null || !strideVersions.Contains(ActiveVersion) || !ActiveVersion.CanDelete)
+                    // Update the active version if it is now invalid
+                    if (ActiveVersion is null ||
+                        !strideVersions.Contains(ActiveVersion) ||
+                        !ActiveVersion.CanDelete)
                         ActiveVersion = StrideVersions.FirstOrDefault(x => x.CanDelete);
 
                     if (!lastActiveVersionRestored)
                     {
-                        var restoredVersion = StrideVersions.FirstOrDefault(x => x.CanDelete && x.Name == LauncherSettings.ActiveVersion);
+                        var restoredVersion = StrideVersions.FirstOrDefault(x => x.CanDelete &&
+                                                                                 x.Name == LauncherSettings.ActiveVersion);
                         if (restoredVersion != null)
                         {
                             ActiveVersion = restoredVersion;
@@ -285,7 +333,7 @@ namespace Stride.LauncherApp.ViewModels
                     try
                     {
                         var realPath = store.GetRealPath(package);
-                        var version = new StrideDevVersionViewModel(this, store, package, realPath, true);
+                        var version = new StrideDevVersionViewModel(this, store, package, realPath, isDevRedirect: true);
                         Dispatcher.Invoke(() => strideVersions.Add(version));
                     }
                     catch (Exception ex)
@@ -312,18 +360,17 @@ namespace Stride.LauncherApp.ViewModels
                         project.CompatibleVersions.Clear();
                         foreach (var version in StrideVersions)
                         {
-                            // We suppose all dev versions are compatible with any project.
+                            // We suppose all dev versions are compatible with any project
                             if (version is StrideDevVersionViewModel)
                                 project.CompatibleVersions.Add(version);
 
-                            var storeVersion = version as StrideStoreVersionViewModel;
-                            if (storeVersion != null && storeVersion.CanDelete)
+                            if (version is StrideStoreVersionViewModel storeVersion && storeVersion.CanDelete)
                             {
                                 // Discard the version that matches the recent project version
                                 if (project.StrideVersion == new Version(storeVersion.Version.Version.Major, storeVersion.Version.Version.Minor))
                                     continue;
 
-                                // Discard the versions that are anterior to the recent project version
+                                // Discard the versions that are previous to the recent project version
                                 if (project.StrideVersion > storeVersion.Version.Version)
                                     continue;
 
@@ -380,13 +427,13 @@ namespace Stride.LauncherApp.ViewModels
                             if (index < 0)
                             {
                                 // If not, add it
-                                version = new StrideStoreVersionViewModel(this, store, null, serverPackage.Id, serverPackage.Version.Version.Major, serverPackage.Version.Version.Minor);
+                                version = new StrideStoreVersionViewModel(this, store, localPackage: null, serverPackage.Id, serverPackage.Version.Version.Major, serverPackage.Version.Version.Minor);
                                 Dispatcher.Invoke(() => strideVersions.Add(version));
                             }
                             else
                             {
                                 // If yes, update it and remove it from the list of old version
-                                version = (StrideStoreVersionViewModel)strideVersions[index];
+                                version = (StrideStoreVersionViewModel) strideVersions[index];
                             }
                             version.UpdateServerPackage(serverPackage, package);
                         }
@@ -425,7 +472,8 @@ namespace Stride.LauncherApp.ViewModels
 
             if (!HasDoneTask(prerequisitesRunTaskName))
             {
-                foreach (var version in StrideVersions.OfType<StrideStoreVersionViewModel>().Where(x => x.CanDelete))
+                foreach (var version in StrideVersions.OfType<StrideStoreVersionViewModel>()
+                                                      .Where(x => x.CanDelete))
                 {
                     await version.RunPrerequisitesInstaller();
                 }
@@ -522,7 +570,8 @@ namespace Stride.LauncherApp.ViewModels
                     metricsForEditorBefore120 = new MetricsClient(CommonApps.StrideEditorAppId, versionOverride: activeStoreVersion.Version.ToString());
                 }
 
-                Process.Start(mainExecutable, argument);
+                // We set the WorkingDirectory so that global.json is properly resolved
+                Process.Start(new ProcessStartInfo(mainExecutable, argument) { WorkingDirectory = Path.GetDirectoryName(mainExecutable) } );
             }
             catch (Exception e)
             {
@@ -563,7 +612,7 @@ namespace Stride.LauncherApp.ViewModels
         {
             try
             {
-                Process.Start(url);
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             }
             // TODO: Catch only specific exceptions?
             catch
@@ -614,7 +663,7 @@ namespace Stride.LauncherApp.ViewModels
 
         Task IPackagesLogger.LogAsync(MessageLevel level, string message)
         {
-            ((IPackagesLogger)this).Log(level, message);
+            ((IPackagesLogger) this).Log(level, message);
             return Task.CompletedTask;
         }
     }

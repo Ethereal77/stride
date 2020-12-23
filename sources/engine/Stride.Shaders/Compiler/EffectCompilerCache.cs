@@ -4,18 +4,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
 using Stride.Core.Serialization;
-using Stride.Core.Serialization.Contents;
 using Stride.Core.Storage;
 using Stride.Rendering;
 
@@ -24,17 +20,20 @@ namespace Stride.Shaders.Compiler
     public delegate TaskScheduler TaskSchedulerSelector(ShaderMixinSource mixinTree, EffectCompilerParameters? compilerParameters);
 
     /// <summary>
-    /// Checks if an effect has already been compiled in its cache before deferring to a real <see cref="IEffectCompiler"/>.
+    ///   Represents a cache of effects that have already been compiled before deferring to a real
+    ///   <see cref="IEffectCompiler"/>.
     /// </summary>
     [DataSerializerGlobal(null, typeof(KeyValuePair<HashSourceCollection, EffectBytecode>))]
     public class EffectCompilerCache : EffectCompilerChain
     {
         private static readonly Logger Log = GlobalLogger.GetLogger("EffectCompilerCache");
+
         private readonly Dictionary<ObjectId, KeyValuePair<EffectBytecode, EffectBytecodeCacheLoadSource>> bytecodes = new Dictionary<ObjectId, KeyValuePair<EffectBytecode, EffectBytecodeCacheLoadSource>>();
         private readonly HashSet<ObjectId> bytecodesByPassingStorage = new HashSet<ObjectId>();
         private const string CompiledShadersKey = "__shaders_bytecode__";
 
         private readonly Dictionary<ObjectId, Task<EffectBytecodeCompilerResult>> compilingShaders = new Dictionary<ObjectId, Task<EffectBytecodeCompilerResult>>();
+        private readonly DatabaseFileProvider database;
         private readonly TaskSchedulerSelector taskSchedulerSelector;
 
         private int effectCompileCount;
@@ -42,19 +41,20 @@ namespace Stride.Shaders.Compiler
         public bool CompileEffectAsynchronously { get; set; }
 
         /// <summary>
-        /// If we have to compile a new shader, what kind of cache are we building?
+        ///   Gets or sets the type of cache is being built for when we have to compile a new shader.
         /// </summary>
         public EffectBytecodeCacheLoadSource CurrentCache { get; set; } = EffectBytecodeCacheLoadSource.DynamicCache;
 
-        public EffectCompilerCache(EffectCompilerBase compiler, TaskSchedulerSelector taskSchedulerSelector = null) : base(compiler)
+        public EffectCompilerCache(EffectCompilerBase compiler, DatabaseFileProvider database, TaskSchedulerSelector taskSchedulerSelector = null) : base(compiler)
         {
             CompileEffectAsynchronously = true;
+            this.database = database ?? throw new ArgumentNullException(nameof(database), "Using the cache requires a database.");
             this.taskSchedulerSelector = taskSchedulerSelector;
         }
 
         public override void ResetCache(HashSet<string> modifiedShaders)
         {
-            // remove old shaders from cache
+            // Remove old shaders from cache
             lock (bytecodes)
             {
                 base.ResetCache(modifiedShaders);
@@ -64,31 +64,28 @@ namespace Stride.Shaders.Compiler
 
         public override TaskOrResult<EffectBytecodeCompilerResult> Compile(ShaderMixinSource mixin, EffectCompilerParameters effectParameters, CompilerParameters compilerParameters)
         {
-            var database = FileProvider as DatabaseFileProvider ?? throw new NotSupportedException("Using the cache requires to ContentManager.FileProvider to be valid.");
-
             var usedParameters = compilerParameters;
             var mixinObjectId = ShaderMixinObjectId.Compute(mixin, usedParameters.EffectParameters);
 
             // Final url of the compiled bytecode
-            var compiledUrl = string.Format("{0}/{1}", CompiledShadersKey, mixinObjectId);
+            var compiledUrl = $"{CompiledShadersKey}/{mixinObjectId}";
 
             var bytecode = new KeyValuePair<EffectBytecode, EffectBytecodeCacheLoadSource>(null, EffectBytecodeCacheLoadSource.JustCompiled);
             lock (bytecodes)
-            {                
+            {
                 // ------------------------------------------------------------------------------------------------------------
                 // 1) Try to load latest bytecode
                 // ------------------------------------------------------------------------------------------------------------
-                ObjectId bytecodeId;
-                if (database.ContentIndexMap.TryGetValue(compiledUrl, out bytecodeId))
+                if (database.ContentIndexMap.TryGetValue(compiledUrl, out ObjectId bytecodeId))
                 {
                     bytecode = LoadEffectBytecode(database, bytecodeId);
                 }
 
                 // On non Windows platform, we are expecting to have the bytecode stored directly
-                if (Compiler is NullEffectCompiler && bytecode.Key == null)
+                if (Compiler is NullEffectCompiler && bytecode.Key is null)
                 {
                     var stringBuilder = new StringBuilder();
-                    stringBuilder.AppendFormat("Unable to find compiled shaders [{0}] for mixin [{1}] with parameters [{2}]", compiledUrl, mixin, usedParameters.ToStringPermutationsDetailed());
+                    stringBuilder.Append($"Unable to find compiled shaders [{compiledUrl}] for mixin [{mixin}] with parameters [{usedParameters.ToStringPermutationsDetailed()}].");
                     Log.Error(stringBuilder.ToString());
                     throw new InvalidOperationException(stringBuilder.ToString());
                 }
@@ -96,7 +93,7 @@ namespace Stride.Shaders.Compiler
                 // ------------------------------------------------------------------------------------------------------------
                 // 2) Try to load from database cache
                 // ------------------------------------------------------------------------------------------------------------
-                if (bytecode.Key == null && database.ObjectDatabase.Exists(mixinObjectId))
+                if (bytecode.Key is null && database.ObjectDatabase.Exists(mixinObjectId))
                 {
                     using (var stream = database.ObjectDatabase.OpenStream(mixinObjectId))
                     {
@@ -109,7 +106,7 @@ namespace Stride.Shaders.Compiler
 
                             if (bytecode.Key != null)
                             {
-                                // If we successfully retrieved it from cache, add it to index map so that it won't be collected and available for faster lookup 
+                                // If we successfully retrieved it from cache, add it to index map so that it won't be collected and available for faster lookup
                                 database.ContentIndexMap[compiledUrl] = newBytecodeId;
                             }
                         }
@@ -127,10 +124,9 @@ namespace Stride.Shaders.Compiler
             // ------------------------------------------------------------------------------------------------------------
             lock (compilingShaders)
             {
-                Task<EffectBytecodeCompilerResult> compilingShaderTask;
-                if (compilingShaders.TryGetValue(mixinObjectId, out compilingShaderTask))
+                if (compilingShaders.TryGetValue(mixinObjectId, out Task<EffectBytecodeCompilerResult> compilingShaderTask))
                 {
-                    // Note: Task might still be compiling
+                    // NOTE: Task might still be compiling
                     return compilingShaderTask;
                 }
 
@@ -157,10 +153,10 @@ namespace Stride.Shaders.Compiler
             var log = new LoggerResult();
             var effectLog = GlobalLogger.GetLogger("EffectCompilerCache");
 
-            // Note: this compiler is expected to not be async and directly write stuff in localLogger
+            // NOTE: This compiler is expected to not be async and directly write stuff in localLogger
             var compiledShader = base.Compile(mixinTree, effectParameters, compilerParameters).WaitForResult();
             compiledShader.CompilationLog.CopyTo(log);
-            
+
             // If there are any errors, return immediately
             if (log.HasErrors)
             {
@@ -183,7 +179,7 @@ namespace Stride.Shaders.Compiler
                 // TODO: Check if we really need to write the bytecode everytime even if id is not changed
                 var memoryStream = new MemoryStream();
                 compiledShader.Bytecode.WriteTo(memoryStream);
-                
+
                 // Write current cache at the end (not part of the pure bytecode, but we use this as meta info)
                 var writer = new BinarySerializationWriter(memoryStream);
                 writer.Write(CurrentCache);
@@ -219,11 +215,10 @@ namespace Stride.Shaders.Compiler
 
         private KeyValuePair<EffectBytecode, EffectBytecodeCacheLoadSource> LoadEffectBytecode(DatabaseFileProvider database, ObjectId bytecodeId)
         {
-            KeyValuePair<EffectBytecode, EffectBytecodeCacheLoadSource> bytecodePair;
-
-            if (!bytecodes.TryGetValue(bytecodeId, out bytecodePair))
+            if (!bytecodes.TryGetValue(bytecodeId, out KeyValuePair<EffectBytecode, EffectBytecodeCacheLoadSource> bytecodePair))
             {
-                if (!bytecodesByPassingStorage.Contains(bytecodeId) && database.ObjectDatabase.Exists(bytecodeId))
+                if (!bytecodesByPassingStorage.Contains(bytecodeId) &&
+                    database.ObjectDatabase.Exists(bytecodeId))
                 {
                     using (var stream = database.ObjectDatabase.OpenStream(bytecodeId))
                     {
@@ -234,7 +229,7 @@ namespace Stride.Shaders.Compiler
                         if (stream.Position < stream.Length)
                         {
                             var binaryReader = new BinarySerializationReader(stream);
-                            cacheSource = (EffectBytecodeCacheLoadSource)binaryReader.ReadInt32();
+                            cacheSource = (EffectBytecodeCacheLoadSource) binaryReader.ReadInt32();
                         }
                         bytecodePair = new KeyValuePair<EffectBytecode, EffectBytecodeCacheLoadSource>(bytecode, cacheSource);
                     }
@@ -257,7 +252,7 @@ namespace Stride.Shaders.Compiler
 
         private void RemoveObsoleteStoredResults(HashSet<string> modifiedShaders)
         {
-            // TODO: avoid List<ObjectId> creation?
+            // TODO: Avoid List<ObjectId> creation?
             var keysToRemove = new List<ObjectId>();
             foreach (var bytecodePair in bytecodes)
             {
@@ -277,7 +272,8 @@ namespace Stride.Shaders.Compiler
             // Don't use linq
             foreach (KeyValuePair<string, ObjectId> x in bytecode.HashSources)
             {
-                if (modifiedShaders.Contains(x.Key)) return true;
+                if (modifiedShaders.Contains(x.Key))
+                    return true;
             }
             return false;
         }

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +13,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Windows.Input;
-using System.Windows;
 
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.ViewModel;
@@ -50,8 +48,9 @@ namespace Stride.ConfigEditor.ViewModels
         {
             get
             {
-                if (optionsCommand == null)
+                if (optionsCommand is null)
                     optionsCommand = new AnonymousCommand(_ => ShowOptionsWindow());
+
                 return optionsCommand;
             }
         }
@@ -60,7 +59,7 @@ namespace Stride.ConfigEditor.ViewModels
         {
             var optionsWindow = new OptionsWindow
             {
-                DataContext = optionsViewModel,
+                DataContext = optionsViewModel
             };
 
             optionsViewModel.SetOptionsWindow(optionsWindow);
@@ -72,8 +71,9 @@ namespace Stride.ConfigEditor.ViewModels
         {
             get
             {
-                if (reloadCommand == null)
+                if (reloadCommand is null)
                     reloadCommand = new AnonymousCommand(_ => LoadAssemblies());
+
                 return reloadCommand;
             }
         }
@@ -91,7 +91,7 @@ namespace Stride.ConfigEditor.ViewModels
 
         public async void LoadAssemblies()
         {
-            if (Options == null || Options.StridePath == null)
+            if (Options is null || Options.StridePath is null)
             {
                 if (ShowOptionsWindow() == false)
                     return;
@@ -114,21 +114,20 @@ namespace Stride.ConfigEditor.ViewModels
 
             var binPaths = new[]
             {
-                string.Format(@"{0}\Debug", Options.StridePath),
-                string.Format(@"{0}\scripts", Options.StridePath),
+                $@"{Options.StridePath}\Debug",
+                $@"{Options.StridePath}\scripts",
             };
 
             foreach (var path in binPaths)
             {
                 try
                 {
-                    var files = await Task.Factory.StartNew(p => Directory.GetFiles((string)p, "*.dll", SearchOption.AllDirectories)
-                        .Concat(Directory.GetFiles((string)p, "*.exe", SearchOption.AllDirectories)), path);
+                    var files = await Task.Factory.StartNew(p => Directory.GetFiles((string)p, "*.dll", SearchOption.AllDirectories).Concat(
+                                                                 Directory.GetFiles((string)p, "*.exe", SearchOption.AllDirectories)),
+                                                                 path);
 
                     foreach (var file in files)
-                    {
                         await LoadAssembly(file);
-                    }
                 }
                 catch { }
             }
@@ -144,13 +143,13 @@ namespace Stride.ConfigEditor.ViewModels
         private void ApplyConfig()
         {
             var configSectionsNodes = xmlDocument.SelectNodes("configuration/configSections");
-            if (configSectionsNodes == null)
+            if (configSectionsNodes is null)
                 return;
 
             foreach (XmlNode configSectionsNode in configSectionsNodes)
             {
                 var tempNodes = configSectionsNode.SelectNodes("section");
-                if (tempNodes == null)
+                if (tempNodes is null)
                     continue;
 
                 var sections = (from node in tempNodes.OfType<XmlNode>()
@@ -170,18 +169,18 @@ namespace Stride.ConfigEditor.ViewModels
                 foreach (var sectionViewModel in workingSections)
                 {
                     var sectionFound = sections.FirstOrDefault(t => t.AssemblyQualifiedName == sectionViewModel.Section.AssemblyQualifiedName);
-                    if (sectionFound == null)
+                    if (sectionFound is null)
                         continue;
 
                     var step1 = sectionFound.Name;
                     sectionViewModel.Name = step1;
 
                     var sectionNode = xmlDocument.SelectSingleNode(string.Format("configuration/{0}", sectionFound.Name));
-                    if (sectionNode == null)
+                    if (sectionNode is null)
                         continue;
 
                     var sectionNodeAttributes = sectionNode.Attributes;
-                    if (sectionNodeAttributes == null)
+                    if (sectionNodeAttributes is null)
                         continue;
 
                     var usedAttributes = sectionNodeAttributes.OfType<XmlAttribute>().ToArray();
@@ -227,7 +226,7 @@ namespace Stride.ConfigEditor.ViewModels
                 return;
             }
 
-            if (assembly == null)
+            if (assembly is null)
                 return;
 
             IEnumerable<Type> configurationSections = null;
@@ -289,9 +288,9 @@ namespace Stride.ConfigEditor.ViewModels
 
         private void GenerateXmlText()
         {
-            // cleanup
+            // Cleanup
             var confNode = xmlDocument.SelectSingleNode("configuration");
-            if (confNode == null)
+            if (confNode is null)
                 return;
 
             var sectionsNodes = confNode.SelectNodes("configSections");
@@ -310,12 +309,11 @@ namespace Stride.ConfigEditor.ViewModels
                 sectionsNode.ParentNode.RemoveChild(sectionsNode);
             }
 
-            // re-add
+            // Re-add
             var configSectionsNode = xmlDocument.CreateElement("configSections");
 
-            // WARNING!!!
-            // If the 'configSections' markup is not the first child of the 'configuration' parent markup
-            // then the fucking System.Configuration.Configuration will screw up the config file.
+            // WARNING: If the 'configSections' element is not the first child of the 'configuration' parent
+            //          then System.Configuration.Configuration will screw up the config file.
             confNode.PrependChild(configSectionsNode);
 
             foreach (var svm in workingSections)
@@ -329,9 +327,7 @@ namespace Stride.ConfigEditor.ViewModels
                     foreach (var child in toBeRemoved)
                         confNode.RemoveChild(child);
 
-                    XmlNode sectionNode;
-                    XmlNode definitionNode;
-                    if (svm.CreateXmlNodes(xmlDocument, out sectionNode, out definitionNode))
+                    if (svm.CreateXmlNodes(xmlDocument, out XmlNode sectionNode, out XmlNode definitionNode))
                     {
                         configSectionsNode.AppendChild(sectionNode);
                         confNode.AppendChild(definitionNode);
@@ -340,8 +336,7 @@ namespace Stride.ConfigEditor.ViewModels
                 catch { }
             }
 
-            // dump as text
-
+            // Dump as text
             var ms = new MemoryStream();
             xmlDocument.Save(ms);
 
@@ -354,7 +349,7 @@ namespace Stride.ConfigEditor.ViewModels
         {
             get
             {
-                if (saveCommand == null)
+                if (saveCommand is null)
                     saveCommand = new AnonymousCommand(_ => Save());
                 return saveCommand;
             }
@@ -365,18 +360,18 @@ namespace Stride.ConfigEditor.ViewModels
             xmlDocument.Save(GetStrideConfigurationFilename());
         }
 
-        private byte[] xmlData;
+        private readonly byte[] xmlData;
         public byte[] XmlData
         {
-            get { return xmlData; }
-            set { SetValue(ref xmlData, value, "XmlData"); }
+            get => xmlData;
+            set => SetValue(ref xmlData, value, nameof(XmlData));
         }
 
-        private string xmlText;
+        private readonly string xmlText;
         public string XmlText
         {
-            get { return xmlText; }
-            set { SetValue(ref xmlText, value, "XmlText"); }
+            get => xmlText;
+            set => SetValue(ref xmlText, value, nameof(XmlText));
         }
     }
 }

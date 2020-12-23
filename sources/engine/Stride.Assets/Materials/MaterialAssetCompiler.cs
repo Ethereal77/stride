@@ -2,15 +2,14 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Stride.Core.IO;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Compiler;
 using Stride.Core.BuildEngine;
-using Stride.Core.IO;
 using Stride.Core.Serialization;
 using Stride.Core.Serialization.Contents;
 using Stride.Assets.Textures;
@@ -31,14 +30,15 @@ namespace Stride.Assets.Materials
 
         public override IEnumerable<ObjectUrl> GetInputFiles(AssetItem assetItem)
         {
-            // Note: might not be needed in all cases, but let's not bother for now (they are only 9kb)
+            // NOTE: Might not be needed in all cases, but let's not bother for now (they are only 9 kB)
             yield return new ObjectUrl(UrlType.Content, "StrideEnvironmentLightingDFGLUT16");
             yield return new ObjectUrl(UrlType.Content, "StrideEnvironmentLightingDFGLUT8");
         }
 
         protected override void Prepare(AssetCompilerContext context, AssetItem assetItem, string targetUrlInStorage, AssetCompilerResult result)
         {
-            var asset = (MaterialAsset)assetItem.Asset;
+            var asset = (MaterialAsset) assetItem.Asset;
+
             result.BuildSteps = new AssetBuildStep(assetItem);
             result.BuildSteps.Add(new MaterialCompileCommand(targetUrlInStorage, assetItem, asset, context));
         }
@@ -55,7 +55,7 @@ namespace Stride.Assets.Materials
             public MaterialCompileCommand(string url, AssetItem assetItem, MaterialAsset value, AssetCompilerContext context)
                 : base(url, value, assetItem.Package)
             {
-                Version = 5;
+                Version = 6;
                 this.assetItem = assetItem;
                 colorSpace = context.GetColorSpace();
                 assetUrl = new UFile(url);
@@ -111,7 +111,7 @@ namespace Stride.Assets.Materials
                 //    }
                 //}
 
-                // Check with Ben why DoCommandOverride is called without going through the constructor?
+                // TODO: Check with Ben why DoCommandOverride is called without going through the constructor?
                 var assetManager = new ContentManager(MicrothreadLocalDatabases.ProviderService);
                 var materialContext = new MaterialGeneratorContext
                 {
@@ -140,10 +140,8 @@ namespace Stride.Assets.Materials
                 return Task.FromResult(ResultStatus.Successful);
             }
 
-            public override string ToString()
-            {
-                return (assetUrl ?? "[File]") + " (Material) > " + (assetUrl ?? "[Location]");
-            }
+            public override string ToString() =>
+                (assetUrl ?? "[File]") + " (Material) > " + (assetUrl ?? "[Location]");
         }
     }
 }

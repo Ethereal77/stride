@@ -5,62 +5,60 @@
 using System;
 using System.Collections.Generic;
 
-using Stride.Core.Collections;
-
 namespace Stride.Input
 {
     /// <summary>
-    /// This interface is used for interacting with game controller devices.
+    ///   Defines the interface for interacting with game controller devices.
     /// </summary>
     public interface IGameControllerDevice : IInputDevice
     {
         /// <summary>
-        /// Product Id of the device
+        ///   Gets the product Id of the device.
         /// </summary>
         Guid ProductId { get; }
-        
+
         /// <summary>
-        /// Information about the buttons on this game controller
+        ///   Gets information about the buttons on this game controller.
         /// </summary>
         IReadOnlyList<GameControllerButtonInfo> ButtonInfos { get; }
 
         /// <summary>
-        /// Information about the axes on this game controller
+        ///   Gets information about the axis on this game controller.
         /// </summary>
         IReadOnlyList<GameControllerAxisInfo> AxisInfos { get; }
 
         /// <summary>
-        /// Information about the direction controllers on this game controller 
+        ///   Gets information about the directions on this game controller.
         /// </summary>
         IReadOnlyList<GameControllerDirectionInfo> DirectionInfos { get; }
-        
-        /// <summary>
-        /// The buttons that have been pressed since the last frame
-        /// </summary>
-        IReadOnlySet<int> PressedButtons { get; }
 
         /// <summary>
-        /// The buttons that have been released since the last frame
+        ///   Gets the buttons that have been pressed since the last frame.
         /// </summary>
-        IReadOnlySet<int> ReleasedButtons { get; }
+        Core.Collections.IReadOnlySet<int> PressedButtons { get; }
 
         /// <summary>
-        /// The buttons that are down
+        ///   Gets the buttons that have been released since the last frame.
         /// </summary>
-        IReadOnlySet<int> DownButtons { get; }
-        
+        Core.Collections.IReadOnlySet<int> ReleasedButtons { get; }
+
         /// <summary>
-        /// Retrieves the state of a single axis
+        ///   Gets the buttons that are down.
         /// </summary>
-        /// <param name="index">The axis' index, as exposed in <see cref="AxisInfos"/></param>
-        /// <returns>The value read directly from the axis</returns>
+        Core.Collections.IReadOnlySet<int> DownButtons { get; }
+
+        /// <summary>
+        ///   Retrieves the state of a single axis.
+        /// </summary>
+        /// <param name="index">The axis' index, as exposed in <see cref="AxisInfos"/>.</param>
+        /// <returns>The value read directly from the axis.</returns>
         float GetAxis(int index);
 
         /// <summary>
-        /// Retrieves the state of a single point of direction controller
+        ///   Retrieves the state of a single direction.
         /// </summary>
-        /// <param name="index">The direction controller's index, as exposed in <see cref="DirectionInfos"/></param>
-        /// <returns>The current state of the direction controller</returns>
+        /// <param name="index">The direction index, as exposed in <see cref="DirectionInfos"/>.</param>
+        /// <returns>The current state of the direction.</returns>
         Direction GetDirection(int index);
     }
 }

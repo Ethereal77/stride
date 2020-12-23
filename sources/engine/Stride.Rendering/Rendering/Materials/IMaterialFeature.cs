@@ -5,12 +5,12 @@
 namespace Stride.Rendering.Materials
 {
     /// <summary>
-    /// Base interface for a material feature.
+    ///   Defines the interface for a material feature.
     /// </summary>
     public interface IMaterialFeature : IMaterialShaderGenerator
     {
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="IMaterialFeature"/> is enabled.
+        ///   Gets or sets a value indicating whether this <see cref="IMaterialFeature"/> is enabled.
         /// </summary>
         /// <value><c>true</c> if enabled; otherwise, <c>false</c>.</value>
         bool Enabled { get; set; }

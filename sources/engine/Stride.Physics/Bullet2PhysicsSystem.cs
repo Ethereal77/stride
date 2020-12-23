@@ -31,9 +31,11 @@ namespace Stride.Physics
         public Bullet2PhysicsSystem(IServiceRegistry registry)
             : base(registry)
         {
-            UpdateOrder = -1000; //make sure physics runs before everything
+            // Make sure physics runs before everything
+            UpdateOrder = -1000;
 
-            Enabled = true; //enabled by default
+            // Enabled by default
+            Enabled = true;
         }
 
         private PhysicsSettings physicsConfiguration;
@@ -59,7 +61,12 @@ namespace Stride.Physics
 
         public Simulation Create(PhysicsProcessor sceneProcessor, PhysicsEngineFlags flags = PhysicsEngineFlags.None)
         {
-            var scene = new PhysicsScene { Processor = sceneProcessor, Simulation = new Simulation(sceneProcessor, physicsConfiguration) };
+            var scene = new PhysicsScene
+            {
+                Processor = sceneProcessor,
+                Simulation = new Simulation(sceneProcessor, physicsConfiguration)
+            };
+
             lock (this)
             {
                 scenes.Add(scene);
@@ -72,7 +79,9 @@ namespace Stride.Physics
             lock (this)
             {
                 var scene = scenes.SingleOrDefault(x => x.Processor == processor);
-                if (scene == null) return;
+                if (scene is null)
+                    return;
+
                 scenes.Remove(scene);
                 scene.Simulation.Dispose();
             }
@@ -94,7 +103,7 @@ namespace Stride.Physics
                     physicsScene.Processor.UpdateBones();
 
                     // Simulate physics
-                    physicsScene.Simulation.Simulate((float) gameTime.Elapsed.TotalSeconds);
+                    physicsScene.Simulation.Simulate((float)gameTime.WarpElapsed.TotalSeconds);
 
                     // Update character bound Entity's Transforms from physics engine simulation
                     physicsScene.Processor.UpdateCharacters();
