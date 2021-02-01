@@ -4,8 +4,8 @@
 
 #pragma warning disable 436 // The type 'type' in 'assembly' conflicts with the imported type 'type2' in 'assembly' (due to StrideVersion being duplicated)
 
-using System;
 using System.Runtime.InteropServices;
+
 using Stride.Core.Annotations;
 using Stride.Metrics;
 
@@ -14,7 +14,7 @@ namespace Stride.GameStudio
     public static class StrideGameStudio
     {
         [NotNull]
-        public static string CopyrightText1 => "© 2018-2020 Stride contributors";
+        public static string CopyrightText1 => "© 2018-2021 Stride contributors";
 
         [NotNull]
         public static string CopyrightText2 => "© 2011-2018 Silicon Studio Corp.";
@@ -31,7 +31,7 @@ namespace Stride.GameStudio
         public static string EditorVersionMajor => new System.Version(StrideVersion.PublicVersion).ToString(2);
 
         [NotNull]
-        public static string AnswersUrl => "http://answers.stride3d.net/";
+        public static string AnswersUrl => "https://gamedev.stackexchange.com/tags/stride"; // #706
 
         [NotNull]
         public static string DocumentationUrl => $"https://doc.stride3d.net/{EditorVersionMajor}/";

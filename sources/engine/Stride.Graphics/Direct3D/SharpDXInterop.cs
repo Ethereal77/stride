@@ -17,122 +17,106 @@ namespace Stride.Graphics
     public static class SharpDXInterop
     {
         /// <summary>
-        /// Gets the native device (DX11/DX12)
+        ///   Gets the native device (DX11/DX12).
         /// </summary>
-        /// <param name="device">The Stride GraphicsDevice</param>
-        /// <returns></returns>
-        public static object GetNativeDevice(GraphicsDevice device)
-        {
-            return GetNativeDeviceImpl(device);
-        }
+        /// <param name="device">The Stride <see cref="GraphicsDevice"/> instance.</param>
+        /// <returns>An object representing the native device object.</returns>
+        public static object GetNativeDevice(GraphicsDevice device) => GetNativeDeviceImpl(device);
 
         /// <summary>
-        /// Gets the native device context (DX11)
+        ///   Gets the native device context (DX11).
         /// </summary>
-        /// <param name="device">The Stride GraphicsDevice</param>
-        /// <returns></returns>
-        public static object GetNativeDeviceContext(GraphicsDevice device)
-        {
-            return GetNativeDeviceContextImpl(device);
-        }
+        /// <param name="device">The Stride <see cref="GraphicsDevice"/> instance.</param>
+        /// <returns>An object representing the native device context object.</returns>
+        public static object GetNativeDeviceContext(GraphicsDevice device) => GetNativeDeviceContextImpl(device);
 
         /// <summary>
-        /// Gets the native command queue (DX12 only)
+        ///   Gets the native command queue (DX12 only).
         /// </summary>
-        /// <param name="device">The Stride GraphicsDevice</param>
-        /// <returns></returns>
-        public static object GetNativeCommandQueue(GraphicsDevice device)
-        {
-            return GetNativeCommandQueueImpl(device);
-        }
+        /// <param name="device">The Stride <see cref="GraphicsDevice"/> instance.</param>
+        /// <returns>An object representing the native command queue object.</returns>
+        public static object GetNativeCommandQueue(GraphicsDevice device) => GetNativeCommandQueueImpl(device);
 
         /// <summary>
-        /// Gets the DX11 native resource handle
+        ///   Gets the native resource handle of a DirectX 11 resource.
         /// </summary>
-        /// <param name="resource">The Stride GraphicsResourceBase</param>
-        /// <returns></returns>
-        public static object GetNativeResource(GraphicsResource resource)
-        {
-            return GetNativeResourceImpl(resource);
-        }
-
-        public static object GetNativeShaderResourceView(GraphicsResource resource)
-        {
-            return GetNativeShaderResourceViewImpl(resource);
-        }
-
-        public static object GetNativeRenderTargetView(Texture texture)
-        {
-            return GetNativeRenderTargetViewImpl(texture);
-        }
+        /// <param name="resource">The Stride <see cref="GraphicsResource"/> instance.</param>
+        /// <returns>An object representing the native graphics resource object.</returns>
+        public static object GetNativeResource(GraphicsResource resource) => GetNativeResourceImpl(resource);
 
         /// <summary>
-        /// Creates a Texture from a DirectX11 native texture
-        /// This method internally will call AddReference on the dxTexture2D texture.
+        ///   Gets the native shader resource view of a resource.
         /// </summary>
-        /// <param name="device">The GraphicsDevice in use</param>
+        /// <param name="resource">The Stride <see cref="GraphicsResource"/> instance.</param>
+        /// <returns>An object representing the native shader resource view object.</returns>
+        public static object GetNativeShaderResourceView(GraphicsResource resource) => GetNativeShaderResourceViewImpl(resource);
+
+        /// <summary>
+        ///   Gets the native render target view of a texture.
+        /// </summary>
+        /// <param name="texture">The Stride <see cref="Texture"/> instance.</param>
+        /// <returns>An object representing the native render target view object.</returns>
+        public static object GetNativeRenderTargetView(Texture texture) => GetNativeRenderTargetViewImpl(texture);
+
+        /// <summary>
+        ///   Creates a texture from a DirectX 11 native texture.
+        /// </summary>
+        /// <param name="device">The Stride <see cref="GraphicsDevice"/> instance.</param>
         /// <param name="dxTexture2D">The DX11 texture</param>
-        /// <param name="takeOwnership">If false AddRef will be called on the texture, if true will not, effectively taking ownership</param>
-        /// <returns></returns>
-        public static Texture CreateTextureFromNative(GraphicsDevice device, object dxTexture2D, bool takeOwnership)
+        /// <param name="takeOwnership">
+        ///   A value indicating whether to take ownership of the native texture.
+        ///   If <c>false</c>, <see cref="IUnknown.AddReference"/> will be called on the texture.
+        /// </param>
+        /// <param name="isSRgb">A value indicating whether to set the format to sRGB.</param>
+        /// <returns>A <see cref="Texture"/> encapsulating the native DirectX 11 texture.</returns>
+        /// <remarks>
+        ///   This method internally will call <see cref="IUnknown.AddReference"/> on the <paramref name="dxTexture2D"/> texture.
+        /// </remarks>
+        public static Texture CreateTextureFromNative(GraphicsDevice device, object dxTexture2D, bool takeOwnership, bool isSRgb = false)
         {
 #if STRIDE_GRAPHICS_API_DIRECT3D11
-            return CreateTextureFromNativeImpl(device, (Texture2D)dxTexture2D, takeOwnership);
+            return CreateTextureFromNativeImpl(device, (Texture2D) dxTexture2D, takeOwnership, isSRgb);
 #elif STRIDE_GRAPHICS_API_DIRECT3D12
-            return CreateTextureFromNativeImpl(device, (Resource)dxTexture2D, takeOwnership);
+            return CreateTextureFromNativeImpl(device, (Resource) dxTexture2D, takeOwnership, isSRgb);
 #endif
         }
 
 #if STRIDE_GRAPHICS_API_DIRECT3D11
-        /// <summary>
-        /// Gets the DX11 native device
-        /// </summary>
-        /// <param name="device">The Stride GraphicsDevice</param>
-        /// <returns></returns>
-        private static Device GetNativeDeviceImpl(GraphicsDevice device)
-        {
-            return device.NativeDevice;
-        }
 
-        private static DeviceContext GetNativeDeviceContextImpl(GraphicsDevice device)
-        {
-            return device.NativeDeviceContext;
-        }
+        //
+        // Gets the DirectX 11 native device.
+        //
+        private static Device GetNativeDeviceImpl(GraphicsDevice device) => device.NativeDevice;
 
-        private static object GetNativeCommandQueueImpl(GraphicsDevice device)
-        {
-            return null;
-        }
+        //
+        // Gets the DirectX 11 native device context.
+        //
+        private static DeviceContext GetNativeDeviceContextImpl(GraphicsDevice device) => device.NativeDeviceContext;
 
-        /// <summary>
-        /// Gets the DX11 native resource handle
-        /// </summary>
-        /// <param name="resource">The Stride GraphicsResourceBase</param>
-        /// <returns></returns>
-        private static Resource GetNativeResourceImpl(GraphicsResource resource)
-        {
-            return resource.NativeResource;
-        }
+        //
+        // Returns null as DirectX 11 doesn't have the concept of a native command queue.
+        //
+        private static object GetNativeCommandQueueImpl(GraphicsDevice _) => null;
 
-        private static ShaderResourceView GetNativeShaderResourceViewImpl(GraphicsResource resource)
-        {
-            return resource.NativeShaderResourceView;
-        }
+        //
+        // Gets the DirectX 11 native resource handle.
+        //
+        private static Resource GetNativeResourceImpl(GraphicsResource resource) => resource.NativeResource;
 
-        private static RenderTargetView GetNativeRenderTargetViewImpl(Texture texture)
-        {
-            return texture.NativeRenderTargetView;
-        }
+        //
+        // Gets the DirectX 11 native shader resource view from a resource.
+        //
+        private static ShaderResourceView GetNativeShaderResourceViewImpl(GraphicsResource resource) => resource.NativeShaderResourceView;
 
-        /// <summary>
-        /// Creates a Texture from a DirectX11 native texture
-        /// This method internally will call AddReference on the dxTexture2D texture.
-        /// </summary>
-        /// <param name="device">The GraphicsDevice in use</param>
-        /// <param name="dxTexture2D">The DX11 texture</param>
-        /// <param name="takeOwnership">If false AddRef will be called on the texture, if true will not, effectively taking ownership</param>
-        /// <returns></returns>
-        private static Texture CreateTextureFromNativeImpl(GraphicsDevice device, Texture2D dxTexture2D, bool takeOwnership)
+        //
+        // Gets the DirectX 11 native render target view from a texture.
+        //
+        private static RenderTargetView GetNativeRenderTargetViewImpl(Texture texture) => texture.NativeRenderTargetView;
+
+        //
+        // Creates a Texture instance encapsulating a DirectX 11 texture.
+        //
+        private static Texture CreateTextureFromNativeImpl(GraphicsDevice device, Texture2D dxTexture2D, bool takeOwnership, bool isSRgb = false)
         {
             var tex = new Texture(device);
 
@@ -142,61 +126,47 @@ namespace Stride.Graphics
                 unknown.AddReference();
             }
 
-            tex.InitializeFromImpl(dxTexture2D, false);
+            tex.InitializeFromImpl(dxTexture2D, isSRgb);
 
             return tex;
         }
 
 #elif STRIDE_GRAPHICS_API_DIRECT3D12
-        /// <summary>
-        /// Gets the DX11 native device
-        /// </summary>
-        /// <param name="device">The Stride GraphicsDevice</param>
-        /// <returns></returns>
-        private static Device GetNativeDeviceImpl(GraphicsDevice device)
-        {
-            return device.NativeDevice;
-        }
 
-        private static object GetNativeDeviceContextImpl(GraphicsDevice device)
-        {
-            return null;
-        }
+        //
+        // Gets the DirectX 12 native device.
+        //
+        private static Device GetNativeDeviceImpl(GraphicsDevice device) => device.NativeDevice;
 
-        private static CommandQueue GetNativeCommandQueueImpl(GraphicsDevice device)
-        {
-            return device.NativeCommandQueue;
-        }
+        //
+        // Returns null as DirectX 12 doesn't have the concept of a native device context.
+        //
+        private static object GetNativeDeviceContextImpl(GraphicsDevice device) => null;
 
-        /// <summary>
-        /// Gets the DX11 native resource handle
-        /// </summary>
-        /// <param name="resource">The Stride GraphicsResourceBase</param>
-        /// <returns></returns>
-        private static Resource GetNativeResourceImpl(GraphicsResource resource)
-        {
-            return resource.NativeResource;
-        }
+        //
+        // Gets the DirectX 12 native command queue.
+        //
+        private static CommandQueue GetNativeCommandQueueImpl(GraphicsDevice device) => device.NativeCommandQueue;
 
-        private static CpuDescriptorHandle GetNativeShaderResourceViewImpl(GraphicsResource resource)
-        {
-            return resource.NativeShaderResourceView;
-        }
+        //
+        // Gets the DirectX 12 native resource handle.
+        //
+        private static Resource GetNativeResourceImpl(GraphicsResource resource) => resource.NativeResource;
 
-        private static CpuDescriptorHandle GetNativeRenderTargetViewImpl(Texture texture)
-        {
-            return texture.NativeRenderTargetView;
-        }
+        //
+        // Gets the DirectX 12 native shader resource view from a resource.
+        //
+        private static CpuDescriptorHandle GetNativeShaderResourceViewImpl(GraphicsResource resource) => resource.NativeShaderResourceView;
 
-        /// <summary>
-        /// Creates a Texture from a DirectX11 native texture
-        /// This method internally will call AddReference on the dxTexture2D texture.
-        /// </summary>
-        /// <param name="device">The GraphicsDevice in use</param>
-        /// <param name="dxTexture2D">The DX11 texture</param>
-        /// <param name="takeOwnership">If false AddRef will be called on the texture, if true will not, effectively taking ownership</param>
-        /// <returns></returns>
-        private static Texture CreateTextureFromNativeImpl(GraphicsDevice device, Resource dxTexture2D, bool takeOwnership)
+        //
+        // Gets the DirectX 12 native render target view from a texture.
+        //
+        private static CpuDescriptorHandle GetNativeRenderTargetViewImpl(Texture texture) => texture.NativeRenderTargetView;
+
+        //
+        // Creates a Texture instance encapsulating a DirectX 12 texture.
+        //
+        private static Texture CreateTextureFromNativeImpl(GraphicsDevice device, Resource dxTexture2D, bool takeOwnership, bool isSRgb = false)
         {
             var tex = new Texture(device);
 
@@ -206,11 +176,12 @@ namespace Stride.Graphics
                 unknown.AddReference();
             }
 
-            tex.InitializeFromImpl(dxTexture2D, false);
+            tex.InitializeFromImpl(dxTexture2D, isSRgb);
 
             return tex;
         }
 #endif
+
     }
 }
 

@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,10 +21,10 @@ using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
-using Stride.Metrics;
 using Stride.Core.VisualStudio;
-using Stride.LauncherApp.Resources;
+using Stride.Metrics;
 using Stride.LauncherApp.Services;
+using Stride.LauncherApp.Resources;
 
 namespace Stride.LauncherApp.ViewModels
 {
@@ -36,17 +38,17 @@ namespace Stride.LauncherApp.ViewModels
         private readonly UninstallHelper uninstallHelper;
         private readonly object objectLock = new object();
         private ObservableList<NewsPageViewModel> newsPages;
-        private readonly ReleaseNotesViewModel activeReleaseNotes;
-        private readonly StrideVersionViewModel activeVersion;
-        private readonly bool isOffline;
-        private readonly bool isSynchronizing = true;
-        private readonly string currentToolTip;
+        private ReleaseNotesViewModel activeReleaseNotes;
+        private StrideVersionViewModel activeVersion;
+        private bool isOffline;
+        private bool isSynchronizing = true;
+        private string currentToolTip;
         private readonly List<(DateTime Time, MessageLevel Level, string Message)> logMessages = new List<(DateTime, MessageLevel, string)>();
-        private readonly bool autoCloseLauncher = LauncherSettings.CloseLauncherAutomatically;
+        private bool autoCloseLauncher = LauncherSettings.CloseLauncherAutomatically;
         private bool lastActiveVersionRestored;
-        private readonly AnnouncementViewModel announcement;
-        private readonly bool isVisible;
-        private readonly bool showBetaVersions;
+        private AnnouncementViewModel announcement;
+        private bool isVisible;
+        private bool showBetaVersions;
 
         internal LauncherViewModel(IViewModelServiceProvider serviceProvider, NugetStore store)
             : base(serviceProvider)
@@ -255,6 +257,52 @@ namespace Stride.LauncherApp.ViewModels
             Dispatcher.Invoke(() => IsSynchronizing = false);
         }
 
+        private class ReferencedPackageEqualityComparer : IEqualityComparer<NugetLocalPackage>
+        {
+            public static readonly ReferencedPackageEqualityComparer Instance = new ReferencedPackageEqualityComparer();
+
+            private ReferencedPackageEqualityComparer() { }
+
+            public bool Equals(NugetLocalPackage x, NugetLocalPackage y)
+                => (ReferenceEquals(x, y)) || ((!ReferenceEquals(x, null)) && (!ReferenceEquals(y, null)) && (x.Id == y.Id) && (x.Version.ToString() == y.Version.ToString()));
+
+            public int GetHashCode([DisallowNull] NugetLocalPackage obj)
+                => (obj.Id.GetHashCode() ^ obj.Version.ToString().GetHashCode());
+        }
+
+        private HashSet<NugetLocalPackage> referencedPackages = new HashSet<NugetLocalPackage>(ReferencedPackageEqualityComparer.Instance);
+
+        private async Task RemoveUnusedPackages(IEnumerable<NugetLocalPackage> mainPackages)
+        {
+            var previousReferencedPackages = referencedPackages;
+            referencedPackages = new HashSet<NugetLocalPackage>(ReferencedPackageEqualityComparer.Instance);
+            foreach (var mainPackage in mainPackages)
+            {
+                await FindReferencedPackages(mainPackage);
+            }
+            foreach (var package in previousReferencedPackages.Where(package => !referencedPackages.Contains(package)))
+            {
+                await store.UninstallPackage(package, null);
+            }
+        }
+
+        private async Task FindReferencedPackages(NugetLocalPackage package)
+        {
+            foreach (var dependency in package.Dependencies)
+            {
+                string prefix = dependency.Item1.Split('.', 2)[0];
+                if ((prefix == "Stride") || (prefix == "Xenko"))
+                {
+                    NugetLocalPackage dependencyPackage = store.FindLocalPackage(dependency.Item1, dependency.Item2);
+                    if ((dependencyPackage != null) && (!referencedPackages.Contains(dependencyPackage)))
+                    {
+                        referencedPackages.Add(dependencyPackage);
+                        await FindReferencedPackages(dependencyPackage);
+                    }
+                }
+            }
+        }
+
         public async Task RetrieveLocalStrideVersions()
         {
             List<RecentProjectViewModel> currentRecentProjects;
@@ -272,6 +320,22 @@ namespace Stride.LauncherApp.ViewModels
 
                 lock (objectLock)
                 {
+                    // Try to remove unused Stride/Xenko packages after uninstall or update
+                    try
+                    {
+                        Task.WaitAll(RemoveUnusedPackages(localPackages));
+                    }
+                    catch (Exception e)
+                    {
+                        var message = $@"**Failed to remove unused NuGet package(s).**
+
+### Exception
+```
+{e.FormatSummary(false).TrimEnd(Environment.NewLine.ToCharArray())}
+```";
+                        Task.WaitAll(ServiceProvider.Get<IDialogService>().MessageBox(message, MessageBoxButton.OK, MessageBoxImage.Warning));
+                    }
+
                     // Retrieve all local packages
                     var packages = localPackages.Where(p => !store.IsDevRedirectPackage(p))
                                                 .GroupBy(p => $"{p.Version.Version.Major}.{p.Version.Version.Minor}", p => p);

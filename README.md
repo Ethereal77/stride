@@ -62,8 +62,23 @@ Ask for help or report issues:
 ### Build Stride
 
 1. Clone Stride: `git clone https://github.com/Ethereal77/stride.git`.
-
 2. Open `Stride.sln` in the `build` directory with Visual Studio 2019 and build `Stride.GameStudio` (it should be the default startup project).
+
+### Build Stride without Visual Studio
+
+1. Install Visual Studio 2019 Build Tools with the same prerequisites listed above.
+2. Add MSBuild's directory to your system's `PATH`.
+3. Clone Stride: `git clone https://github.com/Ethereal77/stride.git`.
+4. Navigate to the `build` directory with the command prompt, input `dotnet restore Stride.sln` then `dotnet build Stride.sln`.
+
+For .NET 5 make sure that you have the latest .NET 5 SDK and Runtime, navigate to `\sources\targets\Stride.Core.TargetFrameworks.Editor.props` and change `net472` to `net5.0-windows`.
+
+If building failed:
+ * If you skipped one of the `Prerequisites` thinking that you already have the latest version, update to the latest anyway just to be sure.
+ * Visual Studio might have issues properly building if an outdated version of VS 2017 is present alongside VS 2019. If you want to keep VS 2017 make sure that it is up to date and that you are building Stride through VS 2019.
+ * Some changes might require a system reboot, try that if you haven't yet.
+ * Make sure that Git and Visual Studio can access the Internet.
+ * Close Visual Studio, clear the NuGet cache (in your command prompt `dotnet nuget locals all --clear`), delete the hidden `.vs` folder inside `\build` and the files inside `bin\packages`, kill any MSBuild and other VS processes, build the whole solution then build and run GameStudio.
 
 Do note that test solutions might fail but it should not prevent you from building `Stride.GameStudio`.
 

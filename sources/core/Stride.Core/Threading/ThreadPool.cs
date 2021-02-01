@@ -19,13 +19,13 @@ namespace Stride.Core.Threading
     ///   <para/>
     ///   Also, this class can be instantiated. It generates less garbage than <see cref="System.Threading.ThreadPool"/>.
     /// </remarks>
-    public sealed partial class ThreadPool
+    public sealed partial class ThreadPool : IDisposable
     {
         /// <summary>
         ///   The default instance that the whole process shares.
         /// </summary>
         /// <remarks>Use this instance where possible instead of creating new ones to avoid wasting process memory.</remarks>
-        public static readonly ThreadPool Instance = new ThreadPool();
+        public static ThreadPool Instance = new ThreadPool();
 
         private static readonly bool isSingleCore = Environment.ProcessorCount < 2;
 
@@ -41,6 +41,8 @@ namespace Stride.Core.Threading
 
         private long completionCounter;
         private int workScheduled, threadsBusy;
+        private int disposing;
+        private int leftToDispose;
 
         /// <summary>
         ///   Number of <see cref="Thread"/>s managed by this <see cref="ThreadPool"/>.
@@ -63,20 +65,23 @@ namespace Stride.Core.Threading
         public int ThreadsBusy => Volatile.Read(ref threadsBusy);
 
 
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="ThreadPool"/> class.
+        /// </summary>
+        /// <param name="threadCount">
+        ///   The number of worker threads to spawn. Specify <c>null</c> to decide the count based on the number of processors in the system.
+        /// </param>
         public ThreadPool(int? threadCount = null)
         {
+            semaphore = new SemaphoreW(spinCountParam: 70);
+
             WorkerThreadsCount =
                 threadCount ??
-                (Environment.ProcessorCount == 1 ? 1 : Environment.ProcessorCount - 1);
+                (isSingleCore ? 1 : Environment.ProcessorCount - 1);
 
             for (int i = 0; i < WorkerThreadsCount; i++)
                 CreateWorkerThread();
-
-            // TODO: Benchmark this on multiple computers at different work frequency
-            const int SpinDuration = 140;
-            semaphore = new SemaphoreW(0, SpinDuration);
         }
-
 
 
         /// <summary>
@@ -92,9 +97,10 @@ namespace Stride.Core.Threading
             // Throw right here to help debugging
             if (workItem is null)
                 throw new NullReferenceException(nameof(workItem));
-
             if (amount < 1)
                 throw new ArgumentOutOfRangeException(nameof(amount));
+            if (disposing > 0)
+                throw new ObjectDisposedException(ToString());
 
             Interlocked.Add(ref workScheduled, amount);
             for (int i = 0; i < amount; i++)
@@ -143,7 +149,7 @@ namespace Stride.Core.Threading
         {
             var thread = new Thread(WorkerThreadLoop)
             {
-                Name = $"{GetType().FullName} thread",
+                Name = $"{GetType().FullName} worker thread",
                 IsBackground = true,
                 Priority = ThreadPriority.Highest,
             };
@@ -158,18 +164,49 @@ namespace Stride.Core.Threading
 
             try
             {
-                while (true)
+                do
                 {
                     while (TryCooperate()) { }
 
                     semaphore.Wait();
-                }
+
+                    if (disposing > 0)
+                        return;
+
+                } while (true);
             }
             finally
             {
-                // If this thread is aborted or errored, spin up a new thread prior to stopping
-                CreateWorkerThread();
+                if (disposing == 0)
+                {
+                    // If this thread is aborted or errored, spin up a new thread prior to stopping
+                    CreateWorkerThread();
+                }
+                else
+                {
+                    Interlocked.Decrement(ref leftToDispose);
+                }
             }
+        }
+
+        public void Dispose()
+        {
+            if (Interlocked.CompareExchange(ref disposing, 1, 0) == 1)
+                // Already disposing
+                return;
+
+            semaphore.Release(WorkerThreadsCount);
+
+            while (Volatile.Read(ref leftToDispose) != 0)
+            {
+                if (semaphore.SignalCount == 0)
+                    semaphore.Release(1);
+
+                Thread.Yield();
+            }
+
+            // Finish any work left
+            while (TryCooperate()) { }
         }
     }
 }

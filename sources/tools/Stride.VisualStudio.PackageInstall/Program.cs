@@ -47,8 +47,8 @@ namespace Stride.VisualStudio.PackageInstall
                         break;
 
                     case "/uninstall":
-                        // Note: we allow uninstall to fail (i.e. VSIX was not installed for that specific VIsual Studio version)
-                        RunVsixInstaller(visualStudioVersion.VsixInstallerPath, "/uninstall:b0b8feb1-7b83-43fc-9fc0-70065ddb80a1");
+                        // NOTE: We allow uninstall to fail (i.e. VSIX was not installed for that specific VIsual Studio version)
+                        RunVsixInstaller(visualStudioVersion.VsixInstallerPath, "/uninstall:248ff1ce-dacd-4404-947a-85e999d3c3ea");
                         break;
                 }
 

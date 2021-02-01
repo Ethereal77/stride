@@ -15,28 +15,26 @@ using Stride.Core.Annotations;
 using Stride.Core.Collections;
 using Stride.Core.Storage;
 using Stride.Core.Threading;
-using Stride.Graphics;
-using Stride.Rendering.Shadows;
 using Stride.Shaders;
+using Stride.Rendering.Shadows;
 
 namespace Stride.Rendering.Lights
 {
     /// <summary>
-    /// Compute lighting shaders and data.
+    ///   Represents a rendering feature that computes lighting shaders and data.
     /// </summary>
     public class ForwardLightingRenderFeature : SubRenderFeature
     {
         /// <summary>
-        /// Property key to access the current collection of <see cref="CameraComponent"/> from <see cref="RenderContext.Tags"/>.
+        ///   Property key to access the current collection of lights from <see cref="RenderContext.Tags"/>.
         /// </summary>
         public static readonly PropertyKey<RenderLightCollection> CurrentLights = new PropertyKey<RenderLightCollection>("ForwardLightingRenderFeature.CurrentLights", typeof(ForwardLightingRenderFeature));
 
         public class RenderViewLightData
         {
             /// <summary>
-            /// Gets the lights without shadow per light type.
+            ///   Gets the active lights without shadow grouped per light type.
             /// </summary>
-            /// <value>The lights.</value>
             public readonly Dictionary<Type, RenderLightCollectionGroup> ActiveLightGroups;
 
             internal readonly List<ActiveLightGroupRenderer> ActiveRenderers;
@@ -73,7 +71,7 @@ namespace Stride.Rendering.Lights
         private readonly TrackingCollection<LightGroupRendererBase> lightRenderers = new TrackingCollection<LightGroupRendererBase>();
 
         /// <summary>
-        /// List of renderers that can handle a specific light type by light type
+        ///   List of renderers that can handle a specific light type.
         /// </summary>
         private readonly Dictionary<Type, List<LightGroupRendererBase>> lightRenderersByType = new Dictionary<Type, List<LightGroupRendererBase>>();
 
@@ -103,11 +101,12 @@ namespace Stride.Rendering.Lights
         [Category]
         [MemberCollection(CanReorderItems = true, NotNullItems = true)]
         public TrackingCollection<LightGroupRendererBase> LightRenderers => lightRenderers;
-        
+
         [DataMember]
         public IShadowMapRenderer ShadowMapRenderer
         {
-            get { return shadowMapRenderer; }
+            get => shadowMapRenderer;
+
             set
             {
                 // Unset RenderSystem on old value
@@ -125,15 +124,17 @@ namespace Stride.Rendering.Lights
         static ForwardLightingRenderFeature()
         {
             // TODO: 32 is hardcoded and will generate a NullReferenceException in CreateShaderPermutationEntry
+
             DirectLightGroupsCompositionNames = new string[32];
             for (int i = 0; i < DirectLightGroupsCompositionNames.Length; i++)
             {
-                DirectLightGroupsCompositionNames[i] = DirectLightGroupsCompositionName + "[" + i + "]";
+                DirectLightGroupsCompositionNames[i] = $"{DirectLightGroupsCompositionName}[{i}]";
             }
+
             EnvironmentLightGroupsCompositionNames = new string[32];
             for (int i = 0; i < EnvironmentLightGroupsCompositionNames.Length; i++)
             {
-                EnvironmentLightGroupsCompositionNames[i] = EnvironmentLightsCompositionName + "[" + i + "]";
+                EnvironmentLightGroupsCompositionNames[i] = $"{EnvironmentLightsCompositionName}[{i}]";
             }
         }
 
@@ -189,9 +190,7 @@ namespace Stride.Rendering.Lights
         }
 
         /// <inheritdoc/>
-        public override void Extract()
-        {
-        }
+        public override void Extract() { }
 
         /// <inheritdoc/>
         public override void PrepareEffectPermutations(RenderDrawContext context)
@@ -510,7 +509,7 @@ namespace Stride.Rendering.Lights
                 {
                     RenderLightCollectionGroup lightGroup;
                     viewData.ActiveLightGroups.TryGetValue(p.Key, out lightGroup);
-                    
+
                     if (lightGroup != null && lightGroup.Count > 0)
                     {
                         var activeLightGroup = new ActiveLightGroupRenderer(lightGroup, p.Value);
@@ -618,11 +617,15 @@ namespace Stride.Rendering.Lights
                 // Find lights
                 var lightCollection = activeRenderer.LightGroup.FindLightCollectionByGroup(group);
 
+                // Light collections aren't cleared (see ClearCache). Can be null after switching to empty scenes.
+                if (lightCollection is null)
+                    continue;
+
                 // Indices of lights in lightCollection that need processing
                 lightIndicesToProcess.Clear();
                 for (int i = 0; i < lightCollection.Count; i++)
                     lightIndicesToProcess.Add(i);
-                
+
                 // Loop over all the renderers in order
                 int rendererIndex = 0;
                 foreach (var renderer in activeRenderer.Renderers)
@@ -697,7 +700,7 @@ namespace Stride.Rendering.Lights
             }
             EvaluateLightTypes();
         }
-        
+
         private void EvaluateLightTypes()
         {
             lightRenderersByType.Clear();

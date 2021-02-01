@@ -3,40 +3,37 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Stride.Graphics;
-using Stride.Shaders.Compiler;
 
 namespace Stride.Rendering
 {
     /// <summary>
-    /// A render feature used inside another one (i.e. <see cref="MeshRenderFeature.RenderFeatures"/>.
+    ///   Represents a render feature used inside another one (i.e. <see cref="MeshRenderFeature.RenderFeatures"/>).
     /// </summary>
     public abstract class SubRenderFeature : RenderFeature
     {
         /// <summary>
-        /// Gets root render feature.
+        ///   Gets the root render feature.
         /// </summary>
         protected RootRenderFeature RootRenderFeature;
 
         /// <summary>
-        /// Attach this <see cref="SubRenderFeature"/> to a <see cref="RootRenderFeature"/>.
+        ///   Attaches this <see cref="SubRenderFeature"/> to a <see cref="Rendering.RootRenderFeature"/>.
         /// </summary>
-        /// <param name="rootRenderFeature"></param>
+        /// <param name="rootRenderFeature">The root render feature.</param>
         internal void AttachRootRenderFeature(RootRenderFeature rootRenderFeature)
         {
-            this.RootRenderFeature = rootRenderFeature;
+            RootRenderFeature = rootRenderFeature;
             RenderSystem = rootRenderFeature.RenderSystem;
         }
 
         /// <summary>
-        /// Do any changes required to the pipeline state.
+        ///   Does any changes required to the pipeline state by this render feature.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">Context object providing access to information and services.</param>
         /// <param name="renderNodeReference"></param>
         /// <param name="renderNode"></param>
         /// <param name="renderObject"></param>
         /// <param name="pipelineState"></param>
-        public virtual void ProcessPipelineState(RenderContext context, RenderNodeReference renderNodeReference, ref RenderNode renderNode, RenderObject renderObject, PipelineStateDescription pipelineState)
-        {
-        }
+        public virtual void ProcessPipelineState(RenderContext context, RenderNodeReference renderNodeReference, ref RenderNode renderNode, RenderObject renderObject, PipelineStateDescription pipelineState) { }
     }
 }

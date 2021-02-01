@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Reflection;
 using Stride.Core.Quantum;
@@ -21,8 +20,11 @@ namespace Stride.Core.Presentation.Quantum.Presenters
         public MemberNodePresenter([NotNull] INodePresenterFactoryInternal factory, IPropertyProviderViewModel propertyProvider, [NotNull] INodePresenter parent, [NotNull] IMemberNode member)
             : base(factory, propertyProvider, parent)
         {
-            if (factory == null) throw new ArgumentNullException(nameof(factory));
-            if (parent == null) throw new ArgumentNullException(nameof(parent));
+            if (factory is null)
+                throw new ArgumentNullException(nameof(factory));
+            if (parent is null)
+                throw new ArgumentNullException(nameof(parent));
+
             Member = member ?? throw new ArgumentNullException(nameof(member));
             Name = member.Name;
             CombineKey = Name;
@@ -47,6 +49,7 @@ namespace Stride.Core.Presentation.Quantum.Presenters
         public override void Dispose()
         {
             base.Dispose();
+
             Member.ValueChanging -= OnMemberChanging;
             Member.ValueChanged -= OnMemberChanged;
             if (Member.Target != null)
@@ -76,58 +79,63 @@ namespace Stride.Core.Presentation.Quantum.Presenters
 
         public override void UpdateValue(object newValue)
         {
+            // Do not update member node presenter value to null if it does not
+            // allow null values (related to issue #668)
+            if ((newValue is null) && (memberAttributes.Any(x => x is NotNullAttribute)))
+                return;
+
             try
             {
                 Member.Update(newValue);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new NodePresenterException("An error occurred while updating the value of the node, see the inner exception for more information.", e);
+                throw new NodePresenterException("An error occurred while updating the value of the node, see the inner exception for more information.", ex);
             }
         }
 
         public override void AddItem(object value)
         {
-            if (Member.Target == null || !Member.Target.IsEnumerable)
+            if (Member.Target is null || !Member.Target.IsEnumerable)
                 throw new NodePresenterException($"{nameof(MemberNodePresenter)}.{nameof(AddItem)} cannot be invoked on members that are not collection.");
 
             try
             {
                 Member.Target.Add(value);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new NodePresenterException("An error occurred while adding an item to the node, see the inner exception for more information.", e);
+                throw new NodePresenterException("An error occurred while adding an item to the node, see the inner exception for more information.", ex);
             }
         }
 
         public override void AddItem(object value, NodeIndex index)
         {
-            if (Member.Target == null || !Member.Target.IsEnumerable)
+            if (Member.Target is null || !Member.Target.IsEnumerable)
                 throw new NodePresenterException($"{nameof(MemberNodePresenter)}.{nameof(AddItem)} cannot be invoked on members that are not collection.");
 
             try
             {
                 Member.Target.Add(value, index);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new NodePresenterException("An error occurred while adding an item to the node, see the inner exception for more information.", e);
+                throw new NodePresenterException("An error occurred while adding an item to the node, see the inner exception for more information.", ex);
             }
         }
 
         public override void RemoveItem(object value, NodeIndex index)
         {
-            if (Member.Target == null || !Member.Target.IsEnumerable)
+            if (Member.Target is null || !Member.Target.IsEnumerable)
                 throw new NodePresenterException($"{nameof(MemberNodePresenter)}.{nameof(RemoveItem)} cannot be invoked on members that are not collection.");
 
             try
             {
                 Member.Target.Remove(value, index);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new NodePresenterException("An error occurred while removing an item to the node, see the inner exception for more information.", e);
+                throw new NodePresenterException("An error occurred while removing an item to the node, see the inner exception for more information.", ex);
             }
         }
 

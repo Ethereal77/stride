@@ -127,8 +127,8 @@ namespace Stride.Assets.Templates
 
                 if (platform.Platform.Type == PlatformType.Windows)
                 {
-                    var isNETCore = RuntimeInformation.FrameworkDescription.StartsWith(".NET Core");
-                    AddOption(parameters, "TargetFramework", isNETCore ? "netcoreapp3.1" : "net461");
+                    var isNETFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
+                    AddOption(parameters, "TargetFramework", isNETFramework ? "net461" : "net5.0-windows");
                 }
 
                 var projectDirectory = Path.GetDirectoryName(projectFullPath.ToWindowsPath());
@@ -138,7 +138,7 @@ namespace Stride.Assets.Templates
                     {
                         Directory.Delete(projectDirectory, true);
                     }
-                    catch (Exception)
+                    catch
                     {
                         logger.Warning($"Unable to delete directory [{projectDirectory}].");
                     }
@@ -169,7 +169,7 @@ namespace Stride.Assets.Templates
                     {
                         Directory.Delete(projectDirectory, true);
                     }
-                    catch (Exception)
+                    catch
                     {
                         logger.Warning($"Unable to delete directory [{projectDirectory}].");
                     }
@@ -289,8 +289,8 @@ namespace Stride.Assets.Templates
 
             if (platformType == PlatformType.Windows)
             {
-                var isNETCore = RuntimeInformation.FrameworkDescription.StartsWith(".NET Core");
-                AddOption(parameters, "TargetFramework", isNETCore ? "netcoreapp3.1" : "net461");
+                var isNETFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
+                AddOption(parameters, "TargetFramework", isNETFramework ? "net461" : "net5.0-windows");
             }
 
             return projectTemplate;
@@ -322,7 +322,7 @@ namespace Stride.Assets.Templates
                 {
                     Directory.Delete(projectDirectory, true);
                 }
-                catch (Exception)
+                catch
                 {
                     logger.Warning($"Unable to delete directory [{projectDirectory}].");
                 }

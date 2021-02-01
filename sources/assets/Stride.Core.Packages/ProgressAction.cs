@@ -4,10 +4,24 @@
 
 namespace Stride.Core.Packages
 {
+    /// <summary>
+    ///   Defines the actions that can be in progress when operating on a <see cref="NugetPackage"/>.
+    /// </summary>
     public enum ProgressAction
     {
+        /// <summary>
+        ///   A specific version of the package is being downloaded.
+        /// </summary>
         Download,
+
+        /// <summary>
+        ///   A specific version of the package is being installed.
+        /// </summary>
         Install,
+
+        /// <summary>
+        ///   A specific version of the package is being removed.
+        /// </summary>
         Delete,
     }
 }

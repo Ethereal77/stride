@@ -6,13 +6,12 @@ using System;
 using System.Collections.Generic;
 
 using Stride.Core;
-using Stride.Core.Mathematics;
 using Stride.Graphics;
 
 namespace Stride.Rendering
 {
     /// <summary>
-    /// Rendering context used during <see cref="IGraphicsRenderer.Draw"/>.
+    ///   Represents an object that provides context information during <see cref="IGraphicsRenderer.Draw"/>.
     /// </summary>
     public sealed class RenderDrawContext : ComponentBase
     {
@@ -22,9 +21,11 @@ namespace Stride.Rendering
 
         private readonly Dictionary<Type, DrawEffect> sharedEffects = new Dictionary<Type, DrawEffect>();
 
+
         public RenderDrawContext(IServiceRegistry services, RenderContext renderContext, GraphicsContext graphicsContext)
         {
-            if (services == null) throw new ArgumentNullException(nameof(services));
+            if (services is null)
+                throw new ArgumentNullException(nameof(services));
 
             RenderContext = renderContext;
             ResourceGroupAllocator = graphicsContext.ResourceGroupAllocator;
@@ -35,18 +36,19 @@ namespace Stride.Rendering
             QueryManager = new QueryManager(CommandList, renderContext.Allocator);
         }
 
+
         /// <summary>
-        /// Gets the render context.
+        ///   Gets the render context.
         /// </summary>
         public RenderContext RenderContext { get; }
 
         /// <summary>
-        /// Gets the <see cref="ResourceGroup"/> allocator.
+        ///   Gets the <see cref="ResourceGroup"/> allocator.
         /// </summary>
         public ResourceGroupAllocator ResourceGroupAllocator { get; }
 
         /// <summary>
-        /// Gets the command list.
+        ///   Gets the command list.
         /// </summary>
         public CommandList CommandList { get; }
 
@@ -59,19 +61,21 @@ namespace Stride.Rendering
         public QueryManager QueryManager { get; }
 
         /// <summary>
-        /// Locks the command list until <see cref="IDisposable.Dispose()"/> is called on the returned value type.
+        ///   Locks the command list until <see cref="DefaultCommandListLock.Dispose()"/> is called on the returned object.
         /// </summary>
-        /// <returns></returns>
-        /// This is necessary only during Collect(), Extract() and Prepare() phases, not during Draw().
-        /// Some graphics API might not require actual locking, in which case this object might do nothing.
+        /// <returns>A <see cref="DefaultCommandListLock"/> that can be used to lock and unlock the command list.</returns>
         public DefaultCommandListLock LockCommandList()
         {
+            // This is necessary only during Collect(), Extract() and Prepare() phases, not during Draw().
+            // Some graphics API might not require actual locking, in which case this object might do nothing.
+
             // TODO: Temporary, for now we use the CommandList itself as a lock
             return new DefaultCommandListLock(CommandList);
         }
 
         /// <summary>
-        /// Pushes render targets and viewport state.
+        ///   Remembewrs the render targets and viewport states and restores them whenever <see cref="RenderTargetRestore.Dispose()"/>
+        ///   is called on the returned object.
         /// </summary>
         public RenderTargetRestore PushRenderTargetsAndRestore()
         {
@@ -93,43 +97,40 @@ namespace Stride.Rendering
         }
 
         /// <summary>
-        /// Restores render targets and viewport state.
+        ///   Restores the render targets and viewport states previously pushed with <see cref="PushRenderTargetsAndRestore()"/>.
         /// </summary>
         public void PopRenderTargets()
         {
             if (currentStateIndex < 0)
-            {
-                throw new InvalidOperationException("Cannot pop more than push");
-            }
+                throw new InvalidOperationException("Cannot pop more than push.");
 
             var oldState = allocatedStates[currentStateIndex--];
             oldState.Restore(CommandList);
         }
 
         /// <summary>
-        /// Gets or creates a shared effect.
+        ///   Gets or creates a shared effect.
         /// </summary>
-        /// <typeparam name="T">Type of the shared effect (mush have a constructor taking a <see cref="Rendering.RenderContext"/></typeparam>
-        /// <returns>A singleton instance of <typeparamref name="T"/></returns>
+        /// <typeparam name="T">Type of the shared effect.</typeparam>
+        /// <returns>A singleton instance of <typeparamref name="T"/>.</returns>
         public T GetSharedEffect<T>() where T : DrawEffect, new()
         {
             // TODO: Add a way to support custom constructor
             lock (sharedEffects)
             {
-                DrawEffect effect;
-                if (!sharedEffects.TryGetValue(typeof(T), out effect))
+                if (!sharedEffects.TryGetValue(typeof(T), out DrawEffect effect))
                 {
                     effect = new T();
                     sharedEffects.Add(typeof(T), effect);
                     effect.Initialize(RenderContext);
                 }
 
-                return (T)effect;
+                return (T) effect;
             }
         }
 
         /// <summary>
-        /// Holds current viewports and render targets.
+        ///   Holds current viewports and render targets.
         /// </summary>
         private class RenderTargetsState
         {
@@ -148,9 +149,9 @@ namespace Stride.Rendering
                 RenderTargetCount = commandList.RenderTargetCount;
                 ViewportCount = commandList.ViewportCount;
                 DepthStencilBuffer = commandList.DepthStencilBuffer;
-                
+
                 // TODO: Backup scissor rectangles and restore them
-                
+
                 for (int i = 0; i < RenderTargetCount; i++)
                 {
                     RenderTargets[i] = commandList.RenderTargets[i];
@@ -169,7 +170,10 @@ namespace Stride.Rendering
             }
         }
 
-        public struct RenderTargetRestore : IDisposable
+        /// <summary>
+        ///   Represents an object that can restore a previous viewport and render target state when disposed.
+        /// </summary>
+        public readonly struct RenderTargetRestore : IDisposable
         {
             private readonly RenderDrawContext context;
 
