@@ -27,9 +27,9 @@ namespace Stride
     internal static class StrideVersion
     {
         /// <summary>
-        ///   The version used by the editor for displaying. 4th digit needs to be at least 1 if used (due to NuGet special cases).
+        ///   The version displayed  by the editor. The 4th digit will automatically be replaced by the Git height when building packages with Stride.Build.
         /// </summary>
-        public const string PublicVersion = "4.0.1.1";
+        public const string PublicVersion = "4.1.0.1";
 
         /// <summary>
         ///   The current assembly version as text. Currently the same as <see cref="PublicVersion"/>.
@@ -47,7 +47,7 @@ namespace Stride
         public const string NuGetVersion = NuGetVersionSimple + NuGetVersionSuffix;
 
         /// <summary>
-        ///   The NuGet package suffix (i.e. <c>-beta</c>). Automatically set by Stride.GitVersioning.GenerateVersionFile.
+        ///   The NuGet package suffix (i.e. <c>-beta</c>).
         ///   <para/>
         ///   Three possible values:
         ///   <list type="bullet">
@@ -56,7 +56,7 @@ namespace Stride
         ///   <item><c>-dev</c>: Development version.</item>
         ///   </list>
         /// </summary>
-        public const string NuGetVersionSuffix = "";
+        public const string NuGetVersionSuffix = "-beta";
 
         /// <summary>
         ///   The build metadata, usually <c>+g[git_hash]</c> during package. Automatically set by Stride.GitVersioning.GenerateVersionFile.
