@@ -10,7 +10,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using Stride.Core;
-using Stride.Core.Collections;
 using Stride.Core.Diagnostics;
 using Stride.Core.ReferenceCounting;
 using Stride.Core.Reflection;
@@ -23,7 +22,7 @@ namespace Stride.Engine
     /// <summary>
     ///   Represents a class that manages a collection of <see cref="Entity"/>.
     /// </summary>
-    public abstract class EntityManager : ComponentBase, IReadOnlySet<Entity>
+    public abstract class EntityManager : ComponentBase, Core.Collections.IReadOnlySet<Entity>
     {
         // TODO: Make this class threadsafe (current locks aren't sufficient)
 
@@ -77,7 +76,7 @@ namespace Stride.Engine
         protected EntityManager(IServiceRegistry registry)
         {
             if (registry is null)
-                throw new ArgumentNullException("registry");
+                throw new ArgumentNullException(nameof(registry));
 
             Services = registry;
 
@@ -94,7 +93,6 @@ namespace Stride.Engine
         /// <summary>
         ///   Gets the registry of the services of the game.
         /// </summary>
-        /// <value>The services.</value>
         public IServiceRegistry Services { get; private set; }
 
         /// <summary>
@@ -252,7 +250,7 @@ namespace Stride.Engine
 
                 // Check which exiting processor are working with the components of this entity
                 // and grab the list of new processors to registers
-                CheckEntityWithProcessors(entity, false, true);
+                CheckEntityWithProcessors(entity, forceRemove: false, collectComponentTypesAndProcessors: true);
 
                 addEntityLevel--;
             }
@@ -297,7 +295,7 @@ namespace Stride.Engine
             }
 
             // Notify Processors this entity has been removed
-            CheckEntityWithProcessors(entity, true, false);
+            CheckEntityWithProcessors(entity, forceRemove: true, collectComponentTypesAndProcessors: false);
 
             entity.ReleaseInternal();
 
@@ -442,13 +440,13 @@ namespace Stride.Engine
             currentDependentProcessors.Clear();
             if (oldComponent != null)
             {
-                CheckEntityComponentWithProcessors(entity, oldComponent, true, currentDependentProcessors);
+                CheckEntityComponentWithProcessors(entity, oldComponent, forceRemove: true, currentDependentProcessors);
             }
 
             // Add new component to processors
             if (newComponent != null)
             {
-                CheckEntityComponentWithProcessors(entity, newComponent, false, currentDependentProcessors);
+                CheckEntityComponentWithProcessors(entity, newComponent, forceRemove: false, currentDependentProcessors);
             }
 
             // Update all dependencies
@@ -488,14 +486,14 @@ namespace Stride.Engine
             }
         }
 
-        private void CheckEntityWithProcessors(Entity entity, bool forceRemove, bool collecComponentTypesAndProcessors)
+        private void CheckEntityWithProcessors(Entity entity, bool forceRemove, bool collectComponentTypesAndProcessors)
         {
             var components = entity.Components;
             for (int i = 0; i < components.Count; i++)
             {
                 var component = components[i];
                 CheckEntityComponentWithProcessors(entity, component, forceRemove, null);
-                if (collecComponentTypesAndProcessors)
+                if (collectComponentTypesAndProcessors)
                 {
                     CollectNewProcessorsByComponentType(component.GetType().GetTypeInfo());
                 }
@@ -510,7 +508,7 @@ namespace Stride.Engine
                 var component = components[i];
                 if (processor.Accept(component.GetType().GetTypeInfo()))
                 {
-                    processor.ProcessEntityComponent(entity, component, false);
+                    processor.ProcessEntityComponent(entity, component, forceRemove: false);
                 }
             }
         }
@@ -518,9 +516,8 @@ namespace Stride.Engine
         private void CheckEntityComponentWithProcessors(Entity entity, EntityComponent component, bool forceRemove, List<EntityProcessor> dependentProcessors)
         {
             var componentType = component.GetType().GetTypeInfo();
-            EntityProcessorCollectionPerComponentType processorsForComponent;
 
-            if (MapComponentTypeToProcessors.TryGetValue(componentType, out processorsForComponent))
+            if (MapComponentTypeToProcessors.TryGetValue(componentType, out EntityProcessorCollectionPerComponentType processorsForComponent))
             {
                 for (int i = 0; i < processorsForComponent.Count; i++)
                 {
@@ -541,7 +538,7 @@ namespace Stride.Engine
 
                     if (processor.IsDependentOnComponentType(componentType))
                     {
-                        if (processorsForComponent.Dependencies == null)
+                        if (processorsForComponent.Dependencies is null)
                         {
                             processorsForComponent.Dependencies = new List<EntityProcessor>();
                         }
@@ -566,40 +563,22 @@ namespace Stride.Engine
             }
         }
 
-        IEnumerator<Entity> IEnumerable<Entity>.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator<Entity> IEnumerable<Entity>.GetEnumerator() => GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        protected virtual void OnComponentTypeAdded(TypeInfo obj)
-        {
-            ComponentTypeAdded?.Invoke(this, obj);
-        }
+        protected virtual void OnComponentTypeAdded(TypeInfo obj) => ComponentTypeAdded?.Invoke(this, obj);
 
-        protected virtual void OnEntityAdded(Entity e)
-        {
-            EntityAdded?.Invoke(this, e);
-        }
+        protected virtual void OnEntityAdded(Entity e) => EntityAdded?.Invoke(this, e);
 
-        protected virtual void OnEntityRemoved(Entity e)
-        {
-            EntityRemoved?.Invoke(this, e);
-        }
+        protected virtual void OnEntityRemoved(Entity e) => EntityRemoved?.Invoke(this, e);
 
         protected virtual void OnComponentChanged(Entity entity, int index, EntityComponent previousComponent, EntityComponent newComponent)
         {
             ComponentChanged?.Invoke(this, new EntityComponentEventArgs(entity, index, previousComponent, newComponent));
         }
 
-        internal void OnHierarchyChanged(Entity entity)
-        {
-            HierarchyChanged?.Invoke(this, entity);
-        }
+        internal void OnHierarchyChanged(Entity entity) => HierarchyChanged?.Invoke(this, entity);
 
         /// <summary>
         ///   Represents a collection of <see cref="EntityProcessor"/>s for a particular <see cref="EntityComponent"/> type.

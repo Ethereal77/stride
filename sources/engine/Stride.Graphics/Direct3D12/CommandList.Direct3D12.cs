@@ -35,7 +35,7 @@ namespace Stride.Graphics
         internal readonly Queue<GraphicsCommandList> NativeCommandLists = new Queue<GraphicsCommandList>();
 
         private CompiledCommandList currentCommandList;
-        
+
         private bool IsComputePipelineStateBound => boundPipelineState != null && boundPipelineState.IsCompute;
 
         public static CommandList New(GraphicsDevice device)
@@ -307,7 +307,7 @@ namespace Stride.Graphics
                 resource.NativeResourceState = targetState;
             }
         }
-        
+
         private unsafe void FlushResourceBarriers()
         {
             int count = resourceBarriers.Count;
@@ -491,7 +491,7 @@ namespace Stride.Graphics
         public void DrawAuto()
         {
             PrepareDraw();
-            
+
             throw new NotImplementedException();
         }
 
@@ -777,7 +777,7 @@ namespace Stride.Graphics
             {
                 var sourceParent = sourceTexture.ParentTexture ?? sourceTexture;
                 var destinationParent = destinationTexture.ParentTexture ?? destinationTexture;
-                
+
                 if (destinationTexture.Usage == GraphicsResourceUsage.Staging)
                 {
                     // Copy staging texture -> staging texture
@@ -785,7 +785,7 @@ namespace Stride.Graphics
                     {
                         var size = destinationTexture.ComputeBufferTotalSize();
                         var destinationMapped = destinationTexture.NativeResource.Map(0);
-                        var sourceMapped = sourceTexture.NativeResource.Map(0, new Range { Begin = 0, End = size });
+                        var sourceMapped = sourceTexture.NativeResource.Map(0, new SharpDX.Direct3D12.Range { Begin = 0, End = size });
 
                         Utilities.CopyMemory(destinationMapped, sourceMapped, size);
 
@@ -975,11 +975,11 @@ namespace Stride.Graphics
                 var nativeUploadTexture = NativeDevice.CreateCommittedResource(new HeapProperties(CpuPageProperty.WriteBack, MemoryPool.L0), HeapFlags.None,
                     resourceDescription,
                     ResourceStates.GenericRead);
-                
+
                 GraphicsDevice.TemporaryResources.Enqueue(new KeyValuePair<long, object>(GraphicsDevice.NextFenceValue, nativeUploadTexture));
 
                 nativeUploadTexture.WriteToSubresource(0, null, databox.DataPointer, databox.RowPitch, databox.SlicePitch);
-                
+
                 // Trigger copy
                 ResourceBarrierTransition(resource, GraphicsResourceState.CopyDestination);
                 FlushResourceBarriers();
@@ -1118,4 +1118,4 @@ namespace Stride.Graphics
     }
 }
 
-#endif 
+#endif

@@ -14,7 +14,6 @@
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="EnvDTE" Version="8.0.2" Condition="$(TargetFramework.StartsWith('net4'))" />
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
   </ItemGroup>
   <PropertyGroup>

@@ -1,7 +1,6 @@
 <Project>
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
-    <StrideRuntimeWindowsDotNet>true</StrideRuntimeWindowsDotNet>
     <StrideRuntimeWindowsNet5>true</StrideRuntimeWindowsNet5>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
   </PropertyGroup>
@@ -10,8 +9,8 @@
   <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="3.0.22" />
 
   <PropertyGroup>
-    <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF Condition="$(TargetFramework.EndsWith('-windows'))">true</UseWPF>
+    <UseWindowsForms Condition="$(TargetFramework.EndsWith('-windows'))">true</UseWindowsForms>
     <StridePlatformDependent>true</StridePlatformDependent>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideBuildTags>*</StrideBuildTags>
@@ -30,9 +29,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Stride.Games\Stride.Games.csproj" />
 
-    <PackageReference Include="SharpDX.RawInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.EndsWith('-windows'))" />
-    <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.EndsWith('-windows'))" />
-    <PackageReference Include="SharpDX.XInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.EndsWith('-windows'))" />
+    <PackageReference Include="SharpDX.RawInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4'))" />
+    <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" Condition="$(TargetFramework.EndsWith('-windows'))" />
+    <PackageReference Include="SharpDX.XInput" Version="4.2.0" Condition="$(TargetFramework.EndsWith('-windows'))" />
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />

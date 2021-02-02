@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-using Stride.Core;
 using Stride.Core.Collections;
 using Stride.Core.Mathematics;
 using Stride.Core.Serialization;
@@ -128,7 +127,7 @@ namespace Stride.Rendering.LightProbes
         static BowyerWatsonTetrahedralization()
         {
             // TODO: Add native to Stride.Engine?
-            NativeLibrary.PreloadLibrary(NativeInvoke.Library, typeof(BowyerWatsonTetrahedralization));
+            Core.NativeLibrary.PreloadLibrary(NativeInvoke.Library, typeof(BowyerWatsonTetrahedralization));
             exactinit();
         }
 

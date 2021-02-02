@@ -5,7 +5,7 @@
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Class LuminanceLogEffect.
+    ///   Represents an effect for the computation of logarithmic (log2) luminance.
     /// </summary>
     public class LuminanceLogEffect : ImageEffectShader
     {

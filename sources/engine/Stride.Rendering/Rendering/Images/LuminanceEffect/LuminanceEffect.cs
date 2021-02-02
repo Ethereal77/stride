@@ -3,16 +3,17 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.IO;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 
+using Half = Stride.Core.Mathematics.Half;
+
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Luminance effect.
+    ///   Represents an <see cref="ImageEffect"/> that can compute the average luminance of an input texture.
     /// </summary>
     public class LuminanceEffect : ImageEffect
     {
@@ -25,7 +26,7 @@ namespace Stride.Rendering.Images
         private ImageReadback<Half> readback;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LuminanceEffect" /> class.
+        ///   Initializes a new instance of the <see cref="LuminanceEffect" /> class.
         /// </summary>
         public LuminanceEffect()
         {
@@ -51,70 +52,77 @@ namespace Stride.Rendering.Images
             // Readback is always going to be done on the 1x1 texture
             readback = ToLoadAndUnload(readback);
 
-            // Blur used before upscaling 
+            // Blur used before upscaling
             blur = ToLoadAndUnload(new GaussianBlur());
             blur.Radius = 4;
         }
 
         /// <summary>
-        /// Luminance texture format.
+        ///   Gets or sets the luminance texture format.
         /// </summary>
         public PixelFormat LuminanceFormat
         {
             get => luminanceFormat;
+
             set
             {
-                if (value.IsCompressed() || value.IsPacked() || value.IsTypeless() || value == PixelFormat.None)
+                if (value.IsCompressed() ||
+                    value.IsPacked() ||
+                    value.IsTypeless() ||
+                    value == PixelFormat.None)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), "Unsupported format [{0}] (must be not none, compressed, packed or typeless)".ToFormat(value));
+                    throw new ArgumentOutOfRangeException(nameof(value), $"Unsupported format [{value}] (can't be None, Compressed, Packed nor Typeless).");
                 }
                 luminanceFormat = value;
             }
         }
 
         /// <summary>
-        /// Luminance log effect.
+        ///   Gets or sets the effect that computes the logarithmic (log2) luminance from the input texture.
         /// </summary>
         public ImageEffectShader LuminanceLogEffect { get; set; }
 
         /// <summary>
-        /// Gets or sets down scale count used to downscale the input intermediate texture used for local luminance (if no 
-        /// output is given). By default 1/64 of the input texture size.
+        ///   Gets or sets the downscale count of the input intermediate texture used for local luminance (if no
+        ///   output is given).
         /// </summary>
-        /// <value>Down scale count.</value>
+        /// <value>Down scale count. By default 1/64 of the input texture size.</value>
         public int DownscaleCount { get; set; }
 
         /// <summary>
-        /// Gets or sets the upscale count used to upscale the downscaled input local luminance texture. By default x16 of the 
-        /// input texture size.
+        ///   Gets or sets the upscale count of the downscaled input local luminance texture.
         /// </summary>
-        /// <value>The upscale count.</value>
+        /// <value>The upscale count. By default x16 of the input texture size.</value>
         public int UpscaleCount { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to enable calculation of <see cref="AverageLuminance"/> (default is true).
+        ///   Gets or sets a value indicating whether to enable the read back of the calculated <see cref="AverageLuminance"/>
+        ///   by the CPU.
         /// </summary>
-        /// <value><c>true</c> if to enable calculation of <see cref="AverageLuminance"/>; otherwise, <c>false</c>.</value>
+        /// <value>
+        ///   <c>true</c> if to enable calculation of <see cref="AverageLuminance"/>; otherwise, <c>false</c>.
+        ///   Default is <c>true</c>.
+        /// </value>
         public bool EnableAverageLuminanceReadback { get; set; }
 
         /// <summary>
-        /// Gets the average luminance calculated on the GPU. See remarks.
+        ///   Gets the average luminance calculated on the GPU.
         /// </summary>
         /// <value>The average luminance.</value>
         /// <remarks>
-        /// The average luminance is calculated on the GPU and readback with a few frames of delay, depending on the number of 
-        /// frames in advance between command scheduling and actual execution on GPU.
+        ///   The average luminance is calculated on the GPU and readback with a few frames of delay, depending
+        ///   on the number of frames in advance between command scheduling and actual execution on GPU.
         /// </remarks>
         public float AverageLuminance { get; private set; }
 
         /// <summary>
-        /// Gets the average luminance 1x1 texture available after drawing this effect.
+        ///   Gets the average luminance 1x1 texture available after drawing this effect.
         /// </summary>
         /// <value>The average luminance texture.</value>
         public Texture AverageLuminanceTexture { get; private set; }
 
         /// <summary>
-        /// Indicated if the local luminance should be rendered to the output texture.
+        ///   Gets or sets a value indicating if the local luminance should be rendered to the output texture.
         /// </summary>
         public bool EnableLocalLuminanceCalculation { get; set; }
 
@@ -130,7 +138,7 @@ namespace Stride.Rendering.Images
             var input = GetSafeInput(0);
 
             // Render the luminance to a power-of-two target, so we preserve energy on downscaling
-            var startWidth = Math.Max(1, Math.Min(MathUtil.NextPowerOfTwo(input.Size.Width), MathUtil.NextPowerOfTwo(input.Size.Height)) / 2);
+            var startWidth = Math.Clamp(MathUtil.NextPowerOfTwo(input.Size.Width), 1, MathUtil.NextPowerOfTwo(input.Size.Height) / 2);
             var startSize = new Size3(startWidth, startWidth, 1);
             var blurTextureSize = startSize.Down2(UpscaleCount);
 
@@ -150,7 +158,7 @@ namespace Stride.Rendering.Images
 
             // Downscales luminance up to BlurTexture (optional) and 1x1
             multiScaler.SetInput(luminanceMap);
-            if (blurTexture == null)
+            if (blurTexture is null)
             {
                 multiScaler.SetOutput(AverageLuminanceTexture);
                 multiScaler.Draw(context);
@@ -170,7 +178,7 @@ namespace Stride.Rendering.Images
                 multiScaler.SetOutput(blurTexture, AverageLuminanceTexture);
                 multiScaler.Draw(context);
 
-                // Blur x2 the intermediate output texture 
+                // Blur x2 the intermediate output texture
                 blur.SetInput(blurTexture);
                 blur.SetOutput(blurTexture);
                 blur.Draw(context);
@@ -190,9 +198,10 @@ namespace Stride.Rendering.Images
                 readback.SetInput(AverageLuminanceTexture);
                 readback.Draw(context);
                 var rawLogValue = readback.Result[0];
-                AverageLuminance = (float)Math.Pow(2.0, rawLogValue);
 
-                // In case AvergaeLuminance go crazy because of halp float/infinity precision, some code to save the values here:
+                AverageLuminance = (float) Math.Pow(2.0, rawLogValue);
+
+                // In case AvergaeLuminance go crazy because of half float/infinity precision, some code to save the values here:
                 //if (float.IsInfinity(AverageLuminance))
                 //{
                 //    using (var stream = new FileStream("luminance_input.dds", FileMode.Create, FileAccess.Write))

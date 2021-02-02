@@ -16,6 +16,7 @@ using Stride.Core.Shaders.Visitor;
 using Stride.Graphics;
 
 using StorageQualifier = Stride.Core.Shaders.Ast.StorageQualifier;
+using Half = Stride.Core.Mathematics.Half;
 
 namespace Stride.Shaders.Parser
 {
@@ -31,23 +32,23 @@ namespace Stride.Shaders.Parser
         private readonly ShaderMixinParsingResult parsingResult;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ShaderLinker" /> class.
+        ///   Initializes a new instance of the <see cref="ShaderLinker" /> class.
         /// </summary>
         /// <param name="parsingResult">The parsing result.</param>
         public ShaderLinker(ShaderMixinParsingResult parsingResult)
             : base(true, false)
         {
             this.parsingResult = parsingResult;
-            this.effectReflection = parsingResult.Reflection;
+            effectReflection = parsingResult.Reflection;
         }
 
         /// <summary>
-        /// Gets the samplers.
+        ///   Gets the samplers.
         /// </summary>
         public IDictionary<string, SamplerStateDescription> Samplers => samplers;
 
         /// <summary>
-        /// Runs the linker on the specified Shader.
+        ///   Runs the linker on the specified Shader.
         /// </summary>
         /// <param name="shader">The shader.</param>
         public void Run(Shader shader)
@@ -63,7 +64,7 @@ namespace Stride.Shaders.Parser
         private void PrepareConstantBuffers(Shader shader)
         {
             var otherNodes = shader.Declarations.Where(declaration => !(declaration is MethodDeclaration) && !(declaration is Variable));
-            // Note: flattening variables
+            // NOTE: Flattening variables
             var variables = shader.Declarations.OfType<Variable>().SelectMany(x => x.Instances()).ToList();
 
             var declarations = new List<Node>();
@@ -83,10 +84,10 @@ namespace Stride.Shaders.Parser
 
 
         /// <summary>
-        /// Visits the specified variable.
+        ///   Visits the specified variable.
         /// </summary>
         /// <param name="variable">The variable.</param>
-        /// <returns>The variable visited</returns>
+        /// <returns>The variable visited.</returns>
         public override void Visit(Variable variable)
         {
             var parameterKey = GetLinkParameterKey(variable);
@@ -95,11 +96,11 @@ namespace Stride.Shaders.Parser
 
             var resolvedType = variable.Type.ResolveType();
             var slotCount = 1;
-            if (resolvedType is ArrayType)
+            if (resolvedType is ArrayType array)
             {
                 // TODO: Use evaluator?
-                slotCount = (int)((LiteralExpression)((ArrayType)resolvedType).Dimensions[0]).Literal.Value;
-                resolvedType = ((ArrayType)resolvedType).Type;
+                slotCount = (int)((LiteralExpression)array.Dimensions[0]).Literal.Value;
+                resolvedType = array.Type;
             }
             if (resolvedType.IsStateType())
             {
@@ -120,21 +121,27 @@ namespace Stride.Shaders.Parser
                                 case "COMPARISON_MIN_MAG_LINEAR_MIP_POINT":
                                     samplerState.Filter = TextureFilter.ComparisonMinMagLinearMipPoint;
                                     break;
+
                                 case "COMPARISON_MIN_MAG_MIP_POINT":
                                     samplerState.Filter = TextureFilter.ComparisonPoint;
                                     break;
+
                                 case "MIN_MAG_LINEAR_MIP_POINT":
                                     samplerState.Filter = TextureFilter.MinMagLinearMipPoint;
                                     break;
+
                                 case "MIN_MAG_MIP_LINEAR":
                                     samplerState.Filter = TextureFilter.Linear;
                                     break;
+
                                 case "ANISOTROPIC":
                                     samplerState.Filter = TextureFilter.Anisotropic;
                                     break;
+
                                 case "MIN_MAG_MIP_POINT":
                                     samplerState.Filter = TextureFilter.Point;
                                     break;
+
                                 default:
                                     parsingResult.Error(StrideMessageCode.SamplerFilterNotSupported, variable.Span, value);
                                     break;
@@ -142,25 +149,26 @@ namespace Stride.Shaders.Parser
                         }
                         else if (key == "ComparisonFunc")
                         {
-                            CompareFunction compareFunction;
-                            Enum.TryParse(value, true, out compareFunction);
+                            Enum.TryParse(value, true, out CompareFunction compareFunction);
                             samplerState.CompareFunction = compareFunction;
                         }
                         else if (key == "AddressU" || key == "AddressV" || key == "AddressW")
                         {
-                            TextureAddressMode textureAddressMode;
-                            Enum.TryParse(value, true, out textureAddressMode);
+                            Enum.TryParse(value, true, out TextureAddressMode textureAddressMode);
                             switch (key)
                             {
                                 case "AddressU":
                                     samplerState.AddressU = textureAddressMode;
                                     break;
+
                                 case "AddressV":
                                     samplerState.AddressV = textureAddressMode;
                                     break;
+
                                 case "AddressW":
                                     samplerState.AddressW = textureAddressMode;
                                     break;
+
                                 default:
                                     parsingResult.Error(StrideMessageCode.SamplerAddressModeNotSupported, variable.Span, key);
                                     break;
@@ -234,10 +242,9 @@ namespace Stride.Shaders.Parser
         }
 
         /// <summary>
-        /// Visits the specified constant buffer.
+        ///   Visits the specified constant buffer.
         /// </summary>
         /// <param name="constantBuffer">The constant buffer.</param>
-        /// <returns></returns>
         public override void Visit(ConstantBuffer constantBuffer)
         {
             foreach (var variable in constantBuffer.Members.OfType<Variable>().SelectMany(x => x.Instances()))
@@ -274,7 +281,7 @@ namespace Stride.Shaders.Parser
         {
             if (node is IDeclaration)
             {
-                var parameterKey = this.GetLinkParameterKey(node);
+                var parameterKey = GetLinkParameterKey(node);
                 if (parameterKey != null)
                     LinkVariable(effectReflection, ((IDeclaration)node).Name, parameterKey, parameterKey.Type.Elements);
             }
@@ -287,10 +294,11 @@ namespace Stride.Shaders.Parser
             var qualifiers = node as IQualifiers;
             var attributable = node as IAttributes;
 
-            if ((qualifiers != null && (qualifiers.Qualifiers.Contains(Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Static) ||
-                                        qualifiers.Qualifiers.Contains(StorageQualifier.Const) ||
-                                        qualifiers.Qualifiers.Contains(Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Groupshared)
-                                       )) || attributable == null)
+            if ((qualifiers != null &&
+                    (qualifiers.Qualifiers.Contains(Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Static) ||
+                     qualifiers.Qualifiers.Contains(StorageQualifier.Const) ||
+                     qualifiers.Qualifiers.Contains(Stride.Core.Shaders.Ast.Hlsl.StorageQualifier.Groupshared))) ||
+                attributable is null)
             {
                 return null;
             }
@@ -300,18 +308,18 @@ namespace Stride.Shaders.Parser
                 if (annotation.Name != "Link" || annotation.Parameters.Count < 1)
                     continue;
 
-                var variableName = (string)annotation.Parameters[0].Value;
+                var variableName = (string) annotation.Parameters[0].Value;
                 var parameterKey = new LocalParameterKey() {Name = variableName};
                 var variable = node as Variable;
                 if (variable != null)
                 {
-                    var cbuffer = (ConstantBuffer)variable.GetTag(StrideTags.ConstantBuffer);
+                    var cbuffer = (ConstantBuffer) variable.GetTag(StrideTags.ConstantBuffer);
                     if (cbuffer != null && cbuffer.Type == StrideConstantBufferType.ResourceGroup)
                     {
                         parameterKey.ResourceGroup = cbuffer.Name;
                     }
 
-                    parameterKey.LogicalGroup = (string)variable.GetTag(StrideTags.LogicalGroup);
+                    parameterKey.LogicalGroup = (string) variable.GetTag(StrideTags.LogicalGroup);
 
                     var variableType = variable.Type;
 
@@ -335,7 +343,7 @@ namespace Stride.Shaders.Parser
 
             if (variableType is ArrayType)
             {
-                var arrayType = (ArrayType)variableType;
+                var arrayType = (ArrayType) variableType;
                 variableType = arrayType.Type;
                 parameterTypeInfo.Elements = (int)((LiteralExpression)arrayType.Dimensions[0]).Literal.Value;
 
@@ -405,12 +413,12 @@ namespace Stride.Shaders.Parser
             {
                 parameterTypeInfo.Class = EffectParameterClass.MatrixColumns;
                 parameterTypeInfo.Type = EffectParameterType.Float;
-                parameterTypeInfo.RowCount = ((MatrixType)variableType).RowCount;
-                parameterTypeInfo.ColumnCount = ((MatrixType)variableType).ColumnCount;
+                parameterTypeInfo.RowCount = ((MatrixType) variableType).RowCount;
+                parameterTypeInfo.ColumnCount = ((MatrixType) variableType).ColumnCount;
             }
             else if (variableType is StructType)
             {
-                var structType = (StructType)variableType;
+                var structType = (StructType) variableType;
 
                 parameterTypeInfo.Class = EffectParameterClass.Struct;
                 parameterTypeInfo.RowCount = 1;
@@ -589,9 +597,10 @@ namespace Stride.Shaders.Parser
 
             if (type is ScalarType)
             {
-                // Uint and int are collapsed to int
-                if (type == ScalarType.Int || type == ScalarType.UInt
-                    || type == ScalarType.Float || type == ScalarType.Bool)
+                // UInt and Int are collapsed to Int
+                if (type == ScalarType.Int || type == ScalarType.UInt ||
+                    type == ScalarType.Float ||
+                    type == ScalarType.Bool)
                 {
                     return 4;
                 }
@@ -644,7 +653,7 @@ namespace Stride.Shaders.Parser
                 }
             }
 
-            //// Try to resolve key
+            // Try to resolve key
             var parameterKey = GetLinkParameterKey(variable);
 
             if (parameterKey != null)
@@ -659,7 +668,7 @@ namespace Stride.Shaders.Parser
 
         private static void LinkVariable(EffectReflection reflection, string variableName, LocalParameterKey parameterKey, int slotCount)
         {
-            var binding = new EffectResourceBindingDescription
+            reflection.ResourceBindings.Add(new EffectResourceBindingDescription
             {
                 KeyInfo = { KeyName = parameterKey.Name },
                 Class = parameterKey.Type.Class,
@@ -670,8 +679,7 @@ namespace Stride.Shaders.Parser
                 SlotCount = slotCount > 0 ? slotCount : 1,
                 ResourceGroup = parameterKey.ResourceGroup,
                 LogicalGroup = parameterKey.LogicalGroup
-            };
-            reflection.ResourceBindings.Add(binding);
+            });
         }
 
         private void LinkConstant(string cbName, Variable variable, LocalParameterKey parameterKey)
