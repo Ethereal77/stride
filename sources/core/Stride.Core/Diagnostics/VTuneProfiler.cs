@@ -2,24 +2,25 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 using Stride.Core.Annotations;
-using System;
-using System.Runtime.InteropServices;
 
 namespace Stride.Core.Diagnostics
 {
     /// <summary>
-    /// This static class gives access to the Pause/Resume API of VTune Amplifier.
+    ///   Defines methods to access the Pause / Resume APIs of Intel VTune Amplifier.
     /// </summary>
     public static class VTuneProfiler
     {
         private const string VTune2015DllName = "ittnotify_collector.dll";
+
         private static readonly Dictionary<string, StringHandle> StringHandles = new Dictionary<string, StringHandle>();
 
         /// <summary>
-        /// Resumes the profiler.
+        ///   Resumes the profiler.
         /// </summary>
         public static void Resume()
         {
@@ -27,13 +28,11 @@ namespace Stride.Core.Diagnostics
             {
                 __itt_resume();
             }
-            catch (DllNotFoundException)
-            {
-            }
+            catch (DllNotFoundException) { }
         }
 
         /// <summary>
-        /// Suspends the profiler.
+        ///   Suspends the profiler.
         /// </summary>
         public static void Pause()
         {
@@ -41,22 +40,24 @@ namespace Stride.Core.Diagnostics
             {
                 __itt_pause();
             }
-            catch (DllNotFoundException)
-            {
-            }
+            catch (DllNotFoundException) { }
         }
 
-        public static readonly bool IsAvailable = NativeLibrary.LoadLibrary(VTune2015DllName) != IntPtr.Zero;
+        public static readonly bool IsAvailable = NativeLibrary.Load(VTune2015DllName) != IntPtr.Zero;
 
         public static Event CreateEvent([NotNull] string eventName)
         {
-            if (eventName == null) throw new ArgumentNullException(nameof(eventName));
+            if (eventName is null)
+                throw new ArgumentNullException(nameof(eventName));
+
             return IsAvailable ? __itt_event_createW(eventName, eventName.Length) : new Event();
         }
 
         public static Domain CreateDomain([NotNull] string domaiName)
         {
-            if (domaiName == null) throw new ArgumentNullException(nameof(domaiName));
+            if (domaiName is null)
+                throw new ArgumentNullException(nameof(domaiName));
+
             return IsAvailable ? __itt_domain_createW(domaiName) : new Domain();
         }
 
@@ -69,6 +70,7 @@ namespace Stride.Core.Diagnostics
             {
                 if (id == 0)
                     return;
+
                 __itt_event_start(this);
             }
 
@@ -76,6 +78,7 @@ namespace Stride.Core.Diagnostics
             {
                 if (id == 0)
                     return;
+
                 __itt_event_end(this);
             }
         }
@@ -89,6 +92,7 @@ namespace Stride.Core.Diagnostics
             {
                 if (Pointer == IntPtr.Zero)
                     return;
+
                 __itt_frame_begin_v3(this, IntPtr.Zero);
             }
 
@@ -96,6 +100,7 @@ namespace Stride.Core.Diagnostics
             {
                 if (Pointer == IntPtr.Zero)
                     return;
+
                 __itt_task_begin(this, new IttId(), new IttId(), GetStringHandle(taskName));
             }
 
@@ -103,6 +108,7 @@ namespace Stride.Core.Diagnostics
             {
                 if (Pointer == IntPtr.Zero)
                     return;
+
                 __itt_task_end(this);
             }
 
@@ -110,22 +116,22 @@ namespace Stride.Core.Diagnostics
             {
                 if (Pointer == IntPtr.Zero)
                     return;
+
                 __itt_frame_end_v3(this, IntPtr.Zero);
             }
         }
 
         private static StringHandle GetStringHandle([NotNull] string text)
         {
-            StringHandle result;
             lock (StringHandles)
             {
-                if (!StringHandles.TryGetValue(text, out result))
+                if (!StringHandles.TryGetValue(text, out StringHandle result))
                 {
                     result = __itt_string_handle_createW(text);
                     StringHandles.Add(text, result);
                 }
+                return result;
             }
-            return result;
         }
 
         [StructLayout(LayoutKind.Sequential)]

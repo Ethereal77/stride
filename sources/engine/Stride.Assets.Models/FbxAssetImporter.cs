@@ -4,10 +4,10 @@
 
 using System;
 
-using Stride.Core.Assets;
 using Stride.Core;
-using Stride.Core.Diagnostics;
 using Stride.Core.IO;
+using Stride.Core.Diagnostics;
+using Stride.Core.Assets;
 using Stride.Assets.Textures;
 using Stride.Importer.Common;
 
@@ -17,7 +17,7 @@ namespace Stride.Assets.Models
     {
         static FbxAssetImporter()
         {
-            NativeLibrary.PreloadLibrary("libfbxsdk.dll", typeof(FbxAssetImporter));
+            NativeLibraryHelper.PreloadLibrary("libfbxsdk.dll", typeof(FbxAssetImporter));
         }
 
         // Supported file extensions for this importer

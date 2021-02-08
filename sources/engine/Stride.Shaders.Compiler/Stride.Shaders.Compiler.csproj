@@ -1,7 +1,6 @@
 <Project>
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
-    <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
   </PropertyGroup>
 
   <Import Project="..\..\targets\Stride.props" />
@@ -25,15 +24,10 @@
     <ProjectReference Include="..\Stride.Shaders.Parser\Stride.Shaders.Parser.csproj" />
     <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(DisableRegistryUse)' != 'true'">
-    <WindowsSdkDir_10 Condition="'$(WindowsSdkDir_10)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v10.0@InstallationFolder)</WindowsSdkDir_10>
-    <WindowsSdkDir_10 Condition="'$(WindowsSdkDir_10)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@InstallationFolder)</WindowsSdkDir_10>
-  </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net'))">
     <StrideNativeLib Include="$(WindowsSdkDir_10)\Redist\D3D\**\d3dcompiler_47.dll">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <RelativePath>%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+      <Link>win-%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <RelativePath>win-%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </StrideNativeLib>
   </ItemGroup>

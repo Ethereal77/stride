@@ -2,8 +2,6 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-#if STRIDE_GRAPHICS_API_DIRECT3D // Need SharpDX
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +11,8 @@ using SharpDX.D3DCompiler;
 
 using Stride.Core.Diagnostics;
 using Stride.Core.Storage;
-using Stride.Rendering;
 using Stride.Graphics;
 
-using ConstantBufferType = Stride.Shaders.ConstantBufferType;
-using ShaderBytecode = Stride.Shaders.ShaderBytecode;
 using ShaderVariableType = SharpDX.D3DCompiler.ShaderVariableType;
 
 namespace Stride.Shaders.Compiler.Direct3D
@@ -29,7 +24,7 @@ namespace Stride.Shaders.Compiler.Direct3D
             var isDebug = effectParameters.Debug;
             var optimLevel = effectParameters.OptimizationLevel;
             var profile = effectParameters.Profile;
-            
+
             var shaderModel = ShaderStageToString(stage) + "_" + ShaderProfileFromGraphicsProfile(profile);
 
             var shaderFlags = ShaderFlags.None;
@@ -509,7 +504,7 @@ namespace Stride.Shaders.Compiler.Direct3D
 
             throw new ArgumentException("graphicsProfile");
         }
-        
+
         private static readonly Dictionary<ShaderVariableType, EffectParameterType> MapTypes = new Dictionary<ShaderVariableType,EffectParameterType>()
             {
                 {ShaderVariableType.Void   , EffectParameterType.Void   },
@@ -532,4 +527,3 @@ namespace Stride.Shaders.Compiler.Direct3D
         }
     }
 }
-#endif

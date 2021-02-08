@@ -35,7 +35,7 @@
   <Choose>
     <When Condition="$(DefineConstants.Contains(STRIDE_VIDEO_FFMPEG))">
       <ItemGroup>
-        <StrideNativeLib Include="$(MSBuildThisFileDirectory)..\..\..\deps\FFmpeg\$(StridePlatform)\**\*.dll">
+        <StrideNativeLib Include="$(MSBuildThisFileDirectory)..\..\..\deps\FFmpeg\$(StridePlatformDeps)\**\*.*" Exclude="$(MSBuildThisFileDirectory)..\..\..\deps\FFmpeg\$(StridePlatformDeps)\*.*">
           <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
           <RelativePath>%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

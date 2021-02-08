@@ -14,7 +14,7 @@
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <StrideNativeLib Include="..\..\..\deps\BulletPhysics\$(StridePlatform)\**\libbulletc.*">
+    <StrideNativeLib Include="..\..\..\deps\BulletPhysics\$(StridePlatformDeps)\**\libbulletc.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </StrideNativeLib>
     <Reference Include="BulletSharp">

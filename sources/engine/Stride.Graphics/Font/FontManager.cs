@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+
 using SharpFont;
 
+using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
@@ -15,7 +17,8 @@ using Stride.Core.Serialization.Contents;
 namespace Stride.Graphics.Font
 {
     /// <summary>
-    /// A font manager is in charge of loading in memory the ttf files, looking for font informations, rendering and then caching the <see cref="CharacterBitmap"/>s on the CPU . 
+    ///   Represents a font manager, a system in charge of loading TrueType font files, looking for font informations,
+    ///   rendering and caching the <see cref="CharacterBitmap"/>s on the CPU.
     /// </summary>
     internal class FontManager : IDisposable
     {
@@ -81,7 +84,7 @@ namespace Stride.Graphics.Font
             contentManager = new ContentManager(fileProviderService);
 
             // Preload proper freetype native library (depending on CPU type)
-            Core.NativeLibrary.PreloadLibrary("freetype.dll", typeof(FontManager));
+            NativeLibraryHelper.PreloadLibrary("freetype.dll", typeof(FontManager));
 
             // create a freetype library used to generate the bitmaps
             freetypeLibrary = new Library();
@@ -92,7 +95,7 @@ namespace Stride.Graphics.Font
         }
 
         /// <summary>
-        /// Start the generation of the specified character's bitmap. 
+        /// Start the generation of the specified character's bitmap.
         /// </summary>
         /// <remarks>Does nothing if the bitmap already exist or if the generation is currently running.</remarks>
         /// <param name="characterSpecification">The character we want the bitmap of</param>
@@ -125,7 +128,7 @@ namespace Stride.Graphics.Font
             if (character.Size.X < 1 || character.Size.Y < 1)
                 return;
 
-            // get the face of the font 
+            // get the face of the font
             var fontFace = GetOrCreateFontFace(character.FontName, character.Style);
             lock (freetypeLibrary)
             {
@@ -225,7 +228,7 @@ namespace Stride.Graphics.Font
             // see if the index of the character is valid
             return glyphIndex != 0;
         }
-        
+
         public void Dispose()
         {
             // terminate the build thread
@@ -254,7 +257,7 @@ namespace Stride.Graphics.Font
                 freetypeLibrary.Dispose();
             freetypeLibrary = null;
         }
-        
+
         private Face GetOrCreateFontFace(string fontFamily, FontStyle fontStyle)
         {
             var fontPath = FontHelper.GetFontPath(fontFamily, fontStyle);
@@ -268,7 +271,7 @@ namespace Stride.Graphics.Font
         private void LoadFontInMemory(string fontPath)
         {
             // return if the font is already cached
-            if (cachedFontFaces.ContainsKey(fontPath)) 
+            if (cachedFontFaces.ContainsKey(fontPath))
                 return;
 
             // load the font from the data base
@@ -300,7 +303,7 @@ namespace Stride.Graphics.Font
                     if (character.Size.X < 1 || character.Size.Y < 1)
                         goto DequeueRequest;
 
-                    // get the face of the font 
+                    // get the face of the font
                     var fontFace = GetOrCreateFontFace(character.FontName, character.Style);
 
                     lock (freetypeLibrary)
@@ -329,6 +332,6 @@ namespace Stride.Graphics.Font
                         bitmapsToGenerate.Dequeue();
                 }
             }
-        }   
+        }
     }
 }

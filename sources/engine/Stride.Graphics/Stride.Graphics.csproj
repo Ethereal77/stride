@@ -15,7 +15,7 @@
     <DefineConstants>$(DefineConstants);STRIDE_GRAPHICS_NO_DESCRIPTOR_COPIES</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <StrideNativeLib Include="..\..\..\deps\freetype\$(StridePlatform)\**\*.*">
+    <StrideNativeLib Include="..\..\..\deps\freetype\$(StridePlatformDeps)\**\*.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <RelativePath>%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -12,7 +12,6 @@ using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.TextureConverter.Requests;
 using Stride.TextureConverter.TexLibraries;
-using System.Runtime.CompilerServices;
 
 using Stride.TextureConverter.Backend.Requests;
 
@@ -20,55 +19,60 @@ namespace Stride.TextureConverter
 {
 
     /// <summary>
-    /// Provides method to load images or textures, to modify them and to convert them with different texture compression format.
-    /// Input supported format : gif, png, jpe, pds (Every FreeImage supported format...), dds, pvr, ktx.
-    /// Output format : gif, png, jpe, pds (Every FreeImage supported format...), dds, pvr, ktx.
-    /// Compression format : DXT1-5, ATC, PVRTC1-2, ETC1-2, uncompressed formats (BGRA8888, RGBA8888)
-    /// Image processing : resize, flip, gamma correction
-    /// Texture utilities : Mipmap generation, normal map generation
+    ///   Provides methods to load images or textures, to modify them and to convert them to different texture compression formats.
     /// </summary>
+    /// <remarks>
+    ///   <list type="bullet">
+    ///     <item>Supported input formats: GIF, PNG, JPG, PDS, DDS, PVR, KTX, and every FreeImage supported format.</item>
+    ///     <item>Supported output formats: GIF, PNG, JPG, PDS, DDS, PVR, KTX, and every FreeImage supported format.</item>
+    ///     <item>Compression formats: DXT1-5, ATC, PVRTC1-2, ETC1-2, uncompressed formats (BGRA8888, RGBA8888).</item>
+    ///     <item>Image processing: Resize, Flip, Gamma correction.</item>
+    ///     <item>Texture utilities: Mipmap generation, Normal map generation.</item>
+    ///   </list>
+    /// </remarks>
     public class TextureTool : IDisposable
     {
-
         /// <summary>
-        /// The list of texture processing libraries
+        ///   The list of texture processing libraries
         /// </summary>
         private List<ITexLibrary> textureLibraries;
 
         private static Logger Log = GlobalLogger.GetLogger("TextureTool");
-        
+
         static TextureTool()
         {
             var type = typeof(TextureTool);
-            NativeLibrary.PreloadLibrary("DxtWrapper.dll", type);
-            NativeLibrary.PreloadLibrary("PVRTexLib.dll", type);
-            NativeLibrary.PreloadLibrary("PvrttWrapper.dll", type);
-            NativeLibrary.PreloadLibrary("FreeImage.dll", type);
-            NativeLibrary.PreloadLibrary("FreeImageNET.dll", type);
+            NativeLibraryHelper.PreloadLibrary("DxtWrapper.dll", type);
+            NativeLibraryHelper.PreloadLibrary("PVRTexLib.dll", type);
+            NativeLibraryHelper.PreloadLibrary("PvrttWrapper.dll", type);
+            NativeLibraryHelper.PreloadLibrary("FreeImage.dll", type);
+            NativeLibraryHelper.PreloadLibrary("FreeImageNET.dll", type);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TextureTool"/> class.
+        ///   Initializes a new instance of the <see cref="TextureTool"/> class.
         /// </summary>
         /// <remarks>
-        /// Creating instance of each texture processing libraries. For a multithreaded use, one instance of <see cref="TextureTool"/> should be created per thread.
+        ///   Creates one instance of each texture processing library.
+        ///   For multithreaded use, one instance of <see cref="TextureTool"/> should be created per thread.
         /// </remarks>
         public TextureTool()
         {
             textureLibraries = new List<ITexLibrary>
             {
-                new DxtTexLib(), // used to compress/decompress texture to DXT1-5 and load/save *.dds compressed texture files.
-                new FITexLib(), // used to open/save common bitmap image formats.
-                new StrideTexLibrary(), // used to save/load stride texture format.
-                new PvrttTexLib(), // used to compress/decompress texture to PVRTC1-2 and ETC1-2 and load/save *.pvr compressed texture file.
-                new ColorKeyTexLibrary(), // used to apply ColorKey on R8G8B8A8/B8G8R8A8_Unorm
-                new AtlasTexLibrary(), // used to create and manipulate texture atlas
-                new ArrayTexLib(), // used to create and manipulate texture array and texture cube
+                new DxtTexLib(),          // Compress / decompress textures to DXT1-5 and load/save *.DDS compressed textures
+                new FITexLib(),           // Open / save common bitmap image formats with FreeImage
+                new StrideTexLibrary(),   // Save / load Stride texture format
+                new PvrttTexLib(),        // Compress / decompress textures to PVRTC1-2 and ETC1-2 and load/save *.PVR compressed textures
+                new ColorKeyTexLibrary(), // Apply color key on R8G8B8A8 / B8G8R8A8_Unorm
+                new AtlasTexLibrary(),    // Create and manipulate texture atlases
+                new ArrayTexLib(),        // Create and manipulate texture arrays and texture cubes
             };
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources for each texture porcessing libraries.
+        ///   Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources for
+        ///   each of the texture porcessing libraries.
         /// </summary>
         public void Dispose()
         {
@@ -80,11 +84,11 @@ namespace Stride.TextureConverter
 
 
         /// <summary>
-        /// Creates an atlas with the given TexImage.
+        ///   Creates an atlas with the given images.
         /// </summary>
         /// <param name="textureList">The texture list.</param>
-        /// <param name="forceSquaredAtlas">boolean to decide wheter the atlas will be squared (default is false).</param>
-        /// <returns>An instance of <see cref="TexAtlas"/>.</returns>
+        /// <param name="forceSquaredAtlas">A value indicating whether the atlas will be squared. Default is <c>false</c>.</param>
+        /// <returns>The resulting <see cref="TexAtlas"/>.</returns>
         /// <exception cref="TextureToolsException">No available library could create the atlas.</exception>
         public TexAtlas CreateAtlas(List<TexImage> textureList, bool forceSquaredAtlas = false)
         {
@@ -92,7 +96,7 @@ namespace Stride.TextureConverter
             AtlasCreationRequest request = new AtlasCreationRequest(textureList, forceSquaredAtlas);
 
             ITexLibrary library = FindLibrary(atlas, request);
-            if (library == null)
+            if (library is null)
             {
                 Log.Error("No available library could create the atlas.");
                 throw new TextureToolsException("No available library could create the atlas.");
@@ -103,8 +107,8 @@ namespace Stride.TextureConverter
             {
                 if (texture.Format != atlas.Format)
                 {
-                    Log.Error("The textures in the list must all habe the same format.");
-                    throw new TextureToolsException("The textures in the list must all habe the same format.");
+                    Log.Error("The textures in the list must all have the same format.");
+                    throw new TextureToolsException("The textures in the list must all have the same format.");
                 }
                 texture.Update();
             }
@@ -114,14 +118,13 @@ namespace Stride.TextureConverter
             return atlas;
         }
 
-
         /// <summary>
-        /// Retrieves the atlas from a TexImage and its corresponding layout file.
+        ///   Retrieves the texture atlas from an image and its corresponding layout file.
         /// </summary>
         /// <param name="texture">The texture.</param>
         /// <param name="layoutFile">The layout file.</param>
-        /// <returns>An instance of <see cref="TexAtlas"/>.</returns>
-        /// <exception cref="TextureToolsException">The layout file doesn't exist. Please check the file path.</exception>
+        /// <returns>The corresponding <see cref="TexAtlas"/>.</returns>
+        /// <exception cref="TextureToolsException">The layout file doesn't exist.</exception>
         public TexAtlas RetrieveAtlas(TexImage texture, string layoutFile)
         {
             if (!File.Exists(layoutFile))
@@ -135,14 +138,14 @@ namespace Stride.TextureConverter
 
 
         /// <summary>
-        /// Creates a texture array with the given TexImage.
+        ///   Creates a texture array with the given images.
         /// </summary>
         /// <param name="textureList">The texture list.</param>
-        /// <returns>An instance of <see cref="TexImage"/> corresponding containing the texture array.</returns>
+        /// <returns>The corresponding <see cref="TexImage"/> representing the texture array.</returns>
         /// <exception cref="TextureToolsException">
-        /// No available library could create the array.
-        /// or
-        /// The textures must all have the same size and format to be in a texture array.
+        ///   No available library could create the array;
+        ///   or
+        ///   The textures must all have the same size and format to be in a texture array.
         /// </exception>
         public TexImage CreateTextureArray(List<TexImage> textureList)
         {
@@ -150,7 +153,7 @@ namespace Stride.TextureConverter
             var request = new ArrayCreationRequest(textureList);
 
             ITexLibrary library = FindLibrary(array, request);
-            if (library == null)
+            if (library is null)
             {
                 Log.Error("No available library could create the array.");
                 throw new TextureToolsException("No available library could create the array.");
@@ -170,24 +173,23 @@ namespace Stride.TextureConverter
                     throw new TextureToolsException("The textures must all have the same size and format to be in a texture array.");
                 }
             }
-  
+
             ExecuteRequest(array, request);
 
             return array;
         }
 
-
         /// <summary>
-        /// Creates a texture cube with the given TexImage.
+        ///   Creates a texture cube with the given images.
         /// </summary>
         /// <param name="textureList">The texture list.</param>
-        /// <returns>An instance of <see cref="TexImage"/> containing the texture cube.</returns>
+        /// <returns>The corresponding <see cref="TexImage"/> containing the texture cube.</returns>
         /// <exception cref="TextureToolsException">
-        /// No available library could create the cube.
-        /// or
-        /// The number of texture in the texture list must be a multiple of 6.
-        /// or
-        /// The textures must all have the same size and format to be in a texture cube.
+        ///   No available library could create the cube;
+        ///   or
+        ///   The number of textures in the texture list must be a multiple of 6;
+        ///   or
+        ///   The textures must all have the same size and format to be in a texture cube.
         /// </exception>
         public TexImage CreateTextureCube(List<TexImage> textureList)
         {
@@ -201,7 +203,7 @@ namespace Stride.TextureConverter
             }
 
             ITexLibrary library = FindLibrary(cube, request);
-            if (library == null)
+            if (library is null)
             {
                 Log.Error("No available library could create the cube.");
                 throw new TextureToolsException("No available library could create the cube.");
@@ -227,17 +229,16 @@ namespace Stride.TextureConverter
             return cube;
         }
 
-
         /// <summary>
-        /// Loads the Atlas corresponding to the specified layout and file.
+        ///   Loads a texture atlas corresponding to the specified layout and file.
         /// </summary>
-        /// <param name="layout">The layout.</param>
-        /// <param name="file">The file.</param>
-        /// <returns>An instance of <see cref="TexAtlas"/>.</returns>
+        /// <param name="layout">The layout of the atlas.</param>
+        /// <param name="file">The texture atlas image file.</param>
+        /// <returns>The loaded <see cref="TexAtlas"/>.</returns>
         /// <exception cref="TextureToolsException">
-        /// The file doesn't exist. Please check the file path.
-        /// or
-        /// The layout doesn't match the given atlas file.
+        ///   The file doesn't exist.
+        ///   or
+        ///   The layout doesn't match the given atlas file.
         /// </exception>
         public TexAtlas LoadAtlas(TexAtlas.TexLayout layout, string file)
         {
@@ -250,21 +251,20 @@ namespace Stride.TextureConverter
             var atlas = new TexAtlas(layout, Load(new LoadingRequest(file, false)));
 
             CheckConformity(atlas, layout);
-            
+
             return atlas;
         }
 
-
         /// <summary>
-        /// Loads the Atlas corresponding to the specified texture file and layout file.
+        ///   Loads a texture atlas corresponding to the specified texture and layout files.
         /// </summary>
-        /// <param name="layoutFile">The layout.</param>
-        /// <param name="file">The file.</param>
-        /// <returns>An instance of <see cref="TexAtlas"/>.</returns>
+        /// <param name="layoutFile">The texture atlas layout file.</param>
+        /// <param name="file">The texture atlas image file.</param>
+        /// <returns>The loaded <see cref="TexAtlas"/>.</returns>
         /// <exception cref="TextureToolsException">
-        /// The file doesn't exist. Please check the file path.
-        /// or
-        /// The layout doesn't match the given atlas file.
+        ///   The file doesn't exist;
+        ///   or
+        ///   The layout doesn't match the given atlas file.
         /// </exception>
         public TexAtlas LoadAtlas(string file, string layoutFile = "")
         {
@@ -297,9 +297,8 @@ namespace Stride.TextureConverter
             return atlas;
         }
 
-
         /// <summary>
-        /// Checks the conformity of an atlas an its corresponding layout.
+        ///   Checks the conformity of an atlas an its corresponding layout.
         /// </summary>
         /// <param name="atlas">The atlas.</param>
         /// <param name="layout">The layout.</param>
@@ -310,8 +309,10 @@ namespace Stride.TextureConverter
             int lowestPoint = 0;
             foreach (var entry in layout.TexList)
             {
-                if (entry.Value.UOffset + entry.Value.Width > rightestPoint) rightestPoint = entry.Value.UOffset + entry.Value.Width;
-                if (entry.Value.VOffset + entry.Value.Height > lowestPoint) lowestPoint = entry.Value.VOffset + entry.Value.Height;
+                if (entry.Value.UOffset + entry.Value.Width > rightestPoint)
+                    rightestPoint = entry.Value.UOffset + entry.Value.Width;
+                if (entry.Value.VOffset + entry.Value.Height > lowestPoint)
+                    lowestPoint = entry.Value.VOffset + entry.Value.Height;
             }
 
             if (rightestPoint > atlas.Width || lowestPoint > atlas.Height)
@@ -322,15 +323,15 @@ namespace Stride.TextureConverter
         }
 
         /// <summary>
-        /// Loads the specified file.
+        ///   Loads an image file.
         /// </summary>
+        /// <param name="file">The image file to load.</param>
+        /// <param name="isSRgb">A value indicating if the input file contains sRGB data.</param>
+        /// <returns>The loaded <see cref="TexImage"/>.</returns>
         /// <remarks>
-        /// The file can be an image or a texture.
+        ///   The file can be an image or a texture.
         /// </remarks>
-        /// <param name="file">The file.</param>
-        /// <param name="isSRgb">Indicate if the input file contains sRGB data</param>
-        /// <returns>An instance of <see cref="TexImage"/>.</returns>
-        /// <exception cref="TextureToolsException">The file doesn't exist. Please check the file path.</exception>
+        /// <exception cref="TextureToolsException">The file doesn't exist.</exception>
         public TexImage Load(string file, bool isSRgb)
         {
             if (!File.Exists(file))
@@ -343,28 +344,33 @@ namespace Stride.TextureConverter
         }
 
         /// <summary>
-        /// Loads the specified image of the class <see cref="Stride.Graphics.Image"/>.
+        ///   Loads the specified <see cref="Image"/>.
         /// </summary>
         /// <param name="image">The image.</param>
-        /// <param name="isSRgb">Indicate if the input file contains sRGB data</param>
-        /// <remarks>The ownership of the provided image is not taken by the tex tool. The user has to dispose it him-self</remarks>
-        /// <returns>An instance of the class <see cref="TexImage"/> containing your loaded image</returns>
+        /// <param name="isSRgb">A value indicating if the input file contains sRGB data.</param>
+        /// <returns>The loaded <see cref="TexImage"/>.</returns>
+        /// <remarks>
+        ///   The ownership of the provided image is not taken by <see cref="TextureTool"/>.
+        ///   The calling method has to dispose it if not in use anymore.
+        /// </remarks>
         public TexImage Load(Image image, bool isSRgb)
         {
-            if (image == null) throw new ArgumentNullException("image");
+            if (image is null)
+                throw new ArgumentNullException("image");
+
             return Load(new LoadingRequest(image, isSRgb));
         }
 
         /// <summary>
-        /// Loads the specified request.
+        ///   Loads the specified request.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <returns>An instance of the class <see cref="TexImage"/> containing your loaded image</returns>
-        /// <exception cref="TextureToolsException">No available library could perform the task : LoadingRequest</exception>
+        /// <returns>The resulting loaded <see cref="TexImage"/>.</returns>
+        /// <exception cref="TextureToolsException">No available library could perform the task.</exception>
         private TexImage Load(LoadingRequest request)
         {
             var texImage = new TexImage();
-            texImage.Name = request.FilePath == null ? "" : Path.GetFileName(request.FilePath);
+            texImage.Name = request.FilePath is null ? "" : Path.GetFileName(request.FilePath);
 
             foreach (ITexLibrary library in textureLibraries)
             {
@@ -416,7 +422,7 @@ namespace Stride.TextureConverter
         /// <param name="minimumMipMapSize">Minimum size of the mip map.</param>
         public void Save(TexImage image, String fileName, int minimumMipMapSize=1)
         {
-            if (fileName == null || fileName.Equals(""))
+            if (fileName is null || fileName.Equals(""))
             {
                 Log.Error("No file name entered.");
                 throw new TextureToolsException("No file name entered.");
@@ -424,7 +430,7 @@ namespace Stride.TextureConverter
 
             var request = new ExportRequest(fileName, minimumMipMapSize);
 
-            if (FindLibrary(image, request) == null && image.Format.IsCompressed())
+            if (FindLibrary(image, request) is null && image.Format.IsCompressed())
             {
                 Log.Warning("No library can export this texture with the actual compression format. We will try to decompress it first.");
                 Decompress(image, image.Format.IsSRgb());
@@ -443,7 +449,7 @@ namespace Stride.TextureConverter
         /// <param name="minimumMipMapSize">Minimum size of the mip map.</param>
         public void Save(TexImage image, String fileName, PixelFormat format, int minimumMipMapSize = 1)
         {
-            if (fileName == null || fileName.Equals(""))
+            if (fileName is null || fileName.Equals(""))
             {
                 Log.Error("No file name entered.");
                 throw new TextureToolsException("No file name entered.");
@@ -534,7 +540,7 @@ namespace Stride.TextureConverter
                 Decompress(image, image.Format.IsSRgb());
             }
 
-            if (image.Format != PixelFormat.R8G8B8A8_UNorm && image.Format != PixelFormat.B8G8R8A8_UNorm 
+            if (image.Format != PixelFormat.R8G8B8A8_UNorm && image.Format != PixelFormat.B8G8R8A8_UNorm
                 && image.Format != PixelFormat.B8G8R8A8_UNorm_SRgb && image.Format != PixelFormat.R8G8B8A8_UNorm_SRgb)
             {
                 Log.Error($"ColorKey TextureConverter is only supporting R8G8B8A8_UNorm or B8G8R8A8_UNorm while Texture Format is [{image.Format}]");
@@ -676,7 +682,7 @@ namespace Stride.TextureConverter
 
             ExecuteRequest(image, new PreMultiplyAlphaRequest());
         }
-        
+
         /// <summary>
         /// Create a new image from the alpha component of a reference image.
         /// </summary>
@@ -778,7 +784,7 @@ namespace Stride.TextureConverter
             if (tranparencyColor.HasValue) // specific case when using a transparency color
             {
                 var transparencyValue = format.IsRGBAOrder() ? tranparencyColor.Value.ToRgba() : tranparencyColor.Value.ToBgra();
-                
+
                 for (int y = 0; y < region.Height; ++y)
                 {
                     var ptr = (int*)rowPtr;
@@ -831,7 +837,9 @@ namespace Stride.TextureConverter
         /// <exception cref="ArgumentNullException"><paramref name="texture"/> is null</exception>
         public unsafe Color PickColor(TexImage texture, Int2 pixel)
         {
-            if (texture == null) throw new ArgumentNullException(nameof(texture));
+            if (texture is null)
+                throw new ArgumentNullException(nameof(texture));
+
 
             var format = texture.Format;
             if (texture.Dimension != TexImage.TextureDimension.Texture2D || !(format.IsRGBAOrder() || format.IsBGRAOrder() || format.SizeInBytes() != 4))
@@ -862,7 +870,9 @@ namespace Stride.TextureConverter
         /// <returns></returns>
         public unsafe Rectangle FindSpriteRegion(TexImage texture, Int2 pixel, Color? separatorColor = null, uint separatorMask = 0xff000000)
         {
-            if (texture == null) throw new ArgumentNullException(nameof(texture));
+            if (texture is null)
+                throw new ArgumentNullException(nameof(texture));
+
 
             var format = texture.Format;
             if (texture.Dimension != TexImage.TextureDimension.Texture2D || !(format.IsRGBAOrder() || format.IsBGRAOrder() || format.SizeInBytes() != 4))
@@ -876,7 +886,7 @@ namespace Stride.TextureConverter
                 separatorMask = RgbaToBgra(separatorMask);
             }
             var maskedSeparator = separator & separatorMask;
-            
+
             var ptr = (uint*)texture.Data;
             var stride = texture.RowPitch / 4;
 
@@ -911,7 +921,7 @@ namespace Stride.TextureConverter
                     startEdge.X = x;
                 }
 
-                // Stage 2: Determine the whole contour of the shape and update the region. 
+                // Stage 2: Determine the whole contour of the shape and update the region.
                 // Note: the found contour can correspond to an internal hole contour or the external shape contour.
                 var currentEdge = startEdge;
                 var currentEdgeDirection = startEdgeDirection;
@@ -939,7 +949,7 @@ namespace Stride.TextureConverter
                         currentEdgeDirection = (EdgeDirection)(((int)currentEdgeDirection + 1) % 4);
                     }
 
-                    // keep record of the point of the edge which is 
+                    // keep record of the point of the edge which is
                     if (currentEdge.X < contourLeftEgde.X)
                         contourLeftEgde = currentEdge;
 
@@ -950,7 +960,7 @@ namespace Stride.TextureConverter
                     region = Rectangle.Union(region, currentEdge);
                 }
                 while (currentEdge != startEdge || currentEdgeDirection != startEdgeDirection); // as long as we do not close the contour continue to explore
-                
+
             } // repeat the process as long as the edge found is not the shape external contour.
             while (rotationDirection != 4);
 
@@ -978,7 +988,7 @@ namespace Stride.TextureConverter
 
             // create the stride image
             var sdImage = Image.New2D(region.Width, region.Height, 1, texImage.Format);
-            if (sdImage == null)
+            if (sdImage is null)
             {
                 Log.Error("Image could not be created.");
                 throw new InvalidOperationException("Image could not be created.");
@@ -1156,7 +1166,7 @@ namespace Stride.TextureConverter
         /// </exception>
         public TexImage Extract(TexAtlas atlas, string name, int minimumMipmapSize = 1)
         {
-            if (name == null || name.Equals(""))
+            if (name is null || name.Equals(""))
             {
                 Log.Error("You must enter a texture name to extract.");
                 throw new TextureToolsException("You must enter a texture name to extract.");
@@ -1477,7 +1487,7 @@ namespace Stride.TextureConverter
                     }
 
                     // One or both libraries were not found, cannot proceed with the request
-                    if (libraryOne == null || libraryTwo == null)
+                    if (libraryOne is null || libraryTwo is null)
                     {
                         Log.Error("No available library could perform the task : " + request.Type);
                         throw new TextureToolsException("No available library could perform the task : " + request.Type);
@@ -1531,7 +1541,7 @@ namespace Stride.TextureConverter
 
                 texTool.Save(array, @"C:\dev\data\test\array_after.dds");
 
-                foreach (var texture in list)  
+                foreach (var texture in list)
                 {
                     texture.Dispose();
                 }

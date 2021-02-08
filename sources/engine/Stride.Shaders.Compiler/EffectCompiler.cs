@@ -47,8 +47,8 @@ namespace Stride.Shaders.Compiler
         public EffectCompiler(IVirtualFileProvider fileProvider)
         {
             FileProvider = fileProvider;
-
-            NativeLibrary.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
+            
+            NativeLibraryHelper.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
 
             SourceDirectories = new List<string>();
             UrlToFilePath = new Dictionary<string, string>();
@@ -92,7 +92,7 @@ namespace Stride.Shaders.Compiler
             // NOTE: No lock, it's probably fine if it gets called from multiple threads at the same time.
             if (!d3dCompilerLoaded)
             {
-                NativeLibrary.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
+                NativeLibraryHelper.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
                 d3dCompilerLoaded = true;
             }
 

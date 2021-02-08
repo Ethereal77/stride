@@ -2,24 +2,26 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Stride.Core.Assets.Compiler;
-using Stride.Core.BuildEngine;
-using Stride.Core;
-using Stride.Core.Mathematics;
-using Stride.Core.Serialization;
-using Stride.Rendering;
-using Stride.Graphics.Data;
-using Stride.Physics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Analysis;
+using Stride.Core;
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization;
 using Stride.Core.Serialization.Contents;
+using Stride.Core.BuildEngine;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Compiler;
+using Stride.Core.Assets.Analysis;
 using Stride.Assets.Textures;
+using Stride.Graphics.Data;
+using Stride.Rendering;
+using Stride.Physics;
+
 using VHACDSharp;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Assets.Physics
@@ -29,7 +31,7 @@ namespace Stride.Assets.Physics
     {
         static ColliderShapeAssetCompiler()
         {
-            NativeLibrary.PreloadLibrary("VHACD.dll", typeof(ColliderShapeAssetCompiler));
+            NativeLibraryHelper.PreloadLibrary("VHACD.dll", typeof(ColliderShapeAssetCompiler));
         }
 
         public override IEnumerable<BuildDependencyInfo> GetInputTypes(AssetItem assetItem)
@@ -141,9 +143,10 @@ namespace Stride.Assets.Physics
                     {
                         ContentFilter = ContentManagerLoaderSettings.NewContentFilterByType(typeof(Mesh), typeof(Skeleton))
                     };
-                    
+
                     var modelAsset = assetManager.Load<Model>(AttachedReferenceManager.GetUrl(convexHullDesc.Model), loadSettings);
-                    if (modelAsset == null) continue;
+                    if (modelAsset is null)
+                        continue;
 
                     convexHullDescClone.ConvexHulls = new List<List<List<Vector3>>>();
                     convexHullDescClone.ConvexHullsIndices = new List<List<List<uint>>>();
@@ -153,8 +156,8 @@ namespace Stride.Assets.Physics
                     var nodeTransforms = new List<Matrix>();
 
                     //pre-compute all node transforms, assuming nodes are ordered... see ModelViewHierarchyUpdater
-                    
-                    if (modelAsset.Skeleton == null)
+
+                    if (modelAsset.Skeleton is null)
                     {
                         Matrix baseMatrix;
                         Matrix.Transformation(ref convexHullDescClone.Scaling, ref convexHullDescClone.LocalRotation, ref convexHullDescClone.LocalOffset, out baseMatrix);
@@ -165,11 +168,11 @@ namespace Stride.Assets.Physics
                         var nodesLength = modelAsset.Skeleton.Nodes.Length;
                         for (var i = 0; i < nodesLength; i++)
                         {
-                            Matrix localMatrix;
                             Matrix.Transformation(
                                 ref modelAsset.Skeleton.Nodes[i].Transform.Scale,
                                 ref modelAsset.Skeleton.Nodes[i].Transform.Rotation,
-                                ref modelAsset.Skeleton.Nodes[i].Transform.Position, out localMatrix);
+                                ref modelAsset.Skeleton.Nodes[i].Transform.Position,
+                                out Matrix localMatrix);
 
                             Matrix worldMatrix;
                             if (modelAsset.Skeleton.Nodes[i].ParentIndex != -1)
@@ -184,21 +187,27 @@ namespace Stride.Assets.Physics
 
                             if (i == 0)
                             {
-                                Matrix baseMatrix;
-                                Matrix.Transformation(ref convexHullDescClone.Scaling, ref convexHullDescClone.LocalRotation, ref convexHullDescClone.LocalOffset, out baseMatrix);
-                                nodeTransforms.Add(baseMatrix*worldMatrix);
+                                Matrix.Transformation(
+                                    ref convexHullDescClone.Scaling,
+                                    ref convexHullDescClone.LocalRotation,
+                                    ref convexHullDescClone.LocalOffset,
+                                    out Matrix baseMatrix);
+
+                                nodeTransforms.Add(baseMatrix * worldMatrix);
                             }
                             else
                             {
-                                nodeTransforms.Add(worldMatrix); 
-                            }                           
+                                nodeTransforms.Add(worldMatrix);
+                            }
                         }
                     }
 
                     for (var i = 0; i < nodeTransforms.Count; i++)
                     {
                         var i1 = i;
-                        if (modelAsset.Meshes.All(x => x.NodeIndex != i1)) continue; // no geometry in the node
+                        if (modelAsset.Meshes.All(x => x.NodeIndex != i1))
+                            // No geometry in the node
+                            continue;
 
                         var combinedVerts = new List<float>();
                         var combinedIndices = new List<uint>();
@@ -211,7 +220,7 @@ namespace Stride.Assets.Physics
 
                         foreach (var meshData in modelAsset.Meshes.Where(x => x.NodeIndex == i1))
                         {
-                            var indexOffset = (uint)combinedVerts.Count / 3;
+                            var indexOffset = (uint) combinedVerts.Count / 3;
 
                             var stride = meshData.Draw.VertexBuffers[0].Declaration.VertexStride;
 
@@ -236,9 +245,8 @@ namespace Stride.Assets.Physics
                             {
                                 var posMatrix = Matrix.Translation(new Vector3(BitConverter.ToSingle(vertexData, vertexIndex + 0), BitConverter.ToSingle(vertexData, vertexIndex + 4), BitConverter.ToSingle(vertexData, vertexIndex + 8)));
 
-                                Matrix rotatedMatrix;
                                 var nodeTransform = nodeTransforms[i];
-                                Matrix.Multiply(ref posMatrix, ref nodeTransform, out rotatedMatrix);
+                                Matrix.Multiply(ref posMatrix, ref nodeTransform, out Matrix rotatedMatrix);
 
                                 combinedVerts.Add(rotatedMatrix.TranslationVector.X);
                                 combinedVerts.Add(rotatedMatrix.TranslationVector.Y);

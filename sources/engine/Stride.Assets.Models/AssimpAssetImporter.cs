@@ -5,12 +5,12 @@
 using System;
 using System.Collections.Generic;
 
-using Stride.Core.Assets;
 using Stride.Core;
-using Stride.Core.Diagnostics;
 using Stride.Core.IO;
-using Stride.Animations;
+using Stride.Core.Diagnostics;
+using Stride.Core.Assets;
 using Stride.Assets.Textures;
+using Stride.Animations;
 using Stride.Importer.Common;
 
 namespace Stride.Assets.Models
@@ -19,7 +19,7 @@ namespace Stride.Assets.Models
     {
         static AssimpAssetImporter()
         {
-            NativeLibrary.PreloadLibrary("assimp-vc140-mt.dll", typeof(AssimpAssetImporter));
+            NativeLibraryHelper.PreloadLibrary("assimp-vc140-mt.dll", typeof(AssimpAssetImporter));
         }
 
         // Supported file extensions for this importer
