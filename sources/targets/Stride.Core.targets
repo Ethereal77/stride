@@ -24,20 +24,6 @@
   <Import Project="$(SolutionDir)$(SolutionName).Build.targets" Condition="Exists('$(SolutionDir)$(SolutionName).Build.targets')" />
   <Import Project="$(SolutionDir)Stride.Core.Build.targets" Condition="Exists('$(SolutionDir)Stride.Core.Build.targets')" />
 
-  <!-- Setup default RuntimeIdentifier for design-time build -->
-  <PropertyGroup Condition="$(DesignTimeBuild) == 'true'">
-    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' And '$(RuntimeIdentifiers)' != ''">$(RuntimeIdentifiers.Split(';', StringSplitOptions.RemoveEmptyEntries)[0])</RuntimeIdentifier>
-  </PropertyGroup>
-
-  <!-- Workaround: Remove RuntimeIdentifier from Solution references (https://github.com/onovotny/MSBuildSdkExtras/issues/139).
-                   Additionally, also remove it from all references to avoid issues -->
-  <Target Name="_StrideProjectReferenceRemoveRuntimeIdentifier" AfterTargets="AssignProjectConfiguration">
-    <ItemGroup>
-      <ProjectReferenceWithConfiguration>
-        <GlobalPropertiesToRemove>%(ProjectReferenceWithConfiguration.GlobalPropertiesToRemove);RuntimeIdentifier</GlobalPropertiesToRemove>
-      </ProjectReferenceWithConfiguration>
-    </ItemGroup>
-  </Target>
 
   <!-- Code Analysis -->
   <PropertyGroup Condition="'$(StrideCodeAnalysis)' == 'true'">
@@ -57,17 +43,10 @@
     </ItemGroup>
   </Target>
 
-  <!-- DocFX doesn't like if there is no TargetFramework/RuntimeIdentifier set by default -->
+  <!-- DocFX doesn't like if there is no TargetFramework set by default -->
   <PropertyGroup Condition="'$(StrideBuildDoc)' == 'true'">
     <TargetFramework Condition="'$(TargetFramework)' == ''">$(TargetFrameworks.Split(';', StringSplitOptions.RemoveEmptyEntries)[0])</TargetFramework>
-    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(StrideRuntimeIdentifier)</RuntimeIdentifier>
-  </PropertyGroup>
-
-  <!-- Setup compiler targets per platform / language -->
-  <PropertyGroup>
-    <OutputPath Condition="'$(StrideProjectType)' == 'Cpp'">$(OutDir)</OutputPath>
-    <IntermediateOutputPath Condition="'$(StrideProjectType)' == 'Cpp'">$(IntDir)</IntermediateOutputPath>
-  </PropertyGroup>
+  </PropertyGroup>  
 
   <!-- User Documentation (.usrdoc) -->
   <PropertyGroup Condition="'$(StridePublicApi)' == 'true'">
@@ -100,6 +79,12 @@
     <StrideAssemblyProcessorHash Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$([System.IO.File]::ReadAllText('$(StrideAssemblyProcessorBasePath)\$(StrideAssemblyProcessorFramework)\Stride.Core.AssemblyProcessor.Packed$(StrideAssemblyProcessorExt).hash'))</StrideAssemblyProcessorHash>
     <StrideAssemblyProcessorTempBasePath Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$(TEMP)\Stride\AssemblyProcessor\$(StrideAssemblyProcessorHash)\$(StrideAssemblyProcessorFramework)\</StrideAssemblyProcessorTempBasePath>
     <StrideAssemblyProcessorTempPath Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$(StrideAssemblyProcessorTempBasePath)Stride.Core.AssemblyProcessor.Packed$(StrideAssemblyProcessorExt)</StrideAssemblyProcessorTempPath>
+  </PropertyGroup>
+
+  <!-- Setup default output path for C++ projects -->
+  <PropertyGroup>
+    <OutputPath Condition="'$(StrideProjectType)' == 'Cpp'">$(OutDir)</OutputPath>
+    <IntermediateOutputPath Condition="'$(StrideProjectType)' == 'Cpp'">$(IntDir)</IntermediateOutputPath>
   </PropertyGroup>
 
   <!-- C++ doesn't auto-import language targets -->
@@ -174,12 +159,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
-  <Target Name="_StridePackRemoveRuntimeIdentifierIfSingle" BeforeTargets="_SdkGetBuildOutputFilesWithTfm;_SdkGetDebugSymbolsWithTfm">
-
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' != '' And '$(RuntimeIdentifiers)' == ''">
-      <RuntimeIdentifier></RuntimeIdentifier>
-    </PropertyGroup>
-  </Target>
 
   <!-- Auto NuGet build packages and deploy them -->
   <Import Project="$(MSBuildThisFileDirectory)Stride.AutoPack.targets"/>
@@ -216,5 +195,5 @@
     </ItemGroup>
   </Target>
 
-  <Import Project="$(MSBuildThisFileDirectory)Stride.Core.RuntimeIdentifier.ProjectReference.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(StrideProjectType)' != 'Cpp'" />
 </Project>

@@ -34,5 +34,5 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
-  <Import Project="Sdk.props" Sdk="MSBuild.Sdk.Extras" Version="3.0.22" />
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 </Project>
