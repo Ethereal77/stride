@@ -14,7 +14,7 @@ namespace Stride.GameStudio.Tests
 {
     public class Module
     {
-        [ModuleInitializer]
+        [Core.ModuleInitializer]
         internal static void Initialize()
         {
             PackageSessionPublicHelper.FindAndSetMSBuildVersion();
