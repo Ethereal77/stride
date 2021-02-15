@@ -1,0 +1,71 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <MSBuildAllProjects Condition=" '$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0' ">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Convert 'TargetFramework' to lower case -->
+    <TargetFramework>$(TargetFramework.ToLowerInvariant())</TargetFramework>
+    <!-- If version-less framework-profile is specified then default to the highest supported version of that framework-profile -->
+    <TargetFramework Condition="'$(TargetFramework)' == 'net'">net45</TargetFramework>
+  </PropertyGroup>
+
+  <!--
+    Split 'TargetFramework' into short identifier, version and profile list
+    For Example:
+      net45 into 'net', '45'
+  -->
+  <Choose>
+    <When Condition="$(TargetFramework.Contains('-'))">
+      <!-- Handle short framework ids with profiles -->
+      <PropertyGroup>
+        <_SdkShortFrameworkIdentifierWithVersion>$(TargetFramework.Split('-')[0])</_SdkShortFrameworkIdentifierWithVersion>
+        <_SdkShortFrameworkIdentifier>$(_SdkShortFrameworkIdentifierWithVersion.TrimEnd('.0123456789'))</_SdkShortFrameworkIdentifier>
+        <_SdkShortFrameworkVersion>$(_SdkShortFrameworkIdentifierWithVersion.Substring($(_SdkShortFrameworkIdentifier.Length)))</_SdkShortFrameworkVersion>
+        <_SdkShortFrameworkProfile>$(TargetFramework.Split('-')[1])</_SdkShortFrameworkProfile>
+        <_SdkShortFrameworkProfileCount>$(_SdkShortFrameworkProfile.Split('+').Length)</_SdkShortFrameworkProfileCount>
+        <!-- Pre and post-pend the separator char + to the short-TFM list after counting so we can easily do a Contains() match -->
+        <_SdkShortFrameworkProfile>+$(_SdkShortFrameworkProfile)+</_SdkShortFrameworkProfile>
+      </PropertyGroup>
+    </When>
+
+    <Otherwise>
+      <!-- Handle simple short framework ids -->
+      <PropertyGroup>
+        <_SdkShortFrameworkIdentifier>$(TargetFramework.TrimEnd('.0123456789'))</_SdkShortFrameworkIdentifier>
+        <_SdkShortFrameworkVersion>$(TargetFramework.Substring($(_SdkShortFrameworkIdentifier.Length)))</_SdkShortFrameworkVersion>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <!-- Map short name to long name. See earlier comment for example of how to work with identifiers that are not recognized here -->
+  <PropertyGroup Condition=" ('$(TargetFrameworkIdentifier)' == '' OR '$(TargetFrameworkIdentifier)' == '_') AND '$(_SdkShortFrameworkIdentifier)' != ''">
+    <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'net'">.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'netstandard'">.NETStandard</TargetFrameworkIdentifier>
+    <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'netcoreapp' OR ('$(_SdkShortFrameworkIdentifier)' == 'net' AND $(_SdkShortFrameworkVersion[0]) >= 5)">.NETCoreApp</TargetFrameworkIdentifier>
+
+    <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'win'">.NETCore</TargetFrameworkIdentifier>
+    <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'netcore'">.NETCore</TargetFrameworkIdentifier> 
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(TargetFrameworkVersion)' == '' AND '$(_SdkShortFrameworkVersion)' != '' AND $(_SdkShortFrameworkVersion.Contains('.'))">
+      <!-- Versions with dots are taken as is -->
+      <PropertyGroup>
+        <TargetFrameworkVersion>v$(_SdkShortFrameworkVersion)</TargetFrameworkVersion>
+      </PropertyGroup>
+    </When>
+
+    <When Condition="'$(TargetFrameworkVersion)' == '' AND '$(_SdkShortFrameworkVersion)' != ''">
+      <!-- Versions with no dots and up to 3 characters gets implicit dots between characters -->
+      <PropertyGroup>
+        <TargetFrameworkVersion Condition="$(_SdkShortFrameworkVersion.Length) == 1">v$(_SdkShortFrameworkVersion[0]).0</TargetFrameworkVersion>
+        <TargetFrameworkVersion Condition="$(_SdkShortFrameworkVersion.Length) == 2">v$(_SdkShortFrameworkVersion[0]).$(_SdkShortFrameworkVersion[1])</TargetFrameworkVersion>
+        <TargetFrameworkVersion Condition="$(_SdkShortFrameworkVersion.Length) == 3">v$(_SdkShortFrameworkVersion[0]).$(_SdkShortFrameworkVersion[1]).$(_SdkShortFrameworkVersion[2])</TargetFrameworkVersion>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <Import Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" Project="$(MSBuildThisFileDirectory)FrameworkResolvers\NETFramework.targets"/>
+</Project>

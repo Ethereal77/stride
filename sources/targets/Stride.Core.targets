@@ -195,5 +195,12 @@
     </ItemGroup>
   </Target>
 
+  <PropertyGroup>
+    <_SdkLanguageSourceName Condition="'$(MSBuildProjectExtension)' == '.csproj'">CSharp</_SdkLanguageSourceName>
+  </PropertyGroup>
+  <Import Condition="'$(TargetFramework)' != ''" Project="$(MSBuildThisFileDirectory)MSBuild.Sdk.Extras\Inference.targets" />
+  <Import Condition="'$(TargetFramework)' != ''" Project="$(MSBuildThisFileDirectory)MSBuild.Sdk.Extras\Platforms.targets" />
+  <Import Condition="'$(TargetFramework)' != ''" Project="$(MSBuildThisFileDirectory)MSBuild.Sdk.Extras\DefaultItems\ImplicitPackages.targets"/>
+
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(StrideProjectType)' != 'Cpp'" />
 </Project>
