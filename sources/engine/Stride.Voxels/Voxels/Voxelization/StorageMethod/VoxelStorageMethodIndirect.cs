@@ -1,12 +1,10 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Stride.Core;
-using Stride.Shaders;
-using Stride.Rendering.Materials;
 using Stride.Core.Annotations;
+using Stride.Shaders;
 
 namespace Stride.Rendering.Voxels
 {
@@ -16,8 +14,10 @@ namespace Stride.Rendering.Voxels
     {
         [NotNull]
         public IVoxelFragmentPacker TempStorageFormat { get; set; } = new VoxelFragmentPackFloatR11G11B10();
+
         [NotNull]
         public IVoxelBufferWriter Filter { get; set; } = new VoxelBufferWriteMax();
+
 
         public void Apply(ShaderMixinSource mixin)
         {

@@ -40,7 +40,7 @@
     Settings StridePlatform specific.
   -->
   <PropertyGroup>
-    <!-- Using C# version 7.3 -->
+    <!-- Using C# 9 -->
     <LangVersion>9.0</LangVersion>
     <StridePlatformDefines>STRIDE_PLATFORM_DESKTOP;STRIDE_PLATFORM_WINDOWS;STRIDE_PLATFORM_WINDOWS_DESKTOP</StridePlatformDefines>
 

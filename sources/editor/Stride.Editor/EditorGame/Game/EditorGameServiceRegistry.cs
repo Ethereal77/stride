@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Reflection;
 
@@ -29,21 +28,21 @@ namespace Stride.Editor.EditorGame.Game
             if (serviceType is null)
                 throw new ArgumentNullException(nameof(serviceType));
             if (!serviceType.HasInterface(typeof(IEditorGameService)))
-                throw new ArgumentException($@"The given type must be a type that implement {nameof(IEditorGameService)}", nameof(serviceType));
+                throw new ArgumentException($@"The given type must be a type that implements {nameof(IEditorGameService)}.", nameof(serviceType));
 
             return Services.FirstOrDefault(serviceType.IsInstanceOfType);
         }
 
         public void Add<T>([NotNull] T service) where T : IEditorGameService
         {
-            if (service == null)
+            if (service is null)
                 throw new ArgumentNullException(nameof(service));
 
             Services.Add(service);
         }
 
         /// <inheritdoc/>
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             for (var index = Services.Count - 1; index >= 0; index--)
             {
@@ -54,3 +53,4 @@ namespace Stride.Editor.EditorGame.Game
         }
     }
 }
+

@@ -8,29 +8,29 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets;
-using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Collections;
 using Stride.Core.Mathematics;
 using Stride.Core.Serialization;
 using Stride.Core.Quantum;
+using Stride.Core.Assets;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Assets.Entities;
 using Stride.Assets.Navigation;
-using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
-using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
-using Stride.Assets.Presentation.AssetEditors.SceneEditor.Game;
-using Stride.Assets.Presentation.AssetEditors.SceneEditor.Services;
-using Stride.Editor.Build;
-using Stride.Editor.EditorGame.Game;
-using Stride.Engine;
-using Stride.Extensions;
-using Stride.Games;
 using Stride.Graphics;
 using Stride.Graphics.GeometricPrimitives;
-using Stride.Navigation;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
+using Stride.Games;
+using Stride.Navigation;
+using Stride.Engine;
+using Stride.Extensions;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
+using Stride.Assets.Presentation.AssetEditors.SceneEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.SceneEditor.Game;
+using Stride.Editor.Build;
+using Stride.Editor.EditorGame.Game;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
@@ -52,7 +52,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private readonly Dictionary<AssetId, AssetViewModel> navigationMeshAssets = new Dictionary<AssetId, AssetViewModel>();
 
         private readonly Dictionary<AssetId, Scene> loadedScenes = new Dictionary<AssetId, Scene>();
-        
+
         private DynamicNavigationMeshSystem dynamicNavigationMeshSystem;
 
         // The currently displayed dynamic navigation mesh
@@ -74,7 +74,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             navigationMeshManager = new NavigationMeshManager(editor.Controller);
         }
 
-        public override async Task DisposeAsync()
+        public override async ValueTask DisposeAsync()
         {
             // Remove registered events
             editor.Session.DeletedAssetsChanged -= OnDeletedAssetsChanged;
@@ -91,7 +91,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
 
             game.EditorScene.Entities.Remove(rootDebugEntity);
-            
+
             await navigationMeshManager.DisposeAsync();
             await base.DisposeAsync();
         }
@@ -148,7 +148,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         }
 
         /// <summary>
-        /// Updates the visibility of an existing group by Id 
+        /// Updates the visibility of an existing group by Id
         /// </summary>
         public void UpdateGroupVisibility(Guid groupId, bool isVisible)
         {
@@ -179,7 +179,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
             sceneEditorController = editor.Controller as SceneEditorController;
             if (sceneEditorController == null) throw new ArgumentNullException(nameof(sceneEditorController));
-            
+
             gameSettingsProviderService = editor.ServiceProvider.Get<GameSettingsProviderService>();
             gameSettingsProviderService.GameSettingsChanged += GameSettingsProviderServiceOnGameSettingsChanged;
             await navigationMeshManager.Initialize();
@@ -250,14 +250,14 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         private void NavigationMeshManagerOnChanged(object sender, ItemChangeEventArgs args)
         {
-            var assetId = (AssetId)args.Index.Value;
-            AssetViewModel asset;
-            if (navigationMeshAssets.TryGetValue(assetId, out asset))
+            var assetId = (AssetId) args.Index.Value;
+
+            if (navigationMeshAssets.TryGetValue(assetId, out AssetViewModel asset))
             {
                 Scene targetScene = null;
 
                 // Find out which scene to attach the navigation mesh preview to
-                var navigationMeshAsset = (NavigationMeshAsset)asset.Asset;
+                var navigationMeshAsset = (NavigationMeshAsset) asset.Asset;
                 if (navigationMeshAsset.Scene != null)
                 {
                     var referencedSceneReference = AttachedReferenceManager.GetAttachedReference(navigationMeshAsset.Scene);
@@ -275,8 +275,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         {
             NavigationMeshDebugVisual ret = new NavigationMeshDebugVisual();
 
-            ret.DebugEntity = new Entity($"Debug entity for navigation mesh");
-            
+            ret.DebugEntity = new Entity("Debug entity for navigation mesh");
+
             // Create a visual for every layer with a separate color
             using (var layers = navigationMesh.Layers.GetEnumerator())
             {
@@ -287,8 +287,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                     var currentLayer = layers.Current.Value;
                     var currentId = layers.Current.Key;
 
-                    NavigationMeshDisplayGroup displayGroup;
-                    if (!groupDisplaySettings.TryGetValue(currentId, out displayGroup))
+                    if (!groupDisplaySettings.TryGetValue(currentId, out NavigationMeshDisplayGroup displayGroup))
                         continue; // No display settings for this group
 
                     model.Add(displayGroup.Material);
@@ -299,7 +298,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                         bool updated = true;
 
                         NavigationMeshTile tile = p.Value;
-                        
+
                         // Extract vertex data
                         List<Vector3> tileVertexList = new List<Vector3>();
                         List<int> tileIndexList = new List<int>();
@@ -307,8 +306,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                             continue;
 
                         // Check if updated
-                        NavigationMeshLayer sourceLayer;
-                        if (previousNavigationMesh != null && previousNavigationMesh.Layers.TryGetValue(currentId, out sourceLayer))
+                        if (previousNavigationMesh != null &&
+                            previousNavigationMesh.Layers.TryGetValue(currentId, out NavigationMeshLayer sourceLayer))
                         {
                             NavigationMeshTile oldTile = sourceLayer.FindTile(p.Key);
                             if (oldTile != null && oldTile.Data.SequenceEqual(tile.Data))
@@ -327,11 +326,12 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                             Vector3 position = tileVertexList[i] + offset;
                             BoundingBox.Merge(ref bb, ref position, out bb);
 
-                            VertexPositionNormalTexture vert = new VertexPositionNormalTexture();
-                            vert.Position = position;
-                            vert.Normal = Vector3.UnitY;
-                            vert.TextureCoordinate = new Vector2(0.5f, 0.5f);
-                            meshVertices.Add(vert);
+                            meshVertices.Add(new VertexPositionNormalTexture
+                            {
+                                Position = position,
+                                Normal = Vector3.UnitY,
+                                TextureCoordinate = new Vector2(0.5f, 0.5f)
+                            });
                         }
 
                         MeshDraw draw;
@@ -406,7 +406,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             // Hide regular navigation meshes when dynamic system is enabled, this gets checked in ShouldDisplayNavigationMesh
             sceneEditorController.InvokeTask(UpdateAllNavigationMeshLinks);
         }
-        
+
         private void GameSettingsProviderServiceOnGameSettingsChanged(object sender, GameSettingsChangedEventArgs gameSettingsChangedEventArgs)
         {
             // Send game settings changes to dynamic navigation mesh system
@@ -543,8 +543,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         private void RemoveNavigationMesh(NavigationMesh navigationMesh)
         {
-            NavigationMeshDebugVisual visual;
-            if (debugVisuals.TryGetValue(navigationMesh, out visual))
+            if (debugVisuals.TryGetValue(navigationMesh, out NavigationMeshDebugVisual visual))
             {
                 visual.Dispose();
                 rootDebugEntity.RemoveChild(visual.DebugEntity);
@@ -554,7 +553,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         private bool HasSceneOrChildSceneReference(AttachedReference referencedSceneReference, Scene scene)
         {
-            bool hasReference = referencedSceneReference != null && loadedScenes.ContainsKey(referencedSceneReference.Id);
+            bool hasReference = referencedSceneReference != null &&
+                                loadedScenes.ContainsKey(referencedSceneReference.Id);
             if (hasReference)
                 return true;
 
@@ -575,11 +575,11 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 return false;
 
             var referencedSceneReference = AttachedReferenceManager.GetAttachedReference(navigationMeshAsset.Scene);
-            if (referencedSceneReference == null)
+            if (referencedSceneReference is null)
                 return false;
 
             // Check the current scene and all child scenes if they are being referenced by this navigation mesh asset
-            if (game.ContentScene == null)
+            if (game.ContentScene is null)
                 return false;
 
             if (HasSceneOrChildSceneReference(referencedSceneReference, game.ContentScene))
@@ -610,8 +610,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 await navigationMeshManager.AddUnique(asset.Id);
             else
             {
-                NavigationMesh navigationMesh;
-                if (navigationMeshManager.Meshes.TryGetValue(asset.Id, out navigationMesh))
+                if (navigationMeshManager.Meshes.TryGetValue(asset.Id, out NavigationMesh navigationMesh))
                 {
                     await navigationMeshManager.Remove(asset.Id);
                     RemoveNavigationMesh(navigationMesh);
@@ -623,8 +622,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         {
             navigationMeshAssets.Remove(asset.Id);
 
-            NavigationMesh navigationMesh;
-            if (navigationMeshManager.Meshes.TryGetValue(asset.Id, out navigationMesh))
+            if (navigationMeshManager.Meshes.TryGetValue(asset.Id, out NavigationMesh navigationMesh))
             {
                 await navigationMeshManager.Remove(asset.Id);
                 RemoveNavigationMesh(navigationMesh);
@@ -638,11 +636,12 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             public readonly Dictionary<Guid, ModelComponent> ModelComponents = new Dictionary<Guid, ModelComponent>();
             public Entity DebugEntity;
             public Scene Scene;
-            
+
             public void Dispose()
             {
                 foreach (var primitive in GeneratedDynamicPrimitives)
                     primitive.Dispose();
+
                 GeneratedDynamicPrimitives.Clear();
             }
         }
@@ -654,7 +653,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             /// </summary>
             private const float HighlightDuration = 1.0f;
             private float highlightTimer;
-            
+
             public Guid Id;
             public bool IsVisible;
             public Color4 Color;
@@ -669,7 +668,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             {
                 highlightTimer = HighlightDuration;
             }
-            
+
             /// <summary>
             /// Updates the highlight material animation
             /// </summary>

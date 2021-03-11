@@ -11,15 +11,15 @@ using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.Mathematics;
-using Stride.Assets.Presentation.AssetEditors.UIEditor.Adorners;
-using Stride.Assets.Presentation.AssetEditors.UIEditor.Services;
-using Stride.Assets.Presentation.ViewModel;
-using Stride.Editor.EditorGame.Game;
-using Stride.Editor.EditorGame.ViewModels;
+using Stride.Rendering.Compositing;
 using Stride.Engine;
 using Stride.UI;
 using Stride.UI.Panels;
-using Stride.Rendering.Compositing;
+using Stride.Assets.Presentation.ViewModel;
+using Stride.Assets.Presentation.AssetEditors.UIEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.UIEditor.Adorners;
+using Stride.Editor.EditorGame.ViewModels;
+using Stride.Editor.EditorGame.Game;
 
 namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 {
@@ -33,7 +33,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
         /// but this is not currently possible because of canvas limitation (see XK-3353). Therefore we need to maintain two canvas:
         /// * A canvas that is sized to the parent of the associated UIElement (if it has one).
         /// * A canvas that is sized to the associated UIElement.
-        /// 
+        ///
         /// When adding a adorner, the second parameter specifiy in which canvas goes the adorner visual.
         /// </remarks>
         private class AdornerLayer
@@ -55,9 +55,11 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
             public AdornerLayer(UIElement gameSideElement)
             {
-                if (gameSideElement == null) throw new ArgumentNullException(nameof(gameSideElement));
+                if (gameSideElement is null)
+                    throw new ArgumentNullException(nameof(gameSideElement));
 
                 this.gameSideElement = gameSideElement;
+
                 canvas = new Canvas();
                 parentCanvas = new Canvas
                 {
@@ -75,52 +77,51 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
             public void Add(IAdornerBase<UIElement> adorner, bool addToParentLayer = false)
             {
                 if (addToParentLayer)
-                {
                     parentCanvas.Children.Add(adorner.Visual);
-                }
                 else
-                {
                     canvas.Children.Add(adorner.Visual);
-                }
+
                 adorners.Add(adorner);
             }
 
             public bool CheckValidity()
             {
-                // compare some properties involved in layout with their previous "seen" values
+                // Compare some properties involved in layout with their previous "seen" values
                 if (prevMargin == gameSideElement.Margin &&
                     prevParentId == gameSideElement.VisualParent?.Id &&
                     prevRenderSize == gameSideElement.RenderSize &&
                     prevWorldMatrix == gameSideElement.WorldMatrix)
                 {
-                    // still valid
+                    // Still valid
                     return true;
                 }
-                // remember current values
+
+                // Remember current values
                 prevMargin = gameSideElement.Margin;
                 prevParentId = gameSideElement.VisualParent?.Id;
                 prevRenderSize = gameSideElement.RenderSize;
                 prevWorldMatrix = gameSideElement.WorldMatrix;
+
                 return false;
             }
 
             public void Disable()
             {
                 IsEnabled = false;
+
                 foreach (var adorner in adorners)
-                {
                     adorner.Disable();
-                }
+
                 highlightAdorner?.Disable();
             }
 
             public void Enable()
             {
                 IsEnabled = true;
+
                 foreach (var adorner in adorners)
-                {
                     adorner.Enable();
-                }
+
                 highlightAdorner?.Enable();
             }
 
@@ -130,9 +131,8 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 isVisible = false;
 #endif
                 foreach (var adorner in adorners)
-                {
                     adorner.Hide();
-                }
+
                 highlightAdorner?.Show();
             }
 
@@ -153,14 +153,12 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
             public void SetHighlightAdorner(HighlightAdorner value)
             {
                 if (highlightAdorner != null)
-                {
                     canvas.Children.Remove(highlightAdorner.Visual);
-                }
+
                 highlightAdorner = value;
+
                 if (highlightAdorner != null)
-                {
                     canvas.Children.Add(highlightAdorner.Visual);
-                }
             }
 
             public void Show()
@@ -169,9 +167,8 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 isVisible = true;
 #endif
                 foreach (var adorner in adorners)
-                {
                     adorner.Show();
-                }
+
                 highlightAdorner?.Hide();
             }
 
@@ -186,6 +183,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 Vector3 parentPosition;
                 Vector3 parentSize;
                 Matrix parentMatrixInv;
+
                 var parent = gameSideElement.VisualParent;
                 if (parent != null)
                 {
@@ -197,7 +195,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 }
                 else
                 {
-                    // or to the total available size if it doesn't have a parent.
+                    // Or to the total available size if it doesn't have a parent.
                     parentPosition = availableSize * 0.5f;
                     parentSize = availableSize;
                     parentMatrixInv = Matrix.Identity;
@@ -210,8 +208,8 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 var position = diffMatrix.TranslationVector + parentSize * 0.5f;
                 // canvas is sized to the associated UIElement
                 canvas.Size = gameSideElement.RenderSize;
-                // canvas is z-offset by depth bias (+1 to differentiate with the adorner root canvas)
-                canvas.Margin = new Thickness(0, 0, 0, 0, 0, -1*(gameSideElement.DepthBias + 1)); // because we are inside a canvas, only Left, Top and Front margins can be used.
+                // canvas is Z-offset by depth bias (+1 to differentiate with the adorner root canvas)
+                canvas.Margin = new Thickness(0, 0, 0, 0, 0, -1*(gameSideElement.DepthBias + 1)); // Because we are inside a canvas, only Left, Top and Front margins can be used.
 
                 canvas.SetCanvasAbsolutePosition(position);
                 canvas.SetCanvasPinOrigin(0.5f * Vector3.One); // centered on origin
@@ -256,7 +254,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
         internal UIEditorController Controller { get; }
 
         /// <inheritdoc/>
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             EnsureNotDestroyed(nameof(UIEditorGameAdornerService));
 
@@ -375,7 +373,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
         private AdornerLayer CreateLayer(UIElement gameSideElement)
         {
             var canvas = GetAdornerCanvas();
-            if (canvas == null)
+            if (canvas is null)
                 return null;
 
             var font = Controller.DefaultFont;
@@ -414,12 +412,13 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
         private void DoAddAdorner(Guid elementId)
         {
-            AdornerLayer layer;
-            if (!adornerLayers.TryGetValue(elementId, out layer))
+            if (!adornerLayers.TryGetValue(elementId, out AdornerLayer layer))
             {
                 // Doesn't exist yet, add it
-                var element = (UIElement)Controller.FindGameSidePart(new AbsoluteId(Controller.Editor.Asset.Id, elementId));
-                if (element == null) throw new ArgumentException(@"No game-side part corresponds to the given id", nameof(elementId));
+                var element = (UIElement) Controller.FindGameSidePart(new AbsoluteId(Controller.Editor.Asset.Id, elementId));
+                if (element is null)
+                    throw new ArgumentException("No game-side part corresponds to the given id.", nameof(elementId));
+
                 layer = CreateLayer(element);
             }
 
@@ -428,8 +427,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
         private void DoDisableAdorner(Guid elementId)
         {
-            AdornerLayer layer;
-            if (!adornerLayers.TryGetValue(elementId, out layer))
+            if (!adornerLayers.TryGetValue(elementId, out AdornerLayer layer))
                 return;
 
             layer.Hide();
@@ -439,6 +437,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
         private void DoEnableAdorner(Guid elementId)
         {
             var layer = GetAdornerLayer(elementId);
+
             // Make sure adorners will be rendered correctly the next time
             layer.Invalidate();
             layer.Enable();
@@ -465,11 +464,9 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
         private void DoRemoveAdorner(Guid elementId)
         {
-            AdornerLayer layer;
-            if (!adornerLayers.TryGetValue(elementId, out layer))
-            {
+            if (!adornerLayers.TryGetValue(elementId, out AdornerLayer layer))
                 return;
-            }
+
             adornerLayers.Remove(elementId);
 
             var canvas = GetAdornerCanvas();
@@ -500,11 +497,8 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
         private AdornerLayer GetAdornerLayer(Guid elementId)
         {
-            AdornerLayer layer;
-            if (!adornerLayers.TryGetValue(elementId, out layer))
-            {
+            if (!adornerLayers.TryGetValue(elementId, out AdornerLayer layer))
                 throw new KeyNotFoundException("The adorner for the given element id is not available.");
-            }
 
             // If the layer doesn't exist add it
             return layer;
@@ -516,15 +510,17 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
         private async Task Update()
         {
             Canvas adornerCanvas;
-            // initialize
+
+            // Initialize
             while (true)
             {
                 if (IsDisposed)
                     return;
+
                 await Game.Script.NextFrame();
 
                 adornerCanvas = GetAdornerCanvas();
-                if (adornerCanvas == null)
+                if (adornerCanvas is null)
                     continue;
 
                 adornerCanvas.PreviewTouchDown += PreviewTouchDown;
@@ -536,18 +532,19 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
             // add a scene delegate renderer to update all adorners.
             var compositor = Game.SceneSystem.GraphicsCompositor;
-            ((EditorTopLevelCompositor)compositor.Game).PostGizmoCompositors.Add(new DelegateSceneRenderer(context =>
-            {
-                var canvasRenderSize = adornerCanvas.RenderSize;
-                foreach (var layer in adornerLayers.Values)
+            ((EditorTopLevelCompositor)compositor.Game).PostGizmoCompositors.Add(
+                new DelegateSceneRenderer(context =>
                 {
-                    if (!layer.IsEnabled || layer.CheckValidity())
-                        continue;
+                    var canvasRenderSize = adornerCanvas.RenderSize;
+                    foreach (var layer in adornerLayers.Values)
+                    {
+                        if (!layer.IsEnabled || layer.CheckValidity())
+                            continue;
 
-                    // Always update adorners (even if there are hidden)
-                    layer.Update(ref canvasRenderSize);
-                }
-            }));
+                        // Always update adorners (even if there are hidden)
+                        layer.Update(ref canvasRenderSize);
+                    }
+                }));
         }
     }
 }

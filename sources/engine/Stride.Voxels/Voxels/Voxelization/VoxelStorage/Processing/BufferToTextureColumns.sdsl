@@ -1,5 +1,7 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 namespace Stride.Rendering.Voxels
 {
     shader BufferToTextureColumns : LocalSamples, ComputeShaderBase, VoxelPositionStream, DataPacking
@@ -16,7 +18,7 @@ namespace Stride.Rendering.Voxels
         [Link("BufferToTexture.clipOffset")]
         stage uint clipOffset;
 
-        
+
         compose VoxelAttribute AttributesTemp[];
         compose VoxelAttribute AttributesIndirect[];
 
@@ -27,8 +29,8 @@ namespace Stride.Rendering.Voxels
 
         override void Compute()
         {
-            int3 clipMapResolutionI = (int3)clipMapResolution;
-            
+            int3 clipMapResolutionI = (int3) clipMapResolution;
+
             uint3 pos = streams.DispatchThreadId.xyz;
             uint clipIndex = streams.DispatchThreadId.y + clipOffset;
 
@@ -38,9 +40,9 @@ namespace Stride.Rendering.Voxels
 
             uint wStride = clipMapResolutionI.x * clipMapResolutionI.y * clipMapResolutionI.z;
             uint VoxelFragmentsIndex = clipIndex * wStride + pos.x + pos.y * clipMapResolutionI.x + pos.z * clipMapResolutionI.x * clipMapResolutionI.y;
-            VoxelFragmentsIndex *= (uint)storageUints;
+            VoxelFragmentsIndex *= (uint) storageUints;
 
-            uint yStride = clipMapResolutionI.x * (uint)storageUints;
+            uint yStride = clipMapResolutionI.x * (uint) storageUints;
             uint initialVoxelFragmentsIndex = VoxelFragmentsIndex;
 
             foreach (var attr in AttributesTemp)
@@ -56,17 +58,17 @@ namespace Stride.Rendering.Voxels
                 attr.DirectWrite(streams.PositionVXPS, clipIndex, (int)clipMapResolutionI.y);
 
             streams.PositionVXPS.y++;
-            for (int i = 0; streams.PositionVXPS.y < clipMapResolutionI.y-1 ; streams.PositionVXPS.y ++)
+            for (int i = 0; streams.PositionVXPS.y < clipMapResolutionI.y - 1 ; streams.PositionVXPS.y ++)
             {
                 uint VoxelFragmentsIndexOld = VoxelFragmentsIndex;
 
-                //See VoxelStorageClipmaps.cs Line #307
+                // See VoxelStorageClipmaps.cs Line #307
                 IndirectReadAndStoreMacro
 
                 foreach (var attr in AttributesIndirect)
                     attr.DirectWrite(streams.PositionVXPS, clipIndex, (int)clipMapResolutionI.y);
 
-                VoxelFragmentsIndex = VoxelFragmentsIndexOld + (uint)storageUints * clipMapResolutionI.x;
+                VoxelFragmentsIndex = VoxelFragmentsIndexOld + (uint) storageUints * clipMapResolutionI.x;
             }
             foreach (var attr in AttributesTemp)
                 attr.InitializeDummy();
@@ -77,7 +79,7 @@ namespace Stride.Rendering.Voxels
             IndirectStoreMacro
 
             foreach (var attr in AttributesIndirect)
-                attr.DirectWrite(streams.PositionVXPS, clipIndex, (int)clipMapResolutionI.y);
+                attr.DirectWrite(streams.PositionVXPS, clipIndex, (int) clipMapResolutionI.y);
         }
     };
 }

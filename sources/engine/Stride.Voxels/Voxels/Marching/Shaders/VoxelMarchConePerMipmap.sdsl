@@ -1,22 +1,28 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 shader VoxelMarchConePerMipmap<int steps> : VoxelMarchMethod, MarchAttributes
 {
     #ifndef AttributeID
         #define AttributeID 0
     #endif
+
     cbuffer PerView.Lighting
     {
         float offset;
         float coneRatioInv;
     }
+
     override float4 March(float3 rayPos, float3 rayDir)
     {
         float voxelSize = AttributeSamplers[AttributeID].VoxelSize();
         rayPos += rayDir * voxelSize * offset;
+
         float dist = voxelSize * coneRatioInv;
         float size = 0;
-        float4 light = float4(0.0, 0.0, 0.0, 0.0);
+
+        float4 light = float4(0, 0, 0, 0);
         for (int i = 0; i < steps; i++)
         {
             float3 pos = rayPos + rayDir * dist;
@@ -29,5 +35,8 @@ shader VoxelMarchConePerMipmap<int steps> : VoxelMarchMethod, MarchAttributes
         return light;
     }
 
-    override float StepSize() { return AttributeSamplers[AttributeID].VoxelSize(); }
+    override float StepSize()
+    {
+        return AttributeSamplers[AttributeID].VoxelSize();
+    }
 };

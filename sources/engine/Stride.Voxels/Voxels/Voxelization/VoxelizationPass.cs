@@ -1,10 +1,9 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
+
 using System.Collections.Generic;
-using System.Text;
-using Stride.Core.Mathematics;
-using Stride.Rendering;
+
 using Stride.Shaders;
 
 namespace Stride.Rendering.Voxels
@@ -14,7 +13,8 @@ namespace Stride.Rendering.Voxels
         public RenderView view;
         public IVoxelStorer storer;
         public IVoxelizationMethod method;
-        //Stage1
+
+        // Stage 1
         public List<VoxelAttribute> AttributesTemp = new List<VoxelAttribute>();
         public List<VoxelAttribute> AttributesDirect = new List<VoxelAttribute>();
         public List<VoxelAttribute> AttributesIndirect = new List<VoxelAttribute>();
@@ -30,13 +30,9 @@ namespace Stride.Rendering.Voxels
             if (stage == VoxelizationStage.Initial)
             {
                 if (output)
-                {
                     AttributesDirect.Add(attr);
-                }
                 else
-                {
                     AttributesTemp.Add(attr);
-                }
             }
             else if (stage == VoxelizationStage.Post)
             {

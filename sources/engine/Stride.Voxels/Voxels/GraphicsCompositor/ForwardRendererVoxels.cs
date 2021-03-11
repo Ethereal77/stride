@@ -1,23 +1,12 @@
 // Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Core.Collections;
-using Stride.Core.Diagnostics;
-using Stride.Core.Mathematics;
-using Stride.Core.Storage;
-using Stride.Graphics;
-using Stride.Rendering.Images;
 using Stride.Rendering.Lights;
 using Stride.Rendering.Shadows;
-using Stride.Rendering.SubsurfaceScattering;
 using Stride.Rendering.Compositing;
 using Stride.Rendering.Voxels.Debug;
 
@@ -43,7 +32,7 @@ namespace Stride.Rendering.Voxels
                     .FirstOrDefault()?.RenderFeatures
                         .OfType<ForwardLightingRenderFeature>()
                         .FirstOrDefault()?.ShadowMapRenderer;
-    
+
             base.InitializeCore();
         }
 
@@ -64,9 +53,9 @@ namespace Stride.Rendering.Voxels
             base.DrawCore(context, drawContext);
         }
 
-        protected override void DrawView(RenderContext context, RenderDrawContext drawContext, int eyeIndex, int eyeCount)
+        protected override void DrawView(RenderContext context, RenderDrawContext drawContext)
         {
-            base.DrawView(context, drawContext, eyeIndex, eyeCount);
+            base.DrawView(context, drawContext);
 
             // Voxel Debug if enabled
             if (VoxelVisualization != null)

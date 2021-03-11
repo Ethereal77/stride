@@ -4,7 +4,6 @@
 
 using System.Runtime.CompilerServices;
 
-using Stride.Core;
 using Stride.Core.Reflection;
 using Stride.Core.Translation;
 using Stride.Core.Translation.Providers;
@@ -19,7 +18,7 @@ namespace Stride.Assets.Presentation
 {
     internal class Module
     {
-        [ModuleInitializer]
+        [Core.ModuleInitializer]
         public static void Initialize()
         {
             RuntimeHelpers.RunModuleConstructor(typeof(SpriteFontAsset).Module.ModuleHandle);

@@ -1,11 +1,14 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 namespace Stride.Rendering.Voxels
 {
     shader Voxel2x2x2Mipmap : Math, Texturing, ComputeShaderBase
     {
         stage float3 ReadOffset;
         stage float3 WriteOffset;
+
         stage Texture3D<half4> ReadTex;
         stage RWTexture3D<half4> WriteTex;
 
@@ -15,7 +18,7 @@ namespace Stride.Rendering.Voxels
         {
             uint3 pos = streams.DispatchThreadId;
 
-            uint3 posR = pos * 2 + (int3)ReadOffset;
+            uint3 posR = pos * 2 + (int3) ReadOffset;
 
             float4 fragmentSum = mipmapper.Mipmap(
                 ReadTex.Load(int4(posR, 0)),

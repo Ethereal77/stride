@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
-using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
 using Stride.Assets.SpriteFont;
 using Stride.Assets.SpriteFont.Compiler;
-using Stride.Editor.Build;
-using Stride.Editor.EditorGame.Game;
-using Stride.Engine;
 using Stride.Graphics;
 using Stride.Graphics.Font;
 using Stride.Rendering;
 using Stride.Rendering.Compositing;
+using Stride.Engine;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
+using Stride.Editor.Build;
+using Stride.Editor.EditorGame.Game;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
@@ -59,7 +59,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         {
             game = (EntityHierarchyEditorGame)editorGame;
 
-            // create the default font
+            // Create the default font
             var fontItem = OfflineRasterizedSpriteFontFactory.Create();
             fontItem.FontType.Size = 8;
             defaultFont = OfflineRasterizedFontCompiler.Compile(game.Services.GetService<IFontFactory>(), fontItem, game.GraphicsDevice.ColorSpace == ColorSpace.Linear);
@@ -87,17 +87,18 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                     new VertexPositionTexture(new Vector3(1.0f, 1.0f, 0.0f), Vector2.Zero),
                     new VertexPositionTexture(new Vector3(1.0f, 0.0f, 0.0f), Vector2.Zero),
                     new VertexPositionTexture(new Vector3(0.0f, 0.0f, 0.0f), Vector2.Zero),
-                    new VertexPositionTexture(new Vector3(0.0f, 1.0f, 0.0f), Vector2.Zero), // extra vertex so that left-top corner is not missing (likely due to rasterization rule)
+
+                    // Extra vertex so that left-top corner is not missing (likely due to rasterization rule)
+                    new VertexPositionTexture(new Vector3(0.0f, 1.0f, 0.0f), Vector2.Zero)
                 };
                 fixed (VertexPositionTexture* borderVerticesPtr = borderVertices)
                     borderVertexBuffer = Graphics.Buffer.Vertex.New(game.GraphicsDevice, new DataPointer(borderVerticesPtr, VertexPositionTexture.Size * borderVertices.Length));
             }
 
-            var editorTopLevel = game.EditorSceneSystem.GraphicsCompositor.Game as EditorTopLevelCompositor;
-            if (editorTopLevel != null)
+            if (game.EditorSceneSystem.GraphicsCompositor.Game is EditorTopLevelCompositor editorTopLevelCompositor)
             {
                 // Display it as incrust
-                editorTopLevel.PostGizmoCompositors.Add(renderIncrustRenderer = new RenderIncrustRenderer(this));
+                editorTopLevelCompositor.PostGizmoCompositors.Add(renderIncrustRenderer = new RenderIncrustRenderer(this));
             }
 
             Services.Get<IEditorGameEntitySelectionService>().SelectionUpdated += UpdateModifiedEntitiesList;
@@ -111,23 +112,22 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
             renderIncrustRenderer.IncrustRenderer = null;
 
-            var gameTopLevel = game.SceneSystem.GraphicsCompositor.Game as EditorTopLevelCompositor;
-            if (gameTopLevel != null)
+            if (game.SceneSystem.GraphicsCompositor.Game is EditorTopLevelCompositor editorTopLevelCompositor)
             {
                 generateIncrustRenderer = new GenerateIncrustRenderer(this)
                 {
-                    Content = gameTopLevel.Child,
+                    Content = editorTopLevelCompositor.Child,
                     GameSettingsAccessor = game.PackageSettings,
                 };
 
                 // Render camera view
-                gameTopLevel.PostGizmoCompositors.Add(generateIncrustRenderer);
+                editorTopLevelCompositor.PostGizmoCompositors.Add(generateIncrustRenderer);
 
                 renderIncrustRenderer.IncrustRenderer = generateIncrustRenderer;
             }
         }
 
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             EnsureNotDestroyed(nameof(EditorGameCameraPreviewService));
 
@@ -137,12 +137,11 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 selectionService.SelectionUpdated -= UpdateModifiedEntitiesList;
 
             // Remove renderers
-            var gameTopLevel = game.SceneSystem.GraphicsCompositor.Game as EditorTopLevelCompositor;
-            var editorTopLevel = game.EditorSceneSystem.GraphicsCompositor.Game as EditorTopLevelCompositor;
-            if (gameTopLevel != null && editorTopLevel != null)
+            if (game.SceneSystem.GraphicsCompositor.Game is EditorTopLevelCompositor gameTopLevelCompositor &&
+                game.EditorSceneSystem.GraphicsCompositor.Game is EditorTopLevelCompositor editorTopLevelCompositor)
             {
-                gameTopLevel.PostGizmoCompositors.Remove(generateIncrustRenderer);
-                editorTopLevel.PostGizmoCompositors.Remove(renderIncrustRenderer);
+                gameTopLevelCompositor.PostGizmoCompositors.Remove(generateIncrustRenderer);
+                editorTopLevelCompositor.PostGizmoCompositors.Remove(renderIncrustRenderer);
             }
 
             defaultFont?.Dispose();
@@ -166,6 +165,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         class RenderIncrustRenderer : SceneRendererBase
         {
             private readonly EditorGameCameraPreviewService previewService;
+
             public GenerateIncrustRenderer IncrustRenderer { get; set; }
 
             public RenderIncrustRenderer(EditorGameCameraPreviewService previewService)
@@ -175,7 +175,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
             protected override void DrawCore(RenderContext context, RenderDrawContext drawContext)
             {
-                if (IncrustRenderer == null || !IncrustRenderer.IsIncrustEnabled)
+                if (IncrustRenderer is null || !IncrustRenderer.IsIncrustEnabled)
                     return;
 
                 var currentViewport = drawContext.CommandList.Viewport;
@@ -187,7 +187,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 previewService.borderPipelineState.State.Output.CaptureState(drawContext.CommandList);
                 previewService.borderPipelineState.Update();
                 drawContext.CommandList.SetPipelineState(previewService.borderPipelineState.CurrentState);
-                previewService.spriteEffect.Parameters.Set(SpriteBaseKeys.MatrixTransform, Matrix.Scaling((float)(IncrustRenderer.Viewport.Width + 1) * 2.0f / (float)currentViewport.Width, -(float)(IncrustRenderer.Viewport.Height + 1) * 2.0f / (float)currentViewport.Height, 1.0f) * Matrix.Translation((float)position.X * 2.0f / (float)currentViewport.Width - 1.0f, -((float)position.Y * 2.0f / (float)currentViewport.Height - 1.0f), 0.0f));
+                previewService.spriteEffect.Parameters.Set(SpriteBaseKeys.MatrixTransform, Matrix.Scaling((float) (IncrustRenderer.Viewport.Width + 1) * 2.0f / (float)currentViewport.Width, -(float)(IncrustRenderer.Viewport.Height + 1) * 2.0f / (float)currentViewport.Height, 1.0f) * Matrix.Translation(position.X * 2.0f / currentViewport.Width - 1.0f, -(position.Y * 2.0f / currentViewport.Height - 1.0f), 0.0f));
                 previewService.spriteEffect.Apply(drawContext.GraphicsContext);
 
                 drawContext.CommandList.SetVertexBuffer(0, previewService.borderVertexBuffer, 0, VertexPositionTexture.Size);

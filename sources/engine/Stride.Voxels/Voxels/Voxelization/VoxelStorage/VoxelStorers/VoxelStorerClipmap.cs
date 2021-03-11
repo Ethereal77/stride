@@ -1,12 +1,10 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
-using System.Collections.Generic;
+
 using Stride.Core.Mathematics;
-using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Graphics;
 using Stride.Shaders;
+using Stride.Graphics;
 
 namespace Stride.Rendering.Voxels
 {
@@ -15,7 +13,7 @@ namespace Stride.Rendering.Voxels
         public VoxelStorageClipmaps.UpdateMethods UpdatesPerFrame;
 
         public int storageUints;
-        public Stride.Graphics.Buffer FragmentsBuffer = null;
+        public Buffer FragmentsBuffer = null;
 
         public int ClipMapCount;
         public int ClipMapCurrent = -1;
@@ -28,14 +26,11 @@ namespace Stride.Rendering.Voxels
             return UpdatesPerFrame == VoxelStorageClipmaps.UpdateMethods.SingleClipmap || ClipMapCount <= 1;
         }
 
-
         public bool CanShareRenderStage(IVoxelStorer storer)
         {
             VoxelStorerClipmap storerClipmap = storer as VoxelStorerClipmap;
-            if (storerClipmap == null)
-            {
+            if (storerClipmap is null)
                 return false;
-            }
 
             bool singleClipA = UpdatesOneClipPerFrame();
             bool singleClipB = storerClipmap.UpdatesOneClipPerFrame();
@@ -45,10 +40,8 @@ namespace Stride.Rendering.Voxels
         public override bool Equals(object obj)
         {
             VoxelStorerClipmap storerClipmap = obj as VoxelStorerClipmap;
-            if (storerClipmap == null)
-            {
+            if (storerClipmap is null)
                 return false;
-            }
 
             bool singleClipA = UpdatesOneClipPerFrame();
             bool singleClipB = storerClipmap.UpdatesOneClipPerFrame();
@@ -62,7 +55,7 @@ namespace Stride.Rendering.Voxels
         }
 
 
-        ObjectParameterKey<Stride.Graphics.Buffer> fragmentsBufferKey;
+        ObjectParameterKey<Buffer> fragmentsBufferKey;
         ValueParameterKey<Vector3> clipMapResolutionKey;
         ValueParameterKey<float> storageUintsKey;
 
@@ -72,6 +65,7 @@ namespace Stride.Rendering.Voxels
         ValueParameterKey<float> clipPosKey;
         ValueParameterKey<Vector3> clipOffsetKey;
         ValueParameterKey<Vector4> perClipMapOffsetScaleKey;
+
         public void UpdateVoxelizationLayout(string compositionName)
         {
             fragmentsBufferKey = VoxelStorageClipmapShaderKeys.fragmentsBuffer.ComposeWith(compositionName);
@@ -90,6 +84,7 @@ namespace Stride.Rendering.Voxels
                 perClipMapOffsetScaleKey = VoxelStorageClipmapShaderKeys.perClipMapOffsetScale.ComposeWith(compositionName);
             }
         }
+
         public void ApplyVoxelizationParameters(ParameterCollection param)
         {
             param.Set(fragmentsBufferKey, FragmentsBuffer);
@@ -133,17 +128,13 @@ namespace Stride.Rendering.Voxels
             cachedMixin.AddMacro("IndirectStoreMacro", IndirectStoreMacro);
 
             foreach (var attr in pass.AttributesTemp)
-            {
                 cachedMixin.AddCompositionToArray("AttributesTemp", attr.GetVoxelizationShader());
-            }
+
             foreach (var attr in pass.AttributesDirect)
-            {
                 cachedMixin.AddCompositionToArray("AttributesDirect", attr.GetVoxelizationShader());
-            }
+
             foreach (var attr in pass.AttributesIndirect)
-            {
                 cachedMixin.AddCompositionToArray("AttributesIndirect", attr.GetVoxelizationShader());
-            }
 
             return cachedMixin;
         }
@@ -152,13 +143,13 @@ namespace Stride.Rendering.Voxels
         {
             return UpdatesPerFrame == VoxelStorageClipmaps.UpdateMethods.AllClipmapsGeometryShader && !UpdatesOneClipPerFrame();
         }
+
         public int GeometryShaderOutputCount()
         {
             return UpdatesPerFrame == VoxelStorageClipmaps.UpdateMethods.SingleClipmap ? 1 : ClipMapCount;
         }
 
         public void PostProcess(VoxelStorageContext context, RenderDrawContext drawContext, ProcessedVoxelVolume data)
-        {
-        }
+        { }
     }
 }

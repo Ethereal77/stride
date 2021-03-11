@@ -7,14 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
-using Stride.Assets.Presentation.AssetEditors.GameEditor;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Stride.Assets.Presentation.SceneEditor;
-using Stride.Editor.EditorGame.Game;
 using Stride.Rendering;
 using Stride.Rendering.Compositing;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
+using Stride.Editor.EditorGame.Game;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
@@ -23,7 +21,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private EntityHierarchyEditorGame game;
         private MaterialFilterRenderFeature materialFilterRenderFeature;
 
-        // descibes the state of savedCameras (true: for game preview, false: for normal rendering)
+        // Decides the state of savedCameras (true: game preview, false: normal rendering)
         private bool isPreviewMode;
         private List<SceneCameraSlot> savedCameras = new List<SceneCameraSlot>();
 
@@ -34,15 +32,16 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         public override IEnumerable<Type> Dependencies { get { yield return typeof(IEditorGameMouseService); } }
 
         /// <inheritdoc/>
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             EnsureNotDestroyed(nameof(EditorGameRenderModeService));
+
             return base.DisposeAsync();
         }
 
         protected override Task<bool> Initialize(EditorServiceGame editorGame)
         {
-            game = (EntityHierarchyEditorGame)editorGame;
+            game = (EntityHierarchyEditorGame) editorGame;
             game.Script.AddTask(Update);
 
             return Task.FromResult(true);
@@ -55,7 +54,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             // Make a copy of cameras (for game preview)
             savedCameras.Clear();
             savedCameras.AddRange(game.SceneSystem.GraphicsCompositor.Cameras);
-            isPreviewMode = false; // saved camera means we are not yet in preview mode
+            // Saved camera means we are not yet in preview mode
+            isPreviewMode = false;
 
             // Make sure it is null if nothing found
             materialFilterRenderFeature = null;
@@ -78,19 +78,18 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 if (!IsActive)
                     continue;
 
-                var renderMode = ((IEditorGameRenderModeViewModelService)this).RenderMode;
+                var renderMode = ((IEditorGameRenderModeViewModelService) this).RenderMode;
 
                 // Toggle graphics compositor to display scene using either editor or game graphics compositor
                 var previewGameGraphicsCompositor = renderMode.PreviewGameGraphicsCompositor;
-                var gameTopLevel = game.SceneSystem.GraphicsCompositor.Game as EditorTopLevelCompositor;
-                if (gameTopLevel != null)
+                if (game.SceneSystem.GraphicsCompositor.Game is EditorTopLevelCompositor editorTopLevelCompositor)
                 {
                     // Enable preview game if requested
-                    gameTopLevel.EnablePreviewGame = previewGameGraphicsCompositor;
+                    editorTopLevelCompositor.EnablePreviewGame = previewGameGraphicsCompositor;
                     // Disable Gizmo during preview game
                     game.EditorSceneSystem.GraphicsCompositor.Game.Enabled = !previewGameGraphicsCompositor;
 
-                    if (gameTopLevel.EnablePreviewGame != isPreviewMode)
+                    if (editorTopLevelCompositor.EnablePreviewGame != isPreviewMode)
                     {
                         // Swap cameras collection content between game and savedCameras
                         var tempCameras = new List<SceneCameraSlot>(game.SceneSystem.GraphicsCompositor.Cameras);
@@ -101,14 +100,14 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                         savedCameras.Clear();
                         savedCameras = tempCameras;
 
-                        isPreviewMode = gameTopLevel.EnablePreviewGame;
+                        isPreviewMode = editorTopLevelCompositor.EnablePreviewGame;
                     }
 
                     // Setup material filter
                     materialFilterRenderFeature.MaterialFilter =
                         (materialFilterRenderFeature != null && renderMode.Mode == GameEditor.RenderMode.SingleStream)
-                        ? renderMode.StreamDescriptor.Filter
-                        : null;
+                            ? renderMode.StreamDescriptor.Filter
+                            : null;
 
                     // Disable mouse services while we are in game preview, and reenable them after
                     // TODO: A more robust mechanism for filtering or redirecting input?

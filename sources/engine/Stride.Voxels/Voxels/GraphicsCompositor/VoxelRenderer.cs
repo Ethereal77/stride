@@ -1,20 +1,15 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 using Stride.Core;
-using Stride.Core.Collections;
 using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
-using Stride.Engine;
-using Stride.Shaders;
 using Stride.Graphics;
-using Stride.Rendering.Lights;
-using Stride.Rendering.Voxels;
-using Stride.Core.Extensions;
-using System.Linq;
 
 namespace Stride.Rendering.Voxels
 {
@@ -23,11 +18,12 @@ namespace Stride.Rendering.Voxels
     {
         [DataMemberIgnore]
         public static readonly PropertyKey<Dictionary<VoxelVolumeComponent, DataVoxelVolume>> CurrentRenderVoxelVolumes = new PropertyKey<Dictionary<VoxelVolumeComponent, DataVoxelVolume>>("VoxelRenderer.CurrentRenderVoxelVolumes", typeof(VoxelRenderer));
+
         [DataMemberIgnore]
         public static readonly PropertyKey<Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume>> CurrentProcessedVoxelVolumes = new PropertyKey<Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume>>("VoxelRenderer.CurrentProcessedVoxelVolumes", typeof(VoxelRenderer));
+
         private Dictionary<VoxelVolumeComponent, DataVoxelVolume> renderVoxelVolumes;
         private Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume> renderVoxelVolumeData;
-
 
         readonly ProfilingKey PassesVoxelizationProfilingKey = new ProfilingKey("Voxelization: Passes");
         readonly ProfilingKey FragmentVoxelizationProfilingKey = new ProfilingKey("Voxelization: Passes - Fragments");
@@ -36,16 +32,18 @@ namespace Stride.Rendering.Voxels
 
         public List<RenderStage> VoxelStages { get; set; } = new List<RenderStage>();
 
+
         public Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume> GetProcessedVolumes()
         {
             return renderVoxelVolumeData;
         }
+
         public virtual void Collect(RenderContext Context, Shadows.IShadowMapRenderer ShadowMapRenderer)
         {
             renderVoxelVolumes = Context.VisibilityGroup.Tags.Get(CurrentRenderVoxelVolumes);
             renderVoxelVolumeData = Context.VisibilityGroup.Tags.Get(CurrentProcessedVoxelVolumes);
 
-            if (renderVoxelVolumes == null || renderVoxelVolumes.Count == 0)
+            if (renderVoxelVolumes is null || renderVoxelVolumes.Count == 0)
                 return;
 
             if (Context.RenderSystem.GraphicsDevice.Features.CurrentProfile < GraphicsProfile.Level_11_0)
@@ -53,24 +51,22 @@ namespace Stride.Rendering.Voxels
                 throw new ArgumentOutOfRangeException("Graphics Profile Level 11 or higher required for Voxelization.");
             }
 
-            //Setup per volume passes and texture allocations
+            // Setup per volume passes and texture allocations
             foreach ( var pair in renderVoxelVolumes )
             {
                 var dataVolume = pair.Value;
                 var bounds = dataVolume.VolumeSize;
 
-                ProcessedVoxelVolume processedVolume;
-                if (!renderVoxelVolumeData.TryGetValue(pair.Key, out processedVolume))
+                if (!renderVoxelVolumeData.TryGetValue(pair.Key, out ProcessedVoxelVolume processedVolume))
                 {
                     processedVolume = new ProcessedVoxelVolume();
                     renderVoxelVolumeData.Add(pair.Key, processedVolume);
                 }
 
-
-                //Setup matrix
+                // Setup matrix
                 Vector3 matScale = dataVolume.VolumeSize;
                 Vector3 matTrans = dataVolume.VolumeTranslation;
-                
+
                 Matrix corMatrix = Matrix.Scaling(matScale) * Matrix.Translation(matTrans);
                 VoxelStorageContext storageContext = new VoxelStorageContext
                 {
@@ -83,9 +79,9 @@ namespace Stride.Rendering.Voxels
                 if (dataVolume.VoxelGridSnapping)
                 {
                     matTrans /= storageContext.RealVoxelSize();
-                    matTrans.X = (float)Math.Floor(matTrans.X);
-                    matTrans.Y = (float)Math.Floor(matTrans.Y);
-                    matTrans.Z = (float)Math.Floor(matTrans.Z);
+                    matTrans.X = (float) Math.Floor(matTrans.X);
+                    matTrans.Y = (float) Math.Floor(matTrans.Y);
+                    matTrans.Z = (float) Math.Floor(matTrans.Z);
                     matTrans *= storageContext.RealVoxelSize();
 
                     corMatrix = Matrix.Scaling(matScale) * Matrix.Translation(matTrans);
@@ -94,10 +90,10 @@ namespace Stride.Rendering.Voxels
                 storageContext.Translation = matTrans;
                 storageContext.VoxelSpaceTranslation = matTrans / storageContext.RealVoxelSize();
 
-                //Update storage
+                // Update storage
                 dataVolume.Storage.UpdateFromContext(storageContext);
 
-                //Transfer voxelization info
+                // Transfer voxelization info
                 processedVolume.VisualizeVoxels = dataVolume.VisualizeVoxels;
                 processedVolume.Storage = dataVolume.Storage;
                 processedVolume.StorageContext = storageContext;
@@ -114,32 +110,28 @@ namespace Stride.Rendering.Voxels
                 processedVolume.passList.defaultVoxelizationMethod = dataVolume.VoxelizationMethod;
 
 
-                //Create final list of attributes (including temporary ones)
+                // Create final list of attributes (including temporary ones)
                 foreach (var attr in dataVolume.Attributes)
                 {
                     attr.CollectAttributes(processedVolume.Attributes, VoxelizationStage.Initial, true);
                 }
 
-                //Allocate textures and space in the temporary buffer
+                // Allocate textures and space in the temporary buffer
                 foreach (var attr in processedVolume.Attributes)
                 {
                     attr.Attribute.PrepareLocalStorage(storageContext, dataVolume.Storage);
                     if (attr.Output)
-                    {
                         attr.Attribute.PrepareOutputStorage(storageContext, dataVolume.Storage);
-                    }
                     else
-                    {
                         attr.Attribute.ClearOutputStorage();
-                    }
                 }
                 dataVolume.Storage.UpdateTempStorage(storageContext);
 
-                //Create list of voxelization passes that need to be done
+                // Create list of voxelization passes that need to be done
                 dataVolume.Storage.CollectVoxelizationPasses(processedVolume, storageContext);
 
-                //Group voxelization passes where the RenderStage can be shared
-                //TODO: Group identical attributes
+                // Group voxelization passes where the RenderStage can be shared
+                // TODO: Group identical attributes
                 for (int i = 0; i < processedVolume.passList.passes.Count; i++)
                 {
                     bool added = false;
@@ -147,13 +139,12 @@ namespace Stride.Rendering.Voxels
                     for (int group = 0; group < processedVolume.groupedPasses.Count; group++)
                     {
                         var passB = processedVolume.groupedPasses[group][0];
-                        if (
-                           passB.storer.CanShareRenderStage(passA.storer)
-                        && passB.method.CanShareRenderStage(passA.method)
-                        && passB.AttributesDirect.SequenceEqual(passA.AttributesDirect)
-                        && passB.AttributesIndirect.SequenceEqual(passA.AttributesIndirect)
-                        && passB.AttributesTemp.SequenceEqual(passA.AttributesTemp)
-                        )
+
+                        if (passB.storer.CanShareRenderStage(passA.storer) &&
+                            passB.method.CanShareRenderStage(passA.method) &&
+                            passB.AttributesDirect.SequenceEqual(passA.AttributesDirect) &&
+                            passB.AttributesIndirect.SequenceEqual(passA.AttributesIndirect) &&
+                            passB.AttributesTemp.SequenceEqual(passA.AttributesTemp))
                         {
                             processedVolume.groupedPasses[group].Add(passA);
                             added = true;
@@ -162,20 +153,17 @@ namespace Stride.Rendering.Voxels
                     }
                     if (!added)
                     {
-                        List<VoxelizationPass> newGroup = new List<VoxelizationPass>
-                        {
-                            passA
-                        };
+                        List<VoxelizationPass> newGroup = new List<VoxelizationPass> { passA };
                         processedVolume.groupedPasses.Add(newGroup);
                     }
                 }
 
                 if (VoxelStages.Count < processedVolume.groupedPasses.Count)
                 {
-                    throw new ArgumentOutOfRangeException(processedVolume.groupedPasses.Count.ToString() + " Render Stages required for voxelization, only " + VoxelStages.Count.ToString() + " provided.");
+                    throw new ArgumentOutOfRangeException($"{processedVolume.groupedPasses.Count} Render Stages are required for voxelization, but only {VoxelStages.Count} were provided.");
                 }
 
-                //Finish preparing the passes, collecting views and setting up shader sources and shadows
+                // Finish preparing the passes, collecting views and setting up shader sources and shadows
                 for (int group = 0; group < processedVolume.groupedPasses.Count; group++)
                 {
                     foreach(var pass in processedVolume.groupedPasses[group])
@@ -195,9 +183,10 @@ namespace Stride.Rendering.Voxels
                 }
             }
         }
+
         public virtual void Draw(RenderDrawContext drawContext, Shadows.IShadowMapRenderer ShadowMapRenderer)
         {
-            if (renderVoxelVolumes == null || renderVoxelVolumes.Count == 0)
+            if (renderVoxelVolumes is null || renderVoxelVolumes.Count == 0)
                 return;
 
             if (drawContext.GraphicsDevice.Features.CurrentProfile < GraphicsProfile.Level_11_0)
@@ -211,7 +200,8 @@ namespace Stride.Rendering.Voxels
                 foreach (var processedVolumeKeyValue in renderVoxelVolumeData)
                 {
                     var processedVolume = processedVolumeKeyValue.Value;
-                    if (!processedVolume.Voxelize) continue;
+                    if (!processedVolume.Voxelize)
+                        continue;
 
                     VoxelStorageContext storageContext = processedVolume.StorageContext;
 
@@ -223,15 +213,15 @@ namespace Stride.Rendering.Voxels
 
                             if (pass.requireShadows)
                             {
-                                //Render Shadow Maps
+                                // Render Shadow Maps
                                 RenderView oldView = drawContext.RenderContext.RenderView;
 
                                 drawContext.RenderContext.RenderView = voxelizeRenderView;
-                                    ShadowMapRenderer.Draw(drawContext);
+                                ShadowMapRenderer.Draw(drawContext);
                                 drawContext.RenderContext.RenderView = oldView;
                             }
 
-                            //Render/Collect voxel fragments
+                            // Render/Collect voxel fragments
                             using (drawContext.QueryManager.BeginProfile(Color.Black, FragmentVoxelizationProfilingKey))
                             {
                                 using (drawContext.PushRenderTargetsAndRestore())
@@ -246,13 +236,13 @@ namespace Stride.Rendering.Voxels
                         }
                     }
 
-                    //Fill and write to voxel volume
+                    // Fill and write to voxel volume
                     using (drawContext.QueryManager.BeginProfile(Color.Black, BufferProcessingVoxelizationProfilingKey))
                     {
                         processedVolume.Storage.PostProcess(storageContext, context, processedVolume);
                     }
 
-                    //Mipmap
+                    // Mipmap
                     using (drawContext.QueryManager.BeginProfile(Color.Black, MipmappingVoxelizationProfilingKey))
                     {
                         foreach (var attr in processedVolume.Attributes)

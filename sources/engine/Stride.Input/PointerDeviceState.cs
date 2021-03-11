@@ -29,7 +29,7 @@ namespace Stride.Input
 
         public PointerDeviceState(IPointerDevice pointerDevice)
         {
-            this.SourceDevice = pointerDevice;
+            SourceDevice = pointerDevice;
             PressedPointers = new ReadOnlySet<PointerPoint>(pressedPointers);
             ReleasedPointers = new ReadOnlySet<PointerPoint>(releasedPointers);
             DownPointers = new ReadOnlySet<PointerPoint>(downPointers);
@@ -39,9 +39,9 @@ namespace Stride.Input
         public Vector2 InverseSurfaceSize => invSurfaceSize;
         public float SurfaceAspectRatio => aspectRatio;
 
-        public IReadOnlySet<PointerPoint> PressedPointers { get; }
-        public IReadOnlySet<PointerPoint> ReleasedPointers { get; }
-        public IReadOnlySet<PointerPoint> DownPointers { get; }
+        public Core.Collections.IReadOnlySet<PointerPoint> PressedPointers { get; }
+        public Core.Collections.IReadOnlySet<PointerPoint> ReleasedPointers { get; }
+        public Core.Collections.IReadOnlySet<PointerPoint> DownPointers { get; }
 
         public IPointerDevice SourceDevice;
 

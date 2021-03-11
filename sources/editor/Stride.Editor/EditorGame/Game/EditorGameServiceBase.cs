@@ -34,10 +34,10 @@ namespace Stride.Editor.EditorGame.Game
         protected bool IsDisposed { get; private set; }
 
         /// <inheritdoc/>
-        public virtual Task DisposeAsync()
+        public virtual ValueTask DisposeAsync()
         {
             IsDisposed = true;
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
         /// <inheritdoc/>
@@ -61,7 +61,7 @@ namespace Stride.Editor.EditorGame.Game
         }
 
         /// <summary>
-        /// Checks whether this service has been disposed, and throws an <see cref="ObjectDisposedException"/> if it is the case. 
+        /// Checks whether this service has been disposed, and throws an <see cref="ObjectDisposedException"/> if it is the case.
         /// </summary>
         /// <param name="name">The name to supply to the <see cref="ObjectDisposedException"/>.</param>
         protected void EnsureNotDestroyed(string name = null)

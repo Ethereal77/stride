@@ -1,5 +1,7 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 shader VoxelAnisotropicWriter_Float4 : VoxelLayout_Float4, NormalStream
 {
     stream float4 axisXP;
@@ -8,12 +10,15 @@ shader VoxelAnisotropicWriter_Float4 : VoxelLayout_Float4, NormalStream
     stream float4 axisYN;
     stream float4 axisZP;
     stream float4 axisZN;
+
     RWTexture3D<float4> DirectOutput;
+
     compose VoxelFragmentPacker writer;
 
     float maxBrightnessInv;
-    
+
     compose VoxelModifierApplierAnisotropic Modifiers[];
+
     override void InitializeDummy()
     {
         streams.axisXP = float4(0,0,0,0);
@@ -23,6 +28,7 @@ shader VoxelAnisotropicWriter_Float4 : VoxelLayout_Float4, NormalStream
         streams.axisYN = float4(0,0,0,0);
         streams.axisZN = float4(0,0,0,0);
     }
+
     override void InitializeFromStreams(float4 original)
     {
         if (streams.normalWS.x > 0)
@@ -40,41 +46,43 @@ shader VoxelAnisotropicWriter_Float4 : VoxelLayout_Float4, NormalStream
         else
             streams.axisZN = original * -streams.normalWS.z;
     }
+
     float4 applyMaxBrightness(float4 col)
     {
         return float4(col.rgb * maxBrightnessInv, col.a);
     }
+
     override void DirectWrite(uint3 address, uint strideIndex, uint stride)
     {
         address.y += strideIndex * stride * 6;
+
         float4 tempAxisXP = streams.axisXP;
         float4 tempAxisXN = streams.axisXN;
         float4 tempAxisYP = streams.axisYP;
         float4 tempAxisYN = streams.axisYN;
         float4 tempAxisZP = streams.axisZP;
         float4 tempAxisZN = streams.axisZN;
+
         foreach (var modifier in Modifiers)
         {
             modifier.Apply(tempAxisXP, tempAxisXN, tempAxisYP, tempAxisYN, tempAxisZP, tempAxisZN);
         }
+
         streams.axisXP = tempAxisXP;
         streams.axisXN = tempAxisXN;
         streams.axisYP = tempAxisYP;
         streams.axisYN = tempAxisYN;
         streams.axisZP = tempAxisZP;
         streams.axisZN = tempAxisZN;
-        DirectOutput[address] = applyMaxBrightness(streams.axisXP);
-        address.y += stride;
-            DirectOutput[address] = applyMaxBrightness(streams.axisXN);
-        address.y += stride;
-            DirectOutput[address] = applyMaxBrightness(streams.axisYP);
-        address.y += stride;
-            DirectOutput[address] = applyMaxBrightness(streams.axisYN);
-        address.y += stride;
-            DirectOutput[address] = applyMaxBrightness(streams.axisZP);
-        address.y += stride;
-            DirectOutput[address] = applyMaxBrightness(streams.axisZN);
+
+        DirectOutput[address] = applyMaxBrightness(streams.axisXP); address.y += stride;
+        DirectOutput[address] = applyMaxBrightness(streams.axisXN); address.y += stride;
+        DirectOutput[address] = applyMaxBrightness(streams.axisYP); address.y += stride;
+        DirectOutput[address] = applyMaxBrightness(streams.axisYN); address.y += stride;
+        DirectOutput[address] = applyMaxBrightness(streams.axisZP); address.y += stride;
+        DirectOutput[address] = applyMaxBrightness(streams.axisZN);
     }
+
     override void IndirectWrite(RWBuffer<uint> buffer, uint address)
     {
             writer.Write(buffer, address, streams.axisXP);
@@ -84,6 +92,7 @@ shader VoxelAnisotropicWriter_Float4 : VoxelLayout_Float4, NormalStream
             writer.Write(buffer, address, streams.axisZP);
             writer.Write(buffer, address, streams.axisZN);
     }
+
     override void InitializeFromBuffer(RWBuffer<uint> buffer, uint address)
     {
         writer.Read(buffer, address, streams.axisXP);
@@ -93,6 +102,7 @@ shader VoxelAnisotropicWriter_Float4 : VoxelLayout_Float4, NormalStream
         writer.Read(buffer, address, streams.axisZP);
         writer.Read(buffer, address, streams.axisZN);
     }
+
     override float4 SampleLocal()
     {
         return streams.axisXP;

@@ -1,8 +1,7 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Stride.Core;
 using Stride.Shaders;
 
@@ -14,21 +13,25 @@ namespace Stride.Rendering.Voxels
     {
         [DataMember(0)]
         public bool EditMode = true;
+
         [DataMember(10)]
         public bool Fast = false;
+
         [DataMember(20)]
         public int Steps = 9;
+
         [DataMember(30)]
         public float StepScale = 1.0f;
+
         [DataMember(40)]
         public float ConeRatio = 1.0f;
+
         [DataMember(50)]
         public float StartOffset = 1.0f;
 
-        public VoxelMarchCone()
-        {
 
-        }
+        public VoxelMarchCone() { }
+
         public VoxelMarchCone(int steps, float stepScale, float ratio)
         {
             Steps = steps;
@@ -36,6 +39,8 @@ namespace Stride.Rendering.Voxels
             ConeRatio = ratio;
             EditMode = false;
         }
+
+
         public ShaderSource GetMarchingShader(int attrID)
         {
             var mixin = new ShaderMixinSource();
@@ -58,6 +63,7 @@ namespace Stride.Rendering.Voxels
         ValueParameterKey<float> ConeRatioKey;
         ValueParameterKey<int> FastKey;
         ValueParameterKey<float> OffsetKey;
+
         public void UpdateMarchingLayout(string compositionName)
         {
             if (EditMode)
@@ -69,6 +75,7 @@ namespace Stride.Rendering.Voxels
                 OffsetKey = VoxelMarchConeEditModeKeys.offset.ComposeWith(compositionName);
             }
         }
+
         public void ApplyMarchingParameters(ParameterCollection parameters)
         {
             if (EditMode)

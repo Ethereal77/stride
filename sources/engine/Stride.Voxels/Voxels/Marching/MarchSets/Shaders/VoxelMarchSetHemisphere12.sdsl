@@ -1,12 +1,16 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 shader VoxelMarchSetHemisphere12 : VoxelMarchSet
 {
     cbuffer PerView.Lighting
     {
         float offset;
     }
+
     compose VoxelMarchMethod Marcher;
+
     override float4 March(float3 rayPos, float3 rayDir)
     {
         float3 tan = normalize(cross(rayDir, normalize(float3(1, 1, 1))));
@@ -16,8 +20,8 @@ shader VoxelMarchSetHemisphere12 : VoxelMarchSet
         float3 startPos = rayPos + rayDir * Marcher.StepSize() * offset;
 
         float4 reflLighting = float4(0, 0, 0, 0);
-        
-        //Dot products of rays
+
+        // Dot products of rays
         float central = 0.84;
         float outer = 0.22;
         float sum = (central*4+outer*8);

@@ -27,4 +27,7 @@
     <ProjectReference Include="..\Stride.UI\Stride.UI.csproj" />
   </ItemGroup>
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
+  <ItemGroup>
+    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
+  </ItemGroup>
 </Project>

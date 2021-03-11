@@ -1,8 +1,7 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Stride.Core;
 using Stride.Shaders;
 
@@ -21,29 +20,34 @@ namespace Stride.Rendering.Voxels
         [DataMember(20)]
         public float StartOffset { get; set; } = 0.5f;
 
-        public VoxelMarchConePerMipmap()
-        {
 
-        }
+        public VoxelMarchConePerMipmap() { }
+
         public VoxelMarchConePerMipmap(float ratio, int steps)
         {
             ConeRatio = ratio;
             Steps = steps;
         }
+
+
         public ShaderSource GetMarchingShader(int attrID)
         {
             var mixin = new ShaderMixinSource();
             mixin.Mixins.Add(new ShaderClassSource("VoxelMarchConePerMipmap", Steps));
             mixin.Macros.Add(new ShaderMacro("AttributeID", attrID));
+
             return mixin;
         }
+
         ValueParameterKey<float> OffsetKey;
         ValueParameterKey<float> ConeRatioInvKey;
+
         public void UpdateMarchingLayout(string compositionName)
         {
             OffsetKey = VoxelMarchConePerMipmapKeys.offset.ComposeWith(compositionName);
             ConeRatioInvKey = VoxelMarchConePerMipmapKeys.coneRatioInv.ComposeWith(compositionName);
         }
+
         public void ApplyMarchingParameters(ParameterCollection parameters)
         {
             parameters.Set(OffsetKey, StartOffset);

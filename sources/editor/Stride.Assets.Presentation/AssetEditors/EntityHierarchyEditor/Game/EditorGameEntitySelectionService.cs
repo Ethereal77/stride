@@ -13,18 +13,18 @@ using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.Mathematics;
 using Stride.Core.BuildEngine;
-using Stride.Assets.Presentation.AssetEditors.Gizmos;
-using Stride.Assets.Presentation.AssetEditors.SceneEditor.ViewModels;
-using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
-using Stride.Assets.Presentation.SceneEditor;
-using Stride.Editor.EditorGame.Game;
-using Stride.Engine;
 using Stride.Input;
 using Stride.Rendering;
 using Stride.Rendering.Sprites;
 using Stride.Rendering.Compositing;
+using Stride.Engine;
+using Stride.Assets.Presentation.AssetEditors.SceneEditor.ViewModels;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
+using Stride.Assets.Presentation.AssetEditors.Gizmos;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Editor.EditorGame.Game;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
@@ -105,7 +105,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private IEditorGameComponentGizmoService Gizmos => Services.Get<IEditorGameComponentGizmoService>();
 
         /// <inheritdoc />
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             EnsureNotDestroyed(nameof(EditorGameEntitySelectionService));
 
@@ -373,8 +373,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                     case NotifyCollectionChangedAction.Add:
                         foreach (EntityHierarchyItemViewModel newItem in e.NewItems)
                         {
-                            var root = newItem as SceneRootViewModel;
-                            if (root != null)
+                            if (newItem is SceneRootViewModel root)
                                 AddToSelection(root);
                             else
                                 foreach (var entity in newItem.InnerSubEntities)
@@ -385,8 +384,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                     case NotifyCollectionChangedAction.Remove:
                         foreach (EntityHierarchyItemViewModel oldItem in e.OldItems)
                         {
-                            var root = oldItem as SceneRootViewModel;
-                            if (root != null)
+                            if (oldItem is SceneRootViewModel root)
                                 RemoveFromSelection(root);
                             else
                                 foreach (var entity in oldItem.InnerSubEntities)

@@ -42,9 +42,9 @@ namespace Stride.Input
         public abstract IReadOnlyList<GameControllerAxisInfo> AxisInfos { get; }
         public abstract IReadOnlyList<GameControllerDirectionInfo> DirectionInfos { get; }
 
-        public IReadOnlySet<int> PressedButtons { get; }
-        public IReadOnlySet<int> ReleasedButtons { get; }
-        public IReadOnlySet<int> DownButtons { get; }
+        public Core.Collections.IReadOnlySet<int> PressedButtons { get; }
+        public Core.Collections.IReadOnlySet<int> ReleasedButtons { get; }
+        public Core.Collections.IReadOnlySet<int> DownButtons { get; }
 
         /// <summary>
         ///   Creates the correct amount of states based on the amount of input object information structures

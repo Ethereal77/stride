@@ -1,21 +1,12 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
+
 using System.Collections.Generic;
-using System.Text;
-using Stride.Graphics;
+
 using Stride.Core;
-using Stride.Core.Annotations;
-using Stride.Core.Collections;
-using Stride.Core.Extensions;
-using Stride.Core.Mathematics;
-using Stride.Shaders;
+using Stride.Graphics;
 using Stride.Rendering.Images;
-using Stride.Rendering.Voxels;
-using Stride.Rendering.Lights;
-using Stride.Rendering.Skyboxes;
-using System.Linq;
-using Stride.Rendering.Compositing;
 
 namespace Stride.Rendering.Voxels.Debug
 {
@@ -33,26 +24,25 @@ namespace Stride.Rendering.Voxels.Debug
             if (!Initialized)
                 Initialize(context.RenderContext);
 
-            if (VoxelRenderer == null)
-            {
+            if (VoxelRenderer is null)
                 return;
-            }
 
-            Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume> datas = VoxelRenderer.GetProcessedVolumes();
-            if (datas == null)
-            {
+            Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume> precessedVolumes = VoxelRenderer.GetProcessedVolumes();
+            if (precessedVolumes is null)
                 return;
-            }
-            foreach (var datapairs in datas)
-            {
-                var data = datapairs.Value;
 
-                if (!data.VisualizeVoxels || data.VoxelVisualization == null || data.VisualizationAttribute == null)
+            foreach (var volume in precessedVolumes)
+            {
+                var data = volume.Value;
+
+                if (!data.VisualizeVoxels ||
+                    data.VoxelVisualization is null ||
+                    data.VisualizationAttribute is null)
                     continue;
 
                 ImageEffectShader shader = data.VoxelVisualization.GetShader(context, data.VisualizationAttribute);
 
-                if (shader == null)
+                if (shader is null)
                     continue;
 
                 shader.SetOutput(GetSafeOutput(0));
@@ -60,6 +50,7 @@ namespace Stride.Rendering.Voxels.Debug
                 shader.Draw(context);
             }
         }
+
         public void Draw(RenderDrawContext drawContext, Texture output)
         {
             SetOutput(output);

@@ -97,4 +97,7 @@
     <None Include="Stride.Engine.Tests.sdpkg" />
   </ItemGroup>
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
+  <ItemGroup>
+    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
+  </ItemGroup>
 </Project>

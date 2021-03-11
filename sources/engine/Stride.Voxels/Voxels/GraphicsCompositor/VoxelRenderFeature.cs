@@ -1,18 +1,13 @@
 // Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 using Stride.Core;
-using Stride.Core.Mathematics;
 using Stride.Core.Storage;
 using Stride.Core.Threading;
-using Stride.Graphics;
-using Stride.Rendering.Shadows;
-using Stride.Rendering.Voxels;
-using Stride.Shaders;
 
 namespace Stride.Rendering.Voxels
 {
@@ -25,9 +20,10 @@ namespace Stride.Rendering.Voxels
         public static readonly PropertyKey<Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume>> CurrentProcessedVoxelVolumes = new PropertyKey<Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume>>("VoxelRenderFeature.CurrentProcessedVoxelVolumes", typeof(VoxelRenderFeature));
 
         private Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume> renderVoxelVolumeData;
-        
+
         private LogicalGroupReference VoxelizerStorerCasterKey;
         private StaticObjectPropertyKey<RenderEffect> renderEffectKey;
+
 
         protected override void InitializeCore()
         {
@@ -44,9 +40,9 @@ namespace Stride.Rendering.Voxels
                 return;
 
             var renderEffects = RootRenderFeature.RenderData.GetData(renderEffectKey);
-            int effectSlotCount = ((RootEffectRenderFeature)RootRenderFeature).EffectPermutationSlotCount;
+            int effectSlotCount = ((RootEffectRenderFeature) RootRenderFeature).EffectPermutationSlotCount;
 
-            var rootEffectRenderFeature = ((RootEffectRenderFeature)RootRenderFeature);
+            var rootEffectRenderFeature = (RootEffectRenderFeature) RootRenderFeature;
 
             if (rootEffectRenderFeature is null)
                 return;
@@ -157,7 +153,7 @@ namespace Stride.Rendering.Voxels
                             continue;
 
                         if (voxelizerStorer.Hash != firstViewLighting.Hash)
-                            throw new InvalidOperationException("PerView VoxelizerStorer layout differs between different RenderObject in the same RenderView");
+                            throw new InvalidOperationException("PerView VoxelizerStorer layout differs between different RenderObject in the same RenderView.");
 
                         var resourceGroup = viewLayout.Entries[pass.view.Index].Resources;
                         resourceGroup.UpdateLogicalGroup(ref voxelizerStorer, VSViewParameters);

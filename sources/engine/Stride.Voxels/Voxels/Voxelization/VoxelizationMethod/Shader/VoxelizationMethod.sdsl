@@ -1,9 +1,11 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 shader VoxelizationMethod : VoxelPositionStream, PositionStream4, ShaderBaseStream
 {
-    void PrepareFragment(){ }
-    void PrepareVertex(){ }
+    void PrepareFragment() { }
+    void PrepareVertex() { }
 
     void InitializeFromTriangle(triangle Input input[3]) { }
 
@@ -12,6 +14,7 @@ shader VoxelizationMethod : VoxelPositionStream, PositionStream4, ShaderBaseStre
         streams.ShadingPosition.z = streams.ShadingPosition.z * 0.5 + 0.5;
         triangleStream.Append(streams);
     }
+
     void RestartStrip(inout TriangleStream<Output> triangleStream)
     {
         triangleStream.RestartStrip();

@@ -1,60 +1,50 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using Stride.Core;
-using Stride.Core.Collections;
-using Stride.Core.Diagnostics;
 using Stride.Core.Mathematics;
-using Stride.Engine;
 using Stride.Shaders;
 using Stride.Graphics;
-using Stride.Rendering.Lights;
-using Stride.Rendering.Voxels;
-using Stride.Core.Extensions;
-using Stride.Rendering;
-
 
 namespace Stride.Rendering.Voxels
 {
-    //Uses a geometry shader to project each triangle to the axis
-    //of maximum coverage, and lets the pipeline generate fragments from there
+    /// <summary>
+    ///   Uses a geometry shader to project each triangle to the axis of maximum coverage, and lets the pipeline generate fragments from there.
+    /// </summary>
     [DataContract(DefaultMemberMode = DataMemberMode.Default)]
     [Display("Single Axis")]
     public class VoxelizationMethodSingleAxis : IVoxelizationMethod
     {
         List<RenderView> VoxelizationViews { get; } = new List<RenderView>();
+
         Dictionary<RenderView,Int2> VoxelizationViewSizes { get; } = new Dictionary<RenderView, Int2>();
+
         int currentViewIndex = 0;
 
-        public enum Axis {X, Y, Z};
+        public enum Axis  { X, Y, Z };
+
         public Axis VoxelizationAxis = Axis.Y;
 
         public MultisampleCount MultisampleCount = MultisampleCount.X8;
 
         public override bool Equals(object obj)
         {
-            VoxelizationMethodSingleAxis method = obj as VoxelizationMethodSingleAxis;
-            if (method == null)
-            {
+            if (obj is not VoxelizationMethodSingleAxis method)
                 return false;
-            }
+
             if (method.MultisampleCount != MultisampleCount)
-            {
                 return false;
-            }
+
             return true;
         }
-        public bool CanShareRenderStage(IVoxelizationMethod obj)
-        {
-            return Equals(obj);
-        }
-        public override int GetHashCode()
-        {
-            return MultisampleCount.GetHashCode();
-        }
+
+        public bool CanShareRenderStage(IVoxelizationMethod obj) => Equals(obj);
+
+        public override int GetHashCode() => MultisampleCount.GetHashCode();
 
 
         public void CollectVoxelizationPasses(VoxelizationPassList passList, IVoxelStorer storer, Matrix view, Vector3 resolution, VoxelAttribute attr, VoxelizationStage stage, bool output, bool shadows)
@@ -72,23 +62,23 @@ namespace Stride.Rendering.Voxels
             while (VoxelizationViews.Count <= currentViewIndex)
             {
                 VoxelizationViews.Add(new RenderView());
-                VoxelizationViewSizes[VoxelizationViews[VoxelizationViews.Count-1]] = new Int2();
+                VoxelizationViewSizes[VoxelizationViews[VoxelizationViews.Count - 1]] = new Int2();
             }
             RenderView voxelizationView = VoxelizationViews[currentViewIndex];
 
             float maxRes = Math.Max(resolution.X, Math.Max(resolution.Y, resolution.Z));
             Matrix aspectScale = Matrix.Scaling(new Vector3(resolution.X, resolution.Z, resolution.Y) / maxRes);
 
-            VoxelizationViewSizes[voxelizationView] = new Int2((int)maxRes, (int)maxRes);
+            VoxelizationViewSizes[voxelizationView] = new Int2((int) maxRes, (int) maxRes);
 
             voxelizationView.View = actualView;
             voxelizationView.Projection = view * aspectScale;
             voxelizationView.ViewProjection = voxelizationView.View * voxelizationView.Projection;
             voxelizationView.ViewSize = new Vector2(maxRes * 8, maxRes * 8);
 
-
-            //The BoundingFrustum constructor doesn't end up calculating the correct Near Plane for the symmetric matrix, squish it so the Z is from 0 to 1
-            Matrix SquishedMatrix = voxelizationView.ViewProjection * Matrix.Scaling(1f, 1f, 0.5f) * Matrix.Translation(new Vector3(0, 0, 0.5f));
+            // The BoundingFrustum constructor doesn't end up calculating the correct Near Plane for the symmetric matrix,
+            // squish it so the Z is from 0 to 1
+            Matrix SquishedMatrix = voxelizationView.ViewProjection * Matrix.Scaling(1, 1, 0.5f) * Matrix.Translation(new Vector3(0, 0, 0.5f));
             voxelizationView.Frustum = new BoundingFrustum(ref SquishedMatrix);
 
             voxelizationView.CullingMode = CameraCullingMode.None;
@@ -100,11 +90,12 @@ namespace Stride.Rendering.Voxels
             passList.AddDirect(storer, this, voxelizationView, attr, stage, output, shadows);
         }
 
-        Stride.Graphics.Texture MSAARenderTarget = null;
+        Texture MSAARenderTarget = null;
 
         public void Render(VoxelStorageContext storageContext, RenderDrawContext drawContext, RenderView view)
         {
             RenderView voxelizationView = view;
+
             Int2 ViewSize = VoxelizationViewSizes[view];
 
             if (VoxelUtils.DisposeTextureBySpecs(MSAARenderTarget, new Vector3(ViewSize.X, ViewSize.Y, 1), PixelFormat.R8G8B8A8_UNorm, MultisampleCount))
@@ -123,6 +114,7 @@ namespace Stride.Rendering.Voxels
             renderSystem.Draw(drawContext, voxelizationView, renderSystem.RenderStages[voxelizationView.RenderStages[0].Index]);
             drawContext.CommandList.ResetTargets();
         }
+
         public void Reset()
         {
             currentViewIndex = 0;
@@ -130,22 +122,19 @@ namespace Stride.Rendering.Voxels
 
         ShaderClassSource method = new ShaderClassSource("VoxelizationMethodSingleAxis");
         ShaderMixinSource methodmixin = null;
+
         public ShaderSource GetVoxelizationShader()
         {
-            if (methodmixin == null)
+            if (methodmixin is null)
             {
                 methodmixin = new ShaderMixinSource();
                 methodmixin.Mixins.Add(method);
             }
             return methodmixin;
         }
-        public bool RequireGeometryShader()
-        {
-            return false;
-        }
-        public int GeometryShaderOutputCount()
-        {
-            return 3;
-        }
+
+        public bool RequireGeometryShader() => false;
+
+        public int GeometryShaderOutputCount() => 3;
     }
 }

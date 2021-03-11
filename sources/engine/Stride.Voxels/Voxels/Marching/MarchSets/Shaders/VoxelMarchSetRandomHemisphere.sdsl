@@ -1,5 +1,7 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 shader VoxelMarchSetRandomHemisphere : VoxelMarchSet, ShaderBase
 {
     cbuffer PerView.Lighting
@@ -7,12 +9,15 @@ shader VoxelMarchSetRandomHemisphere : VoxelMarchSet, ShaderBase
         int marchCount;
         float time;
     }
+
     float Random(in float2 uv)
     {
-        float2 noise = (frac(sin(dot(uv,float2(12.9898,78.233)*2.0)) * 43758.5453));
+        float2 noise = (frac(sin(dot(uv,float2(12.9898, 78.233) * 2.0)) * 43758.5453));
         return abs(noise.x + noise.y) * 0.5;
     }
-    float3 CosineWeightedPointOnHemisphere(float2 uv) {
+
+    float3 CosineWeightedPointOnHemisphere(float2 uv)
+    {
         float u = Random(uv) * 6.28;
         float v = Random(uv + 0.1);
 
@@ -20,10 +25,11 @@ shader VoxelMarchSetRandomHemisphere : VoxelMarchSet, ShaderBase
 
         float2 pos = float2(sin(u),cos(u)) * v;
 
-        return float3(pos, sqrt(1-pos.x*pos.x-pos.y*pos.y));
+        return float3(pos, sqrt(1 - pos.x * pos.x - pos.y * pos.y));
     }
 
     compose VoxelMarchMethod Marcher;
+
     override float4 March(float3 rayPos, float3 rayDir)
     {
         float3 tan = normalize(cross(rayDir, normalize(float3(1,1,1))));
@@ -36,7 +42,7 @@ shader VoxelMarchSetRandomHemisphere : VoxelMarchSet, ShaderBase
 
         for(int i = 0; i < marchCount; i ++)
         {
-            float3 dir = CosineWeightedPointOnHemisphere(streams.ShadingPosition.xy + i*1.73 + time);
+            float3 dir = CosineWeightedPointOnHemisphere(streams.ShadingPosition.xy + i * 1.73 + time);
             dir = mul(dir, tangentMatrix);
             reflLighting += Marcher.March(startPos, dir);
         }

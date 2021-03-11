@@ -13,13 +13,12 @@ using Xunit;
 
 namespace Stride.Core.Tests.Build
 {
-    [Ignore("Need check")]
     public class TestStorage
     {
         private readonly int[] blobData1 = new[] { 0, 1, 2, 3 };
         private readonly int[] blobData2 = new[] { 0, 2, 3, 4 };
 
-        [Fact]
+        [Fact(Skip = "Needs check")]
         public unsafe void TestBlobSizeAndData()
         {
             using (var tempObjDatabase = new TemporaryObjectDatabase())
@@ -30,18 +29,18 @@ namespace Stride.Core.Tests.Build
                     blob = objectDatabase.CreateBlob((IntPtr)blobData1Ptr, Utilities.SizeOf(blobData1));
 
                 // Check size
-                Assert.Equal(Utilities.SizeOf(blobData1, blob.Size));
+                Assert.Equal(Utilities.SizeOf(blobData1), blob.Size);
 
                 // Check content
                 fixed (int* blobData1Ptr = blobData1)
-                    Assert.That(Utilities.CompareMemory(blob.Content, (IntPtr)blobData1Ptr, Utilities.SizeOf(blobData1)));
+                    Assert.True(Utilities.CompareMemory(blob.Content, (IntPtr) blobData1Ptr, Utilities.SizeOf(blobData1)));
 
                 // Test unloading blob
                 Assert.Equal(0, blob.Release());
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Needs check")]
         public unsafe void TestBlobLookup()
         {
             using (var tempObjDatabase = new TemporaryObjectDatabase())
@@ -67,18 +66,18 @@ namespace Stride.Core.Tests.Build
                 var blob4 = objectDatabase.Lookup(blob.ObjectId);
 
                 // Reference should be new
-                Assert.That(blob4, Is.Not.EqualTo(blob));
+                Assert.NotEqual(blob4, blob);
                 // Check size
-                Assert.Equal(Utilities.SizeOf(blobData1, blob4.Size));
+                Assert.Equal(Utilities.SizeOf(blobData1), blob4.Size);
                 // Check content
                 fixed (int* blobData1Ptr = blobData1)
-                    Assert.That(Utilities.CompareMemory(blob4.Content, (IntPtr)blobData1Ptr, Utilities.SizeOf(blobData1)));
+                    Assert.True(Utilities.CompareMemory(blob4.Content, (IntPtr)blobData1Ptr, Utilities.SizeOf(blobData1)));
                 // Unload
                 Assert.Equal(0, blob4.Release());
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Needs check")]
         public unsafe void TestBlobIdentical()
         {
             using (var tempObjDatabase = new TemporaryObjectDatabase())
@@ -96,7 +95,7 @@ namespace Stride.Core.Tests.Build
                 }
 
                 Assert.Equal(blob, blob2);
-                Assert.That(blob3, Is.Not.EqualTo(blob));
+                Assert.NotEqual(blob3, blob);
                 blob2.Release();
                 blob3.Release();
 
@@ -105,7 +104,7 @@ namespace Stride.Core.Tests.Build
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Needs check")]
         public unsafe void TestDigestStream()
         {
             string s1 = "abc";
@@ -179,5 +178,3 @@ namespace Stride.Core.Tests.Build
         }
     }
 }
-
-#endif

@@ -1,11 +1,13 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 namespace Stride.Rendering.Voxels
 {
     shader BufferToTexture : LocalSamples, ComputeShaderBase, VoxelPositionStream, DataPacking
     {
         stage RWBuffer<uint> VoxelFragments;
-        
+
         stage float3 clipMapResolution;
 
         stage float  storageUints;
@@ -22,7 +24,7 @@ namespace Stride.Rendering.Voxels
 
         override void Compute()
         {
-            int3 clipMapResolutionI = (int3)clipMapResolution;
+            int3 clipMapResolutionI = (int3) clipMapResolution;
 
             uint3 pos = streams.DispatchThreadId.xyz;
             pos.y = pos.y % clipMapResolutionI.y;
@@ -33,12 +35,10 @@ namespace Stride.Rendering.Voxels
 
             uint wStride = clipMapResolutionI.x * clipMapResolutionI.y * clipMapResolutionI.z;
             uint VoxelFragmentsIndex = clipIndex * wStride + pos.x + pos.y * clipMapResolutionI.x + pos.z * clipMapResolutionI.x * clipMapResolutionI.y;
-            VoxelFragmentsIndex *= (uint)storageUints;
+            VoxelFragmentsIndex *= (uint) storageUints;
 
-            uint yStride = clipMapResolutionI.x * (uint)storageUints;
+            uint yStride = clipMapResolutionI.x * (uint) storageUints;
             uint initialVoxelFragmentsIndex = VoxelFragmentsIndex;
-
-
 
             foreach (var attr in AttributesTemp)
                 attr.InitializeDummy();

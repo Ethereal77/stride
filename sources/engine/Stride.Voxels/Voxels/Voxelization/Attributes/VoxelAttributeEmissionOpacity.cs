@@ -1,13 +1,13 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
+
 using System.Collections.Generic;
-using System.Text;
+
 using Stride.Core;
 using Stride.Core.Annotations;
-using Stride.Shaders;
-using Stride.Rendering.Materials;
 using Stride.Core.Mathematics;
+using Stride.Shaders;
 
 namespace Stride.Rendering.Voxels
 {
@@ -17,9 +17,14 @@ namespace Stride.Rendering.Voxels
     {
         public enum LightFalloffs
         {
-            [Display("Sharp")] Sharp,
-            [Display("Physically Based")] PhysicallyBased,
-            [Display("Physically Based + Shadowing Heuristic")] Heuristic,
+            [Display("Sharp")]
+            Sharp,
+
+            [Display("Physically Based")]
+            PhysicallyBased,
+
+            [Display("Physically Based + Shadowing Heuristic")]
+            Heuristic
         }
 
         [NotNull]
@@ -34,27 +39,29 @@ namespace Stride.Rendering.Voxels
         {
             BufferOffset = VoxelLayout.PrepareLocalStorage(context, storage);
         }
+
         public override void PrepareOutputStorage(VoxelStorageContext context, IVoxelStorage storage)
         {
             VoxelLayout.PrepareOutputStorage(context, storage);
         }
+
         public override void ClearOutputStorage()
         {
             VoxelLayout.ClearOutputStorage();
         }
 
 
-
-
         public override void CollectVoxelizationPasses(VoxelizationPassList passList, IVoxelStorer storer, Matrix view, Vector3 resolution, VoxelizationStage stage, bool output)
         {
             passList.defaultVoxelizationMethod.CollectVoxelizationPasses(passList, storer, view, resolution, this, stage, output, true);
         }
+
         public override void CollectAttributes(List<AttributeStream> attributes, VoxelizationStage stage, bool output)
         {
             foreach (VoxelModifierEmissionOpacity modifier in Modifiers)
             {
-                if (!modifier.Enabled) continue;
+                if (!modifier.Enabled)
+                    continue;
 
                 modifier.CollectAttributes(attributes, VoxelizationStage.Post, false);
             }
@@ -65,19 +72,19 @@ namespace Stride.Rendering.Voxels
         {
             foreach (VoxelModifierEmissionOpacity modifier in Modifiers)
             {
-                if (!modifier.Enabled) continue;
+                if (!modifier.Enabled)
+                    continue;
 
                 if (modifier.RequiresColumns())
                     return true;
             }
             return false;
         }
+
         public override void PostProcess(RenderDrawContext drawContext)
         {
             VoxelLayout.PostProcess(drawContext, LightFalloff);
         }
-
-
 
 
         ShaderClassSource source = new ShaderClassSource("VoxelAttributeEmissionOpacityShader");
@@ -89,23 +96,28 @@ namespace Stride.Rendering.Voxels
             mixin.AddComposition("layout", VoxelLayout.GetVoxelizationShader(Modifiers));
             return mixin;
         }
+
         public override void UpdateVoxelizationLayout(string compositionName)
         {
             int i = 0;
             foreach (VoxelModifierEmissionOpacity modifier in Modifiers)
             {
-                if (!modifier.Enabled) continue;
+                if (!modifier.Enabled)
+                    continue;
 
                 modifier.UpdateVoxelizationLayout($"Modifiers[{i}].layout.{compositionName}");
                 i++;
             }
+
             VoxelLayout.UpdateVoxelizationLayout("layout." + compositionName, Modifiers);
         }
+
         public override void ApplyVoxelizationParameters(ParameterCollection parameters)
         {
             foreach (VoxelModifierEmissionOpacity modifier in Modifiers)
             {
-                if (!modifier.Enabled) continue;
+                if (!modifier.Enabled)
+                    continue;
 
                 modifier.ApplyVoxelizationParameters(parameters);
             }
@@ -113,16 +125,16 @@ namespace Stride.Rendering.Voxels
         }
 
 
-
-
         public override ShaderSource GetSamplingShader()
         {
             return VoxelLayout.GetSamplingShader();
         }
+
         public override void UpdateSamplingLayout(string compositionName)
         {
             VoxelLayout.UpdateSamplingLayout(compositionName);
         }
+
         public override void ApplySamplingParameters(VoxelViewContext viewContext, ParameterCollection parameters)
         {
             VoxelLayout.ApplySamplingParameters(viewContext, parameters);

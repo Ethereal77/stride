@@ -7,16 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets.Editor.Extensions;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
 using Stride.Assets.Presentation.SceneEditor;
-using Stride.Editor.EditorGame.Game;
 using Stride.Engine;
 using Stride.Rendering;
 using Stride.Rendering.Compositing;
+using Stride.Editor.EditorGame.Game;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
@@ -34,7 +32,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         }
 
         /// <inheritdoc />
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             EnsureNotDestroyed(nameof(EditorGameModelSelectionService));
 
@@ -81,7 +79,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 wireframeRenderFeature.RegisterSelectionService(selectionService);
 
                 // Enable editor shaders for meshes (will use StrideEditorForwardShadingEffect instead of StrideForwardShadingEffect)
-				// TODO: Avoid hardcoding those shader names (maybe by letting the user mix himself editor mixin in his own effect?)
+                // TODO: Avoid hardcoding those shader names (maybe by letting the user mix himself editor mixin in his own effect?)
                 meshRenderFeature.RenderStageSelectors.Add(new MeshEditorRenderStageSelector());
             }
 
@@ -99,7 +97,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
             editor.Controller.InvokeAsync(() =>
             {
-                // update the selection on the gizmo entities.
+                // Update the selection on the gizmo entities.
                 selectedEntities.Clear();
                 selectedEntities.AddRange(recursiveSelection);
             });
@@ -133,8 +131,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                     if (renderObject.ActiveRenderStages[index].Active)
                     {
                         var effectName = renderObject.ActiveRenderStages[index].EffectSelector.EffectName;
-                        if (effectName == "StrideForwardShadingEffect"
-                            || effectName.StartsWith("StrideForwardShadingEffect."))
+
+                        if (effectName == "StrideForwardShadingEffect" ||
+                            effectName.StartsWith("StrideForwardShadingEffect."))
                         {
                             effectName = effectName.Replace("StrideForwardShadingEffect", "StrideEditorForwardShadingEffect");
                             renderObject.ActiveRenderStages[index].EffectSelector = new EffectSelector(effectName);

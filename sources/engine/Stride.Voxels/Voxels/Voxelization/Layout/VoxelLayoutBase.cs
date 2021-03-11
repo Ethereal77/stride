@@ -1,12 +1,15 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
-using System.Text;
+
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Shaders;
-using Stride.Rendering.Materials;
+using Stride.Graphics;
+
 using static Stride.Rendering.Voxels.VoxelAttributeEmissionOpacity;
 
 namespace Stride.Rendering.Voxels
@@ -18,7 +21,7 @@ namespace Stride.Rendering.Voxels
         {
             R10G10B10A2,
             RGBA8,
-            RGBA16F,
+            RGBA16F
         };
 
         [NotNull]
@@ -26,19 +29,20 @@ namespace Stride.Rendering.Voxels
 
         public StorageFormats StorageFormat { get; set; } = StorageFormats.RGBA16F;
 
-        Graphics.PixelFormat StorageFormatToPixelFormat()
+
+        PixelFormat StorageFormatToPixelFormat()
         {
-            Graphics.PixelFormat format = Graphics.PixelFormat.R16G16B16A16_Float;
+            PixelFormat format = PixelFormat.R16G16B16A16_Float;
             switch (StorageFormat)
             {
                 case StorageFormats.RGBA8:
-                    format = Graphics.PixelFormat.R8G8B8A8_UNorm;
+                    format = PixelFormat.R8G8B8A8_UNorm;
                     break;
                 case StorageFormats.R10G10B10A2:
-                    format = Graphics.PixelFormat.R10G10B10A2_UNorm;
+                    format = PixelFormat.R10G10B10A2_UNorm;
                     break;
                 case StorageFormats.RGBA16F:
-                    format = Graphics.PixelFormat.R16G16B16A16_Float;
+                    format = PixelFormat.R16G16B16A16_Float;
                     break;
             }
             return format;
@@ -48,15 +52,15 @@ namespace Stride.Rendering.Voxels
         public float maxBrightness = 10.0f;
 
 
-
-
         //Per-Layout Settings
+
         protected virtual int LayoutCount { get; set; } = 1;
+
         protected virtual ShaderClassSource Writer { get; set; } = new ShaderClassSource("VoxelIsotropicWriter_Float4");
+
         protected virtual ShaderClassSource Sampler { get; set; } = new ShaderClassSource("VoxelIsotropicSampler");
+
         protected virtual string ApplierKey { get; set; } = "Isotropic";
-
-
 
 
         protected IVoxelStorageTexture storageTex;
@@ -65,10 +69,12 @@ namespace Stride.Rendering.Voxels
         {
             return StorageMethod.PrepareLocalStorage(context, storage, 4, LayoutCount);
         }
+
         virtual public void PrepareOutputStorage(VoxelStorageContext context, IVoxelStorage storage)
         {
             storage.UpdateTexture(context, ref storageTex, StorageFormatToPixelFormat(), LayoutCount);
         }
+
         virtual public void ClearOutputStorage()
         {
             storageTex = null;
@@ -87,6 +93,7 @@ namespace Stride.Rendering.Voxels
             ShaderSource sharp = new ShaderClassSource("Voxel2x2x2MipmapperSimple");
             ShaderSource physicallybased = new ShaderClassSource("Voxel2x2x2MipmapperPhysicallyBased");
             ShaderSource heuristic = new ShaderClassSource("Voxel2x2x2MipmapperHeuristic");
+
             for (int i = 0; i < LayoutCount; i++)
             {
                 mipmapperSharp[i] = sharp;
@@ -94,12 +101,12 @@ namespace Stride.Rendering.Voxels
                 mipmapperHeuristic[i] = heuristic;
             }
         }
+
         virtual public void PostProcess(RenderDrawContext drawContext, LightFalloffs LightFalloff)
         {
-            if (mipmapperSharp == null)
-            {
+            if (mipmapperSharp is null)
                 PrepareMipmapShaders();
-            }
+
             switch (LightFalloff)
             {
                 case LightFalloffs.Sharp:
@@ -114,19 +121,19 @@ namespace Stride.Rendering.Voxels
         }
 
 
-        
-
         protected ValueParameterKey<float> BrightnessInvKey;
-        protected ObjectParameterKey<Stride.Graphics.Texture> DirectOutput;
+        protected ObjectParameterKey<Texture> DirectOutput;
 
         virtual public ShaderSource GetVoxelizationShader(List<VoxelModifierEmissionOpacity> modifiers)
         {
             var mixin = new ShaderMixinSource();
             mixin.Mixins.Add(Writer);
             StorageMethod.Apply(mixin);
+
             foreach (var modifier in modifiers)
             {
-                if (!modifier.Enabled) continue;
+                if (!modifier.Enabled)
+                    continue;
 
                 ShaderSource applier = modifier.GetApplier(ApplierKey);
                 if (applier != null)
@@ -134,6 +141,7 @@ namespace Stride.Rendering.Voxels
             }
             return mixin;
         }
+
         virtual public void ApplyVoxelizationParameters(ParameterCollection parameters, List<VoxelModifierEmissionOpacity> modifiers)
         {
             if (StorageFormat != StorageFormats.RGBA16F)
@@ -145,8 +153,6 @@ namespace Stride.Rendering.Voxels
         }
 
 
-
-
         protected ValueParameterKey<float> BrightnessKey;
 
         virtual public ShaderSource GetSamplingShader()
@@ -154,6 +160,7 @@ namespace Stride.Rendering.Voxels
             var mixin = new ShaderMixinSource();
             mixin.Mixins.Add(Sampler);
             mixin.AddComposition("storage", storageTex.GetSamplingShader());
+
             return mixin;
         }
         virtual public void ApplySamplingParameters(VoxelViewContext viewContext, ParameterCollection parameters)

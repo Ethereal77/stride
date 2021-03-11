@@ -20,7 +20,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
     ///   Represents a manager that always loads the <see cref="NavigationMesh"/> associated with a given <see cref="Engine.Scene"/>.
     /// </summary>
     [DataContract]
-    public class NavigationMeshManager : IAsyncDisposable
+    public class NavigationMeshManager : System.IAsyncDisposable
     {
         [DataMember]
         public readonly Dictionary<AssetId, NavigationMesh> Meshes = new Dictionary<AssetId, NavigationMesh>();
@@ -38,7 +38,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             meshesNode.ItemChanged += (sender, args) => { Changed?.Invoke(this, args); };
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             foreach (var pair in Meshes)
             {

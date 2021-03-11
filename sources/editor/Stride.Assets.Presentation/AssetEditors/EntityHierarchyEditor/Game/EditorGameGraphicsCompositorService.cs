@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
@@ -6,16 +6,16 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.Serialization;
+using Stride.Core.Assets.Editor.ViewModel;
+using Stride.Rendering.Compositing;
+using Stride.Assets.Presentation.ViewModel;
 using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
 using Stride.Assets.Presentation.AssetEditors.GameEditor.ViewModels;
-using Stride.Assets.Presentation.ViewModel;
 using Stride.Editor.Build;
 using Stride.Editor.EditorGame.Game;
-using Stride.Rendering.Compositing;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
@@ -30,11 +30,14 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         public EditorGameGraphicsCompositorService([NotNull] IEditorGameController controller, [NotNull] GameEditorViewModel editor)
         {
-            if (controller == null) throw new ArgumentNullException(nameof(controller));
-            if (editor == null) throw new ArgumentNullException(nameof(editor));
+            if (controller is null)
+                throw new ArgumentNullException(nameof(controller));
+            if (editor is null)
+                throw new ArgumentNullException(nameof(editor));
 
             this.controller = controller;
             this.editor = editor;
+
             settingsProvider = editor.ServiceProvider.Get<GameSettingsProviderService>();
         }
 
@@ -47,13 +50,14 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 // Be notified of future changes to game settings
                 settingsProvider.GameSettingsChanged += GameSettingsChanged;
                 editor.Session.AssetPropertiesChanged += AssetPropertyChanged;
+
                 await ReloadGraphicsCompositor(true);
             });
 
             return Task.FromResult(true);
         }
 
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             settingsProvider.GameSettingsChanged -= GameSettingsChanged;
             editor.Session.AssetPropertiesChanged -= AssetPropertyChanged;
@@ -87,7 +91,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             currentGraphicsCompositorAsset = graphicsCompositorAsset;
 
             // TODO: If nothing, fallback to default compositor, or stop rendering?
-            if (graphicsCompositorAsset == null)
+            if (graphicsCompositorAsset is null)
                 return;
 
             // TODO: Prevent reentrency

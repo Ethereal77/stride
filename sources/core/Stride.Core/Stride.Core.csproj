@@ -3,7 +3,7 @@
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.Core.props" />
-  
+
   <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
@@ -19,8 +19,6 @@
 
   <ItemGroup>
     <PackageReference Include="ServiceWire" Version="5.3.4" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Microsoft.NETCore.Platforms" Version="2.2.3" />
   </ItemGroup>
 
   <PropertyGroup>

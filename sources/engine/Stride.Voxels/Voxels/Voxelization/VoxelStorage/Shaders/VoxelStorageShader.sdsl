@@ -1,15 +1,23 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 shader VoxelStorageShader : VoxelPositionStream, PositionStream4, ShaderBaseStream
 {
     compose VoxelizationMethod method;
-    void PrepareFragments(){ method.PrepareFragment(); }
-    void StoreFragments(){ }
-    bool MightStoreFragments(){ return false; }
-    void PrepareVertex(){ method.PrepareVertex(); }
-    void GenerateTriangles(triangle Input input [3], inout TriangleStream<Output> triangleStream)
+
+    void PrepareFragments() { method.PrepareFragment(); }
+
+    void StoreFragments() { }
+
+    bool MightStoreFragments() { return false; }
+
+    void PrepareVertex() { method.PrepareVertex(); }
+
+    void GenerateTriangles(triangle Input input[3], inout TriangleStream<Output> triangleStream)
     {
         method.InitializeFromTriangle(input);
+
         [unroll]
         for (int i = 0; i < 3 ; i++)
         {

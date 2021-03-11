@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets.Analysis;
-using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
+using Stride.Core.Assets.Analysis;
+using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Assets.Presentation.AssetEditors.AssetHighlighters;
 using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
 using Stride.Editor.EditorGame.Game;
@@ -34,16 +34,18 @@ namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Game
         }
 
         /// <inheritdoc/>
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             EnsureNotDestroyed(nameof(EditorGameAssetHighlighterService));
             assetHighlighters.Select(x => x.Value).ForEach(x => x.Clear());
+
             return base.DisposeAsync();
         }
 
         public void HighlightAssets(IEnumerable<AssetViewModel> assets)
         {
             const float duration = 1.0f;
+
             var assetItems = assets.Select(x => x.AssetItem).ToList();
             controller.InvokeAsync(() =>
             {
@@ -51,8 +53,7 @@ namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Game
 
                 foreach (var assetItem in assetItems)
                 {
-                    AssetHighlighter highlighter;
-                    if (assetHighlighters.TryGetValue(assetItem.Asset.GetType(), out highlighter))
+                    if (assetHighlighters.TryGetValue(assetItem.Asset.GetType(), out AssetHighlighter highlighter))
                     {
                         highlighter.Highlight(controller, game, assetItem, duration);
                     }
@@ -63,6 +64,7 @@ namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Game
         protected override Task<bool> Initialize(EditorServiceGame editorGame)
         {
             game = editorGame;
+
             return Task.FromResult(true);
         }
     }

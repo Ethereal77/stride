@@ -31,6 +31,8 @@ using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.EntityFactor
 using Stride.Assets.Presentation.AssetEditors.SceneEditor.ViewModels;
 using Stride.Engine;
 
+using KeyValuePair = System.Collections.Generic.KeyValuePair;
+
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels
 {
     public abstract class EntityHierarchyItemViewModel : AssetCompositeItemViewModel<EntityHierarchyViewModel, EntityHierarchyItemViewModel>, IAddChildViewModel, IInsertChildViewModel

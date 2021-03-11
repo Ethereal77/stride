@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 
-using Stride.Core.Collections;
 using Stride.Core.Mathematics;
 
 namespace Stride.Input
@@ -24,9 +23,9 @@ namespace Stride.Input
 
         public Vector2 SurfaceSize => PointerState.SurfaceSize;
         public float SurfaceAspectRatio => PointerState.SurfaceAspectRatio;
-        public IReadOnlySet<PointerPoint> PressedPointers => PointerState.PressedPointers;
-        public IReadOnlySet<PointerPoint> ReleasedPointers => PointerState.ReleasedPointers;
-        public IReadOnlySet<PointerPoint> DownPointers => PointerState.DownPointers;
+        public Core.Collections.IReadOnlySet<PointerPoint> PressedPointers => PointerState.PressedPointers;
+        public Core.Collections.IReadOnlySet<PointerPoint> ReleasedPointers => PointerState.ReleasedPointers;
+        public Core.Collections.IReadOnlySet<PointerPoint> DownPointers => PointerState.DownPointers;
         public event EventHandler<SurfaceSizeChangedEventArgs> SurfaceSizeChanged;
 
         public int Priority { get; set; }

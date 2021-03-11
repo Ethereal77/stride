@@ -1,4 +1,5 @@
 // Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
@@ -15,7 +16,9 @@ namespace Stride.Engine.Processors
         public Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume> processedVoxelVolumes = new Dictionary<VoxelVolumeComponent, ProcessedVoxelVolume>();
 
         public VisibilityGroup VisibilityGroup { get; set; }
+
         public RenderGroup RenderGroup { get; set; }
+
 
         protected override void OnSystemAdd()
         {
@@ -59,8 +62,9 @@ namespace Stride.Engine.Processors
 
                 var volume = pair.Key;
 
-                DataVoxelVolume data;
-                renderVoxelVolumes.Add(volume, data = new DataVoxelVolume());
+                DataVoxelVolume data = new DataVoxelVolume();
+
+                renderVoxelVolumes.Add(volume, data);
                 processedVoxelVolumes.Add(volume, new ProcessedVoxelVolume());
 
                 data.VolumeTranslation = volume.Entity.Transform.WorldMatrix.TranslationVector;

@@ -10,13 +10,6 @@ using System.Threading.Tasks;
 using Stride.Core;
 using Stride.Core.Collections;
 using Stride.Core.Mathematics;
-using Stride.Core.Storage;
-using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
-using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
-using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
-using Stride.Assets.Presentation.AssetEditors.Gizmos;
-using Stride.Assets.Presentation.SceneEditor;
-using Stride.Editor.EditorGame.Game;
 using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
@@ -24,6 +17,12 @@ using Stride.Rendering.Compositing;
 using Stride.Rendering.LightProbes;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services;
+using Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewModels;
+using Stride.Assets.Presentation.AssetEditors.GameEditor.Game;
+using Stride.Assets.Presentation.AssetEditors.Gizmos;
+using Stride.Assets.Presentation.SceneEditor;
+using Stride.Editor.EditorGame.Game;
 
 using Buffer = Stride.Graphics.Buffer;
 
@@ -60,7 +59,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         /// <inheritdoc/>
         public bool IsLightProbeVolumesVisible
         {
-            get { return isWireframeVisible; }
+            get => isWireframeVisible;
+
             set
             {
                 isWireframeVisible = value;
@@ -89,9 +89,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 editor.ServiceProvider.TryGet<RenderDocManager>()?.StartFrameCapture(game.GraphicsDevice, IntPtr.Zero);
 
                 // Reset lightprobes temporarily (if requested)
-                // Note: we only process first LightProbeProcessor
+                // NOTE: We only process first LightProbeProcessor
                 var runtimeData = game.SceneSystem.SceneInstance.GetProcessor<LightProbeProcessor>()?.VisibilityGroup.Tags.Get(LightProbeRenderer.CurrentLightProbes);
-                if (runtimeData == null)
+                if (runtimeData is null)
                     return new Dictionary<Guid, FastList<Color3>>();
 
                 var editorCompositor = game.EditorSceneSystem.GraphicsCompositor.Game;
@@ -117,10 +117,13 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         protected override Task<bool> Initialize(EditorServiceGame editorGame)
         {
-            if (editorGame == null) throw new ArgumentNullException(nameof(editorGame));
-            game = (EntityHierarchyEditorGame)editorGame;
+            if (editorGame is null)
+                throw new ArgumentNullException(nameof(editorGame));
+
+            game = (EntityHierarchyEditorGame) editorGame;
 
             var pickingRenderStage = game.EditorSceneSystem.GraphicsCompositor.RenderStages.First(x => x.Name == "Picking");
+
             // TODO: Move selection/wireframe render stage in EditorGameComponentGizmoService (as last render step?)
             var selectionRenderStage = new RenderStage("SelectionGizmo", "Wireframe");
             selectionRenderStage.Filter = new WireframeFilter();
@@ -180,7 +183,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             return Task.FromResult(true);
         }
 
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             Cleanup();
             game.EditorScene.Entities.Remove(debugEntity);
@@ -192,9 +195,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         {
             // Clean GPU buffers used by previous wireframe
             foreach (var resource in wireframeResources)
-            {
                 resource.Release();
-            }
+
             wireframeResources.Clear();
 
             wireframeModelComponent = null;
@@ -221,7 +223,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             var lightProbeProcessor = game.SceneSystem.SceneInstance.GetProcessor<LightProbeProcessor>();
 
             var lightProbeRuntimeData = lightProbeProcessor?.VisibilityGroup.Tags.Get(LightProbeRenderer.CurrentLightProbes);
-            if (lightProbeRuntimeData == null)
+            if (lightProbeRuntimeData is null)
             {
                 // Nothing, just remove existing wireframe and exit
                 Cleanup();
@@ -238,14 +240,13 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
             else
             {
-                // check if we need to trigger a manual refresh (the LightProbeProcessor only reacts to LightProbe added/removed at runtime)
+                // Check if we need to trigger a manual refresh (the LightProbeProcessor only reacts to LightProbe added/removed at runtime)
                 var needPositionRefresh = false;
                 var needCoefficientsRefresh = false;
                 for (var lightProbeIndex = 0; lightProbeIndex < lightProbeRuntimeData.LightProbes.Length; lightProbeIndex++)
                 {
-                    // check if lightprobe moved
-                    var lightProbe = lightProbeRuntimeData.LightProbes[lightProbeIndex] as LightProbeComponent;
-                    if (lightProbe == null)
+                    // Check if lightprobe moved
+                    if (lightProbeRuntimeData.LightProbes[lightProbeIndex] is not LightProbeComponent lightProbe)
                         continue;
 
                     if (lightProbe.Entity.Transform.WorldMatrix.TranslationVector != lightProbeRuntimeData.Vertices[lightProbeIndex])
@@ -254,7 +255,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                         needWireframeRefresh = true;
                     }
 
-                    // check if lightprobe coefficients changed
+                    // Check if lightprobe coefficients changed
                     var coefficientIndex = lightProbeIndex * LightProbeGenerator.LambertHamonicOrder * LightProbeGenerator.LambertHamonicOrder;
                     for (int i = 0; i < LightProbeGenerator.LambertHamonicOrder * LightProbeGenerator.LambertHamonicOrder; ++i)
                     {
@@ -270,7 +271,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 {
                     lightProbeProcessor.UpdateLightProbePositions();
                     lightProbeRuntimeData = lightProbeProcessor.VisibilityGroup.Tags.Get(LightProbeRenderer.CurrentLightProbes);
-                    if (lightProbeRuntimeData == null)
+                    if (lightProbeRuntimeData is null)
                     {
                         Cleanup();
                         return;
@@ -344,9 +345,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
                 // Skip infinite edges to not clutter display
                 // Maybe we could reenable it when we have better infinite nodes
-                if (currentFace.Vertices[0] >= lightProbeRuntimeData.UserVertexCount
-                    || currentFace.Vertices[1] >= lightProbeRuntimeData.UserVertexCount
-                    || currentFace.Vertices[2] >= lightProbeRuntimeData.UserVertexCount)
+                if (currentFace.Vertices[0] >= lightProbeRuntimeData.UserVertexCount ||
+                    currentFace.Vertices[1] >= lightProbeRuntimeData.UserVertexCount ||
+                    currentFace.Vertices[2] >= lightProbeRuntimeData.UserVertexCount)
                     continue;
 
                 indices[i * 6 + 0] = currentFace.Vertices[0];
@@ -364,7 +365,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             // Compute bounding sphere
             BoundingSphere boundingSphere;
             fixed (void* verticesPtr = vertices)
-                BoundingSphere.FromPoints((IntPtr)verticesPtr, 0, vertices.Length, VertexPositionNormalTexture.Size, out boundingSphere);
+                BoundingSphere.FromPoints((IntPtr) verticesPtr, 0, vertices.Length, VertexPositionNormalTexture.Size, out boundingSphere);
 
             var layout = vertices[0].GetLayout();
 

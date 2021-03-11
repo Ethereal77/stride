@@ -12,8 +12,8 @@ using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
 using Stride.Core.Quantum;
-using Stride.Assets.Presentation.AssetEditors;
 using Stride.Assets.Scripts;
+using Stride.Assets.Presentation.AssetEditors;
 
 namespace Stride.Assets.Presentation.ViewModel
 {
@@ -26,7 +26,7 @@ namespace Stride.Assets.Presentation.ViewModel
         private readonly IObjectNode blocksContent;
         private readonly IObjectNode linksContent;
         private readonly IObjectNode parametersContent;
-        private readonly MemberGraphNodeBinding<Accessibility> accessibilityNodeBinding;
+        private readonly MemberGraphNodeBinding<Scripts.Accessibility> accessibilityNodeBinding;
         private readonly MemberGraphNodeBinding<VirtualModifier> virtualModifierNodeBinding;
         private readonly MemberGraphNodeBinding<bool> isStaticNodeBinding;
         private readonly MemberGraphNodeBinding<string> nameNodeBinding;
@@ -34,7 +34,7 @@ namespace Stride.Assets.Presentation.ViewModel
 
         public Method Method { get; }
 
-        public Accessibility Accessibility { get { return accessibilityNodeBinding.Value; } set { accessibilityNodeBinding.Value = value; } }
+        public Scripts.Accessibility Accessibility { get { return accessibilityNodeBinding.Value; } set { accessibilityNodeBinding.Value = value; } }
 
         public VirtualModifier VirtualModifier { get { return virtualModifierNodeBinding.Value; } set { virtualModifierNodeBinding.Value = value; } }
 
@@ -49,7 +49,7 @@ namespace Stride.Assets.Presentation.ViewModel
             : base(visualScript.ServiceProvider)
         {
             this.visualScript = visualScript;
-            this.Method = method;
+            Method = method;
             var methodNode = visualScript.Session.AssetNodeContainer.GetOrCreateNode(method);
             blocksContent = methodNode[nameof(method.Blocks)].Target;
             linksContent = methodNode[nameof(method.Links)].Target;
@@ -162,7 +162,7 @@ namespace Stride.Assets.Presentation.ViewModel
             {
                 // Allow errors while building slots
                 // TODO: Should go to some kind of log in the view model
-                log?.Error($"Could not regenerate slots for block [{block}]", ex);
+                log?.Error($"Could not regenerate slots for block [{block}].", ex);
             }
         }
 

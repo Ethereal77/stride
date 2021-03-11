@@ -32,7 +32,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         public abstract Type ComponentType { get; }
 
         /// <inheritdoc />
-        public override Task DisposeAsync()
+        public override ValueTask DisposeAsync()
         {
             EnsureNotDestroyed(nameof(EditorGameComponentChangeWatcherService));
             foreach (var component in registeredListeners.Keys.ToList())
@@ -47,12 +47,13 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             game.SceneSystem.SceneInstance.EntityAdded += EntityAdded;
             game.SceneSystem.SceneInstance.EntityRemoved += EntityRemoved;
             game.SceneSystem.SceneInstance.ComponentChanged += ComponentChanged;
+
             return Task.FromResult(true);
         }
 
         protected virtual void ComponentPropertyChanged(object sender, INodeChangeEventArgs e)
         {
-            // Do nothing by default.
+            // Do nothing by default
         }
 
         private void RegisterComponent(EntityComponent component)

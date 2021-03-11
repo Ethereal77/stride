@@ -1,11 +1,9 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Stride.Core;
 using Stride.Shaders;
-using Stride.Rendering.Materials;
 
 namespace Stride.Rendering.Voxels
 {
@@ -14,13 +12,12 @@ namespace Stride.Rendering.Voxels
     public class VoxelFragmentPackFloatR11G11B10 : IVoxelFragmentPacker
     {
         ShaderSource source = new ShaderClassSource("VoxelFragmentPackFloatR11G11B10");
-        public ShaderSource GetShader()
-        {
-            return source;
-        }
+
+        public ShaderSource GetShader() => source;
+
         public int GetBits(int channels)
         {
-            return ((channels+2) / 3)*32;//(channels)/3 * 32 + (channels % 3) * 11;
+            return 32 * ((channels + 2) / 3); // (channels)/3 * 32 + (channels % 3) * 11
         }
     }
 }

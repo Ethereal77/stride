@@ -1,12 +1,15 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 namespace Stride.Rendering.Voxels
 {
     partial effect BufferToTextureColumnsEffect
     {
         using params BufferToTextureKeys;
-        
+
         mixin BufferToTextureColumns;
+
         if (BufferToTextureKeys.AttributesIndirect!=null)
         {
             foreach (var attr in BufferToTextureKeys.AttributesIndirect)
@@ -14,6 +17,7 @@ namespace Stride.Rendering.Voxels
                 mixin compose AttributesIndirect += (attr);
             }
         }
+
         if (BufferToTextureKeys.AttributesTemp!=null)
         {
             foreach (var attr in BufferToTextureKeys.AttributesTemp)
@@ -21,7 +25,7 @@ namespace Stride.Rendering.Voxels
                 mixin compose AttributesTemp += (attr);
             }
         }
-        
+
         mixin macro BufferToTextureKeys.IndirectReadAndStoreMacro;
         mixin macro BufferToTextureKeys.IndirectStoreMacro;
     };

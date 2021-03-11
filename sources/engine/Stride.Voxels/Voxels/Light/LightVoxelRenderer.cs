@@ -1,19 +1,14 @@
 // Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
 using System.Collections.Generic;
 
 using Stride.Core.Collections;
-using Stride.Core.Mathematics;
-using Stride.Engine;
 using Stride.Engine.Processors;
-using Stride.Graphics;
 using Stride.Shaders;
-using Stride.Rendering.Voxels;
-using Stride.Rendering.Shadows;
 using Stride.Rendering.Lights;
-using Stride.Rendering.Skyboxes;
 
 namespace Stride.Rendering.Voxels.VoxelGI
 {
@@ -48,14 +43,13 @@ namespace Stride.Rendering.Voxels.VoxelGI
         {
             foreach (var index in parameters.LightIndices)
             {
-                // For now, we allow only one cubemap at once
+                // For now, we allow only one voxel volume at once
                 var light = parameters.LightCollection[index];
 
                 // Prepare LightVoxelShaderGroup
-                LightVoxelShaderGroup lightShaderGroup;
-                if (!lightShaderGroupsPerVoxel.TryGetValue(light, out lightShaderGroup))
+                if (!lightShaderGroupsPerVoxel.TryGetValue(light, out _))
                 {
-                    lightShaderGroup = pool.Add();
+                    LightVoxelShaderGroup lightShaderGroup = pool.Add();
                     lightShaderGroup.Light = light;
 
                     lightShaderGroupsPerVoxel.Add(light, lightShaderGroup);
@@ -100,7 +94,7 @@ namespace Stride.Rendering.Voxels.VoxelGI
 
             ProcessedVoxelVolume GetProcessedVolume()
             {
-                var lightVoxel = ((LightVoxel)Light.Type);
+                var lightVoxel = (LightVoxel) Light.Type;
                 if (lightVoxel.Volume is null)
                     throw new ArgumentNullException("No Voxel Volume Component selected for voxel light.");
 
@@ -114,20 +108,18 @@ namespace Stride.Rendering.Voxels.VoxelGI
 
             VoxelAttribute GetTraceAttr()
             {
-                var lightVoxel = ((LightVoxel)Light.Type);
+                var lightVoxel = (LightVoxel) Light.Type;
 
                 ProcessedVoxelVolume processedVolume = GetProcessedVolume();
                 if (processedVolume is null)
                     return null;
 
                 if (processedVolume.OutputAttributes.Count > lightVoxel.AttributeIndex)
-                {
                     return processedVolume.OutputAttributes[lightVoxel.AttributeIndex];
-                }
-                else
-                    throw new ArgumentOutOfRangeException(
-                        $"Tried to access attribute index {lightVoxel.AttributeIndex.ToString()} (zero-indexed) when the " +
-                         "Voxel Volume Component has only {processedVolume.OutputAttributes.Count.ToString()} attributes.");
+
+                else throw new ArgumentOutOfRangeException(
+                    $"Tried to access attribute index {lightVoxel.AttributeIndex} (zero-indexed) when the " +
+                    $"Voxel Volume Component has only {processedVolume.OutputAttributes.Count} attributes.");
             }
 
             public override void UpdateLayout(string compositionName)
@@ -145,10 +137,11 @@ namespace Stride.Rendering.Voxels.VoxelGI
 
                 if (traceAttribute != null)
                 {
-                    if (((LightVoxel)Light.Type).DiffuseMarcher != null)
-                        ((LightVoxel)Light.Type).DiffuseMarcher.UpdateMarchingLayout("diffuseMarcher." + compositionName);
-                    if (((LightVoxel)Light.Type).SpecularMarcher != null)
-                        ((LightVoxel)Light.Type).SpecularMarcher.UpdateMarchingLayout("specularMarcher." + compositionName);
+                    if (((LightVoxel) Light.Type).DiffuseMarcher != null)
+                        ((LightVoxel) Light.Type).DiffuseMarcher.UpdateMarchingLayout("diffuseMarcher." + compositionName);
+                    if (((LightVoxel) Light.Type).SpecularMarcher != null)
+                        ((LightVoxel) Light.Type).SpecularMarcher.UpdateMarchingLayout("specularMarcher." + compositionName);
+
                     traceAttribute.UpdateSamplingLayout("AttributeSamplers[0]." + compositionName);
                 }
             }
@@ -163,10 +156,10 @@ namespace Stride.Rendering.Voxels.VoxelGI
                     };
                     renderEffect.EffectValidator.ValidateParameter(attributeSamplersKey, collection);
 
-                    if (((LightVoxel)Light.Type).DiffuseMarcher != null)
-                        renderEffect.EffectValidator.ValidateParameter(diffuseMarcherKey, ((LightVoxel)Light.Type).DiffuseMarcher.GetMarchingShader(0));
-                    if (((LightVoxel)Light.Type).SpecularMarcher != null)
-                        renderEffect.EffectValidator.ValidateParameter(specularMarcherKey, ((LightVoxel)Light.Type).SpecularMarcher.GetMarchingShader(0));
+                    if (((LightVoxel) Light.Type).DiffuseMarcher != null)
+                        renderEffect.EffectValidator.ValidateParameter(diffuseMarcherKey, ((LightVoxel) Light.Type).DiffuseMarcher.GetMarchingShader(0));
+                    if (((LightVoxel) Light.Type).SpecularMarcher != null)
+                        renderEffect.EffectValidator.ValidateParameter(specularMarcherKey, ((LightVoxel) Light.Type).SpecularMarcher.GetMarchingShader(0));
                 }
             }
 
@@ -174,7 +167,7 @@ namespace Stride.Rendering.Voxels.VoxelGI
             {
                 base.ApplyViewParameters(context, viewIndex, parameters);
 
-                var lightVoxel = ((LightVoxel)Light.Type);
+                var lightVoxel = (LightVoxel) Light.Type;
                 if (lightVoxel.Volume is null)
                     return;
 

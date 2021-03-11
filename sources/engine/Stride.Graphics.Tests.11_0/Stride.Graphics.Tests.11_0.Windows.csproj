@@ -28,4 +28,7 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
+  <ItemGroup>
+    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
+  </ItemGroup>
 </Project>

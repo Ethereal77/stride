@@ -1,14 +1,13 @@
-﻿// Copyright (c) Stride contributors (https://stride3d.net) and Sean Boettger <sean@whypenguins.com>
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2019 Sean Boettger <sean@whypenguins.com>
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Stride.Core.Mathematics;
+
+
 using Stride.Core;
-using Stride.Rendering.Images;
 using Stride.Core.Annotations;
+using Stride.Core.Mathematics;
+using Stride.Rendering.Images;
 using Stride.Shaders;
-using Stride.Rendering.Shadows;
 
 namespace Stride.Rendering.Voxels.Debug
 {
@@ -19,17 +18,20 @@ namespace Stride.Rendering.Voxels.Debug
         [NotNull]
         public IVoxelMarchMethod MarchMethod { get; set; } = new VoxelMarchBeam(200, 1.0f, 1.0f);
 
-        public Color Background = new Color(0.1f,0.1f,0.1f,1.0f);
+        public Color Background = new Color(0.1f, 0.1f, 0.1f, 1.0f);
 
         private ImageEffectShader voxelDebugEffectShader = new ImageEffectShader("VoxelVisualizationViewEffect");
+
+
         public ImageEffectShader GetShader(RenderDrawContext context, VoxelAttribute attr)
         {
-            VoxelViewContext viewContext = new VoxelViewContext(false);
+            VoxelViewContext viewContext = new VoxelViewContext(voxelView: false);
+
             Matrix ViewProjection = context.RenderContext.RenderView.ViewProjection;
 
             voxelDebugEffectShader.Parameters.Set(VoxelVisualizationViewShaderKeys.view, ViewProjection);
             voxelDebugEffectShader.Parameters.Set(VoxelVisualizationViewShaderKeys.viewInv, Matrix.Invert(ViewProjection));
-            voxelDebugEffectShader.Parameters.Set(VoxelVisualizationViewShaderKeys.background, (Vector4)Background);
+            voxelDebugEffectShader.Parameters.Set(VoxelVisualizationViewShaderKeys.background, (Vector4) Background);
 
             attr.UpdateSamplingLayout("AttributeSamplers[0]");
             attr.ApplySamplingParameters(viewContext, voxelDebugEffectShader.Parameters);

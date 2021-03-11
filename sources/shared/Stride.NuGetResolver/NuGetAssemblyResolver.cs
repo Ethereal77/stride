@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace Stride.Core.Assets
         public const string DevSource = @"%LocalAppData%\Stride\NugetDev";
 
         static bool assembliesResolved;
-        static object assembliesLock = new object();
+        static readonly object assembliesLock = new object();
         static List<string> assemblies;
 
         internal static void DisableAssemblyResolve()
