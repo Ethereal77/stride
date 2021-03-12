@@ -47,7 +47,7 @@ namespace Stride.Shaders.Compiler
         public EffectCompiler(IVirtualFileProvider fileProvider)
         {
             FileProvider = fileProvider;
-            
+
             NativeLibraryHelper.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
 
             SourceDirectories = new List<string>();

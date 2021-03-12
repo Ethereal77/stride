@@ -254,6 +254,9 @@ namespace Stride.Input
 
             set
             {
+                if (Platform.Type != PlatformType.Windows)
+                    return;
+
                 InputSourceWindowsRawInput rawInputSource = Sources.OfType<InputSourceWindowsRawInput>().FirstOrDefault();
 
                 if (value)

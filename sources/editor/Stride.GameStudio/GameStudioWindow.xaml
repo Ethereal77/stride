@@ -990,9 +990,24 @@
 
                     <Border Grid.Row="6" Background="{StaticResource ToolBarBackgroundBrush}">
                       <DockPanel>
-                        <TextBlock Margin="4" DockPanel.Dock="Top" FontWeight="Bold"
-                                   Text="{Binding HoveredItem.DataContext.DisplayName, ElementName=AssetPropertyView}"
-                                   TextTrimming="CharacterEllipsis"/>
+                        <Grid Margin="4" DockPanel.Dock="Top">
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20px"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                          </Grid.ColumnDefinitions>
+
+                          <TextBlock Grid.Column="0"
+                                     FontWeight="Bold" FontStyle="Normal" TextTrimming="CharacterEllipsis"
+                                     Text="{Binding HoveredItem.DataContext.DisplayName, ElementName=AssetPropertyView}"/>
+                          <TextBlock Grid.Column="2"
+                                     FontWeight="Thin" FontStyle="Italic" TextAlignment="Right" TextTrimming="CharacterEllipsis"
+                                     Text="{Binding HoveredItem.DataContext.Type, Converter={sd:TypeToNamespace}, ConverterParameter='$.', ElementName=AssetPropertyView}"/>
+                          <TextBlock Grid.Column="3"
+                                     FontWeight="Bold" FontStyle="Italic" TextAlignment="Left" TextTrimming="CharacterEllipsis"
+                                     Text="{Binding HoveredItem.DataContext.Type, Converter={sd:TypeToTypeName}, ElementName=AssetPropertyView}"/>
+                        </Grid>
                         <TextBlock Margin="4"
                                    Text="{Binding HoveredItem.DataContext.Documentation, ElementName=AssetPropertyView}"
                                    TextWrapping="Wrap" TextTrimming="WordEllipsis"/>

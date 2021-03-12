@@ -180,12 +180,12 @@ namespace Stride.GameStudio.Debugging
                             break;
                         }
 
-                        // Load csproj to evaluate assembly processor parameters
+                        // Load .csproj to evaluate Assembly Processor parameters
                         var msbuildProject = await Task.Run(() => VSProjectHelper.LoadProject(gameProject.FilePath));
                         if (msbuildProject.GetPropertyValue("StrideAssemblyProcessor") == "true")
                         {
                             var referenceBuild = await Task.Run(() => VSProjectHelper.CompileProjectAssemblyAsync(gameProject.FilePath, result, "ResolveReferences", flags: Microsoft.Build.Execution.BuildRequestDataFlags.ProvideProjectStateAfterBuild));
-                            if (referenceBuild == null)
+                            if (referenceBuild is null)
                             {
                                 result.Error("Could not properly run ResolveAssemblyReferences.");
                                 break;
@@ -235,7 +235,7 @@ namespace Stride.GameStudio.Debugging
                             assemblyProcessorApp.SerializationAssembly = true;
                             if (!assemblyProcessorApp.Run(ref assemblyDefinition, out _, out _))
                             {
-                                result.Error("Error running Assembly Processor.");
+                                result.Error("Error running assembly processor.");
                                 break;
                             }
 
@@ -311,10 +311,8 @@ namespace Stride.GameStudio.Debugging
 
         public static string TrimMatchingQuotes(string input, char quote)
         {
-            if ((input.Length >= 2) &&
-                (input[0] == quote) &&
-                (input[input.Length - 1] == quote))
-                return input.Substring(1, input.Length - 2);
+            if (input.Length >= 2 && input[0] == quote && input[^1] == quote)
+                return input[1..^1];
 
             return input;
         }
@@ -336,7 +334,7 @@ namespace Stride.GameStudio.Debugging
         }
 
         /// <summary>
-        /// Wraps <see cref="ILogger"/> defined by Core into one defined by AssemblyProcessor (source code sharing, not the same class).
+        ///   Wraps <see cref="ILogger"/> defined by Core into one defined by AssemblyProcessor (source code sharing, not the same class).
         /// </summary>
         class LoggerAssemblyProcessorWrapper : TextWriter
         {

@@ -7,7 +7,8 @@ using System;
 namespace Stride.Games
 {
     /// <summary>
-    ///   Provides methods to creates <see cref="GameContext"/> based on the provided <see cref="AppContextType"/> and the current executing platform.
+    ///   Provides methods to create a <see cref="GameContext"/> based on the provided <see cref="AppContextType"/> and
+    ///   the current executing platform.
     /// </summary>
     public static class GameContextFactory
     {

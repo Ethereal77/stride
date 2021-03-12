@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 using SharpDX;
 using SharpDX.Direct3D11;
+using Stride.Core;
 
 namespace Stride.Graphics
 {

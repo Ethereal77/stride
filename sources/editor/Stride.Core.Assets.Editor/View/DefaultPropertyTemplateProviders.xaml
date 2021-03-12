@@ -62,9 +62,9 @@
     <Setter Property="ToolTip" Value="{sd:Localize Replace..., Context=ToolTip}"/>
     <!-- Visible if: we have the command to create a new instance, we're not read-only, we not a collection -->
     <Setter Property="Visibility" Value="{sd:MultiBinding {Binding HasCommand_CreateNewInstance},
-                                                            {Binding IsReadOnly, Converter={sd:InvertBool}},
-                                                            {Binding HasCollection, Converter={sd:InvertBool}},
-                                         Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}}"/>
+                                                          {Binding IsReadOnly, Converter={sd:InvertBool}},
+                                                          {Binding HasCollection, Converter={sd:InvertBool}},
+                                                          Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}}"/>
     <Setter Property="BorderBrush" Value="{StaticResource NormalBorderBrush}"/>
     <Setter Property="BorderThickness" Value="0"/>
     <Setter Property="Tag" Value="{StaticResource ImageDropDown}"/>
@@ -74,9 +74,9 @@
           <TextBlock x:Name="TypeTextBlock"
                      Text="{Binding Converter={cvt:AbstractNodeEntryToDisplayName}}"
                      Foreground="{sd:MultiBinding {Binding}, {Binding DataContext.NodeValue, RelativeSource={RelativeSource AncestorType=ComboBox}},
-                                 Converter={cvt:AbstractNodeEntryToBrush}, FallbackValue={StaticResource TextBrush}}"
+                                                  Converter={cvt:AbstractNodeEntryToBrush}, FallbackValue={StaticResource TextBrush}}"
                      FontWeight="{sd:MultiBinding {Binding}, {Binding DataContext.NodeValue, RelativeSource={RelativeSource AncestorType=ComboBox}},
-                                 Converter={cvt:AbstractNodeEntryToFontWeight}, FallbackValue={x:Static FontWeights.Normal}}"/>
+                                                  Converter={cvt:AbstractNodeEntryToFontWeight}, FallbackValue={x:Static FontWeights.Normal}}"/>
         </DataTemplate>
       </Setter.Value>
     </Setter>
@@ -126,16 +126,19 @@
     <Setter Property="Height" Value="16"/>
     <Setter Property="BorderBrush" Value="Transparent"/>
     <Setter Property="VerticalAlignment" Value="Center"/>
-    <Setter Property="Visibility" Value="{sd:MultiBinding {Binding HasCommand_AddNewItem}, {Binding HasCollection}, {Binding HasAssociatedData_AbstractNodeMatchingEntries},
-                                                            Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}"/>
+    <Setter Property="Visibility" Value="{sd:MultiBinding {Binding HasCommand_AddNewItem},
+                                                          {Binding HasCollection},
+                                                          {Binding HasAssociatedData_AbstractNodeMatchingEntries},
+                                                          Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}},
+                                                          FallbackValue={sd:Collapsed}}"/>
     <Setter Property="ToolTip" Value="{sd:Localize Add..., Context=ToolTip}" />
     <Setter Property="Tag" Value="{StaticResource ImageAdd}"/>
   </Style>
 
   <Style x:Key="RemoveItemButtonStyle" BasedOn="{StaticResource ImageButtonStyle}" TargetType="Button">
     <Setter Property="Visibility" Value="{sd:MultiBinding {Binding HasCommand_RemoveItem},
-                                                            {Binding HasAssociatedData_ReadOnlyCollection, Converter={sd:InvertBool}},
-                                          Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}}"/>
+                                                          {Binding HasAssociatedData_ReadOnlyCollection, Converter={sd:InvertBool}},
+                                                          Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}}"/>
     <Setter Property="Command" Value="{Binding RemoveItem}"/>
     <Setter Property="ToolTip" Value="{sd:Localize Delete, Context=ToolTip}"/>
     <Setter Property="ContentTemplate">
@@ -238,17 +241,17 @@
     </Grid>
     <DataTemplate.Triggers>
       <DataTrigger Binding="{sd:MultiBinding {Binding IsOverridden},
-                                               {Binding Enabled.IsOverridden},
-                                               {Binding InlinedProperty.IsOverridden},
-                                               Converter={sd:OrMultiConverter}}" Value="{sd:True}">
+                                             {Binding Enabled.IsOverridden},
+                                             {Binding InlinedProperty.IsOverridden},
+                                             Converter={sd:OrMultiConverter}}" Value="{sd:True}">
         <Setter TargetName="PropertyNameBlock" Property="FontWeight" Value="Bold"/>
         <Setter TargetName="PropertyNameBox" Property="FontWeight" Value="Bold"/>
       </DataTrigger>
       <DataTrigger Binding="{sd:MultiBinding {Binding HasBase, FallbackValue={sd:False}},
-                                               {Binding IsInherited, FallbackValue={sd:True}},
-                                               {Binding Enabled.IsInherited, FallbackValue={sd:True}},
-                                               {Binding InlinedProperty.IsInherited, FallbackValue={sd:True}},
-                                               Converter={sd:AndMultiConverter}}" Value="{sd:True}">
+                                             {Binding IsInherited, FallbackValue={sd:True}},
+                                             {Binding Enabled.IsInherited, FallbackValue={sd:True}},
+                                             {Binding InlinedProperty.IsInherited, FallbackValue={sd:True}},
+                                             Converter={sd:AndMultiConverter}}" Value="{sd:True}">
         <Setter TargetName="PropertyNameBlock" Property="Opacity" Value="0.5"/>
         <Setter TargetName="PropertyNameBox" Property="Opacity" Value="0.5"/>
       </DataTrigger>
@@ -272,15 +275,15 @@
           </ComboBox>
         </StackPanel>
         <ToggleButton DockPanel.Dock="Left" Template="{StaticResource PropertyGridHeaderExpanderToggleButton}" Width="16" Height="16"
-                                    IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=sd:PropertyViewItem}}"
-                                    Visibility="{Binding VisibleChildrenCount, Converter={sd:Chained {sd:NumericToBool}, {sd:VisibleOrCollapsed}}}"/>
+                      IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=sd:PropertyViewItem}}"
+                      Visibility="{Binding VisibleChildrenCount, Converter={sd:Chained {sd:NumericToBool}, {sd:VisibleOrCollapsed}}}"/>
         <StackPanel Orientation="Horizontal" Margin="8,0,0,0">
           <CheckBox Margin="4,0" VerticalAlignment="Center"
                     IsThreeState="{Binding Enabled.NodeValue, Converter={sd:IsEqualToParam}, ConverterParameter={x:Static qvm:NodeViewModel.DifferentValues}}"
                     IsChecked="{Binding Enabled.NodeValue, Converter={view:DifferentValueToParam}, ConverterParameter={x:Null}}"
                     Visibility="{Binding HasChild_Enabled, Converter={sd:VisibleOrCollapsed}}"/>
           <Image Source="{Binding NodeValue, Converter={sd:Chained {sd:ObjectToType}, {cvt:TypeToResource}}}" MaxWidth="16" MaxHeight="16"
-                            RenderOptions.BitmapScalingMode="NearestNeighbor" Margin="0,0,4,0"/>
+                 RenderOptions.BitmapScalingMode="NearestNeighbor" Margin="0,0,4,0"/>
           <TextBlock x:Name="HeaderTextBlock" FontSize="16" TextTrimming="CharacterEllipsis"
                      Text="{Binding DisplayName, Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Center"
                      Foreground="{StaticResource SelectedTextBrush}"/>
@@ -292,16 +295,16 @@
     </Grid>
     <DataTemplate.Triggers>
       <DataTrigger Binding="{sd:MultiBinding {Binding IsOverridden},
-                                               {Binding Enabled.IsOverridden},
-                                               {Binding InlinedProperty.IsOverridden},
-                                               Converter={sd:OrMultiConverter}}" Value="{sd:True}">
+                                             {Binding Enabled.IsOverridden},
+                                             {Binding InlinedProperty.IsOverridden},
+                                             Converter={sd:OrMultiConverter}}" Value="{sd:True}">
         <Setter TargetName="HeaderTextBlock" Property="FontWeight" Value="Bold"/>
       </DataTrigger>
       <DataTrigger Binding="{sd:MultiBinding {Binding HasBase, FallbackValue={sd:False}},
-                                               {Binding IsInherited, FallbackValue={sd:True}},
-                                               {Binding Enabled.IsInherited, FallbackValue={sd:True}},
-                                               {Binding InlinedProperty.IsInherited, FallbackValue={sd:True}},
-                                               Converter={sd:AndMultiConverter}}" Value="{sd:True}">
+                                             {Binding IsInherited, FallbackValue={sd:True}},
+                                             {Binding Enabled.IsInherited, FallbackValue={sd:True}},
+                                             {Binding InlinedProperty.IsInherited, FallbackValue={sd:True}},
+                                             Converter={sd:AndMultiConverter}}" Value="{sd:True}">
         <Setter TargetName="HeaderTextBlock" Property="Opacity" Value="0.5"/>
       </DataTrigger>
       <DataTrigger Binding="{Binding NodeValue}" Value="{x:Static qvm:NodeViewModel.DifferentValues}">
@@ -327,11 +330,11 @@
 
   <!-- Base provider for properties: ToggleButton for expander, TextBlock for property name (respecting alignment), and a ContentControl for the actual property editor -->
   <sd:DefaultTemplateProvider x:Key="DefaultPropertyTemplateProvider" edvw:PropertyViewHelper.TemplateCategory="PropertyHeader" OverrideRule="None"
-                                  Template="{StaticResource DefaultPropertyHeaderTemplate}">
+                              Template="{StaticResource DefaultPropertyHeaderTemplate}">
   </sd:DefaultTemplateProvider>
 
   <pvdr:CategoryNodeTemplateProvider x:Key="CategoryNodeTemplateProvider" Template="{StaticResource HeaderReadOnlyProperty}"
-                                                    edvw:PropertyViewHelper.TemplateCategory="PropertyHeader"/>
+                                     edvw:PropertyViewHelper.TemplateCategory="PropertyHeader"/>
 
   <!-- Provider for abstract types: ComboBox that allows to select a type and create an instance of the selected type, visible if the current value is null -->
   <pvdr:AbstractTypeTemplateProvider x:Key="InlinedAbstractTypePropertyTemplateProvider" OverrideRule="Most" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
@@ -344,7 +347,7 @@
                   ItemsSource="{Binding AbstractNodeMatchingEntries}"
                   DisplayMemberPath="DisplayValue"
                   Visibility="{sd:MultiBinding {Binding HasCommand_CreateNewInstance}, {Binding IsReadOnly, Converter={sd:InvertBool}},
-                                                 Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}}">
+                                               Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}}">
           <i:Interaction.Behaviors>
             <behaviors:OnComboBoxClosedWithSelectionBehavior Command="{Binding CreateNewInstance}"
                                                              CommandParameter="{Binding SelectedItem, ElementName=InstanceTypeSelectionComboBox}"/>
@@ -380,12 +383,12 @@
         <!-- Fallback when the node has multiple values to display -->
         <TextBlock Margin="2,0" VerticalAlignment="Center" Text="{sd:Localize (Different values)}"
                    Visibility="{Binding NodeValue, Converter={sd:Chained {sd:IsEqualToParam}, {sd:VisibleOrCollapsed},
-                               Parameter1={x:Static qvm:NodeViewModel.DifferentValues}}}"/>
+                                                                         Parameter1={x:Static qvm:NodeViewModel.DifferentValues}}}"/>
         <!-- Fallback when the value does not have an inline property -->
         <ContentControl x:Name="ContentControl" Content="{sd:PriorityBinding {Binding InlinedProperty}, {Binding}}"
                         ContentTemplateSelector="{x:Static edvw:PropertyViewHelper.EditorProviders}"
                         Visibility="{Binding NodeValue, Converter={sd:Chained {sd:IsEqualToParam}, {sd:InvertBool}, {sd:VisibleOrCollapsed},
-                                    Parameter1={x:Static qvm:NodeViewModel.DifferentValues}}}"/>
+                                                                              Parameter1={x:Static qvm:NodeViewModel.DifferentValues}}}"/>
       </Grid>
     </DataTemplate>
   </pvdr:InlinedPropertyTemplateProvider>
@@ -425,8 +428,8 @@
     <DataTemplate DataType="qvm:NodeViewModel">
       <Grid x:Name="Grid" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource BackgroundBrush}"
             Visibility="{sd:MultiBinding {Binding IsVisible}, {Binding HasCommand_AddNewItem}, {Binding HasCollection},
-                                           {Binding VisibleChildrenCount, Converter={sd:IsGreater}, ConverterParameter={sd:Int 0}},
-                                           Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}">
+                                         {Binding VisibleChildrenCount, Converter={sd:IsGreater}, ConverterParameter={sd:Int 0}},
+                                         Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}">
         <Grid.ColumnDefinitions>
           <!-- Parameters of the SumNum converters used here must be the total width of fixed columns + MinWidths of sizable columns: 8+5+64=77 -->
           <ColumnDefinition Width="8"/>
@@ -472,13 +475,13 @@
       <DockPanel>
         <Button Style="{StaticResource ImageButtonStyle}" DockPanel.Dock="Right" Command="{Binding AddPrimitiveKey}"
                 Visibility="{sd:MultiBinding {Binding HasCommand_AddPrimitiveKey}, {Binding HasAssociatedData_ReadOnlyCollection, Converter={sd:InvertBool}},
-                             Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}"
+                                             Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}"
                     ToolTip="{sd:Localize Add a new entry to the dictionary, Context=ToolTip}">
           <Image Source="{StaticResource ImageAdd}" Width="16" Height="16" Margin="-1"/>
         </Button>
         <TextBlock Margin="2">
-                    <Run Text="{sd:Localize Dictionary}"/> -
-                    <Run Text="{sd:Localize {}{0} item, Plural={}{0} items, Count={Binding Children.Count, Mode=OneWay}, IsStringFormat=True}"/>
+          <Run Text="{sd:Localize Dictionary}"/> -
+          <Run Text="{sd:Localize {}{0} item, Plural={}{0} items, Count={Binding Children.Count, Mode=OneWay}, IsStringFormat=True}"/>
         </TextBlock>
       </DockPanel>
     </DataTemplate>
@@ -492,8 +495,9 @@
     <DataTemplate DataType="qvm:NodeViewModel">
       <DockPanel>
         <ComboBox DockPanel.Dock="Right" Margin="2,0"
-                  Visibility="{sd:MultiBinding {Binding HasCommand_AddPrimitiveKey}, {Binding HasAssociatedData_ReadOnlyCollection, Converter={sd:InvertBool}},
-                                                 Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}">
+                  Visibility="{sd:MultiBinding {Binding HasCommand_AddPrimitiveKey},
+                                               {Binding HasAssociatedData_ReadOnlyCollection, Converter={sd:InvertBool}},
+                                               Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}">
           <ComboBox.Template>
             <ControlTemplate TargetType="{x:Type ComboBox}">
               <Grid x:Name="grid">
@@ -512,9 +516,9 @@
                     <TextBlock DockPanel.Dock="Left" Margin="8,0,0,0" VerticalAlignment="Center"
                                Text="{sd:Localize Key name:}"/>
                     <sd:TextBox sd:FocusManager.IsFocused="{Binding IsOpen, ElementName=Popup}" CancelOnLostFocus="True"
-                                  Text="{sd:Localize New key}" Margin="8" SelectAllOnFocus="True" Width="160"
-                                  ValidateCommand="{Binding AddPrimitiveKey}" x:Name="TextBox"
-                                  ValidateCommandParameter="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                                Text="{sd:Localize New key}" Margin="8" SelectAllOnFocus="True" Width="160"
+                                ValidateCommand="{Binding AddPrimitiveKey}" x:Name="TextBox"
+                                ValidateCommandParameter="{Binding Text, RelativeSource={RelativeSource Self}}"/>
                   </DockPanel>
                 </Popup>
               </Grid>
@@ -550,8 +554,9 @@
     <DataTemplate DataType="qvm:NodeViewModel">
       <DockPanel>
         <ComboBox DockPanel.Dock="Right" Margin="2,0"
-                  Visibility="{sd:MultiBinding {Binding HasCommand_AddPrimitiveKey}, {Binding HasAssociatedData_ReadOnlyCollection, Converter={sd:InvertBool}},
-                                                 Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}">
+                  Visibility="{sd:MultiBinding {Binding HasCommand_AddPrimitiveKey},
+                                               {Binding HasAssociatedData_ReadOnlyCollection, Converter={sd:InvertBool}},
+                                               Converter={sd:MultiChained {sd:AndMultiConverter}, {sd:VisibleOrCollapsed}}, FallbackValue={sd:Collapsed}}">
           <ComboBox.Template>
             <ControlTemplate TargetType="{x:Type ComboBox}">
               <Grid x:Name="grid">
@@ -626,10 +631,10 @@
           </i:Interaction.Behaviors>
         </TextBox>
         <sd:NumericTextBox x:Name="TextBox" TextAlignment="Center" Grid.Column="1" Margin="2" SelectAllOnFocus="True"
-                             Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:CharToUnicode}}}"
-                             SmallChange="1" LargeChange="10" DecimalPlaces="0" Minimum="0" ToolTip="{sd:Localize Unicode value, Context=ToolTip}"
-                             WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
-                             DisplayUpDownButtons="False">
+                           Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:CharToUnicode}}}"
+                           SmallChange="1" LargeChange="10" DecimalPlaces="0" Minimum="0" ToolTip="{sd:Localize Unicode value, Context=ToolTip}"
+                           WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
+                           DisplayUpDownButtons="False">
           <i:Interaction.Behaviors>
             <!--<sd:NumericTextBoxTransactionalRepeatButtonsBehavior UndoRedoService="{Binding Session.UndoRedoService}"/>-->
             <behaviors:TextBoxPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
@@ -663,8 +668,8 @@
         </i:Interaction.Behaviors>
       </ToggleButton>
       <sd:TextBox x:Name="TextBox" Grid.Column="1" Margin="2" SelectAllOnFocus="True" VerticalAlignment="Center"
-                    Text="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ColorConverter}}}"
-                    WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}">
+                  Text="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ColorConverter}}}"
+                  WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}">
         <i:Interaction.Behaviors>
           <behaviors:TextBoxPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
         </i:Interaction.Behaviors>
@@ -674,7 +679,7 @@
           <TabControl>
             <TabItem Header="Color picker">
               <sd:ColorPicker Color="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ColorConverter}}, FallbackValue={x:Static math:Color4.Black}}"
-                                ShowAlpha="{Binding Type, Mode=OneWay, Converter={sd:Chained {sd:IsEqualToParam}, {sd:InvertBool}, Parameter1={x:Type math:Color3}}}"/>
+                              ShowAlpha="{Binding Type, Mode=OneWay, Converter={sd:Chained {sd:IsEqualToParam}, {sd:InvertBool}, Parameter1={x:Type math:Color3}}}"/>
             </TabItem>
             <TabItem Header="Palette">
               <ListBox ItemsSource="{x:Static viewModel:ColorPaletteViewModel.Colors}" SelectedValuePath="Value"
@@ -725,14 +730,14 @@
           </i:Interaction.Behaviors>
         </Slider>
         <sd:NumericTextBox x:Name="TextBox" Grid.Column="1" SelectAllOnFocus="True" Margin="6,2,2,2"
-                             Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                             Minimum="{Binding Minimum, FallbackValue={x:Static s:Double.MinValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                             Maximum="{Binding Maximum, FallbackValue={x:Static s:Double.MaxValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                             SmallChange="{Binding SmallStep, FallbackValue=1, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                             LargeChange="{Binding LargeStep, FallbackValue=10, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                             DecimalPlaces="{Binding DecimalPlaces, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}, FallbackValue=6}"
-                             WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
-                             DisplayUpDownButtons="False">
+                           Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                           Minimum="{Binding Minimum, FallbackValue={x:Static s:Double.MinValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                           Maximum="{Binding Maximum, FallbackValue={x:Static s:Double.MaxValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                           SmallChange="{Binding SmallStep, FallbackValue=1, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                           LargeChange="{Binding LargeStep, FallbackValue=10, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                           DecimalPlaces="{Binding DecimalPlaces, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}, FallbackValue=6}"
+                           WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
+                           DisplayUpDownButtons="False">
           <i:Interaction.Behaviors>
             <!--<sd:NumericTextBoxTransactionalRepeatButtonsBehavior UndoRedoService="{Binding Session.UndoRedoService}"/>-->
             <behaviors:TextBoxPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
@@ -750,14 +755,14 @@
   <!-- Providers for floating-point number editors -->
   <DataTemplate x:Key="FloatEditorTemplate" DataType="qvm:NodeViewModel">
     <sd:NumericTextBox x:Name="TextBox" SelectAllOnFocus="True" Margin="2"
-                         Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         Minimum="{Binding Minimum, FallbackValue={x:Static s:Double.MinValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         Maximum="{Binding Maximum, FallbackValue={x:Static s:Double.MaxValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         SmallChange="{Binding SmallStep, FallbackValue=1, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         LargeChange="{Binding LargeStep, FallbackValue=10, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         DecimalPlaces="{Binding DecimalPlaces, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}, FallbackValue=6}"
-                         WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
-                         DisplayUpDownButtons="False">
+                       Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       Minimum="{Binding Minimum, FallbackValue={x:Static s:Double.MinValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       Maximum="{Binding Maximum, FallbackValue={x:Static s:Double.MaxValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       SmallChange="{Binding SmallStep, FallbackValue=1, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       LargeChange="{Binding LargeStep, FallbackValue=10, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       DecimalPlaces="{Binding DecimalPlaces, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}, FallbackValue=6}"
+                       WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
+                       DisplayUpDownButtons="False">
       <i:Interaction.Behaviors>
         <!--<sd:NumericTextBoxTransactionalRepeatButtonsBehavior UndoRedoService="{Binding Session.UndoRedoService}"/>-->
         <behaviors:TextBoxPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
@@ -775,14 +780,14 @@
   <!-- Providers for fixed-point number editors -->
   <DataTemplate x:Key="IntEditorTemplate" DataType="qvm:NodeViewModel">
     <sd:NumericTextBox x:Name="TextBox" SelectAllOnFocus="True" Margin="2"
-                         Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         Minimum="{Binding Minimum, FallbackValue={x:Static s:Double.MinValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         Maximum="{Binding Maximum, FallbackValue={x:Static s:Double.MaxValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         SmallChange="{Binding SmallStep, FallbackValue=1, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         LargeChange="{Binding LargeStep, FallbackValue=10, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
-                         DecimalPlaces="0"
-                         WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
-                         DisplayUpDownButtons="False">
+                       Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       Minimum="{Binding Minimum, FallbackValue={x:Static s:Double.MinValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       Maximum="{Binding Maximum, FallbackValue={x:Static s:Double.MaxValue}, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       SmallChange="{Binding SmallStep, FallbackValue=1, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       LargeChange="{Binding LargeStep, FallbackValue=10, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:ToDouble}}}"
+                       DecimalPlaces="0"
+                       WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
+                       DisplayUpDownButtons="False">
       <i:Interaction.Behaviors>
         <!--<sd:NumericTextBoxTransactionalRepeatButtonsBehavior UndoRedoService="{Binding Session.UndoRedoService}"/>-->
         <behaviors:TextBoxPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
@@ -835,13 +840,13 @@
       </DataTemplate.Triggers>
     </DataTemplate>
   </view:TypeMatchTemplateProvider>
-  
+
   <!-- Provider for string editor -->
   <view:TypeMatchTemplateProvider x:Key="StringPropertyTemplateProvider" Type="{x:Type s:String}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:TextBox x:Name="TextBox" Margin="2" SelectAllOnFocus="True"
-                    Text="{Binding NodeValue, Converter={cvt:DifferentValuesToString}}"
-                    WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"/>
+                  Text="{Binding NodeValue, Converter={cvt:DifferentValuesToString}}"
+                  WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"/>
       <DataTemplate.Triggers>
         <DataTrigger Binding="{Binding NodeValue}" Value="{x:Static qvm:NodeViewModel.DifferentValues}">
           <Setter TargetName="TextBox" Property="WatermarkContent" Value="{sd:Localize (Different values)}"/>
@@ -854,8 +859,8 @@
   <view:TypeMatchTemplateProvider x:Key="Vector2PropertyTemplateProvider" Type="{x:Type math:Vector2}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:Vector2Editor X="{Binding X.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor">
+                        Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                        WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor">
         <i:Interaction.Behaviors>
           <behaviors:TextBoxVectorPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
         </i:Interaction.Behaviors>
@@ -872,9 +877,9 @@
   <view:TypeMatchTemplateProvider x:Key="Vector3PropertyTemplateProvider" Type="{x:Type math:Vector3}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:Vector3Editor X="{Binding X.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          Z="{Binding Z.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor">
+                        Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                        Z="{Binding Z.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                        WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor">
         <i:Interaction.Behaviors>
           <behaviors:TextBoxVectorPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
         </i:Interaction.Behaviors>
@@ -891,10 +896,10 @@
   <view:TypeMatchTemplateProvider x:Key="Vector4PropertyTemplateProvider" Type="{x:Type math:Vector4}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:Vector4Editor X="{Binding X.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          Z="{Binding Z.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          W="{Binding W.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                          WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor">
+                        Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                        Z="{Binding Z.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                        W="{Binding W.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                        WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor">
         <i:Interaction.Behaviors>
           <behaviors:TextBoxVectorPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
         </i:Interaction.Behaviors>
@@ -911,8 +916,8 @@
   <view:TypeMatchTemplateProvider x:Key="Int2PropertyTemplateProvider" Type="{x:Type math:Int2}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:Int2Editor X="{Binding X.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" x:Name="VectorEditor">
+                     Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                     WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" x:Name="VectorEditor">
         <i:Interaction.Behaviors>
           <behaviors:TextBoxVectorPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
         </i:Interaction.Behaviors>
@@ -929,9 +934,9 @@
   <view:TypeMatchTemplateProvider x:Key="Int3PropertyTemplateProvider" Type="{x:Type math:Int3}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:Int3Editor X="{Binding X.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       Z="{Binding Z.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" x:Name="VectorEditor">
+                     Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                     Z="{Binding Z.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                     WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" x:Name="VectorEditor">
         <i:Interaction.Behaviors>
           <behaviors:TextBoxVectorPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
         </i:Interaction.Behaviors>
@@ -948,10 +953,10 @@
   <view:TypeMatchTemplateProvider x:Key="Int4PropertyTemplateProvider" Type="{x:Type math:Int4}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:Int4Editor X="{Binding X.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       Z="{Binding Z.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       W="{Binding W.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                       WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" x:Name="VectorEditor">
+                     Y="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                     Z="{Binding Z.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                     W="{Binding W.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                     WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" x:Name="VectorEditor">
         <i:Interaction.Behaviors>
           <behaviors:TextBoxVectorPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
         </i:Interaction.Behaviors>
@@ -968,10 +973,10 @@
   <view:TypeMatchTemplateProvider x:Key="RectangleFPropertyTemplateProvider" Type="{x:Type math:RectangleF}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:RectangleFEditor RectX="{Binding X.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                             RectY="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                             RectWidth="{Binding Width.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                             RectHeight="{Binding Height.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                             WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor"/>
+                           RectY="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                           RectWidth="{Binding Width.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                           RectHeight="{Binding Height.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                           WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor"/>
       <DataTemplate.Triggers>
         <DataTrigger Binding="{Binding NodeValue}" Value="{x:Static qvm:NodeViewModel.DifferentValues}">
           <Setter TargetName="VectorEditor" Property="WatermarkContent" Value="≠"/>
@@ -984,10 +989,10 @@
   <view:TypeMatchTemplateProvider x:Key="RectanglePropertyTemplateProvider" Type="{x:Type math:Rectangle}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:RectangleEditor RectX="{Binding X.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                            RectY="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                            RectWidth="{Binding Width.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                            RectHeight="{Binding Height.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                            WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" x:Name="VectorEditor"/>
+                          RectY="{Binding Y.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                          RectWidth="{Binding Width.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                          RectHeight="{Binding Height.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                          WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" x:Name="VectorEditor"/>
       <DataTemplate.Triggers>
         <DataTrigger Binding="{Binding NodeValue}" Value="{x:Static qvm:NodeViewModel.DifferentValues}">
           <Setter TargetName="VectorEditor" Property="WatermarkContent" Value="≠"/>
@@ -1000,7 +1005,7 @@
   <view:TypeMatchTemplateProvider x:Key="RotationPropertyTemplateProvider" Type="{x:Type math:Quaternion}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:RotationEditor Value="{Binding NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                           WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor"/>
+                         WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor"/>
       <DataTemplate.Triggers>
         <DataTrigger Binding="{Binding NodeValue}" Value="{x:Static qvm:NodeViewModel.DifferentValues}">
           <Setter TargetName="VectorEditor" Property="WatermarkContent" Value="≠"/>
@@ -1013,22 +1018,22 @@
   <view:TypeMatchTemplateProvider x:Key="MatrixPropertyTemplateProvider" Type="{x:Type math:Matrix}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:MatrixEditor M11="{Binding M11.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M12="{Binding M12.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M13="{Binding M13.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M14="{Binding M14.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M21="{Binding M21.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M22="{Binding M22.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M23="{Binding M23.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M24="{Binding M24.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M31="{Binding M31.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M32="{Binding M32.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M33="{Binding M33.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M34="{Binding M34.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M41="{Binding M41.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M42="{Binding M42.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M43="{Binding M43.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         M44="{Binding M44.NodeValue, Converter={cvt:DifferentValuesToNull}}"
-                         WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor"/>
+                       M12="{Binding M12.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M13="{Binding M13.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M14="{Binding M14.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M21="{Binding M21.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M22="{Binding M22.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M23="{Binding M23.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M24="{Binding M24.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M31="{Binding M31.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M32="{Binding M32.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M33="{Binding M33.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M34="{Binding M34.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M41="{Binding M41.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M42="{Binding M42.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M43="{Binding M43.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       M44="{Binding M44.NodeValue, Converter={cvt:DifferentValuesToNull}}"
+                       WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}" DecimalPlaces="3" x:Name="VectorEditor"/>
       <DataTemplate.Triggers>
         <DataTrigger Binding="{Binding NodeValue}" Value="{x:Static qvm:NodeViewModel.DifferentValues}">
           <Setter TargetName="VectorEditor" Property="WatermarkContent" Value="≠"/>
@@ -1041,10 +1046,10 @@
   <view:TypeMatchTemplateProvider x:Key="AnglePropertyTemplateProvider" Type="{x:Type math:AngleSingle}" edvw:PropertyViewHelper.TemplateCategory="PropertyEditor">
     <DataTemplate DataType="qvm:NodeViewModel">
       <sd:NumericTextBox x:Name="TextBox" DecimalPlaces="3"
-                           Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:AngleSingleToDegrees}}}"
-                           ToolTip="{sd:Localize Angle in degrees, Context=ToolTip}"
-                           WatermarkContent="≠" WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
-                           DisplayUpDownButtons="False">
+                         Value="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:AngleSingleToDegrees}}}"
+                         ToolTip="{sd:Localize Angle in degrees, Context=ToolTip}"
+                         WatermarkContent="≠" WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}"
+                         DisplayUpDownButtons="False">
         <i:Interaction.Behaviors>
           <!--<sd:NumericTextBoxTransactionalRepeatButtonsBehavior UndoRedoService="{Binding Session.UndoRedoService}"/>-->
           <behaviors:TextBoxPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
@@ -1068,9 +1073,9 @@
           <Image Source="{StaticResource ImageBrowse}" Width="16" Height="16" Margin="-1"/>
         </Button>
         <sd:TextBox x:Name="TextBox" Margin="2" SelectAllOnFocus="True"
-                      sd:Trimming.TextTrimming="WordEllipsis" sd:Trimming.TrimmingSource="Middle" sd:Trimming.WordSeparators="/\\"
-                      Text="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:UDirectoryToString}}}"
-                      WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}">
+                    sd:Trimming.TextTrimming="WordEllipsis" sd:Trimming.TrimmingSource="Middle" sd:Trimming.WordSeparators="/\\"
+                    Text="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:UDirectoryToString}}}"
+                    WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}">
           <i:Interaction.Behaviors>
             <behaviors:ReferenceHostDragDropBehavior UsePreviewEvents="True" DisplayDropAdorner="ExternalOnly"/>
           </i:Interaction.Behaviors>
@@ -1094,9 +1099,9 @@
           <Image Source="{StaticResource ImageBrowse}" Width="16" Height="16" Margin="-1"/>
         </Button>
         <sd:TextBox x:Name="TextBox" Margin="2" SelectAllOnFocus="True"
-                      sd:Trimming.TextTrimming="WordEllipsis" sd:Trimming.TrimmingSource="Middle" sd:Trimming.WordSeparators="/\\"
-                      Text="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:UFileToString}}}"
-                      WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}">
+                    sd:Trimming.TextTrimming="WordEllipsis" sd:Trimming.TrimmingSource="Middle" sd:Trimming.WordSeparators="/\\"
+                    Text="{Binding NodeValue, Converter={sd:Chained {cvt:DifferentValuesToNull}, {sd:UFileToString}}}"
+                    WatermarkContentTemplate="{StaticResource DifferentValuesWatermarkTemplate}">
           <i:Interaction.Behaviors>
             <behaviors:ReferenceHostDragDropBehavior UsePreviewEvents="True" DisplayDropAdorner="ExternalOnly"/>
             <behaviors:TextBoxPropertyValueValidationBehavior AdornerStoryboard="{StaticResource HighlightBorderAdornerValidationErrorStoryboard}"/>
@@ -1254,8 +1259,9 @@
           </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <i:Interaction.Behaviors>
-          <sd:ListBoxBindableSelectedItemsBehavior SelectedItems="{sd:MultiBinding {Binding}, {Binding NodeValue, Converter={cvt:DifferentValuesToNull}},
-                                                                    Converter={cvt:FlagEnumToObservableList}}"/>
+          <sd:ListBoxBindableSelectedItemsBehavior SelectedItems="{sd:MultiBinding {Binding},
+                                                                                   {Binding NodeValue, Converter={cvt:DifferentValuesToNull}},
+                                                                                   Converter={cvt:FlagEnumToObservableList}}"/>
         </i:Interaction.Behaviors>
       </ListBox>
     </DataTemplate>
@@ -1283,11 +1289,11 @@
     <DockPanel>
       <UniformGrid Rows="1" DockPanel.Dock="Right">
         <Button Style="{StaticResource ImageButtonStyle}" Command="{Binding PickupAsset}" CommandParameter="{Binding Type}"
-                ToolTip="{sd:Localize Select an asset, Context=ToolTip}">
+                ToolTip="{sd:Localize Select an asset, Context=ToolTip}" Visibility="{Binding IsReadOnly, Converter={sd:VisibleOrCollapsed}, ConverterParameter={sd:False}, Mode=OneWay}">
           <Image Source="{StaticResource ImagePickup}" Width="16" Height="16" Margin="-1"/>
         </Button>
         <Button Style="{StaticResource ImageButtonStyle}" Command="{Binding CreateNewInstance}" CommandParameter="{x:Static assetCommands:AbstractNodeValue.Null}"
-                ToolTip="{sd:Localize Clear the reference, Context=ToolTip}">
+                ToolTip="{sd:Localize Clear the reference, Context=ToolTip}" Visibility="{Binding IsReadOnly, Converter={sd:VisibleOrCollapsed}, ConverterParameter={sd:False}, Mode=OneWay}">
           <Image Source="{StaticResource ImageClear}" Width="16" Height="16" Margin="-1"/>
         </Button>
         <Button Style="{StaticResource ImageButtonStyle}" Command="{Binding FetchAsset}"
@@ -1325,7 +1331,7 @@
             </Border>
             <ProgressBar DataContext="{Binding NodeValue, Converter={cvt:ContentReferenceToAsset}}" Width="16" Height="4" IsIndeterminate="True"
                          Visibility="{Binding ThumbnailData, Mode=OneWay, FallbackValue={sd:Collapsed},
-                                                          Converter={sd:Chained {sd:ObjectToBool}, {sd:InvertBool}, {sd:VisibleOrHidden}}}"/>
+                                              Converter={sd:Chained {sd:ObjectToBool}, {sd:InvertBool}, {sd:VisibleOrHidden}}}"/>
             <Border Width="64" Height="64" Background="Transparent" ToolTip="{sd:Localize Select an asset, Context=ToolTip}"
                     Visibility="{Binding Visibility,ElementName=PickupImage}">
               <Image x:Name="PickupImage" Source="{StaticResource ImagePickup}" Width="16" Height="16"

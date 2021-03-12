@@ -2,7 +2,7 @@
   <Import Project="..\..\targets\Stride.props" />
   <PropertyGroup>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <TargetFrameworks>$(StrideEditorTargetFrameworks)</TargetFrameworks>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyTitle>Stride Project Generation based on Templates</AssemblyTitle>

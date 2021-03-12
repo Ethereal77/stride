@@ -3,7 +3,7 @@
 
   <Import Project="..\..\targets\Stride.props" />
   <PropertyGroup>
-    <TargetFrameworks>$(StrideEditorTargetFrameworks)</TargetFrameworks>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <OutputType>WinExe</OutputType>

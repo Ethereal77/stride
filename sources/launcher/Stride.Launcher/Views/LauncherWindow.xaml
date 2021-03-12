@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Stride.LauncherApp.ViewModels"
-        xmlns:sskk="http://schemas.stride3d.net/xaml/presentation"
+        xmlns:s3d="http://schemas.stride3d.net/xaml/presentation"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:services="clr-namespace:Stride.LauncherApp.Services"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
@@ -14,7 +14,7 @@
         mc:Ignorable="d" d:DataContext="{d:DesignInstance vm:LauncherViewModel}"
         WindowStartupLocation="CenterScreen" Style="{DynamicResource WindowChromeStyle}"
         Height="768" Width="1024" FontFamily="Segoe UI"
-        Visibility="{Binding IsVisible, Converter={sskk:VisibleOrHidden}}">
+        Visibility="{Binding IsVisible, Converter={s3d:VisibleOrHidden}}">
 
   <Window.Resources>
     <ResourceDictionary>
@@ -57,25 +57,25 @@
 
       <DataTemplate DataType="{x:Type vm:StrideDevVersionViewModel}">
         <DockPanel Margin="0,2" Height="32" SnapsToDevicePixels="True" Background="{StaticResource TileAlphaBackgroundBrush}"
-                   Visibility="{Binding IsVisible, Converter={sskk:VisibleOrCollapsed}, Mode=OneWay}">
-          <StackPanel MinWidth="32" Orientation="Horizontal" DockPanel.Dock="Right" IsEnabled="{Binding IsProcessing, Converter={sskk:InvertBool}}">
+                   Visibility="{Binding IsVisible, Converter={s3d:VisibleOrCollapsed}, Mode=OneWay}">
+          <StackPanel MinWidth="32" Orientation="Horizontal" DockPanel.Dock="Right" IsEnabled="{Binding IsProcessing, Converter={s3d:InvertBool}}">
             <!-- DELETE BUTTON -->
-            <Button Content="{sskk:Image {StaticResource ImageDelete}, 20, 20}" Width="32" Height="32" ToolTipService.IsEnabled="False"
-                    ToolTip="{Binding FullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipUninstall}}" Margin="4,0,0,0"
-                    Visibility="{Binding CanDelete, Converter={sskk:VisibleOrCollapsed}}" Command="{Binding DeleteCommand}">
+            <Button Content="{s3d:Image {StaticResource ImageDelete}, 20, 20}" Width="32" Height="32" ToolTipService.IsEnabled="False"
+                    ToolTip="{Binding FullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipUninstall}}" Margin="4,0,0,0"
+                    Visibility="{Binding CanDelete, Converter={s3d:VisibleOrCollapsed}}" Command="{Binding DeleteCommand}">
               <i:Interaction.Behaviors>
-                <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
+                <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
                                                        DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
               </i:Interaction.Behaviors>
             </Button>
           </StackPanel>
           <Grid>
             <Button Command="{Binding SetAsActiveCommand}" x:Name="VersionButton" ToolTipService.IsEnabled="False"
-                  ToolTip="{Binding FullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipSetActiveVersion}}"
-                  Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}, ConverterParameter={sskk:False}}">
+                  ToolTip="{Binding FullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipSetActiveVersion}}"
+                  Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}, ConverterParameter={s3d:False}}">
               <TextBlock Text="{Binding DisplayName, StringFormat={x:Static r:Strings.VersionButton}, Mode=OneWay}"/>
               <i:Interaction.Behaviors>
-                <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
+                <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
                                                      DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
               </i:Interaction.Behaviors>
             </Button>
@@ -89,15 +89,15 @@
 
       <DataTemplate DataType="{x:Type vm:StrideStoreVersionViewModel}">
         <DockPanel Margin="0,2" Height="32" SnapsToDevicePixels="True" Background="{StaticResource TileAlphaBackgroundBrush}"
-                   Visibility="{Binding IsVisible, Converter={sskk:VisibleOrCollapsed}, Mode=OneWay}">
-          <StackPanel MinWidth="32" Orientation="Horizontal" DockPanel.Dock="Right" IsEnabled="{Binding IsProcessing, Converter={sskk:InvertBool}}">
+                   Visibility="{Binding IsVisible, Converter={s3d:VisibleOrCollapsed}, Mode=OneWay}">
+          <StackPanel MinWidth="32" Orientation="Horizontal" DockPanel.Dock="Right" IsEnabled="{Binding IsProcessing, Converter={s3d:InvertBool}}">
             <!-- UPDATE BUTTON -->
             <Button Width="32" Height="32" ToolTipService.IsEnabled="False" Margin="4,0,0,0"
-                    ToolTip="{Binding ServerVersionFullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipUpdate}}"
-                    Visibility="{sskk:MultiBinding {Binding CanBeDownloaded}, {Binding CanDelete},
-                    Converter={sskk:MultiChained {sskk:AndMultiConverter}, {sskk:VisibleOrCollapsed}}}" Command="{Binding DownloadCommand}">
+                    ToolTip="{Binding ServerVersionFullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipUpdate}}"
+                    Visibility="{s3d:MultiBinding {Binding CanBeDownloaded}, {Binding CanDelete},
+                    Converter={s3d:MultiChained {s3d:AndMultiConverter}, {s3d:VisibleOrCollapsed}}}" Command="{Binding DownloadCommand}">
               <i:Interaction.Behaviors>
-                <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
+                <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
                                                        DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
               </i:Interaction.Behaviors>
               <Rectangle Width="20" Height="20" Fill="White">
@@ -107,26 +107,26 @@
               </Rectangle>
             </Button>
             <!-- DOWNLOAD BUTTON -->
-            <Button Content="{sskk:Image {StaticResource ImageDownload}, 20, 20}" Width="32" Height="32" ToolTipService.IsEnabled="False" Margin="4,0,0,0"
-                    ToolTip="{Binding FullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipDownload}}"
-                    Visibility="{sskk:MultiBinding {Binding CanBeDownloaded}, {Binding CanDelete, Converter={sskk:InvertBool}},
-                    Converter={sskk:MultiChained {sskk:AndMultiConverter}, {sskk:VisibleOrCollapsed}}}" Command="{Binding DownloadCommand}">
+            <Button Content="{s3d:Image {StaticResource ImageDownload}, 20, 20}" Width="32" Height="32" ToolTipService.IsEnabled="False" Margin="4,0,0,0"
+                    ToolTip="{Binding FullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipDownload}}"
+                    Visibility="{s3d:MultiBinding {Binding CanBeDownloaded}, {Binding CanDelete, Converter={s3d:InvertBool}},
+                    Converter={s3d:MultiChained {s3d:AndMultiConverter}, {s3d:VisibleOrCollapsed}}}" Command="{Binding DownloadCommand}">
               <i:Interaction.Behaviors>
-                <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
+                <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
                                                        DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
               </i:Interaction.Behaviors>
             </Button>
             <!-- DELETE BUTTON -->
-            <Button Content="{sskk:Image {StaticResource ImageDelete}, 20, 20}" Width="32" Height="32" ToolTipService.IsEnabled="False"
-                    ToolTip="{Binding FullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipUninstall}}" Margin="4,0,0,0"
-                    Visibility="{Binding CanDelete, Converter={sskk:VisibleOrCollapsed}}" Command="{Binding DeleteCommand}">
+            <Button Content="{s3d:Image {StaticResource ImageDelete}, 20, 20}" Width="32" Height="32" ToolTipService.IsEnabled="False"
+                    ToolTip="{Binding FullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipUninstall}}" Margin="4,0,0,0"
+                    Visibility="{Binding CanDelete, Converter={s3d:VisibleOrCollapsed}}" Command="{Binding DeleteCommand}">
               <i:Interaction.Behaviors>
-                <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
+                <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
                                                        DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
               </i:Interaction.Behaviors>
             </Button>
             <!-- ALTERNATE VERSIONS -->
-            <ToggleButton x:Name="Toggle" Content="{sskk:Image {StaticResource ImageListVersions}, 20, 20}" Width="32" Height="32"
+            <ToggleButton x:Name="Toggle" Content="{s3d:Image {StaticResource ImageListVersions}, 20, 20}" Width="32" Height="32"
                 ToolTipService.IsEnabled="False" ToolTip="Install another version" Margin="4,0,0,0"/>
             <Popup IsOpen="{Binding IsChecked, ElementName=Toggle, Mode=TwoWay}" StaysOpen="False" AllowsTransparency="True">
               <Border Margin="6" Background="{StaticResource ControlBackgroundBrush}"
@@ -142,10 +142,10 @@
                   </Menu.ItemsPanel>
                   <Menu.ItemTemplate>
                     <DataTemplate>
-                      <MenuItem Header="{Binding FullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipSetActiveVersion}}"
+                      <MenuItem Header="{Binding FullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipSetActiveVersion}}"
                                 Command="{Binding SetAsActiveCommand}">
                         <i:Interaction.Behaviors>
-                          <sskk:OnEventSetPropertyBehavior EventName="Click" EventOwnerType="MenuItem" Target="{Binding ElementName=Toggle}" Property="ToggleButton.IsChecked" Value="{sskk:False}" />
+                          <s3d:OnEventSetPropertyBehavior EventName="Click" EventOwnerType="MenuItem" Target="{Binding ElementName=Toggle}" Property="ToggleButton.IsChecked" Value="{s3d:False}" />
                         </i:Interaction.Behaviors>
                       </MenuItem>
                     </DataTemplate>
@@ -155,23 +155,23 @@
             </Popup>
           </StackPanel>
           <!-- RELEASE NOTES BUTTON -->
-          <Button Content="{sskk:Image {StaticResource ImageReleaseNotes}, 20, 20}" Width="32" Height="32"
+          <Button Content="{s3d:Image {StaticResource ImageReleaseNotes}, 20, 20}" Width="32" Height="32"
                   ToolTipService.IsEnabled="False" ToolTip="Display release notes for this version"
                   Margin="0,0,4,0" Command="{Binding ReleaseNotes.ToggleCommand}" DockPanel.Dock="Left">
             <i:Interaction.Behaviors>
-              <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
+              <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
                                                      DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
             </i:Interaction.Behaviors>
           </Button>
           <Grid>
             <ProgressBar x:Name="ProgressBar" Minimum="0" Maximum="100" Value="{Binding CurrentProgress, Mode=OneWay}"
-                         BorderThickness="0" Background="{StaticResource ControlBackgroundBrush}" Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}}"
+                         BorderThickness="0" Background="{StaticResource ControlBackgroundBrush}" Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}}"
                          IsIndeterminate="{Binding CurrentProgress, Mode=OneWay, Converter={l:ProgressToIndeterminatedConverter}}"/>
             <TextBlock Text="{Binding CurrentProcessStatus, Mode=OneWay}" Foreground="{StaticResource TextBrush}" HorizontalAlignment="Center"
-                       VerticalAlignment="Center" Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}}"/>
+                       VerticalAlignment="Center" Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}}"/>
             <DockPanel>
               <TextBlock Text="{Binding CurrentProcessStatus, Mode=OneWay}" HorizontalAlignment="Center"
-                         VerticalAlignment="Center" Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}}"/>
+                         VerticalAlignment="Center" Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}}"/>
               <UIElement.Clip>
                 <RectangleGeometry>
                   <RectangleGeometry.Rect>
@@ -184,21 +184,23 @@
                 </RectangleGeometry>
               </UIElement.Clip>
             </DockPanel>
-            <Grid Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}, ConverterParameter={sskk:False}}">
+            <Grid Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}, ConverterParameter={s3d:False}}">
               <Button Command="{Binding SetAsActiveCommand}" ToolTipService.IsEnabled="False"
-                      Visibility="{Binding CanDelete, Converter={sskk:VisibleOrHidden}}"
-                      ToolTip="{Binding FullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipSetActiveVersion}}">
+                      Visibility="{Binding CanDelete, Converter={s3d:VisibleOrHidden}}"
+                      ToolTip="{Binding FullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipSetActiveVersion}}">
                 <i:Interaction.Behaviors>
-                  <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
-                                                       DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
+                  <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
+                                                         DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                 </i:Interaction.Behaviors>
               </Button>
               <TextBlock HorizontalAlignment="Left" Margin="16,0" IsHitTestVisible="False" Foreground="White" VerticalAlignment="Center">
                   <Run Text="{Binding DisplayName, StringFormat={x:Static r:Strings.VersionButton}, Mode=OneWay}"/>
                   <!-- Careful here, there must not be any space or line-break between the next two Run tags! -->
-                  <Run Text="{Binding CanDelete, Converter={sskk:Chained {sskk:InvertBool}, {sskk:BoolToParam}, Parameter2={x:Static r:Strings.VersionButtonUninstalled}},
-                       Mode=OneWay}"/><Run Text="{sskk:MultiBinding {Binding CanDelete}, {Binding CanBeDownloaded}, Converter={sskk:MultiChained {sskk:AndMultiConverter},
-                       {sskk:BoolToParam}, Parameter1={x:Static r:Strings.VersionButtonUpdateAvailable}}, Mode=OneWay}"/>
+                  <Run Text="{Binding CanDelete, Converter={s3d:Chained {s3d:InvertBool}, {s3d:BoolToParam}, Parameter2={x:Static r:Strings.VersionButtonUninstalled}},
+                       Mode=OneWay}"/><Run Text="{s3d:MultiBinding {Binding CanDelete}, {Binding CanBeDownloaded}, {Binding IsLatestPackageRemote}, Converter={s3d:MultiChained
+                       {s3d:AndMultiConverter}, {s3d:BoolToParam}, Parameter1={x:Static r:Strings.VersionButtonUpdateAvailable}}, Mode=OneWay}"/><Run Text="{s3d:MultiBinding
+                       {Binding CanDelete}, {Binding CanBeDownloaded}, {Binding IsLatestPackageLocal}, Converter={s3d:MultiChained {s3d:AndMultiConverter}, {s3d:BoolToParam},
+                       Parameter1={x:Static r:Strings.VersionButtonLocalUpdateAvailable}}, Mode=OneWay}"/>
               </TextBlock>
             </Grid>
           </Grid>
@@ -208,13 +210,13 @@
       <DataTemplate DataType="{x:Type vm:VsixVersionViewModel}">
         <Grid Height="32" SnapsToDevicePixels="True" Background="{StaticResource TileAlphaBackgroundBrush}">
           <ProgressBar x:Name="ProgressBar" Minimum="0" Maximum="100" Value="{Binding CurrentProgress, Mode=OneWay}"
-                       BorderThickness="0" Background="{StaticResource ControlBackgroundBrush}" Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}}"
+                       BorderThickness="0" Background="{StaticResource ControlBackgroundBrush}" Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}}"
                        IsIndeterminate="{Binding CurrentProgress, Mode=OneWay, Converter={l:ProgressToIndeterminatedConverter}}"/>
           <TextBlock Text="{Binding CurrentProcessStatus, Mode=OneWay}" Foreground="{StaticResource TextBrush}" HorizontalAlignment="Center"
-                     VerticalAlignment="Center" Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}}"/>
+                     VerticalAlignment="Center" Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}}"/>
           <DockPanel>
             <TextBlock Text="{Binding CurrentProcessStatus, Mode=OneWay}" HorizontalAlignment="Center"
-                       VerticalAlignment="Center" Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}}"/>
+                       VerticalAlignment="Center" Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}}"/>
             <UIElement.Clip>
               <RectangleGeometry>
                 <RectangleGeometry.Rect>
@@ -228,10 +230,10 @@
             </UIElement.Clip>
           </DockPanel>
           <Button Content="{Binding Status}" Command="{Binding ExecuteActionCommand}" ToolTipService.IsEnabled="False"
-                  ToolTip="{Binding Status, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipVisualStudioPlugin}}"
-                  Visibility="{Binding IsProcessing, Converter={sskk:VisibleOrCollapsed}, ConverterParameter={sskk:False}}">
+                  ToolTip="{Binding Status, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipVisualStudioPlugin}}"
+                  Visibility="{Binding IsProcessing, Converter={s3d:VisibleOrCollapsed}, ConverterParameter={s3d:False}}">
             <i:Interaction.Behaviors>
-              <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
+              <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding Launcher.CurrentToolTip}"
                                                      DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
             </i:Interaction.Behaviors>
           </Button>
@@ -269,7 +271,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 ToolTip="Click to reconnect..."
-                Visibility="{Binding IsOffline, Converter={sskk:VisibleOrHidden}}">
+                Visibility="{Binding IsOffline, Converter={s3d:VisibleOrHidden}}">
             <TextBlock FontWeight="ExtraBold" Foreground="Gold" Text="Offline" />
           </Button>
         </StatusBarItem>
@@ -291,7 +293,7 @@
           </Grid.RowDefinitions>
 
           <!-- FIRST COLUMN -->
-          <DockPanel Grid.Row="0" Grid.Column="0" Width="380">
+          <DockPanel Grid.Row="0" Grid.Column="0" Width="400">
             <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="{StaticResource TileBorderThickness}"
                   Background="{StaticResource TileAlphaBackgroundBrush}">
               <DockPanel Margin="10">
@@ -300,10 +302,10 @@
                         Command="{Binding OpenUrlCommand}"
                         CommandParameter="{x:Static r:Urls.Twitter}" SnapsToDevicePixels="True" Margin="2"
                         ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}"
-                        Content="{sskk:Image {StaticResource ImageTwitter}, 24, 24, NearestNeighbor}">
+                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}"
+                        Content="{s3d:Image {StaticResource ImageTwitter}, 24, 24, NearestNeighbor}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
                                                      DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                   </Button>
@@ -311,10 +313,10 @@
                         Command="{Binding OpenUrlCommand}"
                         CommandParameter="{x:Static r:Urls.Facebook}" SnapsToDevicePixels="True" Margin="2"
                         ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}"
-                        Content="{sskk:Image {StaticResource ImageFacebook}, 24, 24, NearestNeighbor}">
+                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}"
+                        Content="{s3d:Image {StaticResource ImageFacebook}, 24, 24, NearestNeighbor}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
                                                      DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                   </Button>
@@ -322,10 +324,10 @@
                         Command="{Binding OpenUrlCommand}"
                         CommandParameter="{x:Static r:Urls.Reddit}" SnapsToDevicePixels="True" Margin="2"
                         ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}"
-                        Content="{sskk:Image {StaticResource ImageReddit}, 24, 24, NearestNeighbor}">
+                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}"
+                        Content="{s3d:Image {StaticResource ImageReddit}, 24, 24, NearestNeighbor}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
                                                      DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                   </Button>
@@ -333,38 +335,38 @@
                         Command="{Binding OpenUrlCommand}"
                         CommandParameter="{x:Static r:Urls.Patreon}" SnapsToDevicePixels="True" Margin="2"
                         ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}"
-                        Content="{sskk:Image {StaticResource ImagePatreon}, 24, 24, NearestNeighbor}">
+                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}"
+                        Content="{s3d:Image {StaticResource ImagePatreon}, 24, 24, NearestNeighbor}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
                                                      DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                   </Button>
                   <!--<Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
-                        Command="{Binding OpenUrlCommand}"
-                        CommandParameter="https://www.google.com/" SnapsToDevicePixels="True" Margin="2"
-                        Content="{sskk:Image {StaticResource ImageGooglePlus}, 24, 24, NearestNeighbor}">
-                </Button>
-                <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
-                        Command="{Binding OpenUrlCommand}"
-                        CommandParameter="https://www.youtube.com/user/StrideCSG/" SnapsToDevicePixels="True" Margin="2"
-                        Content="{sskk:Image {StaticResource ImageYoutube}, 24, 24, NearestNeighbor}">
-                </Button>
-                <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
-                        Command="{Binding OpenUrlCommand}"
-                        CommandParameter="https://www.twitch.tv/" SnapsToDevicePixels="True" Margin="2"
-                        Content="{sskk:Image {StaticResource ImageTwitch}, 24, 24, NearestNeighbor}">
-                </Button>-->
+                          Command="{Binding OpenUrlCommand}"
+                          CommandParameter="https://www.google.com/" SnapsToDevicePixels="True" Margin="2"
+                          Content="{sskk:Image {StaticResource ImageGooglePlus}, 24, 24, NearestNeighbor}">
+                  </Button>
+                  <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
+                          Command="{Binding OpenUrlCommand}"
+                          CommandParameter="https://www.youtube.com/user/StrideCSG/" SnapsToDevicePixels="True" Margin="2"
+                          Content="{sskk:Image {StaticResource ImageYoutube}, 24, 24, NearestNeighbor}">
+                  </Button>
+                  <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
+                          Command="{Binding OpenUrlCommand}"
+                          CommandParameter="https://www.twitch.tv/" SnapsToDevicePixels="True" Margin="2"
+                          Content="{sskk:Image {StaticResource ImageTwitch}, 24, 24, NearestNeighbor}">
+                  </Button>-->
                 </StackPanel>
                 <UniformGrid Columns="2">
                   <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
-                        Command="{Binding OpenUrlCommand}"
-                        CommandParameter="{x:Static r:Urls.Issues}"
-                        ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
+                          Command="{Binding OpenUrlCommand}"
+                          CommandParameter="{x:Static r:Urls.Issues}"
+                          ToolTipService.IsEnabled="False"
+                          ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
-                                                     DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                                                             DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                     <StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
                       <Image Margin="5" Source="{StaticResource ImageIssues}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="16" Height="16"/>
@@ -372,13 +374,13 @@
                     </StackPanel>
                   </Button>
                   <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
-                        Command="{Binding OpenUrlCommand}"
-                        CommandParameter="{x:Static r:Urls.Forums}"
-                        ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
+                          Command="{Binding OpenUrlCommand}"
+                          CommandParameter="{x:Static r:Urls.Forums}"
+                          ToolTipService.IsEnabled="False"
+                          ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
-                                                     DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                                                             DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                     <StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
                       <Image Margin="5" Source="{StaticResource ImageForums}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="16" Height="16"/>
@@ -386,13 +388,13 @@
                     </StackPanel>
                   </Button>
                   <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
-                        Command="{Binding OpenUrlCommand}"
-                        CommandParameter="{x:Static r:Urls.Discord}"
-                        ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
+                          Command="{Binding OpenUrlCommand}"
+                          CommandParameter="{x:Static r:Urls.Discord}"
+                          ToolTipService.IsEnabled="False"
+                          ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
-                                                     DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                                                             DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                     <StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
                       <Image Margin="5" Source="{StaticResource ImageChat}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="16" Height="16"/>
@@ -400,13 +402,13 @@
                     </StackPanel>
                   </Button>
                   <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
-                        Command="{Binding OpenUrlCommand}"
-                        CommandParameter="{x:Static r:Urls.Github}"
-                        ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
+                          Command="{Binding OpenUrlCommand}"
+                          CommandParameter="{x:Static r:Urls.Github}"
+                          ToolTipService.IsEnabled="False"
+                          ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
-                                                     DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                                                             DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                     <StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
                       <Image Margin="5" Source="{StaticResource ImageGithub}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="16" Height="16"/>
@@ -414,13 +416,13 @@
                     </StackPanel>
                   </Button>
                   <Button Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Left"
-                        Command="{Binding OpenUrlCommand}"
-                        CommandParameter="{x:Static r:Urls.Roadmap}"
-                        ToolTipService.IsEnabled="False"
-                        ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
+                          Command="{Binding OpenUrlCommand}"
+                          CommandParameter="{x:Static r:Urls.Roadmap}"
+                          ToolTipService.IsEnabled="False"
+                          ToolTip="{Binding CommandParameter, RelativeSource={RelativeSource Self}, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipOpenLink}}">
                     <i:Interaction.Behaviors>
-                      <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
-                                                     DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
+                      <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                                                             DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                     </i:Interaction.Behaviors>
                     <StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
                       <Image Margin="5" Source="{StaticResource ImageRoadmap}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="16" Height="16"/>
@@ -435,58 +437,58 @@
                 <StackPanel>
                   <Grid Height="48">
                     <!-- Launch Game Studio -->
-                    <Button IsEnabled="{sskk:MultiBinding {Binding ActiveVersion.IsProcessing, Converter={sskk:InvertBool}},
-                          {Binding StartStudioCommand.IsEnabled}, Converter={sskk:AndMultiConverter}}"
+                    <Button IsEnabled="{s3d:MultiBinding {Binding ActiveVersion.IsProcessing, Converter={s3d:InvertBool}},
+                          {Binding StartStudioCommand.IsEnabled}, Converter={s3d:AndMultiConverter}}"
                           Command="{Binding StartStudioCommand}" Content="{Binding ActiveVersion.FullName}"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBlock.FontSize="24"
                           ContentStringFormat="{x:Static r:Strings.StartVersion}" Background="{StaticResource EmphasisButtonBackground}" ToolTipService.IsEnabled="False"
-                          Visibility="{Binding ActiveVersion.CanStart, Converter={sskk:VisibleOrCollapsed}}"
-                          ToolTip="{Binding ActiveVersion.FullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipStartButton}}">
+                          Visibility="{Binding ActiveVersion.CanStart, Converter={s3d:VisibleOrCollapsed}}"
+                          ToolTip="{Binding ActiveVersion.FullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipStartButton}}">
                       <Button.Resources>
                         <!-- ReSharper disable once Xaml.RedundantResource - Overriding hovered color from theme-->
                         <SolidColorBrush x:Key="ButtonHoverBackgroundBrush" Color="{StaticResource EmphasisButtonHoverColor}"/>
                       </Button.Resources>
                       <i:Interaction.Behaviors>
-                        <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                        <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
                                                                                DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                       </i:Interaction.Behaviors>
                     </Button>
                     <!-- Install specific version -->
-                    <Button IsEnabled="{sskk:MultiBinding {Binding ActiveVersion.IsProcessing, Converter={sskk:InvertBool}},
-                          {Binding ActiveVersion.DownloadCommand.IsEnabled}, Converter={sskk:AndMultiConverter}}"
+                    <Button IsEnabled="{s3d:MultiBinding {Binding ActiveVersion.IsProcessing, Converter={s3d:InvertBool}},
+                          {Binding ActiveVersion.DownloadCommand.IsEnabled}, Converter={s3d:AndMultiConverter}}"
                           Command="{Binding ActiveVersion.DownloadCommand}" Content="{Binding ActiveVersion.FullName}"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBlock.FontSize="24"
                           ContentStringFormat="{x:Static r:Strings.InstallVersion}" Background="{StaticResource EmphasisButtonBackground}" ToolTipService.IsEnabled="False"
-                          Visibility="{sskk:MultiBinding {Binding ActiveVersion.DownloadCommand.IsEnabled}, {Binding ActiveVersion.CanStart, Converter={sskk:InvertBool}}, Converter={sskk:MultiChained {sskk:AndMultiConverter}, {sskk:VisibleOrCollapsed}}}"
-                          ToolTip="{Binding ActiveVersion.FullName, Converter={sskk:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipDownload}}">
+                          Visibility="{s3d:MultiBinding {Binding ActiveVersion.DownloadCommand.IsEnabled}, {Binding ActiveVersion.CanStart, Converter={s3d:InvertBool}}, Converter={s3d:MultiChained {s3d:AndMultiConverter}, {s3d:VisibleOrCollapsed}}}"
+                          ToolTip="{Binding ActiveVersion.FullName, Converter={s3d:FormatString}, ConverterParameter={x:Static r:Strings.ToolTipDownload}}">
                       <Button.Resources>
                         <!-- ReSharper disable once Xaml.RedundantResource - Overriding hovered color from theme-->
                         <SolidColorBrush x:Key="ButtonHoverBackgroundBrush" Color="{StaticResource EmphasisButtonHoverColor}"/>
                       </Button.Resources>
                       <i:Interaction.Behaviors>
-                        <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                        <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
                                                                                DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                       </i:Interaction.Behaviors>
                     </Button>
                     <!-- Install latest version (nothing installed) -->
-                    <Button IsEnabled="{sskk:MultiBinding {Binding IsSynchronizing, Converter={sskk:InvertBool}},
-                          {Binding InstallLatestVersionCommand.IsEnabled}, Converter={sskk:AndMultiConverter}}"
+                    <Button IsEnabled="{s3d:MultiBinding {Binding IsSynchronizing, Converter={s3d:InvertBool}},
+                          {Binding InstallLatestVersionCommand.IsEnabled}, Converter={s3d:AndMultiConverter}}"
                           Command="{Binding InstallLatestVersionCommand}" Content="{x:Static r:Strings.InstallLatestVersion}"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextBlock.FontSize="24"
                           Background="{StaticResource EmphasisButtonBackground}" ToolTipService.IsEnabled="False"
-                          Visibility="{Binding ActiveVersion, Converter={sskk:Chained {sskk:ObjectToBool}, {sskk:InvertBool}, {sskk:VisibleOrCollapsed}}}"
+                          Visibility="{Binding ActiveVersion, Converter={s3d:Chained {s3d:ObjectToBool}, {s3d:InvertBool}, {s3d:VisibleOrCollapsed}}}"
                           ToolTip="{x:Static r:Strings.ToolTipInstallLatestVersion}">
                       <Button.Resources>
                         <!-- ReSharper disable once Xaml.RedundantResource - Overriding hovered color from theme-->
                         <SolidColorBrush x:Key="ButtonHoverBackgroundBrush" Color="{StaticResource EmphasisButtonHoverColor}"/>
                       </Button.Resources>
                       <i:Interaction.Behaviors>
-                        <sskk:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
+                        <s3d:BindCurrentToolTipStringBehavior ToolTipTarget="{Binding CurrentToolTip}"
                                                                                DefaultValue="{x:Static r:Strings.ToolTipDefault}"/>
                       </i:Interaction.Behaviors>
                     </Button>
                   </Grid>
-                  <ComboBox Margin="0,4" Name="FrameworkSelector" IsEnabled="{Binding ActiveVersion.Frameworks.Count, Converter={sskk:Chained {sskk:IsGreater}, Parameter1={sskk:Double 1}}}" ItemsSource="{Binding ActiveVersion.Frameworks}" SelectedItem="{Binding ActiveVersion.SelectedFramework}" SelectionChanged="FrameworkChanged">
+                  <ComboBox Margin="0,4" Name="FrameworkSelector" IsEnabled="{Binding ActiveVersion.Frameworks.Count, Converter={s3d:Chained {s3d:IsGreater}, Parameter1={s3d:Double 1}}}" ItemsSource="{Binding ActiveVersion.Frameworks}" SelectedItem="{Binding ActiveVersion.SelectedFramework}" SelectionChanged="FrameworkChanged">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
                         <TextBlock Text="{Binding Converter={vm:FrameworkConverter}}" />
@@ -494,7 +496,7 @@
                     </ComboBox.ItemTemplate>
                   </ComboBox>
                   <CheckBox Margin="0,2" DockPanel.Dock="Bottom" IsChecked="{Binding AutoCloseLauncher}"
-                                      Content="{x:Static r:Strings.AutoCloseLauncher}"/>
+                            Content="{x:Static r:Strings.AutoCloseLauncher}"/>
                 </StackPanel>
               </Border>
               <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="{StaticResource TileBorderThickness}" DockPanel.Dock="Top">
@@ -516,12 +518,12 @@
                 </DockPanel>
               </Border>
               <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="{StaticResource TileBorderThickness}"
-                            Background="Transparent">
+                      Background="Transparent">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Top">
                   <StackPanel>
                     <ItemsControl ItemsSource="{Binding StrideVersions}" Margin="0,-2"/>
                     <ProgressBar Height="24" Margin="0,2" IsIndeterminate="True" Opacity="0.5"
-                                                    Visibility="{Binding IsSynchronizing, Converter={sskk:VisibleOrCollapsed}}"/>
+                                 Visibility="{Binding IsSynchronizing, Converter={s3d:VisibleOrCollapsed}}"/>
                     <ToggleButton Style="{StaticResource TransparentButtonStyle}" IsChecked="{Binding ShowBetaVersions}" Margin="0,6" Content="{Binding}">
                       <ToggleButton.ContentTemplate>
                         <DataTemplate>
@@ -540,15 +542,15 @@
             </DockPanel>
           </DockPanel>
 
-          <Grid Grid.Column="1" Grid.Row="0" Tag="{sskk:Double 0}" IsEnabled="{Binding ActiveReleaseNotes.IsActive, Converter={sskk:InvertBool}, FallbackValue={sskk:True}}">
+          <Grid Grid.Column="1" Grid.Row="0" Tag="{s3d:Double 0}" IsEnabled="{Binding ActiveReleaseNotes.IsActive, Converter={s3d:InvertBool}, FallbackValue={s3d:True}}">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*"/>
               <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RenderTransform>
-              <TranslateTransform X="{sskk:MultiBinding {Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid},
-                                                                  Converter={sskk:SumNum}, ConverterParameter={StaticResource ReleaseNotesMargin}},
-                                               {Binding Tag, RelativeSource={RelativeSource AncestorType=Grid}}, Converter={sskk:MultiplyMultiConverter}}"/>
+              <TranslateTransform X="{s3d:MultiBinding {Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid},
+                                                                  Converter={s3d:SumNum}, ConverterParameter={StaticResource ReleaseNotesMargin}},
+                                               {Binding Tag, RelativeSource={RelativeSource AncestorType=Grid}}, Converter={s3d:MultiplyMultiConverter}}"/>
             </Grid.RenderTransform>
             <Grid.Style>
               <Style TargetType="Grid">
@@ -583,8 +585,8 @@
                   </DockPanel>
                 </Border>
                 <Border DockPanel.Dock="Top" BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="{StaticResource TileBorderThickness}"
-                                    Background="{StaticResource TileAlphaBackgroundBrush}"
-                                    Visibility="{Binding RecentProjects.Count, Converter={sskk:Chained {sskk:NumericToBool}, {sskk:InvertBool}, {sskk:VisibleOrCollapsed}}}">
+                        Background="{StaticResource TileAlphaBackgroundBrush}"
+                        Visibility="{Binding RecentProjects.Count, Converter={s3d:Chained {s3d:NumericToBool}, {s3d:InvertBool}, {s3d:VisibleOrCollapsed}}}">
                   <TextBlock Text="{x:Static r:Strings.NoProjectCreated}" FontSize="16" Margin="20" TextAlignment="Center"/>
                 </Border>
                 <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="{StaticResource TileBorderThickness}">
@@ -607,8 +609,8 @@
                               <DockPanel Margin="10,5">
                                 <DockPanel DockPanel.Dock="Bottom">
                                   <!-- Update dropdown -->
-                                  <ToggleButton x:Name="Toggle" Visibility="{Binding CompatibleVersions.Count, Converter={sskk:Chained {sskk:NumericToBool}, {sskk:VisibleOrCollapsed}}}"
-                                                DockPanel.Dock="Right" Content="{sskk:Image {StaticResource ImageUpgrade}, 16, 16}" Margin="4,0,0,0" Width="20" Height="20"
+                                  <ToggleButton x:Name="Toggle" Visibility="{Binding CompatibleVersions.Count, Converter={s3d:Chained {s3d:NumericToBool}, {s3d:VisibleOrCollapsed}}}"
+                                                DockPanel.Dock="Right" Content="{s3d:Image {StaticResource ImageUpgrade}, 16, 16}" Margin="4,0,0,0" Width="20" Height="20"
                                                 ToolTip="{x:Static r:Strings.ToolTipOpenAndUpgradeProject}" SnapsToDevicePixels="True"/>
                                   <Popup IsOpen="{Binding ElementName=Toggle, Path=IsChecked}" StaysOpen="False" PlacementTarget="{Binding ElementName=Toggle}">
                                     <ScrollViewer Background="{StaticResource BackgroundBrush}" MinWidth="150" MaxHeight="400" VerticalScrollBarVisibility="Auto" BorderBrush="Black" BorderThickness="1">
@@ -623,19 +625,19 @@
                                       </ItemsControl>
                                     </ScrollViewer>
                                   </Popup>
-                                  <sskk:TextBox DockPanel.Dock="Bottom" IsReadOnly="True" Text="{Binding FullPath, Mode=OneWay}" Margin="0,10,0,0"
+                                  <s3d:TextBox DockPanel.Dock="Bottom" IsReadOnly="True" Text="{Binding FullPath, Mode=OneWay}" Margin="0,10,0,0"
                                                 Foreground="{StaticResource TextBrush}" FontStyle="Italic" Background="Transparent" Focusable="False"
-                                                BorderThickness="0" sskk:Trimming.TextTrimming="WordEllipsis" sskk:Trimming.TrimmingSource="Middle" sskk:Trimming.WordSeparators="\/" x:Name="RecentTextBox"/>
+                                                BorderThickness="0" s3d:Trimming.TextTrimming="WordEllipsis" s3d:Trimming.TrimmingSource="Middle" s3d:Trimming.WordSeparators="\/" x:Name="RecentTextBox"/>
                                 </DockPanel>
                                 <DockPanel>
                                   <!-- Discovering -->
                                   <TextBlock Text="{Binding StrideVersionName}" FontSize="14"
                                              Foreground="{StaticResource TextBrush}" HorizontalAlignment="Right" DockPanel.Dock="Right"
-                                             Visibility="{Binding StrideVersionName, Converter={sskk:Chained {sskk:ObjectToBool}, {sskk:VisibleOrCollapsed}}}"/>
+                                             Visibility="{Binding StrideVersionName, Converter={s3d:Chained {s3d:ObjectToBool}, {s3d:VisibleOrCollapsed}}}"/>
                                   <!-- Unknown -->
                                   <TextBlock Text="{x:Static r:Strings.UnknownVersion}" FontSize="14"
                                              DockPanel.Dock="Right" Foreground="{StaticResource TextBrush}" HorizontalAlignment="Right" Margin="0,3"
-                                             Visibility="{Binding StrideVersionName, Converter={sskk:Chained {sskk:ObjectToBool}, {sskk:InvertBool}, {sskk:VisibleOrCollapsed}}}"/>
+                                             Visibility="{Binding StrideVersionName, Converter={s3d:Chained {s3d:ObjectToBool}, {s3d:InvertBool}, {s3d:VisibleOrCollapsed}}}"/>
                                   <TextBlock FontSize="16" FontWeight="Bold" Text="{Binding Name}" Foreground="{StaticResource TextBrush}"/>
                                 </DockPanel>
                               </DockPanel>
@@ -671,7 +673,7 @@
                     </ScrollViewer.Style>
                     <StackPanel>
                       <Border Background="{StaticResource TileAlphaBackgroundBrush}"
-                                            Visibility="{Binding ActiveDocumentationPages.Count, Converter={sskk:Chained {sskk:NumericToBool}, {sskk:InvertBool}, {sskk:VisibleOrCollapsed}}, FallbackValue={sskk:Collapsed}}">
+                                            Visibility="{Binding ActiveDocumentationPages.Count, Converter={s3d:Chained {s3d:NumericToBool}, {s3d:InvertBool}, {s3d:VisibleOrCollapsed}}, FallbackValue={s3d:Collapsed}}">
                         <TextBlock Text="{x:Static r:Strings.NoDocumentation}" FontSize="16" Margin="20" TextAlignment="Center" VerticalAlignment="Center"/>
                       </Border>
                       <ItemsControl ItemsSource="{Binding ActiveDocumentationPages}">
@@ -704,7 +706,7 @@
                     </ScrollViewer.Style>
                     <StackPanel>
                       <Border Background="{StaticResource TileAlphaBackgroundBrush}"
-                                            Visibility="{Binding NewsPages.Count, Converter={sskk:Chained {sskk:NumericToBool}, {sskk:InvertBool}, {sskk:VisibleOrCollapsed}}, FallbackValue={sskk:Collapsed}}">
+                                            Visibility="{Binding NewsPages.Count, Converter={s3d:Chained {s3d:NumericToBool}, {s3d:InvertBool}, {s3d:VisibleOrCollapsed}}, FallbackValue={s3d:Collapsed}}">
                         <TextBlock Text="{x:Static r:Strings.NoNews}" FontSize="16" Margin="20" TextAlignment="Center" VerticalAlignment="Center"/>
                       </Border>
                       <ItemsControl ItemsSource="{Binding NewsPages}">
@@ -733,29 +735,29 @@
             </Border>
           </Grid>
 
-          <Grid Grid.Column="1" Grid.Row="0" Tag="{sskk:Double 1}" IsEnabled="{Binding ActiveReleaseNotes.IsActive, FallbackValue={sskk:False}}">
+          <Grid Grid.Column="1" Grid.Row="0" Tag="{s3d:Double 1}" IsEnabled="{Binding ActiveReleaseNotes.IsActive, FallbackValue={s3d:False}}">
             <DockPanel Background="{StaticResource TileAlphaBackgroundBrush}" Margin="{StaticResource TileBorderThickness}">
               <DockPanel DockPanel.Dock="Top">
-                <Button Content="{sskk:Image {StaticResource ImageCloseWindow}, 16, 16, NearestNeighbor}" DockPanel.Dock="Right" Margin="15,8"
-                                Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Right" Command="{Binding ActiveReleaseNotes.ToggleCommand}"/>
+                <Button Content="{s3d:Image {StaticResource ImageCloseWindow}, 16, 16, NearestNeighbor}" DockPanel.Dock="Right" Margin="15,8"
+                        Style="{StaticResource TransparentButtonStyle}" HorizontalAlignment="Right" Command="{Binding ActiveReleaseNotes.ToggleCommand}"/>
                 <TextBlock Margin="15,8" Text="{Binding ActiveReleaseNotes.Version, StringFormat=Release notes of version {0}}" FontSize="20" FontWeight="Bold"/>
               </DockPanel>
               <Grid>
                 <!-- BaseUrl must be set before Text so when ActiveReleaseNotes is updated, the binding of ImageBaseUrl is updated first,
-                    then MarkdownContent is updated and the text converted, we will have a valid path for relative urls -->
-                <sskk:MarkdownTextBlock BaseUrl="{Binding ActiveReleaseNotes.BaseUrl, Mode=OneWay}" HyperlinkCommand="{x:Static l:Commands.OpenHyperlinkCommand}"
+                     then MarkdownContent is updated and the text converted, we will have a valid path for relative URLs -->
+                <s3d:MarkdownTextBlock BaseUrl="{Binding ActiveReleaseNotes.BaseUrl, Mode=OneWay}" HyperlinkCommand="{x:Static l:Commands.OpenHyperlinkCommand}"
                                         Text="{Binding ActiveReleaseNotes.MarkdownContent}" Background="Transparent" x:Name="ReleaseNotesPanel"
-                                        Margin="{StaticResource TileBorderThickness}" Visibility="{Binding ActiveReleaseNotes.IsLoaded, Converter={sskk:VisibleOrCollapsed}}"/>
+                                        Margin="{StaticResource TileBorderThickness}" Visibility="{Binding ActiveReleaseNotes.IsLoaded, Converter={s3d:VisibleOrCollapsed}}"/>
                 <TextBlock Text="{x:Static r:Strings.NoReleaseNotes}" TextWrapping="Wrap" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    Visibility="{Binding ActiveReleaseNotes.IsUnavailable, Converter={sskk:VisibleOrCollapsed}}"/>
+                                    Visibility="{Binding ActiveReleaseNotes.IsUnavailable, Converter={s3d:VisibleOrCollapsed}}"/>
                 <TextBlock Text="{x:Static r:Strings.DownloadingReleaseNotes}" TextWrapping="Wrap" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    Visibility="{Binding ActiveReleaseNotes.IsLoading, Converter={sskk:VisibleOrCollapsed}}"/>
+                                    Visibility="{Binding ActiveReleaseNotes.IsLoading, Converter={s3d:VisibleOrCollapsed}}"/>
               </Grid>
             </DockPanel>
             <Grid.RenderTransform>
-              <TranslateTransform X="{sskk:MultiBinding {Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid},
-                                                                  Converter={sskk:SumNum}, ConverterParameter={StaticResource ReleaseNotesMargin}},
-                                               {Binding Tag, RelativeSource={RelativeSource AncestorType=Grid}}, Converter={sskk:MultiplyMultiConverter}}"/>
+              <TranslateTransform X="{s3d:MultiBinding {Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid},
+                                                                  Converter={s3d:SumNum}, ConverterParameter={StaticResource ReleaseNotesMargin}},
+                                               {Binding Tag, RelativeSource={RelativeSource AncestorType=Grid}}, Converter={s3d:MultiplyMultiConverter}}"/>
             </Grid.RenderTransform>
             <Grid.Style>
               <Style TargetType="Grid">
@@ -783,7 +785,7 @@
         </Grid>
       </Border>
     </DockPanel>
-    <Border Visibility="{Binding Announcement, Converter={sskk:Chained {sskk:ObjectToBool}, {sskk:VisibleOrCollapsed}}}">
+    <Border Visibility="{Binding Announcement, Converter={s3d:Chained {s3d:ObjectToBool}, {s3d:VisibleOrCollapsed}}}">
       <l:Announcement DataContext="{Binding Announcement}"/>
     </Border>
   </Grid>

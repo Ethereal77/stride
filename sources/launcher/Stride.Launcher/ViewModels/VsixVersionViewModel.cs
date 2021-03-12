@@ -3,18 +3,15 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Stride.Core.Extensions;
-using Stride.Core.VisualStudio;
 using Stride.Core.Packages;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
 using Stride.LauncherApp.Resources;
-using Stride.LauncherApp.Services;
 
 namespace Stride.LauncherApp.ViewModels
 {
@@ -44,7 +41,7 @@ namespace Stride.LauncherApp.ViewModels
         private string status;
 
         /// <summary>
-        /// Gets a command that will download the latest version of the VSIX and install it on all compatible versions of Visual Studio.
+        ///   Gets a command that will download the latest version of the VSIX and install it on all compatible versions of Visual Studio.
         /// </summary>
         public ICommandBase ExecuteActionCommand { get; }
 
@@ -60,7 +57,7 @@ namespace Stride.LauncherApp.ViewModels
         {
             this.packageId = packageId;
             status = FormatStatus(Strings.ReportChecking);
-            ExecuteActionCommand = new AnonymousCommand(ServiceProvider, ExecuteAction) { IsEnabled = false };
+            ExecuteActionCommand = new AnonymousTaskCommand(ServiceProvider, ExecuteAction) { IsEnabled = false };
         }
 
 
@@ -93,20 +90,12 @@ namespace Stride.LauncherApp.ViewModels
         /// <inheritdoc/>
         protected override void UpdateInstallStatus()
         {
-            switch (CurrentProgressAction)
+            CurrentProcessStatus = CurrentProgressAction switch
             {
-                case ProgressAction.Download:
-                    CurrentProcessStatus = string.Format(Strings.ReportDownloadingVSIX, CurrentProgress);
-                    break;
-
-                case ProgressAction.Install:
-                    CurrentProcessStatus = string.Format(Strings.ReportInstallingVSIX, CurrentProgress);
-                    break;
-
-                case ProgressAction.Delete:
-                    CurrentProcessStatus = string.Format(Strings.ReportDeletingVersion, FullName, CurrentProgress);
-                    break;
-            }
+                ProgressAction.Download => CurrentProcessStatus = string.Format(Strings.ReportDownloadingVSIX, CurrentProgress),
+                ProgressAction.Install => CurrentProcessStatus = string.Format(Strings.ReportInstallingVSIX, CurrentProgress),
+                ProgressAction.Delete => CurrentProcessStatus = string.Format(Strings.ReportDeletingVersion, FullName, CurrentProgress)
+            };
         }
 
         /// <inheritdoc/>
@@ -130,11 +119,11 @@ namespace Stride.LauncherApp.ViewModels
                     IsProcessing = false;
                     await ServiceProvider.Get<IDialogService>().MessageBox(Strings.VSIXInstallSucessful, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     CurrentProcessStatus = checkingStatus;
                     IsProcessing = false;
-                    var message = $"{Strings.ErrorInstallingVSIX}{e.FormatSummary(true)}";
+                    var message = $"{Strings.ErrorInstallingVSIX}{ex.FormatSummary(true)}";
                     await ServiceProvider.Get<IDialogService>().MessageBox(message, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 UpdateStatus();

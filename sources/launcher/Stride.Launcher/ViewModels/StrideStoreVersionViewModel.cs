@@ -29,13 +29,13 @@ namespace Stride.LauncherApp.ViewModels
         private ReleaseNotesViewModel releaseNotes;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StrideStoreVersionViewModel"/>
+        ///   Initializes a new instance of the <see cref="StrideStoreVersionViewModel"/> class.
         /// </summary>
-        /// <param name="launcher"></param>
-        /// <param name="store"></param>
-        /// <param name="localPackage"></param>
-        /// <param name="major"></param>
-        /// <param name="minor"></param>
+        /// <param name="launcher">The launcher view model.</param>
+        /// <param name="store">The NuGet store from which this Stride version is obtained.</param>
+        /// <param name="localPackage">The NuGet local package from which this Stride version is obtained.</param>
+        /// <param name="major">Major number of the version of Stride.</param>
+        /// <param name="minor">Minor number of the version of Stride.</param>
         internal StrideStoreVersionViewModel(LauncherViewModel launcher, NugetStore store, NugetLocalPackage localPackage, string packageId, int major, int minor)
             : base(launcher, store, localPackage, packageId, major, minor)
         {
@@ -44,9 +44,26 @@ namespace Stride.LauncherApp.ViewModels
         }
 
         /// <summary>
-        /// Gets the full name of this version, including revision number and special revision string.
+        ///   Gets a value indicating whether the latest available package is from a remote repository (i.e. NuGet).
         /// </summary>
-        /// <remarks>If this version is installed, it will use the name of the installed version. Otherwise, it will use the name of the latest version available on the server.</remarks>
+        public bool IsLatestPackageRemote =>
+            (LatestServerPackage?.Source != null) &&
+            Uri.IsWellFormedUriString(LatestServerPackage.Source, UriKind.Absolute);
+
+        /// <summary>
+        ///   Gets a value indicating whether the latest available package is from a local repository (i.e. disk).
+        /// </summary>
+        public bool IsLatestPackageLocal =>
+            (LatestServerPackage?.Source != null) &&
+            Directory.Exists(LatestServerPackage.Source);
+
+        /// <summary>
+        ///   Gets the full name of this version, including the revision number and the special revision string.
+        /// </summary>
+        /// <remarks>
+        ///   If this version is installed, it will use the name of the installed version.
+        ///   Otherwise, it will use the name of the latest version available on the server.
+        /// </remarks>
         public override string FullName
         {
             get
@@ -59,30 +76,33 @@ namespace Stride.LauncherApp.ViewModels
         }
 
         /// <summary>
-        /// Gets the full name of this version on the server.
+        ///   Gets the full name of this version on the server.
         /// </summary>
         public string ServerVersionFullName => ServerPackage?.Version?.ToString() ?? "";
 
         public ObservableList<StrideStoreAlternateVersionViewModel> AlternateVersions { get; } = new ObservableList<StrideStoreAlternateVersionViewModel>();
 
         /// <summary>
-        /// Gets the release notes associated to this version.
+        ///   Gets the release notes associated to this version.
         /// </summary>
-        public ReleaseNotesViewModel ReleaseNotes { get { return releaseNotes; } private set { SetValue(ref releaseNotes, value); } }
+        public ReleaseNotesViewModel ReleaseNotes
+        {
+            get => releaseNotes;
+            private set => SetValue(ref releaseNotes, value);
+        }
 
         /// <summary>
-        /// Gets the collection of <see cref="DocumentationPageViewModel"/> associated with this version.
+        ///   Gets a collection of the documentation <see cref="DocumentationPageViewModel"/> associated with this version.
         /// </summary>
         public ObservableList<DocumentationPageViewModel> DocumentationPages { get; } = new ObservableList<DocumentationPageViewModel>();
 
         /// <summary>
-        /// Gets the full version of the local package if it exists, or the server package.
+        ///   Gets the full version of the local package if it exists, or the version of the server package.
         /// </summary>
-        /// <value>The version.</value>
-        public PackageVersion Version => LocalPackage != null ? LocalPackage.Version : ServerPackage?.Version;
+        public PackageVersion Version => LocalPackage?.Version ?? ServerPackage?.Version;
 
         /// <summary>
-        /// Updates the local package of this version.
+        ///   Updates the local package of this version.
         /// </summary>
         /// <param name="package">The local package corresponding to this version.</param>
         internal void UpdateLocalPackage(NugetLocalPackage package, IEnumerable<NugetLocalPackage> alternateVersions)
@@ -90,14 +110,17 @@ namespace Stride.LauncherApp.ViewModels
             OnPropertyChanging(nameof(FullName), nameof(Version));
             LocalPackage = package;
             OnPropertyChanged(nameof(FullName), nameof(Version));
+
             Dispatcher.Invoke(UpdateStatus);
+
             if (alternateVersions != null)
             {
                 Dispatcher.Invoke(() =>
                 {
                     UpdateAlternateVersions(alternateVersions, (alternateVersionViewModel, alternateVersion) =>
                     {
-                        if (alternateVersion == null && alternateVersionViewModel.ServerPackage == null)
+                        if (alternateVersion is null &&
+                            alternateVersionViewModel.ServerPackage is null)
                             AlternateVersions.Remove(alternateVersionViewModel);
                         else
                             alternateVersionViewModel.UpdateLocalPackage(alternateVersion);
@@ -108,7 +131,7 @@ namespace Stride.LauncherApp.ViewModels
         }
 
         /// <summary>
-        /// Updates the server package of this version.
+        ///   Updates the server package of this version.
         /// </summary>
         /// <param name="package">The server package corresponding to this version.</param>
         internal void UpdateServerPackage(NugetServerPackage package, IEnumerable<NugetServerPackage> alternateVersions)
@@ -118,16 +141,20 @@ namespace Stride.LauncherApp.ViewModels
             OnPropertyChanged(nameof(FullName), nameof(Version));
 
             // Always keep track of highest version
-            if (ServerPackage != null && (LatestServerPackage == null || LatestServerPackage.Version < ServerPackage.Version))
+            if (ServerPackage is not null && (LatestServerPackage is null || LatestServerPackage.Version < ServerPackage.Version))
+            {
+                OnPropertyChanging(nameof(IsLatestPackageRemote), nameof(IsLatestPackageLocal));
                 LatestServerPackage = ServerPackage;
+                OnPropertyChanged(nameof(IsLatestPackageRemote), nameof(IsLatestPackageLocal));
+            }
 
             Dispatcher.Invoke(UpdateStatus);
-            if (alternateVersions != null)
+            if (alternateVersions is not null)
             {
                 Dispatcher.Invoke(() =>
                     UpdateAlternateVersions(alternateVersions, (alternateVersionViewModel, alternateVersion) =>
                     {
-                        if (alternateVersion == null && alternateVersionViewModel.LocalPackage == null)
+                        if (alternateVersion is null && alternateVersionViewModel.LocalPackage is null)
                             AlternateVersions.Remove(alternateVersionViewModel);
                         else
                             alternateVersionViewModel.UpdateServerPackage(alternateVersion);
@@ -135,23 +162,25 @@ namespace Stride.LauncherApp.ViewModels
             }
         }
 
-        private void UpdateAlternateVersions<T>(IEnumerable<T> alternateVersions, Action<StrideStoreAlternateVersionViewModel, T> updateAction) where T : NugetPackage
+        private void UpdateAlternateVersions<T>(IEnumerable<T> alternateVersions, Action<StrideStoreAlternateVersionViewModel, T> updateAction)
+            where T : NugetPackage
         {
             var updatedViewModels = new HashSet<StrideStoreAlternateVersionViewModel>();
+
             foreach (var alternateVersion in alternateVersions)
             {
+                StrideStoreAlternateVersionViewModel alternateVersionViewModel;
 
                 int index = AlternateVersions.IndexOf(x => x.Version == alternateVersion.Version);
-                StrideStoreAlternateVersionViewModel alternateVersionViewModel;
                 if (index < 0)
                 {
-                    // If not, add it
+                    // If there is no alternate version, add it
                     alternateVersionViewModel = new StrideStoreAlternateVersionViewModel(this);
                     AlternateVersions.Add(alternateVersionViewModel);
                 }
                 else
                 {
-                    // If yes, update it and remove it from the list of old version
+                    // If the alternate version is found, update it and remove it from the list of old version
                     alternateVersionViewModel = AlternateVersions[index];
                 }
 
@@ -170,9 +199,7 @@ namespace Stride.LauncherApp.ViewModels
         {
             // Only used for older packages
             if (ServerPackage.Version.Version >= new Version(1, 11, 2, 0))
-            {
                 return;
-            }
 
             // Run prerequisites installer (if it exists)
             var prerequisitesInstaller = PrerequisitesInstaller;
@@ -194,7 +221,11 @@ namespace Stride.LauncherApp.ViewModels
                     {
                         // We'll enter this if UAC has been declined, but also if it timed out (which is a frequent case
                         // if you don't stay in front of your computer during the installation.
-                        var result = await ServiceProvider.Get<IDialogService>().MessageBox("The installation of prerequisites has been canceled by user or failed to run. Do you want to run it again?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                        var result = await ServiceProvider.Get<IDialogService>().MessageBox(
+                            "The installation of prerequisites has been canceled by user or failed to run. Do you want to run it again?",
+                            MessageBoxButton.YesNoCancel,
+                            MessageBoxImage.Question);
+
                         if (result != MessageBoxResult.Yes)
                             break;
                     }
@@ -218,6 +249,7 @@ namespace Stride.LauncherApp.ViewModels
         protected override void UpdateStatus()
         {
             base.UpdateStatus();
+
             OnPropertyChanging(nameof(ServerVersionFullName));
             OnPropertyChanged(nameof(ServerVersionFullName));
         }
@@ -225,24 +257,19 @@ namespace Stride.LauncherApp.ViewModels
         /// <inheritdoc/>
         protected override void UpdateInstallStatus()
         {
-            switch (CurrentProgressAction)
+            CurrentProcessStatus = CurrentProgressAction switch
             {
-                case ProgressAction.Download:
-                    CurrentProcessStatus = string.Format(Strings.ReportDownloadingVersion, ServerVersionFullName, CurrentProgress);
-                    break;
-                case ProgressAction.Install:
-                    CurrentProcessStatus = string.Format(Strings.ReportInstallingVersion, ServerVersionFullName, CurrentProgress);
-                    break;
-                case ProgressAction.Delete:
-                    CurrentProcessStatus = string.Format(Strings.ReportDeletingVersion, FullName, CurrentProgress);
-                    break;
-            }
+                ProgressAction.Download => string.Format(Strings.ReportDownloadingVersion, ServerVersionFullName, CurrentProgress),
+                ProgressAction.Install => string.Format(Strings.ReportInstallingVersion, ServerVersionFullName, CurrentProgress),
+                ProgressAction.Delete => string.Format(Strings.ReportDeletingVersion, FullName, CurrentProgress)
+            };
         }
 
         /// <inheritdoc/>
         protected override void BeforeDownload()
         {
             base.BeforeDownload();
+
             ReleaseNotes.Show();
         }
 
@@ -250,13 +277,14 @@ namespace Stride.LauncherApp.ViewModels
         protected override void AfterDownload()
         {
             base.AfterDownload();
+
             RunPrerequisitesInstaller().Forget();
 
             Launcher.ActiveVersion = this;
         }
 
         /// <summary>
-        /// Fetches the documentation pages corresponding to this version from the server.
+        ///   Fetches the documentation pages corresponding to this version from the server.
         /// </summary>
         internal async void FetchDocumentation()
         {

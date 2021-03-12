@@ -2,7 +2,7 @@
   <Import Project="..\..\targets\Stride.Core.props" />
   <PropertyGroup>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <TargetFrameworks>$(StrideEditorTargetFrameworks)</TargetFrameworks>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
     <UseWPF>true</UseWPF>

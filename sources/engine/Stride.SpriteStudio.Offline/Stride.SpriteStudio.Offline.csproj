@@ -5,7 +5,7 @@
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--serialization --parameter-key</StrideAssemblyProcessorOptions>
     <StridePackAssets>true</StridePackAssets>
-    <TargetFrameworks>$(StrideEditorTargetFrameworks)</TargetFrameworks>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyTitle>Stride Importer and Compiler for SpriteStudio Animations</AssemblyTitle>
