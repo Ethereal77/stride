@@ -15,7 +15,7 @@ using Stride.Rendering.Materials;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    ///   Represents a default bundle of <see cref="ImageEffect"/> for post-processing.
+    ///   Represents the default bundle of <see cref="ImageEffect"/>s for post-processing.
     /// </summary>
     [DataContract("PostProcessingEffects")]
     [Display("Post-processing effects")]
@@ -27,20 +27,23 @@ namespace Stride.Rendering.Images
         private ImageEffectShader rangeCompress;
         private ImageEffectShader rangeDecompress;
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="PostProcessingEffects" /> class.
+        ///   Initializes a new instance of the <see cref="PostProcessingEffects" /> class.
         /// </summary>
         /// <param name="services">The services.</param>
         public PostProcessingEffects(IServiceRegistry services)
             : this(RenderContext.GetShared(services))
-        {
-        }
+        { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PostProcessingEffects"/> class.
+        ///   Initializes a new instance of the <see cref="PostProcessingEffects"/> class.
         /// </summary>
         public PostProcessingEffects()
         {
+            Outline = new Outline { Enabled = false };
+            Fog = new Fog { Enabled = false };
+
             AmbientOcclusion = new AmbientOcclusion();
             LocalReflections = new LocalReflections();
             DepthOfField = new DepthOfField();
@@ -56,14 +59,14 @@ namespace Stride.Rendering.Images
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PostProcessingEffects"/> class.
+        ///   Initializes a new instance of the <see cref="PostProcessingEffects"/> class.
         /// </summary>
         /// <param name="context">The context.</param>
-        public PostProcessingEffects(RenderContext context)
-            : this()
+        public PostProcessingEffects(RenderContext context) : this()
         {
             Initialize(context);
         }
+
 
         /// <inheritdoc/>
         [DataMember(-100), Display(Browsable = false)]
@@ -71,48 +74,60 @@ namespace Stride.Rendering.Images
         public Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
-        /// Gets the ambient occlusion effect.
+        ///   Gets the outline effect.
+        /// </summary>
+        [DataMember(6)]
+        [Category]
+        public Outline Outline { get; private set; }
+
+        /// <summary>
+        ///   Gets the fog effect.
+        /// </summary>
+        [DataMember(7)]
+        [Category]
+        public Fog Fog { get; private set; }
+
+        /// <summary>
+        ///   Gets the ambient occlusion effect.
         /// </summary>
         /// <userdoc>
-        /// Darkens areas where light is occluded by opaque objects, such as corners and crevices
+        ///   Darkens areas where light is occluded by opaque objects, such as corners and crevices.
         /// </userdoc>
         [DataMember(8)]
         [Category]
         public AmbientOcclusion AmbientOcclusion { get; private set; }
 
         /// <summary>
-        /// Gets the local reflections effect.
+        ///   Gets the local reflections effect.
         /// </summary>
-        /// <value>The local reflection technique.</value>
-        /// <userdoc>Reflect the scene in glossy materials</userdoc>
+        /// <userdoc>Reflect the scene in glossy materials.</userdoc>
         [DataMember(9)]
         [Category]
         public LocalReflections LocalReflections { get; private set; }
 
         /// <summary>
-        /// Gets the depth of field effect.
+        ///   Gets the depth of field effect.
         /// </summary>
-        /// <value>The depth of field.</value>
-        /// <userdoc>Accentuate regions of the image by blurring objects in the foreground or background</userdoc>
+        /// <userdoc>Accentuate regions of the image by blurring objects in the foreground or background.</userdoc>
         [DataMember(10)]
         [Category]
         public DepthOfField DepthOfField { get; private set; }
 
         /// <summary>
-        /// Gets the bright pass-filter.
+        ///   Gets the bright pass-filter.
         /// </summary>
-        /// <value>The bright filter.</value>
-        /// <userdoc>The bright filter isn't an effect by itself;
-        /// it extracts the brightest areas of the image and gives it to effects that use it (eg bloom, light streaks, lens flares).</userdoc>
+        /// <userdoc>
+        ///   The bright filter isn't an effect by itself;
+        ///   it extracts the brightest areas of the image and gives it to effects that use it (eg bloom, light streaks, lens flares).
+        /// </userdoc>
         [DataMember(20)]
         [Category]
         public BrightFilter BrightFilter { get; private set; }
 
         /// <summary>
-        /// Gets the bloom effect.
+        ///   Gets the bloom effect.
         /// </summary>
-        /// <value>The bloom.</value>
-        /// <userdoc>Bleed bright areas into surrounding areas</userdoc>
+        /// <userdoc>Bleed bright areas into surrounding areas.</userdoc>
         [DataMember(30)]
         [Category]
         public Bloom Bloom { get; private set; }
@@ -120,44 +135,44 @@ namespace Stride.Rendering.Images
         /// <summary>
         /// Gets the light streak effect.
         /// </summary>
-        /// <value>The light streak.</value>
-        /// <userdoc>Bleed bright points along streaks</userdoc>
+        /// <userdoc>Bleed bright points along streaks.</userdoc>
         [DataMember(40)]
         [Category]
         public LightStreak LightStreak { get; private set; }
 
         /// <summary>
-        /// Gets the lens flare effect.
+        ///   Gets the lens flare effect.
         /// </summary>
-        /// <value>The lens flare.</value>
-        /// <userdoc>Simulate artifacts produced by the internal reflection or scattering of light within camera lenses</userdoc>
+        /// <userdoc>Simulate artifacts produced by the internal reflection or scattering of light within camera lenses.</userdoc>
         [DataMember(50)]
         [Category]
         public LensFlare LensFlare { get; private set; }
 
         /// <summary>
-        /// Gets the final color transforms.
+        ///   Gets the final color transforms.
         /// </summary>
         /// <value>The color transforms.</value>
-        /// <userdoc>Perform a transformation onto the image colors</userdoc>
+        /// <userdoc>Perform a transformation of the image colors.</userdoc>
         [DataMember(70)]
         [Category]
         public ColorTransformGroup ColorTransforms => colorTransformsGroup;
 
         /// <summary>
-        /// Gets the antialiasing effect.
+        ///   Gets the antialiasing effect.
         /// </summary>
-        /// <value>The antialiasing.</value>
-        /// <userdoc>Perform anti-aliasing filtering, smoothing the jagged edges of models</userdoc>
+        /// <userdoc>Perform anti-aliasing filtering, smoothing the jagged edges of models.</userdoc>
         [DataMember(80)]
         [Display("Type", "Antialiasing")]
         public IScreenSpaceAntiAliasingEffect Antialiasing { get; set; } // TODO: Unload previous anti aliasing
 
+
         /// <summary>
-        /// Disables all post processing effects.
+        ///   Disables all post processing effects.
         /// </summary>
         public void DisableAll()
         {
+            Outline.Enabled = false;
+            Fog.Enabled = false;
             AmbientOcclusion.Enabled = false;
             LocalReflections.Enabled = false;
             DepthOfField.Enabled = false;
@@ -183,6 +198,8 @@ namespace Stride.Rendering.Images
         {
             base.InitializeCore();
 
+            Outline = ToLoadAndUnload(Outline);
+            Fog = ToLoadAndUnload(Fog);
             AmbientOcclusion = ToLoadAndUnload(AmbientOcclusion);
             LocalReflections = ToLoadAndUnload(LocalReflections);
             DepthOfField = ToLoadAndUnload(DepthOfField);
@@ -191,8 +208,9 @@ namespace Stride.Rendering.Images
             Bloom = ToLoadAndUnload(Bloom);
             LightStreak = ToLoadAndUnload(LightStreak);
             LensFlare = ToLoadAndUnload(LensFlare);
-            //this can be null if no SSAA is selected in the editor
-            if (Antialiasing != null) Antialiasing = ToLoadAndUnload(Antialiasing);
+            // This can be null if no SSAA is selected in the editor
+            if (Antialiasing is not null)
+                Antialiasing = ToLoadAndUnload(Antialiasing);
 
             rangeCompress = ToLoadAndUnload(rangeCompress);
             rangeDecompress = ToLoadAndUnload(rangeDecompress);
@@ -200,9 +218,7 @@ namespace Stride.Rendering.Images
             colorTransformsGroup = ToLoadAndUnload(colorTransformsGroup);
         }
 
-        public void Collect(RenderContext context)
-        {
-        }
+        public void Collect(RenderContext context) { }
 
         public void Draw(RenderDrawContext drawContext, RenderOutputValidator outputValidator, Texture[] inputs, Texture inputDepthStencil, Texture outputTarget)
         {
@@ -253,10 +269,8 @@ namespace Stride.Rendering.Images
         {
             var input = GetInput(0);
             var output = GetOutput(0);
-            if (input == null || output == null)
-            {
+            if (input is null || output is null)
                 return;
-            }
 
             var inputDepthTexture = GetInput(1); // Depth
 
@@ -272,7 +286,7 @@ namespace Stride.Rendering.Images
                 return;
             }
 
-            // If input == output, than copy the input to a temporary texture
+            // If input == output, copy the input to a temporary texture
             if (input == output)
             {
                 var newInput = NewScopedRenderTarget2D(input.Width, input.Height, input.Format);
@@ -282,11 +296,22 @@ namespace Stride.Rendering.Images
 
             var currentInput = input;
 
+            // Draw outline before AA
+            if (Outline.Enabled && inputDepthTexture != null)
+            {
+                // Outline
+                var outlineOutput = NewScopedRenderTarget2D(input.Width, input.Height, input.Format);
+                Outline.SetColorDepthInput(currentInput, inputDepthTexture, context.RenderContext.RenderView.NearClipPlane, context.RenderContext.RenderView.FarClipPlane);
+                Outline.SetOutput(outlineOutput);
+                Outline.Draw(context);
+                currentInput = outlineOutput;
+            }
+
             var fxaa = Antialiasing as FXAAEffect;
             bool aaFirst = Bloom != null && Bloom.StableConvolution;
             bool needAA = Antialiasing != null && Antialiasing.Enabled;
 
-            // do AA here, first. (hybrid method from Karis2013)
+            // Do AA here, first. (hybrid method from Karis2013)
             if (aaFirst && needAA)
             {
                 // do AA:
@@ -306,18 +331,21 @@ namespace Stride.Rendering.Images
                 var aaSurface = NewScopedRenderTarget2D(input.Width, input.Height, input.Format);
                 if (Antialiasing.NeedRangeDecompress)
                 {
-                    // explanation:
-                    // The Karis method (Unreal Engine 4.1x), uses a hybrid pipeline to execute AA.
-                    // The AA is usually done at the end of the pipeline, but we don't benefit from
-                    // AA for the posteffects, which is a shame.
-                    // The Karis method, executes AA at the beginning, but for AA to be correct, it must work post tonemapping,
-                    // and even more in fact, in gamma space too. Plus, it waits for the alpha=luma to be a "perceptive luma" so also gamma space.
-                    // in our case, working in gamma space created monstruous outlining artefacts around eggageratedely strong constrasted objects (way in hdr range).
-                    // so AA works in linear space, but still with gamma luma, as a light tradeoff to supress artefacts.
+                    // Explanation:
+                    //   The Karis method (Unreal Engine 4.1x), uses a hybrid pipeline to execute AA.
+                    //   The AA is usually done at the end of the pipeline, but we don't benefit from
+                    //   AA for the posteffects, which is a shame.
+                    //   The Karis method, executes AA at the beginning, but for AA to be correct, it
+                    //   must work post tonemapping, and even more in fact, in gamma space too. Plus,
+                    //   it waits for the alpha=luma to be a "perceptive luma" so also gamma space.
+                    //   In our case, working in gamma space created monstruous outlining artefacts
+                    //   around exageratedly strong constrasted objects (way in HDR range).
+                    //   So AA works in linear space, but still with gamma luma, as a light tradeoff
+                    //   to supress artefacts.
 
-                    // create a 16 bits target for FXAA:
+                    // Create a 16 bits target for FXAA:
 
-                    // render range compression & perceptual luma to alpha channel:
+                    // Render range compression & perceptual luma to alpha channel:
                     rangeCompress.SetInput(currentInput);
                     rangeCompress.SetOutput(aaSurface);
                     rangeCompress.Draw(context);
@@ -326,7 +354,7 @@ namespace Stride.Rendering.Images
                     Antialiasing.SetOutput(currentInput);
                     Antialiasing.Draw(context);
 
-                    // reverse tone LDR to HDR:
+                    // Reverse tone LDR to HDR:
                     rangeDecompress.SetInput(currentInput);
                     rangeDecompress.SetOutput(aaSurface);
                     rangeDecompress.Draw(context);
@@ -377,6 +405,16 @@ namespace Stride.Rendering.Images
                 currentInput = dofOutput;
             }
 
+            if (Fog.Enabled && inputDepthTexture != null)
+            {
+                // Fog
+                var fogOutput = NewScopedRenderTarget2D(input.Width, input.Height, input.Format);
+                Fog.SetColorDepthInput(currentInput, inputDepthTexture, context.RenderContext.RenderView.NearClipPlane, context.RenderContext.RenderView.FarClipPlane);
+                Fog.SetOutput(fogOutput);
+                Fog.Draw(context);
+                currentInput = fogOutput;
+            }
+
             // Luminance pass (only if tone mapping is enabled)
             // TODO: This is not super pluggable to have this kind of dependencies. Check how to improve this
             var toneMap = colorTransformsGroup.Transforms.Get<ToneMap>();
@@ -408,6 +446,7 @@ namespace Stride.Rendering.Images
             if (BrightFilter.Enabled && (Bloom.Enabled || LightStreak.Enabled || LensFlare.Enabled))
             {
                 Texture brightTexture = NewScopedRenderTarget2D(currentInput.Width, currentInput.Height, currentInput.Format, 1);
+
                 // Bright filter pass
 
                 BrightFilter.SetInput(currentInput);
@@ -446,7 +485,7 @@ namespace Stride.Rendering.Images
             var luminanceToChannelTransform = colorTransformsGroup.PostTransforms.Get<LuminanceToChannelTransform>();
             if (fxaa != null)
             {
-                if (luminanceToChannelTransform == null)
+                if (luminanceToChannelTransform is null)
                 {
                     luminanceToChannelTransform = new LuminanceToChannelTransform { ColorChannel = ColorChannel.A };
                     colorTransformsGroup.PostTransforms.Add(luminanceToChannelTransform);
@@ -461,12 +500,12 @@ namespace Stride.Rendering.Images
             }
 
             // Color transform group pass (tonemap, color grading)
-            var lastEffect = colorTransformsGroup.Enabled ? (ImageEffect)colorTransformsGroup : Scaler;
+            var lastEffect = colorTransformsGroup.Enabled ? (ImageEffect) colorTransformsGroup : Scaler;
             lastEffect.SetInput(currentInput);
             lastEffect.SetOutput(toneOutput);
             lastEffect.Draw(context);
 
-            // do AA here, last, if not already done.
+            // Do AA here, last, if not already done.
             if (aaLast)
             {
                 Antialiasing.SetInput(toneOutput);

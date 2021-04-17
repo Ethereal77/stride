@@ -5,13 +5,12 @@
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Base class for a <see cref="ColorTransformBase"/> to be used in a <see cref="ColorTransformGroup"/>.
+    ///   Represents the base class for a color transform to be used in a <see cref="ColorTransformGroup"/>.
     /// </summary>
     public abstract class ColorTransform : ColorTransformBase
     {
         protected ColorTransform(string colorTransformShader)
             : base(colorTransformShader)
-        {
-        }
+        { }
     }
 }

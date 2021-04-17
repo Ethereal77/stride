@@ -105,35 +105,45 @@
          so that top-level folder contains default libraries and "RuntimeCopyLocalItems" target works properly -->
     <ItemGroup Condition="'$(StrideGraphicsApi)' == '$(StrideDefaultGraphicsApi)'">
       <SatelliteDllsProjectOutputGroupOutput Include="@(SatelliteDllsProjectOutputGroupOutput)">
+        <TargetPath Condition="'%(SatelliteDllsProjectOutputGroupOutput.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(SatelliteDllsProjectOutputGroupOutput.TargetPath)</TargetPath>
       </SatelliteDllsProjectOutputGroupOutput>
       <BuiltProjectOutputGroupOutput Include="@(BuiltProjectOutputGroupOutput)">
+        <TargetPath Condition="'%(BuiltProjectOutputGroupOutput.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(BuiltProjectOutputGroupOutput.TargetPath)</TargetPath>
       </BuiltProjectOutputGroupOutput>
       <DocumentationProjectOutputGroupOutput Include="@(DocumentationProjectOutputGroupOutput)">
+        <TargetPath Condition="'%(DocumentationProjectOutputGroupOutput.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(DocumentationProjectOutputGroupOutput.TargetPath)</TargetPath>
       </DocumentationProjectOutputGroupOutput>
       <_PathToPriFile Include="@(_PathToPriFile)">
+        <TargetPath Condition="'%(_PathToPriFile.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(_PathToPriFile.TargetPath)</TargetPath>
       </_PathToPriFile>
       <BuildOutputInPackage Include="@(BuildOutputInPackage)">
+        <TargetPath Condition="'%(BuildOutputInPackage.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(BuildOutputInPackage.TargetPath)</TargetPath>
       </BuildOutputInPackage>
     </ItemGroup>
     <ItemGroup Condition="'$(StrideGraphicsApi)' != '$(StrideDefaultGraphicsApi)'">
       <SatelliteDllsProjectOutputGroupOutput Update="@(SatelliteDllsProjectOutputGroupOutput)">
+        <TargetPath Condition="'%(SatelliteDllsProjectOutputGroupOutput.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(SatelliteDllsProjectOutputGroupOutput.TargetPath)</TargetPath>
       </SatelliteDllsProjectOutputGroupOutput>
       <BuiltProjectOutputGroupOutput Update="@(BuiltProjectOutputGroupOutput)">
+        <TargetPath Condition="'%(BuiltProjectOutputGroupOutput.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(BuiltProjectOutputGroupOutput.TargetPath)</TargetPath>
       </BuiltProjectOutputGroupOutput>
       <DocumentationProjectOutputGroupOutput Update="@(DocumentationProjectOutputGroupOutput)">
+        <TargetPath Condition="'%(DocumentationProjectOutputGroupOutput.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(DocumentationProjectOutputGroupOutput.TargetPath)</TargetPath>
       </DocumentationProjectOutputGroupOutput>
       <_PathToPriFile Update="@(_PathToPriFile)">
+        <TargetPath Condition="'%(_PathToPriFile.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(_PathToPriFile.TargetPath)</TargetPath>
       </_PathToPriFile>
       <BuildOutputInPackage Update="@(BuildOutputInPackage)">
+        <TargetPath Condition="'%(BuildOutputInPackage.TargetPath)' == ''">%(FileName)%(Extension)</TargetPath>
         <TargetPath>$(StrideGraphicsApi)\%(BuildOutputInPackage.TargetPath)</TargetPath>
       </BuildOutputInPackage>
     </ItemGroup>

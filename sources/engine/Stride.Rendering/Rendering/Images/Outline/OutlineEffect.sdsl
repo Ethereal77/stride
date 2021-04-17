@@ -1,0 +1,73 @@
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+namespace Stride.Rendering.Images
+{
+    /// <summary>
+    ///   Depth-based post-processing effect to render an outline for objects.
+    /// </summary>
+    internal shader OutlineEffect : ImageEffectShader
+    {
+        stage float2 ScreenDiffs;  // .x = Width, .y = Height
+
+        stage float zFar;
+        stage float zNear;
+
+        stage float NormalWeight;
+        stage float DepthWeight;
+        stage float NormalNearCutoff;
+
+        stage Texture2D DepthTexture;
+
+        float3 NormalFromDepth(float depth, float2 texcoords)
+        {
+          const float2 offset1 = float2(0, ScreenDiffs.y);
+          const float2 offset2 = float2(ScreenDiffs.x, 0);
+
+          float depth1 = DepthTexture.SampleLevel(PointSampler, texcoords + offset1, 0).x;
+          float depth2 = DepthTexture.SampleLevel(PointSampler, texcoords + offset2, 0).x;
+
+          float3 p1 = float3(offset1, depth1 - depth);
+          float3 p2 = float3(offset2, depth2 - depth);
+
+          float3 normal = cross(p1, p2);
+          normal.z = -normal.z;
+
+          return normalize(normal);
+        }
+
+        float4 FetchNormalDepth(float2 texcoords)
+        {
+            float z_b = DepthTexture.SampleLevel(PointSampler, texcoords, 0).x;
+            float z_n = 2 * z_b - 1;
+            float linearDepth = 2 * zNear * zFar / (zFar + zNear - z_n * (zFar - zNear));
+
+            // Linear depth
+            float4 normalDepth;
+            normalDepth.w = DepthWeight * linearDepth;
+
+            // Normal, but skip if really close
+            normalDepth.xyz = step(NormalNearCutoff, linearDepth) * NormalFromDepth(z_b, texcoords) * NormalWeight;
+
+            return normalDepth;
+        }
+
+        stage override float4 Shading()
+        {
+            float4 color = Texture0.Sample(PointSampler, streams.TexCoord);
+
+            float4 n1 = FetchNormalDepth(streams.TexCoord + float2(-ScreenDiffs.x, -ScreenDiffs.y));
+            float4 n2 = FetchNormalDepth(streams.TexCoord + float2( ScreenDiffs.x,  ScreenDiffs.y));
+            float4 n3 = FetchNormalDepth(streams.TexCoord + float2(-ScreenDiffs.x,  ScreenDiffs.y));
+            float4 n4 = FetchNormalDepth(streams.TexCoord + float2( ScreenDiffs.x, -ScreenDiffs.y));
+
+            // Work out how much the normal and depth values are changing
+            float4 diagonalDelta = abs(n1 - n2) + abs(n3 - n4);
+
+            float normalDelta = dot(diagonalDelta.xyz, float3(1, 1, 1));
+            float totalDelta = diagonalDelta.w + normalDelta * 0.4;
+
+            return float4(color.xyz * (1 - clamp(totalDelta, 0, 1)), 1);
+        }
+    };
+}

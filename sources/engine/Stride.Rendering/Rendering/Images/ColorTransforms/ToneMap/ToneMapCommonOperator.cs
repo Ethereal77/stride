@@ -9,50 +9,38 @@ using Stride.Core;
 namespace Stride.Rendering.Images
 {
     /// <summary>
-    /// Base operator shared by Reinhard, Drago, Exponential and Logarithmic.
+    ///   Represents the common tonemapping properties shared by <see cref="ToneMapReinhardOperator"/>,
+    ///   <see cref="ToneMapDragoOperator"/>, <see cref="ToneMapExponentialOperator"/>,
+    ///   <see cref="ToneMapLogarithmicOperator"/>, and <see cref="ToneMapACESOperator"/>.
     /// </summary>
     [DataContract]
     public abstract class ToneMapCommonOperator : ToneMapOperator
     {
-        protected ToneMapCommonOperator(string effectName)
-            : base(effectName)
-        {
-        }
+        protected ToneMapCommonOperator(string effectName) : base(effectName) { }
+
 
         /// <summary>
-        /// Gets or sets the luminance saturation.
+        ///   Gets or sets the luminance saturation.
         /// </summary>
         /// <value>The luminance saturation.</value>
         [DataMember(5)]
-        [DefaultValue(1f)]
+        [DefaultValue(1.0f)]
         public float LuminanceSaturation
         {
-            get
-            {
-                return Parameters.Get(ToneMapCommonOperatorShaderKeys.LuminanceSaturation);
-            }
-            set
-            {
-                Parameters.Set(ToneMapCommonOperatorShaderKeys.LuminanceSaturation, value);
-            }
+            get => Parameters.Get(ToneMapCommonOperatorShaderKeys.LuminanceSaturation);
+            set => Parameters.Set(ToneMapCommonOperatorShaderKeys.LuminanceSaturation, value);
         }
 
         /// <summary>
-        /// Gets or sets the white level.
+        ///   Gets or sets the white level.
         /// </summary>
         /// <value>The white level.</value>
         [DataMember(8)]
-        [DefaultValue(5f)]
+        [DefaultValue(5.0f)]
         public float WhiteLevel
         {
-            get
-            {
-                return Parameters.Get(ToneMapCommonOperatorShaderKeys.WhiteLevel);
-            }
-            set
-            {
-                Parameters.Set(ToneMapCommonOperatorShaderKeys.WhiteLevel, value);
-            }
+            get => Parameters.Get(ToneMapCommonOperatorShaderKeys.WhiteLevel);
+            set => Parameters.Set(ToneMapCommonOperatorShaderKeys.WhiteLevel, value);
         }
     }
 }

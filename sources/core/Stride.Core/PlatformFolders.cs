@@ -122,9 +122,9 @@ namespace Stride.Core
         private static string GetApplicationTemporaryDirectory() => Path.GetTempPath();
 
         [NotNull]
-        private static string GetApplicationBinaryDirectory() => FindCoreAssemblyDirectory(GetApplicationExecutableDiretory());
+        private static string GetApplicationBinaryDirectory() => FindCoreAssemblyDirectory(GetApplicationExecutableDirectory());
 
-        private static string GetApplicationExecutableDiretory()
+        private static string GetApplicationExecutableDirectory()
         {
             var executableName = GetApplicationExecutablePath();
             if (!string.IsNullOrEmpty(executableName))
@@ -133,7 +133,7 @@ namespace Stride.Core
             return AppContext.BaseDirectory;
         }
 
-        static string FindCoreAssemblyDirectory(string entryDirectory)
+        private static string FindCoreAssemblyDirectory(string entryDirectory)
         {
             // Simple case
             var corePath = Path.Combine(entryDirectory, "Stride.Core.dll");
