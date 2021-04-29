@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <Import Project="Sdk.props" Condition="'$(StrideNuGetLoaderWindowsDesktop)' != 'true'" Sdk="Microsoft.NET.Sdk" />
   <Import Project="Sdk.props" Condition="'$(StrideNuGetLoaderWindowsDesktop)' == 'true'" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
 
@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Stride.NuGet.PackageManagement" Version="5.8.0" />
+    <PackageReference Include="NuGet.PackageManagement" Version="5.9.1" />
   </ItemGroup>
 
   <ItemGroup>
