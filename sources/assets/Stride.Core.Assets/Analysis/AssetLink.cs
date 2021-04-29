@@ -4,65 +4,68 @@
 
 using System;
 
-using Stride.Core.Serialization;
 using Stride.Core.Serialization.Contents;
 
 namespace Stride.Core.Assets.Analysis
 {
     /// <summary>
-    /// Represent a link between Assets.
+    ///   Represents a link between <see cref="Asset"/>s.
     /// </summary>
     public struct AssetLink : IContentLink
     {
         /// <summary>
-        /// The asset item pointed by the dependency.
+        ///   The asset item pointed by the dependency.
         /// </summary>
         public readonly AssetItem Item;
+        private readonly IReference assetReference;
 
-        private ContentLinkType type;
-
-        private readonly IReference reference;
 
         /// <summary>
-        /// Create an asset dependency of type <paramref name="type"/> and pointing to <paramref name="item"/>
+        ///   Create an asset dependency of a specified <paramref name="type"/> pointing to an asset <paramref name="item"/>.
         /// </summary>
-        /// <param name="item">The item the dependency is pointing to</param>
-        /// <param name="type">The type of the dependency between the items</param>
+        /// <param name="item">The item the dependency is pointing to.</param>
+        /// <param name="type">The type of the dependency between the items.</param>
         public AssetLink(AssetItem item, ContentLinkType type)
         {
-            if (item == null) throw new ArgumentNullException("item");
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
 
             Item = item;
-            this.type = type;
-            reference = item.ToReference();
+            Type = type;
+            assetReference = item.ToReference();
         }
 
-        // This constructor exists for better factorization of code in AssetDependencies. 
+        //
+        // This constructor exists for better factorization of code in AssetDependencies.
         // It should not be turned into public as AssetItem is not valid.
+        //
         internal AssetLink(IReference reference, ContentLinkType type)
         {
-            if (reference == null) throw new ArgumentNullException("reference");
-
             Item = null;
-            this.type = type;
-            this.reference = reference;
+            Type = type;
+            assetReference = reference ?? throw new ArgumentNullException(nameof(reference));
         }
 
-        public ContentLinkType Type
-        {
-            get { return type; }
-            set { type = value; }
-        }
-
-        public IReference Element { get { return reference; } }
 
         /// <summary>
-        /// Gets a clone copy of the asset dependency.
+        ///   Gets or sets the type of the dependency for the referenced <see cref="Element"/>.
         /// </summary>
-        /// <returns>the clone instance</returns>
-        public AssetLink Clone()
-        {
-            return new AssetLink(Item.Clone(true), Type);
-        }
+        /// <value>
+        ///   One or more of the values of <see cref="ContentLinkType"/> representing the type of link
+        ///   for the referenced asset.
+        /// </value>
+        public ContentLinkType Type { get; set; }
+
+        /// <summary>
+        ///   Gets the reference to the element at the opposite side of the link.
+        /// </summary>
+        public IReference Element => assetReference;
+
+
+        /// <summary>
+        ///   Gets a copy of the asset dependency.
+        /// </summary>
+        /// <returns>The cloned asset link.</returns>
+        public AssetLink Clone() => new(Item.Clone(keepPackage: true), Type);
     }
 }

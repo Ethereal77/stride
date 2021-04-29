@@ -324,7 +324,7 @@ namespace Stride.Engine
                 }
 
                 // Filter using ExecutionMode
-                if (ExecutionMode.HasFlag(processorAttributeType.ExecutionMode))
+                if ((ExecutionMode & processorAttributeType.ExecutionMode) != 0)
                 {
                     // Make sure that we are adding a processor of the specified type only if it is not already in the list or pending
 
@@ -353,7 +353,7 @@ namespace Stride.Engine
                         // If not found, we can add this processor
                         if (addNewProcessor)
                         {
-                            var processor = (EntityProcessor)Activator.CreateInstance(processorType);
+                            var processor = (EntityProcessor) Activator.CreateInstance(processorType);
                             pendingProcessors.Add(processor);
 
                             // Collect dependencies

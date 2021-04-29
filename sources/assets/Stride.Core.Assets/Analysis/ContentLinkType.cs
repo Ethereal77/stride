@@ -7,19 +7,19 @@ using System;
 namespace Stride.Core.Assets.Analysis
 {
     /// <summary>
-    /// The different possible types of link between elements.
+    ///   Defines flags to mark the different types of links between content elements.
     /// </summary>
     [Flags]
     public enum ContentLinkType
     {
         /// <summary>
-        /// A simple reference to the asset.
+        ///   A simple reference to an <see cref="Asset"/>.
         /// </summary>
         Reference = 1,
 
         /// <summary>
-        /// All type of links.
+        ///   Represents every possible type of link.
         /// </summary>
-        All = Reference,
+        All = Reference
     }
 }

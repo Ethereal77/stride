@@ -129,7 +129,7 @@ namespace Stride.Core.Assets.Analysis
         ///   Initializes this instance of <see cref="AssetDependencyManager"/> to analyze and track the packages of a session.
         /// </summary>
         /// <remarks>
-        ///   Until this method is call to initialize the <see cref="AssetDependencyManager"/>, all public methods may block.
+        ///   Until this method is called to initialize the <see cref="AssetDependencyManager"/>, all public methods may block.
         /// </remarks>
         private object Initialize()
         {
