@@ -23,6 +23,7 @@ namespace Stride.Engine
     {
         private readonly Entity entity;
 
+
         public EntityComponentCollection() { }
 
         internal EntityComponentCollection(Entity entity)
@@ -30,11 +31,13 @@ namespace Stride.Engine
             this.entity = entity;
         }
 
+
         /// <summary>
         ///   This property is only used when merging.
         /// </summary>
         // NOTE: This property set to true internally in some very rare case (merging)
-        internal bool AllowReplaceForeignEntity { get; set; }
+        internal static bool AllowReplaceForeignEntity { get; set; }
+
 
         /// <summary>
         ///   Gets the first component of the specified type or derived type.
@@ -147,6 +150,7 @@ namespace Stride.Engine
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClearItems()
         {
             for (int index = Count - 1; index >= 0; index--)
@@ -155,6 +159,7 @@ namespace Stride.Engine
             base.ClearItems();
         }
 
+        /// <inheritdoc/>
         protected override void InsertItem(int index, EntityComponent item)
         {
             ValidateItem(index, item, isReplacing: false);
@@ -165,6 +170,7 @@ namespace Stride.Engine
             entity?.OnComponentChanged(index, oldComponent: null, newComponent: item);
         }
 
+        /// <inheritdoc/>
         protected override void RemoveItem(int index)
         {
             var item = this[index];
@@ -180,6 +186,7 @@ namespace Stride.Engine
             entity?.OnComponentChanged(index, oldComponent: item, newComponent: null);
         }
 
+        /// <inheritdoc/>
         protected override void SetItem(int index, EntityComponent item)
         {
             var oldItem = ValidateItem(index, item, isReplacing: true);
@@ -194,12 +201,15 @@ namespace Stride.Engine
             entity?.OnComponentChanged(index, oldItem, item);
         }
 
-        private EntityComponent ValidateItem(int index, EntityComponent item, bool isReplacing)
+        //
+        // Checks whether a Component is valid for adding to the Entity.
+        //
+        private EntityComponent ValidateItem(int index, EntityComponent component, bool isReplacing)
         {
-            if (item is null)
-                throw new ArgumentNullException(nameof(item), @"Cannot add a null component to the Entity.");
+            if (component is null)
+                throw new ArgumentNullException(nameof(component), @"Cannot add a null Component to the Entity.");
 
-            var componentType = item.GetType();
+            var componentType = component.GetType();
             var attributes = EntityComponentAttributes.Get(componentType);
 
             var onlySingleComponent = !attributes.AllowMultipleComponents;
@@ -208,26 +218,27 @@ namespace Stride.Engine
             for (int i = 0; i < Count; i++)
             {
                 var existingItem = this[i];
+
                 if (index == i && isReplacing)
                 {
                     previousItem = existingItem;
                 }
                 else
                 {
-                    if (ReferenceEquals(existingItem, item))
-                        throw new InvalidOperationException($"Cannot add the same component multiple times. Already set at index [{i}].");
+                    if (ReferenceEquals(existingItem, component))
+                        throw new InvalidOperationException($"Cannot add the same Component multiple times. Already set at index [{i}].");
 
                     if (onlySingleComponent && componentType == existingItem.GetType())
-                        throw new InvalidOperationException($"Cannot add a component of type [{componentType}] multiple times.");
+                        throw new InvalidOperationException($"Cannot add a Component of type [{componentType}] multiple times.");
                 }
             }
 
-            if (!AllowReplaceForeignEntity && entity != null && item.Entity != null)
-                throw new InvalidOperationException($"This component is already attached to entity [{item.Entity}] and cannot be attached to [{entity}].");
+            if (!AllowReplaceForeignEntity && entity is not null && component.Entity is not null)
+                throw new InvalidOperationException($"This Component is already attached to Entity [{component.Entity}] and cannot be attached to [{entity}].");
 
-            if (entity != null)
+            if (entity is not null)
             {
-                if(item is TransformComponent transform)
+                if(component is TransformComponent transform)
                 {
                     entity.TransformValue = transform;
                 }
@@ -237,7 +248,7 @@ namespace Stride.Engine
                     entity.TransformValue = null;
                 }
 
-                item.Entity = entity;
+                component.Entity = entity;
             }
 
             return previousItem;

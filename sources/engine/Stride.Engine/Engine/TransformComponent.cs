@@ -3,7 +3,6 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 
 using Stride.Core;
@@ -25,25 +24,18 @@ namespace Stride.Engine
     [ComponentOrder(0)]
     public sealed class TransformComponent : EntityComponent //, IEnumerable<TransformComponent> Check why this is not working
     {
-        private static readonly TransformOperation[] EmptyTransformOperations = new TransformOperation[0];
-
-        // When false, transformation should be computed in TransformProcessor (no dependencies).
-        // When true, transformation is computed later by another system.
-        // This is useful for scenario such as binding a node to a bone, where it first need to run TransformProcessor for the hierarchy,
-        // run MeshProcessor to update ModelViewHierarchy, copy Node/Bone transformation to another Entity with special root and then update its children transformations.
-        private bool useTRS = true;
+        private static readonly TransformOperation[] EmptyTransformOperations = Array.Empty<TransformOperation>();
 
         private TransformComponent parent;
-
-        private readonly TransformChildrenCollection children;
 
         internal bool IsMovingInsideRootScene;
 
         /// <summary>
-        /// This is where we can register some custom work to be done after world matrix has been computed, such as updating model node hierarchy or physics for local node.
+        ///   List of operations registered for custom work to be done after the world matrix has been computed,
+        ///   such as updating model node hierarchy or physics for local node.
         /// </summary>
         [DataMemberIgnore]
-        public FastListStruct<TransformOperation> PostOperations = new FastListStruct<TransformOperation>(EmptyTransformOperations);
+        public FastListStruct<TransformOperation> PostOperations = new(EmptyTransformOperations);
 
         /// <summary>
         ///   The world transform matrix.
@@ -92,6 +84,15 @@ namespace Stride.Engine
         [DataMember(30)]
         public Vector3 Scale;
 
+        /// <summary>
+        ///   A link representing how to compute the parent transform.
+        /// </summary>
+        /// <remarks>
+        ///   If <c>null</c>, the transform hierarchy will be taken into account for computing the world matrix, starting
+        ///   with the <see cref="Parent"/> Entity.
+        ///   <para/>
+        ///   If not <c>null</c>, the <see cref="Engine.TransformLink"/> will take that responsibility.
+        /// </remarks>
         [DataMemberIgnore]
         public TransformLink TransformLink;
 
@@ -101,13 +102,21 @@ namespace Stride.Engine
         /// </summary>
         public TransformComponent()
         {
-            children = new TransformChildrenCollection(this);
+            Children = new TransformChildrenCollection(this);
 
             UseTRS = true;
             Scale = Vector3.One;
             Rotation = Quaternion.Identity;
         }
 
+
+        // Use Translate+Rotate+Scale:
+        //   false --> Transformation should be computed in TransformProcessor (no dependencies).
+        //   true  --> Transformation is computed later by another system.
+        //
+        //   This is useful for scenarios such as binding a node to a bone, where it first need to run TransformProcessor for
+        //   the hierarchy, run MeshProcessor to update ModelViewHierarchy, copy Node/Bone transformation to another Entity with
+        //   special root and then update its children transformations.
 
         /// <summary>
         ///   Gets or sets a value indicating whether to compute the transform matrix using the
@@ -117,16 +126,12 @@ namespace Stride.Engine
         [DataMemberIgnore]
         [Display(Browsable = false)]
         [DefaultValue(true)]
-        public bool UseTRS
-        {
-            get => useTRS;
-            set => useTRS = value;
-        }
+        public bool UseTRS { get; set; } = true;
 
         /// <summary>
         ///   Gets the children of this <see cref="TransformComponent"/>.
         /// </summary>
-        public FastCollection<TransformComponent> Children => children;
+        public FastCollection<TransformComponent> Children { get; }
 
         /// <summary>
         ///   Gets or sets the Euler rotation, with XYZ order.
@@ -148,8 +153,7 @@ namespace Stride.Engine
                 Vector3 rotationEuler;
 
                 // Equivalent to:
-                //  Matrix rotationMatrix;
-                //  Matrix.Rotation(ref cachedRotation, out rotationMatrix);
+                //  Matrix.Rotation(ref cachedRotation, out Matrix rotationMatrix);
                 //  rotationMatrix.DecomposeXYZ(out rotationEuler);
 
                 float xx = rotation.X * rotation.X;
@@ -162,16 +166,16 @@ namespace Stride.Engine
                 float yz = rotation.Y * rotation.Z;
                 float xw = rotation.X * rotation.W;
 
-                rotationEuler.Y = (float)Math.Asin(2.0f * (yw - zx));
+                rotationEuler.Y = (float) Math.Asin(2.0f * (yw - zx));
                 double test = Math.Cos(rotationEuler.Y);
                 if (test > 1e-6f)
                 {
-                    rotationEuler.Z = (float)Math.Atan2(2.0f * (xy + zw), 1.0f - (2.0f * (yy + zz)));
-                    rotationEuler.X = (float)Math.Atan2(2.0f * (yz + xw), 1.0f - (2.0f * (yy + xx)));
+                    rotationEuler.Z = (float) Math.Atan2(2.0f * (xy + zw), 1.0f - (2.0f * (yy + zz)));
+                    rotationEuler.X = (float) Math.Atan2(2.0f * (yz + xw), 1.0f - (2.0f * (yy + xx)));
                 }
                 else
                 {
-                    rotationEuler.Z = (float)Math.Atan2(2.0f * (zw - xy), 2.0f * (zx + yw));
+                    rotationEuler.Z = (float) Math.Atan2(2.0f * (zw - xy), 2.0f * (zx + yw));
                     rotationEuler.X = 0.0f;
                 }
                 return rotationEuler;
@@ -189,20 +193,20 @@ namespace Stride.Engine
 
                 var halfAngles = value * 0.5f;
 
-                var fSinX = (float)Math.Sin(halfAngles.X);
-                var fCosX = (float)Math.Cos(halfAngles.X);
-                var fSinY = (float)Math.Sin(halfAngles.Y);
-                var fCosY = (float)Math.Cos(halfAngles.Y);
-                var fSinZ = (float)Math.Sin(halfAngles.Z);
-                var fCosZ = (float)Math.Cos(halfAngles.Z);
+                var sinX = (float) Math.Sin(halfAngles.X);
+                var cosX = (float) Math.Cos(halfAngles.X);
+                var sinY = (float) Math.Sin(halfAngles.Y);
+                var cosY = (float) Math.Cos(halfAngles.Y);
+                var sinZ = (float) Math.Sin(halfAngles.Z);
+                var cosZ = (float) Math.Cos(halfAngles.Z);
 
-                var fCosXY = fCosX * fCosY;
-                var fSinXY = fSinX * fSinY;
+                var cosXY = cosX * cosY;
+                var sinXY = sinX * sinY;
 
-                Rotation.X = fSinX * fCosY * fCosZ - fSinZ * fSinY * fCosX;
-                Rotation.Y = fSinY * fCosX * fCosZ + fSinZ * fSinX * fCosY;
-                Rotation.Z = fSinZ * fCosXY - fSinXY * fCosZ;
-                Rotation.W = fCosZ * fCosXY + fSinXY * fSinZ;
+                Rotation.X = sinX * cosY * cosZ - sinZ * sinY * cosX;
+                Rotation.Y = sinY * cosX * cosZ + sinZ * sinX * cosY;
+                Rotation.Z = sinZ * cosXY - sinXY * cosZ;
+                Rotation.W = cosZ * cosXY + sinXY * sinZ;
             }
         }
 
@@ -216,6 +220,7 @@ namespace Stride.Engine
         public TransformComponent Parent
         {
             get => parent;
+
             set
             {
                 var oldParent = Parent;
@@ -223,31 +228,32 @@ namespace Stride.Engine
                     return;
 
                 // SceneValue must be null if we have a parent
-                if (Entity.SceneValue != null)
+                if (Entity.SceneValue is not null)
                     Entity.Scene = null;
 
                 var previousScene = oldParent?.Entity?.Scene;
                 var newScene = value?.Entity?.Scene;
 
-                // Get to root scene
-                while (previousScene?.Parent != null)
+                // Get to root Scene
+                while (previousScene?.Parent is not null)
                     previousScene = previousScene.Parent;
-                while (newScene?.Parent != null)
+                while (newScene?.Parent is not null)
                     newScene = newScene.Parent;
 
-                // Check if root scene didn't change
-                bool moving = (newScene != null && newScene == previousScene);
-                if (moving)
+                // Check if root Scene didn't change
+                bool isMoving = (newScene is not null && newScene == previousScene);
+                if (isMoving)
                     IsMovingInsideRootScene = true;
 
-                // Add/Remove
+                // Add / Remove
                 oldParent?.Children.Remove(this);
                 value?.Children.Add(this);
 
-                if (moving)
+                if (isMoving)
                     IsMovingInsideRootScene = false;
             }
         }
+
 
         /// <summary>
         ///   Updates the local matrix.
@@ -265,14 +271,14 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        ///   Updates the local matrix based on the world matrix and the parent entity's or containing scene's world matrix.
+        ///   Updates the local matrix based on the world matrix and the parent Entity's or containing Scene's world matrix.
         /// </summary>
         public void UpdateLocalFromWorld()
         {
             if (Parent is null)
             {
                 var scene = Entity?.Scene;
-                if (scene != null)
+                if (scene is not null)
                 {
                     Matrix.Invert(ref scene.WorldMatrix, out var inverseSceneTransform);
                     Matrix.Multiply(ref WorldMatrix, ref inverseSceneTransform, out LocalMatrix);
@@ -305,14 +311,20 @@ namespace Stride.Engine
             UpdateWorldMatrixInternal(recursive: true);
         }
 
+        /// <summary>
+        ///   Updates the world matrix by taking into account the Transform Link (if any), and the transform hierarchy of
+        ///   Entities and Scenes.
+        ///   Then it applies all the registered post-operations.
+        /// </summary>
+        /// <param name="recursive">A value indicating whether to update the transform recursively for the transform hierarchy.</param>
         internal void UpdateWorldMatrixInternal(bool recursive)
         {
-            if (TransformLink != null)
+            if (TransformLink is not null)
             {
                 TransformLink.ComputeMatrix(recursive, out Matrix linkMatrix);
                 Matrix.Multiply(ref LocalMatrix, ref linkMatrix, out WorldMatrix);
             }
-            else if (Parent != null)
+            else if (Parent is not null)
             {
                 if (recursive)
                     Parent.UpdateWorldMatrix();
@@ -322,7 +334,7 @@ namespace Stride.Engine
             else
             {
                 var scene = Entity?.Scene;
-                if (scene != null)
+                if (scene is not null)
                 {
                     if (recursive)
                         scene.UpdateWorldMatrix();
@@ -341,20 +353,28 @@ namespace Stride.Engine
             }
         }
 
+
+        /// <summary>
+        ///   Represents a collection of the child <see cref="TransformComponent"/>s of a <see cref="TransformComponent"/>.
+        /// </summary>
         [DataContract]
         public class TransformChildrenCollection : FastCollection<TransformComponent>
         {
-            TransformComponent transform;
-            Entity Entity => transform.Entity;
+            private readonly TransformComponent transform;
 
-            public TransformChildrenCollection(TransformComponent transformParam)
+            private Entity Entity => transform.Entity;
+
+            public TransformChildrenCollection(TransformComponent transform)
             {
-                transform = transformParam;
+                this.transform = transform;
             }
 
+            //
+            // Called when a new TransformComponent is added to the collection.
+            //
             private void OnTransformAdded(TransformComponent item)
             {
-                if (item.Parent != null)
+                if (item.Parent is not null)
                     throw new InvalidOperationException("This TransformComponent already has a Parent. Detach it first.");
 
                 item.parent = transform;
@@ -362,6 +382,10 @@ namespace Stride.Engine
                 Entity?.EntityManager?.OnHierarchyChanged(item.Entity);
                 Entity?.EntityManager?.GetProcessor<TransformProcessor>().NotifyChildrenCollectionChanged(item, true);
             }
+
+            //
+            // Called when a new TransformComponent is removed from the collection.
+            //
             private void OnTransformRemoved(TransformComponent item)
             {
                 if (item.Parent != transform)
@@ -377,6 +401,7 @@ namespace Stride.Engine
             protected override void InsertItem(int index, TransformComponent item)
             {
                 base.InsertItem(index, item);
+
                 OnTransformAdded(item);
             }
 
@@ -384,6 +409,7 @@ namespace Stride.Engine
             protected override void RemoveItem(int index)
             {
                 OnTransformRemoved(this[index]);
+
                 base.RemoveItem(index);
             }
 

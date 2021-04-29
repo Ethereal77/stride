@@ -15,9 +15,10 @@ using Stride.Core.Serialization.Serializers;
 namespace Stride.Core.Collections
 {
     /// <summary>
-    /// A collection that maintains the order of the elements  and lightter implementation of <see cref="System.Collections.ObjectModel.Collection{T}"/> with value types enumerators to avoid allocation in foreach loops, and various helper functions.
+    ///   Represents a light collection that maintains the order of the elements with valuetype enumerator to avoid allocating
+    ///   in <see langword="foreach"/> loops, and various helper functions.
     /// </summary>
-    /// <typeparam name="T">Type of elements of this collection </typeparam>
+    /// <typeparam name="T">Type of elements of this collection.</typeparam>
     [DataSerializer(typeof(ListAllSerializer<,>), Mode = DataSerializerGenericMode.TypeAndGenericArguments)]
     [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     public class OrderedCollection<T> : ICollection<T>
@@ -29,30 +30,36 @@ namespace Stride.Core.Collections
         private int size;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrderedCollection{T}"/> class.
+        ///   Initializes a new instance of the <see cref="OrderedCollection{T}"/> class.
         /// </summary>
         /// <param name="comparer">The comparer providing information about order between elements.</param>
-        /// <exception cref="System.ArgumentNullException">If comparer is null</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="comparer"/> is a <c>null</c> reference.</exception>
         public OrderedCollection([NotNull] IComparer<T> comparer)
         {
-            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            if (comparer is null)
+                throw new ArgumentNullException(nameof(comparer));
+
             this.comparer = comparer;
-            items = ArrayHelper<T>.Empty;
+            items = Array.Empty<T>();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrderedCollection{T}"/> class with a default capacity.
+        ///   Initializes a new instance of the <see cref="OrderedCollection{T}"/> class.
         /// </summary>
-        /// <param name="comparer">The comparer.</param>
-        /// <param name="capacity">The capacity.</param>
+        /// <param name="comparer">The comparer providing information about order between elements.</param>
+        /// <param name="capacity">Initial capacity.</param>
         public OrderedCollection([NotNull] IComparer<T> comparer, int capacity) : this(comparer)
         {
             items = new T[capacity];
         }
 
+        /// <summary>
+        ///   Gets or sets the number of elements this collection has space for before growing.
+        /// </summary>
         public int Capacity
         {
-            get { return items.Length; }
+            get => items.Length;
+
             set
             {
                 if (value != items.Length)
@@ -61,83 +68,113 @@ namespace Stride.Core.Collections
                     {
                         var destinationArray = new T[value];
                         if (size > 0)
-                        {
                             Array.Copy(items, 0, destinationArray, 0, size);
-                        }
+
                         items = destinationArray;
                     }
                     else
                     {
-                        items = ArrayHelper<T>.Empty;
+                        items = Array.Empty<T>();
                     }
                 }
             }
         }
 
+        /// <summary>
+        ///   Gets the number of elements in this collection.
+        /// </summary>
         public int Count => size;
 
         /// <summary>
-        /// Gets the element <see cref="T"/> at the specified index.
+        ///   Gets the element at the specified index.
         /// </summary>
         /// <param name="index">The index.</param>
-        /// <returns>The element at the specified index</returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">If index is out of range</exception>
+        /// <value>
+        ///   The element at the specified <paramref name="index"/>.
+        /// </value>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is out of range.</exception>
         public T this[int index]
         {
             get
             {
-                if (index < 0 || index >= size) throw new ArgumentOutOfRangeException(nameof(index));
+                if (index < 0 || index >= size)
+                    throw new ArgumentOutOfRangeException(nameof(index));
+
                 return items[index];
             }
         }
 
+        /// <summary>
+        ///   Adds an element to the collection.
+        /// </summary>
+        /// <param name="item">The element to add.</param>
         public void Add(T item)
         {
             AddItem(item);
         }
 
+        /// <summary>
+        ///   Removes all elements from the collection.
+        /// </summary>
         public void Clear()
         {
             ClearItems();
         }
 
+        /// <summary>
+        ///   Determines if an element exists in the collection.
+        /// </summary>
+        /// <param name="item">Element to look for.</param>
+        /// <returns><c>true</c> if the element exists in the collection; <c>false</c> otherwise.</returns>
         public bool Contains(T item)
         {
             if (item == null)
             {
                 for (var j = 0; j < size; j++)
-                {
                     if (items[j] == null)
-                    {
                         return true;
-                    }
-                }
+
                 return false;
             }
+
             var equalComparer = EqualityComparer<T>.Default;
+
             for (var i = 0; i < size; i++)
-            {
                 if (equalComparer.Equals(items[i], item))
-                {
                     return true;
-                }
-            }
+
             return false;
         }
 
+        /// <summary>
+        ///   Copies the contents of the collection to an array.
+        /// </summary>
+        /// <param name="array">The destination array.</param>
+        /// <param name="arrayIndex">The index of the array where to start copying to.</param>
         public void CopyTo(T[] array, int arrayIndex)
         {
             Array.Copy(items, 0, array, arrayIndex, size);
         }
 
+        /// <summary>
+        ///   Searches for the specified element in the collection and returns the first occurrence.
+        /// </summary>
+        /// <param name="item">The element to search for.</param>
+        /// <returns>Index of the first occurrence of <paramref name="item"/> in the collection; or -1 if not found.</returns>
         public int IndexOf(T item)
         {
             return Array.IndexOf(items, item, 0, size);
         }
 
+        /// <summary>
+        ///   Removes the specified element from the collection.
+        /// </summary>
+        /// <param name="item">The element to remove.</param>
+        /// <returns><c>true</c> if the element was found and removed; <c>false</c> otherwise.</returns>
         public bool Remove(T item)
         {
             var index = IndexOf(item);
+
             if (index >= 0)
             {
                 RemoveAt(index);
@@ -146,83 +183,86 @@ namespace Stride.Core.Collections
             return false;
         }
 
+        /// <summary>
+        ///   Removes the element from the collection at the specified index.
+        /// </summary>
+        /// <param name="index">Index of the element to remove.</param>
         public void RemoveAt(int index)
         {
-            if (index < 0 || index >= size) throw new ArgumentOutOfRangeException(nameof(index));
-            RemoteItem(index);
+            if (index < 0 || index >= size)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            RemoveItem(index);
         }
 
         /// <summary>
-        /// Clears all the items in this collection. Can be overriden.
+        ///   Removes all the elements from the collection.
+        ///   Override this method in a derived class to implement custom logic for when the collection should be cleared.
         /// </summary>
         protected virtual void ClearItems()
         {
             if (size > 0)
-            {
                 Array.Clear(items, 0, size);
-            }
+
             size = 0;
         }
 
         /// <summary>
-        /// Adds an item to this collection. Can be overriden.
+        ///   Adds an element to the collection.
+        ///   Override this method in a derived class to implement custom logic for adding an element.
         /// </summary>
-        /// <param name="item">The item.</param>
+        /// <param name="item">The element to add.</param>
         protected virtual void AddItem(T item)
         {
-            var index = Array.BinarySearch(items, 0, size, item, comparer);
+            var index = Array.BinarySearch(items, index: 0, size, item, comparer);
+
             if (index < 0)
-            {
-                index = ~index; // insert at the end of the list
-            }
+                // Insert at the end of the list
+                index = ~index;
+
             if (size == items.Length)
-            {
                 EnsureCapacity(size + 1);
-            }
+
             if (index < size)
-            {
                 Array.Copy(items, index, items, index + 1, size - index);
-            }
+
             items[index] = item;
             size++;
         }
 
-        protected virtual void RemoteItem(int index)
+        /// <summary>
+        ///   Remove an element from the collection at the specified index.
+        ///   Override this method in a derived class to implement custom logic for removing an element.
+        /// </summary>
+        /// <param name="index">The index of the element to remove.</param>
+        protected virtual void RemoveItem(int index)
         {
             size--;
+
             if (index < size)
-            {
                 Array.Copy(items, index + 1, items, index, size - index);
-            }
-            items[size] = default(T);
+
+            items[size] = default;
         }
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => new Enumerator(this);
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
 
         /// <summary>
-        /// Adds the elements of the specified source to the end of <see cref="FastCollection{T}"/>.
+        ///   Adds the elements of the specified source to the end of the collection.
         /// </summary>
-        /// <param name="itemsArgs">The items to add to this collection.</param>
-        public void AddRange<TE>([NotNull] TE itemsArgs) where TE : IEnumerable<T>
+        /// <param name="itemsToAdd">The elements to add to this collection.</param>
+        public void AddRange<TEnumerable>([NotNull] TEnumerable itemsToAdd) where TEnumerable : IEnumerable<T>
         {
-            foreach (var item in itemsArgs)
-            {
+            foreach (var item in itemsToAdd)
                 Add(item);
-            }
         }
 
         /// <summary>
-        /// Inline Enumerator used directly by foreach.
+        ///   Gets an <see cref="Enumerator"/> that can be used to iterate the collection.
         /// </summary>
-        /// <returns>An enumerator of this collection</returns>
+        /// <returns>A valuetype enumerator to iterate this collection.</returns>
         public Enumerator GetEnumerator()
         {
             return new Enumerator(this);
@@ -230,19 +270,28 @@ namespace Stride.Core.Collections
 
         bool ICollection<T>.IsReadOnly => false;
 
+        /// <summary>
+        ///   Checks the collection has enough space to store a specific number of elements. If not, grows the
+        ///   backing storage to have the needed space.
+        /// </summary>
+        /// <param name="min">Minimum number of elements the collection should have capacity for.</param>
         public void EnsureCapacity(int min)
         {
             if (items.Length < min)
             {
                 var num = (items.Length == 0) ? DefaultCapacity : (items.Length * 2);
+
                 if (num < min)
-                {
                     num = min;
-                }
+
                 Capacity = num;
             }
         }
 
+
+        /// <summary>
+        ///   A valuetype enumerator that can be used to iterate through the elements of a <see cref="FastCollection{T}"/>.
+        /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         public struct Enumerator : IEnumerator<T>
         {
@@ -254,12 +303,10 @@ namespace Stride.Core.Collections
             {
                 this.collection = collection;
                 index = 0;
-                current = default(T);
+                current = default;
             }
 
-            public void Dispose()
-            {
-            }
+            public void Dispose() { }
 
             public bool MoveNext()
             {
@@ -275,7 +322,7 @@ namespace Stride.Core.Collections
             private bool MoveNextRare()
             {
                 index = collection.size + 1;
-                current = default(T);
+                current = default;
                 return false;
             }
 
@@ -286,7 +333,7 @@ namespace Stride.Core.Collections
             void IEnumerator.Reset()
             {
                 index = 0;
-                current = default(T);
+                current = default;
             }
         }
     }

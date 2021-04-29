@@ -14,8 +14,12 @@ using Stride.Core.Serialization.Contents;
 namespace Stride.Engine
 {
     /// <summary>
-    /// A scene.
+    ///   Represents a scene as a collection of <see cref="Entity"/>s related to some common space.
     /// </summary>
+    /// <remarks>
+    ///   Scenes can form transform hierarchies with other Scenes, the same way <see cref="Entity"/>s do, and can
+    ///   have local transformations that are applied to all their children Entities.
+    /// </remarks>
     [DataContract("Scene")]
     [ContentSerializer(typeof(DataContentSerializerWithReuse<Scene>))]
     [ReferenceSerializer, DataSerializerGlobal(typeof(ReferenceSerializer<Scene>), Profile = "Content")]
@@ -40,12 +44,14 @@ namespace Stride.Engine
         public Guid Id { get; set; }
 
         /// <summary>
-        /// The parent scene.
+        ///   Gets or sets the parent scene.
         /// </summary>
+        /// <value>The parent scene. The value will be <c>null</c> when this Scene is the Root Scene (it has no parent).</value>
         [DataMemberIgnore]
         public Scene Parent
         {
-            get { return parent; }
+            get => parent;
+
             set
             {
                 var oldParent = Parent;
@@ -58,43 +64,46 @@ namespace Stride.Engine
         }
 
         /// <summary>
-        /// The entities.
+        ///   Gets the collection of Entities belonging to this Scene.
         /// </summary>
         public TrackingCollection<Entity> Entities { get; }
 
         /// <summary>
-        /// The child scenes.
+        ///   Gets the collection of child Scenes belonging to this Scene.
         /// </summary>
         [DataMemberIgnore]
         public TrackingCollection<Scene> Children { get; }
 
         /// <summary>
-        /// An offset applied to all entities of the scene relative to it's parent scene.
+        ///   An offset of the Scene relative to it's parent Scene applied to all its Entities' positions.
         /// </summary>
         public Vector3 Offset;
 
         /// <summary>
-        /// The absolute transform applied to all entities of the scene.
+        ///   The absolute Transform applied to all entities of the Scene.
         /// </summary>
-        /// <remarks>This field is overwritten by the transform processor each frame.</remarks>
+        /// <remarks>This field is overwritten by the <see cref="Processors.TransformProcessor"/> each frame.</remarks>
         public Matrix WorldMatrix;
 
+
         /// <summary>
-        /// Updates the world transform of the scene.
+        ///   Updates the world transform of the Scene.
         /// </summary>
         public void UpdateWorldMatrix()
         {
-            UpdateWorldMatrixInternal(true);
+            UpdateWorldMatrixInternal(isRecursive: true);
         }
 
+        /// <summary>
+        ///   Updates the transform hierarchy of the Scene and its children recursively.
+        /// </summary>
+        /// <param name="isRecursive">A value indicating whether to also update the transform of child Scenes.</param>
         internal void UpdateWorldMatrixInternal(bool isRecursive)
         {
-            if (parent != null)
+            if (parent is not null)
             {
                 if (isRecursive)
-                {
-                    parent.UpdateWorldMatrixInternal(true);
-                }
+                    parent.UpdateWorldMatrixInternal(isRecursive: true);
 
                 WorldMatrix = parent.WorldMatrix;
             }
@@ -106,29 +115,31 @@ namespace Stride.Engine
             WorldMatrix.TranslationVector += Offset;
         }
 
-        public override string ToString()
-        {
-            return $"Scene {Name}";
-        }
+        public override string ToString() => $"Scene {Name}";
 
+
+        /// <summary>
+        ///   Represents a collection of <see cref="Entity"/>s of a <see cref="Scene"/>.
+        /// </summary>
         [DataContract]
         public class EntityCollection : TrackingCollection<Entity>
         {
-            Scene scene;
+            private readonly Scene scene;
 
-            public EntityCollection(Scene sceneParam)
+            public EntityCollection(Scene scene)
             {
-                scene = sceneParam;
+                this.scene = scene;
             }
 
             /// <inheritdoc/>
             protected override void InsertItem(int index, Entity item)
             {
-                // Root entity in another scene, or child of another entity
-                if (item.Scene != null)
-                    throw new InvalidOperationException("This entity already has a scene. Detach it first.");
+                // Root Entity in another Scene, or child of another Entity
+                if (item.Scene is not null)
+                    throw new InvalidOperationException("This Entity already has a Scene. Detach it first.");
 
                 item.SceneValue = scene;
+
                 base.InsertItem(index, item);
             }
 
@@ -136,31 +147,37 @@ namespace Stride.Engine
             protected override void RemoveItem(int index)
             {
                 var item = this[index];
+
                 if (item.SceneValue != scene)
-                    throw new InvalidOperationException("This entity's scene is not the expected value.");
+                    throw new InvalidOperationException("This Entity's Scene is not the expected value.");
 
                 item.SceneValue = null;
+
                 base.RemoveItem(index);
             }
         }
 
+        /// <summary>
+        ///   Represents a collection of child <see cref="Scene"/>s of a <see cref="Scene"/>.
+        /// </summary>
         [DataContract]
         public class SceneCollection : TrackingCollection<Scene>
         {
-            Scene scene;
+            private readonly Scene scene;
 
-            public SceneCollection(Scene sceneParam)
+            public SceneCollection(Scene scene)
             {
-                scene = sceneParam;
+                this.scene = scene;
             }
 
             /// <inheritdoc/>
             protected override void InsertItem(int index, Scene item)
             {
-                if (item.Parent != null)
-                    throw new InvalidOperationException("This scene already has a Parent. Detach it first.");
+                if (item.Parent is not null)
+                    throw new InvalidOperationException("This Scene already has a Parent. Detach it first.");
 
                 item.parent = scene;
+
                 base.InsertItem(index, item);
             }
 
@@ -168,10 +185,12 @@ namespace Stride.Engine
             protected override void RemoveItem(int index)
             {
                 var item = this[index];
+
                 if (item.Parent != scene)
-                    throw new InvalidOperationException("This scene's parent is not the expected value.");
+                    throw new InvalidOperationException("This Scene's parent is not the expected value.");
 
                 item.parent = null;
+
                 base.RemoveItem(index);
             }
         }
