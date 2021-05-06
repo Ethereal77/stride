@@ -12,7 +12,7 @@ namespace Stride.Audio
 
         internal static void PreLoad()
         {
-            NativeLibraryHelper.PreloadLibrary("libstrideaudio", typeof(NativeInvoke));
+            NativeLibraryHelper.Load("libstrideaudio", typeof(NativeInvoke));
         }
 
         static NativeInvoke()

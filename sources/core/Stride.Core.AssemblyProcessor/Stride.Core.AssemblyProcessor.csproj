@@ -1,85 +1,45 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <AssemblyTitle>Stride Post-Compilation Assembly Patching Tool</AssemblyTitle>
+
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>STRIDE_ASSEMBLY_PROCESSOR;STRIDE_PLATFORM_DESKTOP;DEBUG;TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>STRIDE_ASSEMBLY_PROCESSOR;STRIDE_PLATFORM_DESKTOP;TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>STRIDE_ASSEMBLY_PROCESSOR;STRIDE_PLATFORM_DESKTOP</DefineConstants>
   </PropertyGroup>
 
   <Import Project="..\..\targets\Stride.PackageVersion.targets" />
   <PropertyGroup>
     <GenerateAssemblyInformationalVersionAttribute>true</GenerateAssemblyInformationalVersionAttribute>
     <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
-
-    <AssemblyTitle>Stride Post-Compilation Assembly Patching Tool</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Stride.Core\DataMemberMode.cs">
-      <Link>Core\DataMemberMode.cs</Link>
-    </Compile>
-    <Compile Include="..\Stride.Core\PlatformType.cs">
-      <Link>Core\PlatformType.cs</Link>
-    </Compile>
-    <Compile Include="..\Stride.Core\Reflection\AssemblyCommonCategories.cs">
-      <Link>Core\AssemblyCommonCategories.cs</Link>
-    </Compile>
-    <Compile Include="..\Stride.Core\Serialization\ArchiveMode.cs">
-      <Link>Core\ArchiveMode.cs</Link>
-    </Compile>
+    <Compile Include="..\Stride.Core\DataMemberMode.cs" Link="Core\DataMemberMode.cs" />
+    <Compile Include="..\Stride.Core\PlatformType.cs" Link="Core\PlatformType.cs" />
+    <Compile Include="..\Stride.Core\Reflection\AssemblyCommonCategories.cs" Link="Core\AssemblyCommonCategories.cs" />
+    <Compile Include="..\Stride.Core\Serialization\ArchiveMode.cs" Link="Core\ArchiveMode.cs" />
     <Compile Include="..\Stride.Core\Serialization\DataSerializer.BinaryFormatVersion.cs" Link="Core\DataSerializer.BinaryFormatVersion.cs" />
-    <Compile Include="..\Stride.Core\Serialization\DataSerializerGenericMode.cs">
-      <Link>Core\DataSerializerGenericMode.cs</Link>
-    </Compile>
-    <Compile Include="..\Stride.Core\Storage\ObjectId.cs">
-      <Link>Core\ObjectId.cs</Link>
-    </Compile>
-    <Compile Include="..\Stride.Core\Storage\ObjectIdBuilder.cs">
-      <Link>Core\ObjectIdBuilder.cs</Link>
-    </Compile>
-    <Compile Update="AssemblyScanCodeGenerator.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyScanCodeGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Update="ComplexSerializerCodeGenerator.cs">
-      <DependentUpon>ComplexSerializerCodeGenerator.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Update="ComplexClassSerializerGenerator.cs">
-      <DependentUpon>ComplexClassSerializerGenerator.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
+    <Compile Include="..\Stride.Core\Serialization\DataSerializerGenericMode.cs" Link="Core\DataSerializerGenericMode.cs" />
+    <Compile Include="..\Stride.Core\Storage\ObjectId.cs" Link="Core\ObjectId.cs" />
+    <Compile Include="..\Stride.Core\Storage\ObjectIdBuilder.cs" Link="Core\ObjectIdBuilder.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="ILRepack" Version="2.0.18" PrivateAssets="All" />
     <PackageReference Include="Mono.Cecil" Version="0.11.3" />
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.8.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.9.0" ExcludeAssets="runtime" />
   </ItemGroup>
 
-  <!-- Generate hash file for the Assembly -->
-  <UsingTask TaskName="WriteAllText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+  <!--
+    Assembly Processor single file repacking and hash computation.
+   -->
 
+  <UsingTask TaskName="WriteAllText" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <Path ParameterType="System.String" />
       <Contents ParameterType="System.String" />
@@ -95,11 +55,15 @@ File.WriteAllText(Path, Contents);
     </Task>
   </UsingTask>
 
+  <!-- Generate hash file for the Assembly Processor -->
   <Target Name="GenerateHash" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y $(TargetDir)*.* $(SolutionDir)..\deps\AssemblyProcessor\$(TargetFramework)\&#xA;cd $(SolutionDir)..\deps\AssemblyProcessor\$(TargetFramework)\&#xA;$(ILRepack) Stride.Core.AssemblyProcessor$(TargetExt) Mono.Cecil.dll Mono.Cecil.Mdb.dll Mono.Cecil.Pdb.dll Mono.Cecil.Rocks.dll Mono.Options.dll /out:Stride.Core.AssemblyProcessor.Packed$(TargetExt)" />
-    <GetFileHash Files="$(SolutionDir)..\deps\AssemblyProcessor\$(TargetFramework)\Stride.Core.AssemblyProcessor.Packed$(TargetExt)">
+
+    <!-- Copy all assemblies to Dependencies dir and repack them -->
+    <Exec Command="xcopy /y $(TargetDir)*.* $(SolutionDir)..\deps\AssemblyProcessor\&#xA;cd $(SolutionDir)..\deps\AssemblyProcessor\&#xA;ren Stride.Core.AssemblyProcessor$(TargetExt) Stride.Core.AssemblyProcessor.temp$(TargetExt)&#xA;$(ILRepack) Stride.Core.AssemblyProcessor.temp$(TargetExt) Mono.Cecil.dll Mono.Cecil.Mdb.dll Mono.Cecil.Pdb.dll Mono.Cecil.Rocks.dll Mono.Options.dll /out:Stride.Core.AssemblyProcessor$(TargetExt)" />
+    <!-- Get file hash and write it -->
+    <GetFileHash Files="$(SolutionDir)..\deps\AssemblyProcessor\Stride.Core.AssemblyProcessor$(TargetExt)">
       <Output TaskParameter="Hash" PropertyName="PackedAssemblyHash" />
     </GetFileHash>
-    <WriteAllText Path="$(SolutionDir)..\deps\AssemblyProcessor\$(TargetFramework)\Stride.Core.AssemblyProcessor.Packed$(TargetExt).hash" Contents="$(PackedAssemblyHash)" />
+    <WriteAllText Path="$(SolutionDir)..\deps\AssemblyProcessor\Stride.Core.AssemblyProcessor$(TargetExt).hash" Contents="$(PackedAssemblyHash)" />
   </Target>
 </Project>

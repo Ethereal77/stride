@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2011 Irony - Roman Ivantsov
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -32,7 +32,6 @@ namespace Stride.Irony.Parsing.Construction {
         _grammar.OnGrammarDataConstructed(Language);
         var pbld = new ParserDataBuilder(Language);
         pbld.Build();
-        Validate();
         //call grammar method, a chance to tweak the automaton
         _grammar.OnLanguageDataConstructed(Language);
         return true;
@@ -46,12 +45,5 @@ namespace Stride.Irony.Parsing.Construction {
 
     }
 
-    #region Language Data Validation
-    private void Validate() {
-
-    }//method
-    #endregion
-
-  
   }//class
 }

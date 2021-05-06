@@ -1,26 +1,21 @@
 <Project>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
+
     <StrideCompilerTargetsEnable Condition="'$(StridePackageBuild)' == 'true'">false</StrideCompilerTargetsEnable>
     <StrideCompilerTargetsEnable Condition="'$(StrideSkipUnitTests)' == 'true'">false</StrideCompilerTargetsEnable>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\engine\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
     <ProjectReference Include="..\Stride.ConnectionRouter\Stride.ConnectionRouter.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
 
   <Import Project="..\..\shared\Stride.Core.ShellHelper\Stride.Core.ShellHelper.projitems" Label="Shared" />

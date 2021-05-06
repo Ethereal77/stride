@@ -5,7 +5,6 @@ using System;
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
 
 using xunit.runner.stride.ViewModels;
@@ -23,9 +22,9 @@ namespace xunit.runner.stride
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
-                .UsePlatformDetect()
-                .LogToDebug()
-                .UseReactiveUI();
+                         .UsePlatformDetect()
+                         .LogToTrace()
+                         .UseReactiveUI();
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI
         // container, etc.

@@ -1,30 +1,26 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.props" />
-  <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
-    <StrideBuildTags>*</StrideBuildTags>
-  </PropertyGroup>
 
   <PropertyGroup>
     <AssemblyTitle>Stride Shading Language Parser</AssemblyTitle>
+
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\shaders\Stride.Core.Shaders\Stride.Core.Shaders.csproj" />
     <ProjectReference Include="..\Stride.Shaders\Stride.Shaders.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup />
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

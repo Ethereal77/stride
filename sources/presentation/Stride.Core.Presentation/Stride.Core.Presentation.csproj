@@ -1,41 +1,21 @@
 <Project>
-
   <Import Project="..\..\targets\Stride.Core.props" />
 
   <PropertyGroup>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+    <UseWPF>true</UseWPF>
+
+    <AssemblyTitle>Stride Base Infrastructure and Controls for WPF</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
-    <StrideLocalized>true</StrideLocalized>
+
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\build\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <UseWPF>true</UseWPF>
-    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <StrideLocalized>true</StrideLocalized>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="PresentationFramework.Aero" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <AssemblyTitle>Stride Base Infrastructure and Controls for WPF</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
-    <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
-    <ProjectReference Include="..\..\presentation\Stride.Core.Translation.Presentation\Stride.Core.Translation.Presentation.csproj" />
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +33,13 @@
     <Resource Include="Resources\Images\cursor_north_south.png" />
     <Resource Include="Resources\Images\cursor_west_east.png" />
     <Resource Include="Resources\Images\warning-32.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
+
+    <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
+    <ProjectReference Include="..\..\presentation\Stride.Core.Translation.Presentation\Stride.Core.Translation.Presentation.csproj" />
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />

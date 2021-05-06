@@ -24,9 +24,10 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private readonly IEditorGameController controller;
         private readonly GameEditorViewModel editor;
         private readonly GameSettingsProviderService settingsProvider;
+
         private EditorServiceGame game;
-        private GraphicsCompositorViewModel currentGraphicsCompositorAsset;
         private GraphicsCompositor loadedGraphicsCompositor;
+        private GraphicsCompositorViewModel currentGraphicsCompositorAsset;
 
         public EditorGameGraphicsCompositorService([NotNull] IEditorGameController controller, [NotNull] GameEditorViewModel editor)
         {
@@ -51,7 +52,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 settingsProvider.GameSettingsChanged += GameSettingsChanged;
                 editor.Session.AssetPropertiesChanged += AssetPropertyChanged;
 
-                await ReloadGraphicsCompositor(true);
+                await ReloadGraphicsCompositor(forceIfSame: true);
             });
 
             return Task.FromResult(true);
@@ -67,14 +68,14 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         private void GameSettingsChanged(object sender, GameSettingsChangedEventArgs e)
         {
-            ReloadGraphicsCompositor(false).Forget();
+            ReloadGraphicsCompositor(forceIfSame: false).Forget();
         }
 
         private void AssetPropertyChanged(object sender, AssetChangedEventArgs e)
         {
             if (currentGraphicsCompositorAsset != null && e.Assets.Any(x => x.Asset == currentGraphicsCompositorAsset.Asset))
             {
-                ReloadGraphicsCompositor(true).Forget();
+                ReloadGraphicsCompositor(forceIfSame: true).Forget();
             }
         }
 
@@ -94,7 +95,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             if (graphicsCompositorAsset is null)
                 return;
 
-            // TODO: Prevent reentrency
+            // TODO: Prevent reentrancy
             var database = editor.ServiceProvider.Get<GameStudioDatabase>();
             await database.Build(graphicsCompositorAsset.AssetItem);
 

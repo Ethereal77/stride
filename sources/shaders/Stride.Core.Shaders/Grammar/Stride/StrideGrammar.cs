@@ -12,7 +12,9 @@ using Stride.Core.Shaders.Grammar.Hlsl;
 
 namespace Stride.Core.Shaders.Grammar.Stride
 {
-    [Language("hotei2", "5.0", "Stride2 hlsl grammar")]
+    /// <summary>
+    ///   Grammar for Stride Shader Language (SDSL, SDFX), an extension of HLSL with object-oriented concepts.
+    /// </summary>
     public partial class StrideGrammar : HlslGrammar
     {
         protected readonly NonTerminal constant_buffer_name = T("constant_buffer_name", CreateConstantBufferNameAst);

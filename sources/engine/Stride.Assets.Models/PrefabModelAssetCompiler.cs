@@ -7,29 +7,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Stride.Core.Mathematics;
+using Stride.Core.Serialization;
+using Stride.Core.Serialization.Contents;
+using Stride.Core.Extensions;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Compiler;
 using Stride.Core.BuildEngine;
-using Stride.Core.Extensions;
-using Stride.Core.Mathematics;
-using Stride.Core.Serialization;
-using Stride.Core.Serialization.Contents;
 using Stride.Assets.Entities;
-using Stride.Engine;
 using Stride.Extensions;
+using Stride.Engine;
 using Stride.Graphics;
 using Stride.Graphics.Data;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
 using Stride.Rendering.Materials.ComputeColors;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Assets.Models
 {
+    /// <summary>
+    ///   Asset compiler for <see cref="PrefabModelAsset"/>s.
+    /// </summary>
     [AssetCompiler(typeof(PrefabModelAsset), typeof(AssetCompilationContext))]
     internal class PrefabModelAssetCompiler : AssetCompilerBase
     {
+        /// <inheritdoc/>
         public override IEnumerable<BuildDependencyInfo> GetInputTypes(AssetItem assetItem)
         {
             // We need to read the prefab asset to collect models
@@ -40,46 +45,57 @@ namespace Stride.Assets.Models
             }
         }
 
+        /// <inheritdoc/>
         public override IEnumerable<ObjectUrl> GetInputFiles(AssetItem assetItem)
         {
-            var asset = (PrefabModelAsset)assetItem.Asset;
+            var asset = (PrefabModelAsset) assetItem.Asset;
+
             var prefab = assetItem.Package.Session.FindAssetFromProxyObject(asset.Prefab)?.Asset as PrefabAsset;
-            if (prefab != null)
+            if (prefab is not null)
             {
                 foreach (var entity in prefab.Hierarchy.Parts.Values.Select(x => x.Entity))
                 {
                     var modelComponent = entity.Get<ModelComponent>();
-                    if (modelComponent == null)
+                    if (modelComponent is null)
                         continue;
 
                     var model = assetItem.Package.Session.FindAssetFromProxyObject(modelComponent.Model);
-                    if (model == null)
+                    if (model is null)
                         continue;
 
                     // We need any model to be compiled before generating the prefab model
                     yield return new ObjectUrl(UrlType.Content, model.Location);
 
                     // We need all materials to be compiled before generating the prefab model
-                    foreach (var material in modelComponent.Materials.Values.Select(x => assetItem.Package.Session.FindAssetFromProxyObject(x)).NotNull())
-                    {
+                    var materials = modelComponent.Materials.Values
+                        .Select(m => assetItem.Package.Session.FindAssetFromProxyObject(m))
+                        .NotNull();
+                    foreach (var material in materials)
                         yield return new ObjectUrl(UrlType.Content, material.Location);
-                    }
-                    foreach (var material in ((IModelAsset)model.Asset).Materials.Select(x => assetItem.Package.Session.FindAssetFromProxyObject(x.MaterialInstance.Material)).NotNull())
-                    {
+
+                    materials = ((IModelAsset) model.Asset).Materials
+                        .Select(m => assetItem.Package.Session.FindAssetFromProxyObject(m.MaterialInstance.Material))
+                        .NotNull();
+                    foreach (var material in materials)
                         yield return new ObjectUrl(UrlType.Content, material.Location);
-                    }
                 }
             }
         }
 
+        /// <inheritdoc/>
         protected override void Prepare(AssetCompilerContext context, AssetItem assetItem, string targetUrlInStorage, AssetCompilerResult result)
         {
-            var asset = (PrefabModelAsset)assetItem.Asset;
+            var asset = (PrefabModelAsset) assetItem.Asset;
             var renderingSettings = context.GetGameSettingsAsset().GetOrCreate<RenderingSettings>();
+
             result.BuildSteps = new AssetBuildStep(assetItem);
             result.BuildSteps.Add(new PrefabModelAssetCompileCommand(targetUrlInStorage, asset, assetItem, renderingSettings));
         }
 
+
+        //
+        // The asset compilation command to compile a PrefabModelAsset.
+        //
         private class PrefabModelAssetCompileCommand : AssetCommand<PrefabModelAsset>
         {
             private readonly RenderingSettings renderingSettings;
@@ -95,7 +111,7 @@ namespace Stride.Assets.Models
                 base.ComputeParameterHash(writer);
 
                 var prefabAsset = AssetFinder.FindAssetFromProxyObject(Parameters.Prefab);
-                if (prefabAsset != null)
+                if (prefabAsset is not null)
                 {
                     writer.Write(prefabAsset.Version);
                 }
@@ -103,10 +119,10 @@ namespace Stride.Assets.Models
 
             private class MeshData
             {
-                public readonly List<byte> VertexData = new List<byte>();
+                public readonly List<byte> VertexData = new();
                 public int VertexStride;
 
-                public readonly List<byte> IndexData = new List<byte>();
+                public readonly List<byte> IndexData = new();
                 public int IndexOffset;
             }
 
@@ -119,74 +135,70 @@ namespace Stride.Assets.Models
 
             private static unsafe void ProcessMaterial(ContentManager manager, ICollection<EntityChunk> chunks, MaterialInstance material, Model prefabModel)
             {
-                //we need to futher group by VertexDeclaration
+                // We need to futher group by VertexDeclaration
                 var meshes = new Dictionary<VertexDeclaration, MeshData>();
 
-                //actually create the mesh
+                // Actually create the mesh
                 foreach (var chunk in chunks)
                 {
                     foreach (var modelMesh in chunk.Model.Meshes)
                     {
-                        //process only right material
+                        // Process only the right material
                         if (modelMesh.MaterialIndex == chunk.MaterialIndex)
                         {
-                            MeshData mesh;
-                            if (!meshes.TryGetValue(modelMesh.Draw.VertexBuffers[0].Declaration, out mesh))
+                            if (!meshes.TryGetValue(modelMesh.Draw.VertexBuffers[0].Declaration, out MeshData mesh))
                             {
                                 mesh = new MeshData { VertexStride = modelMesh.Draw.VertexBuffers[0].Stride };
                                 meshes.Add(modelMesh.Draw.VertexBuffers[0].Declaration, mesh);
                             }
 
-                            //vertexes
-                            var vertexBufferRef = AttachedReferenceManager.GetAttachedReference(modelMesh.Draw.VertexBuffers[0].Buffer);
+                            // Vertices
                             byte[] vertexData;
-                            if (vertexBufferRef.Data != null)
+                            var vertexBuffer = AttachedReferenceManager.GetAttachedReference(modelMesh.Draw.VertexBuffers[0].Buffer);
+                            if (vertexBuffer.Data is not null)
                             {
-                                vertexData = ((BufferData)vertexBufferRef.Data).Content;
+                                vertexData = ((BufferData) vertexBuffer.Data).Content;
                             }
-                            else if (!string.IsNullOrEmpty(vertexBufferRef.Url))
+                            else if (!string.IsNullOrEmpty(vertexBuffer.Url))
                             {
-                                var dataAsset = manager.Load<Buffer>(vertexBufferRef.Url);
+                                var dataAsset = manager.Load<Buffer>(vertexBuffer.Url);
                                 vertexData = dataAsset.GetSerializationData().Content;
                             }
                             else
-                            {
-                                throw new Exception($"Failed to get Vertex BufferData for entity {chunk.Entity.Name}'s model.");
-                            }
+                                throw new Exception($"Failed to get Vertex Buffer Data for Entity {chunk.Entity.Name}'s Model.");
 
-                            //transform the vertexes according to the entity
+                            // Transform the vertexes according to the entity
                             var vertexDataCopy = vertexData.ToArray();
-                            chunk.Entity.Transform.UpdateWorldMatrix(); //make sure matrix is computed
+                            // Make sure matrix is computed
+                            chunk.Entity.Transform.UpdateWorldMatrix();
                             var worldMatrix = chunk.Entity.Transform.WorldMatrix;
                             var up = Vector3.Cross(worldMatrix.Right, worldMatrix.Forward);
                             bool isScalingNegative = Vector3.Dot(worldMatrix.Up, up) < 0.0f;
 
                             modelMesh.Draw.VertexBuffers[0].TransformBuffer(vertexDataCopy, ref worldMatrix);
 
-                            //add to the big single array
-                            var vertexes = vertexDataCopy
+                            // Add to the big single array
+                            var vertices = vertexDataCopy
                                 .Skip(modelMesh.Draw.VertexBuffers[0].Offset)
-                                .Take(modelMesh.Draw.VertexBuffers[0].Count*modelMesh.Draw.VertexBuffers[0].Stride)
+                                .Take(modelMesh.Draw.VertexBuffers[0].Count * modelMesh.Draw.VertexBuffers[0].Stride)
                                 .ToArray();
 
-                            mesh.VertexData.AddRange(vertexes);
+                            mesh.VertexData.AddRange(vertices);
 
-                            //indices
-                            var indexBufferRef = AttachedReferenceManager.GetAttachedReference(modelMesh.Draw.IndexBuffer.Buffer);
+                            // Indices
                             byte[] indexData;
-                            if (indexBufferRef.Data != null)
+                            var indexBuffer = AttachedReferenceManager.GetAttachedReference(modelMesh.Draw.IndexBuffer.Buffer);
+                            if (indexBuffer.Data is not null)
                             {
-                                indexData = ((BufferData)indexBufferRef.Data).Content;
+                                indexData = ((BufferData) indexBuffer.Data).Content;
                             }
-                            else if (!string.IsNullOrEmpty(indexBufferRef.Url))
+                            else if (!string.IsNullOrEmpty(indexBuffer.Url))
                             {
-                                var dataAsset = manager.Load<Buffer>(indexBufferRef.Url);
+                                var dataAsset = manager.Load<Buffer>(indexBuffer.Url);
                                 indexData = dataAsset.GetSerializationData().Content;
                             }
                             else
-                            {
-                                throw new Exception("Failed to get Indices BufferData for entity {chunk.Entity.Name}'s model.");
-                            }
+                                throw new Exception($"Failed to get Indices Buffer Data for Entity {chunk.Entity.Name}'s Model.");
 
                             var indexSize = modelMesh.Draw.IndexBuffer.Is32Bit ? sizeof(uint) : sizeof(ushort);
 
@@ -195,8 +207,9 @@ namespace Stride.Assets.Models
                             {
                                 // Get reversed winding order
                                 modelMesh.Draw.GetReversedWindingOrder(out indices);
-                                indices = indices.Skip(modelMesh.Draw.IndexBuffer.Offset)
-                                    .Take(modelMesh.Draw.IndexBuffer.Count*indexSize)
+                                indices = indices
+                                    .Skip(modelMesh.Draw.IndexBuffer.Offset)
+                                    .Take(modelMesh.Draw.IndexBuffer.Count * indexSize)
                                     .ToArray();
                             }
                             else
@@ -204,40 +217,37 @@ namespace Stride.Assets.Models
                                 // Get indices normally
                                 indices = indexData
                                     .Skip(modelMesh.Draw.IndexBuffer.Offset)
-                                    .Take(modelMesh.Draw.IndexBuffer.Count*indexSize)
+                                    .Take(modelMesh.Draw.IndexBuffer.Count * indexSize)
                                     .ToArray();
                             }
 
-                            // Convert indices to 32 bits
+                            // Convert indices to 32-bit
                             if (indexSize == sizeof(ushort))
                             {
-                                var uintIndices = new byte[indices.Length*2];
-                                fixed (byte* psrc = indices)
-                                fixed (byte* pdst = uintIndices)
-                                {
-                                    var src = (ushort*)psrc;
-                                    var dst = (uint*)pdst;
+                                var uintIndices = new byte[indices.Length * 2];
 
-                                    int numIndices = indices.Length/sizeof(ushort);
+                                fixed (byte* pSrc = indices)
+                                fixed (byte* pDst = uintIndices)
+                                {
+                                    var src = (ushort*) pSrc;
+                                    var dst = (uint*) pDst;
+
+                                    int numIndices = indices.Length / sizeof(ushort);
                                     for (var i = 0; i < numIndices; i++)
-                                    {
                                         dst[i] = src[i];
-                                    }
                                 }
                                 indices = uintIndices;
                             }
 
                             // Offset indices by mesh.IndexOffset
-                            fixed (byte* pdst = indices)
+                            fixed (byte* pDst = indices)
                             {
-                                var dst = (uint*)pdst;
+                                var dst = (uint*) pDst;
 
-                                int numIndices = indices.Length/sizeof(uint);
+                                int numIndices = indices.Length / sizeof(uint);
                                 for (var i = 0; i < numIndices; i++)
-                                {
                                     // Offset indices
-                                    dst[i] += (uint)mesh.IndexOffset;
-                                }
+                                    dst[i] += (uint) mesh.IndexOffset;
                             }
 
                             mesh.IndexOffset += modelMesh.Draw.VertexBuffers[0].Count;
@@ -247,18 +257,18 @@ namespace Stride.Assets.Models
                     }
                 }
 
-                //Sort out material
+                // Sort out material
                 var matIndex = prefabModel.Materials.Count;
                 prefabModel.Materials.Add(material);
 
                 foreach (var meshData in meshes)
                 {
-                    //todo need to take care of short index
+                    // TODO: Need to take care of short index
                     var vertexArray = meshData.Value.VertexData.ToArray();
                     var indexArray = meshData.Value.IndexData.ToArray();
 
-                    var vertexCount = vertexArray.Length/meshData.Value.VertexStride;
-                    var indexCount = indexArray.Length/4;
+                    var vertexCount = vertexArray.Length / meshData.Value.VertexStride;
+                    var indexCount = indexArray.Length / 4;
 
                     var gpuMesh = new Mesh
                     {
@@ -277,7 +287,7 @@ namespace Stride.Assets.Models
 
                     gpuMesh.Draw.VertexBuffers = new VertexBufferBinding[1];
                     gpuMesh.Draw.VertexBuffers[0] = new VertexBufferBinding(vertexBufferSerializable, meshData.Key, vertexCount);
-                    gpuMesh.Draw.IndexBuffer = new IndexBufferBinding(indexBufferSerializable, true, indexCount);
+                    gpuMesh.Draw.IndexBuffer = new IndexBufferBinding(indexBufferSerializable, is32Bit: true, indexCount);
 
                     prefabModel.Meshes.Add(gpuMesh);
                 }
@@ -288,10 +298,10 @@ namespace Stride.Assets.Models
                 var instance = new MaterialInstance
                 {
                     Material = modelComponent.Materials.SafeGet(index) ?? baseInstance.Material ?? fallbackMaterial,
-                    IsShadowCaster = modelComponent.IsShadowCaster,
+                    IsShadowCaster = modelComponent.IsShadowCaster
                 };
 
-                if (baseInstance != null)
+                if (baseInstance is not null)
                 {
                     instance.IsShadowCaster = instance.IsShadowCaster && baseInstance.IsShadowCaster;
                 }
@@ -319,20 +329,19 @@ namespace Stride.Assets.Models
                     ContentFilter = ContentManagerLoaderSettings.NewContentFilterByType(typeof(Mesh), typeof(Material))
                 };
 
-                IList<Entity> allEntities = new List<Entity>();
+                var allEntities = new List<Entity>();
 
-                if (Parameters.Prefab != null)
+                if (Parameters.Prefab is not null)
                 {
-                    var prefab = AssetFinder.FindAssetFromProxyObject(Parameters.Prefab)?.Asset as PrefabAsset;
-                    if (prefab != null)
+                    if (AssetFinder.FindAssetFromProxyObject(Parameters.Prefab)?.Asset is PrefabAsset prefab)
                         allEntities = prefab.Hierarchy.Parts.Values.Select(x => x.Entity).ToList();
                 }
 
                 var prefabModel = new Model();
 
-                //The objective is to create 1 mesh per material/shadow params
-                //1. We group by materials
-                //2. Create a mesh per material (might need still more meshes if 16bit indexes or more then 32bit)
+                // The objective is to create 1 mesh per material / shadow params:
+                //   1. Group by materials.
+                //   2. Create a mesh per material (might need still more meshes if 16-bit indices or more than 32-bit).
 
                 var materials = new Dictionary<MaterialInstance, List<EntityChunk>>();
                 var loadedModel = new List<Model>();
@@ -341,20 +350,26 @@ namespace Stride.Assets.Models
                 {
                     var modelComponent = subEntity.Get<ModelComponent>();
 
-                    if (modelComponent?.Model == null || (modelComponent.Skeleton != null && modelComponent.Skeleton.Nodes.Length != 1) || !modelComponent.Enabled)
+                    if (modelComponent?.Model is null ||
+                        (modelComponent.Skeleton is not null &&
+                         modelComponent.Skeleton.Nodes.Length != 1) ||
+                        !modelComponent.Enabled)
                         continue;
 
                     var modelAsset = AssetFinder.FindAssetFromProxyObject(modelComponent.Model);
-                    if (modelAsset == null)
+                    if (modelAsset is null)
                         continue;
 
                     var model = contentManager.Load<Model>(modelAsset.Location, loadSettings);
                     loadedModel.Add(model);
 
-                    if (model == null ||
-                        model.Meshes.Any(x => x.Draw.PrimitiveType != PrimitiveType.TriangleList || x.Draw.VertexBuffers == null || x.Draw.VertexBuffers.Length != 1) ||
-                        model.Materials.Any(x => x.Material != null && x.Material.Passes.Any(pass => pass.HasTransparency)) ||
-                        modelComponent.Materials.Values.Any(x => x.Passes.Any(pass => pass.HasTransparency))) //For now we limit only to TriangleList types and interleaved vertex buffers, also we skip transparent
+                    // For now we limit only to TriangleList types and interleaved vertex buffers. Also we skip transparent
+                    if (model is null ||
+                        model.Meshes.Any(mesh => mesh.Draw.PrimitiveType != PrimitiveType.TriangleList ||
+                                                 mesh.Draw.VertexBuffers is null || mesh.Draw.VertexBuffers.Length != 1) ||
+                        model.Materials.Any(mat => mat.Material is not null &&
+                                            mat.Material.Passes.Any(pass => pass.HasTransparency)) ||
+                        modelComponent.Materials.Values.Any(mat => mat.Passes.Any(pass => pass.HasTransparency)))
                     {
                         commandContext.Logger.Info($"Skipped entity {subEntity.Name} since it's not compatible with PrefabModel.");
                         continue;
@@ -368,13 +383,9 @@ namespace Stride.Assets.Models
                         var chunk = new EntityChunk { Entity = subEntity, Model = model, MaterialIndex = index };
 
                         if (materials.TryGetValue(mat, out var entities))
-                        {
                             entities.Add(chunk);
-                        }
                         else
-                        {
                             materials.Add(mat, new List<EntityChunk> { chunk });
-                        }
                     }
                 }
 
@@ -383,10 +394,10 @@ namespace Stride.Assets.Models
                     ProcessMaterial(contentManager, material.Value, material.Key, prefabModel);
                 }
 
-                // split the meshes if necessary
+                // Split the meshes if necessary
                 prefabModel.Meshes = SplitExtensions.SplitMeshes(prefabModel.Meshes, can32bitIndex: true);
 
-                //handle boundng box/sphere
+                // Handle boundng box / sphere
                 var modelBoundingBox = prefabModel.BoundingBox;
                 var modelBoundingSphere = prefabModel.BoundingSphere;
                 foreach (var mesh in prefabModel.Meshes)
@@ -399,8 +410,7 @@ namespace Stride.Assets.Models
                         mesh.BoundingBox = vertexBuffers[0].ComputeBounds(ref matrix, out mesh.BoundingSphere);
 
                         // Compute model bounding box (includes node transformation)
-                        BoundingSphere meshBoundingSphere;
-                        var meshBoundingBox = vertexBuffers[0].ComputeBounds(ref matrix, out meshBoundingSphere);
+                        var meshBoundingBox = vertexBuffers[0].ComputeBounds(ref matrix, out BoundingSphere meshBoundingSphere);
                         BoundingBox.Merge(ref modelBoundingBox, ref meshBoundingBox, out modelBoundingBox);
                         BoundingSphere.Merge(ref modelBoundingSphere, ref meshBoundingSphere, out modelBoundingSphere);
                     }
@@ -410,13 +420,12 @@ namespace Stride.Assets.Models
                 prefabModel.BoundingBox = modelBoundingBox;
                 prefabModel.BoundingSphere = modelBoundingSphere;
 
-                //save
+                // Save
                 contentManager.Save(Url, prefabModel);
 
                 foreach (var model in loadedModel.NotNull())
-                {
                     contentManager.Unload(model);
-                }
+
                 device.Dispose();
 
                 return Task.FromResult(ResultStatus.Successful);

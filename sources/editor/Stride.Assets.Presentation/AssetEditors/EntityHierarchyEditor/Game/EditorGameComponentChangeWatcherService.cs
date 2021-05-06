@@ -7,46 +7,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Stride.Core.Assets.Quantum;
 using Stride.Core.Annotations;
 using Stride.Core.Quantum;
+using Stride.Engine;
+using Stride.Core.Assets.Quantum;
+using Stride.Engine.Design;
 using Stride.Assets.Entities;
 using Stride.Assets.Presentation.AssetEditors.GameEditor.Services;
 using Stride.Editor.EditorGame.Game;
-using Stride.Engine;
-using Stride.Engine.Design;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
     public abstract class EditorGameComponentChangeWatcherService : EditorGameServiceBase
     {
-        private readonly Dictionary<EntityComponent, GraphNodeChangeListener> registeredListeners = new Dictionary<EntityComponent, GraphNodeChangeListener>();
+        private readonly Dictionary<EntityComponent, GraphNodeChangeListener> registeredListeners = new();
         private readonly IEditorGameController controller;
+
 
         protected EditorGameComponentChangeWatcherService(IEditorGameController controller)
         {
             this.controller = controller;
         }
 
+
         [NotNull]
         public abstract Type ComponentType { get; }
 
-        /// <inheritdoc />
+
+        /// <inheritdoc/>
         public override ValueTask DisposeAsync()
         {
             EnsureNotDestroyed(nameof(EditorGameComponentChangeWatcherService));
+
             foreach (var component in registeredListeners.Keys.ToList())
             {
                 UnregisterComponent(component);
             }
+
             return base.DisposeAsync();
         }
 
+        /// <inheritdoc/>
         protected override Task<bool> Initialize(EditorServiceGame game)
         {
-            game.SceneSystem.SceneInstance.EntityAdded += EntityAdded;
-            game.SceneSystem.SceneInstance.EntityRemoved += EntityRemoved;
-            game.SceneSystem.SceneInstance.ComponentChanged += ComponentChanged;
+            game.SceneSystem.SceneInstance.EntityAdded += OnEntityAdded;
+            game.SceneSystem.SceneInstance.EntityRemoved += OnEntityRemoved;
+            game.SceneSystem.SceneInstance.ComponentChanged += OnComponentChanged;
 
             return Task.FromResult(true);
         }
@@ -58,7 +64,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         private void RegisterComponent(EntityComponent component)
         {
-            if (component != null && ComponentType.IsInstanceOfType(component))
+            if (component is not null && ComponentType.IsInstanceOfType(component))
             {
                 var rootNode = controller.GameSideNodeContainer.GetOrCreateNode(component);
                 var listener = new AssetGraphNodeChangeListener(rootNode, AssetQuantumRegistry.GetDefinition(typeof(EntityHierarchyAssetBase)));
@@ -71,7 +77,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         private void UnregisterComponent(EntityComponent component)
         {
-            if (component != null && registeredListeners.TryGetValue(component, out var listener))
+            if (component is not null && registeredListeners.TryGetValue(component, out var listener))
             {
                 listener.ValueChanged -= ComponentPropertyChanged;
                 listener.ItemChanged -= ComponentPropertyChanged;
@@ -80,7 +86,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
         }
 
-        private void EntityAdded(object sender, Entity e)
+        private void OnEntityAdded(object sender, Entity e)
         {
             foreach (var component in e.Components)
             {
@@ -88,7 +94,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
         }
 
-        private void EntityRemoved(object sender, Entity e)
+        private void OnEntityRemoved(object sender, Entity e)
         {
             foreach (var component in e.Components)
             {
@@ -96,7 +102,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
         }
 
-        private void ComponentChanged(object sender, EntityComponentEventArgs e)
+        private void OnComponentChanged(object sender, EntityComponentEventArgs e)
         {
             UnregisterComponent(e.PreviousComponent);
             RegisterComponent(e.NewComponent);

@@ -3,12 +3,13 @@
     <StrideRuntime>true</StrideRuntime>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
   </PropertyGroup>
-
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
+    <AssemblyTitle>Stride Video Decoding and Rendering Library</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StridePlatformDependent>true</StridePlatformDependent>
-    <StrideBuildTags>*</StrideBuildTags>
+
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
     <StridePackAssets>true</StridePackAssets>
   </PropertyGroup>
@@ -16,20 +17,10 @@
     <DefineConstants>STRIDE_VIDEO_FFMPEG;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Video Decoding and Rendering Library</AssemblyTitle>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
-    <PackageReference Include="SharpDX.MediaFoundation" Version="4.2.0" />
-    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
-    <PackageReference Include="SharpDX.Direct3D12" Version="4.2.0" />
-  </ItemGroup>
+
   <Choose>
     <When Condition="$(DefineConstants.Contains(STRIDE_VIDEO_FFMPEG))">
       <ItemGroup>
@@ -41,8 +32,12 @@
       </ItemGroup>
     </When>
   </Choose>
+
   <ItemGroup>
+    <PackageReference Include="SharpDX.MediaFoundation" Version="4.2.0" />
     <PackageReference Include="FFmpeg.AutoGen" Version="3.4.0.2" />
+
+    <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />

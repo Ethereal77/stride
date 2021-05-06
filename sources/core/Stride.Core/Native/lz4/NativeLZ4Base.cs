@@ -10,7 +10,7 @@ namespace Stride.Core.Native
     {
         static NativeLz4Base()
         {
-            NativeLibraryHelper.PreloadLibrary(NativeInvoke.Library, typeof(NativeLz4Base));
+            NativeLibraryHelper.Load(NativeInvoke.Library, typeof(NativeLz4Base));
         }
 
         [DllImport(NativeInvoke.Library, CallingConvention = CallingConvention.Cdecl)]

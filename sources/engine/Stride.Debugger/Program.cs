@@ -48,9 +48,7 @@ namespace Stride
             {
                 var unexpectedArgs = p.Parse(args);
                 if (unexpectedArgs.Any())
-                {
                     throw new OptionException("Unexpected arguments [{0}]".ToFormat(string.Join(", ", unexpectedArgs)), "args");
-                }
 
                 if (waitDebuggerAttach)
                 {
@@ -67,32 +65,21 @@ namespace Stride
                 }
 
                 if (hostPipe is null)
-                {
-                    throw new OptionException("Host pipe not specified", "host");
-                }
+                    throw new OptionException("Host pipe not specified.", "host");
 
                 // Open ServiceWire channel with master builder
-                try
-                {
-                    using (var channel = new NpClient<IGameDebuggerHost>(new NpEndPoint(hostPipe)))
-                    {
-                        var gameDebuggerTarget = new GameDebuggerTarget();
-                        gameDebuggerTarget.MainLoop(channel.Proxy);
-                    }
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+                using var channel = new NpClient<IGameDebuggerHost>(new NpEndPoint(hostPipe));
+                var gameDebuggerTarget = new GameDebuggerTarget();
+                gameDebuggerTarget.MainLoop(channel.Proxy);
             }
-            catch (OptionException e)
+            catch (OptionException ex)
             {
-                Console.WriteLine("Command option '{0}': {1}", e.OptionName, e.Message);
+                Console.WriteLine("Command option '{0}': {1}", ex.OptionName, ex.Message);
                 return -1;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("Unhandled exception: {0}", e);
+                Console.WriteLine("Unhandled exception: {0}", ex);
                 return -1;
             }
 

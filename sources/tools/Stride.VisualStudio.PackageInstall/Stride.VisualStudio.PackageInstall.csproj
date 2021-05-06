@@ -2,36 +2,26 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net461</TargetFramework>
+
+    <AssemblyName>packageinstall</AssemblyName>
+    <AssemblyTitle>Installer for the Visual Studio Plugin for Stride</AssemblyTitle>
+
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\build\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <AssemblyName>packageinstall</AssemblyName>
-    <AssemblyTitle>Installer for the Visual Studio Plugin for Stride</AssemblyTitle>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Debug\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\core\Stride.Core.Design\VisualStudio\VisualStudioVersions.cs" Link="VisualStudioVersions.cs" />
+
+    <None Include="App.config" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="2.3.2262-g94fae01e">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\core\Stride.Core.Design\VisualStudio\VisualStudioVersions.cs">
-      <Link>VisualStudioVersions.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
+
   <Import Project="..\..\targets\Stride.Core.Sign.targets" />
 </Project>

@@ -33,7 +33,8 @@
       <BuildOutputInPackage Include="$(OutputPath)Newtonsoft.Json.dll" />
     </ItemGroup>
   </Target>
-  <!-- If .NET Core, we embed a loader which will resolve the nuget packages for us -->
+
+  <!-- If .NET Core, we embed a loader which will resolve the NuGet packages for us -->
   <PropertyGroup>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.loaderdata</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <DefineConstants Condition="'$(StrideNuGetResolverUX)' == 'true'">STRIDE_NUGET_RESOLVER_UX;$(DefineConstants)</DefineConstants>
@@ -42,15 +43,20 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.loaderdata</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);_StridePackageNuGetLoader</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
+
   <Target Name="_StridePackageNuGetLoader">
     <PropertyGroup>
-      <_StrideNuGetLoaderWindowsDesktop Condition="'$(_MicrosoftNetSdkWindowsDesktop)' == 'true'">true</_StrideNuGetLoaderWindowsDesktop>
       <_StrideNuGetLoaderApplicationIcon Condition="'$(ApplicationIcon)' != ''">$(MSBuildProjectDirectory)\$(ApplicationIcon)</_StrideNuGetLoaderApplicationIcon>
     </PropertyGroup>
-    <!-- Build NuGetLoader project, using same application icon and same Sdk (so that WinForms/WPF can also work) -->
-    <MSBuild Projects="$(SolutionDir)..\sources\tools\Stride.NuGetLoader\Stride.NuGetLoader.csproj" Properties="Configuration=$(Configuration);OutputType=$(OutputType);ApplicationIcon=$(_StrideNuGetLoaderApplicationIcon);StrideApplicationName=$(AssemblyName);StrideNuGetLoaderWindowsDesktop=$(_StrideNuGetLoaderWindowsDesktop);StrideSTAThreadOnMain=$(StrideSTAThreadOnMain);StrideNuGetResolverUX=$(StrideNuGetResolverUX)" />
-    <!-- Write a small data file containing package and version to use for loader (let's not rely on NuGet layout/files such as .nuspec file in case it changes in the future) -->
+
+    <!-- Build NuGetLoader project, using the same application icon and SDK (so that WinForms/WPF can also work) -->
+    <MSBuild Projects="$(SolutionDir)..\sources\tools\Stride.NuGetLoader\Stride.NuGetLoader.csproj"
+             Properties="Configuration=$(Configuration);OutputType=$(OutputType);ApplicationIcon=$(_StrideNuGetLoaderApplicationIcon);StrideApplicationName=$(AssemblyName);StrideSTAThreadOnMain=$(StrideSTAThreadOnMain);StrideNuGetResolverUX=$(StrideNuGetResolverUX)" />
+
+    <!-- Write a small data file containing the package and version to use for the loader.
+        (let's not rely on NuGet layout/files such as .nuspec file in case it changes in the future) -->
     <WriteLinesToFile File="$(OutputPath)Stride.NuGetLoader.loaderdata" Lines="$(PackageId)/$(PackageVersion)" Overwrite="true" />
+
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)Stride.NuGetLoader.loaderdata" />
       <BuildOutputInPackage Include="$(SolutionDir)..\sources\tools\Stride.NuGetLoader\bin\$(Configuration)\$(AssemblyName)\$(TargetFramework)\*.*" />

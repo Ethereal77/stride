@@ -2,26 +2,19 @@
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
-
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
-    <StrideBuildTags>*</StrideBuildTags>
+    <AssemblyTitle>Stride Shading Language Compiler</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Shading Language Compiler</AssemblyTitle>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Stride.Shaders.Parser\Stride.Shaders.Parser.csproj" />
-    <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
-  </ItemGroup>
+
   <ItemGroup Condition="$(TargetFramework.StartsWith('net'))">
     <StrideNativeLib Include="$(WindowsSdkDir_10)\Redist\D3D\**\d3dcompiler_47.dll">
       <Link>win-%(RecursiveDir)%(Filename)%(Extension)</Link>
@@ -30,7 +23,12 @@
     </StrideNativeLib>
   </ItemGroup>
 
-  <Import Project="..\..\shared\Stride.Core.ShellHelper\Stride.Core.ShellHelper.projitems" Label="Shared" />
+  <ItemGroup>
+    <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
 
+    <ProjectReference Include="..\Stride.Shaders.Parser\Stride.Shaders.Parser.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\..\shared\Stride.Core.ShellHelper\Stride.Core.ShellHelper.projitems" Label="Shared" />
   <Import Project="$(StrideSdkTargets)" />
 </Project>

@@ -3,36 +3,49 @@
     <StrideRuntime>true</StrideRuntime>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
   </PropertyGroup>
-
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
+    <AssemblyTitle>Stride Graphics Subsystem</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StridePlatformDependent>true</StridePlatformDependent>
-    <StrideBuildTags>*</StrideBuildTags>
+
     <StridePackAssets>true</StridePackAssets>
     <DefineConstants>$(DefineConstants);STRIDE_GRAPHICS_NO_DESCRIPTOR_COPIES</DefineConstants>
   </PropertyGroup>
+
   <ItemGroup>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+
     <StrideNativeLib Include="..\..\..\deps\freetype\$(StridePlatformDeps)\**\*.*">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
       <RelativePath>%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </StrideNativeLib>
-  </ItemGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Graphics Subsystem</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
     <None Include="build\**\*.targets" PackagePath="build\" Pack="true" />
     <None Include="build\**\*.targets" PackagePath="buildTransitive\" Pack="true" />
     <None Include="..\..\targets\Stride.GraphicsApi.PackageReference.targets" PackagePath="build\" Pack="true" />
     <None Include="..\..\targets\Stride.GraphicsApi.PackageReference.targets" PackagePath="buildTransitive\" Pack="true" />
+
+    <Compile Update="FrameworkResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FrameworkResources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="FrameworkResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FrameworkResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+    <PackageReference Include="SharpDX.Direct3D12" Version="4.2.0" />
+    <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
+    <PackageReference Include="Stride.SharpFont" Version="1.0.0" />
+
     <ProjectReference Include="..\..\core\Stride.Core.Tasks\Stride.Core.Tasks.csproj">
       <Private>false</Private>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -42,18 +55,8 @@
     <ProjectReference Include="..\Stride.Native\Stride.Native.csproj" />
     <ProjectReference Include="..\Stride.Shaders\Stride.Shaders.csproj" />
     <ProjectReference Include="..\Stride\Stride.csproj" />
-    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
-    <PackageReference Include="SharpDX.Direct3D12" Version="4.2.0" />
-    <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
-    <PackageReference Include="Stride.SharpFont" Version="1.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="FrameworkResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>FrameworkResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
+
   <Import Project="..\Stride.Shared\Refactor\Stride.Refactor.projitems" Label="Shared" />
   <Import Project="$(StrideSdkTargets)" />
 </Project>

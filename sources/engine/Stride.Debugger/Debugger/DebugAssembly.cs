@@ -14,17 +14,14 @@ namespace Stride.Debugger.Target
     {
         private readonly int id;
 
-        public static readonly DebugAssembly Empty = new DebugAssembly(0);
+        public static readonly DebugAssembly Empty = new(0);
 
         internal DebugAssembly(int id)
         {
             this.id = id;
         }
 
-        public bool Equals(DebugAssembly other)
-        {
-            return id == other.id;
-        }
+        public bool Equals(DebugAssembly other) => id == other.id;
 
         public override bool Equals(object obj)
         {
@@ -34,9 +31,6 @@ namespace Stride.Debugger.Target
             return obj is DebugAssembly assembly && Equals(assembly);
         }
 
-        public override int GetHashCode()
-        {
-            return id;
-        }
+        public override int GetHashCode() => id;
     }
 }

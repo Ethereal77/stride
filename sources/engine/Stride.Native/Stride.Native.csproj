@@ -3,35 +3,31 @@
     <StrideRuntime>true</StrideRuntime>
     <StrideNativeOutputName>libstride</StrideNativeOutputName>
   </PropertyGroup>
-
   <Import Project="..\..\targets\Stride.props" />
-  <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideAssemblyProcessorOptions>--serialization --parameter-key</StrideAssemblyProcessorOptions>
-    <StrideBuildTags>*</StrideBuildTags>
-  </PropertyGroup>
 
   <PropertyGroup>
     <AssemblyTitle>Stride Native and Interop Bindings</AssemblyTitle>
+
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>--serialization --parameter-key</StrideAssemblyProcessorOptions>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\core\Stride.Core.Mathematics\Stride.Core.Mathematics.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Stride.Native.Libs.targets">
-      <SubType>Designer</SubType>
-    </None>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+
+    <None Include="Stride.Native.Libs.targets" />
     <None Include="StrideNative.h" />
     <None Include="FastTextRenderer\FastTextRenderer.c" />
     <None Include="Sprite\SpriteBatchNative.c" />
     <None Include="DirectInput\XInputChecker.cpp" />
     <None Include="Lightprobes\predicates.c" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\Stride.Core.Mathematics\Stride.Core.Mathematics.csproj" />
+  </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

@@ -104,9 +104,7 @@ namespace Stride.GitVersioning
                 if (RevisionGitHeight)
                 {
                     if (!Version.TryParse(publicVersion, out var publicVersionParsed))
-                    {
-                        throw new InvalidOperationException($"Could not decode version {publicVersion}");
-                    }
+                        throw new InvalidOperationException($"Could not decode version {publicVersion}.");
 
                     // Compute version based on Git info
                     var height = Nerdbank.GitVersioning.GitExtensions.GetVersionHeight(repo, VersionFile.ItemSpec);
@@ -133,10 +131,10 @@ namespace Stride.GitVersioning
 
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 NuGetVersion = publicVersion + versionSuffix;
-                Log.LogWarning($"Could not determine version using git history: {e}", e);
+                Log.LogWarning($"Could not determine version using Git history: {ex}", ex);
                 return false;
             }
         }

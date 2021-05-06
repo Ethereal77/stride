@@ -3,10 +3,12 @@
   <Import Project="..\..\targets\Stride.Core.TargetFrameworks.Editor.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+
     <StrideSkipAutoPack>false</StrideSkipAutoPack>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>
@@ -16,15 +18,14 @@
     </AvaloniaResource>
     <AvaloniaResource Include="Assets\*" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.10" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.10" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.10" />
+    <PackageReference Include="Avalonia" Version="0.10.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.3" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.3" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.3" Condition="'$(Configuration)' == 'Debug'" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.utility" Version="2.4.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
   <Import Project="..\..\targets\Stride.PackageVersion.targets" />

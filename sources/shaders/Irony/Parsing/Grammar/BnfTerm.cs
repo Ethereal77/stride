@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 
-namespace Stride.Irony.Parsing { 
+namespace Stride.Irony.Parsing {
   [Flags]
   public enum TermFlags {
     None = 0,
@@ -23,13 +23,13 @@ namespace Stride.Irony.Parsing {
     IsPunctuation =      0x20,
     IsDelimiter =        0x40,
     IsReservedWord =    0x080,
-    IsMemberSelect =    0x100,    
+    IsMemberSelect =    0x100,
 
-    IsNonScanner =    0x01000,  // indicates that tokens for this terminal are NOT produced by scanner 
+    IsNonScanner =    0x01000,  // indicates that tokens for this terminal are NOT produced by scanner
     IsNonGrammar =    0x02000,  // if set, parser would eliminate the token from the input stream; terms in Grammar.NonGrammarTerminals have this flag set
     IsTransient =     0x04000,  // Transient non-terminal - should be replaced by it's child in the AST tree.
     IsNotReported =   0x08000,  // Exclude from expected terminals list on syntax error
-    
+
     //calculated flags
     IsNullable =     0x010000,
     IsVisible =      0x020000,
@@ -40,7 +40,7 @@ namespace Stride.Irony.Parsing {
     IsListContainer     = 0x400000,
     //Indicates not to create AST node; mainly to suppress warning message on some special nodes that AST node type is not specified
     //Automatically set by MarkTransient method
-    NoAstNode           = 0x800000,  
+    NoAstNode           = 0x800000,
   }
 
   public delegate void AstNodeCreator(ParsingContext context, ParseTreeNode parseNode);
@@ -53,11 +53,8 @@ namespace Stride.Irony.Parsing {
       Name = name;
       ErrorAlias = errorAlias;
     }
-    public BnfTerm(string name, string errorAlias, Type nodeType) : this(name, errorAlias) {
-      AstNodeType = nodeType;
-    }
     public BnfTerm(string name, string errorAlias, AstNodeCreator nodeCreator) : this(name, errorAlias) {
-      AstNodeCreator = nodeCreator;  
+      AstNodeCreator = nodeCreator;
     }
     #endregion
 
@@ -70,8 +67,8 @@ namespace Stride.Irony.Parsing {
     public virtual string GetParseNodeCaption(ParseTreeNode node) {
       if (GrammarData != null)
         return GrammarData.Grammar.GetParseNodeCaption(node);
-      else 
-        return Name; 
+      else
+        return Name;
     }
 
     public override string ToString() {
@@ -82,22 +79,22 @@ namespace Stride.Irony.Parsing {
       if (Name == null) return 0;
       return Name.GetHashCode();
     }
-    #endregion 
+    #endregion
 
     public const int NoPrecedence = 0;
 
     #region properties: Name, DisplayName, Key, Options
     public string Name;
-  
-    //ErrorAlias is used in error reporting, e.g. "Syntax error, expected <list-of-display-names>". 
+
+    //ErrorAlias is used in error reporting, e.g. "Syntax error, expected <list-of-display-names>".
     public string ErrorAlias;
     public TermFlags Flags;
     protected GrammarData GrammarData;
     public int Precedence = NoPrecedence;
     public Associativity Associativity = Associativity.Neutral;
 
-    public Grammar Grammar { 
-      get { return GrammarData.Grammar; } 
+    public Grammar Grammar {
+      get { return GrammarData.Grammar; }
     }
     public bool FlagIsSet(TermFlags flag) {
       return (Flags & flag) != 0;
@@ -123,18 +120,18 @@ namespace Stride.Irony.Parsing {
     public virtual void CreateAstNode(ParsingContext context, ParseTreeNode nodeInfo) {
       if (AstNodeCreator != null) {
         AstNodeCreator(context, nodeInfo);
-        //We assume that Node creator method creates node and initializes it, so parser does not need to call 
+        //We assume that Node creator method creates node and initializes it, so parser does not need to call
         // IAstNodeInit.InitNode() method on node object.
         return;
       }
       Type nodeType = GetAstNodeType(context, nodeInfo);
-      if (nodeType == null) 
+      if (nodeType == null)
         return; //we give a warning on grammar validation about this situation
       nodeInfo.AstNode =  Activator.CreateInstance(nodeType);
       //Initialize node
       var iInit = nodeInfo.AstNode as IAstNodeInit;
       if (iInit != null)
-        iInit.Init(context, nodeInfo); 
+        iInit.Init(context, nodeInfo);
     }
 
     //method may be overriden to provide node type different from this.AstNodeType. StringLiteral is overriding this method
@@ -156,17 +153,17 @@ namespace Stride.Irony.Parsing {
     public NonTerminal Q()
     {
       if (_q != null)
-        return _q; 
+        return _q;
       _q = new NonTerminal(this.Name + "?");
       _q.Rule = this | Grammar.CurrentGrammar.Empty;
-      return _q; 
+      return _q;
     }
-    
+
     public NonTerminal Plus() {
-      if (_plus != null) 
+      if (_plus != null)
         return _plus;
       _plus = new NonTerminal(this.Name + "+");
-      _plus.Rule = Grammar.MakePlusRule(_plus, this); 
+      _plus.Rule = Grammar.MakePlusRule(_plus, this);
       return _plus;
     }
 
@@ -174,7 +171,7 @@ namespace Stride.Irony.Parsing {
     {
       if (_star != null) return _star;
       _star = new NonTerminal(this.Name + "*");
-      _star.Rule = Grammar.MakeStarRule(_star, this);  
+      _star.Rule = Grammar.MakeStarRule(_star, this);
       return _star;
     }
     #endregion
@@ -190,15 +187,12 @@ namespace Stride.Irony.Parsing {
       return Op_Plus(Grammar.CurrentGrammar.ToTerm(symbol1), term2);
     }
 
-    //Alternative 
+    //Alternative
     public static BnfExpression operator |(BnfTerm term1, BnfTerm term2) {
       return Op_Pipe(term1, term2);
     }
     public static BnfExpression operator |(BnfTerm term1, string symbol2) {
       return Op_Pipe(term1, Grammar.CurrentGrammar.ToTerm(symbol2));
-    }
-    public static BnfExpression operator |(string symbol1, BnfTerm term2) {
-      return Op_Pipe(Grammar.CurrentGrammar.ToTerm(symbol1), term2);
     }
 
     //BNF operations implementation -----------------------
@@ -238,9 +232,6 @@ namespace Stride.Irony.Parsing {
       ParseTreeNode = parseTreeNode;
     }
     public readonly ParseTreeNode ParseTreeNode;
-    public object AstNode {
-      get { return ParseTreeNode.AstNode; }
-    }
   }
 
 

@@ -42,11 +42,11 @@ namespace Stride.TextureConverter
         static TextureTool()
         {
             var type = typeof(TextureTool);
-            NativeLibraryHelper.PreloadLibrary("DxtWrapper.dll", type);
-            NativeLibraryHelper.PreloadLibrary("PVRTexLib.dll", type);
-            NativeLibraryHelper.PreloadLibrary("PvrttWrapper.dll", type);
-            NativeLibraryHelper.PreloadLibrary("FreeImage.dll", type);
-            NativeLibraryHelper.PreloadLibrary("FreeImageNET.dll", type);
+            NativeLibraryHelper.Load("DxtWrapper", type);
+            NativeLibraryHelper.Load("PVRTexLib", type);
+            NativeLibraryHelper.Load("PvrttWrapper", type);
+            NativeLibraryHelper.Load("FreeImage", type);
+            NativeLibraryHelper.Load("FreeImageNET", type);
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace Stride.TextureConverter
                 throw new TextureToolsException("The file " + file + " doesn't exist. Please check the file path.");
             }
 
-            if (!layoutFile.Equals("") && !File.Exists(layoutFile))
+            if (layoutFile != "" && !File.Exists(layoutFile))
             {
                 Log.Error("The file " + layoutFile + " doesn't exist. Please check the file path.");
                 throw new TextureToolsException("The file " + layoutFile + " doesn't exist. Please check the file path.");
@@ -369,8 +369,10 @@ namespace Stride.TextureConverter
         /// <exception cref="TextureToolsException">No available library could perform the task.</exception>
         private TexImage Load(LoadingRequest request)
         {
-            var texImage = new TexImage();
-            texImage.Name = request.FilePath is null ? "" : Path.GetFileName(request.FilePath);
+            var texImage = new TexImage
+            {
+                Name = request.FilePath is null ? "" : Path.GetFileName(request.FilePath)
+            };
 
             foreach (ITexLibrary library in textureLibraries)
             {
@@ -420,9 +422,9 @@ namespace Stride.TextureConverter
         /// <param name="image">The image.</param>
         /// <param name="fileName">Name of the file.</param>
         /// <param name="minimumMipMapSize">Minimum size of the mip map.</param>
-        public void Save(TexImage image, String fileName, int minimumMipMapSize=1)
+        public void Save(TexImage image, string fileName, int minimumMipMapSize=1)
         {
-            if (fileName is null || fileName.Equals(""))
+            if (fileName is null || fileName == "")
             {
                 Log.Error("No file name entered.");
                 throw new TextureToolsException("No file name entered.");
@@ -447,9 +449,9 @@ namespace Stride.TextureConverter
         /// <param name="fileName">Name of the file.</param>
         /// <param name="format">The new format.</param>
         /// <param name="minimumMipMapSize">Minimum size of the mip map.</param>
-        public void Save(TexImage image, String fileName, PixelFormat format, int minimumMipMapSize = 1)
+        public void Save(TexImage image, string fileName, PixelFormat format, int minimumMipMapSize = 1)
         {
-            if (fileName is null || fileName.Equals(""))
+            if (fileName is null || fileName == "")
             {
                 Log.Error("No file name entered.");
                 throw new TextureToolsException("No file name entered.");
@@ -495,7 +497,7 @@ namespace Stride.TextureConverter
         {
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't switch channels of a compressed texture. It will be decompressed first..");
+                Log.Warning("You can't switch channels of a compressed texture. It will be decompressed first.");
                 Decompress(image, image.Format.IsSRgb());
             }
 
@@ -518,7 +520,7 @@ namespace Stride.TextureConverter
 
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't compress an already compressed texture. It will be decompressed first..");
+                Log.Warning("You can't compress an already compressed texture. It will be decompressed first.");
                 Decompress(image, format.IsSRgb());
             }
 
@@ -536,12 +538,14 @@ namespace Stride.TextureConverter
         {
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't compress an already compressed texture. It will be decompressed first..");
+                Log.Warning("You can't compress an already compressed texture. It will be decompressed first.");
                 Decompress(image, image.Format.IsSRgb());
             }
 
-            if (image.Format != PixelFormat.R8G8B8A8_UNorm && image.Format != PixelFormat.B8G8R8A8_UNorm
-                && image.Format != PixelFormat.B8G8R8A8_UNorm_SRgb && image.Format != PixelFormat.R8G8B8A8_UNorm_SRgb)
+            if (image.Format != PixelFormat.R8G8B8A8_UNorm &&
+                image.Format != PixelFormat.B8G8R8A8_UNorm &&
+                image.Format != PixelFormat.B8G8R8A8_UNorm_SRgb &&
+                image.Format != PixelFormat.R8G8B8A8_UNorm_SRgb)
             {
                 Log.Error($"ColorKey TextureConverter is only supporting R8G8B8A8_UNorm or B8G8R8A8_UNorm while Texture Format is [{image.Format}]");
                 return;
@@ -597,7 +601,7 @@ namespace Stride.TextureConverter
 
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't resize a compressed texture. It will be decompressed first..");
+                Log.Warning("You can't resize a compressed texture. It will be decompressed first.");
                 Decompress(image, image.Format.IsSRgb());
             }
 
@@ -632,7 +636,7 @@ namespace Stride.TextureConverter
 
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't rescale a compressed texture. It will be decompressed first..");
+                Log.Warning("You can't rescale a compressed texture. It will be decompressed first.");
                 Decompress(image, image.Format.IsSRgb());
             }
 
@@ -656,7 +660,7 @@ namespace Stride.TextureConverter
 
             if (heightMap.Format.IsCompressed())
             {
-                Log.Warning("You can't generate a normal map from a compressed height hmap. It will be decompressed first..");
+                Log.Warning("You can't generate a normal map from a compressed height hmap. It will be decompressed first.");
                 Decompress(heightMap, heightMap.Format.IsSRgb());
             }
 
@@ -676,7 +680,7 @@ namespace Stride.TextureConverter
         {
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't premultiply alpha on a compressed texture. It will be decompressed first..");
+                Log.Warning("You can't premultiply alpha on a compressed texture. It will be decompressed first.");
                 Decompress(image, image.Format.IsSRgb());
             }
 
@@ -693,12 +697,12 @@ namespace Stride.TextureConverter
             if (texImage.Dimension != TexImage.TextureDimension.Texture2D || texImage.Format.IsCompressed())
                 throw new NotImplementedException();
 
-            var alphaImage = (TexImage)texImage.Clone(true);
+            var alphaImage = (TexImage) texImage.Clone(true);
 
             var rowPtr = alphaImage.Data;
             for (int i = 0; i < alphaImage.Height; i++)
             {
-                var pByte = (byte*)rowPtr;
+                var pByte = (byte*) rowPtr;
                 for (int x = 0; x < alphaImage.Width; x++)
                 {
                     pByte[0] = pByte[3];
@@ -739,10 +743,10 @@ namespace Stride.TextureConverter
         /// <returns>The swapped value</returns>
         private static uint RgbaToBgra(uint value)
         {
-            var b1 = (value >> 0) & 0xff;
-            var b2 = (value >> 8) & 0xff;
-            var b3 = (value >> 16) & 0xff;
-            var b4 = (value >> 24) & 0xff;
+            var b1 = (value >> 0) & 0xFF;
+            var b2 = (value >> 8) & 0xFF;
+            var b3 = (value >> 16) & 0xFF;
+            var b4 = (value >> 24) & 0xFF;
 
             return b4 << 24 | b1 << 16 | b2 << 8 | b3 << 0;
         }
@@ -765,7 +769,7 @@ namespace Stride.TextureConverter
             // check that we support the format
             var format = texture.Format;
             var pixelSize = format.SizeInBytes();
-            if (texture.Dimension != TexImage.TextureDimension.Texture2D || !(format.IsRGBAOrder() || format.IsBGRAOrder() || pixelSize != 4))
+            if (texture.Dimension != TexImage.TextureDimension.Texture2D || !(format.IsRgbaOrder() || format.IsBgraOrder() || pixelSize != 4))
             {
                 var guessedAlphaLevel = alphaDepth > 0 ? AlphaLevels.InterpolatedAlpha : AlphaLevels.NoAlpha;
                 logger?.Debug($"Unable to find alpha levels for texture type {format}. Returning default alpha level '{guessedAlphaLevel}'.");
@@ -781,9 +785,10 @@ namespace Stride.TextureConverter
             var startPtr = (byte*)texture.Data + stride * region.Y + pixelSize * region.X;
             var rowPtr = startPtr;
 
-            if (tranparencyColor.HasValue) // specific case when using a transparency color
+            // Specific case when using a transparency color
+            if (tranparencyColor.HasValue)
             {
-                var transparencyValue = format.IsRGBAOrder() ? tranparencyColor.Value.ToRgba() : tranparencyColor.Value.ToBgra();
+                var transparencyValue = format.IsRgbaOrder() ? tranparencyColor.Value.ToRgba() : tranparencyColor.Value.ToBgra();
 
                 for (int y = 0; y < region.Height; ++y)
                 {
@@ -799,7 +804,8 @@ namespace Stride.TextureConverter
                     rowPtr += stride;
                 }
             }
-            else // use default alpha channel
+            // Use default alpha channel
+            else
             {
                 for (int y = 0; y < region.Height; ++y)
                 {
@@ -815,7 +821,7 @@ namespace Stride.TextureConverter
 
                             alphaLevel = AlphaLevels.MaskAlpha;
                         }
-                        else if (value != 0xff)
+                        else if (value != 0xFF)
                         {
                             return AlphaLevels.InterpolatedAlpha;
                         }
@@ -842,10 +848,10 @@ namespace Stride.TextureConverter
 
 
             var format = texture.Format;
-            if (texture.Dimension != TexImage.TextureDimension.Texture2D || !(format.IsRGBAOrder() || format.IsBGRAOrder() || format.SizeInBytes() != 4))
+            if (texture.Dimension != TexImage.TextureDimension.Texture2D || !(format.IsRgbaOrder() || format.IsBgraOrder() || format.SizeInBytes() != 4))
                 throw new NotImplementedException();
 
-            // check that the pixel is inside the texture
+            // Check that the pixel is inside the texture
             var textureRegion = new Rectangle(0, 0, texture.Width, texture.Height);
             if (!textureRegion.Contains(pixel))
                 throw new ArgumentException("The provided pixel coordinate is outside of the texture");
@@ -854,7 +860,7 @@ namespace Stride.TextureConverter
             var stride = texture.RowPitch / 4;
 
             var pixelColorInt = ptr[stride*pixel.Y + pixel.X];
-            var pixelColor = format.IsRGBAOrder() ? Color.FromRgba(pixelColorInt) : Color.FromBgra(pixelColorInt);
+            var pixelColor = format.IsRgbaOrder() ? Color.FromRgba(pixelColorInt) : Color.FromBgra(pixelColorInt);
 
             return pixelColor;
         }
@@ -868,19 +874,19 @@ namespace Stride.TextureConverter
         /// <param name="separatorMask">The mask specifying which bits of the color should be checked. The bits are ordered as AABBGGRR.</param>
         /// <exception cref="ArgumentNullException"><paramref name="texture"/> is null</exception>
         /// <returns></returns>
-        public unsafe Rectangle FindSpriteRegion(TexImage texture, Int2 pixel, Color? separatorColor = null, uint separatorMask = 0xff000000)
+        public unsafe Rectangle FindSpriteRegion(TexImage texture, Int2 pixel, Color? separatorColor = null, uint separatorMask = 0xFF000000)
         {
             if (texture is null)
                 throw new ArgumentNullException(nameof(texture));
 
 
             var format = texture.Format;
-            if (texture.Dimension != TexImage.TextureDimension.Texture2D || !(format.IsRGBAOrder() || format.IsBGRAOrder() || format.SizeInBytes() != 4))
+            if (texture.Dimension != TexImage.TextureDimension.Texture2D || !(format.IsRgbaOrder() || format.IsBgraOrder() || format.SizeInBytes() != 4))
                 throw new NotImplementedException();
 
             // adjust the separator color the mask depending on the color format.
             var separator = (uint)(separatorColor ?? Color.Transparent).ToRgba();
-            if (texture.Format.IsBGRAOrder())
+            if (texture.Format.IsBgraOrder())
             {
                 separator = RgbaToBgra(separator);
                 separatorMask = RgbaToBgra(separatorMask);
@@ -922,7 +928,7 @@ namespace Stride.TextureConverter
                 }
 
                 // Stage 2: Determine the whole contour of the shape and update the region.
-                // Note: the found contour can correspond to an internal hole contour or the external shape contour.
+                // NOTE: The found contour can correspond to an internal hole contour or the external shape contour.
                 var currentEdge = startEdge;
                 var currentEdgeDirection = startEdgeDirection;
                 do
@@ -934,7 +940,7 @@ namespace Stride.TextureConverter
                     var neighbourPixel = currentEdge + nextSearchOffsets[(int)currentEdgeDirection, 1];
                     var neighbourIsSeparator = !textureRegion.Contains(neighbourPixel) || (ptr[neighbourPixel.Y * stride + neighbourPixel.X] & separatorMask) == maskedSeparator;
 
-                    // determine the next edge position
+                    // Determine the next edge position
                     if (!diagonalIsSeparator)
                     {
                         currentEdge = diagonalPixel;
@@ -949,19 +955,19 @@ namespace Stride.TextureConverter
                         currentEdgeDirection = (EdgeDirection)(((int)currentEdgeDirection + 1) % 4);
                     }
 
-                    // keep record of the point of the edge which is
+                    // Keep record of the point of the edge which is
                     if (currentEdge.X < contourLeftEgde.X)
                         contourLeftEgde = currentEdge;
 
-                    // increase or decrease the rotation counter based on the sequence of edge direction
+                    // Increase or decrease the rotation counter based on the sequence of edge direction
                     rotationDirection += RotationDirection(previousEdgeDirection, currentEdgeDirection);
 
-                    // update the rectangle
+                    // Update the rectangle
                     region = Rectangle.Union(region, currentEdge);
                 }
-                while (currentEdge != startEdge || currentEdgeDirection != startEdgeDirection); // as long as we do not close the contour continue to explore
+                while (currentEdge != startEdge || currentEdgeDirection != startEdgeDirection); // As long as we do not close the contour continue to explore
 
-            } // repeat the process as long as the edge found is not the shape external contour.
+            } // Repeat the process as long as the edge found is not the shape external contour.
             while (rotationDirection != 4);
 
             return region;
@@ -1006,8 +1012,8 @@ namespace Stride.TextureConverter
                 rowSrcPtr = IntPtr.Add(rowSrcPtr, region.Y * texImage.RowPitch);
                 for (int i = 0; i < region.Height; i++)
                 {
-                    var pSrc = ((UInt32*)rowSrcPtr) + region.X;
-                    var pDst = (UInt32*)rowDstPtr;
+                    var pSrc = ((uint*) rowSrcPtr) + region.X;
+                    var pDst = (uint*) rowDstPtr;
 
                     for (int x = 0; x < region.Width; x++)
                         *(pDst++) = *(pSrc++);
@@ -1052,7 +1058,7 @@ namespace Stride.TextureConverter
 
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't correct gamme on a compressed texture. It will be decompressed first..");
+                Log.Warning("You can't correct gamme on a compressed texture. It will be decompressed first.");
                 Decompress(image, image.Format.IsSRgb());
             }
 
@@ -1071,7 +1077,7 @@ namespace Stride.TextureConverter
         {
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't flip a compressed texture. It will be decompressed first..");
+                Log.Warning("You can't flip a compressed texture. It will be decompressed first.");
                 Decompress(image, image.Format.IsSRgb());
             }
 
@@ -1090,7 +1096,7 @@ namespace Stride.TextureConverter
         {
             if (image.Format.IsCompressed())
             {
-                Log.Warning("You can't flip a compressed texture. It will be decompressed first..");
+                Log.Warning("You can't flip a compressed texture. It will be decompressed first.");
                 Decompress(image, image.Format.IsSRgb());
             }
 
@@ -1166,7 +1172,7 @@ namespace Stride.TextureConverter
         /// </exception>
         public TexImage Extract(TexAtlas atlas, string name, int minimumMipmapSize = 1)
         {
-            if (name is null || name.Equals(""))
+            if (name is null || name == "")
             {
                 Log.Error("You must enter a texture name to extract.");
                 throw new TextureToolsException("You must enter a texture name to extract.");
@@ -1205,7 +1211,7 @@ namespace Stride.TextureConverter
         /// </exception>
         public TexImage Extract(TexImage array, int indice, int minimumMipmapSize = 1)
         {
-            if (indice < 0 || indice > array.ArraySize-1)
+            if (indice < 0 || indice > array.ArraySize - 1)
             {
                 Log.Error("The indice you entered is not valid.");
                 throw new TextureToolsException("The indice you entered is not valid.");
@@ -1244,7 +1250,7 @@ namespace Stride.TextureConverter
 
             if (atlas.Format.IsCompressed())
             {
-                Log.Warning("You can't extract a texture from a compressed atlas. The atlas will be decompressed first..");
+                Log.Warning("You can't extract a texture from a compressed atlas. The atlas will be decompressed first.");
                 Decompress(atlas, atlas.Format.IsSRgb());
             }
 
@@ -1297,7 +1303,7 @@ namespace Stride.TextureConverter
         {
             texture.Update();
 
-            if (texture.Name.Equals("") && name.Equals(""))
+            if (texture.Name == "" && name == "")
             {
                 Log.Error("You must either set the Name attribute of the TexImage, or you must give the name of the texture to update in the atlas.");
                 throw new TextureToolsException("You must either set the Name attribute of the TexImage, or you must give the name of the texture to update in the atlas.");
@@ -1311,7 +1317,7 @@ namespace Stride.TextureConverter
 
             CheckConformity(atlas, texture);
 
-            name = name.Equals("") ? texture.Name : name;
+            name = name == "" ? texture.Name : name;
 
             ExecuteRequest(atlas, new AtlasUpdateRequest(texture, name));
         }
@@ -1449,7 +1455,7 @@ namespace Stride.TextureConverter
                 ITexLibrary library;
                 if ((library = FindLibrary(image, request)) != null)
                 {
-                    if (image.Format.IsBGRAOrder() && !library.SupportBGRAOrder())
+                    if (image.Format.IsBgraOrder() && !library.SupportBGRAOrder())
                     {
                         SwitchChannel(image);
                     }
@@ -1494,7 +1500,7 @@ namespace Stride.TextureConverter
                     }
 
                     // Both libraries for intermediate processing were found, preceeding with the request
-                    if (image.Format.IsBGRAOrder() && !library.SupportBGRAOrder())
+                    if (image.Format.IsBgraOrder() && !library.SupportBGRAOrder())
                     {
                         SwitchChannel(image);
                     }

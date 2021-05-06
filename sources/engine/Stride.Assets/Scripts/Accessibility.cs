@@ -5,7 +5,7 @@
 namespace Stride.Assets.Scripts
 {
     /// <summary>
-    /// Describes accessibility of a <see cref="VisualScriptAsset"/>, <see cref="Method"/> or <see cref="Symbol"/>.
+    ///   Defines the accessibility kinds of a <see cref="VisualScriptAsset"/>, <see cref="Method"/> or <see cref="Symbol"/>.
     /// </summary>
     public enum Accessibility
     {
@@ -13,6 +13,6 @@ namespace Stride.Assets.Scripts
         Private = 1,
         Protected = 2,
         Internal = 3,
-        ProtectedOrInternal = 4,
+        ProtectedOrInternal = 4
     }
 }

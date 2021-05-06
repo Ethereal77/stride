@@ -1,41 +1,31 @@
 <Project>
-
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
     <StrideRuntimeNetStandardNoRuntimeIdentifiers>true</StrideRuntimeNetStandardNoRuntimeIdentifiers>
   </PropertyGroup>
-
   <Import Project="..\..\targets\Stride.props" />
 
   <PropertyGroup>
+    <AssemblyTitle>Stride Engine Base Functionality</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
-    <StridePlatformDependent>true</StridePlatformDependent>
-    <StrideBuildTags>*</StrideBuildTags>
+
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Engine Base Functionality</AssemblyTitle>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\core\Stride.Core.Serialization\Stride.Core.Serialization.csproj" />
-    <ProjectReference Include="..\..\core\Stride.Core.Mathematics\Stride.Core.Mathematics.csproj" />
     <!-- SharpDX is needed for WIC -->
     <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.1" />
-  </ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
 
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <ProjectReference Include="..\..\core\Stride.Core.Serialization\Stride.Core.Serialization.csproj" />
+    <ProjectReference Include="..\..\core\Stride.Core.Mathematics\Stride.Core.Mathematics.csproj" />
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />
-
 </Project>

@@ -120,7 +120,12 @@
     <MSBuild Targets="Build" Projects="$(StrideRoot)deps\Stride.GitVersioning\Stride.GitVersioning.csproj"/>
 
     <!-- Create SharedAssemblyInfo.NuGet.cs with Git information (different between official build and internal builds) -->
-    <GenerateVersionFile RootDirectory="$(StrideRoot)" VersionFile="sources\shared\SharedAssemblyInfo.cs" GeneratedVersionFile="sources\shared\SharedAssemblyInfo.NuGet.cs" RevisionGitHeight="true" SpecialVersionGitCommit="true">
+    <GenerateVersionFile RootDirectory="$(StrideRoot)"
+                         VersionFile="sources\shared\SharedAssemblyInfo.cs"
+                         GeneratedVersionFile="sources\shared\SharedAssemblyInfo.NuGet.cs"
+                         RevisionGitHeight="true"
+                         SpecialVersionGitCommit="true">
+
       <Output TaskParameter="NuGetVersion" PropertyName="StridePackageVersion"/>
     </GenerateVersionFile>
 

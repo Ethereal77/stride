@@ -1,24 +1,24 @@
 <Project>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>$(StrideAssemblyProcessorDefaultOptions)</StrideAssemblyProcessorOptions>
-    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\Stride.Assets\Stride.Assets.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

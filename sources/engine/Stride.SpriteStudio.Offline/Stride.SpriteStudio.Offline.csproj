@@ -1,29 +1,30 @@
 <Project>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+
+    <AssemblyTitle>Stride Importer and Compiler for SpriteStudio Animations</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--serialization --parameter-key</StrideAssemblyProcessorOptions>
+
     <StridePackAssets>true</StridePackAssets>
-    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Stride Importer and Compiler for SpriteStudio Animations</AssemblyTitle>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <ProjectReference Include="..\Stride.Assets\Stride.Assets.csproj" />
-    <ProjectReference Include="..\Stride.SpriteStudio.Runtime\Stride.SpriteStudio.Runtime.csproj" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+
     <None Include="Templates\Assets\SpriteStudio\DefaultSpriteStudioAnimation.sdtpl" />
     <None Include="Templates\Assets\SpriteStudio\DefaultSpriteStudioModel.sdtpl" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Templates\Assets\.sdtpl\SpriteStudioAnimation.png" />
     <None Include="Templates\Assets\.sdtpl\SpriteStudioModel.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stride.Assets\Stride.Assets.csproj" />
+    <ProjectReference Include="..\Stride.SpriteStudio.Runtime\Stride.SpriteStudio.Runtime.csproj" />
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />

@@ -50,9 +50,12 @@
   <Import Project="$(MSBuildThisFileDirectory)Stride.GraphicsApi.PackageReference.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)Stride.GraphicsApi.Dev.targets"/>
 
-  <!-- If it exists, replace SharedAssemblyInfo.cs with the Package one (which contain NuGet and git versions) -->
+  <!-- If it exists, replace SharedAssemblyInfo.cs with the Package one (which contain NuGet and Git versions) -->
   <Target Name="StrideReplaceVersionInfo" Condition="'$(StridePackageBuild)' == 'true'" BeforeTargets="PrepareResources">
-    <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.NuGet.cs')" Text="File SharedAssemblyInfo.NuGet.cs doesn't seem to have been generated. Please make sure Stride.build PackageEnvironment target has been run succesfully."/>
+
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.NuGet.cs')"
+           Text="File SharedAssemblyInfo.NuGet.cs doesn't seem to have been generated. Please make sure Stride.build PackageEnvironment target has been run succesfully."/>
+
     <ItemGroup>
       <StrideSharedAssemblyFile Include="@(Compile)" Condition="'%(Compile.FullPath)' == '$([System.IO.Path]::GetFullPath(`$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.cs`))'"/>
       <Compile Remove="@(StrideSharedAssemblyFile)" />

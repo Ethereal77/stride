@@ -6,30 +6,29 @@
   </PropertyGroup>
 
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <UseWPF Condition="$(TargetFramework.EndsWith('-windows'))">true</UseWPF>
     <UseWindowsForms Condition="$(TargetFramework.EndsWith('-windows'))">true</UseWindowsForms>
-    <StridePlatformDependent>true</StridePlatformDependent>
+
+    <AssemblyTitle>Stride Input Devices</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideBuildTags>*</StrideBuildTags>
+
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
     <DefineConstants Condition="$(TargetFramework.StartsWith('net4'))">$(DefineConstants);STRIDE_INPUT_RAWINPUT</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Input Devices</AssemblyTitle>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Stride.Games\Stride.Games.csproj" />
 
+  <ItemGroup>
     <PackageReference Include="SharpDX.RawInput" Version="4.2.0" Condition="$(TargetFramework.StartsWith('net4'))" />
     <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" Condition="$(TargetFramework.EndsWith('-windows'))" />
     <PackageReference Include="SharpDX.XInput" Version="4.2.0" Condition="$(TargetFramework.EndsWith('-windows'))" />
+
+    <ProjectReference Include="..\Stride.Games\Stride.Games.csproj" />
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />

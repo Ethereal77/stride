@@ -19,7 +19,7 @@ namespace Stride.Rendering.LightProbes
     ///   Represents a class that can compute the tetrahedralization of a set of vertices using
     ///   the Bowyer-Watson tetrahedralization algorithm.
     /// </summary>
-    /// <see cref="http://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm"/>
+    /// <seealso href="http://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm">Bowyer-Watson algorithm</seealso>
     public class BowyerWatsonTetrahedralization
     {
         // Add 100 meters for extrapolation
@@ -37,10 +37,10 @@ namespace Stride.Rendering.LightProbes
         public static extern float insphere(ref Vector3 pa, ref Vector3 pb, ref Vector3 pc, ref Vector3 pd, ref Vector3 pe);
 #pragma warning restore SA1300 // Element should begin with upper-case letter
 
-        private readonly List<int> badTetrahedra = new List<int>();
-        private readonly FastList<HoleFace> holeFaces = new FastList<HoleFace>();
-        private readonly List<HoleEdge> edges = new List<HoleEdge>();
-        private readonly List<int> freeTetrahedra = new List<int>();
+        private readonly List<int> badTetrahedra = new();
+        private readonly FastList<HoleFace> holeFaces = new();
+        private readonly List<HoleEdge> edges = new();
+        private readonly List<int> freeTetrahedra = new();
 
         private Vector3[] vertices;
 
@@ -120,7 +120,7 @@ namespace Stride.Rendering.LightProbes
                 public override unsafe void Serialize(ref Tetrahedron tetrahedron, ArchiveMode mode, SerializationStream stream)
                 {
                     fixed (Tetrahedron* tetrahedronPtr = &tetrahedron)
-                        stream.Serialize((IntPtr)tetrahedronPtr, sizeof(Tetrahedron));
+                        stream.Serialize((IntPtr) tetrahedronPtr, sizeof(Tetrahedron));
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace Stride.Rendering.LightProbes
         static BowyerWatsonTetrahedralization()
         {
             // TODO: Add native to Stride.Engine?
-            NativeLibraryHelper.PreloadLibrary(NativeInvoke.Library, typeof(BowyerWatsonTetrahedralization));
+            NativeLibraryHelper.Load(NativeInvoke.Library, typeof(BowyerWatsonTetrahedralization));
             exactinit();
         }
 
@@ -168,7 +168,7 @@ namespace Stride.Rendering.LightProbes
                 Vertices = this.vertices,
                 UserVertexCount = vertices.Count,
                 Tetrahedra = tetrahedralization,
-                Faces = faces,
+                Faces = faces
             };
         }
 
@@ -205,10 +205,9 @@ namespace Stride.Rendering.LightProbes
                         var superTetrahedronVertex = currentTetrahedron->Vertices[superTetrahedronVertexIndex];
 
                         // Compute normal
-                        Vector3 edge1, edge2, faceNormal;
-                        Vector3.Subtract(ref vertices[vertex1], ref vertices[vertex0], out edge1);
-                        Vector3.Subtract(ref vertices[vertex2], ref vertices[vertex0], out edge2);
-                        Vector3.Cross(ref edge1, ref edge2, out faceNormal);
+                        Vector3.Subtract(ref vertices[vertex1], ref vertices[vertex0], out Vector3 edge1);
+                        Vector3.Subtract(ref vertices[vertex2], ref vertices[vertex0], out Vector3 edge2);
+                        Vector3.Cross(ref edge1, ref edge2, out Vector3 faceNormal);
                         faceNormal.Normalize();
 
                         // Reverse it if not facing proper direction (extraVertex should be on the positive side)
@@ -237,7 +236,7 @@ namespace Stride.Rendering.LightProbes
             vertices = vertices.Concat(extraVertices).ToArray();
 
             // Add all the new points one at a time to the tetrahedralization
-            for (int index = this.vertices.Length - extraVertices.Count; index < this.vertices.Length; index++)
+            for (int index = vertices.Length - extraVertices.Count; index < vertices.Length; index++)
             {
                 AddVertex(index);
                 CheckConnectivity();
@@ -301,10 +300,9 @@ namespace Stride.Rendering.LightProbes
                             currentFace.Vertices[2] = currentTetrahedron->Vertices[(((i + 3) / 2) * 2) % 4];    // 2 0 0 2
 
                             // Compute normal
-                            Vector3 edge1, edge2, faceNormal;
-                            Vector3.Subtract(ref vertices[currentFace.Vertices[1]], ref vertices[currentFace.Vertices[0]], out edge1);
-                            Vector3.Subtract(ref vertices[currentFace.Vertices[2]], ref vertices[currentFace.Vertices[0]], out edge2);
-                            Vector3.Cross(ref edge1, ref edge2, out faceNormal);
+                            Vector3.Subtract(ref vertices[currentFace.Vertices[1]], ref vertices[currentFace.Vertices[0]], out Vector3 edge1);
+                            Vector3.Subtract(ref vertices[currentFace.Vertices[2]], ref vertices[currentFace.Vertices[0]], out Vector3 edge2);
+                            Vector3.Cross(ref edge1, ref edge2, out Vector3 faceNormal);
                             faceNormal.Normalize();
 
                             currentFace.Normal = faceNormal;
@@ -372,7 +370,7 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        ///   Removes the super tetrahedra, and any tetrahedra sharing its vertices.
+        ///   Removes the super tetrahedron, and any tetrahedra sharing its vertices.
         /// </summary>
         private unsafe void RemoveSuperTetrahedron(int startVertex, int endVertex)
         {
@@ -416,7 +414,7 @@ namespace Stride.Rendering.LightProbes
         }
 
         /// <summary>
-        ///   Adds the super tetrahedron, which encompass every vertices.
+        ///   Adds the super tetrahedron, which encompass every vertex.
         /// </summary>
         private unsafe void AddSuperTetrahedron()
         {
@@ -444,10 +442,10 @@ namespace Stride.Rendering.LightProbes
                 // Note: we build 3 extra vertices on a plane with normal (1,1,1) to makes computation easier
                 // As an example, (assuming 2D), if B=(1,1) or (0.5,1.5), we can encompass it with (2,0) and (0,2))
                 var combinedSize = boundingBox.Extent.X + boundingBox.Extent.Y + boundingBox.Extent.Z;
-                vertices[vertices.Length - 4] = boundingBox.Minimum - boundingBox.Extent * 1000.0f;
-                vertices[vertices.Length - 3] = boundingBox.Minimum + Vector3.UnitZ * combinedSize * 1000.0f;
-                vertices[vertices.Length - 2] = boundingBox.Minimum + Vector3.UnitY * combinedSize * 1000.0f;
-                vertices[vertices.Length - 1] = boundingBox.Minimum + Vector3.UnitX * combinedSize * 1000.0f;
+                vertices[^4] = boundingBox.Minimum - boundingBox.Extent * 1000.0f;
+                vertices[^3] = boundingBox.Minimum + Vector3.UnitZ * combinedSize * 1000.0f;
+                vertices[^2] = boundingBox.Minimum + Vector3.UnitY * combinedSize * 1000.0f;
+                vertices[^1] = boundingBox.Minimum + Vector3.UnitX * combinedSize * 1000.0f;
 
                 // Create super tetrahedron
                 var superTetrahedron = new Tetrahedron();
@@ -458,7 +456,7 @@ namespace Stride.Rendering.LightProbes
                 }
 
                 if (!IsTetrahedronPositiveOrder(vertices, ref superTetrahedron))
-                    throw new InvalidOperationException("Tetrahedron not in positive order");
+                    throw new InvalidOperationException("Tetrahedron not in positive order.");
 
                 tetrahedralization.Add(superTetrahedron);
             }
@@ -507,7 +505,7 @@ namespace Stride.Rendering.LightProbes
                                     }
                                 }
                                 if (neighbourTetrahedronSelfIndex == -1)
-                                    throw new InvalidOperationException("Inconsistency: two tetrahedra don't agree on their neighbour information (they should both reference each other)");
+                                    throw new InvalidOperationException("Inconsistency: Two tetrahedra don't agree on their neighbour information (they should both reference each other).");
                             }
 
                             // Store edges information (to easily reconstruct neighbour after)
@@ -552,7 +550,7 @@ namespace Stride.Rendering.LightProbes
                     if (!IsTetrahedronPositiveOrder(ref vertex, ref vertices[face->Vertex0], ref vertices[face->Vertex1], ref vertices[face->Vertex2]))
                         throw new InvalidOperationException();
 
-                    // Note: we use opposite direction for half-edge
+                    // NOTE: We use opposite direction for half-edge
                     edges.Add(new HoleEdge(face->Vertex0, face->Vertex1, tetrahedronIndex));
                     edges.Add(new HoleEdge(face->Vertex1, face->Vertex2, tetrahedronIndex));
                     edges.Add(new HoleEdge(face->Vertex2, face->Vertex0, tetrahedronIndex));
@@ -602,7 +600,7 @@ namespace Stride.Rendering.LightProbes
                     newTetrahedron->Neighbours[3] = tetrahedronAdjacentIndex2 >= 0 ? edges[tetrahedronAdjacentIndex2].Neighboor : -1;
 
                     if (!IsTetrahedronPositiveOrder(vertices, ref *newTetrahedron))
-                        throw new InvalidOperationException("Tetrahedron not in positive order");
+                        throw new InvalidOperationException("Tetrahedron not in positive order.");
                 }
             }
         }
@@ -636,7 +634,7 @@ namespace Stride.Rendering.LightProbes
                                 }
                             }
                             if (neighbourTetrahedronSelfIndex == -1)
-                                throw new InvalidOperationException("Inconsistency: two tetrahedra don't agree on their neighbour information (they should both reference each other)");
+                                throw new InvalidOperationException("Inconsistency: Two tetrahedra don't agree on their neighbour information (they should both reference each other).");
                         }
                     }
                 }
@@ -648,7 +646,7 @@ namespace Stride.Rendering.LightProbes
             // Check free list
             if (freeTetrahedra.Count > 0)
             {
-                var lastTetrahedron = freeTetrahedra[freeTetrahedra.Count - 1];
+                var lastTetrahedron = freeTetrahedra[^1];
                 freeTetrahedra.RemoveAt(freeTetrahedra.Count - 1);
                 return lastTetrahedron;
             }
@@ -683,8 +681,9 @@ namespace Stride.Rendering.LightProbes
         ///   Determines whether the given point is in the tetraedra.
         /// </summary>
         /// <param name="p">The point.</param>
+        /// <param name="points">Points composing the tetrahedron.</param>
         /// <param name="tetrahedron">The tetrahedron.</param>
-        /// <returns></returns>
+        /// <returns><c>true</c> if the point is contained.</returns>
         private unsafe bool IsPointInCircumsphere(ref Vector3 p, Vector3[] points, ref Tetrahedron tetrahedron)
         {
             fixed (Tetrahedron* tetrahedronPointer = &tetrahedron)

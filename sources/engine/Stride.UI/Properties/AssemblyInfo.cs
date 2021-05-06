@@ -15,7 +15,5 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable 436 // Stride.PublicKeys is defined in multiple assemblies
 
-[assembly: InternalsVisibleTo("Stride.UI.Serializers" + Stride.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Stride.Engine" + Stride.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Stride.UI.Tests" + Stride.PublicKeys.Default)]
-[assembly: InternalsVisibleTo("StrideUITests" + Stride.PublicKeys.Default)]

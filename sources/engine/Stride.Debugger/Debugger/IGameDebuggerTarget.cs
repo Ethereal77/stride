@@ -9,7 +9,8 @@ using Stride.Engine;
 namespace Stride.Debugger.Target
 {
     /// <summary>
-    /// Controls a game execution host, that can load and unload assemblies, run games and update assets.
+    ///   Defines the interface that allows the debugger to control a game execution host, that can load and unload assemblies,
+    ///   run games and update assets.
     /// </summary>
     public interface IGameDebuggerTarget
     {

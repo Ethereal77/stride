@@ -101,12 +101,11 @@ namespace Stride.Debugger
 
             // Use the newly created component during second pass for proper cycle deserialization
             var newComponent = reloadedComponent.NewComponent;
-            if (newComponent != null)
+            if (newComponent is not null)
                 components.Add(newComponent);
 
             // Try to create component first
-            PropertyContainer properties;
-            AssetYamlSerializer.Default.Deserialize(eventReader, components, typeof(EntityComponentCollection), out properties);
+            AssetYamlSerializer.Default.Deserialize(eventReader, components, typeof(EntityComponentCollection), out _);
             var component = components.Count == 1 ? components[0] : null;
             return component;
         }
@@ -133,9 +132,9 @@ namespace Stride.Debugger
             var oldComponent = reloadedComponent.Entity.Components[reloadedComponent.ComponentIndex];
 
             // Flag scripts as being live reloaded
-            if (game != null && oldComponent is ScriptComponent)
+            if (game is not null && oldComponent is ScriptComponent oldScript)
             {
-                game.Script.LiveReload((ScriptComponent)oldComponent, (ScriptComponent)newComponent);
+                game.Script.LiveReload(oldScript, (ScriptComponent) newComponent);
             }
 
             // Replace with new component
@@ -148,13 +147,13 @@ namespace Stride.Debugger
 
         private class ReloadedComponentEntryLive
         {
-            public Entity Entity { get { throw new NotImplementedException(); } }
+            public Entity Entity => throw new NotImplementedException();
 
-            public int ComponentIndex { get { throw new NotImplementedException(); } }
+            public int ComponentIndex => throw new NotImplementedException();
 
             public readonly List<ParsingEvent> YamlEvents;
 
-            public EntityComponent OriginalComponent { get { throw new NotImplementedException(); } }
+            public EntityComponent OriginalComponent => throw new NotImplementedException();
 
             public EntityComponent NewComponent { get; set; }
         }

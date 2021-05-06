@@ -9,6 +9,8 @@ using System.Windows;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("361bd08b-e0a3-44f3-839a-d10a7089f7d0")]
 
+#pragma warning disable CS0436
+
 [assembly: InternalsVisibleTo("Stride.GameStudio" + Stride.PublicKeys.Default)]
 
 [assembly: ThemeInfo(

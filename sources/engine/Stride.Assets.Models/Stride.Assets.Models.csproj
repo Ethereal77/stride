@@ -1,20 +1,21 @@
 <Project>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideAssemblyProcessorOptions>$(StrideAssemblyProcessorDefaultOptions)</StrideAssemblyProcessorOptions>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-  </PropertyGroup>
-  <PropertyGroup>
+
     <AssemblyTitle>Stride Model Assets Support Assembly</AssemblyTitle>
+
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>$(StrideAssemblyProcessorDefaultOptions)</StrideAssemblyProcessorOptions>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\tools\Stride.Assimp\Stride.Assimp.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\..\tools\Stride.Assimp.Translation\Stride.Assimp.Translation.vcxproj" PrivateAssets="All" />
@@ -23,18 +24,15 @@
     <ProjectReference Include="..\..\tools\Stride.Importer.FBX\Stride.Importer.FBX.vcxproj" PrivateAssets="All" />
     <ProjectReference Include="..\Stride.Assets\Stride.Assets.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Analysis\" />
-  </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>_StrideIncludeExtraAssemblies;$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
-
   </PropertyGroup>
   <Target Name="_StrideIncludeExtraAssemblies">
     <ItemGroup>
-      <!-- Needed by .NET Core runtime to be able to load C++/CLI assemblies -->
+      <!-- Needed by .NET Runtime to be able to load C++/CLI assemblies -->
       <BuildOutputInPackage Include="$(OutputPath)ijwhost.dll" Condition="Exists('$(OutputPath)ijwhost.dll')" />
       <BuildOutputInPackage Include="$(OutputPath)Stride.Assimp.dll" />
       <BuildOutputInPackage Include="$(OutputPath)Stride.Assimp.Translation.dll" />

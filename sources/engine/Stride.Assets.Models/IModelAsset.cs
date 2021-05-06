@@ -7,16 +7,14 @@ using System.Collections.Generic;
 namespace Stride.Assets.Models
 {
     /// <summary>
-    /// This interface represents an asset containing a model.
+    ///   Defines the interface of an object representing an Asset containing a Model.
     /// </summary>
     public interface IModelAsset
     {
         /// <summary>
-        /// The materials.
+        ///   Gets the list of materials in the model.
         /// </summary>
-        /// <userdoc>
-        /// The list of materials in the model.
-        /// </userdoc>
+        /// <userdoc>The list of materials in the model.</userdoc>
         List<ModelMaterial> Materials { get; }
     }
 }

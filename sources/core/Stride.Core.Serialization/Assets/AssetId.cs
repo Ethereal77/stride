@@ -12,7 +12,7 @@ namespace Stride.Core.Assets
     [DataSerializer(typeof(AssetId.Serializer))]
     public struct AssetId : IComparable<AssetId>, IEquatable<AssetId>
     {
-        public static readonly AssetId Empty = new AssetId();
+        public static readonly AssetId Empty = new();
 
         private readonly Guid guid;
 
@@ -27,21 +27,12 @@ namespace Stride.Core.Assets
             this.guid = new Guid(guid);
         }
 
-        public static AssetId New()
-        {
-            return new AssetId(Guid.NewGuid());
-        }
+        public static AssetId New() => new AssetId(Guid.NewGuid());
 
 
-        public static explicit operator AssetId(Guid guid)
-        {
-            return new AssetId(guid);
-        }
+        public static explicit operator AssetId(Guid guid) => new AssetId(guid);
 
-        public static explicit operator Guid(AssetId id)
-        {
-            return id.guid;
-        }
+        public static explicit operator Guid(AssetId id) => id.guid;
 
 
         /// <summary>
@@ -50,10 +41,7 @@ namespace Stride.Core.Assets
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(AssetId left, AssetId right)
-        {
-            return left.Equals(right);
-        }
+        public static bool operator ==(AssetId left, AssetId right) => left.Equals(right);
 
         /// <summary>
         /// Implements the !=.
@@ -61,13 +49,10 @@ namespace Stride.Core.Assets
         /// <param name="left">The left.</param>
         /// <param name="right">The right.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(AssetId left, AssetId right)
-        {
-            return !left.Equals(right);
-        }
+        public static bool operator !=(AssetId left, AssetId right) => !left.Equals(right);
 
         /// <inheritdoc/>
-        public bool Equals(AssetId other) => (guid == other.guid);
+        public bool Equals(AssetId other) => guid == other.guid;
 
         /// <inheritdoc/>
         public override bool Equals(object obj) => obj is AssetId id && Equals(id);

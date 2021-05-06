@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2011 Irony - Roman Ivantsov
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -76,35 +76,6 @@ namespace Stride.Irony.Parsing {
       FirstTerminal = null;
       OtherTerminals = new HashSet<Terminal>();
       MaxPreviewTokens = 0;
-    }
-
-    public TokenPreviewHint(ParserActionType action, string first) : this(action) {
-      FirstString = first;
-    }
-
-    public TokenPreviewHint(ParserActionType action, Terminal first) : this(action) {
-      FirstTerminal = first;
-    }
-
-    public TokenPreviewHint ComesBefore(params string[] others) {
-      foreach (string term in others)
-      {
-        OtherStrings.Add(term);
-      }
-      return this;
-    }
-
-    public TokenPreviewHint ComesBefore(params Terminal[] others) {
-      foreach (Terminal term in others)
-      {
-        OtherTerminals.Add(term);
-      }
-      return this;
-    }
-
-    public TokenPreviewHint SetMaxPreview(int max) {
-      MaxPreviewTokens = max;
-      return this;
     }
 
     public override void Init(GrammarData grammarData) {

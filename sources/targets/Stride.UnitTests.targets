@@ -96,8 +96,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.23" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />

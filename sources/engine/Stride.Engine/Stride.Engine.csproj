@@ -1,38 +1,31 @@
 <Project>
-
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
-
   <Import Project="..\..\targets\Stride.props" />
 
   <PropertyGroup>
+    <AssemblyTitle>Stride Engine Base Infrastructure</AssemblyTitle>
+    <RootNamespace>Stride</RootNamespace>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>$(StrideAssemblyProcessorDefaultOptions)</StrideAssemblyProcessorOptions>
-    <StrideBuildTags>*</StrideBuildTags>
-    <RestorePackages>true</RestorePackages>
-    <RootNamespace>Stride</RootNamespace>
-    <StrideCodeAnalysis>true</StrideCodeAnalysis>
+
     <StridePackAssets>true</StridePackAssets>
+    <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Engine Base Infrastructure</AssemblyTitle>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="5.0.0" />
     <ProjectReference Include="..\Stride.Audio\Stride.Audio.csproj" />
     <ProjectReference Include="..\Stride.Input\Stride.Input.csproj" />
     <ProjectReference Include="..\Stride.Rendering\Stride.Rendering.csproj" />
     <ProjectReference Include="..\Stride.Shaders.Compiler\Stride.Shaders.Compiler.csproj" />
   </ItemGroup>
+
   <Import Project="..\Stride.Shared\Refactor\Stride.Refactor.projitems" Label="Shared" />
   <Import Project="$(StrideSdkTargets)" />
-
 </Project>

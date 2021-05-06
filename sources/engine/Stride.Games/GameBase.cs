@@ -361,7 +361,7 @@ namespace Stride.Games
                 throw new InvalidOperationException("No GraphicsDeviceManager found.");
 
             // Gets the GameWindow Context
-            Context = gameContext ?? GameContextFactory.NewDefaultGameContext();
+            Context = gameContext ?? GameContextFactory.NewGameContext(AppContextType.Desktop);
 
             PrepareContext();
 

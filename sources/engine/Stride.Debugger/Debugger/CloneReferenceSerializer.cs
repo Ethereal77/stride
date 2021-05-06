@@ -34,6 +34,7 @@ namespace Stride.Debugger.Target
         [ThreadStatic]
         internal static List<object> References;
 
+        /// <inheritdoc/>
         public override IYamlSerializable TryCreate(SerializerContext context, ITypeDescriptor typeDescriptor)
         {
             if (CanVisit(typeDescriptor.Type))

@@ -1,41 +1,42 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.Core.props" />
 
   <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <StrideCodeAnalysis>true</StrideCodeAnalysis>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <StrideNativeOutputName>libcore</StrideNativeOutputName>
+
+    <AssemblyTitle>Stride Core Types and Infrastructure</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
-    <StrideBuildTags>*</StrideBuildTags>
-    <RestorePackages>true</RestorePackages>
+
+    <StrideCodeAnalysis>true</StrideCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ServiceWire" Version="5.3.4" />
-  </ItemGroup>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Core Types and Infrastructure</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
     <None Include="build\**\*.targets" PackagePath="build\" Pack="true" />
     <None Include="build\**\*.props" PackagePath="build\" Pack="true" />
     <None Include="build\**\*.targets" PackagePath="buildTransitive\" Pack="true" />
     <None Include="build\**\*.props" PackagePath="buildTransitive\" Pack="true" />
-    <None Include="..\..\..\deps\AssemblyProcessor\**\*.*" Exclude="..\..\..\deps\AssemblyProcessor\.gitignore" PackagePath="tools\AssemblyProcessor\" Pack="true" />
+    <None Include="..\..\..\deps\AssemblyProcessor\*.*" PackagePath="tools\AssemblyProcessor\" Pack="true" Visible="false" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FrameworkResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FrameworkResources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="FrameworkResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>FrameworkResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+
     <Compile Update="Diagnostics\ILogger.Extensions.cs">
       <DependentUpon>ILogger.Extensions.tt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -56,14 +57,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Update="FrameworkResources.Designer.cs">
-      <DependentUpon>FrameworkResources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-  </ItemGroup>
 
-  <ItemGroup>
     <None Update="Diagnostics\ILogger.Extensions.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ILogger.Extensions.cs</LastGenOutput>
@@ -72,8 +66,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Logger.Extensions.cs</LastGenOutput>
     </None>
-    <None Include="Serialization\MemberSerializerClass.ttinclude" />
-    <None Include="Serialization\MemberSerializerCore.ttinclude" />
     <None Update="Serialization\MemberSerializerGenerated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MemberSerializerGenerated.cs</LastGenOutput>
@@ -82,6 +74,12 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TupleSerializer.cs</LastGenOutput>
     </None>
+    <None Include="Serialization\MemberSerializerClass.ttinclude" />
+    <None Include="Serialization\MemberSerializerCore.ttinclude" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ServiceWire" Version="5.3.4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -74,6 +74,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         /// <inheritdoc/>
         public override IEnumerable<Type> Dependencies { get { yield return typeof(IEditorGameComponentGizmoService); } }
 
+        /// <summary>
+        ///   Gets the scene editor this service is operating on.
+        /// </summary>
         protected EntityHierarchyEditorViewModel Editor { get; }
 
         /// <summary>
@@ -110,7 +113,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             EnsureNotDestroyed(nameof(EditorGameEntitySelectionService));
 
             Editor.SelectedContent.CollectionChanged -= SelectedContentChanged;
-            SelectionUpdated -= SelectionSelectionUpdated;
+            SelectionUpdated -= OnSelectionUpdated;
 
             return base.DisposeAsync();
         }
@@ -126,13 +129,13 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             game.SceneSystem.SceneInstance.EntityRemoved += (_, entity) => entityPicker.UncacheEntity(entity, isRecursive: false);
             game.SceneSystem.SceneInstance.ComponentChanged += (_, e) =>
             {
-                if (e.PreviousComponent != null)
+                if (e.PreviousComponent is not null)
                     entityPicker.UncacheEntityComponent(e.PreviousComponent);
-                if (e.NewComponent != null)
+                if (e.NewComponent is not null)
                     entityPicker.CacheEntityComponent(e.NewComponent);
             };
 
-            SelectionUpdated += SelectionSelectionUpdated;
+            SelectionUpdated += OnSelectionUpdated;
         }
 
         /// <summary>
@@ -185,16 +188,21 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private void Set([NotNull] Entity entity)
         {
             var entityId = Editor.Controller.GetAbsoluteId(entity);
+
             if (!SelectableIds.Contains(entityId) || SelectedIds.Count == 1 && SelectedIds.Contains(entityId))
                 return;
 
             IsControllingMouse = true;
+
             Editor.Dispatcher.InvokeAsync(() =>
             {
                 var viewModel = (EntityHierarchyElementViewModel) Editor.FindPartViewModel(entityId);
+
                 Editor.ClearSelection();
-                if (viewModel != null)
+
+                if (viewModel is not null)
                     Editor.SelectedContent.Add(viewModel);
+
                 Editor.Controller.InvokeAsync(() => IsControllingMouse = false);
             });
         }
@@ -206,15 +214,18 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private void Add([NotNull] Entity entity)
         {
             var entityId = Editor.Controller.GetAbsoluteId(entity);
+
             if (!SelectableIds.Contains(entityId) || SelectedIds.Contains(entityId))
                 return;
 
             IsControllingMouse = true;
+
             Editor.Dispatcher.InvokeAsync(() =>
             {
-                var viewModel = (EntityHierarchyElementViewModel)Editor.FindPartViewModel(entityId);
+                var viewModel = (EntityHierarchyElementViewModel) Editor.FindPartViewModel(entityId);
                 if (viewModel?.IsSelectable == true)
                     Editor.SelectedContent.Add(viewModel);
+
                 Editor.Controller.InvokeAsync(() => IsControllingMouse = false);
             });
         }
@@ -226,15 +237,18 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private void Remove([NotNull] Entity entity)
         {
             var entityId = Editor.Controller.GetAbsoluteId(entity);
+
             if (!SelectedIds.Contains(entityId))
                 return;
 
             IsControllingMouse = true;
+
             Editor.Dispatcher.InvokeAsync(() =>
             {
-                var viewModel = (EntityHierarchyElementViewModel)Editor.FindPartViewModel(entityId);
-                if (viewModel != null)
+                var viewModel = (EntityHierarchyElementViewModel) Editor.FindPartViewModel(entityId);
+                if (viewModel is not null)
                     Editor.SelectedContent.Remove(viewModel);
+
                 Editor.Controller.InvokeAsync(() => IsControllingMouse = false);
             });
         }
@@ -249,14 +263,17 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private bool Contains([NotNull] Entity entity)
         {
             var entityId = Editor.Controller.GetAbsoluteId(entity);
+
             return SelectedIds.Contains(entityId);
         }
 
-        public EntityPickingResult Pick()
-        {
-            return entityPicker?.Pick() ?? default;
-        }
+        /// <summary>
+        ///   Tries to pick the <see cref="Entity"/> under the mouse cursor.
+        /// </summary>
+        /// <returns>An <see cref="EntityPickingResult"/> structure containing information of the picked <see cref="Entity"/>, if any.</returns>
+        public EntityPickingResult Pick() => entityPicker?.Pick() ?? default;
 
+        /// <inheritdoc/>
         public async Task<bool> DuplicateSelection()
         {
             var duplicatedIds = new HashSet<AbsoluteId>();
@@ -264,7 +281,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
             var tcs = new TaskCompletionSource<bool>();
 
-            EventHandler<EntitySelectionEventArgs> callback = (_, e) =>
+            void onSelectionUpdatedCallback(object _, EntitySelectionEventArgs e)
             {
                 // Ignore first call (clear list)
                 selectedEntitiesId.Clear();
@@ -274,22 +291,26 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 {
                     tcs.TrySetResult(selectedEntitiesId.SetEquals(duplicatedIds));
                 }
-            };
-            SelectionUpdated += callback;
+            }
+
+            SelectionUpdated += onSelectionUpdatedCallback;
 
             var result = await Editor.Dispatcher.InvokeAsync(() => Editor.DuplicateSelectedEntities()?.Select(x => x.Id));
             if (result is null)
             {
-                SelectionUpdated -= callback;
+                SelectionUpdated -= onSelectionUpdatedCallback;
                 return false;
             }
             duplicatedIds.AddRange(result);
 
             await tcs.Task;
-            SelectionUpdated -= callback;
+            SelectionUpdated -= onSelectionUpdatedCallback;
             return true;
         }
 
+        //
+        // Adds an element (Entity) to the current selection.
+        //
         private void AddToSelection([NotNull] EntityHierarchyElementViewModel element)
         {
             lock (LockObject)
@@ -297,12 +318,12 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 if (!element.IsSelectable)
                     return;
 
-                // Add the entity id to the selected ids
+                // Add the Entity id to the selected ids
                 SelectedIds.Add(element.Id);
 
                 // Check if one of its parents is in the selection
                 var parent = element.TransformParent;
-                while (parent != null)
+                while (parent is not null)
                 {
                     if (SelectedIds.Contains(parent.Id))
                         break;
@@ -311,7 +332,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 }
 
                 // If so, the SelectedRootIds collection does not need to be updated.
-                if (parent != null)
+                if (parent is not null)
                     return;
 
                 // Otherwise, it's a new root entity in the selection.
@@ -325,6 +346,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
         }
 
+        //
+        // Removes an element (Entity) from the current selection.
+        //
         private void RemoveFromSelection([NotNull] EntityHierarchyElementViewModel element)
         {
             lock (LockObject)
@@ -339,7 +363,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                     {
                         // Check if one of its parents is in the selection
                         var parent = child.TransformParent;
-                        while (parent != element && parent != null)
+                        while (parent != element && parent is not null)
                         {
                             if (SelectedIds.Contains(parent.Id))
                                 break;
@@ -358,6 +382,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
         }
 
+        //
+        // Called when the contents of the selection have changed.
+        //
         private void SelectedContentChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (!Editor.SceneInitialized)
@@ -409,18 +436,26 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
         }
 
+        //
+        // Raises the SelectionUpdated event with the changes in the selection.
+        //
         private void RaiseSelectionUpdated(IReadOnlyCollection<AbsoluteId> oldSelectionIds)
         {
             var newSelectionIds = GetSelectedRootIds();
+
             Editor.Controller.InvokeAsync(() =>
             {
                 var oldSelection = oldSelectionIds.Select(x => Editor.Controller.FindGameSidePart(x)).Cast<Entity>().NotNull().ToList();
                 var newSelection = newSelectionIds.Select(x => Editor.Controller.FindGameSidePart(x)).Cast<Entity>().NotNull().ToList();
+
                 SelectionUpdated?.Invoke(this, new EntitySelectionEventArgs(oldSelection, newSelection));
             });
         }
 
-        private void SelectionSelectionUpdated(object sender, [NotNull] EntitySelectionEventArgs e)
+        //
+        // Checks the changes in the selected elements and updates the gizmos.
+        //
+        private void OnSelectionUpdated(object sender, [NotNull] EntitySelectionEventArgs e)
         {
             var previousSelection = new HashSet<Entity>(e.OldSelection);
             foreach (var childEntity in e.OldSelection.SelectDeep(x => x.Transform.Children.Select(y => y.Entity)))
@@ -436,27 +471,34 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
             previousSelection.ExceptWith(newSelection);
 
-            // update the selection on the gizmo entities.
+            // Update the selection on the gizmo entities
             foreach (var previousEntity in previousSelection)
             {
-                UpdateGizmoEntitiesSelection(previousEntity, false);
+                UpdateGizmoEntitiesSelection(previousEntity, isSelected: false);
             }
 
             foreach (var newEntity in newSelection)
             {
-                UpdateGizmoEntitiesSelection(newEntity, true);
+                UpdateGizmoEntitiesSelection(newEntity, isSelected: true);
             }
         }
 
+        //
+        // Updates the gizmo selection state of an Entity.
+        //
         private void UpdateGizmoEntitiesSelection([NotNull] Entity entity, bool isSelected)
         {
             Gizmos.UpdateGizmoEntitiesSelection(entity, isSelected);
+
             foreach (var child in entity.Transform.Children.SelectDeep(x => x.Children).Select(x => x.Entity).NotNull())
             {
                 Gizmos.UpdateGizmoEntitiesSelection(child, isSelected);
             }
         }
 
+        //
+        // Main loop of this service.
+        //
         private async Task Execute()
         {
             MicrothreadLocalDatabases.MountCommonDatabase();
@@ -495,7 +537,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
                             // Check for instancing
                             var instancingComponent = entityUnderMouse?.Get<InstancingComponent>();
-                            if (instancingComponent != null && instancingComponent.Enabled && instancingComponent.Type is InstancingEntityTransform instancing)
+                            if (instancingComponent is not null && instancingComponent.Enabled && instancingComponent.Type is InstancingEntityTransform instancing)
                             {
                                 entityUnderMouse = instancing.GetInstanceAt(entityPicked.InstanceId)?.Entity ?? entityUnderMouse;
                             }
@@ -546,7 +588,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             // Meshes
             var meshRenderFeature = game.SceneSystem.GraphicsCompositor.RenderFeatures.OfType<MeshRenderFeature>().FirstOrDefault();
             // TODO: Complain (log) if there is no MeshRenderFeature
-            if (meshRenderFeature != null)
+            if (meshRenderFeature is not null)
             {
                 meshRenderFeature.RenderFeatures.Add(new PickingRenderFeature());
                 meshRenderFeature.RenderStageSelectors.Add(new SimpleGroupToRenderStageSelector
@@ -560,7 +602,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             // Sprites
             var spriteRenderFeature = game.SceneSystem.GraphicsCompositor.RenderFeatures.OfType<SpriteRenderFeature>().FirstOrDefault();
             // TODO: Complain (log) if there is no SpriteRenderFeature
-            if (spriteRenderFeature != null)
+            if (spriteRenderFeature is not null)
             {
                 spriteRenderFeature.RenderStageSelectors.Add(new SimpleGroupToRenderStageSelector
                 {
@@ -576,7 +618,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             editorCompositor.PostGizmoCompositors.Add(entityPicker = new PickingSceneRenderer { PickingRenderStage = pickingRenderStage });
 
             var contentScene = ((EntityHierarchyEditorGame)game).ContentScene;
-            if (contentScene != null)
+            if (contentScene is not null)
                 entityPicker.CacheScene(contentScene, true);
         }
 
@@ -587,7 +629,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             Editor.Controller.InvokeAsync(() => SelectableIds.Add(id));
 
             // Add to game selection, in case it is already selected
-            var element = (EntityHierarchyElementViewModel)Editor.FindPartViewModel(id);
+            var element = (EntityHierarchyElementViewModel) Editor.FindPartViewModel(id);
             if (element is null)
                 return;
 
@@ -607,7 +649,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             Editor.Controller.InvokeAsync(() => SelectableIds.Remove(id));
 
             // Remove from game selection, in case it was selected
-            var element = (EntityHierarchyElementViewModel)Editor.FindPartViewModel(id);
+            var element = (EntityHierarchyElementViewModel) Editor.FindPartViewModel(id);
             if (element is null)
                 return;
 
@@ -629,7 +671,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             public override bool IsVisible(RenderObject renderObject, RenderView renderView, RenderViewStage renderViewStage)
             {
                 var entity = (renderObject.Source as EntityComponent)?.Entity;
-                if (entity != null)
+                if (entity is not null)
                 {
                     var entityId = service.Editor.Controller.GetAbsoluteId(entity);
                     return service.SelectableIds.Contains(entityId);

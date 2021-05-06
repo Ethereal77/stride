@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2011 Irony - Roman Ivantsov
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -37,24 +37,6 @@ namespace Stride.Irony.Parsing
         #region Constructors and Destructors
 
         /// <summary>
-        /// </summary>
-        /// <param name="grammar">
-        /// </param>
-        public Parser(Grammar grammar)
-            : this(new LanguageData(grammar))
-        {
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="language">
-        /// </param>
-        public Parser(LanguageData language)
-            : this(language, null, null)
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Parser"/> class.
         /// </summary>
         /// <param name="language">The language.</param>
@@ -71,7 +53,7 @@ namespace Stride.Irony.Parsing
             if (Scanner != null)
             {
                 Scanner.Initialize(this);
-            } 
+            }
             else
             {
                 Language.Errors.Add(GrammarErrorLevel.Error, null, "Scanner is not initialized for this grammar");
@@ -110,17 +92,6 @@ namespace Stride.Irony.Parsing
         /// </summary>
         /// <param name="sourceText">
         /// </param>
-        /// <returns>
-        /// </returns>
-        public ParseTree Parse(string sourceText)
-        {
-            return Parse(sourceText, "<Source>");
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="sourceText">
-        /// </param>
         /// <param name="fileName">
         /// </param>
         /// <returns>
@@ -142,31 +113,6 @@ namespace Stride.Irony.Parsing
             CoreParser.Parse();
             Context.CurrentParseTree.ParseTime = Environment.TickCount - start;
             UpdateParseTreeStatus();
-            return Context.CurrentParseTree;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="sourceText">
-        /// </param>
-        /// <param name="fileName">
-        /// </param>
-        /// <returns>
-        /// </returns>
-        public ParseTree ScanOnly(string sourceText, string fileName)
-        {
-            Context.CurrentParseTree = new ParseTree(sourceText, fileName);
-            // TODO Set SourceStream on Scanner
-            // Context.SourceStream.SetText(sourceText, 0, false);
-            while (true)
-            {
-                var token = Scanner.GetToken();
-                if (token == null || token.Terminal == Language.Grammar.Eof)
-                {
-                    break;
-                }
-            }
-
             return Context.CurrentParseTree;
         }
 

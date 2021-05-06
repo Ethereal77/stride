@@ -3,27 +3,25 @@
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.props" />
-  <PropertyGroup>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideBuildTags>*</StrideBuildTags>
-    <StridePackAssets>true</StridePackAssets>
-  </PropertyGroup>
+
   <PropertyGroup>
     <AssemblyTitle>Stride Voxel GI Rendering</AssemblyTitle>
+
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+
+    <StridePackAssets>true</StridePackAssets>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
     <ProjectReference Include="..\Stride.Native\Stride.Native.csproj" />
     <ProjectReference Include="..\Stride.Games\Stride.Games.csproj" />
     <ProjectReference Include="..\Stride.Rendering\Stride.Rendering.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

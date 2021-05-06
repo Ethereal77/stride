@@ -19,7 +19,7 @@ namespace Stride.Assets.Models
     {
         static AssimpAssetImporter()
         {
-            NativeLibraryHelper.PreloadLibrary("assimp-vc140-mt.dll", typeof(AssimpAssetImporter));
+            NativeLibraryHelper.Load("assimp-vc140-mt", typeof(AssimpAssetImporter));
         }
 
         // Supported file extensions for this importer

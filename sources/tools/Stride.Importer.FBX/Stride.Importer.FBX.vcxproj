@@ -4,7 +4,6 @@
   <PropertyGroup>
     <StrideProjectType>Cpp</StrideProjectType>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
     <FbxSdkVersion>2019.0</FbxSdkVersion>
     <FbxSdkUrl>https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-2019-0</FbxSdkUrl>

@@ -17,7 +17,7 @@ using Stride.Core.Annotations;
 namespace Stride.Video.FFmpeg
 {
     /// <summary>
-    /// Collection of utilities when invoking <see cref="global::FFmpeg.AutoGen"/>.
+    ///   Collection of utilities when invoking <see cref="global::FFmpeg.AutoGen"/>.
     /// </summary>
     public static class FFmpegUtils
     {
@@ -75,13 +75,13 @@ namespace Stride.Video.FFmpeg
             //   |---- avcodec
             //   |---- avutil
             var type = typeof(FFmpegUtils);
-            NativeLibraryHelper.PreloadLibrary("avutil-55", type);
-            NativeLibraryHelper.PreloadLibrary("swresample-2", type);
-            NativeLibraryHelper.PreloadLibrary("avcodec-57", type);
-            NativeLibraryHelper.PreloadLibrary("avformat-57", type);
-            NativeLibraryHelper.PreloadLibrary("swscale-4", type);
-            NativeLibraryHelper.PreloadLibrary("avfilter-6", type);
-            NativeLibraryHelper.PreloadLibrary("avdevice-57", type);
+            NativeLibraryHelper.Load("avutil-55", type);
+            NativeLibraryHelper.Load("swresample-2", type);
+            NativeLibraryHelper.Load("avcodec-57", type);
+            NativeLibraryHelper.Load("avformat-57", type);
+            NativeLibraryHelper.Load("swscale-4", type);
+            NativeLibraryHelper.Load("avfilter-6", type);
+            NativeLibraryHelper.Load("avdevice-57", type);
         }
 
         /// <summary>

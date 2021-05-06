@@ -1,4 +1,13 @@
-<!-- Build file pre-included by all Stride projects -->
+<!--
+***********************************************************************************************
+  Stride.Core.TargetFrameworks.Editor.props
+
+  Build file pre-included before the building of the project to configure solution-wide
+  the Target Framework for the Editor, design-time tools and associated projects.
+
+  Copyright (C) 2021 Stride and its contributors
+***********************************************************************************************
+-->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>

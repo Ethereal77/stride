@@ -30,14 +30,14 @@
     <StridePlatformDeps Condition="$(TargetFramework.StartsWith('net'))">dotnet</StridePlatformDeps>
   </PropertyGroup>
 
-  <!--Import Local Pre Settings for the solution being loaded -->
+  <!-- Import Local Pre-Settings for the solution being loaded -->
   <Import Project="$(SolutionDir)$(SolutionName).Build.props" Condition="Exists('$(SolutionDir)$(SolutionName).Build.props')" />
   <Import Project="$(SolutionDir)Stride.Core.Build.props" Condition="Exists('$(SolutionDir)Stride.Core.Build.props')" />
 
   <Import Project="$(MSBuildThisFileDirectory)Stride.Core.TargetFrameworks.Editor.props" />
 
   <!--
-    Settings StridePlatform specific.
+    Platform-specific settings.
   -->
   <PropertyGroup>
     <!-- Using C# 9 -->
@@ -108,7 +108,7 @@
   </PropertyGroup>
 
   <!--
-    Global Settings per project
+    Global settings per project.
   -->
   <PropertyGroup>
     <StrideCommonDependenciesDir Condition="'$(StrideCommonDependenciesDir)' == ''">$(MSBuildThisFileDirectory)..\..\deps\</StrideCommonDependenciesDir>

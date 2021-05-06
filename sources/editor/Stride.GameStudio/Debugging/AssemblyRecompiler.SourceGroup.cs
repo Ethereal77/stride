@@ -2,6 +2,7 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,56 +18,47 @@ namespace Stride.GameStudio.Debugging
     partial class AssemblyRecompiler
     {
         /// <summary>
-        /// Defines a group of source <see cref="SyntaxTree"/>, and later a generated <see cref="Project"/> and compiled assemblies.
+        ///   Represents a group of source <see cref="SyntaxTree"/>, and later a generated <see cref="Project"/> and compiled assemblies.
         /// </summary>
         public class SourceGroup : AdjacencyGraph<SyntaxTree, SEdge<SyntaxTree>>
         {
             /// <summary>
-            /// Gets or sets the generated roslyn project.
+            ///   Gets or sets the generated Roslyn <see cref="Microsoft.CodeAnalysis.Project"/>.
             /// </summary>
-            /// <value>
-            /// The generated roslyn project.
-            /// </value>
             public Project Project { get; set; }
 
             /// <summary>
-            /// Gets or sets the assembly PE data.
+            ///   Gets or sets the assembly PE image data.
             /// </summary>
-            /// <value>
-            /// The assembly PE data.
-            /// </value>
             public byte[] PE { get; set; }
 
             /// <summary>
-            /// Gets or sets the assembly PDB data.
+            ///   Gets or sets the assembly PDB debugging data.
             /// </summary>
-            /// <value>
-            /// The assembly PDB data.
-            /// </value>
             public byte[] PDB { get; set; }
 
             /// <value>
-            /// Temporarily stores the assembly when generating them.
+            ///   Gets or sets a temporary assembly definition when generating it.
             /// </value>
             internal AssemblyDefinition Assembly { get; set; }
 
-            public override string ToString()
-            {
-                return string.Join(" ", Vertices.Select(x => Path.GetFileName(x.FilePath)));
-            }
+
+            public override string ToString() => string.Join(' ', Vertices.Select(syntaxTree => Path.GetFileName(syntaxTree.FilePath)));
         }
 
+
+        /// <summary>
+        ///   An object that can compare two <see cref="SourceGroup"/>s for equality.
+        /// </summary>
         public class SourceGroupComparer : EqualityComparer<SourceGroup>
         {
-            private static readonly SourceGroupComparer _default = new SourceGroupComparer();
+            private static readonly SourceGroupComparer _default = new();
 
             /// <summary>
-            /// Gets the default.
+            ///   Gets the default comparer for <see cref="SourceGroup"/>s.
             /// </summary>
-            public new static SourceGroupComparer Default
-            {
-                get { return _default; }
-            }
+            public static new SourceGroupComparer Default => _default;
+
 
             public override bool Equals(SourceGroup x, SourceGroup y)
             {
@@ -75,17 +67,12 @@ namespace Stride.GameStudio.Debugging
                 return new HashSet<SyntaxTree>(x.Vertices).SetEquals(y.Vertices);
             }
 
-            public override int GetHashCode(SourceGroup obj)
+            public override int GetHashCode(SourceGroup sourceGroup)
             {
-                unchecked
-                {
-                    var hashCode = 17;
-                    foreach (var vertex in obj.Vertices.OrderBy(x => x.FilePath))
-                    {
-                        hashCode = hashCode * 31 + vertex.GetHashCode();
-                    }
-                    return hashCode;
-                }
+                HashCode hashCode = new();
+                foreach (var vertex in sourceGroup.Vertices.OrderBy(x => x.FilePath))
+                    hashCode.Add(vertex);
+                return hashCode.ToHashCode();
             }
         }
     }

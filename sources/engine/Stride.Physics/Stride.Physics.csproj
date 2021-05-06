@@ -2,40 +2,38 @@
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
-
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyTitle>Stride Physics Engine</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--serialization --parameter-key</StrideAssemblyProcessorOptions>
-    <StrideBuildTags>*</StrideBuildTags>
+
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <StrideNativeLib Include="..\..\..\deps\BulletPhysics\$(StridePlatformDeps)\**\libbulletc.*">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </StrideNativeLib>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <StrideNativeLib Include="..\..\..\deps\BulletPhysics\$(StridePlatformDeps)\**\libbulletc.*" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+
     <Reference Include="BulletSharp">
       <HintPath>..\..\..\deps\BulletPhysics\BulletSharp.NetStandard.dll</HintPath>
     </Reference>
   </ItemGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Physics Engine</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>_StrideIncludeExtraAssemblies;$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
-
   </PropertyGroup>
   <Target Name="_StrideIncludeExtraAssemblies">
     <ItemGroup>

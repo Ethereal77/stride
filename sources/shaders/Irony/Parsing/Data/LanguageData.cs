@@ -19,7 +19,7 @@ namespace Stride.Irony.Parsing
         /// <summary>
         /// Grammar errors.
         /// </summary>
-        public readonly GrammarErrorList Errors = new GrammarErrorList();
+        public readonly GrammarErrorList Errors = new();
 
         /// <summary>
         /// The linked Grammar
@@ -70,17 +70,6 @@ namespace Stride.Irony.Parsing
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Determines whether this instance can parse.
-        /// </summary>
-        /// <returns>
-        ///   <c>true</c> if this instance can parse; otherwise, <c>false</c>.
-        /// </returns>
-        public bool CanParse()
-        {
-            return ErrorLevel < GrammarErrorLevel.Error;
-        }
 
         /// <summary>
         /// Constructs all.

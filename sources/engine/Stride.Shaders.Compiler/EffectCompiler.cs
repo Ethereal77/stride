@@ -29,13 +29,13 @@ namespace Stride.Shaders.Compiler
     /// </summary>
     public class EffectCompiler : EffectCompilerBase
     {
-        private static readonly Object WriterLock = new Object();
+        private static readonly object writerLock = new();
 
         private bool d3dCompilerLoaded = false;
 
         private ShaderMixinParser shaderMixinParser;
 
-        private readonly object shaderMixinParserLock = new object();
+        private readonly object shaderMixinParserLock = new();
 
         public List<string> SourceDirectories { get; private set; }
 
@@ -48,7 +48,7 @@ namespace Stride.Shaders.Compiler
         {
             FileProvider = fileProvider;
 
-            NativeLibraryHelper.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
+            NativeLibraryHelper.Load("d3dcompiler_47", typeof(EffectCompiler));
 
             SourceDirectories = new List<string>();
             UrlToFilePath = new Dictionary<string, string>();
@@ -92,7 +92,7 @@ namespace Stride.Shaders.Compiler
             // NOTE: No lock, it's probably fine if it gets called from multiple threads at the same time.
             if (!d3dCompilerLoaded)
             {
-                NativeLibraryHelper.PreloadLibrary("d3dcompiler_47.dll", typeof(EffectCompiler));
+                NativeLibraryHelper.Load("d3dcompiler_47.dll", typeof(EffectCompiler));
                 d3dCompilerLoaded = true;
             }
 
@@ -164,7 +164,7 @@ namespace Stride.Shaders.Compiler
                 Directory.CreateDirectory(logDir);
             }
             var shaderSourceFilename = Path.Combine(logDir, "shader_" + fullEffectName.Replace('.', '_') + "_" + shaderId + ".hlsl");
-            lock (WriterLock) // protect write in case the same shader is created twice
+            lock (writerLock) // protect write in case the same shader is created twice
             {
                 // Write shader before generating to make sure that we are having a trace before compiling it (compiler may crash...etc.)
                 if (!File.Exists(shaderSourceFilename))
@@ -177,17 +177,11 @@ namespace Stride.Shaders.Compiler
             var bytecode = new EffectBytecode { Reflection = parsingResult.Reflection, HashSources = parsingResult.HashSources };
 
             // Select the correct backend compiler
-            IShaderCompiler compiler;
-            switch (effectParameters.Platform)
+            IShaderCompiler compiler = effectParameters.Platform switch
             {
-                case GraphicsPlatform.Direct3D11:
-                case GraphicsPlatform.Direct3D12:
-                    compiler = new Direct3D.ShaderCompiler();
-                    break;
-
-                default:
-                    throw new NotSupportedException();
-            }
+                GraphicsPlatform.Direct3D11 or GraphicsPlatform.Direct3D12 => new Direct3D.ShaderCompiler(),
+                _ => throw new NotSupportedException(),
+            };
 
             var shaderStageBytecodes = new List<ShaderBytecode>();
 
@@ -229,7 +223,7 @@ namespace Stride.Shaders.Compiler
             int shaderSourceLineOffset = 0;
             int shaderSourceCharacterOffset = 0;
             string outputShaderLog;
-            lock (WriterLock) // protect write in case the same shader is created twice
+            lock (writerLock) // protect write in case the same shader is created twice
             {
                 var builder = new StringBuilder();
                 builder.AppendLine("/**************************");

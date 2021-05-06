@@ -2,29 +2,29 @@
   <PropertyGroup>
     <StridePlatform>Windows</StridePlatform>
   </PropertyGroup>
+
   <Import Project="..\..\targets\Stride.Core.props" />
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <PlatformTarget>x86</PlatformTarget>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+
+    <AssemblyTitle>Stride Core Building Infrastructure</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Stride Core Building Infrastructure</AssemblyTitle>
-  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Mono.Options" Version="5.3.0.1" />
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\..\core\Stride.Core\Stride.Core.csproj" />
     <ProjectReference Include="..\..\core\Stride.Core.IO\Stride.Core.IO.csproj" />
     <ProjectReference Include="..\..\core\Stride.Core.MicroThreading\Stride.Core.MicroThreading.csproj" />
     <ProjectReference Include="..\..\core\Stride.Core.Serialization\Stride.Core.Serialization.csproj" />
     <ProjectReference Include="..\Stride.Core.BuildEngine.Common\Stride.Core.BuildEngine.Common.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

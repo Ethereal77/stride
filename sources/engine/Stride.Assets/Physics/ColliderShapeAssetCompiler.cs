@@ -31,66 +31,54 @@ namespace Stride.Assets.Physics
     {
         static ColliderShapeAssetCompiler()
         {
-            NativeLibraryHelper.PreloadLibrary("VHACD.dll", typeof(ColliderShapeAssetCompiler));
+            NativeLibraryHelper.Load("VHACD", typeof(ColliderShapeAssetCompiler));
         }
 
         public override IEnumerable<BuildDependencyInfo> GetInputTypes(AssetItem assetItem)
         {
             foreach (var type in AssetRegistry.GetAssetTypes(typeof(Model)))
-            {
                 yield return new BuildDependencyInfo(type, typeof(AssetCompilationContext), BuildDependencyType.CompileContent);
-            }
+
             foreach (var type in AssetRegistry.GetAssetTypes(typeof(Skeleton)))
-            {
                 yield return new BuildDependencyInfo(type, typeof(AssetCompilationContext), BuildDependencyType.CompileContent);
-            }
+
             foreach (var type in AssetRegistry.GetAssetTypes(typeof(Heightmap)))
-            {
                 yield return new BuildDependencyInfo(type, typeof(AssetCompilationContext), BuildDependencyType.CompileContent);
-            }
         }
 
         public override IEnumerable<Type> GetInputTypesToExclude(AssetItem assetItem)
         {
             foreach(var type in AssetRegistry.GetAssetTypes(typeof(Material)))
-            {
                 yield return type;
-            }
+
             yield return typeof(TextureAsset);
         }
 
         public override IEnumerable<ObjectUrl> GetInputFiles(AssetItem assetItem)
         {
-            var asset = (ColliderShapeAsset)assetItem.Asset;
+            var asset = (ColliderShapeAsset) assetItem.Asset;
+
             foreach (var desc in asset.ColliderShapes)
             {
-                if (desc is ConvexHullColliderShapeDesc)
+                if (desc is ConvexHullColliderShapeDesc convexHullDesc)
                 {
-                    var convexHullDesc = desc as ConvexHullColliderShapeDesc;
-
-                    if (convexHullDesc.Model != null)
+                    if (convexHullDesc.Model is not null)
                     {
                         var url = AttachedReferenceManager.GetUrl(convexHullDesc.Model);
 
                         if (!string.IsNullOrEmpty(url))
-                        {
                             yield return new ObjectUrl(UrlType.Content, url);
-                        }
                     }
                 }
-                else if (desc is HeightfieldColliderShapeDesc)
+                else if (desc is HeightfieldColliderShapeDesc heightfieldDesc)
                 {
-                    var heightfieldDesc = desc as HeightfieldColliderShapeDesc;
-                    var heightmapSource = heightfieldDesc?.HeightStickArraySource as HeightStickArraySourceFromHeightmap;
-
-                    if (heightmapSource?.Heightmap != null)
+                    if (heightfieldDesc.HeightStickArraySource is HeightStickArraySourceFromHeightmap heightmapSource &&
+                        heightmapSource.Heightmap is not null)
                     {
                         var url = AttachedReferenceManager.GetUrl(heightmapSource.Heightmap);
 
                         if (!string.IsNullOrEmpty(url))
-                        {
                             yield return new ObjectUrl(UrlType.Content, url);
-                        }
                     }
                 }
             }
@@ -98,18 +86,23 @@ namespace Stride.Assets.Physics
 
         protected override void Prepare(AssetCompilerContext context, AssetItem assetItem, string targetUrlInStorage, AssetCompilerResult result)
         {
-            var asset = (ColliderShapeAsset)assetItem.Asset;
+            var asset = (ColliderShapeAsset) assetItem.Asset;
 
             result.BuildSteps = new AssetBuildStep(assetItem);
-            result.BuildSteps.Add(new ColliderShapeCombineCommand(targetUrlInStorage, asset, assetItem.Package) { InputFilesGetter = () => GetInputFiles(assetItem) });
+            result.BuildSteps.Add
+                (
+                    new ColliderShapeCombineCommand(targetUrlInStorage, asset, assetItem.Package)
+                    {
+                        InputFilesGetter = () => GetInputFiles(assetItem)
+                    }
+                );
         }
 
         public class ColliderShapeCombineCommand : AssetCommand<ColliderShapeAsset>
         {
             public ColliderShapeCombineCommand(string url, ColliderShapeAsset parameters, IAssetFinder assetFinder)
                 : base(url, parameters, assetFinder)
-            {
-            }
+            { }
 
             protected override Task<ResultStatus> DoCommandOverride(ICommandContext commandContext)
             {
@@ -118,21 +111,23 @@ namespace Stride.Assets.Physics
                 // Cloned list of collider shapes
                 var descriptions = Parameters.ColliderShapes.ToList();
 
-                var validShapes = Parameters.ColliderShapes.Where(x => x != null
-                    && (x.GetType() != typeof(ConvexHullColliderShapeDesc) || ((ConvexHullColliderShapeDesc)x).Model != null)).ToList();
+                var validShapes = Parameters.ColliderShapes
+                    .Where(shape => shape is not null &&
+                                    (shape is not ConvexHullColliderShapeDesc ||
+                                     ((ConvexHullColliderShapeDesc) shape).Model is not null))
+                    .ToList();
 
-                //pre process special types
-                foreach (var convexHullDesc in
-                    (from shape in validShapes let type = shape.GetType() where type == typeof(ConvexHullColliderShapeDesc) select shape)
-                    .Cast<ConvexHullColliderShapeDesc>())
+                // Pre-process special types
+                foreach (var convexHullDesc in validShapes.Where(s => s is ConvexHullColliderShapeDesc)
+                                                          .Cast<ConvexHullColliderShapeDesc>())
                 {
                     // Clone the convex hull shape description so the fields that should not be serialized can be cleared (Model in this case)
-                    ConvexHullColliderShapeDesc convexHullDescClone = new ConvexHullColliderShapeDesc
+                    var convexHullDescClone = new ConvexHullColliderShapeDesc
                     {
                         Scaling = convexHullDesc.Scaling,
                         LocalOffset = convexHullDesc.LocalOffset,
                         LocalRotation = convexHullDesc.LocalRotation,
-                        Decomposition = convexHullDesc.Decomposition,
+                        Decomposition = convexHullDesc.Decomposition
                     };
 
                     // Replace shape in final result with cloned description
@@ -155,57 +150,53 @@ namespace Stride.Assets.Physics
 
                     var nodeTransforms = new List<Matrix>();
 
-                    //pre-compute all node transforms, assuming nodes are ordered... see ModelViewHierarchyUpdater
+                    // Pre-compute all node transforms, assuming nodes are ordered. See ModelViewHierarchyUpdater
 
                     if (modelAsset.Skeleton is null)
                     {
-                        Matrix baseMatrix;
-                        Matrix.Transformation(ref convexHullDescClone.Scaling, ref convexHullDescClone.LocalRotation, ref convexHullDescClone.LocalOffset, out baseMatrix);
+                        Matrix.Transformation(ref convexHullDescClone.Scaling,
+                                              ref convexHullDescClone.LocalRotation,
+                                              ref convexHullDescClone.LocalOffset,
+                                              out Matrix baseMatrix);
+
                         nodeTransforms.Add(baseMatrix);
                     }
                     else
                     {
                         var nodesLength = modelAsset.Skeleton.Nodes.Length;
-                        for (var i = 0; i < nodesLength; i++)
+                        for (var nodeIndex = 0; nodeIndex < nodesLength; nodeIndex++)
                         {
-                            Matrix.Transformation(
-                                ref modelAsset.Skeleton.Nodes[i].Transform.Scale,
-                                ref modelAsset.Skeleton.Nodes[i].Transform.Rotation,
-                                ref modelAsset.Skeleton.Nodes[i].Transform.Position,
-                                out Matrix localMatrix);
+                            Matrix.Transformation(ref modelAsset.Skeleton.Nodes[nodeIndex].Transform.Scale,
+                                                  ref modelAsset.Skeleton.Nodes[nodeIndex].Transform.Rotation,
+                                                  ref modelAsset.Skeleton.Nodes[nodeIndex].Transform.Position,
+                                                  out Matrix localMatrix);
 
                             Matrix worldMatrix;
-                            if (modelAsset.Skeleton.Nodes[i].ParentIndex != -1)
+                            if (modelAsset.Skeleton.Nodes[nodeIndex].ParentIndex != -1)
                             {
-                                var nodeTransform = nodeTransforms[modelAsset.Skeleton.Nodes[i].ParentIndex];
+                                var nodeTransform = nodeTransforms[modelAsset.Skeleton.Nodes[nodeIndex].ParentIndex];
                                 Matrix.Multiply(ref localMatrix, ref nodeTransform, out worldMatrix);
                             }
                             else
-                            {
                                 worldMatrix = localMatrix;
-                            }
 
-                            if (i == 0)
+                            if (nodeIndex == 0)
                             {
-                                Matrix.Transformation(
-                                    ref convexHullDescClone.Scaling,
-                                    ref convexHullDescClone.LocalRotation,
-                                    ref convexHullDescClone.LocalOffset,
-                                    out Matrix baseMatrix);
+                                Matrix.Transformation(ref convexHullDescClone.Scaling,
+                                                      ref convexHullDescClone.LocalRotation,
+                                                      ref convexHullDescClone.LocalOffset,
+                                                      out Matrix baseMatrix);
 
                                 nodeTransforms.Add(baseMatrix * worldMatrix);
                             }
                             else
-                            {
                                 nodeTransforms.Add(worldMatrix);
-                            }
                         }
                     }
 
-                    for (var i = 0; i < nodeTransforms.Count; i++)
+                    for (var transformIndex = 0; transformIndex < nodeTransforms.Count; transformIndex++)
                     {
-                        var i1 = i;
-                        if (modelAsset.Meshes.All(x => x.NodeIndex != i1))
+                        if (modelAsset.Meshes.All(mesh => mesh.NodeIndex != transformIndex))
                             // No geometry in the node
                             continue;
 
@@ -218,17 +209,17 @@ namespace Stride.Assets.Physics
                         var indicesList = new List<List<uint>>();
                         convexHullDescClone.ConvexHullsIndices.Add(indicesList);
 
-                        foreach (var meshData in modelAsset.Meshes.Where(x => x.NodeIndex == i1))
+                        foreach (var meshData in modelAsset.Meshes.Where(mesh => mesh.NodeIndex == transformIndex))
                         {
                             var indexOffset = (uint) combinedVerts.Count / 3;
 
-                            var stride = meshData.Draw.VertexBuffers[0].Declaration.VertexStride;
+                            var vertexStride = meshData.Draw.VertexBuffers[0].Declaration.VertexStride;
 
-                            var vertexBufferRef = AttachedReferenceManager.GetAttachedReference(meshData.Draw.VertexBuffers[0].Buffer);
                             byte[] vertexData;
-                            if (vertexBufferRef.Data != null)
+                            var vertexBufferRef = AttachedReferenceManager.GetAttachedReference(meshData.Draw.VertexBuffers[0].Buffer);
+                            if (vertexBufferRef.Data is not null)
                             {
-                                vertexData = ((BufferData)vertexBufferRef.Data).Content;
+                                vertexData = ((BufferData) vertexBufferRef.Data).Content;
                             }
                             else if (!string.IsNullOrEmpty(vertexBufferRef.Url))
                             {
@@ -236,30 +227,30 @@ namespace Stride.Assets.Physics
                                 vertexData = dataAsset.GetSerializationData().Content;
                             }
                             else
-                            {
                                 continue;
-                            }
 
                             var vertexIndex = meshData.Draw.VertexBuffers[0].Offset;
                             for (var v = 0; v < meshData.Draw.VertexBuffers[0].Count; v++)
                             {
-                                var posMatrix = Matrix.Translation(new Vector3(BitConverter.ToSingle(vertexData, vertexIndex + 0), BitConverter.ToSingle(vertexData, vertexIndex + 4), BitConverter.ToSingle(vertexData, vertexIndex + 8)));
+                                var posMatrix = Matrix.Translation(new Vector3(BitConverter.ToSingle(vertexData, vertexIndex + 0),
+                                                                               BitConverter.ToSingle(vertexData, vertexIndex + 4),
+                                                                               BitConverter.ToSingle(vertexData, vertexIndex + 8)));
 
-                                var nodeTransform = nodeTransforms[i];
+                                var nodeTransform = nodeTransforms[transformIndex];
                                 Matrix.Multiply(ref posMatrix, ref nodeTransform, out Matrix rotatedMatrix);
 
                                 combinedVerts.Add(rotatedMatrix.TranslationVector.X);
                                 combinedVerts.Add(rotatedMatrix.TranslationVector.Y);
                                 combinedVerts.Add(rotatedMatrix.TranslationVector.Z);
 
-                                vertexIndex += stride;
+                                vertexIndex += vertexStride;
                             }
 
-                            var indexBufferRef = AttachedReferenceManager.GetAttachedReference(meshData.Draw.IndexBuffer.Buffer);
                             byte[] indexData;
-                            if (indexBufferRef.Data != null)
+                            var indexBufferRef = AttachedReferenceManager.GetAttachedReference(meshData.Draw.IndexBuffer.Buffer);
+                            if (indexBufferRef.Data is not null)
                             {
-                                indexData = ((BufferData)indexBufferRef.Data).Content;
+                                indexData = ((BufferData) indexBufferRef.Data).Content;
                             }
                             else if (!string.IsNullOrEmpty(indexBufferRef.Url))
                             {
@@ -267,12 +258,10 @@ namespace Stride.Assets.Physics
                                 indexData = dataAsset.GetSerializationData().Content;
                             }
                             else
-                            {
                                 throw new Exception("Failed to find index buffer while building a convex hull.");
-                            }
 
                             var indexIndex = meshData.Draw.IndexBuffer.Offset;
-                            for (var v = 0; v < meshData.Draw.IndexBuffer.Count; v++)
+                            for (var i = 0; i < meshData.Draw.IndexBuffer.Count; i++)
                             {
                                 if (meshData.Draw.IndexBuffer.Is32Bit)
                                 {
@@ -289,8 +278,8 @@ namespace Stride.Assets.Physics
 
                         var decompositionDesc = new ConvexHullMesh.DecompositionDesc
                         {
-                            VertexCount = (uint)combinedVerts.Count / 3,
-                            IndicesCount = (uint)combinedIndices.Count,
+                            VertexCount = (uint) combinedVerts.Count / 3,
+                            IndicesCount = (uint) combinedIndices.Count,
                             Vertexes = combinedVerts.ToArray(),
                             Indices = combinedIndices.ToArray(),
                             Depth = convexHullDesc.Decomposition.Depth,
@@ -304,7 +293,6 @@ namespace Stride.Assets.Physics
                         };
 
                         var convexHullMesh = new ConvexHullMesh();
-
                         convexHullMesh.Generate(decompositionDesc);
 
                         var count = convexHullMesh.Count;
@@ -315,8 +303,7 @@ namespace Stride.Assets.Physics
 
                         for (uint h = 0; h < count; h++)
                         {
-                            float[] points;
-                            convexHullMesh.CopyPoints(h, out points);
+                            convexHullMesh.CopyPoints(h, out float[] points);
 
                             var pointList = new List<Vector3>();
 
@@ -330,8 +317,7 @@ namespace Stride.Assets.Physics
 
                             hullsList.Add(pointList);
 
-                            uint[] indices;
-                            convexHullMesh.CopyIndices(h, out indices);
+                            convexHullMesh.CopyIndices(h, out uint[] indices);
 
                             for (var t = 0; t < indices.Length; t += 3)
                             {
@@ -345,7 +331,7 @@ namespace Stride.Assets.Physics
 
                         convexHullMesh.Dispose();
 
-                        commandContext.Logger.Info("For a total of " + vertexCountHull + " vertexes");
+                        commandContext.Logger.Info("for a total of " + vertexCountHull + " vertices.");
                     }
                 }
 

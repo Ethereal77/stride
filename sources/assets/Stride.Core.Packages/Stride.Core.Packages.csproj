@@ -1,40 +1,40 @@
 <Project>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+
+    <AssemblyTitle>Stride Management Library for NuGet and Asset Packages</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="NuGet.Protocol" Version="5.9.1" />
-    <PackageReference Include="NuGet.PackageManagement" Version="5.9.1" />
-    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
-  </ItemGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Stride Management Library for NuGet and Asset Packages</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Update="TargetGenerator.cs">
       <DependentUpon>TargetGenerator.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="TargetGenerator.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>TargetGenerator.cs</LastGenOutput>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NuGet.Protocol" Version="5.9.1" />
+    <PackageReference Include="NuGet.PackageManagement" Version="5.9.1" />
+
+    <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

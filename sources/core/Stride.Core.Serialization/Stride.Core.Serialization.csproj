@@ -1,33 +1,27 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.Core.props" />
-  <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <StrideBuildTags>*</StrideBuildTags>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
-    <StrideCodeAnalysis>true</StrideCodeAnalysis>
-  </PropertyGroup>
 
   <PropertyGroup>
     <AssemblyTitle>Stride Core Serialization Infrastructure</AssemblyTitle>
+
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
+
+    <StrideCodeAnalysis>true</StrideCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Stride.Core.MicroThreading\Stride.Core.MicroThreading.csproj" />
     <ProjectReference Include="..\Stride.Core.IO\Stride.Core.IO.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Reflection\" />
-  </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

@@ -61,299 +61,11 @@ namespace Stride.Irony {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Nn.
-        /// </summary>
-        internal static string ConsoleNoChars {
-            get {
-                return ResourceManager.GetString("ConsoleNoChars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Yy.
-        /// </summary>
-        internal static string ConsoleYesChars {
-            get {
-                return ResourceManager.GetString("ConsoleYesChars", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Ambiguous grammar, unresolvable reduce-reduce conflicts. State {0}, lookaheads [{1}].
-        /// </summary>
-        internal static string ErrAmbigGrammarRR {
-            get {
-                return ResourceManager.GetString("ErrAmbigGrammarRR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Ambiguous grammar, unresolvable shift-reduce conflicts. State {0}, lookaheads [{1}].
-        /// </summary>
-        internal static string ErrAmbigGrammarSR {
-            get {
-                return ResourceManager.GetString("ErrAmbigGrammarSR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Argument list not found in the stack. Expected: ValueList, found: {0}..
-        /// </summary>
-        internal static string ErrArgListNotFound {
-            get {
-                return ResourceManager.GetString("ErrArgListNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalide operation, attempt to assign constant or literal value..
-        /// </summary>
-        internal static string ErrAssignLiteralValue {
-            get {
-                return ResourceManager.GetString("ErrAssignLiteralValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid length of char literal - should be a single character..
-        /// </summary>
-        internal static string ErrBadChar {
-            get {
-                return ResourceManager.GetString("ErrBadChar", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Mal-formed  string literal - cannot find termination symbol..
-        /// </summary>
-        internal static string ErrBadStrLiteral {
-            get {
-                return ResourceManager.GetString("ErrBadStrLiteral", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid unicode escape ({0}), expected {1} hex digits..
-        /// </summary>
-        internal static string ErrBadUnEscape {
-            get {
-                return ResourceManager.GetString("ErrBadUnEscape", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid \x escape, at least one digit expected..
-        /// </summary>
-        internal static string ErrBadXEscape {
-            get {
-                return ResourceManager.GetString("ErrBadXEscape", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Cannot convert value from type {0} to type {1}, type converter not defined..
-        /// </summary>
-        internal static string ErrCannotConvertValue {
-            get {
-                return ResourceManager.GetString("ErrCannotConvertValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Cannot convert literal {0} to type {1}..
-        /// </summary>
-        internal static string ErrCannotConvertValueToType {
-            get {
-                return ResourceManager.GetString("ErrCannotConvertValueToType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a {0} State {1} on inputs: {2}.
-        /// </summary>
-        internal static string ErrConflictMsgTemplate {
-            get {
-                return ResourceManager.GetString("ErrConflictMsgTemplate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Fatal error:.
-        /// </summary>
-        internal static string ErrConsoleFatalError {
-            get {
-                return ResourceManager.GetString("ErrConsoleFatalError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Construct &apos;{0}&apos; is not supported (yet) by language implementation..
-        /// </summary>
-        internal static string ErrConstructNotSupported {
-            get {
-                return ResourceManager.GetString("ErrConstructNotSupported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Could not find a closing quote for quoted value..
-        /// </summary>
-        internal static string ErrDsvNoClosingQuote {
-            get {
-                return ResourceManager.GetString("ErrDsvNoClosingQuote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Duplicate switch &apos;{0}&apos; for regular expression..
-        /// </summary>
-        internal static string ErrDupRegexSwitch {
-            get {
-                return ResourceManager.GetString("ErrDupRegexSwitch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Duplicate start symbol {0} in string literal [{1}]..
-        /// </summary>
-        internal static string ErrDupStartSymbolStr {
-            get {
-                return ResourceManager.GetString("ErrDupStartSymbolStr", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Failed to create AST node for non-terminal [{0}], error: {1}.
         /// </summary>
         internal static string ErrFailedCreateNode {
             get {
                 return ResourceManager.GetString("ErrFailedCreateNode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a ImpliedSymbolTerminal cannot be used in grammar with DisableScannerParserLink flag set.
-        /// </summary>
-        internal static string ErrImpliedOpUseParserLink {
-            get {
-                return ResourceManager.GetString("ErrImpliedOpUseParserLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Interpreter error, DataStack.Pop() operation failed - stack is empty..
-        /// </summary>
-        internal static string ErrInternalErrDataPopFailed {
-            get {
-                return ResourceManager.GetString("ErrInternalErrDataPopFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Interpreter is busy..
-        /// </summary>
-        internal static string ErrInterpreterIsBusy {
-            get {
-                return ResourceManager.GetString("ErrInterpreterIsBusy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid arguments for IncDecNode AST node: either first or second argument should be &apos;--&apos; or &apos;++&apos;..
-        /// </summary>
-        internal static string ErrInvalidArgsForIncDec {
-            get {
-                return ResourceManager.GetString("ErrInvalidArgsForIncDec", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid AstMode value in call to Evaluate method. Node: {0}, mode: {1}..
-        /// </summary>
-        internal static string ErrInvalidAstMode {
-            get {
-                return ResourceManager.GetString("ErrInvalidAstMode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid character: &apos;{0}&apos;..
-        /// </summary>
-        internal static string ErrInvalidChar {
-            get {
-                return ResourceManager.GetString("ErrInvalidChar", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid embedded expression. .
-        /// </summary>
-        internal static string ErrInvalidEmbeddedPrefix {
-            get {
-                return ResourceManager.GetString("ErrInvalidEmbeddedPrefix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid dedent level, no previous matching indent found..
-        /// </summary>
-        internal static string ErrInvDedent {
-            get {
-                return ResourceManager.GetString("ErrInvDedent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid escape sequence: \{0}..
-        /// </summary>
-        internal static string ErrInvEscape {
-            get {
-                return ResourceManager.GetString("ErrInvEscape", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid escape sequence..
-        /// </summary>
-        internal static string ErrInvEscSeq {
-            get {
-                return ResourceManager.GetString("ErrInvEscSeq", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid escape symbol, expected &apos;u&apos; or &apos;U&apos; only..
-        /// </summary>
-        internal static string ErrInvEscSymbol {
-            get {
-                return ResourceManager.GetString("ErrInvEscSymbol", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid number..
-        /// </summary>
-        internal static string ErrInvNumber {
-            get {
-                return ResourceManager.GetString("ErrInvNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid switch &apos;{0}&apos; for regular expression.
-        /// </summary>
-        internal static string ErrInvRegexSwitch {
-            get {
-                return ResourceManager.GetString("ErrInvRegexSwitch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Error in string literal [{0}]: No start/end symbols specified..
-        /// </summary>
-        internal static string ErrInvStrDef {
-            get {
-                return ResourceManager.GetString("ErrInvStrDef", resourceCulture);
             }
         }
         
@@ -376,24 +88,6 @@ namespace Stride.Irony {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a NewLine expected..
-        /// </summary>
-        internal static string ErrNewLineExpected {
-            get {
-                return ResourceManager.GetString("ErrNewLineExpected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a NLALR process is in indefinite loop, number of states exceeded 3000..
-        /// </summary>
-        internal static string ErrNLALRhang {
-            get {
-                return ResourceManager.GetString("ErrNLALRhang", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a No closing pair for opening symbol {0}.
         /// </summary>
         internal static string ErrNoClosingBrace {
@@ -412,51 +106,6 @@ namespace Stride.Irony {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No end symbol for regex literal..
-        /// </summary>
-        internal static string ErrNoEndForRegex {
-            get {
-                return ResourceManager.GetString("ErrNoEndForRegex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a No ending tag &apos;{0}&apos; found in embedded expression..
-        /// </summary>
-        internal static string ErrNoEndTagInEmbExpr {
-            get {
-                return ResourceManager.GetString("ErrNoEndTagInEmbExpr", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a UnExprNode: no implementation for unary operator &apos;{0}&apos;..
-        /// </summary>
-        internal static string ErrNoImplForUnaryOp {
-            get {
-                return ResourceManager.GetString("ErrNoImplForUnaryOp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Number cannot be followed by a letter..
-        /// </summary>
-        internal static string ErrNoLetterAfterNum {
-            get {
-                return ResourceManager.GetString("ErrNoLetterAfterNum", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a ParserDataBuilder error: inadequate state {0}, reduce item &apos;{1}&apos; has no lookaheads..
-        /// </summary>
-        internal static string ErrNoLkhds {
-            get {
-                return ResourceManager.GetString("ErrNoLkhds", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Non-terminal {0} has uninitialized Rule property..
         /// </summary>
         internal static string ErrNtRuleIsNull {
@@ -466,92 +115,11 @@ namespace Stride.Irony {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Attempt to evaluate NULL AST node. The AST node for term &apos;{0}&apos; was not created during parsing..
-        /// </summary>
-        internal static string ErrNullNodeEval {
-            get {
-                return ResourceManager.GetString("ErrNullNodeEval", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Operator &apos;{0}&apos; is not defined for types {1} and {2}..
-        /// </summary>
-        internal static string ErrOpNotDefinedForTypes {
-            get {
-                return ResourceManager.GetString("ErrOpNotDefinedForTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Operator &apos;{0} not imlemented..
-        /// </summary>
-        internal static string ErrOpNotImplemented {
-            get {
-                return ResourceManager.GetString("ErrOpNotImplemented", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a {0}: {1}.
-        /// </summary>
-        internal static string ErrOutErrorPrintFormat {
-            get {
-                return ResourceManager.GetString("ErrOutErrorPrintFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a CodeOutlineFilter: line continuation symbol &apos;{0}&apos; should be added to Grammar.NonGrammarTerminals list..
-        /// </summary>
-        internal static string ErrOutlineFilterContSymbol {
-            get {
-                return ResourceManager.GetString("ErrOutlineFilterContSymbol", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Syntax error, expected: {0}.
         /// </summary>
         internal static string ErrParserUnexpInput {
             get {
                 return ResourceManager.GetString("ErrParserUnexpInput", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Parsed tree is null, cannot evaluate..
-        /// </summary>
-        internal static string ErrParseTreeNull {
-            get {
-                return ResourceManager.GetString("ErrParseTreeNull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Parse tree root is null, cannot evaluate..
-        /// </summary>
-        internal static string ErrParseTreeRootNull {
-            get {
-                return ResourceManager.GetString("ErrParseTreeRootNull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Root AST node is null, cannot evaluate..
-        /// </summary>
-        internal static string ErrRootAstNodeNull {
-            get {
-                return ResourceManager.GetString("ErrRootAstNodeNull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Root AST node does not implement IInterpretedAstNode interface, cannot evaluate..
-        /// </summary>
-        internal static string ErrRootAstNoInterface {
-            get {
-                return ResourceManager.GetString("ErrRootAstNoInterface", resourceCulture);
             }
         }
         
@@ -601,65 +169,11 @@ namespace Stride.Irony {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Syntax error..
-        /// </summary>
-        internal static string ErrSyntaxErrorNoInfo {
-            get {
-                return ResourceManager.GetString("ErrSyntaxErrorNoInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Expression root non-terminal in template settings (AstNodeConfig property) in templated string literal [{0}] is not added to Roots set. Add it to SnippetRoots in grammar constructor..
-        /// </summary>
-        internal static string ErrTemplExprNotRoot {
-            get {
-                return ResourceManager.GetString("ErrTemplExprNotRoot", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Expression root is not specified in template settings (AstNodeConfig property) in templated string literal [{0}]. .
-        /// </summary>
-        internal static string ErrTemplMissingExprRoot {
-            get {
-                return ResourceManager.GetString("ErrTemplMissingExprRoot", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Error in string literal [{0}]: IsTemplate flag is set, but TemplateSettings is not provided in AstNodeConfig property..
-        /// </summary>
-        internal static string ErrTemplNoSettings {
-            get {
-                return ResourceManager.GetString("ErrTemplNoSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a A terminal {0} has empty prefix..
-        /// </summary>
-        internal static string ErrTerminalHasEmptyPrefix {
-            get {
-                return ResourceManager.GetString("ErrTerminalHasEmptyPrefix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Transient non-terminal must have zero or one non-punctuation child nodes; non-terminals: {0}..
         /// </summary>
         internal static string ErrTransientNtMustHaveOneTerm {
             get {
                 return ResourceManager.GetString("ErrTransientNtMustHaveOneTerm", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Unclosed comment block.
-        /// </summary>
-        internal static string ErrUnclosedComment {
-            get {
-                return ResourceManager.GetString("ErrUnclosedComment", resourceCulture);
             }
         }
         
@@ -687,33 +201,6 @@ namespace Stride.Irony {
         internal static string ErrUnmatchedCloseBrace {
             get {
                 return ResourceManager.GetString("ErrUnmatchedCloseBrace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Variable {0} is not a callable function..
-        /// </summary>
-        internal static string ErrVarIsNotCallable {
-            get {
-                return ResourceManager.GetString("ErrVarIsNotCallable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Variable {0} not defined..
-        /// </summary>
-        internal static string ErrVarNotDefined {
-            get {
-                return ResourceManager.GetString("ErrVarNotDefined", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Invalid number of arguments. Expected {0}, found {1}..
-        /// </summary>
-        internal static string ErrWrongArgCount {
-            get {
-                return ResourceManager.GetString("ErrWrongArgCount", resourceCulture);
             }
         }
         
@@ -772,29 +259,11 @@ namespace Stride.Irony {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a (EOF).
-        /// </summary>
-        internal static string LabelEofMark {
-            get {
-                return ResourceManager.GetString("LabelEofMark", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a [end-of-statement].
         /// </summary>
         internal static string LabelEosLabel {
             get {
                 return ResourceManager.GetString("LabelEosLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a (INITIAL STATE).
-        /// </summary>
-        internal static string LabelInitialState {
-            get {
-                return ResourceManager.GetString("LabelInitialState", resourceCulture);
             }
         }
         
@@ -813,114 +282,6 @@ namespace Stride.Irony {
         internal static string LabelKeyword {
             get {
                 return ResourceManager.GetString("LabelKeyword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a [line break].
-        /// </summary>
-        internal static string LabelLineBreak {
-            get {
-                return ResourceManager.GetString("LabelLineBreak", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Location:.
-        /// </summary>
-        internal static string LabelLocation {
-            get {
-                return ResourceManager.GetString("LabelLocation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a ....
-        /// </summary>
-        internal static string LabelSrcHaveMore {
-            get {
-                return ResourceManager.GetString("LabelSrcHaveMore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a (unassigned).
-        /// </summary>
-        internal static string LabelUnassigned {
-            get {
-                return ResourceManager.GetString("LabelUnassigned", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a (unnamed).
-        /// </summary>
-        internal static string LabelUnnamed {
-            get {
-                return ResourceManager.GetString("LabelUnnamed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Abort script(y/n)?.
-        /// </summary>
-        internal static string MsgAbortScriptYN {
-            get {
-                return ResourceManager.GetString("MsgAbortScriptYN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a {0} Console.\r\nPress Ctrl-C to exit the program.\r\n.
-        /// </summary>
-        internal static string MsgDefaultConsoleGreeting {
-            get {
-                return ResourceManager.GetString("MsgDefaultConsoleGreeting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Console.
-        /// </summary>
-        internal static string MsgDefaultConsoleTitle {
-            get {
-                return ResourceManager.GetString("MsgDefaultConsoleTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Exit console (y/n)?.
-        /// </summary>
-        internal static string MsgExitConsoleYN {
-            get {
-                return ResourceManager.GetString("MsgExitConsoleYN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a NLALR transform: Add WrapTail() in &apos;.&apos; position to [{0}]..
-        /// </summary>
-        internal static string MsgNLALRAdvice {
-            get {
-                return ResourceManager.GetString("MsgNLALRAdvice", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Press any key to end the program..
-        /// </summary>
-        internal static string MsgPressAnyKeyToExit {
-            get {
-                return ResourceManager.GetString("MsgPressAnyKeyToExit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a &quot;[{0}], at {1}.
-        /// </summary>
-        internal static string MsgSrcPosToString {
-            get {
-                return ResourceManager.GetString("MsgSrcPosToString", resourceCulture);
             }
         }
         
@@ -970,15 +331,6 @@ namespace Stride.Irony {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a RECOVERING: Found state with shift on error : {0}.
-        /// </summary>
-        internal static string MsgTraceRecoverFoundState {
-            get {
-                return ResourceManager.GetString("MsgTraceRecoverFoundState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a RECOVERING: popping stack, looking for state with error shift.
         /// </summary>
         internal static string MsgTraceRecovering {
@@ -993,24 +345,6 @@ namespace Stride.Irony {
         internal static string MsgTraceRecoverReducing {
             get {
                 return ResourceManager.GetString("MsgTraceRecoverReducing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a RECOVERING: Shifting Error term, {0}.
-        /// </summary>
-        internal static string MsgTraceRecoverShiftError {
-            get {
-                return ResourceManager.GetString("MsgTraceRecoverShiftError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a RECOVERING: shifting until the end of error production..
-        /// </summary>
-        internal static string MsgTraceRecoverShiftTillEnd {
-            get {
-                return ResourceManager.GetString("MsgTraceRecoverShiftTillEnd", resourceCulture);
             }
         }
         

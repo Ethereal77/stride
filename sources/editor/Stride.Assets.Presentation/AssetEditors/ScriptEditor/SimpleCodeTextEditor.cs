@@ -20,7 +20,7 @@ using Stride.Core.Presentation.Themes;
 namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 {
     /// <summary>
-    /// A <see cref="CodeTextEditor"/> with IntelliSense connected to our <see cref="RoslynWorkspace"/>.
+    ///   A <see cref="CodeTextEditor"/> with <em>IntelliSense</em> connected to Stride's <see cref="RoslynWorkspace"/>.
     /// </summary>
     public class SimpleCodeTextEditor : CodeTextEditor
     {
@@ -38,15 +38,16 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
         private IBraceMatchingService braceMatchingService;
         private CancellationTokenSource braceMatchingCts;
 
-        public static readonly StyledProperty<ImageSource> ContextActionsIconProperty = CommonProperty.Register<SimpleCodeTextEditor, ImageSource>(
-            nameof(ContextActionsIcon), onChanged: OnContextActionsIconChanged);
+        public static readonly StyledProperty<ImageSource> ContextActionsIconProperty = CommonProperty.Register<SimpleCodeTextEditor, ImageSource>
+            (
+                nameof(ContextActionsIcon),
+                onChanged: OnContextActionsIconChanged
+            );
 
         private static void OnContextActionsIconChanged(SimpleCodeTextEditor editor, CommonPropertyChangedArgs<ImageSource> args)
         {
-            if (editor.contextActionsRenderer != null)
-            {
+            if (editor.contextActionsRenderer is not null)
                 editor.contextActionsRenderer.IconImage = args.NewValue;
-            }
         }
 
         public ImageSource ContextActionsIcon
@@ -55,8 +56,9 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
             set => this.SetValue(ContextActionsIconProperty, value);
         }
 
+
         /// <summary>
-        /// Connects the text editor to a roslyn document and a <see cref="AvalonEditTextContainer"/>. This will setup syntax highlighting, intellisense, etc...
+        ///   Connects the text editor to a Roslyn document and a <see cref="AvalonEditTextContainer"/> to setup syntax highlighting, Intellisense, etc.
         /// </summary>
         public void BindSourceTextContainer(RoslynWorkspace workspace, AvalonEditTextContainer sourceTextContainer, DocumentId documentId)
         {
@@ -99,7 +101,7 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
         }
 
         /// <summary>
-        /// Disconnects the text editor from a roslyn document.
+        ///   Disconnects the text editor from a Roslyn document.
         /// </summary>
         public void Unbind()
         {
@@ -119,7 +121,6 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 
             // Context Actions
             contextActionsRenderer.Providers.Remove(contextActionProvider);
-            contextActionsRenderer.Dispose();
             contextActionsRenderer = null;
             contextActionProvider = null;
 
@@ -136,13 +137,13 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 
         public void ProcessDiagnostics(DiagnosticsUpdatedArgs args)
         {
-            if (this.GetDispatcher().CheckAccess())
+            if (Dispatcher.CheckAccess())
             {
                 ProcessDiagnosticsOnUiThread(args);
                 return;
             }
 
-            this.GetDispatcher().InvokeAsync(() => ProcessDiagnosticsOnUiThread(args));
+            Dispatcher.InvokeAsync(() => ProcessDiagnosticsOnUiThread(args));
         }
 
         private void ProcessDiagnosticsOnUiThread(DiagnosticsUpdatedArgs args)
@@ -150,18 +151,15 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
             textMarkerService.RemoveAll(marker => Equals(args.Id, marker.Tag));
 
             if (args.Kind != DiagnosticsUpdatedKind.DiagnosticsCreated)
-            {
                 return;
-            }
 
             foreach (var diagnosticData in args.Diagnostics)
             {
                 if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
-                {
                     continue;
-                }
 
-                var marker = textMarkerService.TryCreate(diagnosticData.TextSpan.Start, diagnosticData.TextSpan.Length);
+                var text = diagnosticData.GetTextSpan() ?? default;
+                var marker = textMarkerService.TryCreate(text.Start, text.Length);
                 if (marker != null)
                 {
                     marker.Tag = args.Id;
@@ -175,7 +173,8 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
         {
             braceMatchingCts?.Cancel();
 
-            if (braceMatchingService == null) return;
+            if (braceMatchingService is null)
+                return;
 
             var cts = new CancellationTokenSource();
             var token = cts.Token;
@@ -188,8 +187,8 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
                 var caretOffset = CaretOffset;
                 if (caretOffset <= text.Length)
                 {
-                    var result = await braceMatchingService.GetAllMatchingBracesAsync(document, caretOffset, token).ConfigureAwait(true);
-                    braceMatcherHighlighter.SetHighlight(result.leftOfPosition, result.rightOfPosition);
+                    var (leftOfPosition, rightOfPosition) = await braceMatchingService.GetAllMatchingBracesAsync(document, caretOffset, token).ConfigureAwait(true);
+                    braceMatcherHighlighter.SetHighlight(leftOfPosition, rightOfPosition);
                 }
             }
             catch (OperationCanceledException) { }
@@ -199,7 +198,7 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
         {
             base.OnKeyDown(e);
 
-            if (e.HasModifiers(ModifierKeys.Control))
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) != 0)
             {
                 switch (e.Key)
                 {
@@ -212,7 +211,8 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 
         private void TryJumpToBrace()
         {
-            if (braceMatcherHighlighter == null) return;
+            if (braceMatcherHighlighter is null)
+                return;
 
             var caret = CaretOffset;
 
@@ -243,20 +243,15 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
             return false;
         }
 
-        private static Color GetDiagnosticsColor(DiagnosticData diagnosticData)
-        {
-            switch (diagnosticData.Severity)
+        private static Color GetDiagnosticsColor(DiagnosticData diagnosticData) =>
+            diagnosticData.Severity switch
             {
-                case DiagnosticSeverity.Info:
-                    return Colors.LimeGreen;
-                case DiagnosticSeverity.Warning:
-                    return Colors.DodgerBlue;
-                case DiagnosticSeverity.Error:
-                    return Colors.Red;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+                DiagnosticSeverity.Info => Colors.LimeGreen,
+                DiagnosticSeverity.Warning => Colors.DodgerBlue,
+                DiagnosticSeverity.Error => Colors.Red,
+
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
         private async Task ProcessAsyncToolTipRequest(ToolTipRequestEventArgs arg)
         {

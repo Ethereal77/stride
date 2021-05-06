@@ -21,8 +21,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
     public class EditorGameModelSelectionService : EditorGameServiceBase
     {
         private readonly EntityHierarchyEditorViewModel editor;
+        private readonly HashSet<Entity> selectedEntities = new();
         private IEditorGameEntitySelectionService selectionService;
-        private readonly HashSet<Entity> selectedEntities = new HashSet<Entity>();
 
         public override IEnumerable<Type> Dependencies { get { yield return typeof(IEditorGameEntitySelectionService); } }
 
@@ -36,7 +36,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         {
             EnsureNotDestroyed(nameof(EditorGameModelSelectionService));
 
-            if (selectionService != null)
+            if (selectionService is not null)
                 selectionService.SelectionUpdated -= SelectionUpdated;
 
             return base.DisposeAsync();
@@ -66,7 +66,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             // Meshes
             var meshRenderFeature = game.SceneSystem.GraphicsCompositor.RenderFeatures.OfType<MeshRenderFeature>().First();
             // TODO: Complain (log) if there is no MeshRenderFeature
-            if (meshRenderFeature != null)
+            if (meshRenderFeature is not null)
             {
                 meshRenderFeature.RenderStageSelectors.Add(new SimpleGroupToRenderStageSelector
                 {
@@ -115,7 +115,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             public override bool IsVisible(RenderObject renderObject, RenderView renderView, RenderViewStage renderViewStage)
             {
                 var entity = ((renderObject as RenderMesh)?.Source as ModelComponent)?.Entity;
-                return entity != null && selectedEntities.Contains(entity);
+                return entity is not null && selectedEntities.Contains(entity);
             }
         }
 

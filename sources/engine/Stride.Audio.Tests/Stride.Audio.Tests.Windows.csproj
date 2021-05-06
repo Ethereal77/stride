@@ -1,12 +1,16 @@
-﻿<Project>
+<Project>
   <Import Project="..\..\targets\Stride.UnitTests.props" />
+
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+
     <AssemblyName>Stride.Audio.Tests</AssemblyName>
+    <AssemblyTitle>Test assembly for Stride Audio</AssemblyTitle>
     <RootNamespace>Stride.Audio.Tests</RootNamespace>
+    <StartupObject>xunit.runner.stride.Program</StartupObject>
+
     <EnableDefaultItems>false</EnableDefaultItems>
-    <StrideBuildTags>*</StrideBuildTags>
     <StrideCompileAssets>true</StrideCompileAssets>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
     <!-- Test this project only on D3D11 since it is graphics API independent -->
@@ -14,23 +18,7 @@
     <!-- Force MSBuild to check to rebuild this assembly instead of letting VS IDE guess -->
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>xunit.runner.stride.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Test assembly for Stride Audio</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
-    <ProjectReference Include="..\..\..\sources\engine\Stride.Engine\Stride.Engine.csproj">
-      <Project>{C121A566-555E-42B9-9B0A-1696529A9088}</Project>
-      <Name>Stride.Engine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj">
-      <Project>{D002FEB1-00A6-4AB1-A83F-1F253465E64D}</Project>
-      <Name>Stride.Graphics.Regression</Name>
-    </ProjectReference>
-  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="XunitAttributes.cs" />
     <Compile Include="AudioTestGame.cs" />
@@ -55,35 +43,16 @@
     <Compile Include="TestSoundEffect.cs" />
     <Compile Include="TestSoundEffectInstance.cs" />
     <Compile Include="TestSoundMusic.cs" />
+
+    <None Include="Stride.Audio.Tests.Windows.sdpkg" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="AudioAssets\a.sdsnd" />
-    <None Include="AudioAssets\ae.sdsnd" />
-    <None Include="AudioAssets\a_Music.sdsnd" />
-    <None Include="AudioAssets\wave1HeaderCorrupted_Music.sdsnd" />
-    <None Include="AudioAssets\wave1_4Channels_Music.sdsnd" />
-    <None Include="AudioAssets\fiveptone_Music.sdsnd" />
-    <None Include="AudioAssets\stereo_Music.sdsnd" />
-    <None Include="AudioAssets\wave1_Music.sdsnd" />
-    <None Include="AudioAssets\wave1MP3.sdsnd" />
-    <None Include="AudioAssets\bizet.sdsnd" />
-    <None Include="AudioAssets\sayuriWAV.sdsnd" />
-    <None Include="AudioAssets\stereoOGG.sdsnd" />
-    <None Include="AudioAssets\InvalidAudioFile.sdsnd" />
-    <None Include="AudioAssets\fiveptone.sdsnd" />
-    <None Include="AudioAssets\sayuri.sdsnd" />
-    <None Include="AudioAssets\sayuriPart.sdsnd" />
-    <None Include="AudioAssets\stereo.sdsnd" />
-    <None Include="AudioAssets\wave1.sdsnd" />
-    <None Include="AudioAssets\wave1HeaderCorrupted.sdsnd" />
-    <None Include="AudioAssets\wave1_24bits.sdsnd" />
-    <None Include="AudioAssets\wave1_4Channels.sdsnd" />
-    <None Include="AudioAssets\wave2.sdsnd" />
-    <None Include="Stride.Audio.Tests.sdpkg" />
+    <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
+    <ProjectReference Include="..\..\..\sources\engine\Stride.Engine\Stride.Engine.csproj" />
+    <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
   </ItemGroup>
+
   <Import Project="..\Stride.Shared\Refactor\Stride.Refactor.projitems" Label="Shared" />
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
-  <ItemGroup>
-    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
-  </ItemGroup>
 </Project>

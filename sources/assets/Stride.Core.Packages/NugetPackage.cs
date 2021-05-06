@@ -6,39 +6,36 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using NuGet;
-
-using Stride.Core;
-using Stride.Core.Annotations;
 using NuGet.Packaging.Core;
-using NuGet.ProjectManagement;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 
+using Stride.Core.Annotations;
+
 using Constants = NuGet.ProjectManagement.Constants;
-using IPackageMetadata = NuGet.Packaging.IPackageMetadata;
 
 namespace Stride.Core.Packages
 {
     /// <summary>
-    /// NuGet abstraction of a package.
+    ///   Represents the NuGet abstraction of a package.
     /// </summary>
     public abstract class NugetPackage : IEquatable<NugetPackage>
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="NugetPackage"/> using some NuGet data.
+        ///   Initializes a new instance of the <see cref="NugetPackage"/> class.
         /// </summary>
-        /// <param name="package">The NuGet metadata we will use to construct the current instance.</param>
+        /// <param name="package">The NuGet metadata.</param>
         internal NugetPackage([NotNull] IPackageSearchMetadata package)
         {
             packageMetadata = package ?? throw new ArgumentNullException(nameof(package));
         }
 
+
         /// <summary>
-        /// Storage for the NuGet metadata.
+        ///   Storage for the NuGet metadata.
         /// </summary>
         private readonly IPackageSearchMetadata packageMetadata;
+
 
         /// <inheritdoc />
         public bool Equals(NugetPackage other)
@@ -49,180 +46,178 @@ namespace Stride.Core.Packages
         /// <inheritdoc />
         public override bool Equals(object other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            if (other.GetType() != GetType()) return false;
-            return Equals((NugetPackage)other);
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return other is NugetPackage nugetPackage && Equals(nugetPackage);
         }
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return packageMetadata.GetHashCode();
-        }
+        public override int GetHashCode() => packageMetadata.GetHashCode();
 
         /// <summary>
-        /// Determines whether two specified <see cref="NugetPackage"/> objects are equal.
+        ///   Determines whether two specified <see cref="NugetPackage"/> objects are equal.
         /// </summary>
         /// <param name="left">The first <see cref="NugetPackage"/>object.</param>
         /// <param name="right">The second <see cref="NugetPackage"/>object.</param>
         /// <returns><c>true</c> if <paramref name="left"/> is equal to <paramref name="right"/>, <c>false</c> otherwise.</returns>
-        public static bool operator ==(NugetPackage left, NugetPackage right)
-        {
-            return Equals(left, right);
-        }
+        public static bool operator ==(NugetPackage left, NugetPackage right) => Equals(left, right);
 
         /// <summary>
-        /// Determines whether two specified <see cref="NugetPackage"/> objects are not equal.
+        ///   Determines whether two specified <see cref="NugetPackage"/> objects are not equal.
         /// </summary>
         /// <param name="left">The first <see cref="NugetPackage"/>object.</param>
         /// <param name="right">The second <see cref="NugetPackage"/>object.</param>
         /// <returns><c>true</c> if <paramref name="left"/> is not equal to <paramref name="right"/>, <c>false</c> otherwise.</returns>
-        public static bool operator !=(NugetPackage left, NugetPackage right)
-        {
-            return !Equals(left, right);
-        }
+        public static bool operator !=(NugetPackage left, NugetPackage right) => !Equals(left, right);
+
 
         /// <summary>
-        /// Version of current package.
+        ///   Gets the version of current package.
         /// </summary>
         public PackageVersion Version => packageMetadata.Identity.Version.ToPackageVersion();
 
         /// <summary>
-        /// The <see cref="NuGetVersion"/> of this package's version.
+        ///   Gets the <see cref="NuGet.Versioning.NuGetVersion"/> of this package's version.
         /// </summary>
         /// <remarks>Internal since it exposes a NuGet type.</remarks>
         internal NuGetVersion NuGetVersion => packageMetadata.Identity.Version;
 
         /// <summary>
-        /// The <see cref="PackageIdentity"/> of this package.
+        ///   Gets the <see cref="PackageIdentity"/> of the package.
         /// </summary>
         /// <remarks>Internal since it exposes a NuGet type.</remarks>
         internal PackageIdentity Identity => packageMetadata.Identity;
 
         /// <summary>
-        /// The Id of this package.
+        ///   Gets the package name (Id) of the package.
         /// </summary>
         public string Id => packageMetadata.Identity.Id;
 
         /// <summary>
-        /// The listed status of this package.
+        ///   Gets a value indicating whether the package is published and public (listed).
         /// </summary>
         public bool Listed => !Published.HasValue || Published > Constants.Unpublished;
 
         /// <summary>
-        /// The date of publication if present.
+        ///   Gets the date of publication of the package.
         /// </summary>
+        /// <value>The date of publication, if present.</value>
         public DateTimeOffset? Published => packageMetadata.Published;
 
         /// <summary>
-        /// The title of this package.
+        ///   Gets the title of the package.
         /// </summary>
         public string Title => packageMetadata.Title;
 
         /// <summary>
-        /// The list of authors of this package.
+        ///   Gets the authors of the package.
         /// </summary>
         public IEnumerable<string> Authors => new List<string>(1) { packageMetadata.Authors };
 
         /// <summary>
-        /// The list of owners of this package.
+        ///   Gets the owners of the package.
         /// </summary>
         public IEnumerable<string> Owners => new List<string>(1) { packageMetadata.Owners };
 
         /// <summary>
-        /// The URL of this package's icon.
+        ///   Gets the URL of the package's icon.
         /// </summary>
         public Uri IconUrl => packageMetadata.IconUrl;
 
         /// <summary>
-        /// The URL of this package's license.
+        ///   Gets the URL of the package's license.
         /// </summary>
         public Uri LicenseUrl => packageMetadata.LicenseUrl;
 
         /// <summary>
-        /// The URL of this package's project.
+        ///   Gets the URL of the package's project.
         /// </summary>
         public Uri ProjectUrl => packageMetadata.ProjectUrl;
 
         /// <summary>
-        /// Determines if this package requires a license acceptance.
+        ///   Gets a value indicating whether the package requires accepting a license.
         /// </summary>
         public bool RequireLicenseAcceptance => packageMetadata.RequireLicenseAcceptance;
 
         /// <summary>
-        /// The description of this package.
+        ///   Gets the description of the package.
         /// </summary>
         public string Description => packageMetadata.Description;
 
         /// <summary>
-        /// The summary description of this package.
+        ///   Gets the summary description of the package.
         /// </summary>
         public string Summary => packageMetadata.Summary;
 
         /// <summary>
-        /// The list of tags of this package separated by spaces.
+        ///   Gets the tags of the package.
         /// </summary>
+        /// <value>The tags of the package separated by spaces.</value>
         public string Tags => packageMetadata.Tags;
 
         /// <summary>
-        /// The list of dependencies of this package.
+        ///   Gets the list of dependencies of the package.
         /// </summary>
         /// <remarks>Internal since it exposes a NuGet type.</remarks>
         internal IEnumerable<NuGet.Packaging.PackageDependencyGroup> DependencySets => packageMetadata.DependencySets;
 
         /// <summary>
-        /// The number of downloads for this package. It is specific to the version of this package.
+        ///   Gets the number of downloads for the package, specific to the version of the package.
         /// </summary>
         public long DownloadCount => VersionInfo.DownloadCount ?? 0;
 
         /// <summary>
-        /// The URL to report abused on this package.
+        ///   Gets the URL to report abuse for the package.
         /// </summary>
         public Uri ReportAbuseUrl => packageMetadata.ReportAbuseUrl;
 
         /// <summary>
-        /// The number of dependency sets.
+        ///   Gets the number of dependency sets.
         /// </summary>
         public int DependencySetsCount => DependencySets?.Count() ?? 0;
 
         /// <summary>
-        /// Computed the list of dependencies of this package.
+        ///   Gets a computed list of dependencies for the package.
         /// </summary>
-        public IEnumerable<Tuple<string, PackageVersionRange>>  Dependencies
+        public IEnumerable<(string id, PackageVersionRange version)>  Dependencies
         {
             get
             {
-                var res = new List<Tuple<string, PackageVersionRange>>();
+                var dependencies = new List<(string, PackageVersionRange)>();
+
                 var set = DependencySets.FirstOrDefault();
                 if (set != null)
                 {
                     foreach (var dependency in set.Packages)
                     {
-                        res.Add(new Tuple<string, PackageVersionRange>(dependency.Id, dependency.VersionRange.ToPackageVersionRange()));
+                        dependencies.Add((dependency.Id, dependency.VersionRange.ToPackageVersionRange()));
                     }
                 }
-                return res;
+
+                return dependencies;
             }
         }
 
         /// <summary>
-        /// The <see cref="VersionInfo"/> associated with this package.
+        ///   Gets the <see cref="VersionInfo"/> associated with the package.
         /// </summary>
         private VersionInfo VersionInfo
         {
             get
             {
-                if (versionInfo == null)
+                if (versionInfo is null)
                 {
                     // Get all versions of the current package and filter on the current package's version.
-                    versionInfo = packageMetadata.GetVersionsAsync().Result.First(v=>v.Version.Equals(Version.ToNuGetVersion()));
+                    versionInfo = packageMetadata.GetVersionsAsync().Result.First(v =>  v.Version.Equals(Version.ToNuGetVersion()));
                 }
                 return versionInfo;
             }
         }
 
         private VersionInfo versionInfo;
-
     }
 }

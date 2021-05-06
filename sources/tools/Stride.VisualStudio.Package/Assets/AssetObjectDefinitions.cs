@@ -10,8 +10,8 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace Stride.VisualStudio.Assets
 {
-	internal static class AssetObjectDefinitions
-	{
+    internal static class AssetObjectDefinitions
+    {
         /// <summary>
         /// Content Type
         /// </summary>
@@ -23,12 +23,12 @@ namespace Stride.VisualStudio.Assets
         /// <summary>
         /// File extensions
         /// </summary>
-		[Export]
-		[FileExtension(".sdpkg")]
-		[ContentType(Constants.ContentType)]
-		internal static FileExtensionToContentTypeDefinition sdpkgFileExtensionDefinition = null;
-		
-		[Export]
+        [Export]
+        [FileExtension(".sdpkg")]
+        [ContentType(Constants.ContentType)]
+        internal static FileExtensionToContentTypeDefinition sdpkgFileExtensionDefinition = null;
+
+        [Export]
         [FileExtension(".sdfnt")]
         [ContentType(Constants.ContentType)]
         internal static FileExtensionToContentTypeDefinition sdfntFileExtensionDefinition = null;
@@ -53,10 +53,10 @@ namespace Stride.VisualStudio.Assets
         [ContentType(Constants.ContentType)]
         internal static FileExtensionToContentTypeDefinition sdsceneFileExtensionDefinition = null;
 
-	    [Export]
-	    [FileExtension(".sdprefab")]
-	    [ContentType(Constants.ContentType)]
-	    internal static FileExtensionToContentTypeDefinition sdprefabFileExtensionDefinition = null;
+        [Export]
+        [FileExtension(".sdprefab")]
+        [ContentType(Constants.ContentType)]
+        internal static FileExtensionToContentTypeDefinition sdprefabFileExtensionDefinition = null;
 
         [Export]
         [FileExtension(".sdm3d")]
@@ -88,12 +88,12 @@ namespace Stride.VisualStudio.Assets
         /// </summary>
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(AnchorClassificationName)]
-		internal static ClassificationTypeDefinition YamlAnchorType = null;
-	    public const string AnchorClassificationName = "Stride.Yaml.Anchor";
+        internal static ClassificationTypeDefinition YamlAnchorType = null;
+        public const string AnchorClassificationName = "Stride.Yaml.Anchor";
 
-		[Export(typeof(ClassificationTypeDefinition))]
+        [Export(typeof(ClassificationTypeDefinition))]
         [Name(AliasClassificationName)]
-		internal static ClassificationTypeDefinition YamlAliasType = null;
+        internal static ClassificationTypeDefinition YamlAliasType = null;
         public const string AliasClassificationName = "Stride.Yaml.Alias";
 
         [Export(typeof(ClassificationTypeDefinition))]

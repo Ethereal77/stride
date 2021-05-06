@@ -16,8 +16,8 @@ namespace Stride.Engine
         {
             AssemblyRegistry.Register(typeof(Module).GetTypeInfo().Assembly, AssemblyCommonCategories.Assets);
 
-            // Preload proper libbulletc native library (depending on CPU type)
-            NativeLibraryHelper.PreloadLibrary("libbulletc.dll", typeof(PhysicsComponent));
+            // Preload proper libbulletc native library
+            NativeLibraryHelper.Load("libbulletc", typeof(PhysicsComponent));
         }
     }
 }

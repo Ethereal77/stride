@@ -4,18 +4,18 @@
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <TargetFrameworks>net5.0</TargetFrameworks>
-  </PropertyGroup>
-  <ItemGroup>
-  </ItemGroup>
-  <PropertyGroup>
+
     <AssemblyTitle>Stride RenderDoc Frame Analysis Plugin</AssemblyTitle>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\engine\Stride.Graphics\Stride.Graphics.csproj" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+
+    <ProjectReference Include="..\..\engine\Stride.Graphics\Stride.Graphics.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

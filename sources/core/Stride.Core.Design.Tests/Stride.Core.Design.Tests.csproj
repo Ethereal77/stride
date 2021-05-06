@@ -1,25 +1,24 @@
-﻿<Project>
+<Project>
   <Import Project="..\..\targets\Stride.UnitTests.props" />
+
   <PropertyGroup>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
+
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
     <ProjectReference Include="..\Stride.Core.Design\Stride.Core.Design.csproj" />
   </ItemGroup>
+
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
-  <ItemGroup>
-    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
-  </ItemGroup>
 </Project>

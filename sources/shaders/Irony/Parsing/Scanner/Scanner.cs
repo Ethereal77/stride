@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2011 Irony - Roman Ivantsov
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Stride.Irony.Parsing
 {
     /// <summary>
-    /// Scanner base class. The Scanner's function is to transform a stream of characters into aggregates/words or lexemes, 
+    /// Scanner base class. The Scanner's function is to transform a stream of characters into aggregates/words or lexemes,
     ///   like identifier, number, literal, etc.
     /// </summary>
     public abstract class Scanner
@@ -22,17 +22,6 @@ namespace Stride.Irony.Parsing
         private IEnumerator<Token> filteredTokens; // stream of tokens after filter
 
         private SourceLocation previewStartLocation;
-
-        #endregion
-
-        #region Constructors and Destructors
-
-        /// <summary>
-        ///   Initializes a new instance of the <see cref = "Scanner" /> class.
-        /// </summary>
-        public Scanner()
-        {
-        }
 
         #endregion
 
@@ -196,7 +185,7 @@ namespace Stride.Irony.Parsing
         {
             // This is iterator method, so it returns immediately when called directly
             // returns unfiltered, "raw" token stream
-            // We don't do "while(!_source.EOF())... because on EOF() we need to continue and produce EOF token 
+            // We don't do "while(!_source.EOF())... because on EOF() we need to continue and produce EOF token
             while (true)
             {
                 Context.PreviousToken = Context.CurrentToken;

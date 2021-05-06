@@ -47,17 +47,33 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             this.controller = controller;
         }
 
-        public override bool IsActive { get { return isActive; } set { isActive = value; } }
+        public override bool IsActive { get => isActive; set => isActive = value; }
 
-        public override IEnumerable<Type> Dependencies { get { yield return typeof(IEditorGameEntitySelectionService); yield return typeof(IEditorGameRenderModeService); } }
+        public override IEnumerable<Type> Dependencies
+        {
+            get
+            {
+                yield return typeof(IEditorGameEntitySelectionService);
+                yield return typeof(IEditorGameRenderModeService);
+            }
+        }
 
-        bool IEditorGameCameraPreviewViewModelService.IsActive { get { return isActive; } set { isActive = value; controller.InvokeAsync(() => IsActive = value); } }
+        bool IEditorGameCameraPreviewViewModelService.IsActive
+        {
+            get => isActive;
+
+            set
+            {
+                isActive = value;
+                controller.InvokeAsync(() => IsActive = value);
+            }
+        }
 
         private IEditorGameRenderModeService Rendering => game.EditorServices.Get<IEditorGameRenderModeService>();
 
         protected override Task<bool> Initialize(EditorServiceGame editorGame)
         {
-            game = (EntityHierarchyEditorGame)editorGame;
+            game = (EntityHierarchyEditorGame) editorGame;
 
             // Create the default font
             var fontItem = OfflineRasterizedSpriteFontFactory.Create();
@@ -133,7 +149,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
             // Unregister events
             var selectionService = Services.Get<IEditorGameEntitySelectionService>();
-            if (selectionService != null)
+            if (selectionService is not null)
                 selectionService.SelectionUpdated -= UpdateModifiedEntitiesList;
 
             // Remove renderers
@@ -162,7 +178,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             selectedEntity = e.NewSelection.Count == 1 ? e.NewSelection.Single() : null;
         }
 
-        class RenderIncrustRenderer : SceneRendererBase
+        private class RenderIncrustRenderer : SceneRendererBase
         {
             private readonly EditorGameCameraPreviewService previewService;
 
@@ -181,7 +197,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 var currentViewport = drawContext.CommandList.Viewport;
 
                 // Copy incrust back to render target
-                var position = new Vector2(currentViewport.Width - IncrustRenderer.Viewport.Width - 16, currentViewport.Height - IncrustRenderer.Viewport.Height - 16);
+                var position = new Vector2(currentViewport.Width - IncrustRenderer.Viewport.Width - 16,
+                                           currentViewport.Height - IncrustRenderer.Viewport.Height - 16);
 
                 // Camera incrust border
                 previewService.borderPipelineState.State.Output.CaptureState(drawContext.CommandList);
@@ -199,7 +216,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 previewService.incrustBatch.End();
 
                 // Camera name
-                if (IncrustRenderer.Camera?.Entity?.Name != null)
+                if (IncrustRenderer.Camera?.Entity?.Name is not null)
                 {
                     previewService.incrustBatch.Begin(drawContext.GraphicsContext, blendState: BlendStates.AlphaBlend, depthStencilState: DepthStencilStates.None);
                     previewService.incrustBatch.DrawString(previewService.defaultFont, IncrustRenderer.Camera?.Entity.Name, new Vector2(position.X, position.Y - 16), Color.White);
@@ -210,7 +227,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
         }
 
-        class GenerateIncrustRenderer : SceneRendererBase
+        private class GenerateIncrustRenderer : SceneRendererBase
         {
             private readonly EditorGameCameraPreviewService previewService;
             internal bool IsIncrustEnabled;
@@ -222,14 +239,14 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
 
             /// <summary>
-            /// The inner compositor to draw inside the viewport.
+            ///   The inner compositor to draw inside the viewport.
             /// </summary>
             public new ISceneRenderer Content { get; set; }
 
             public IGameSettingsAccessor GameSettingsAccessor { get; set; }
 
             /// <summary>
-            /// The render view created and used by this compositor.
+            ///   The render view created and used by this compositor.
             /// </summary>
             public RenderView RenderView { get; } = new RenderView();
 
@@ -245,7 +262,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
                 // Enable camera incrust only if we have an active camera and IsActive is true
                 // Also disabled when previewing game graphics compositor
-                IsIncrustEnabled = previewService.isActive && !previewService.Rendering.RenderMode.PreviewGameGraphicsCompositor && Camera != null;
+                IsIncrustEnabled = previewService.isActive && !previewService.Rendering.RenderMode.PreviewGameGraphicsCompositor && Camera is not null;
 
                 if (IsIncrustEnabled)
                 {
@@ -258,12 +275,12 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                         // Make sure to respect aspect ratio
                         aspectRatio = Camera.AspectRatio;
                     }
-                    else if (GameSettingsAccessor != null)
+                    else if (GameSettingsAccessor is not null)
                     {
                         var renderingSettings = GameSettingsAccessor.GetConfiguration<RenderingSettings>();
-                        if (renderingSettings != null)
+                        if (renderingSettings is not null)
                         {
-                            aspectRatio = (float)renderingSettings.DefaultBackBufferWidth / (float)renderingSettings.DefaultBackBufferHeight;
+                            aspectRatio = (float) renderingSettings.DefaultBackBufferWidth / renderingSettings.DefaultBackBufferHeight;
                         }
                     }
 
@@ -315,7 +332,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
                     // Allocate a RT for the incrust
                     GeneratedIncrust = drawContext.GraphicsContext.Allocator.GetTemporaryTexture2D(TextureDescription.New2D((int)Viewport.Width, (int)Viewport.Height, 1, drawContext.CommandList.RenderTarget.Format, TextureFlags.ShaderResource | TextureFlags.RenderTarget));
-                    var depthBuffer = drawContext.CommandList.DepthStencilBuffer != null ? drawContext.GraphicsContext.Allocator.GetTemporaryTexture2D(TextureDescription.New2D((int)Viewport.Width, (int)Viewport.Height, 1, drawContext.CommandList.DepthStencilBuffer.Format, TextureFlags.DepthStencil)) : null;
+                    var depthBuffer = drawContext.CommandList.DepthStencilBuffer is not null ? drawContext.GraphicsContext.Allocator.GetTemporaryTexture2D(TextureDescription.New2D((int)Viewport.Width, (int)Viewport.Height, 1, drawContext.CommandList.DepthStencilBuffer.Format, TextureFlags.DepthStencil)) : null;
 
                     // Push and set render target
                     using (drawContext.PushRenderTargetsAndRestore())
@@ -329,7 +346,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                     }
 
                     // Note: GeneratedIncrust is released by RenderIncrustCompositorPart
-                    if (depthBuffer != null)
+                    if (depthBuffer is not null)
                         drawContext.GraphicsContext.Allocator.ReleaseReference(depthBuffer);
                 }
             }

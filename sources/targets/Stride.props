@@ -8,7 +8,7 @@
   Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <PropertyGroup>
     <StrideSdkTargets>$(MSBuildThisFileDirectory)Stride.targets</StrideSdkTargets>
     <StrideAssemblyProcessorGlobal>true</StrideAssemblyProcessorGlobal>
@@ -16,7 +16,7 @@
     <StrideAssemblyProcessorOptions Condition="'$(StrideAssemblyProcessorOptions)' == ''">$(StrideAssemblyProcessorDefaultOptions)</StrideAssemblyProcessorOptions>
   </PropertyGroup>
 
-  <!--Import Stride settings-->
+  <!-- Import Stride settings -->
   <Import Project="$(MSBuildThisFileDirectory)Stride.Core.props"/>
 
   <!-- Default GraphicsApi -->
@@ -28,7 +28,7 @@
   </PropertyGroup>
   <!-- Some platforms only have a single graphics API.
        If yes, set it right away and disable StrideGraphicsApiDependent (only for inner builds, check using TargetFrameworks) -->
-  <PropertyGroup Condition="'$(StrideGraphicsApiDependent)' == 'true' And !('$(TargetFrameworks)' != '' and '$(TargetFramework)' == '')">
+  <PropertyGroup Condition="'$(StrideGraphicsApiDependent)' == 'true' And ('$(TargetFrameworks)' == '' Or '$(TargetFramework)' != '')">
     <StrideGraphicsApi Condition="'$(StrideGraphicsApiDependent)' == 'false'">$(StrideDefaultGraphicsApi)</StrideGraphicsApi>
   </PropertyGroup>
   <!-- Setup default GraphicsApi for design-time build.

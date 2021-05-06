@@ -8,7 +8,7 @@
   Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <!--Import Local Pre Settings for the solution being loaded -->
   <Import Project="$(SolutionDir)$(SolutionName).Build.props" Condition="Exists('$(SolutionDir)$(SolutionName).Build.props')" />
   <Import Project="$(SolutionDir)Stride.Core.Build.props" Condition="Exists('$(SolutionDir)Stride.Core.Build.props')" />
@@ -27,7 +27,9 @@
 
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
     <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <!-- Use this so that tests are detected by "dotnet test" even though xunit is referenced transitively -->

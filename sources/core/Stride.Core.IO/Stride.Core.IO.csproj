@@ -3,26 +3,19 @@
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.Core.props" />
-  
-  <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <StrideCodeAnalysis>true</StrideCodeAnalysis>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
-    <StridePlatformDependent>true</StridePlatformDependent>
-    <StrideBuildTags>*</StrideBuildTags>
-  </PropertyGroup>
 
   <PropertyGroup>
     <AssemblyTitle>Stride IO and Virtual File System</AssemblyTitle>
+
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
+
+    <StrideCodeAnalysis>true</StrideCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,5 +25,4 @@
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />
-
 </Project>

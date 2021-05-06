@@ -13,7 +13,7 @@ using Stride.Engine;
 namespace Stride.Editor.EditorGame.Game
 {
     /// <summary>
-    /// Base class for the <see cref="IEditorGameService"/> interface.
+    ///   Base class for the <see cref="IEditorGameService"/> interface.
     /// </summary>
     public abstract class EditorGameServiceBase : IEditorGameService
     {
@@ -21,7 +21,11 @@ namespace Stride.Editor.EditorGame.Game
         public bool IsInitialized { get; private set; }
 
         /// <inheritdoc/>
-        public virtual bool IsActive { get { return true; } set { throw new InvalidOperationException("This service cannot be deactivated."); } }
+        public virtual bool IsActive
+        {
+            get => true;
+            set => throw new InvalidOperationException("This service cannot be deactivated.");
+        }
 
         /// <inheritdoc/>
         public virtual IEnumerable<Type> Dependencies => Enumerable.Empty<Type>();
@@ -29,7 +33,7 @@ namespace Stride.Editor.EditorGame.Game
         public EditorGameServiceRegistry Services { get; } = new EditorGameServiceRegistry();
 
         /// <summary>
-        /// Gets whether this service has been disposed.
+        ///   Gets a value indicating whether this service has been disposed.
         /// </summary>
         protected bool IsDisposed { get; private set; }
 
@@ -50,6 +54,7 @@ namespace Stride.Editor.EditorGame.Game
                 Services.Add(game.EditorServices.Get(dependency));
             }
             IsInitialized = await Initialize(game);
+
             return IsInitialized;
         }
 
@@ -57,34 +62,37 @@ namespace Stride.Editor.EditorGame.Game
         public virtual void RegisterScene(Scene scene)
         {
             EnsureNotDestroyed(nameof(EditorGameServiceBase));
+
             // Do nothing by default.
         }
 
         /// <summary>
-        /// Checks whether this service has been disposed, and throws an <see cref="ObjectDisposedException"/> if it is the case.
+        ///   Checks whether this service has been disposed, and throws an <see cref="ObjectDisposedException"/> if it is the case.
         /// </summary>
         /// <param name="name">The name to supply to the <see cref="ObjectDisposedException"/>.</param>
         protected void EnsureNotDestroyed(string name = null)
         {
             if (IsDisposed)
-            {
                 throw new ObjectDisposedException(name ?? nameof(EditorGameServiceBase), "This service has already been disposed.");
-            }
         }
 
         /// <summary>
-        /// Initializes the service. This method is invoked by <see cref="InitializeService"/>.
+        ///   Initializes the service.
         /// </summary>
-        /// <param name="game"></param>
-        /// <returns></returns>
+        /// <param name="game">In-editor game instance.</param>
+        /// <returns>
+        ///   After initialization is completed, returns <c>true</c> if it was succesful; <c>false</c> otherwise.
+        /// </returns>
+        /// <remarks>
+        ///   This method is invoked by <see cref="InitializeService"/>.
+        /// </remarks>
         protected abstract Task<bool> Initialize([NotNull] EditorServiceGame game);
 
         /// <summary>
-        /// Called when the game graphics compositor is updated.
+        ///   Called when the game graphics compositor is updated. Override in a derived class to implement
+        ///   custom logic for updating the graphics compositor.
         /// </summary>
-        /// <param name="game"></param>
-        public virtual void UpdateGraphicsCompositor(EditorServiceGame game)
-        {
-        }
+        /// <param name="game">In-editor game instance.</param>
+        public virtual void UpdateGraphicsCompositor(EditorServiceGame game) { }
     }
 }

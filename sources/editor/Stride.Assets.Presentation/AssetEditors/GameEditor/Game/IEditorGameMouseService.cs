@@ -7,17 +7,17 @@ using Stride.Editor.EditorGame.Game;
 namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Game
 {
     /// <summary>
-    /// An interface representing a service that can control the mouse.
+    ///   Defines the interface of a <see cref="IEditorGameService"/> that can control the mouse.
     /// </summary>
     public interface IEditorGameMouseService : IEditorGameService
     {
         /// <summary>
-        /// Gets whether this instance is currently controlling the mouse.
+        ///   Gets a value indicating whether this instance is currently controlling the mouse.
         /// </summary>
         bool IsControllingMouse { get; }
 
         /// <summary>
-        /// Gets whether the mouse is available to be be controlled.
+        ///   Gets a value indicating whether the mouse is available to be controlled.
         /// </summary>
         bool IsMouseAvailable { get; }
     }

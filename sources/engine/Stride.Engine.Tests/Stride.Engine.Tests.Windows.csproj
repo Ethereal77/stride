@@ -3,26 +3,19 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+
     <AssemblyName>Stride.Engine.Tests</AssemblyName>
+    <AssemblyTitle>Test assembly for Stride Engine</AssemblyTitle>
     <RootNamespace>Stride.Engine.Tests</RootNamespace>
+    <StartupObject>xunit.runner.stride.Program</StartupObject>
+
     <EnableDefaultItems>false</EnableDefaultItems>
-    <StrideBuildTags>*</StrideBuildTags>
     <StrideCompileAssets>true</StrideCompileAssets>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
     <!-- Force MSBuild to check to rebuild this assembly instead of letting VS IDE guess -->
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>xunit.runner.stride.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Test assembly for Stride Engine</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
-    <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
-    <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
-  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="XunitAttributes.cs" />
     <Compile Include="Build\TestBuilder.cs" />
@@ -46,13 +39,12 @@
     <Compile Include="TestCameraProcessor.cs" />
     <Compile Include="TestTransformComponent.cs" />
     <Compile Include="TestUpdateEngine.cs" />
-    <None Include="Build\TestSerializer.cs" />
     <Compile Include="Build\TestStorage.cs" />
     <Compile Include="AnimationChannelTest.cs" />
     <Compile Include="EntitySerializerTest.cs" />
-    <None Include="effects_test.xml">
-      <SubType>Designer</SubType>
-    </None>
+
+    <None Include="Build\TestSerializer.cs" />
+    <None Include="effects_test.xml" />
     <None Include="GameAssets\01-Default.sdmat" />
     <None Include="GameAssets\BallSprite1.sdsheet" />
     <None Include="GameAssets\BallSprite2.sdsheet" />
@@ -94,10 +86,14 @@
     <None Include="GameAssets\RotationSheet.sdsheet" />
     <None Include="GameAssets\Sphere1.sdtex" />
     <None Include="GameAssets\Sphere2.sdtex" />
-    <None Include="Stride.Engine.Tests.sdpkg" />
+    <None Include="Stride.Engine.Tests.Windows.sdpkg" />
   </ItemGroup>
-  <Import Project="..\..\targets\Stride.UnitTests.targets" />
+
   <ItemGroup>
-    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
+    <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
+    <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
+    <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
   </ItemGroup>
+
+  <Import Project="..\..\targets\Stride.UnitTests.targets" />
 </Project>

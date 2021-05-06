@@ -20,6 +20,7 @@
 
     <_StrideSharedAssemblyInfoLines Condition="'$(StridePackageBuild)' == 'true'">$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.NuGet.cs'))</_StrideSharedAssemblyInfoLines>
     <_StrideSharedAssemblyInfoLines Condition="'$(StridePackageBuild)' != 'true'">$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\shared\SharedAssemblyInfo.cs'))</_StrideSharedAssemblyInfoLines>
+
     <StridePublicVersion>$([System.Text.RegularExpressions.Regex]::Match($(_StrideSharedAssemblyInfoLines), `.*PublicVersion = \"(.*)\";.*`).Groups[1].Value)</StridePublicVersion>
     <StrideNuGetVersionSuffix>$([System.Text.RegularExpressions.Regex]::Match($(_StrideSharedAssemblyInfoLines), `.*NuGetVersionSuffix = \"(.*)\";.*`).Groups[1].Value)</StrideNuGetVersionSuffix>
     <StrideBuildMetadata>$([System.Text.RegularExpressions.Regex]::Match($(_StrideSharedAssemblyInfoLines), `.*BuildMetadata = \"(.*)\";.*`).Groups[1].Value)</StrideBuildMetadata>

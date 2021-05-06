@@ -9,7 +9,7 @@
   Copyright (C) 2020 Stride and its contributors
 ***********************************************************************************************
 -->
-<Project InitialTargets="_StrideCheckVisualCRuntime2013" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project InitialTargets="_StrideCheckVisualCRuntime2013">
   <!-- Check if Visual C++ Runtime 2013 is properly installed -->
   <!-- Should be moved to Stride.Assets as soon as transitive build dependencies are enabled by default in VS2019 (https://github.com/NuGet/Home/issues/6091#issuecomment-438073285) -->
   <Target Name="_StrideCheckVisualCRuntime2013" Condition="'$(MSBuildRuntimeType)' == 'Full'">
@@ -30,10 +30,9 @@
 
     <Error Condition="'@(_StrideVisualCRuntime2013NotInstalled)' != ''" Text="@(_StrideVisualCRuntime2013NotInstalled->'%(Identity) is not installed. Please download from %(DownloadUrl)', '%0a')"/>
   </Target>
+
   <!--
-  *****************************************************************************************************************************
-  Compile Asset
-  *****************************************************************************************************************************
+    Compile Asset
   -->
   <PropertyGroup>
     <PrepareForRunDependsOn>
@@ -41,21 +40,22 @@
       StrideCompileAsset
     </PrepareForRunDependsOn>
 
-    <!--This variable can be overriden by a platform specific targets (in case the executable is located into an assembly dll )-->
+    <!-- This variable can be overriden by a platform specific targets (in case the executable is located into an assembly dll )-->
     <StrideIsExecutable Condition=" '$(OutputType)' == 'Exe'">true</StrideIsExecutable>
     <StrideIsExecutable Condition=" '$(OutputType)' == 'WinExe'">true</StrideIsExecutable>
     <StrideIsExecutable Condition=" '$(OutputType)' == 'AppContainerExe'">true</StrideIsExecutable>
 
-    <!--asset BuildPath for all platforms (same as package)-->
+    <!-- Asset BuildPath for all platforms (same as package) -->
     <StrideCompileAssetBuildPath Condition="'$(StrideCompileAssetBuildPath)' == ''">$(ProjectDir)$(BaseIntermediateOutputPath)stride\assetbuild\data</StrideCompileAssetBuildPath>
 
-    <!--asset OutputPath for other platforms. Note: this is overridden for UnitTests projects. -->
+    <!-- Asset OutputPath for other platforms.
+         NOTE: this is overridden for UnitTests projects. -->
     <StrideCompileAssetOutputPath Condition="'$(StrideCompileAssetOutputPath)' == ''">$(TargetDir)data</StrideCompileAssetOutputPath>
 
     <StrideCompileAssetUpToDateCheckFileBase>$(ProjectDir)$(IntermediateOutputPath)stride\assetcompiler-uptodatecheck</StrideCompileAssetUpToDateCheckFileBase>
   </PropertyGroup>
 
-  <!-- Prepare path to be able to copy Task dll to temp directory (otherwise MSBuild lock the task file and we can't reinstall package in dev mode) -->
+  <!-- Prepare path to be able to copy Task DLL to temp directory (otherwise MSBuild locks the task file and we can't reinstall package in dev mode) -->
   <PropertyGroup>
     <StrideMSBuildTaskTargetFramework>netstandard2.0</StrideMSBuildTaskTargetFramework>
     <!-- First try NuGet layout, then git checkout -->
@@ -122,7 +122,7 @@
     <Error Condition="!Exists('$(StrideCompileAssetCommand)')" Text="Stride AssetCompiler could not be found (Command: &quot;$(StrideCompileAssetCommand)&quot;)"/>
   </Target>
 
-  <!--Compile assets for all StridePackage items and only for an executable-->
+  <!-- Compile assets for all StridePackage items and only for an executable -->
   <Target Name="StrideCompileAsset" Condition="'$(StrideIsExecutable)' == 'true'" DependsOnTargets="_StrideCollectUpToDateCheckInputDesignTime;_StrideCollectUpToDateCheckOutputDesignTime;_StridePrepareAssetCompiler" Inputs="@(StrideAssetInput)" Outputs="@(StrideAssetOutput)">
     <PropertyGroup>
       <StrideCompileAssetCommandProxy>&quot;$(StrideCompileAssetCommand)&quot;</StrideCompileAssetCommandProxy>

@@ -29,13 +29,13 @@ using Buffer = Stride.Graphics.Buffer;
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 {
     /// <summary>
-    /// Handles rendering of navigation meshes associated with the current scene
+    ///   Editor service that handles the rendering of light probes associated with the current scene.
     /// </summary>
     public class EditorGameLightProbeGizmoService : EditorGameServiceBase, IEditorGameLightProbeService
     {
         // Wireframe lightprobes mesh
-        public const RenderGroupMask LightProbeWireGroupMask = RenderGroupMask.Group29;
         public const RenderGroup LightProbeWireGroup = RenderGroup.Group29;
+        public const RenderGroupMask LightProbeWireGroupMask = RenderGroupMask.Group29;
 
         private readonly EntityHierarchyEditorViewModel editor;
 
@@ -43,11 +43,11 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
         // Root debug entity, which will have child entities attached to it for every debug element
         private Entity debugEntity;
-        private ModelComponent wireframeModelComponent;
-        private Material wireframeMaterial;
-        private bool isWireframeVisible = true;
         private LightProbeRuntimeData currentLightProbeRuntimeData;
-        private List<IReferencable> wireframeResources = new List<IReferencable>();
+        private Material wireframeMaterial;
+        private ModelComponent wireframeModelComponent;
+        private bool isWireframeVisible = true;
+        private readonly List<IReferencable> wireframeResources = new();
 
         public EditorGameLightProbeGizmoService(EntityHierarchyEditorViewModel editor)
         {
@@ -67,7 +67,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
                 // Making a local copy of reference since we change it from UI thread (should be OK from different thread since Enabled is atomic)
                 var localWireframeModelComponent = wireframeModelComponent;
-                if (localWireframeModelComponent != null)
+                if (localWireframeModelComponent is not null)
                     localWireframeModelComponent.Enabled = value;
             }
         }
@@ -259,7 +259,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                     var coefficientIndex = lightProbeIndex * LightProbeGenerator.LambertHamonicOrder * LightProbeGenerator.LambertHamonicOrder;
                     for (int i = 0; i < LightProbeGenerator.LambertHamonicOrder * LightProbeGenerator.LambertHamonicOrder; ++i)
                     {
-                        var expectedCoefficient = lightProbe.Coefficients != null ? lightProbe.Coefficients[i] : default(Color3);
+                        var expectedCoefficient = lightProbe.Coefficients is not null ? lightProbe.Coefficients[i] : default(Color3);
                         if (expectedCoefficient != lightProbeRuntimeData.Coefficients[coefficientIndex + i])
                         {
                             needCoefficientsRefresh = true;
@@ -319,7 +319,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
             Color4 deviceSpaceColor = color.ToColorSpace(game.GraphicsDevice.ColorSpace);
 
-            // set the color to the material
+            // Set the color to the material
             lightProbeMaterial.Passes[0].Parameters.Set(MaterialKeys.DiffuseValue, deviceSpaceColor);
             lightProbeMaterial.Passes[0].Parameters.Set(MaterialKeys.EmissiveIntensity, 1.0f);
             lightProbeMaterial.Passes[0].Parameters.Set(MaterialKeys.EmissiveValue, deviceSpaceColor);
@@ -344,7 +344,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 var currentFace = lightProbeRuntimeData.Faces[i];
 
                 // Skip infinite edges to not clutter display
-                // Maybe we could reenable it when we have better infinite nodes
+                // TODO: Maybe we could reenable it when we have better infinite nodes
                 if (currentFace.Vertices[0] >= lightProbeRuntimeData.UserVertexCount ||
                     currentFace.Vertices[1] >= lightProbeRuntimeData.UserVertexCount ||
                     currentFace.Vertices[2] >= lightProbeRuntimeData.UserVertexCount)
@@ -389,7 +389,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             {
                 // TODO: More general implementation (esp. if moved from this class to EditorGameComponentGizmoService)
                 var renderMesh = renderObject as RenderMesh;
-                if (renderMesh != null)
+                if (renderMesh is not null)
                 {
                     // TODO: Avoid having to go through entity
                     return (renderMesh.Source as ModelComponent)?.Entity?.Tags.Get(EditorGameComponentGizmoService.SelectedKey) ?? false;

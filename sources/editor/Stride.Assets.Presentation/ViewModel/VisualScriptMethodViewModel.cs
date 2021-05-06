@@ -200,17 +200,17 @@ namespace Stride.Assets.Presentation.ViewModel
                     }
                 }
 
-                if (matchingOldSlot != null)
+                if (matchingOldSlot is not null)
                 {
                     // Keep Id stable
                     newSlot.Id = matchingOldSlot.Id;
 
                     // If there was a value before, keep it
-                    if (matchingOldSlot.Value != null)
+                    if (matchingOldSlot.Value is not null)
                         newSlot.Value = matchingOldSlot.Value;
 
                     // If a type has been set, new one is probably better; otherwise keep old one
-                    if (newSlot.Type == null)
+                    if (newSlot.Type is null)
                         newSlot.Type = matchingOldSlot.Type;
 
                     // Check if there was any change
@@ -266,7 +266,7 @@ namespace Stride.Assets.Presentation.ViewModel
                         linkRemoved = true;
 
                         // If slot doesn't exist anymore, we're done
-                        if (newSlot == null)
+                        if (newSlot is null)
                         {
                             continue;
                         }
@@ -282,7 +282,7 @@ namespace Stride.Assets.Presentation.ViewModel
                         linkRemoved = true;
 
                         // If slot doesn't exist anymore, we're done
-                        if (newSlot == null)
+                        if (newSlot is null)
                         {
                             continue;
                         }

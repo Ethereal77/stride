@@ -1,38 +1,25 @@
 <Project>
-
   <PropertyGroup>
     <StrideRuntime>true</StrideRuntime>
     <StrideNativeOutputName>libstridenavigation</StrideNativeOutputName>
   </PropertyGroup>
-
   <Import Project="..\..\targets\Stride.props" />
 
   <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyTitle>Stride NavMesh Generation and Pathfinding Library</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--serialization</StrideAssemblyProcessorOptions>
-    <StrideBuildTags>*</StrideBuildTags>
+
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Stride.Physics\Stride.Physics.csproj" />
-  </ItemGroup>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride NavMesh Generation and Pathfinding Library</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Stride.Native.Libs.targets">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Stride.Native.Libs.targets" />
+
     <None Include="Navigation.cpp" />
     <None Include="Navigation.hpp" />
     <None Include="NavigationBuilder.cpp" />
@@ -41,6 +28,9 @@
     <None Include="NavigationMesh.hpp" />
   </ItemGroup>
 
-  <Import Project="$(StrideSdkTargets)" />
+  <ItemGroup>
+    <ProjectReference Include="..\Stride.Physics\Stride.Physics.csproj" />
+  </ItemGroup>
 
+  <Import Project="$(StrideSdkTargets)" />
 </Project>

@@ -3,29 +3,28 @@
     <StrideRuntime>true</StrideRuntime>
     <StrideRuntimeWindowsNet5>true</StrideRuntimeWindowsNet5>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
-    <UseWindowsForms Condition="$(StrideUI.Contains('WINFORMS')) OR $(StrideUI.Contains('WPF'))">true</UseWindowsForms>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <UseWPF Condition="$(TargetFramework.EndsWith('-windows'))">true</UseWPF>
     <UseWindowsForms Condition="$(TargetFramework.EndsWith('-windows'))">true</UseWindowsForms>
+
+    <AssemblyTitle>Stride Windowing and Game Loop</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
-    <StridePlatformDependent>true</StridePlatformDependent>
-    <StrideBuildTags>*</StrideBuildTags>
+
     <StrideCodeAnalysis>true</StrideCodeAnalysis>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Windowing and Game Loop</AssemblyTitle>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Stride.Graphics\Stride.Graphics.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

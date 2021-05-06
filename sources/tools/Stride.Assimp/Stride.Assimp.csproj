@@ -1,15 +1,15 @@
 <Project>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <StrideAssemblyProcessorOptions/>
-  </PropertyGroup>
-  <PropertyGroup>
+
     <AssemblyTitle>Stride Assimp (Asset Import Library) Wrapper</AssemblyTitle>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\core\Stride.Core.Mathematics\Stride.Core.Mathematics.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

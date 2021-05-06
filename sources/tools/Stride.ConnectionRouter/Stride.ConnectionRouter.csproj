@@ -1,60 +1,35 @@
 <Project>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
+    <UseWindowsForms>true</UseWindowsForms>
+
+    <AssemblyTitle>Stride Devices Remote Connection Router</AssemblyTitle>
+    <ApplicationIcon>Resources\ConnectionRouter.ico</ApplicationIcon>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
+
     <StrideNuGetResolverUX>true</StrideNuGetResolverUX>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <Prefer32Bit>false</Prefer32Bit>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Resources\ConnectionRouter.ico</ApplicationIcon>
-  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Include="..\..\shared\AttachedChildProcessJob.cs" Link="AttachedChildProcessJob.cs" />
+
+    <None Include="Resources\ConnectionRouter.ico" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
-    <PackageReference Include="System.Resources.Extensions" Version="5.0.0" />
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
-    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
-    <PackageReference Include="System.Runtime" Version="4.3.1" />
-    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
-  </ItemGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Stride Devices Remote Connection Router</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\shared\AttachedChildProcessJob.cs">
-      <Link>AttachedChildProcessJob.cs</Link>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\..\assets\Stride.Core.Assets\Stride.Core.Assets.csproj" />
     <ProjectReference Include="..\..\engine\Stride.Engine\Stride.Engine.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ConnectionRouter.ico" />
-  </ItemGroup>
+
   <Import Project="..\..\shared\Stride.Core.ShellHelper\Stride.Core.ShellHelper.projitems" Label="Shared" />
   <Import Project="..\..\shared\Stride.NuGetResolver\Stride.NuGetResolver.projitems" Label="Shared" />
   <Import Project="$(StrideSdkTargets)" />
-  </Project>
+</Project>

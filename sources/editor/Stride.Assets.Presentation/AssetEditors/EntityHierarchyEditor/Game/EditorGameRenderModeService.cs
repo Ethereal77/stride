@@ -21,9 +21,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         private EntityHierarchyEditorGame game;
         private MaterialFilterRenderFeature materialFilterRenderFeature;
 
-        // Decides the state of savedCameras (true: game preview, false: normal rendering)
+        // Decides the state of savedCameras (true: Game preview, false: Normal rendering)
         private bool isPreviewMode;
-        private List<SceneCameraSlot> savedCameras = new List<SceneCameraSlot>();
+        private List<SceneCameraSlot> savedCameras = new();
 
         public EditorRenderMode RenderMode { get; set; } = EditorRenderMode.DefaultEditor;
 

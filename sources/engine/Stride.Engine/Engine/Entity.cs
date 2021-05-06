@@ -100,9 +100,9 @@ namespace Stride.Engine
             get => this.FindRoot().SceneValue;
             set
             {
-                if (Transform.Parent != null)
+                if (Transform.Parent is not null)
                 {
-                    if (value != null)
+                    if (value is not null)
                         throw new InvalidOperationException("This entity is another entity's child. Detach it before changing its scene.");
 
                     Transform.Parent = null;

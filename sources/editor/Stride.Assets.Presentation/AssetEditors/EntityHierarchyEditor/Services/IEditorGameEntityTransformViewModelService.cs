@@ -8,6 +8,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Services
 {
     public interface IEditorGameEntityTransformViewModelService : IEditorGameTransformViewModelService
     {
+        /// <summary>
+        ///   Gets or sets the size of the transformation gizmo.
+        /// </summary>
         double GizmoSize { get; set; }
     }
 }

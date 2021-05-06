@@ -21,43 +21,54 @@ namespace Stride.Rendering.ProceduralModels
     [DataContract]
     public abstract class PrimitiveProceduralModelBase : IProceduralModel
     {
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="PrimitiveProceduralModelBase"/> class.
+        /// </summary>
         protected PrimitiveProceduralModelBase()
         {
             MaterialInstance = new MaterialInstance();
             UvScale = Vector2.One;
         }
 
+
+        /// <summary>
+        ///   Sets the material to use when rendering the procedural model.
+        /// </summary>
+        /// <param name="name">Name of the material slot to set.</param>
+        /// <param name="material">The material.</param>
         public void SetMaterial(string name, Material material)
         {
             if (name == "Material")
-            {
                 MaterialInstance.Material = material;
-            }
         }
 
+        /// <summary>
+        ///   Scale of the model's geometry scaling factors.
+        /// </summary>
+        /// <value>The scaling factors to apply when generating the procedural model.</value>
         [DataMember(510)]
-        public Vector3 Scale = Vector3.One;
+        public Vector3 Scale { get; set; } = Vector3.One;
 
         /// <summary>
-        /// Gets or sets the UV scale.
+        ///   Gets or sets the texture-space UV scaling factors.
         /// </summary>
-        /// <value>The UV scale</value>
+        /// <value>The scale to apply to the UV coordinates of the shape. This can be used to tile a texture on it.</value>
         /// <userdoc>The scale to apply to the UV coordinates of the shape. This can be used to tile a texture on it.</userdoc>
         [DataMember(520)]
         [Display("UV Scale")]
         public Vector2 UvScale { get; set; }
 
         /// <summary>
-        /// Gets or sets the local offset that will be applied to the procedural model's vertexes.
+        ///   Gets or sets the local offset that will be applied to the procedural model's vertices.
         /// </summary>
         [DataMember(530)]
         public Vector3 LocalOffset { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of texture coordinate channels to generate. A value between 1 and 10, inclusive.
+        ///   Gets or sets the number of texture coordinate channels to generate.
         /// </summary>
         /// <value>
-        /// The number of texure coordinate channels.
+        ///   The number of texure coordinate channels. A value between 1 and 10, inclusive.
         /// </value>
         [DataMember(540)]
         [DataMemberRange(1, 10)]
@@ -65,9 +76,8 @@ namespace Stride.Rendering.ProceduralModels
         public int NumberOfTextureCoordinates  { get; set; } = 10;
 
         /// <summary>
-        /// Gets the material instance.
+        ///   Gets the material instance to use for the model.
         /// </summary>
-        /// <value>The material instance.</value>
         /// <userdoc>The reference material asset to use with this model.</userdoc>
         [DataMember(600)]
         [NotNull]
@@ -78,13 +88,16 @@ namespace Stride.Rendering.ProceduralModels
         [DataMemberIgnore]
         public IEnumerable<KeyValuePair<string, MaterialInstance>> MaterialInstances { get { yield return new KeyValuePair<string, MaterialInstance>("Material", MaterialInstance); } }
 
+
+        /// <inheritdoc/>
         public void Generate(IServiceRegistry services, Model model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model is null)
+                throw new ArgumentNullException(nameof(model));
 
             var needsTempDevice = false;
             var graphicsDevice = services?.GetSafeServiceAs<IGraphicsDeviceService>().GraphicsDevice;
-            if (graphicsDevice == null)
+            if (graphicsDevice is null)
             {
                 graphicsDevice = GraphicsDevice.New();
                 needsTempDevice = true;
@@ -93,26 +106,23 @@ namespace Stride.Rendering.ProceduralModels
             var data = CreatePrimitiveMeshData();
 
             if (data.Vertices.Length == 0)
-            {
-                throw new InvalidOperationException("Invalid GeometricPrimitive [{0}]. Expecting non-zero Vertices array");
-            }
+                throw new InvalidOperationException("Invalid GeometricPrimitive [{0}]. Expecting non-zero Vertices array.");
 
+            // Translate if necessary
             if (LocalOffset != Vector3.Zero)
-            {
                 for (var index = 0; index < data.Vertices.Length; index++)
-                {
                     data.Vertices[index].Position += LocalOffset;
-                }
-            }
 
-            //Scale if necessary
+            // Scale if necessary
             if (Scale != Vector3.One)
             {
                 var inverseMatrix = Matrix.Scaling(Scale);
                 inverseMatrix.Invert();
+
                 for (var index = 0; index < data.Vertices.Length; index++)
                 {
                     data.Vertices[index].Position *= Scale;
+                    // TODO: Shouldn't be TransformNormal?
                     Vector3.TransformCoordinate(ref data.Vertices[index].Normal, ref inverseMatrix, out data.Vertices[index].Normal);
                 }
             }
@@ -133,7 +143,7 @@ namespace Stride.Rendering.ProceduralModels
             // Generate Tangent/BiNormal vectors
             var resultWithTangentBiNormal = VertexHelper.GenerateTangentBinormal(originalLayout, data.Vertices, data.Indices);
 
-            // Generate Multitexcoords
+            // Generate Multi texturing coords
             var maxTexCoords = MathUtil.Clamp(NumberOfTextureCoordinates, 1, 10) - 1;
             var result = VertexHelper.GenerateMultiTextureCoordinates(resultWithTangentBiNormal, vertexStride: 0, maxTexCoords);
 
@@ -145,29 +155,42 @@ namespace Stride.Rendering.ProceduralModels
 
             if (indices.Length < 0xFFFF)
             {
+                // 16-bit indices
                 var indicesShort = new ushort[indices.Length];
                 for (int i = 0; i < indicesShort.Length; i++)
-                {
-                    indicesShort[i] = (ushort)indices[i];
-                }
-                meshDraw.IndexBuffer = new IndexBufferBinding(Buffer.Index.New(graphicsDevice, indicesShort).RecreateWith(indicesShort), false, indices.Length);
+                    indicesShort[i] = (ushort) indices[i];
+
+                var indexBuffer = Buffer.Index.New(graphicsDevice, indicesShort)
+                                              .RecreateWith(indicesShort);
+
+                meshDraw.IndexBuffer = new IndexBufferBinding(indexBuffer, is32Bit: false, indices.Length);
+
                 if (needsTempDevice)
                 {
                     var indexData = BufferData.New(BufferFlags.IndexBuffer, indicesShort);
-                    meshDraw.IndexBuffer = new IndexBufferBinding(indexData.ToSerializableVersion(), false, indices.Length);
+                    meshDraw.IndexBuffer = new IndexBufferBinding(indexData.ToSerializableVersion(), is32Bit: false, indices.Length);
                 }
             }
             else
             {
-                meshDraw.IndexBuffer = new IndexBufferBinding(Buffer.Index.New(graphicsDevice, indices).RecreateWith(indices), true, indices.Length);
+                // 32-bit indices
+                var indexBuffer = Buffer.Index.New(graphicsDevice, indices)
+                                              .RecreateWith(indices);
+
+                meshDraw.IndexBuffer = new IndexBufferBinding(indexBuffer, is32Bit: true, indices.Length);
+
                 if (needsTempDevice)
                 {
                     var indexData = BufferData.New(BufferFlags.IndexBuffer, indices);
-                    meshDraw.IndexBuffer = new IndexBufferBinding(indexData.ToSerializableVersion(), true, indices.Length);
+                    meshDraw.IndexBuffer = new IndexBufferBinding(indexData.ToSerializableVersion(), is32Bit: true, indices.Length);
                 }
             }
 
-            meshDraw.VertexBuffers = new[] { new VertexBufferBinding(Buffer.New(graphicsDevice, vertexBuffer, BufferFlags.VertexBuffer).RecreateWith(vertexBuffer), layout, data.Vertices.Length) };
+            var geometryBuffer = Buffer.New(graphicsDevice, vertexBuffer, BufferFlags.VertexBuffer)
+                                       .RecreateWith(vertexBuffer);
+
+            meshDraw.VertexBuffers = new[] { new VertexBufferBinding(geometryBuffer, layout, data.Vertices.Length) };
+
             if (needsTempDevice)
             {
                 var vertexData = BufferData.New(BufferFlags.VertexBuffer, vertexBuffer);
@@ -177,13 +200,18 @@ namespace Stride.Rendering.ProceduralModels
             meshDraw.DrawCount = indices.Length;
             meshDraw.PrimitiveType = PrimitiveType.TriangleList;
 
-            var mesh = new Mesh { Draw = meshDraw, BoundingBox = boundingBox, BoundingSphere = boundingSphere };
+            var mesh = new Mesh
+            {
+                Draw = meshDraw,
+                BoundingBox = boundingBox,
+                BoundingSphere = boundingSphere
+            };
 
             model.BoundingBox = boundingBox;
             model.BoundingSphere = boundingSphere;
             model.Add(mesh);
 
-            if (MaterialInstance?.Material != null)
+            if (MaterialInstance?.Material is not null)
             {
                 model.Materials.Add(MaterialInstance);
             }

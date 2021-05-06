@@ -1,20 +1,17 @@
 <Project>
-
   <Import Project="..\..\targets\Stride.Core.props" />
 
   <PropertyGroup>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+
+    <AssemblyTitle>Stride Framework to reason and manipulate Object Graphs</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
-    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Framework to reason and manipulate Object Graphs</AssemblyTitle>
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,5 +19,4 @@
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />
-
 </Project>

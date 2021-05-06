@@ -1,54 +1,54 @@
 <Project>
   <PropertyGroup>
     <StridePlatform>Windows</StridePlatform>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
+    <AssemblyTitle>Stride Assets Compiler</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
+
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
-  </ItemGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Stride Assets Compiler</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+
     <None Include="build\**\*.targets" PackagePath="build\" Pack="true" />
     <None Include="build\**\*.targets" PackagePath="buildTransitive\" Pack="true" />
     <None Include="..\..\..\deps\Stride.MSBuild.Tasks\bin\Release\**\*.*" PackagePath="tools\" Pack="true" />
+    <None Update="global.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+
     <ProjectReference Include="..\..\engine\Stride.Assets.Models\Stride.Assets.Models.csproj" />
     <ProjectReference Include="..\..\engine\Stride.Particles\Stride.Particles.csproj" />
     <ProjectReference Include="..\..\engine\Stride.Physics\Stride.Physics.csproj" />
     <ProjectReference Include="..\..\engine\Stride.SpriteStudio.Offline\Stride.SpriteStudio.Offline.csproj" />
     <ProjectReference Include="..\..\engine\Stride.UI\Stride.UI.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="global.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 
   <Import Project="..\..\tools\Stride.Core.VisualStudio\Stride.Core.VisualStudio.projitems" Label="Shared" />
   <Import Project="..\..\shared\Stride.NuGetResolver\Stride.NuGetResolver.projitems" Label="Shared" />
   <Import Project="$(StrideSdkTargets)" />
+
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>_StrideIncludeExtraAssemblies;$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
-
   </PropertyGroup>
   <Target Name="_StrideIncludeExtraAssemblies">
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)global.json" />
     </ItemGroup>
   </Target>
+
 </Project>

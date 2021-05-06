@@ -82,47 +82,47 @@ namespace Stride.Core.Assets.CompilerApp
                 string.Empty,
                 "=== Options ===",
                 string.Empty,
-                { "h|help", "Show this message and exit", v => showHelp = v != null },
-                { "v|verbose", "Show more verbose progress logs", v => options.Verbose = v != null },
-                { "d|debug", "Show debug logs (imply verbose)", v => options.Debug = v != null },
-                { "log", "Enable file logging", v => options.EnableFileLogging = v != null },
-                { "disable-auto-compile", "Disable auto-compile of projects", v => options.DisableAutoCompileProjects = v != null},
-                { "project-configuration=", "Project configuration", v => options.ProjectConfiguration = v },
-                { "platform=", "Platform name", v => options.Platform = (PlatformType)Enum.Parse(typeof(PlatformType), v) },
-                { "solution-file=", "Solution File Name", v => options.SolutionFile = v },
-                { "package-id=", "Package Id from the solution file", v => options.PackageId = Guid.Parse(v) },
-                { "package-file=", "Input Package File Name", v => options.PackageFile = v },
-                { "msbuild-uptodatecheck-filebase=", "BuildUpToDate File base for MSBuild; it will create one .inputs and one .outputs files", v => options.MSBuildUpToDateCheckFileBase = v },
-                { "o|output-path=", "Output path", v => options.OutputDirectory = v },
-                { "b|build-path=", "Build path", v => options.BuildDirectory = v },
-                { "log-file=", "Log build in a custom file.", v =>
+                { "h|help", "Show this message and exit", help => showHelp = help != null },
+                { "v|verbose", "Show more verbose progress logs", verbose => options.Verbose = verbose != null },
+                { "d|debug", "Show debug logs (imply verbose)", debug => options.Debug = debug != null },
+                { "log", "Enable file logging", enableLogging => options.EnableFileLogging = enableLogging != null },
+                { "disable-auto-compile", "Disable auto-compile of projects", disableAutoCompile => options.DisableAutoCompileProjects = disableAutoCompile != null},
+                { "project-configuration=", "Project configuration", config => options.ProjectConfiguration = config },
+                { "platform=", "Platform name", platform => options.Platform = (PlatformType) Enum.Parse(typeof(PlatformType), platform) },
+                { "solution-file=", "Solution File Name", solutionFile => options.SolutionFile = solutionFile },
+                { "package-id=", "Package Id from the solution file", packageId => options.PackageId = Guid.Parse(packageId) },
+                { "package-file=", "Input Package File Name", packageFile => options.PackageFile = packageFile },
+                { "msbuild-uptodatecheck-filebase=", "BuildUpToDate File base for MSBuild; it will create a .inputs and a .outputs file", fileBase => options.MSBuildUpToDateCheckFileBase = fileBase },
+                { "o|output-path=", "Output path", outputDir => options.OutputDirectory = outputDir },
+                { "b|build-path=", "Build path", buildDir => options.BuildDirectory = buildDir },
+                { "log-file=", "Log build in a custom file.", logFile =>
                 {
-                    options.EnableFileLogging = v != null;
-                    options.CustomLogFileName = v;
+                    options.EnableFileLogging = logFile != null;
+                    options.CustomLogFileName = logFile;
                 } },
-                { "monitor-pipe=", "Monitor pipe.", v =>
+                { "monitor-pipe=", "Monitor pipe.", pipe =>
                 {
-                    if (!string.IsNullOrEmpty(v))
-                        options.MonitorPipeNames.Add(v);
+                    if (!string.IsNullOrEmpty(pipe))
+                        options.MonitorPipeNames.Add(pipe);
                 } },
-                { "slave=", "Slave pipe", v => options.SlavePipe = v }, // Benlitz: I don't think this should be documented
-                { "server=", "This Compiler is launched as a server", v => { } },
-                { "pack", "Special mode to copy assets and resources in a folder for NuGet packaging", v => packMode = true },
-                { "updated-generated-files", "Special mode to update generated files (such as .sdsl.cs)", v => updateGeneratedFilesMode = true },
-                { "t|threads=", "Number of threads to create. Default value is the number of hardware threads available.", v => options.ThreadCount = int.Parse(v) },
+                { "slave=", "Slave pipe", pipe => options.SlavePipe = pipe }, // Benlitz: I don't think this should be documented
+                { "server=", "This Compiler is launched as a server", _ => { } },
+                { "pack", "Special mode to copy assets and resources in a folder for NuGet packaging", _ => packMode = true },
+                { "updated-generated-files", "Special mode to update generated files (such as .sdsl.cs)", u => updateGeneratedFilesMode = true },
+                { "t|threads=", "Number of threads to create. Default value is the number of hardware threads available.", t => options.ThreadCount = int.Parse(t) },
                 { "test=", "Run a test session.", v => options.TestName = v },
-                { "property:", "Properties. Format is name1=value1;name2=value2", v =>
+                { "property:", "Properties. Format is name1=value1;name2=value2", properties =>
                 {
-                    if (!string.IsNullOrEmpty(v))
+                    if (!string.IsNullOrEmpty(properties))
                     {
-                        foreach (var nameValue in v.Split(new [] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                        foreach (var nameValue in properties.Split(new [] { ';' }, StringSplitOptions.RemoveEmptyEntries))
                         {
                             var equalIndex = nameValue.IndexOf('=');
                             if (equalIndex == -1)
-                                throw new OptionException("Expect name1=value1;name2=value2 format.", "property");
+                                throw new OptionException("Expected name1=value1;name2=value2 format.", "property");
 
                             var name = nameValue.Substring(0, equalIndex);
-                            var value = nameValue.Substring(equalIndex + 1);
+                            var value = nameValue[(equalIndex + 1)..];
                             if (value != string.Empty)
                                 options.Properties.Add(name, value);
                         }
@@ -140,9 +140,9 @@ namespace Stride.Core.Assets.CompilerApp
                         {
                             var equalIndex = nameValue.IndexOf('=');
                             if (equalIndex == -1)
-                                throw new OptionException("Expect name1=value1;name2=value2 format.", "property");
+                                throw new OptionException("Expected name1=value1;name2=value2 format.", "property");
 
-                            options.ExtraCompileProperties.Add(nameValue.Substring(0, equalIndex), nameValue.Substring(equalIndex + 1));
+                            options.ExtraCompileProperties.Add(nameValue.Substring(0, equalIndex), nameValue[(equalIndex + 1)..]);
                         }
                     }
                 }
@@ -154,10 +154,8 @@ namespace Stride.Core.Assets.CompilerApp
                         {
                             if (!Debugger.IsAttached)
                             {
-                                using (var debugger = VisualStudioDebugger.GetByProcess(debuggerProcessId))
-                                {
-                                    debugger?.Attach();
-                                }
+                                using var debugger = VisualStudioDebugger.GetByProcess(debuggerProcessId);
+                                debugger?.Attach();
                             }
                         }
                     }
@@ -209,20 +207,19 @@ namespace Stride.Core.Assets.CompilerApp
                                 options.Logger.Info($"Processing: {assetItem}");
                                 projectGeneratorAsset.SaveGeneratedAsset(assetItem);
                             }
-                            catch (Exception e)
+                            catch (Exception ex)
                             {
-                                options.Logger.Error($"Unhandled exception while updating generated files for {assetItem}", e);
+                                options.Logger.Error($"Unhandled exception while updating generated files for {assetItem}.", ex);
                             }
                         }
                     }
 
-                    return (int)BuildResultCode.Successful;
+                    return (int) BuildResultCode.Successful;
                 }
 
                 if (unexpectedArgs.Any())
-                {
-                    throw new OptionException("Unexpected arguments [{0}]".ToFormat(string.Join(", ", unexpectedArgs)), "args");
-                }
+                    throw new OptionException($"Unexpected arguments [{string.Join(", ", unexpectedArgs)}].", nameof(args));
+
                 try
                 {
                     options.ValidateOptions();
@@ -241,23 +238,25 @@ namespace Stride.Core.Assets.CompilerApp
                 {
                     PackageSessionPublicHelper.FindAndSetMSBuildVersion();
 
+                    var logger = new LoggerResult();
+
                     var csprojFile = options.PackageFile;
                     var intermediatePackagePath = options.BuildDirectory;
                     var generatedItems = new List<(string SourcePath, string PackagePath)>();
-                    var logger = new LoggerResult();
+
                     if (!PackAssetsHelper.Run(logger, csprojFile, intermediatePackagePath, generatedItems))
                     {
                         foreach (var message in logger.Messages)
                         {
                             Console.WriteLine(message);
                         }
-                        return (int)BuildResultCode.BuildError;
+                        return (int) BuildResultCode.BuildError;
                     }
-                    foreach (var generatedItem in generatedItems)
+                    foreach (var (SourcePath, PackagePath) in generatedItems)
                     {
-                        Console.WriteLine($"{generatedItem.SourcePath}|{generatedItem.PackagePath}");
+                        Console.WriteLine($"{SourcePath}|{PackagePath}");
                     }
-                    return (int)BuildResultCode.Successful;
+                    return (int) BuildResultCode.Successful;
                 }
 
                 // Also write logs from master process into a file
@@ -304,14 +303,14 @@ namespace Stride.Core.Assets.CompilerApp
                     exitCode = builder.Build();
                 }
             }
-            catch (OptionException e)
+            catch (OptionException ex)
             {
-                options.Logger.Error($"Command option '{e.OptionName}': {e.Message}");
+                options.Logger.Error($"Command option '{ex.OptionName}': {ex.Message}");
                 exitCode = BuildResultCode.CommandLineError;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                options.Logger.Error($"Unhandled exception", e);
+                options.Logger.Error($"Unhandled exception.", ex);
                 exitCode = BuildResultCode.BuildError;
             }
             finally
@@ -335,7 +334,7 @@ namespace Stride.Core.Assets.CompilerApp
                 // Reset cache hold by YamlSerializer
                 YamlSerializer.Default.ResetCache();
             }
-            return (int)exitCode;
+            return (int) exitCode;
         }
 
         private void OnConsoleOnCancelKeyPress(object _, ConsoleCancelEventArgs e)

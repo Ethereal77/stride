@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2011 Irony - Roman Ivantsov
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Stride.Irony.Parsing { 
+namespace Stride.Irony.Parsing {
   public enum GrammarErrorLevel {
     NoError, //used only for max error level when there are no errors
     Info,
@@ -19,13 +19,13 @@ namespace Stride.Irony.Parsing {
   }
 
   public class GrammarError {
-    public readonly GrammarErrorLevel Level; 
+    public readonly GrammarErrorLevel Level;
     public readonly string Message;
     public readonly ParserState State; //can be null!
     public GrammarError(GrammarErrorLevel level, ParserState state, string message) {
       Level = level;
       State = state;
-      Message = message; 
+      Message = message;
     }
   }//class
 
@@ -39,14 +39,14 @@ namespace Stride.Irony.Parsing {
       Add(level, state, message, args);
       var error = this[this.Count - 1];
       var exc = new GrammarErrorException(error.Message, error);
-      throw exc; 
+      throw exc;
     }
     public GrammarErrorLevel GetMaxLevel() {
       var max = GrammarErrorLevel.NoError;
       foreach (var err in this)
         if (max < err.Level)
           max = err.Level;
-      return max; 
+      return max;
     }
   }
 
@@ -54,7 +54,7 @@ namespace Stride.Irony.Parsing {
   public class GrammarErrorException : Exception {
     public readonly GrammarError Error;
     public GrammarErrorException(string message, GrammarError error) : base(message) {
-      Error = error; 
+      Error = error;
     }
 
   }//class

@@ -2,29 +2,24 @@
   <Import Project="..\..\shared\Stride.NuGetResolver\Stride.NuGetResolver.projitems" Label="Shared" />
 
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
+
+    <AssemblyTitle>Stride On-line Effect Compilation Service</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Mono.Options" Version="6.6.0.161" />
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Stride On-line Effect Compilation Service</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\engine\Stride.Assets\Stride.Assets.csproj" />
     <ProjectReference Include="..\Stride.ConnectionRouter\Stride.ConnectionRouter.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

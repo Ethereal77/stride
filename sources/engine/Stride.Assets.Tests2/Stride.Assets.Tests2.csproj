@@ -1,37 +1,37 @@
 <Project>
   <Import Project="..\..\targets\Stride.UnitTests.props" />
+
   <PropertyGroup>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+
+    <AssemblyName>Stride.Assets.Tests2</AssemblyName>
+    <AssemblyTitle>Test assembly for Stride AssetsCompiler</AssemblyTitle>
+
     <EnableDefaultItems>false</EnableDefaultItems>
     <StrideCompileAssets>true</StrideCompileAssets>
     <!-- Force MSBuild to check to rebuild this assembly instead of letting VS IDE guess -->
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
-    <AssemblyName>Stride.Assets.Tests2</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="XunitAttributes.cs" />
+    <Compile Include="AutoAlphaTests.cs" />
+
+    <None Include="README.md" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
     <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
     <ProjectReference Include="..\Stride.Assets\Stride.Assets.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="XunitAttributes.cs" />
-    <Compile Include="AutoAlphaTests.cs" />
-  </ItemGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Test assembly for Stride AssetsCompiler</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-  </ItemGroup>
+
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
 </Project>

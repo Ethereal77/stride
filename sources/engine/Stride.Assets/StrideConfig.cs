@@ -18,12 +18,12 @@ namespace Stride.Assets
     {
         public const string PackageName = "Stride";
 
-        public static readonly PackageVersion LatestPackageVersion = new PackageVersion(StrideVersion.NuGetVersion);
+        public static readonly PackageVersion LatestPackageVersion = new(StrideVersion.NuGetVersion);
 
         private static readonly string ProgramFilesX86 = Environment.GetEnvironmentVariable(Environment.Is64BitOperatingSystem ? "ProgramFiles(x86)" : "ProgramFiles");
 
-        private static readonly Version VS2015Version = new Version(14, 0);
-        private static readonly Version VSAnyVersion = new Version(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue);
+        private static readonly Version VS2015Version = new(14, 0);
+        private static readonly Version VSAnyVersion = new(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue);
 
         public static PackageDependency GetLatestPackageDependency()
         {

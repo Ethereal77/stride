@@ -5,12 +5,12 @@
 using System;
 
 using Stride.Core.Serialization;
-using Stride.Core.Serialization.Serializers;
 
 namespace Stride.Graphics
 {
     /// <summary>
-    /// Binding structure that specifies a vertex buffer and other per-vertex parameters (such as offset and instancing) for a graphics device.
+    ///   Binding structure that specifies a Vertex <see cref="Graphics.Buffer"/> and other per-vertex parameters
+    ///   (such as offset and instancing) for a graphics device.
     /// </summary>
     [DataSerializer(typeof(VertexBufferBinding.Serializer))]
     public struct VertexBufferBinding : IEquatable<VertexBufferBinding>
@@ -18,74 +18,86 @@ namespace Stride.Graphics
         private readonly int hashCode;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VertexBufferBinding"/> struct.
+        ///   Initializes a new instance of the <see cref="VertexBufferBinding"/> struct.
         /// </summary>
-        /// <param name="vertexStride">Jump size to the next element. if -1, it gets auto-discovered from the vertexDeclaration</param>
-        /// <param name="vertexOffset">Offset (in Vertex ElementCount) from the beginning of the buffer to the first vertex to use.</param>
+        /// <param name="vertexBuffer">The buffer containing the vertices.</param>
+        /// <param name="vertexDeclaration">A <see cref="VertexDeclaration"/> specifying tha layout of the vertices.</param>
+        /// <param name="vertexCount">The number of vertices.</param>
+        /// <param name="vertexStride">
+        ///   Number of bytes to advance to get to the next vertex.
+        ///   If -1, it gets auto-discovered from the <paramref name="vertexDeclaration"/>.
+        /// </param>
+        /// <param name="vertexOffset">
+        ///   Offset (in Vertex ElementCount) from the beginning of the buffer to the first vertex to use.
+        /// </param>
         public VertexBufferBinding(Buffer vertexBuffer, VertexDeclaration vertexDeclaration, int vertexCount, int vertexStride = -1, int vertexOffset = 0) : this()
         {
-            if (vertexBuffer == null) throw new ArgumentNullException("vertexBuffer");
-            if (vertexDeclaration == null) throw new ArgumentNullException("vertexDeclaration");
+            Buffer = vertexBuffer ?? throw new ArgumentNullException(nameof(vertexBuffer));
+            Declaration = vertexDeclaration ?? throw new ArgumentNullException(nameof(vertexDeclaration));
 
-            Buffer = vertexBuffer;
             Stride = vertexStride != -1 ? vertexStride : vertexDeclaration.VertexStride;
             Offset = vertexOffset;
             Count = vertexCount;
-            Declaration = vertexDeclaration;
 
-            unchecked
-            {
-                hashCode = Buffer.GetHashCode();
-                hashCode = (hashCode * 397) ^ Offset;
-                hashCode = (hashCode * 397) ^ Stride;
-                hashCode = (hashCode * 397) ^ Count;
-                hashCode = (hashCode * 397) ^ Declaration.GetHashCode();
-            }
+            HashCode hash = default;
+            hash.Add(Buffer.GetHashCode());
+            hash.Add(Offset);
+            hash.Add(Stride);
+            hash.Add(Count);
+            hash.Add(Declaration.GetHashCode());
+            hashCode = hash.ToHashCode();
         }
 
+
         /// <summary>
-        /// Gets a vertex buffer.
+        ///   Gets the Vertex Buffer.
         /// </summary>
         public Buffer Buffer { get; private set; }
 
         /// <summary>
-        /// Gets the offset (vertex index) between the beginning of the buffer and the vertex data to use.
+        ///   Gets the offset (vertex index) between the beginning of the buffer and the vertex data to use.
         /// </summary>
         public int Offset { get; private set; }
 
         /// <summary>
-        /// Gets the vertex stride.
+        ///   Gets the vertex stride, the number of bytes a single vertex occupies in the buffer.
         /// </summary>
         public int Stride { get; private set; }
 
         /// <summary>
-        /// Gets the number of vertex.
+        ///   Gets the number of vertices.
         /// </summary>
-        /// <value>The count.</value>
         public int Count { get; private set; }
 
         /// <summary>
-        /// Gets the layout of the vertex buffer.
+        ///   Gets the layout of the vertices in the Vertex Buffer.
         /// </summary>
-        /// <value>The declaration.</value>
         public VertexDeclaration Declaration { get; private set; }
 
-        public bool Equals(VertexBufferBinding other)
-        {
-            return Buffer.Equals(other.Buffer) && Offset == other.Offset && Stride == other.Stride && Count == other.Count && Declaration.Equals(other.Declaration);
-        }
 
+        /// <inheritdoc/>
+        public bool Equals(VertexBufferBinding other) => Buffer.Equals(other.Buffer) &&
+                                                         Offset == other.Offset &&
+                                                         Stride == other.Stride &&
+                                                         Count == other.Count &&
+                                                         Declaration.Equals(other.Declaration);
+
+        /// <inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is VertexBufferBinding && Equals((VertexBufferBinding)obj);
+            if (obj is null)
+                return false;
+
+            return obj is VertexBufferBinding vertexBufferBinding && Equals(vertexBufferBinding);
         }
 
-        public override int GetHashCode()
-        {
-            return hashCode;
-        }
+        /// <inheritdoc/>
+        public override int GetHashCode() => hashCode;
 
+
+        //
+        // Data serializer for Vertex Buffer bindings.
+        //
         internal class Serializer : DataSerializer<VertexBufferBinding>
         {
             public override void Serialize(ref VertexBufferBinding vertexBufferBinding, ArchiveMode mode, SerializationStream stream)

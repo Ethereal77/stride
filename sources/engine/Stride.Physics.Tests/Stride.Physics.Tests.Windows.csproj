@@ -4,27 +4,19 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+
+    <StartupObject>xunit.runner.stride.Program</StartupObject>
     <AssemblyName>Stride.Physics.Tests</AssemblyName>
+    <AssemblyTitle>Test assembly for Stride Physics</AssemblyTitle>
     <RootNamespace>Stride.Physics.Tests</RootNamespace>
+
     <EnableDefaultItems>false</EnableDefaultItems>
-    <StrideBuildTags>*</StrideBuildTags>
     <StrideCompileAssets>true</StrideCompileAssets>
     <StrideGraphicsApiDependent>true</StrideGraphicsApiDependent>
     <!-- Force MSBuild to check to rebuild this assembly instead of letting VS IDE guess -->
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Test assembly for Stride Physics</AssemblyTitle>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>xunit.runner.stride.Program</StartupObject>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
-    <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
-    <ProjectReference Include="..\Stride.Physics\Stride.Physics.csproj" />
-    <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
-  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="SendCollisionEndedWhenEntityIsRemovedTest.cs" />
     <Compile Include="XunitAttributes.cs" />
@@ -32,12 +24,16 @@
     <Compile Include="ColliderShapesTest.cs" />
     <Compile Include="GameTest.cs" />
     <Compile Include="SkinnedTest.cs" />
+
+    <None Include="Stride.Physics.Tests.Windows.sdpkg" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="Stride.Physics.Tests.sdpkg" />
+    <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
+    <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
+    <ProjectReference Include="..\Stride.Physics\Stride.Physics.csproj" />
+    <ProjectReference Include="..\Stride.Graphics.Regression\Stride.Graphics.Regression.csproj" />
   </ItemGroup>
+
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
-  <ItemGroup>
-    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
-  </ItemGroup>
 </Project>

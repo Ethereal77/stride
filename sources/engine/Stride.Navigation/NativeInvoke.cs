@@ -12,7 +12,7 @@ namespace Stride.Navigation
 
         internal static void PreLoad()
         {
-            NativeLibraryHelper.PreloadLibrary("libstridenavigation", typeof(NativeInvoke));
+            NativeLibraryHelper.Load("libstridenavigation", typeof(NativeInvoke));
         }
 
         static NativeInvoke()

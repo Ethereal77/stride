@@ -16,19 +16,15 @@ namespace Stride.Irony.Parsing {
     }
     public void Push(ParseTreeNode nodeInfo, ParserState state) {
       nodeInfo.State = state;
-      base.Add(nodeInfo); 
+      base.Add(nodeInfo);
     }
     public ParseTreeNode Pop() {
-      var top = Top; 
+      var top = Top;
       base.RemoveAt(Count - 1);
-      return top; 
+      return top;
     }
     public void Pop(int count) {
-      base.RemoveRange(Count - count, count); 
-    }
-    public void PopUntil(int finalCount) {
-      if (finalCount < Count) 
-        Pop(Count - finalCount); 
+      base.RemoveRange(Count - count, count);
     }
     public ParseTreeNode Top {
       get {

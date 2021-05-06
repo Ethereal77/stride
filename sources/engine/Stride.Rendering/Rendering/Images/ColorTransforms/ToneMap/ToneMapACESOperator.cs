@@ -9,7 +9,7 @@ namespace Stride.Rendering.Images
     ///   Represents the ACES filmic tone mapping operator with highlight desaturation ("crosstalk"),
     ///   based on the curve fit by Krzysztof Narkowicz.
     /// </summary>
-    /// <see href="https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/"/>
+    /// <seealso href="https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/">ACES Filmic Tone Mapping Curve</seealso>
     [DataContract("ToneMapACESOperator")]
     [Display("ACES")]
     public class ToneMapACESOperator : ToneMapCommonOperator

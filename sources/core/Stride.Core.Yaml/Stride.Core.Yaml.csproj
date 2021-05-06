@@ -1,21 +1,23 @@
 <Project>
   <Import Project="..\..\targets\Stride.Core.props" />
+
   <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
     <TargetFramework>net5.0</TargetFramework>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
-  </PropertyGroup>
-  <PropertyGroup>
+
     <AssemblyTitle>Stride Yaml Reading/Writing and Serialization Library</AssemblyTitle>
+
+    <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Stride.Core.Reflection\Stride.Core.Reflection.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

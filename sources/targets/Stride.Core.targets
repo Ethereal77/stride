@@ -24,14 +24,13 @@
   <Import Project="$(SolutionDir)$(SolutionName).Build.targets" Condition="Exists('$(SolutionDir)$(SolutionName).Build.targets')" />
   <Import Project="$(SolutionDir)Stride.Core.Build.targets" Condition="Exists('$(SolutionDir)Stride.Core.Build.targets')" />
 
-
   <!-- Code Analysis -->
   <PropertyGroup Condition="'$(StrideCodeAnalysis)' == 'true'">
     <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)Stride.ruleset</CodeAnalysisRuleSet>
     <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
   </PropertyGroup>
   <ItemGroup Condition="'$(StrideCodeAnalysis)' == 'true'">
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" Visible="false" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
   </ItemGroup>
   <!-- Disable analyzers unless StrideEnableCodeAnalysis is set (note: PackageReference can't depend on external Condition) -->
@@ -46,7 +45,7 @@
   <!-- DocFX doesn't like if there is no TargetFramework set by default -->
   <PropertyGroup Condition="'$(StrideBuildDoc)' == 'true'">
     <TargetFramework Condition="'$(TargetFramework)' == ''">$(TargetFrameworks.Split(';', StringSplitOptions.RemoveEmptyEntries)[0])</TargetFramework>
-  </PropertyGroup>  
+  </PropertyGroup>
 
   <!-- User Documentation (.usrdoc) -->
   <PropertyGroup Condition="'$(StridePublicApi)' == 'true'">
@@ -74,11 +73,9 @@
     <!-- If StrideCompilerTargetsEnable is set to false, override LanguageTargets to an empty one -->
     <LanguageTargets Condition="'$(StrideCompilerTargetsEnable)' == 'false'">$(MSBuildThisFileDirectory)Stride.Core.DisableBuild.targets</LanguageTargets>
 
-    <StrideAssemblyProcessorFramework>netstandard2.0</StrideAssemblyProcessorFramework>
-    <StrideAssemblyProcessorExt>.dll</StrideAssemblyProcessorExt>
-    <StrideAssemblyProcessorHash Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$([System.IO.File]::ReadAllText('$(StrideAssemblyProcessorBasePath)\$(StrideAssemblyProcessorFramework)\Stride.Core.AssemblyProcessor.Packed$(StrideAssemblyProcessorExt).hash'))</StrideAssemblyProcessorHash>
-    <StrideAssemblyProcessorTempBasePath Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$(TEMP)\Stride\AssemblyProcessor\$(StrideAssemblyProcessorHash)\$(StrideAssemblyProcessorFramework)\</StrideAssemblyProcessorTempBasePath>
-    <StrideAssemblyProcessorTempPath Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$(StrideAssemblyProcessorTempBasePath)Stride.Core.AssemblyProcessor.Packed$(StrideAssemblyProcessorExt)</StrideAssemblyProcessorTempPath>
+    <StrideAssemblyProcessorHash Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$([System.IO.File]::ReadAllText('$(StrideAssemblyProcessorBasePath)\Stride.Core.AssemblyProcessor.dll.hash'))</StrideAssemblyProcessorHash>
+    <StrideAssemblyProcessorTempBasePath Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$(TEMP)\Stride\AssemblyProcessor\$(StrideAssemblyProcessorHash)\</StrideAssemblyProcessorTempBasePath>
+    <StrideAssemblyProcessorTempPath Condition="'$(StrideAssemblyProcessorBasePath)' != ''">$(StrideAssemblyProcessorTempBasePath)Stride.Core.AssemblyProcessor.dll</StrideAssemblyProcessorTempPath>
   </PropertyGroup>
 
   <!-- Setup default output path for C++ projects -->
@@ -110,7 +107,7 @@
 
     <!-- Copy task to temp directory (otherwise MSBuild lock the task file and we can't reinstall package in dev mode) -->
     <ItemGroup>
-      <StrideAssemblyProcessorFilesToCopy Include="$(StrideAssemblyProcessorBasePath)$(StrideAssemblyProcessorFramework)\*.*" />
+      <StrideAssemblyProcessorFilesToCopy Include="$(StrideAssemblyProcessorBasePath)\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(StrideAssemblyProcessorFilesToCopy)" DestinationFolder="$(StrideAssemblyProcessorTempBasePath)" Condition="!Exists('$(StrideAssemblyProcessorTempPath)')" />
 
@@ -148,7 +145,7 @@
   </Target>
 
 
-  <!-- Auto NuGet build packages and deploy them -->
+  <!-- Auto-build NuGet packages and deploy them -->
   <Target Name="StrideAutoPackDeploy" AfterTargets="Pack">
     <Copy Condition="'%(Extension)' == '.nupkg'" SourceFiles="@(NuGetPackOutput)" DestinationFolder="$(LocalAppData)\Stride\NuGetDev"/>
     <!-- Deleting .sha512 file and/or .nupkg.metadata seems to be enough for NuGet restore to force extract new package and properly compile dependent projects -->
@@ -161,29 +158,32 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.so;.a;.bin;.dylib;$(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
-  <!-- Auto NuGet build packages and deploy them -->
   <Import Project="$(MSBuildThisFileDirectory)Stride.AutoPack.targets"/>
 
   <!-- Generate localization satellite assemblies -->
   <Target Name="StrideGenerateLocalizationSatelliteDlls" BeforeTargets="SatelliteDllsProjectOutputGroup" Returns="@(SatelliteDllsProjectOutputGroupOutput)" Condition="'$(StrideLocalized)' == 'true' And '$(Configuration)' == 'Release'">
     <ItemGroup>
       <!-- Current list of languages to try to generate -->
-      <StrideTraductions Include="fr;ja;es;de;ru;it;ko"/>
-      <StrideTraductions Include="zh-Hans">
+      <StrideTranslations Include="fr;ja;es;de;ru;it;ko"/>
+      <StrideTranslations Include="zh-Hans">
         <Source>zh_HANS-CN</Source>
-      </StrideTraductions>
+      </StrideTranslations>
 
-      <_StrideTraductions Include="@(StrideTraductions)">
-        <Source Condition="%(StrideTraductions.Source) == ''">%(StrideTraductions.Identity)</Source>
-      </_StrideTraductions>
+      <_StrideTranslations Include="@(StrideTranslations)">
+        <Source Condition="%(StrideTranslations.Source) == ''">%(StrideTranslations.Identity)</Source>
+      </_StrideTranslations>
     </ItemGroup>
-    <Message Importance="High" Text="Generating translation for %(_StrideTraductions.Identity) %(_StrideTraductions.SourceFolder)"/>
-    <Exec Condition="Exists('$(SolutionDir)..\sources\localization\%(_StrideTraductions.Source)\$(TargetName).%(_StrideTraductions.Source).po')" Command="Path=$(RoslynTargetsPath);$(Path)
-&quot;$(SolutionDir)..\deps\Gettext.Net\GNU.Gettext.Msgfmt.exe&quot; --lib-dir &quot;$(SolutionDir)..\deps\Gettext.Net&quot; --resource $(TargetName) -d &quot;$(TargetDir).&quot; --locale %(_StrideTraductions.Identity) &quot;$(MSBuildThisFileDirectory)..\localization\%(_StrideTraductions.Source)\$(TargetName).%(_StrideTraductions.Source).po&quot; --verbose" />
+
+    <Message Importance="High" Text="Generating translation for %(_StrideTranslations.Identity) %(_StrideTranslations.SourceFolder)"/>
+
+    <Exec Condition="Exists('$(SolutionDir)..\sources\localization\%(_StrideTranslations.Source)\$(TargetName).%(_StrideTranslations.Source).po')"
+          Command="Path=$(RoslynTargetsPath);$(Path)&quot;$(SolutionDir)..\deps\Gettext.Net\GNU.Gettext.Msgfmt.exe&quot; --lib-dir &quot;$(SolutionDir)..\deps\Gettext.Net&quot; --resource $(TargetName) -d &quot;$(TargetDir).&quot; --locale %(_StrideTranslations.Identity) &quot;$(MSBuildThisFileDirectory)..\localization\%(_StrideTranslations.Source)\$(TargetName).%(_StrideTranslations.Source).po&quot; --verbose" />
+
     <ItemGroup>
-      <SatelliteDllsProjectOutputGroupOutputIntermediate Include="$(OutDir)%(_StrideTraductions.Identity)\$(TargetName).Messages.resources.dll" Condition="Exists('$(OutDir)%(_StrideTraductions.Identity)\$(TargetName).Messages.resources.dll')">
-        <TargetPath>%(_StrideTraductions.Identity)\$(TargetName).Messages.resources.dll</TargetPath>
-        <Culture>%(_StrideTraductions.Identity)</Culture>
+      <SatelliteDllsProjectOutputGroupOutputIntermediate Include="$(OutDir)%(_StrideTranslations.Identity)\$(TargetName).Messages.resources.dll"
+                                                         Condition="Exists('$(OutDir)%(_StrideTranslations.Identity)\$(TargetName).Messages.resources.dll')">
+        <TargetPath>%(_StrideTranslations.Identity)\$(TargetName).Messages.resources.dll</TargetPath>
+        <Culture>%(_StrideTranslations.Identity)</Culture>
       </SatelliteDllsProjectOutputGroupOutputIntermediate>
     </ItemGroup>
   </Target>

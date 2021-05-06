@@ -18,22 +18,22 @@ namespace Stride.Irony.Parsing {
     }
     public Terminal(string name, TokenCategory category, TermFlags flags)  : base(name) {
       Category = category;
-      this.Flags |= flags; 
+      this.Flags |= flags;
       if (Category == TokenCategory.Outline)
         this.SetFlag(TermFlags.IsPunctuation);
-      OutputTerminal = this; 
+      OutputTerminal = this;
     }
     #endregion
 
     #region fields and properties
     public TokenCategory Category = TokenCategory.Content;
-    // Priority is used when more than one terminal may match the input char. 
+    // Priority is used when more than one terminal may match the input char.
     // It determines the order in which terminals will try to match input for a given char in the input.
-    // For a given input char the scanner uses the hash table to look up the collection of terminals that may match this input symbol. 
-    // It is the order in this collection that is determined by Priority property - the higher the priority, 
-    // the earlier the terminal gets a chance to check the input. 
+    // For a given input char the scanner uses the hash table to look up the collection of terminals that may match this input symbol.
+    // It is the order in this collection that is determined by Priority property - the higher the priority,
+    // the earlier the terminal gets a chance to check the input.
     public int Priority; //default is 0
-    
+
     //Terminal to attach to the output token. By default is set to the Terminal itself
     // Use SetOutputTerminal method to change it. For example of use see TerminalFactory.CreateSqlIdentifier and sample SQL grammar
     public Terminal OutputTerminal { get; private set; }
@@ -46,7 +46,7 @@ namespace Stride.Irony.Parsing {
     #region virtual methods: GetFirsts(), TryMatch, Init, TokenToString
 
     //"Firsts" (chars) collections are used for quick search for possible matching terminal(s) using current character in the input stream.
-    // A terminal might declare no firsts. In this case, the terminal is tried for match for any current input character. 
+    // A terminal might declare no firsts. In this case, the terminal is tried for match for any current input character.
     public virtual IList<string> GetFirsts() {
       return null;
     }
@@ -58,7 +58,7 @@ namespace Stride.Irony.Parsing {
     public virtual string TokenToString(Token token) {
       if (token.ValueString == this.Name)
         return token.ValueString;
-      else 
+      else
         return (token.ValueString ?? token.Text) + " (" + Name + ")";
     }
 
@@ -67,36 +67,19 @@ namespace Stride.Irony.Parsing {
 
     #region Events: ValidateToken
     public event EventHandler<ParsingEventArgs> ValidateToken;
-    protected internal virtual void InvokeValidateToken(ParsingContext context) {
-      ValidateToken?.Invoke(this, context.SharedParsingEventArgs);
-    }
     #endregion
 
     #region static comparison methods
     public static int ByName(Terminal x, Terminal y) {
       return string.Compare(x.ToString(), y.ToString());
     }
-    public static int ByPriorityReverse(Terminal x, Terminal y) {
-      if (x.Priority > y.Priority)
-        return -1;
-      if (x.Priority == y.Priority)
-        return 0;
-      return 1;
-    }
     #endregion
 
-    #region Miscellaneous: SetOutputTerminal
-    public void SetOutputTerminal(Grammar grammar, Terminal outputTerminal) {
-      OutputTerminal = outputTerminal;
-      grammar.NonGrammarTerminals.Add(this);
-    }
-
-    #endregion
     //Priority constants
     public const int LowestPriority = -1000;
     public const int HighestPriority = 1000;
     public const int ReservedWordsPriority = 900; //almost top one
- 
+
     public static string TerminalsToString(IEnumerable<Terminal> terminals, string separator) {
       var sb = new StringBuilder();
       foreach (var term in terminals) {
@@ -105,12 +88,12 @@ namespace Stride.Irony.Parsing {
       }
       return sb.ToString().Trim();
     }
-  
+
   }//class
 
   public class TerminalSet : HashSet<Terminal> {
     public override string ToString() {
-      return Terminal.TerminalsToString(this, " "); 
+      return Terminal.TerminalsToString(this, " ");
     }
   }
 
@@ -118,14 +101,10 @@ namespace Stride.Irony.Parsing {
   public class TerminalList : List<Terminal> {
     public new void Add(Terminal terminal) {
       if (!Contains(terminal))
-        base.Add(terminal); 
-    }
-    public new void AddRange(IEnumerable<Terminal> terminals) {
-      foreach(var terminal in terminals)
-        Add(terminal); 
+        base.Add(terminal);
     }
     public override string ToString() {
-      return Terminal.TerminalsToString(this, " "); 
+      return Terminal.TerminalsToString(this, " ");
     }
   }
 

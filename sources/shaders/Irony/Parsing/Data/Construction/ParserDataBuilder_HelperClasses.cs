@@ -18,16 +18,16 @@ namespace Stride.Irony.Parsing.Construction {
 
   internal class ParserStateData {
     public readonly ParserState State;
-    public readonly LRItemSet AllItems = new LRItemSet();
-    public readonly LRItemSet ShiftItems = new LRItemSet();
-    public readonly LRItemSet ReduceItems = new LRItemSet();
-    public readonly LRItemSet InitialItems = new LRItemSet();
-    public readonly BnfTermSet ShiftTerms = new BnfTermSet();
-    public readonly TerminalSet ShiftTerminals = new TerminalSet();
-    public readonly TerminalSet Conflicts = new TerminalSet();
-    public readonly TerminalSet ResolvedConflicts = new TerminalSet();
+    public readonly LRItemSet AllItems = new();
+    public readonly LRItemSet ShiftItems = new();
+    public readonly LRItemSet ReduceItems = new();
+    public readonly LRItemSet InitialItems = new();
+    public readonly BnfTermSet ShiftTerms = new();
+    public readonly TerminalSet ShiftTerminals = new();
+    public readonly TerminalSet Conflicts = new();
+    public readonly TerminalSet ResolvedConflicts = new();
     public readonly bool IsInadequate;
-    public LR0ItemSet AllCores = new LR0ItemSet();
+    public LR0ItemSet AllCores = new();
 
     //used for creating canonical states from core set
     public ParserStateData(ParserState state, LR0ItemSet kernelCores) {
@@ -107,8 +107,8 @@ namespace Stride.Irony.Parsing.Construction {
     public readonly ParserState ToState;
     public readonly NonTerminal OverNonTerminal;
     public readonly LRItemSet Items;
-    public readonly TransitionSet Includes = new TransitionSet();
-    public readonly TransitionSet IncludedBy = new TransitionSet();
+    public readonly TransitionSet Includes = new();
+    public readonly TransitionSet IncludedBy = new();
     int _hashCode;
 
     public Transition(ParserState fromState, NonTerminal overNonTerminal) {
@@ -162,8 +162,8 @@ namespace Stride.Irony.Parsing.Construction {
     int _hashCode;
 
     //Lookahead info for reduce items
-    public TransitionSet Lookbacks = new TransitionSet(); 
-    public TerminalSet Lookaheads = new TerminalSet();
+    public TransitionSet Lookbacks = new(); 
+    public TerminalSet Lookaheads = new();
 
     public LRItem(ParserState state, LR0Item core) {
       State = state;
@@ -241,9 +241,6 @@ namespace Stride.Irony.Parsing.Construction {
         else
           return Production.LR0Items[Position + 1];
       }
-    }
-    public bool IsKernel {
-      get { return Position > 0; }
     }
     public bool IsInitial {
       get { return Position == 0; }

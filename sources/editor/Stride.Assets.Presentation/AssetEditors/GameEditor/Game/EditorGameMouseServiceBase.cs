@@ -11,7 +11,7 @@ using Stride.Editor.EditorGame.Game;
 namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Game
 {
     /// <summary>
-    /// Base class for editor game service that can take control of the mouse.
+    ///   Represents the base class for <see cref="IEditorGameService"/> that can take control of the mouse.
     /// </summary>
     public abstract class EditorGameMouseServiceBase : EditorGameServiceBase, IEditorGameMouseService
     {
@@ -21,7 +21,7 @@ namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Game
         public abstract bool IsControllingMouse { get; protected set; }
 
         /// <summary>
-        /// Gets or sets whether the material selection mode is currently active.
+        ///   Gets or sets whether the material selection mode is currently active.
         /// </summary>
         public override bool IsActive { get; set; } = true;
 

@@ -1,34 +1,26 @@
-﻿<Project>
+<Project>
   <Import Project="..\..\targets\Stride.UnitTests.props" />
+
   <PropertyGroup>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Stride.Core.Assets.Tests\Helpers\GuidGenerator.cs" Link="Helpers\GuidGenerator.cs" />
+    <Compile Include="..\Stride.Core.Assets.Tests\Helpers\IdentifierGenerator.cs" Link="Helpers\IdentifierGenerator.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Stride.Core.Assets.Tests\Helpers\GuidGenerator.cs">
-      <Link>Helpers\GuidGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\Stride.Core.Assets.Tests\Helpers\IdentifierGenerator.cs">
-      <Link>Helpers\IdentifierGenerator.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\..\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
     <ProjectReference Include="..\Stride.Core.Assets.Quantum\Stride.Core.Assets.Quantum.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
+
   <Import Project="..\..\targets\Stride.UnitTests.targets" />
-  <ItemGroup>
-    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
-  </ItemGroup>
 </Project>

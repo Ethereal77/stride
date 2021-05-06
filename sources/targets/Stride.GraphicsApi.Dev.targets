@@ -1,6 +1,6 @@
 <!--
 ***********************************************************************************************
-  Stride.GraphicsApi.PackageReference.targets
+  Stride.GraphicsApi.Dev.targets
 
   Build file post-included after building to configure various development tools to build
   project/packages with graphics API dependent parts.
@@ -12,8 +12,8 @@
 
   <!--
     Packages will be built with following layout:
-      lib/netstandard2.0/Direct3D11/MyAssembly.dll
-      lib/netstandard2.0/MyAssembly.dll (placeholder so that we can piggyback on "RuntimeCopyLocalItems" from NET.Sdk)
+      lib/net5.0/Direct3D11/MyAssembly.dll
+      lib/net5.0/MyAssembly.dll (placeholder so that we can piggyback on "RuntimeCopyLocalItems" from NET.Sdk)
   -->
 
   <!--

@@ -763,7 +763,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.ViewModels
 
                 SaveSettings(sceneSettings);
 
-                // FIXME: it would be better to just set the one scene settings data instead of the whole collection.
+                // TODO: it would be better to just set the one scene settings data instead of the whole collection.
                 userSettings.SetValue(PackageSceneSettings.SceneSettings, sceneSettingsCollection);
                 Asset.Directory.Package.UserSettings.Save();
             }

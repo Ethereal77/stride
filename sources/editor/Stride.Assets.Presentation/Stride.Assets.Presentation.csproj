@@ -1,59 +1,27 @@
 <Project>
   <Import Project="..\..\targets\Stride.props" />
+
   <PropertyGroup>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <StridePackAssets>true</StridePackAssets>
-    <StrideLocalized>true</StrideLocalized>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <UseWPF>true</UseWPF>
+
+    <AssemblyTitle>Stride Assets ViewModels and Editors for WPF</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization --parameter-key</StrideAssemblyProcessorOptions>
+
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\build\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <UseWPF>true</UseWPF>
-    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <StridePackAssets>true</StridePackAssets>
+    <StrideLocalized>true</StrideLocalized>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="16.9.0" ExcludeAssets="runtime" />
-    <PackageReference Include="AvalonEdit" Version="6.0.1" />
-    <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="3.4.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.4.0" />
-    <Reference Include="RoslynPad.Editor.Windows">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\netcoreapp3.1\RoslynPad.Editor.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="RoslynPad.Roslyn.Windows">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\netcoreapp3.1\RoslynPad.Roslyn.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="RoslynPad.Roslyn">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\netcoreapp3.1\RoslynPad.Roslyn.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Stride Assets ViewModels and Editors for WPF</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Include="..\Stride.Samples.Templates\ThisPackageVersion.PackageBuild.cs" Link="ThisPackageVersion.PackageBuild.cs" />
     <Compile Include="..\Stride.Samples.Templates\ThisPackageVersion.DevBuild.cs" Link="ThisPackageVersion.DevBuild.cs" />
-    <None Include="app.config" />
-    <None Include="*.cd" />
-    <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
-    <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
-    <EmbeddedResource Update="AssetEditors\Gizmos\GizmoResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>GizmoResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <Compile Update="AssetEditors\Gizmos\GizmoResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GizmoResources.resx</DependentUpon>
-    </Compile>
+
     <Compile Update="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -63,11 +31,39 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <AppDesigner Include="Properties\" />
+
+    <None Include="*.cd" />
     <None Remove="EditorPackage\buildpath\**" />
     <None Remove="EditorPackage\outputpath\**" />
+
+    <!-- Resources -->
+    <Resource Include="Resources\Components\*.png" />
+    <Resource Include="Resources\Gizmos\*.png" />
+    <Resource Include="Resources\Icons\*.png" />
+    <None Include="Resources\Thumbnails\*.png" />
+    <EmbeddedResource Include="Resources\*.cur" />
+
+    <!-- Templates -->
+    <Compile Remove="Templates\Core\**" />
+    <Compile Remove="Templates\Assets\**" />
+    <None Include="Templates\Core\**" />
+    <None Include="Templates\Assets\**" />
   </ItemGroup>
+
   <ItemGroup>
+    <Reference Include="RoslynPad.Editor.Windows">
+      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net5.0-windows\RoslynPad.Editor.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="RoslynPad.Roslyn.Windows">
+      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net5.0-windows\RoslynPad.Roslyn.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="RoslynPad.Roslyn">
+      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net5.0-windows\RoslynPad.Roslyn.dll</HintPath>
+    </Reference>
+
+    <PackageReference Include="AvalonEdit" Version="6.1.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="3.9.0" />
+
     <ProjectReference Include="..\..\assets\Stride.Core.Assets.Quantum\Stride.Core.Assets.Quantum.csproj" />
     <ProjectReference Include="..\..\presentation\Stride.Core.Presentation.Dialogs\Stride.Core.Presentation.Dialogs.csproj" />
     <ProjectReference Include="..\..\presentation\Stride.Core.Presentation.Graph\Stride.Core.Presentation.Graph.csproj" />
@@ -79,48 +75,11 @@
     <ProjectReference Include="..\Stride.Editor\Stride.Editor.csproj" />
     <ProjectReference Include="..\Stride.Samples.Templates\Stride.Samples.Templates.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <!-- Resources -->
-  <ItemGroup>
-    <Resource Include="Resources\Components\*.png" />
-    <Resource Include="Resources\Gizmos\*.png" />
-    <Resource Include="Resources\Icons\*.png" />
-    <Compile Update="Resources\Strings\KeyGestures.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>KeyGestures.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Update="Resources\Strings\KeyGestures.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>KeyGestures.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="Resources\Thumbnails\*.png" />
-    <Compile Update="Resources\Thumbnails\StaticThumbnails.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StaticThumbnails.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Update="Resources\Thumbnails\StaticThumbnails.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>StaticThumbnails.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\*.cur" />
-  </ItemGroup>
-  <!-- Templates -->
-  <ItemGroup>
-    <Compile Remove="Templates\Core\**" />
-    <Compile Remove="Templates\Assets\**" />
-    <None Include="Templates\Core\**" />
-    <None Include="Templates\Assets\**" />
-  </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />
+
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>_StrideIncludeExtraAssemblies;$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
-
   </PropertyGroup>
   <Target Name="_StrideIncludeExtraAssemblies">
     <ItemGroup>

@@ -84,7 +84,7 @@ namespace Stride.Graphics.Font
             contentManager = new ContentManager(fileProviderService);
 
             // Preload proper freetype native library (depending on CPU type)
-            NativeLibraryHelper.PreloadLibrary("freetype.dll", typeof(FontManager));
+            NativeLibraryHelper.Load("freetype.dll", typeof(FontManager));
 
             // create a freetype library used to generate the bitmaps
             freetypeLibrary = new Library();

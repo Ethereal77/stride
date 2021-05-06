@@ -1,40 +1,33 @@
 <Project>
   <Import Project="..\..\targets\Stride.Core.props" />
-  <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
-    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
-    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\build\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-  </PropertyGroup>
 
   <PropertyGroup>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+
     <AssemblyTitle>Stride Design-time Core Types and Infrastructure</AssemblyTitle>
+
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
+
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\build\</SolutionDir>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Stride.Core.IO\NativeLockFile.cs">
-      <Link>Windows\NativeLockFile.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="System.Management" Version="5.0.0" />
+    <PackageReference Include="NuGet.Configuration" Version="5.9.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="2.3.2262-g94fae01e" />
+
+    <ProjectReference Include="..\Stride.Core.IO\Stride.Core.IO.csproj" />
     <ProjectReference Include="..\Stride.Core.Mathematics\Stride.Core.Mathematics.csproj" />
     <ProjectReference Include="..\Stride.Core.Serialization\Stride.Core.Serialization.csproj" />
     <ProjectReference Include="..\Stride.Core.Yaml\Stride.Core.Yaml.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="2.3.2262-g94fae01e" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
-    <PackageReference Include="NuGet.Configuration" Version="5.9.1" />
-    <PackageReference Include="SharpDX" Version="4.2.0" />
-    <PackageReference Include="System.Management" Version="5.0.0" />
-  </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />
-
 </Project>

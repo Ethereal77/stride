@@ -1,5 +1,5 @@
 @echo off
-REM TODO: Space in --compile-property is not well supported, so a stride path without space is currently required
+REM TODO: Space in --compile-property is not well supported, so a Stride path without space is currently required
 set StrideBuildFolder=%~dp0..\..\..\..\build
 set StrideBinFolder=%~dp0..\..\..\..\Bin\Windows
 set StrideAssetCompiler=%StrideBinFolder%\Stride.Core.Assets.CompilerApp.exe

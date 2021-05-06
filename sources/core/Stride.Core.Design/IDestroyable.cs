@@ -5,16 +5,18 @@
 namespace Stride.Core
 {
     /// <summary>
-    /// Similar to the <see cref="System.IDisposable"/> but only deals with managed resources.
+    ///   Provides a mechanism for releasing managed resources.
     /// </summary>
     /// <remarks>
-    /// Class implementing both <see cref="IDestroyable"/> and <see cref="System.IDisposable"/> should call <see cref="Destroy"/>
-    /// from the <see cref="System.IDisposable.Dispose"/> method when appropriate.
+    ///   This interface is similar in purpose to <see cref="System.IDisposable"/>, but it only deals with managed resources.
+    ///   <para/>
+    ///   Classes implementing both <see cref="IDestroyable"/> and <see cref="System.IDisposable"/> should call
+    ///   <see cref="Destroy"/> from the <see cref="System.IDisposable.Dispose"/> method when appropriate.
     /// </remarks>
     public interface IDestroyable
     {
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting managed resources.
+        ///   Performs application-defined tasks associated with freeing, releasing, or resetting managed resources.
         /// </summary>
         void Destroy();
     }

@@ -1,80 +1,34 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
-  <PropertyGroup>
-    <!-- Include proper language targets for temporary WPF projects. See https://github.com/dotnet/project-system/issues/1467 -->
-    <LanguageTargets Condition="'$(MSBuildProjectExtension)' == '.tmp_proj'">$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
-  </PropertyGroup>
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <UseWPF>true</UseWPF>
-    <AssemblyTitle>Stride Launcher Application</AssemblyTitle>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <OutputPath>bin\Debug\</OutputPath>
-    <Prefer32Bit>false</Prefer32Bit>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <DefineConstants>TRACE;STRIDE_LAUNCHER</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;STRIDE_LAUNCHER</DefineConstants>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Resources\Launcher.ico</ApplicationIcon>
-    <RootNamespace>Stride.LauncherApp</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+
     <StartupObject>Stride.LauncherApp.Program</StartupObject>
+    <RootNamespace>Stride.LauncherApp</RootNamespace>
+    <AssemblyTitle>Stride Launcher</AssemblyTitle>
+    <ApplicationIcon>Resources\Launcher.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- Get version directly from nuspec file, so that there's only one place to bump -->
     <_StrideLauncherNuSpecLines>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)Stride.Launcher.nuspec'))</_StrideLauncherNuSpecLines>
     <Version>$([System.Text.RegularExpressions.Regex]::Match($(_StrideLauncherNuSpecLines), `<version>(.*)</version>`).Groups[1].Value)</Version>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <DefineConstants>STRIDE_LAUNCHER</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Resources\list-26.png" />
-  </ItemGroup>
+
   <ItemGroup>
     <TrimmerRootAssembly Include="System.Xml.Linq" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Stride.Metrics" Version="1.0.3" />
-    <PackageReference Include="Stride.CrashReport" Version="1.0.2" />
-    <Reference Include="System.Diagnostics.Debug" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Net.Http.Formatting">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\deps\Metrics\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\assets\Stride.Core.Assets\PackageSessionHelper.Solution.cs">
-      <Link>Packages\PackageSessionHelper.Solution.cs</Link>
-    </Compile>
-    <Compile Include="..\..\assets\Stride.Core.Assets\Package.Constants.cs">
-      <Link>Packages\Package.Constants.cs</Link>
-    </Compile>
-    <Compile Include="..\..\editor\Stride.Core.Assets.Editor\EditorPath.cs">
-      <Link>Editor\EditorPath.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="..\..\assets\Stride.Core.Assets\PackageSessionHelper.Solution.cs" Link="Packages\PackageSessionHelper.Solution.cs" />
+    <Compile Include="..\..\assets\Stride.Core.Assets\Package.Constants.cs" Link="Packages\Package.Constants.cs" />
+    <Compile Include="..\..\editor\Stride.Core.Assets.Editor\EditorPath.cs" Link="Editor\EditorPath.cs" />
+
     <Resource Include="Resources\list-26.png" />
     <Resource Include="Resources\update.png" />
     <Resource Include="Resources\roadmap.png" />
@@ -98,20 +52,10 @@
     <Resource Include="Resources\delete-26-dark.png" />
     <Resource Include="Resources\download-26-dark.png" />
     <Resource Include="Resources\patreon_mark_coral_24.png" />
+
+    <None Remove="Resources\list-26.png" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\Strings.ja-JP.resx" />
-    <EmbeddedResource Update="Resources\Strings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Urls.ja-JP.resx" />
-    <EmbeddedResource Update="Resources\Urls.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Urls.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
@@ -129,7 +73,11 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="Stride.Metrics" Version="1.0.3" />
+    <PackageReference Include="Stride.CrashReport" Version="1.0.2" />
+
     <ProjectReference Include="..\..\assets\Stride.Core.Packages\Stride.Core.Packages.csproj" />
     <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
     <ProjectReference Include="..\..\core\Stride.Core.IO\Stride.Core.IO.csproj" />
@@ -141,20 +89,10 @@
     <ProjectReference Include="..\..\presentation\Stride.Core.Presentation.Dialogs\Stride.Core.Presentation.Dialogs.csproj" />
     <ProjectReference Include="..\..\presentation\Stride.Core.Presentation\Stride.Core.Presentation.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
 
   <Import Project="..\..\editor\Stride.PrivacyPolicy\Stride.PrivacyPolicy.projitems" Label="Shared" Condition="Exists('..\..\editor\Stride.PrivacyPolicy\Stride.PrivacyPolicy.projitems')" />
   <Import Project="..\..\editor\Stride.Core.MostRecentlyUsedFiles\Stride.Core.MostRecentlyUsedFiles.projitems" Label="Shared" />
   <Import Project="..\..\assets\Stride.Core.Assets.Yaml\Stride.Core.Assets.Yaml.projitems" Label="Shared" />
   <Import Project="..\..\editor\Stride.Editor.CrashReport\Stride.Editor.CrashReport.projitems" Label="Shared" />
   <Import Project="..\..\targets\Stride.Core.Sign.targets" />
-  <!--   <Target Name="AfterResolveReferences">
-    <ItemGroup>
-      <EmbeddedResource Update="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll'">
-        <LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
-      </EmbeddedResource>
-    </ItemGroup>
-  </Target> -->
 </Project>

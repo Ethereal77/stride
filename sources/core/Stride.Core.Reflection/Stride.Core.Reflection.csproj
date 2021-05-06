@@ -3,20 +3,20 @@
     <StrideRuntime>true</StrideRuntime>
   </PropertyGroup>
   <Import Project="..\..\targets\Stride.Core.props" />
-  <PropertyGroup>
-    <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
-    <RestorePackages>true</RestorePackages>
-  </PropertyGroup>
+
   <PropertyGroup>
     <AssemblyTitle>Stride Object Reflection</AssemblyTitle>
+
+    <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Stride.Core.Serialization\Stride.Core.Serialization.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

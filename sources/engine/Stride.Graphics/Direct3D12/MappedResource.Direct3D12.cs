@@ -12,4 +12,5 @@ namespace Stride.Graphics
         internal int UploadOffset;
     }
 }
+
 #endif

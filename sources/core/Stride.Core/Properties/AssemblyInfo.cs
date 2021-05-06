@@ -4,10 +4,7 @@
 
 using System.Runtime.CompilerServices;
 
-#pragma warning disable 436 // Stride.PublicKeys is defined in multiple assemblies
-
 // Make internals Stride.Framework.visible to all Stride.Framework.assemblies
-[assembly: InternalsVisibleTo("Stride.Core.Serializers" + Stride.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Stride.Core.IO" + Stride.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Stride.Core.Assets" + Stride.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Stride" + Stride.PublicKeys.Default)]

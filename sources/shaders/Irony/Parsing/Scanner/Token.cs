@@ -62,7 +62,7 @@ namespace Stride.Irony.Parsing
     }
 
     /// <summary>
-    /// Tokens are produced by scanner and fed to parser, optionally passing through Token filters in between. 
+    /// Tokens are produced by scanner and fed to parser, optionally passing through Token filters in between.
     /// </summary>
     public class Token
     {
@@ -102,7 +102,7 @@ namespace Stride.Irony.Parsing
             SourceCode = source;
             Value = value;
         }
-        
+
         /// <summary>
         /// Location in the source code.
         /// </summary>
@@ -190,7 +190,7 @@ namespace Stride.Irony.Parsing
         }
 
         /// <summary>
-        /// Scanner state after producing token 
+        /// Scanner state after producing token
         /// </summary>
         public short ScannerState;
 
@@ -203,19 +203,7 @@ namespace Stride.Irony.Parsing
             Terminal = terminal;
 
             // Set to term's EditorInfo by default
-            EditorInfo = Terminal.EditorInfo;  
-        }
-
-        /// <summary>
-        /// Determines whether the specified flag is set.
-        /// </summary>
-        /// <param name="flag">The flag.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified flag is set; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsSet(TokenFlags flag)
-        {
-            return (Flags & flag) != 0;
+            EditorInfo = Terminal.EditorInfo;
         }
 
 
@@ -246,28 +234,6 @@ namespace Stride.Irony.Parsing
         public override string ToString()
         {
             return Terminal.TokenToString(this);
-        }
-    }
-
-    /// <summary>
-    /// Some terminals may need to return a bunch of tokens in one call to TryMatch; MultiToken is a container for these tokens
-    /// </summary>
-    public class MultiToken : Token
-    {
-        /// <summary>
-        /// List of child tokens
-        /// </summary>
-        public TokenList ChildTokens;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MultiToken"/> class.
-        /// </summary>
-        /// <param name="term">The term.</param>
-        /// <param name="location">The location.</param>
-        /// <param name="childTokens">The child tokens.</param>
-        public MultiToken(Terminal term, SourceLocation location, TokenList childTokens) : base(term, location, string.Empty, null)
-        {
-            ChildTokens = childTokens;
         }
     }
 }

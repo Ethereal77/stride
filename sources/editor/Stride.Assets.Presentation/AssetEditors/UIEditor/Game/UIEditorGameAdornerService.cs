@@ -26,20 +26,24 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
     internal sealed partial class UIEditorGameAdornerService : EditorGameServiceBase, IEditorGameViewModelService
     {
         /// <summary>
-        /// Represents a layer of adorners associated to one UIElement.
+        ///   Represents a layer of adorners associated to a <see cref="UIElement"/>.
         /// </summary>
         /// <remarks>
-        /// Some adorners (e.g. margin) need to be outside of the canvas representing the render area of the associated UIElement,
-        /// but this is not currently possible because of canvas limitation (see XK-3353). Therefore we need to maintain two canvas:
-        /// * A canvas that is sized to the parent of the associated UIElement (if it has one).
-        /// * A canvas that is sized to the associated UIElement.
-        ///
-        /// When adding a adorner, the second parameter specifiy in which canvas goes the adorner visual.
+        ///   Some adorners (e.g. margin) need to be outside of the canvas representing the render area of
+        ///   the associated <see cref="UIElement"/>, but this is not currently possible because of canvas
+        ///   limitation. Therefore we need to maintain two canvas:
+        ///   <list type="bullet">
+        ///      <item>A canvas that is sized to the parent of the associated <c>UIElement</c> (if it has one).</item>
+        ///      <item>A canvas that is sized to the associated <c>UIElement</c>.</item>
+        ///   </list>
+        ///   When adding an adorner, the second parameter specifiy in which canvas goes the adorner visual.
         /// </remarks>
         private class AdornerLayer
         {
-            private readonly List<IAdornerBase<UIElement>> adorners = new List<IAdornerBase<UIElement>>();
+            private readonly List<IAdornerBase<UIElement>> adorners = new();
+
             private readonly UIElement gameSideElement;
+
             private readonly Canvas canvas;
             private readonly Canvas parentCanvas;
 
@@ -152,12 +156,12 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
             public void SetHighlightAdorner(HighlightAdorner value)
             {
-                if (highlightAdorner != null)
+                if (highlightAdorner is not null)
                     canvas.Children.Remove(highlightAdorner.Visual);
 
                 highlightAdorner = value;
 
-                if (highlightAdorner != null)
+                if (highlightAdorner is not null)
                     canvas.Children.Add(highlightAdorner.Visual);
             }
 
@@ -185,7 +189,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 Matrix parentMatrixInv;
 
                 var parent = gameSideElement.VisualParent;
-                if (parent != null)
+                if (parent is not null)
                 {
                     // parentCanvas is sized to the parent of the associated UIElement
                     var parentMatrix = parent.WorldMatrix;
@@ -202,7 +206,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 }
                 parentCanvas.Size = parentSize;
                 parentCanvas.SetCanvasAbsolutePosition(parentPosition);
-                parentCanvas.SetCanvasPinOrigin(0.5f * Vector3.One); // centered on origin
+                parentCanvas.SetCanvasPinOrigin(0.5f * Vector3.One); // Centered on origin
 
                 var diffMatrix = Matrix.Multiply(parentMatrixInv, gameSideElement.WorldMatrix);
                 var position = diffMatrix.TranslationVector + parentSize * 0.5f;
@@ -212,7 +216,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 canvas.Margin = new Thickness(0, 0, 0, 0, 0, -1*(gameSideElement.DepthBias + 1)); // Because we are inside a canvas, only Left, Top and Front margins can be used.
 
                 canvas.SetCanvasAbsolutePosition(position);
-                canvas.SetCanvasPinOrigin(0.5f * Vector3.One); // centered on origin
+                canvas.SetCanvasPinOrigin(0.5f * Vector3.One); // Centered on origin
 
                 adorners.ForEach(a => a.Update(position));
                 highlightAdorner?.Update(position);
@@ -221,26 +225,26 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
 #if DEBUG
         /// <summary>
-        /// The key to the AssociatedElement dependency property.
+        ///   The key to the AssociatedElement dependency property.
         /// </summary>
-        public static readonly PropertyKey<UIElement> AssociatedElementPropertyKey = DependencyPropertyFactory.RegisterAttached(nameof(AssociatedElementPropertyKey), typeof(UIEditorGameAdornerService), (UIElement)null);
+        public static readonly PropertyKey<UIElement> AssociatedElementPropertyKey = DependencyPropertyFactory.RegisterAttached(nameof(AssociatedElementPropertyKey), typeof(UIEditorGameAdornerService), (UIElement) null);
 #endif
 
         /// <summary>
-        /// The key to the AssociatedAdorner dependency property.
+        ///   The key to the AssociatedAdorner dependency property.
         /// </summary>
-        public static readonly PropertyKey<IAdornerBase<UIElement>> AssociatedAdornerPropertyKey = DependencyPropertyFactory.RegisterAttached(nameof(AssociatedAdornerPropertyKey), typeof(UIEditorGameAdornerService), (IAdornerBase<UIElement>)null);
+        public static readonly PropertyKey<IAdornerBase<UIElement>> AssociatedAdornerPropertyKey = DependencyPropertyFactory.RegisterAttached(nameof(AssociatedAdornerPropertyKey), typeof(UIEditorGameAdornerService), (IAdornerBase<UIElement>) null);
 
         /// <summary>
-        /// The key to the AssociatedElementId dependency property.
+        ///   The key to the AssociatedElementId dependency property.
         /// </summary>
         public static readonly PropertyKey<Guid> AssociatedElementIdPropertyKey = DependencyPropertyFactory.RegisterAttached(nameof(AssociatedElementIdPropertyKey), typeof(UIEditorGameAdornerService), Guid.Empty);
 
         /// <remarks>
-        /// <list type="bullet">
-        /// <item>Key: game-side element Id</item>
-        /// <item>Value: adorner layer</item>
-        /// </list>
+        ///   <list type="bullet">
+        ///     <item>Key: Game-side element Id.</item>
+        ///     <item>Value: Adorner layer.</item>
+        ///   </list>
         /// </remarks>
         private readonly Dictionary<Guid, AdornerLayer> adornerLayers = new Dictionary<Guid, AdornerLayer>();
 
@@ -367,6 +371,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
         {
             Game = editorGame;
             Game.Script.AddTask(Update);
+
             return Task.FromResult(true);
         }
 
@@ -445,7 +450,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
 
         private void DoHideAllAdorners()
         {
-            adornerLayers.Values.ForEach(l => l.Hide());
+            adornerLayers.Values.ForEach(layer => layer.Hide());
             selectedAdorners.Clear();
         }
 
@@ -487,7 +492,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
         private void DoUnlitAllAdorners()
         {
             // Unlit all adorner layers
-            adornerLayers.Values.ForEach(l => l.Unlit());
+            adornerLayers.Values.ForEach(layer => layer.Unlit());
         }
 
         private Canvas GetAdornerCanvas()
@@ -505,7 +510,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
         }
 
         /// <summary>
-        /// Update all the adorners of the scene.
+        ///   Updates all the adorners of the scene.
         /// </summary>
         private async Task Update()
         {
@@ -530,7 +535,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.Game
                 break;
             }
 
-            // add a scene delegate renderer to update all adorners.
+            // Add a scene delegate renderer to update all adorners.
             var compositor = Game.SceneSystem.GraphicsCompositor;
             ((EditorTopLevelCompositor)compositor.Game).PostGizmoCompositors.Add(
                 new DelegateSceneRenderer(context =>

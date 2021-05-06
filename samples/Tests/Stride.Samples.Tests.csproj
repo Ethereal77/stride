@@ -1,28 +1,30 @@
-﻿<Project>
-  <!-- NuGet resolved needed for StrideDefaultAssetsPlugin.LoadDefaultTemplates() -->
+<Project>
+  <!-- NuGet resolve needed for StrideDefaultAssetsPlugin.LoadDefaultTemplates() -->
   <Import Project="..\..\sources\shared\Stride.NuGetResolver\Stride.NuGetResolver.projitems" Label="Shared" />
   <Import Project="..\..\sources\targets\Stride.UnitTests.props" />
+
   <PropertyGroup>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
+
     <StrideSkipAutoPack>false</StrideSkipAutoPack>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\sources\shared\AttachedChildProcessJob.cs" Link="AttachedChildProcessJob.cs" />
+    <Compile Include="..\..\sources\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\sources\shared\AttachedChildProcessJob.cs" Link="AttachedChildProcessJob.cs" />
-    <Compile Include="..\..\sources\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\..\sources\tests\xunit.runner.stride\xunit.runner.stride.csproj" />
     <ProjectReference Include="..\..\sources\editor\Stride.Assets.Presentation\Stride.Assets.Presentation.csproj" />
     <ProjectReference Include="..\..\sources\editor\Stride.Samples.Templates\Stride.Samples.Templates.csproj" />
@@ -30,8 +32,6 @@
     <ProjectReference Include="..\..\sources\tools\Stride.ConnectionRouter\Stride.ConnectionRouter.csproj" />
     <ProjectReference Include="..\..\sources\tools\Stride.SamplesTestServer\Stride.SamplesTestServer.csproj" />
   </ItemGroup>
+
   <Import Project="..\..\sources\targets\Stride.UnitTests.targets" />
-  <ItemGroup>
-    <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.0.25" />
-  </ItemGroup>
 </Project>

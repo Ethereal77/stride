@@ -13,7 +13,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("a9968d1f-7e75-4d89-8411-27390a47e4d0")]
 
-#pragma warning disable 436 // Stride.PublicKeys is defined in multiple assemblies
-
 [assembly: InternalsVisibleTo("Stride.Assets" + Stride.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Stride.Assets.Presentation" + Stride.PublicKeys.Default)]

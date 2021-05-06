@@ -35,7 +35,7 @@ namespace Stride.Irony.Parsing {
     Error,
   }
 
-  // The purpose of this class is to provide a container for information shared 
+  // The purpose of this class is to provide a container for information shared
   // between parser, scanner and token filters.
   public class ParsingContext {
     public readonly Parser Parser;
@@ -61,7 +61,7 @@ namespace Stride.Irony.Parsing {
     //list for terminals - for current parser state and current input char
     public TerminalList CurrentTerminals = new TerminalList();
     public Token CurrentToken; //The token just scanned by Scanner
-    public Token PreviousToken; 
+    public Token PreviousToken;
     public SourceLocation PreviousLineStart; //Location of last line start
 
     //Internal fields
@@ -77,17 +77,7 @@ namespace Stride.Irony.Parsing {
     //values dictionary to use by custom language implementations to save some temporary values in parse process
     public readonly Dictionary<string, object> Values = new Dictionary<string, object>();
 
-    public int TabWidth
-    {
-        get { return _tabWidth; }
-        set
-        {
-            _tabWidth = value;
-        }
-    }
-    int _tabWidth = 8;    
-    
-    #endregion 
+    #endregion
 
 
     #region constructors
@@ -97,12 +87,12 @@ namespace Stride.Irony.Parsing {
       Culture = Language.Grammar.DefaultCulture;
       //This might be a problem for multi-threading - if we have several contexts on parallel threads with different culture.
       //Resources.Culture is static property (this is not Irony's fault, this is auto-generated file).
-      Resources.Culture = Culture; 
+      Resources.Culture = Culture;
       //We assume that if Irony is compiled in Debug mode, then developer is debugging his grammar/language implementation
 #if DEBUG
       Options |= ParseOptions.GrammarDebugging;
 #endif
-      SharedParsingEventArgs = new ParsingEventArgs(this); 
+      SharedParsingEventArgs = new ParsingEventArgs(this);
     }
     #endregion
 
@@ -119,79 +109,73 @@ namespace Stride.Irony.Parsing {
     public bool OptionIsSet(ParseOptions option) {
       return (Options & option) != 0;
     }
-    public void SetOption(ParseOptions option, bool value) {
-      if (value)
-        Options |= option;
-      else
-        Options &= ~option;
-    }
     #endregion
 
     #region Error handling and tracing
     public void AddParserError(string message, params object[] args) {
       var location = CurrentParserInput == null? Parser.Scanner.Location : CurrentParserInput.Span.Location;
-      HasErrors = true; 
+      HasErrors = true;
       AddParserMessage(ParserErrorLevel.Error, location, message, args);
     }
     public void AddParserMessage(ParserErrorLevel level, SourceLocation location, string message, params object[] args) {
-      if (CurrentParseTree == null) return; 
+      if (CurrentParseTree == null) return;
       if (CurrentParseTree.ParserMessages.Count >= MaxErrors) return;
       if (args != null && args.Length > 0)
         message = string.Format(message, args);
       CurrentParseTree.ParserMessages.Add(new ParserMessage(level, location, message, CurrentParserState));
-      if (OptionIsSet(ParseOptions.TraceParser)) 
+      if (OptionIsSet(ParseOptions.TraceParser))
         ParserTrace.Add( new ParserTraceEntry(CurrentParserState, ParserStack.Top, CurrentParserInput, message, true));
     }
 
     public void AddTrace(string message, params object[] args) {
       if (!OptionIsSet(ParseOptions.TraceParser)) return;
       if (args != null && args.Length > 0)
-        message = string.Format(message, args); 
+        message = string.Format(message, args);
       ParserTrace.Add(new ParserTraceEntry(CurrentParserState, ParserStack.Top, CurrentParserInput, message, false));
     }
 
     #endregion
 
     internal void Reset() {
-      CurrentParserState = Parser.InitialState; 
+      CurrentParserState = Parser.InitialState;
       CurrentParserInput = null;
       ParserStack.Clear();
-      HasErrors = false; 
+      HasErrors = false;
       ParserStack.Push(new ParseTreeNode(CurrentParserState));
       ParserInputStack.Clear();
       CurrentParseTree = null;
       OpenBraces.Clear();
       ParserTrace.Clear();
-      CurrentTerminals.Clear(); 
+      CurrentTerminals.Clear();
       CurrentToken = null;
-      PreviousToken = null; 
-      PreviousLineStart = new SourceLocation(0, -1, 0); 
-      Values.Clear();          
+      PreviousToken = null;
+      PreviousLineStart = new SourceLocation(0, -1, 0);
+      Values.Clear();
       foreach (var filter in TokenFilters)
         filter.Reset();
     }
 
     public void SetSourceLocation(SourceLocation location) {
       foreach (var filter in TokenFilters)
-        filter.OnSetSourceLocation(location); 
+        filter.OnSetSourceLocation(location);
       Parser.Scanner.Location = location;
     }
 
     #region Expected term set computations
     public StringSet GetExpectedTermSet() {
       if (CurrentParserState == null)
-        return new StringSet(); 
+        return new StringSet();
       //See note about multi-threading issues in ComputeReportedExpectedSet comments.
       if (CurrentParserState.ReportedExpectedSet == null)
         CurrentParserState.ReportedExpectedSet = CoreParser.ComputeGroupedExpectedSetForState(Language.Grammar, CurrentParserState);
       //Filter out closing braces which are not expected based on previous input.
-      // While the closing parenthesis ")" might be expected term in a state in general, 
+      // While the closing parenthesis ")" might be expected term in a state in general,
       // if there was no opening parenthesis in preceding input then we would not
-      //  expect a closing one. 
+      //  expect a closing one.
       var expectedSet = FilterBracesInExpectedSet(CurrentParserState.ReportedExpectedSet);
       return expectedSet;
     }
-    
+
     private StringSet FilterBracesInExpectedSet(StringSet stateExpectedSet) {
       var result = new StringSet();
       result.UnionWith(stateExpectedSet);
@@ -200,16 +184,16 @@ namespace Stride.Irony.Parsing {
       if (OpenBraces.Count > 0) {
         var lastOpenBraceTerm = OpenBraces.Peek().KeyTerm;
         var nextClosingBraceTerm = lastOpenBraceTerm.IsPairFor as KeyTerm;
-        if (nextClosingBraceTerm != null) 
-          nextClosingBrace = nextClosingBraceTerm.Text; 
+        if (nextClosingBraceTerm != null)
+          nextClosingBrace = nextClosingBraceTerm.Text;
       }
       //Now check all closing braces in result set, and leave only nextClosingBrace
       foreach(var closingBrace in Language.GrammarData.ClosingBraces) {
         if (result.Contains(closingBrace) && closingBrace != nextClosingBrace)
-          result.Remove(closingBrace); 
-        
+          result.Remove(closingBrace);
+
       }
-      return result; 
+      return result;
     }
 
     #endregion
@@ -218,10 +202,10 @@ namespace Stride.Irony.Parsing {
   }//class
 
   // A struct used for packing/unpacking ScannerState int value; used for VS integration.
-  // When Terminal produces incomplete token, it sets 
+  // When Terminal produces incomplete token, it sets
   // this state to non-zero value; this value identifies this terminal as the one who will continue scanning when
   // it resumes, and the terminal's internal state when there may be several types of multi-line tokens for one terminal.
-  // For ex., there maybe several types of string literal like in Python. 
+  // For ex., there maybe several types of string literal like in Python.
   [StructLayout(LayoutKind.Explicit)]
   public struct VsScannerStateMap {
     [FieldOffset(0)]

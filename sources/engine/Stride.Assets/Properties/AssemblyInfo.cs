@@ -4,6 +4,5 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Stride.Assets.Serializers")]
 [assembly: InternalsVisibleTo("Stride.Assets.Model")]
 [assembly: InternalsVisibleTo("Stride.Assets.Tests")]

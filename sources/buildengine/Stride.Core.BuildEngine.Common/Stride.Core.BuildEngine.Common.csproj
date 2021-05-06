@@ -1,27 +1,25 @@
 <Project>
   <Import Project="..\..\targets\Stride.Core.props" />
+
   <PropertyGroup>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+
+    <AssemblyTitle>Stride Core Building Infrastructure</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="ServiceWire" Version="5.3.4" />
-  </ItemGroup>
-  <PropertyGroup>
-    <AssemblyTitle>Stride Core Building Infrastructure</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <EmbeddedResource Update="Resources\FileEnumerationBuildStep.png" />
-    <EmbeddedResource Update="Resources\ListBuildStep.png" />
-    <EmbeddedResource Update="Resources\WaitBuildStep.png" />
-  </ItemGroup>
-  <ItemGroup>
+
     <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
 </Project>

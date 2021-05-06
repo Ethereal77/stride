@@ -4,6 +4,8 @@
 
 using System.Runtime.CompilerServices;
 
+#pragma warning disable CS0436
+
 [assembly: InternalsVisibleTo("Stride.Engine" + Stride.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Stride.Editor" + Stride.PublicKeys.Default)]
 [assembly: InternalsVisibleTo("Stride.Assets.Presentation" + Stride.PublicKeys.Default)]

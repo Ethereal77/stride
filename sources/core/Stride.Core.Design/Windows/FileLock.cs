@@ -4,8 +4,6 @@
 
 using System;
 using System.IO;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Threading;
 
 using Stride.Core.Annotations;
@@ -14,27 +12,28 @@ using Stride.Core.IO;
 namespace Stride.Core.Windows
 {
     /// <summary>
-    /// A class representing an thread-safe, process-safe file lock.
+    ///   Represents a thread-safe, process-safe file lock.
     /// </summary>
-    public class FileLock : IDisposable
+    public sealed class FileLock : IDisposable
     {
         private FileStream lockFile;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileLock"/> class.
+        ///   Initializes a new instance of the <see cref="FileLock"/> class.
         /// </summary>
-        /// <param name="lockFile">A file that was locked.</param>
+        /// <param name="lockFile">The file to serve as a lock.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="lockFile"/> is a <c>null</c> reference.</exception>
         private FileLock(FileStream lockFile)
         {
-            this.lockFile = lockFile;
+            this.lockFile = lockFile ?? throw new ArgumentNullException(nameof(lockFile));
         }
 
         /// <summary>
-        /// Releases the file lock.
+        ///   Releases the file lock.
         /// </summary>
         public void Dispose()
         {
-            if (lockFile != null)
+            if (lockFile is not null)
             {
                 var overlapped = new NativeOverlapped();
                 NativeLockFile.UnlockFileEx(lockFile.SafeFileHandle, 0, uint.MaxValue, uint.MaxValue, ref overlapped);
@@ -46,73 +45,73 @@ namespace Stride.Core.Windows
                 {
                     File.Delete(lockFile.Name);
                 }
-                catch (Exception)
-                {
-                }
+                catch { }
 
                 lockFile = null;
             }
         }
 
         /// <summary>
-        /// Tries to take ownership of the file lock without waiting.
-        /// </summary>
-        /// Tries to take ownership of the file lock within a given delay.
-        /// <returns>A new instance of <see cref="FileLock"/> if the ownership could be taken, <c>null</c> otherwise.</returns>
-        /// <remarks>The returned <see cref="FileLock"/> must be disposed to release the mutex.</remarks>
-        [CanBeNull]
-        public static FileLock TryLock(string name)
-        {
-            return Wait(name, 0);
-        }
-
-        /// <summary>
-        /// Waits indefinitely to take ownership of the file lock.
-        /// </summary>
-        /// Tries to take ownership of the file lock within a given delay.
-        /// <returns>A new instance of <see cref="FileLock"/> if the ownership could be taken, <c>null</c> otherwise.</returns>
-        /// <remarks>The returned <see cref="FileLock"/> must be disposed to release the file lock.</remarks>
-        [CanBeNull]
-        public static FileLock Wait(string name)
-        {
-            return Wait(name, -1);
-        }
-
-        /// <summary>
-        /// Tries to take ownership of the file lock within a given delay.
+        ///   Tries to take ownership of a file lock without waiting.
         /// </summary>
         /// <param name="name">A unique name identifying the file lock.</param>
-        /// <param name="millisecondsTimeout">The maximum delay to wait before returning, in milliseconds.</param>
-        /// <returns>A new instance of <see cref="FileLock"/> if the ownership could be taken, <c>null</c> otherwise.</returns>
+        /// <returns>
+        ///   A new instance of <see cref="FileLock"/> if the ownership could be taken; <c>null</c> otherwise.
+        /// </returns>
         /// <remarks>
-        /// The returned <see cref="FileLock"/> must be disposed to release the file lock.
-        /// Calling this method with 0 for <see paramref="millisecondsTimeout"/> is equivalent to call <see cref="TryLock"/>.
-        /// Calling this method with a negative value for <see paramref="millisecondsTimeout"/> is equivalent to call <see cref="Wait(string)"/>.
+        ///   The returned <see cref="FileLock"/> must be disposed to release the lock.
         /// </remarks>
         [CanBeNull]
-        public static FileLock Wait(string name, int millisecondsTimeout)
+        public static FileLock TryLock(string name) => WaitInternal(name, timeout: 0);
+
+        /// <summary>
+        ///   Waits indefinitely to take ownership of a file lock.
+        /// </summary>
+        /// <param name="name">A unique name identifying the file lock.</param>
+        /// <returns>
+        ///   A new instance of <see cref="FileLock"/> if the ownership could be taken; <c>null</c> otherwise.
+        /// </returns>
+        /// <remarks>
+        ///   The returned <see cref="FileLock"/> must be disposed to release the lock.
+        /// </remarks>
+        [CanBeNull]
+        public static FileLock Wait(string name) => WaitInternal(name, timeout: -1);
+
+        //
+        // Tries to take ownership of a file lock.
+        //
+        private static FileLock WaitInternal(string name, int timeout)
         {
             var fileLock = BuildFileLock(name);
             try
             {
-                if (millisecondsTimeout != 0 && millisecondsTimeout != -1)
-                    throw new NotImplementedException("GlobalMutex.Wait() is implemented only for millisecondsTimeout 0 or -1");
+                if (timeout != 0 && timeout != -1)
+                    throw new NotImplementedException("FileLock.Wait() is implemented only for timeouts 0 or -1.");
 
                 var overlapped = new NativeOverlapped();
-                bool hasHandle = NativeLockFile.LockFileEx(fileLock.SafeFileHandle, NativeLockFile.LOCKFILE_EXCLUSIVE_LOCK | (millisecondsTimeout == 0 ? NativeLockFile.LOCKFILE_FAIL_IMMEDIATELY : 0), 0, uint.MaxValue, uint.MaxValue, ref overlapped);
-                return hasHandle == false ? null : new FileLock(fileLock);
+                bool hasHandle = NativeLockFile.LockFileEx(
+                    fileLock.SafeFileHandle,
+                    NativeLockFile.LOCKFILE_EXCLUSIVE_LOCK | (timeout == 0 ? NativeLockFile.LOCKFILE_FAIL_IMMEDIATELY : 0),
+                    reserved: 0,
+                    countLow: uint.MaxValue,
+                    countHigh: uint.MaxValue,
+                    ref overlapped);
+
+                return !hasHandle ? null : new FileLock(fileLock);
             }
             catch (AbandonedMutexException)
             {
                 return new FileLock(fileLock);
             }
-        }
 
-        [NotNull]
-        private static FileStream BuildFileLock(string name)
-        {
-            // We open with FileShare.ReadWrite mode so that we can implement `Wait`.
-            return new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+            //
+            // Creates a file to be used as lock.
+            //
+            static FileStream BuildFileLock(string name)
+            {
+                // We open with FileShare.ReadWrite mode so that we can implement `Wait`.
+                return new FileStream(name, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+            }
         }
     }
 }

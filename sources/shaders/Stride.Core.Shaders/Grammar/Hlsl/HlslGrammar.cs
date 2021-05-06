@@ -15,9 +15,8 @@ using Stride.Core.Shaders.Utility;
 namespace Stride.Core.Shaders.Grammar.Hlsl
 {
     /// <summary>
-    /// Grammar for Hlsl.
+    ///   Grammar for DirectX HLSL (High-Level Shader Language) v5.0.
     /// </summary>
-    [Language("hlsl", "5.0", "Sample hlsl grammar")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Reviewed. Suppression is OK here.")]
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:FieldNamesMustNotContainUnderscore", Justification = "Reviewed. Suppression is OK here.")]
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1304:NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter", Justification = "Reviewed. Suppression is OK here.")]
@@ -84,7 +83,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
         protected readonly NonTerminal state_expression = T("state_expression", CreateStateExpressionAst);
         protected readonly NonTerminal state_initializer = T("state_initializer", CreateStateValuesAst);
         protected readonly NonTerminal state_initializer_list = T("state_initializer", CreateListFromNode<StateInitializer>);
-        protected readonly NonTerminal state_array_initializer = T("state_array_initializer", CreateStateValuesAst);               
+        protected readonly NonTerminal state_array_initializer = T("state_array_initializer", CreateStateValuesAst);
         protected readonly NonTerminal stream_output_object = T("stream_output_object", CreateGenericTypeAst<ObjectType>);
         protected readonly NonTerminal string_type = T("string_type", (context, node) => Ast<TypeName>(node).Name = new Identifier("string") { Span = SpanConverter.Convert(node.Span) });
         protected readonly NonTerminal structured_buffer = T("structured_buffer", CreateGenericTypeAst<ObjectType>);
@@ -104,7 +103,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
 
         protected readonly NonTerminal variable_declarator_qualifier_post_hlsl = T("variable_declarator_qualifier_post_hlsl", CreateVariableDeclaratorQualifierPostAst);
         protected readonly TerminalSet _skipTokensInPreview = new TerminalSet();
-        // ReSharper restore InconsistentNaming        
+        // ReSharper restore InconsistentNaming
 
 
         public override LanguageData CreateLanguageData()
@@ -263,12 +262,12 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
                 StateType.SamplerComparisonState);
 
             sampler_type.Rule = CreateRuleFromObjectTypes(
-                SamplerType.Sampler, 
-                SamplerType.Sampler1D, 
-                SamplerType.Sampler2D, 
-                SamplerType.Sampler3D, 
+                SamplerType.Sampler,
+                SamplerType.Sampler1D,
+                SamplerType.Sampler2D,
+                SamplerType.Sampler3D,
                 SamplerType.SamplerCube);
-            
+
             sampler_type.AstNodeCreator = CreateTypeFromTokenAst<ObjectType>;
 
             // Texture types
@@ -340,7 +339,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
                                 | geometry_stream;
                                 ////| shader_objects;
 
-            // Type name 
+            // Type name
             typename_for_cast.Rule = identifier + new IdentifierResolverHint(true);
 
             identifier_generic_parameter_list.Rule = MakePlusRule(identifier_generic_parameter_list, ToTerm(","), identifier_sub_generic);
@@ -362,7 +361,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
 
             // ------------------------------------------------------------------------------------
             // Expressions
-            // ------------------------------------------------------------------------------------            
+            // ------------------------------------------------------------------------------------
 
             // Add special variable allowed as variable name and keyword
             identifier_extended.Rule |= Keyword("sample") | Keyword("point");
@@ -434,7 +433,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
             // ------------------------------------------------------------------------------------
             // Declarations
             // ------------------------------------------------------------------------------------
-            
+
             // Add typedef and constant buffer resource
             declaration.Rule |= typedef_declaration
                                | constant_buffer_resource;
@@ -454,7 +453,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
             // Add annotations to variable declarator
             variable_declarator_raw.Rule += annotations_opt;
 
-            // Add special 
+            // Add special
             variable_declarator.Rule |= variable_declarator_raw + state_initializer
                                         | variable_declarator_raw + state_array_initializer;
 
@@ -496,7 +495,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
             // Make parameter_qualifier_pre transient as there is nothing else to parse then parameter_qualifier_pre_list_opt
             parameter_qualifier_pre.Flags = TermFlags.IsTransient | TermFlags.NoAstNode;
 
-            parameter_qualifier_post.Rule = semantic_list_opt 
+            parameter_qualifier_post.Rule = semantic_list_opt
                                            | "=" + initializer + semantic_list_opt;
             parameter_qualifier_post.AstNodeCreator = CreateParameterQualifierPost;
 
@@ -516,7 +515,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
                                   | simple_assignment_expression_statement;
 
             pass_definition.Rule = attribute_qualifier_pre + pass_keyword + identifier.Opt() + annotations_opt + "{" + pass_statement.ListOpt() + "}" + semi_opt;
-            
+
             // ------------------------------------------------------------------------------------
             // Top Level
             // ------------------------------------------------------------------------------------
@@ -579,7 +578,7 @@ namespace Stride.Core.Shaders.Grammar.Hlsl
         //                args.Result = ParserActionType.Shift;
         //            else
         //                args.Result = ParserActionType.Reduce;
-        //            args.Scanner.EndPreview(true); 
+        //            args.Scanner.EndPreview(true);
         //            return;
         //    }
         //}

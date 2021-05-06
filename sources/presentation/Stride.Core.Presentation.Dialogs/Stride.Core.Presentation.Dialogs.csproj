@@ -1,32 +1,30 @@
 <Project>
   <Import Project="..\..\targets\Stride.Core.props" />
+
   <PropertyGroup>
-    <StrideBuildTags>WindowsTools</StrideBuildTags>
     <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+    <UseWPF>true</UseWPF>
+
+    <AssemblyTitle>Stride Common Dialogs for WPF</AssemblyTitle>
+
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
-    <UseWPF>true</UseWPF>
-    <EnableDefaultPageItems>false</EnableDefaultPageItems>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-  </ItemGroup>
 
-  <PropertyGroup>
-    <AssemblyTitle>Stride Common Dialogs for WPF</AssemblyTitle>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Stride.Core.Presentation\Stride.Core.Presentation.csproj" />
   </ItemGroup>
+
   <Import Project="$(StrideSdkTargets)" />
+
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>_StrideIncludeExtraAssemblies;$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
-
   </PropertyGroup>
   <Target Name="_StrideIncludeExtraAssemblies">
     <ItemGroup>

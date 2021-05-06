@@ -19,6 +19,10 @@ using Stride.Engine.Processors;
 
 namespace Stride.Debugger.Target
 {
+    /// <summary>
+    ///   Represents a game debugger target that allows the debugger to control a game execution host, that can load and unload
+    ///   assemblies, run games and update assets.
+    /// </summary>
     public class GameDebuggerTarget : IGameDebuggerTarget
     {
         private static readonly Logger Log = GlobalLogger.GetLogger("GameDebuggerSession");
@@ -29,14 +33,14 @@ namespace Stride.Debugger.Target
         // For now, it uses default one, but later we should probably have one per game debugger session.
         private readonly AssemblyContainer assemblyContainer = AssemblyContainer.Default;
 
-        private readonly Dictionary<DebugAssembly, Assembly> loadedAssemblies = new Dictionary<DebugAssembly, Assembly>();
+        private readonly Dictionary<DebugAssembly, Assembly> loadedAssemblies = new();
         private int currentDebugAssemblyIndex;
 
         private readonly string projectName = string.Empty;
         private Game game;
 
-        private readonly ManualResetEvent gameFinished = new ManualResetEvent(true);
-        private IGameDebuggerHost host;
+        private readonly ManualResetEvent gameFinished = new(initialState: true);
+        private IGameDebuggerHost gameDebuggerHost;
 
         /// <summary>
         ///   Flag to indicate if exit was requested.
@@ -50,12 +54,11 @@ namespace Stride.Debugger.Target
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             // Make sure this assembly is registered (it contains custom Yaml serializers such as CloneReferenceSerializer)
-            // Note: this assembly should not be registered when run by Game Studio
+            // NOTE: This assembly should not be registered when run by Game Studio
             AssemblyRegistry.Register(typeof(Program).GetTypeInfo().Assembly, AssemblyCommonCategories.Assets);
         }
 
-
-        Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             lock (loadedAssemblies)
             {
@@ -63,7 +66,9 @@ namespace Stride.Debugger.Target
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        ///   Notifies the game that the debugging session has ended.
+        /// </summary>
         public void Exit()
         {
             requestedExit = true;
@@ -116,7 +121,7 @@ namespace Stride.Debugger.Target
             // Unload and load assemblies in assemblyContainer, serialization, etc.
             lock (loadedAssemblies)
             {
-                if (game != null)
+                if (game is not null)
                 {
                     lock (game.TickLock)
                     {
@@ -160,7 +165,7 @@ namespace Stride.Debugger.Target
                 if (gameType is null)
                     throw new InvalidOperationException($"Could not find type [{gameTypeName}] in project [{projectName}].");
 
-                game = (Game)Activator.CreateInstance(gameType);
+                game = (Game) Activator.CreateInstance(gameType);
 
                 // TODO: Bind database
                 Task.Run(() =>
@@ -175,12 +180,12 @@ namespace Stride.Debugger.Target
                             game.Run();
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        Log.Error("Exception while running game.", e);
+                        Log.Error("Exception while running game.", ex);
                     }
 
-                    host.OnGameExited();
+                    gameDebuggerHost.OnGameExited();
 
                     // Notify we are done
                     gameFinished.Set();
@@ -211,60 +216,61 @@ namespace Stride.Debugger.Target
             // We enumerate custom games, and then typeof(Game) as fallback
             return loadedAssemblies
                 .SelectMany(assembly => assembly.Value.GetTypes()
-                    .Where(x => typeof(Game).IsAssignableFrom(x)))
-                .Concat(Enumerable.Repeat(typeof(Game), 1));
+                                                      .Where(x => typeof(Game).IsAssignableFrom(x)))
+                .Append(typeof(Game));
         }
 
         private DebugAssembly CreateDebugAssembly(Assembly assembly)
         {
             var debugAssembly = new DebugAssembly(++currentDebugAssemblyIndex);
             loadedAssemblies.Add(debugAssembly, assembly);
+
             return debugAssembly;
         }
 
+        /// <summary>
+        ///   Main loop of the debugger.
+        /// </summary>
+        /// <param name="gameDebuggerHost">The debugger host to run.</param>
         public void MainLoop(IGameDebuggerHost gameDebuggerHost)
         {
-            host = gameDebuggerHost;
-            string callbackChannelEndpoint = "Stride/Debugger/GameDebuggerTarget/CallbackChannel";
-            using (var callbackHost = new NpHost(callbackChannelEndpoint, null, null))
+            const string callbackChannelEndpoint = "Stride/Debugger/GameDebuggerTarget/CallbackChannel";
+
+            using NpHost callbackHost = new(callbackChannelEndpoint, log: null, stats: null);
+
+            callbackHost.AddService<IGameDebuggerTarget>(this);
+            gameDebuggerHost.RegisterTarget(callbackChannelEndpoint);
+
+            Log.MessageLogged += Log_MessageLogged;
+
+            // Log suppressed exceptions in Scripts
+            ScriptSystem.Log.MessageLogged += Log_MessageLogged;
+            Scheduler.Log.MessageLogged += Log_MessageLogged;
+
+            Log.Info("Starting debugging session...");
+
+            while (!requestedExit)
             {
-                callbackHost.AddService<IGameDebuggerTarget>(this);
-                host.RegisterTarget(callbackChannelEndpoint);
-
-                Log.MessageLogged += Log_MessageLogged;
-
-                // Log suppressed exceptions in scripts
-                ScriptSystem.Log.MessageLogged += Log_MessageLogged;
-                Scheduler.Log.MessageLogged += Log_MessageLogged;
-
-                Log.Info("Starting debugging session...");
-
-                while (!requestedExit)
-                {
-                    Thread.Sleep(10);
-                }
+                Thread.Sleep(10);
             }
         }
 
-        void Log_MessageLogged(object sender, MessageLoggedEventArgs e)
+        private void Log_MessageLogged(object sender, MessageLoggedEventArgs e)
         {
             var message = e.Message;
 
-            var serializableMessage = message as SerializableLogMessage;
-            if (serializableMessage is null)
+            if (message is not SerializableLogMessage)
             {
                 if (message is LogMessage logMessage)
                 {
-                    serializableMessage = new SerializableLogMessage(logMessage);
+                    message = new SerializableLogMessage(logMessage);
                 }
             }
 
-            if (serializableMessage is null)
-            {
+            if (message is null)
                 throw new InvalidOperationException(@"Unable to process the given log message.");
-            }
 
-            host.OnLogMessage(serializableMessage);
+            gameDebuggerHost.OnLogMessage(message as SerializableLogMessage);
         }
     }
 }

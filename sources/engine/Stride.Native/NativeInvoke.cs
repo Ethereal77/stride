@@ -17,7 +17,7 @@ namespace Stride.Native
 
         internal static void PreLoad()
         {
-            NativeLibraryHelper.PreloadLibrary("libstride", typeof(NativeInvoke));
+            NativeLibraryHelper.Load("libstride", typeof(NativeInvoke));
         }
 
         static NativeInvoke()
