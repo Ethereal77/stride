@@ -14,6 +14,8 @@ using Mono.Options;
 using Stride.Core.Assets.CompilerApp.Tasks;
 using Stride.Core.Diagnostics;
 
+using static System.String;
+
 namespace Stride.Core.Tasks
 {
     static class Program
@@ -33,23 +35,21 @@ namespace Stride.Core.Tasks
             {
                 "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
                 "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
-                "Stride Router Server - Version: "
-                +
-                String.Format(
-                    "{0}.{1}.{2}",
+                "Stride MSBuild Tasks - Version: " + Format("{0}.{1}.{2}",
                     typeof(Program).Assembly.GetName().Version.Major,
                     typeof(Program).Assembly.GetName().Version.Minor,
-                    typeof(Program).Assembly.GetName().Version.Build) + string.Empty,
-                string.Format("Usage: {0} command [options]*", exeName),
-                string.Empty,
+                    typeof(Program).Assembly.GetName().Version.Build),
+                Empty,
+                Format("Usage: {0} command [options]*", exeName),
+                Empty,
                 "=== Commands ===",
-                string.Empty,
-                " locate-devenv <MSBuildPath>: returns devenv path",
-                " pack-assets <csprojFile> <intermediatePackagePath>: copy and adjust assets for nupkg packaging",
-                string.Empty,
+                Empty,
+                " locate-devenv <MSBuildPath>: Returns the path to Visual Studio 'devenv' executable.",
+                " pack-assets <csprojFile> <intermediatePackagePath>: Copies and adjusts Assets for nupkg packaging.",
+                Empty,
                 "=== Options ===",
-                string.Empty,
-                { "h|help", "Show this message and exit", v => showHelp = v != null },
+                Empty,
+                { "h|help", "Shows this message and exits.", v => showHelp = v != null },
             };
 
             try
@@ -63,18 +63,19 @@ namespace Stride.Core.Tasks
 
                 // Make sure path exists
                 if (commandArgs.Count == 0)
-                    throw new OptionException("You need to specify a command", "");
+                    throw new OptionException("You need to specify a command.", "");
 
                 switch (commandArgs[0])
                 {
                     case "locate-devenv":
                     {
                         if (commandArgs.Count != 2)
-                            throw new OptionException("Need one extra argument", "");
+                            throw new OptionException("Need one extra argument.", "");
+
                         var devenvPath = LocateDevenv.FindDevenv(commandArgs[1]);
-                        if (devenvPath == null)
+                        if (devenvPath is null)
                         {
-                            Console.WriteLine("Could not locate devenv");
+                            Console.WriteLine("Could not locate devenv.");
                             return 1;
                         }
                         Console.WriteLine(devenvPath);
@@ -83,32 +84,32 @@ namespace Stride.Core.Tasks
                     case "pack-assets":
                     {
                         if (commandArgs.Count != 3)
-                            throw new OptionException("Need two extra arguments", "");
+                            throw new OptionException("Need two extra arguments.", "");
 
                         var csprojFile = commandArgs[1];
                         var intermediatePackagePath = commandArgs[2];
-                        var generatedItems = new List<(string SourcePath, string PackagePath)>();
+
                         var logger = new LoggerResult();
+                        var generatedItems = new List<(string SourcePath, string PackagePath)>();
+
                         if (!PackAssetsHelper.Run(logger, csprojFile, intermediatePackagePath, generatedItems))
                         {
                             foreach (var message in logger.Messages)
-                            {
                                 Console.WriteLine(message);
-                            }
+
                             return 1;
                         }
                         foreach (var generatedItem in generatedItems)
-                        {
                             Console.WriteLine($"{generatedItem.SourcePath}|{generatedItem.PackagePath}");
-                        }
+
                         break;
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("{0}: {1}", exeName, e);
-                if (e is OptionException)
+                Console.WriteLine("{0}: {1}", exeName, ex);
+                if (ex is OptionException)
                     p.WriteOptionDescriptions(Console.Out);
                 return 1;
             }

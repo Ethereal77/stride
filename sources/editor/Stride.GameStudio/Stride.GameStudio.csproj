@@ -36,7 +36,6 @@
     <None Include="..\..\tools\Stride.PackageInstall\bin\$(Configuration)\*.*" PackagePath="tools\" Pack="true" />
     <None Include="app.config" />
     <None Include="app.manifest" />
-    <None Update="global.json" CopyToOutputDirectory="PreserveNewest" />
 
     <Content Include="..\..\..\BACKERS.md" Link="BACKERS.md" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\..\..\LICENSE.md" Link="LICENSE.md" CopyToOutputDirectory="PreserveNewest" />
@@ -77,7 +76,6 @@
   <Target Name="_StrideIncludeExtraAssemblies">
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)Stride.Core.AssemblyProcessor.*" />
-      <BuildOutputInPackage Include="$(OutputPath)global.json" />
     </ItemGroup>
   </Target>
 </Project>

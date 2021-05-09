@@ -5,7 +5,7 @@
   Build file included to override the Targets with the default ones when compiling under an
   undefined platform or skipping compilation.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

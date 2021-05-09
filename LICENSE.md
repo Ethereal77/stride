@@ -1,15 +1,15 @@
 ﻿Stride Game Engine
 ==================
 
-Stride is an open source project under the MIT license.
+Copyright (c) 2021 .NET Foundation and Contributors (https://dotnetfoundation.org/)
 
-Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)  
+Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
 Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 
 All rights reserved.
 
 
-## Software from third parties included in Xenko
+## Software from third parties included in Stride
 
 Xenko contains third party software which may be under different license terms. You
 can find the list of third party projects and their license [here](THIRD%20PARTY.md).

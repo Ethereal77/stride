@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -47,8 +48,6 @@ _ReSharper*
 obj/
 Cache/
 ";
-
-        private static string GlobalJson(string version) => $"{{ \"sdk\": {{ \"version\": \"{version}\" }} }}";
 
         public sealed override bool Run(SessionTemplateGeneratorParameters parameters)
         {
@@ -142,16 +141,6 @@ Cache/
             File.WriteAllText(fileName.ToWindowsPath(), GitIgnore);
         }
 
-        protected void WriteGlobalJson(SessionTemplateGeneratorParameters parameters)
-        {
-            if (!RuntimeInformation.FrameworkDescription.StartsWith(".NET Core"))
-                return;
-
-            var sdkVersion = MSBuildLocator.QueryVisualStudioInstances()
-                .First(vs => vs.DiscoveryType == DiscoveryType.DotNetSdk && vs.Version.Major >= 3).Version;
-            var fileName = UFile.Combine(parameters.OutputDirectory, "global.json");
-            File.WriteAllText(fileName.ToWindowsPath(), GlobalJson(sdkVersion.ToString()));
-        }
 
         private void EnsureGraphs(SessionTemplateGeneratorParameters parameters)
         {

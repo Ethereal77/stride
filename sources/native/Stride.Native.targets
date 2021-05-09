@@ -6,7 +6,7 @@
   needed native libraries for each runtime / architecture, and the linking between these
   libraries and the dependent .NET assemblies.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

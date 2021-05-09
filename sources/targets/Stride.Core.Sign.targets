@@ -5,7 +5,7 @@
   Build file post-included after the building of the project to configure the strong-signing
   of the generated assemblies.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

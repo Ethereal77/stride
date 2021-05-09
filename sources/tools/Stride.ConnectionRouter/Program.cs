@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.IO;
@@ -12,6 +13,8 @@ using Mono.Options;
 using Stride.Core.Diagnostics;
 using Stride.Core.Windows;
 using Stride.Engine.Network;
+
+using static System.String;
 
 namespace Stride.ConnectionRouter
 {
@@ -28,18 +31,17 @@ namespace Stride.ConnectionRouter
 
             var p = new OptionSet
                 {
-                    "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
+                    "Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)",
                     "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
-                    "Stride Router Server - Version: " +
-                    string.Format("{0}.{1}.{2}",
+                    "Stride Router Server - Version: " + Format("{0}.{1}.{2}",
                         typeof(Program).Assembly.GetName().Version.Major,
                         typeof(Program).Assembly.GetName().Version.Minor,
                         typeof(Program).Assembly.GetName().Version.Build),
-                    string.Empty,
+                    Empty,
                     $"Usage: {exeName} command [options]*",
-                    string.Empty,
+                    Empty,
                     "=== Options ===",
-                    string.Empty,
+                    Empty,
                     { "h|help", "Show this message and exit", v => showHelp = v != null },
                     { "log-file=", "Log build in a custom file (default: routerlog.txt).", v => logFileName = v }
                 };
@@ -82,10 +84,10 @@ namespace Stride.ConnectionRouter
                     System.Windows.Forms.Application.Run();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("{0}: {1}", exeName, e);
-                if (e is OptionException)
+                Console.WriteLine("{0}: {1}", exeName, ex);
+                if (ex is OptionException)
                     p.WriteOptionDescriptions(Console.Out);
                 exitCode = 1;
             }

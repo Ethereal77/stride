@@ -1,5 +1,6 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
+// See the LICENSE.md file in the project root for full license information.
 
 #if !STRIDE_PACKAGE_BUILD
 

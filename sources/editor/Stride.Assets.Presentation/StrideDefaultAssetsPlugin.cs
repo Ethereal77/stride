@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
@@ -37,11 +38,11 @@ namespace Stride.Assets.Presentation
         #region Component Type Comparer
 
         /// <summary>
-        ///   Represents an <see cref="EqualityComparer<>"/> for component <see cref="Type"/>.
+        ///   Represents an <see cref="EqualityComparer<>"/> for Entity Component <see cref="Type"/>s.
         /// </summary>
-        private class ComponentTypeComparer : EqualityComparer<Type>
+        private sealed class ComponentTypeComparer : EqualityComparer<Type>
         {
-            public new static readonly ComponentTypeComparer Default = new ComponentTypeComparer();
+            public new static readonly ComponentTypeComparer Default = new();
 
             /// <summary>
             ///   Compares two component <see cref="Type"/>s and determines whether the types match with the following criteria:
@@ -79,8 +80,8 @@ namespace Stride.Assets.Presentation
         private static ResourceDictionary visualScriptingTemplateDictionary;
         private static ResourceDictionary visualScriptingGraphTemplatesDictionary;
 
-        private static readonly Dictionary<Type, Type> GizmoTypes = new Dictionary<Type, Type>();
-        private static readonly Dictionary<Type, Type> AssetHighlighterTypes = new Dictionary<Type, Type>();
+        private static readonly Dictionary<Type, Type> GizmoTypes = new();
+        private static readonly Dictionary<Type, Type> AssetHighlighterTypes = new();
 
         public static IReadOnlyDictionary<Type, Type> GizmoTypeDictionary => GizmoTypes;
 

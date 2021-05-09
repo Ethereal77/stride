@@ -5,7 +5,7 @@
   Build file pre-included before the building of the project to configure the version info of
   the generated assemblies and generate the NuGet packages version and metadata.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 

@@ -12,13 +12,26 @@ The engine is highly modular and aims at giving game makers more flexibility in 
 
 To learn more about Stride, visit [stride3d.net](https://stride3d.net/).
 
-## License
+## License and governance
 
-Stride is covered by [MIT](LICENSE.md), unless stated otherwise (i.e. for some files that are copied from other projects).
+### .NET Foundation
+
+This project is supported by the [.NET Foundation](https://dotnetfoundation.org).
+
+### License
+
+Stride is covered by the [MIT License](LICENSE.md) unless stated otherwise (i.e. for some files that are copied from other projects).
 
 You can find the list of third party projects [here](THIRD%20PARTY.md).
 
 Contributors need to sign the following [Contribution License Agreement](docs/ContributorLicenseAgreement.md).
+
+### Code of conduct
+
+As a [.NET Foundation](https://www.dotnetfoundation.org/) project, Stride has adopted the code of conduct defined by the
+Contributor Covenant to clarify expected behavior in our community.
+
+For more information see the [.NET Foundation Code of Conduct](https://dotnetfoundation.org/code-of-conduct). 
 
 ## Documentation
 

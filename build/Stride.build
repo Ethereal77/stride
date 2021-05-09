@@ -7,7 +7,7 @@
   Example of use:
     MSBuild Stride.build /t:Package
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project ToolsVersion="15.0" DefaultTarget="Help" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

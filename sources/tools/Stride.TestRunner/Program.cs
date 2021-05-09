@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
@@ -22,12 +23,12 @@ namespace Stride.TestRunner
     class TestServerHost : RouterServiceServer
     {
         /// <summary>
-        /// The name of the branch the test is done on;
+        ///   The name of the branch the test is done on.
         /// </summary>
         private readonly string branchName;
 
         /// <summary>
-        /// The current buildNumber.
+        ///   The current buildNumber.
         /// </summary>
         private readonly int buildNumber;
 
@@ -45,7 +46,7 @@ namespace Stride.TestRunner
         }
 
         /// <summary>
-        /// A structure to store information about the connected test devices.
+        ///   A structure to store information about the connected test devices.
         /// </summary>
         public struct ConnectedDevice
         {
@@ -102,9 +103,11 @@ namespace Stride.TestRunner
                         case TestRunnerMessageType.SessionSuccess:
                             testFailed = false;
                             break;
+
                         case TestRunnerMessageType.SessionFailure:
                             testFailed = true;
                             break;
+
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -146,16 +149,18 @@ namespace Stride.TestRunner
 
             var p = new OptionSet
             {
-                "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
+                "Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)",
                 "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
                 "Stride Test Suite Tool - Version: " +
                     Format("{0}.{1}.{2}",
                         typeof(Program).Assembly.GetName().Version.Major,
                         typeof(Program).Assembly.GetName().Version.Minor,
-                        typeof(Program).Assembly.GetName().Version.Build), Empty,
-
-                Format("Usage: {0} [assemblies|apk] -option1 -option2:a", exeName), Empty,
-                "=== Options ===", Empty,
+                        typeof(Program).Assembly.GetName().Version.Build),
+                Empty,
+                Format("Usage: {0} [assemblies|apk] -option1 -option2:a", exeName),
+                Empty,
+                "=== Options ===",
+                Empty,
                 { "h|help", "Show this message and exit", v => showHelp = v != null },
                 { "result-path:", "Result .XML output path", v => resultPath = v },
                 { "no-reinstall-apk", "Do not reinstall APK", v => reinstall = false }

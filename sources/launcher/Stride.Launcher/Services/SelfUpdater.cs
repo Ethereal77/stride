@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
@@ -110,7 +111,7 @@ namespace Stride.LauncherApp.Services
                 var movedFiles = new List<string>();
 
                 // Download package
-                var installedPackage = await store.InstallPackage(package.Id, package.Version, null);
+                var installedPackage = await store.InstallPackage(package.Id, package.Version, package.TargetFrameworks, null);
 
                 // Copy files from tools\ to the current directory
                 var inputFiles = installedPackage.GetFiles();

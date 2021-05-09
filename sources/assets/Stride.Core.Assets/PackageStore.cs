@@ -1,141 +1,158 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
-using Stride.Core;
-using Stride.Core.Diagnostics;
-using Stride.Core.IO;
 using System.Threading.Tasks;
 
+using Stride.Core.IO;
 using Stride.Core.Packages;
 
 namespace Stride.Core.Assets
 {
     /// <summary>
-    /// Manage packages locally installed and accessible on the store.
+    ///   Manages packages locally installed and accessible on the store.
     /// </summary>
     /// <remarks>
-    /// This class is the frontend to the packaging/distribution system. It is currently using NuGet for its packaging but may
-    /// change in the future.
+    ///   This class is the frontend to the packaging / distribution system. It is currently using NuGet for its
+    ///   packaging but may change in the future.
     /// </remarks>
     public class PackageStore
     {
-        private static readonly Lazy<PackageStore> DefaultPackageStore = new Lazy<PackageStore>(() => new PackageStore());
+        private static readonly Lazy<PackageStore> DefaultPackageStore = new(() => new PackageStore());
 
         /// <summary>
-        /// Associated <see cref="NugetStore"/> for our packages. Cannot be null.
+        ///   Associated <see cref="NugetStore"/> for our packages. Cannot be null.
         /// </summary>
         private readonly NugetStore store;
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="PackageStore"/> class.
+        ///   Initializes a new instance of the <see cref="PackageStore"/> class.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">Unable to find a valid Stride installation path</exception>
+        /// <exception cref="InvalidOperationException">Unable to find a valid Stride installation path.</exception>
         private PackageStore()
         {
-            // Check if we are in a root directory with store/packages facilities
-            store = new NugetStore(null);
+            // Check if we are in a root directory with store / packages facilities
+            store = new NugetStore(oldRootDirectory: null);
         }
 
+
         /// <summary>
-        /// Gets the packages available online.
+        ///   Gets the packages available online.
         /// </summary>
-        /// <returns>IEnumerable&lt;PackageMeta&gt;.</returns>
+        /// <returns>The collection of packages available in the store online.</returns>
         public async Task<IEnumerable<PackageMeta>> GetPackages()
         {
-            var packages = await store.SourceSearch(null, allowPrereleaseVersions: false);
+            var packages = await store.SourceSearch(searchTerm: null, allowPrereleaseVersions: false);
 
-            // Order by download count and Id to allow collapsing 
+            // Order by download count and Id to allow collapsing
             var orderedPackages = packages.OrderByDescending(p => p.DownloadCount).ThenBy(p => p.Id);
 
-            // For some unknown reasons, we can't select directly from IQueryable<IPackage> to IQueryable<PackageMeta>, 
+            // For some unknown reasons, we can't select directly from IQueryable<IPackage> to IQueryable<PackageMeta>,
             // so we need to pass through a IEnumerable<PackageMeta> and translate it to IQueyable. Not sure it has
-            // an implication on the original query behinds the scene 
+            // an implication on the original query behinds the scene
             return orderedPackages.Select(PackageMetaFromNugetPackage);
         }
 
-        public NugetLocalPackage FindLocalPackage(string packageName, PackageVersionRange versionRange = null, ConstraintProvider constraintProvider = null, bool allowPreleaseVersion = true, bool allowUnlisted = false)
+        /// <summary>
+        ///   Finds an installed local package using a version range or some constraints.
+        /// </summary>
+        /// <param name="packageName">Name of the package.</param>
+        /// <param name="versionRange">The range of versions of the package to look for.</param>
+        /// <param name="constraintProvider">Version constraints for the packages.</param>
+        /// <param name="allowPrereleaseVersion">Value indicating whether to allow pre-release versions of the packages.</param>
+        /// <param name="allowUnlisted">Value indicating whether to look for packages not listed publically.</param>
+        /// <returns>A package matching the search criteria; or <c>null</c> if not found.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="packageName"/> is a <c>null</c> reference.</exception>
+        /// <remarks>
+        ///   If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
+        /// </remarks>
+        public NugetLocalPackage FindLocalPackage(string packageName,
+                                                  PackageVersionRange versionRange = null,
+                                                  ConstraintProvider constraintProvider = null,
+                                                  bool allowPrereleaseVersion = true,
+                                                  bool allowUnlisted = false)
         {
-            if (packageName == null) throw new ArgumentNullException(nameof(packageName));
+            if (string.IsNullOrWhiteSpace(packageName))
+                throw new ArgumentNullException(nameof(packageName));
 
-            return store.FindLocalPackage(packageName, versionRange, constraintProvider, allowPreleaseVersion, allowUnlisted);
+            return store.FindLocalPackage(packageName, versionRange, constraintProvider, allowPrereleaseVersion, allowUnlisted);
         }
 
         /// <summary>
-        /// Gets the filename to the specific package using just a package name.
+        ///   Gets the file name of a specific package using its package name.
         /// </summary>
         /// <param name="packageName">Name of the package.</param>
-        /// <returns>A location on the disk to the specified package or null if not found.</returns>
-        /// <exception cref="System.ArgumentNullException">packageName</exception>
-        public UFile GetPackageWithFileName(string packageName)
-        {
-            return GetPackageFileName(packageName);
-        }
+        /// <returns>The location on disk of specified package; or <c>null</c> if not found.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="packageName"/> is a <c>null</c> reference.</exception>
+        public UFile GetPackageWithFileName(string packageName) => GetPackageFileName(packageName);
 
         /// <summary>
-        /// Gets the filename to the specific package <paramref name="packageName"/> using the version <paramref name="versionRange"/> if not null, otherwise the <paramref name="constraintProvider"/> if specified.
-        /// If no constraints are specified, the first entry if any are founds is used to get the filename.
+        ///   Gets the file name of a specific package using its version or some constraints.
         /// </summary>
         /// <param name="packageName">Name of the package.</param>
-        /// <param name="versionRange">The version range.</param>
-        /// <param name="constraintProvider">The package constraint provider.</param>
-        /// <param name="allowPreleaseVersion">if set to <c>true</c> [allow prelease version].</param>
-        /// <param name="allowUnlisted">if set to <c>true</c> [allow unlisted].</param>
-        /// <returns>A location on the disk to the specified package or null if not found.</returns>
-        /// <exception cref="System.ArgumentNullException">packageName</exception>
-        public UFile GetPackageFileName(string packageName, PackageVersionRange versionRange = null, ConstraintProvider constraintProvider = null, bool allowPreleaseVersion = true, bool allowUnlisted = false)
+        /// <param name="versionRange">The range of versions of the package to look for.</param>
+        /// <param name="constraintProvider">Version constraints for the packages.</param>
+        /// <param name="allowPrereleaseVersion">Value indicating whether to allow pre-release versions of the packages.</param>
+        /// <param name="allowUnlisted">Value indicating whether to look for packages not listed publically.</param>
+        /// <returns>The location on disk of specified package; or <c>null</c> if not found.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="packageName"/> is a <c>null</c> reference.</exception>
+        /// <remarks>
+        ///   If no constraints are specified, the first found entry (if any) is used to get the filename.
+        /// </remarks>
+        public UFile GetPackageFileName(string packageName,
+                                        PackageVersionRange versionRange = null,
+                                        ConstraintProvider constraintProvider = null,
+                                        bool allowPrereleaseVersion = true,
+                                        bool allowUnlisted = false)
         {
-            if (packageName == null) throw new ArgumentNullException(nameof(packageName));
+            if (string.IsNullOrWhiteSpace(packageName))
+                throw new ArgumentNullException(nameof(packageName));
 
-            var package = store.FindLocalPackage(packageName, versionRange, constraintProvider, allowPreleaseVersion, allowUnlisted);
-
-            // If package was not found, 
-            if (package != null)
+            var package = store.FindLocalPackage(packageName, versionRange, constraintProvider, allowPrereleaseVersion, allowUnlisted);
+            if (package is not null)
             {
-                var packageRoot = (UDirectory)store.GetRealPath(package);
+                var packageRoot = (UDirectory) store.GetRealPath(package);
                 var packageFilename = new UFile(packageName + Package.PackageFileExtension);
 
-                // First look for sdpkg at package root
+                // First look for .sdpkg at package root
                 var packageFile = UPath.Combine(packageRoot, packageFilename);
                 if (File.Exists(packageFile))
                     return packageFile;
 
-                // Then look for sdpkg inside stride subfolder
-                packageFile = UPath.Combine(UPath.Combine(packageRoot, (UDirectory)"stride"), packageFilename);
+                // Then look for sdpkg inside 'stride' subfolder
+                packageFile = UPath.Combine(UPath.Combine(packageRoot, (UDirectory) "stride"), packageFilename);
                 if (File.Exists(packageFile))
                     return packageFile;
             }
 
+            // Not found
             return null;
         }
 
         /// <summary>
-        /// Gets the default package manager.
+        ///   Gets the default package manager.
         /// </summary>
-        /// <value>A default instance.</value>
-        public static PackageStore Instance
-        {
-            get
-            {
-                return DefaultPackageStore.Value;
-            }
-        }
+        public static PackageStore Instance => DefaultPackageStore.Value;
 
-        private static PackageLoadParameters GetDefaultPackageLoadParameters()
+        private static PackageLoadParameters GetDefaultPackageLoadParameters() => new()
         {
             // By default, we are not loading assets for installed packages
-            return new PackageLoadParameters { AutoLoadTemporaryAssets = false, LoadAssemblyReferences = false, AutoCompileProjects = false };
-        }
+            AutoLoadTemporaryAssets = false,
+            LoadAssemblyReferences = false,
+            AutoCompileProjects = false
+        };
 
         /// <summary>
-        /// New instance of <see cref="PackageMeta"/> from a NuGet package <paramref name="metadata"/>.
+        ///   Gets the metadata of a package.
         /// </summary>
         /// <param name="metadata">The NuGet metadata used to initialized an instance of <see cref="PackageMeta"/>.</param>
+        /// <returns>A <see cref="PackageMeta"/> containing the package metadata.</returns>
         public static PackageMeta PackageMetaFromNugetPackage(NugetPackage metadata)
         {
             var meta = new PackageMeta
@@ -160,9 +177,7 @@ namespace Stride.Core.Assets
             meta.Owners.AddRange(metadata.Owners);
 
             if (metadata.DependencySetsCount > 1)
-            {
-                throw new InvalidOperationException("Metadata loaded from nuspec cannot have more than one group of dependency");
-            }
+                throw new InvalidOperationException("Metadata loaded from .nuspec cannot have more than one group of dependencies.");
 
             return meta;
         }
@@ -189,13 +204,11 @@ namespace Stride.Core.Assets
 
         private static string ConvertUrlToStringSafe(Uri url)
         {
-            if (url != null)
+            if (url is not null)
             {
                 string originalString = url.OriginalString.SafeTrim();
                 if (!string.IsNullOrEmpty(originalString))
-                {
                     return originalString;
-                }
             }
 
             return null;

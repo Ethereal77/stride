@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ using Stride.Rendering.Materials;
 using Stride.Rendering.ProceduralModels;
 using Stride.Particles;
 using Stride.SpriteStudio.Offline;
+
+using static System.String;
 
 namespace Stride.Core.Assets.CompilerApp
 {
@@ -69,19 +72,17 @@ namespace Stride.Core.Assets.CompilerApp
 
             var p = new OptionSet
             {
-                "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
+                "Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)",
                 "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
-                "Stride Build Tool - Version: "
-                +
-                String.Format(
-                    "{0}.{1}.{2}",
+                "Stride Package Build Tool - Version: " + Format("{0}.{1}.{2}",
                     typeof(Program).Assembly.GetName().Version.Major,
                     typeof(Program).Assembly.GetName().Version.Minor,
-                    typeof(Program).Assembly.GetName().Version.Build) + string.Empty,
-                string.Format("Usage: {0} inputPackageFile [options]* -b buildPath", exeName),
-                string.Empty,
+                    typeof(Program).Assembly.GetName().Version.Build),
+                Empty,
+                Format("Usage: {0} inputPackageFile [options]* -b buildPath", exeName),
+                Empty,
                 "=== Options ===",
-                string.Empty,
+                Empty,
                 { "h|help", "Show this message and exit", help => showHelp = help != null },
                 { "v|verbose", "Show more verbose progress logs", verbose => options.Verbose = verbose != null },
                 { "d|debug", "Show debug logs (imply verbose)", debug => options.Debug = debug != null },
@@ -102,7 +103,7 @@ namespace Stride.Core.Assets.CompilerApp
                 } },
                 { "monitor-pipe=", "Monitor pipe.", pipe =>
                 {
-                    if (!string.IsNullOrEmpty(pipe))
+                    if (!IsNullOrEmpty(pipe))
                         options.MonitorPipeNames.Add(pipe);
                 } },
                 { "slave=", "Slave pipe", pipe => options.SlavePipe = pipe }, // Benlitz: I don't think this should be documented
@@ -113,7 +114,7 @@ namespace Stride.Core.Assets.CompilerApp
                 { "test=", "Run a test session.", v => options.TestName = v },
                 { "property:", "Properties. Format is name1=value1;name2=value2", properties =>
                 {
-                    if (!string.IsNullOrEmpty(properties))
+                    if (!IsNullOrEmpty(properties))
                     {
                         foreach (var nameValue in properties.Split(new [] { ';' }, StringSplitOptions.RemoveEmptyEntries))
                         {
@@ -123,7 +124,7 @@ namespace Stride.Core.Assets.CompilerApp
 
                             var name = nameValue.Substring(0, equalIndex);
                             var value = nameValue[(equalIndex + 1)..];
-                            if (value != string.Empty)
+                            if (value != Empty)
                                 options.Properties.Add(name, value);
                         }
                     }
@@ -131,7 +132,7 @@ namespace Stride.Core.Assets.CompilerApp
                 },
                 { "compile-property:", "Compile properties. Format is name1=value1;name2=value2", v =>
                 {
-                    if (!string.IsNullOrEmpty(v))
+                    if (!IsNullOrEmpty(v))
                     {
                         if (options.ExtraCompileProperties is null)
                             options.ExtraCompileProperties = new Dictionary<string, string>();
@@ -150,7 +151,7 @@ namespace Stride.Core.Assets.CompilerApp
                 {
                     "reattach-debugger=", "Reattach to a Visual Studio debugger", v =>
                     {
-                        if (!string.IsNullOrEmpty(v) && int.TryParse(v, out var debuggerProcessId))
+                        if (!IsNullOrEmpty(v) && int.TryParse(v, out var debuggerProcessId))
                         {
                             if (!Debugger.IsAttached)
                             {

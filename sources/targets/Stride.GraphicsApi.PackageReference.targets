@@ -5,7 +5,7 @@
   Build file post-included after building to configure the correct DLL for a Graphics API
   for the PackageReferences.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -24,22 +24,22 @@
       <_StrideGraphicsApiCurrent Condition="'$(_StrideGraphicsApiCurrent)' == ''">Direct3D11</_StrideGraphicsApiCurrent>
     </PropertyGroup>
     <ItemGroup>
-      <_StrideGraphicsRuntimeCopyLocalFodlers Include="@(RuntimeCopyLocalItems->'%(RootDir)%(Directory)$(_StrideGraphicsApiCurrent)')" Condition="'%(NuGetPackageId)' != '' And Exists('%(RootDir)%(Directory)$(_StrideGraphicsApiCurrent)')">
-      </_StrideGraphicsRuntimeCopyLocalFodlers>
+      <_StrideGraphicsRuntimeCopyLocalFolders Include="@(RuntimeCopyLocalItems->'%(RootDir)%(Directory)$(_StrideGraphicsApiCurrent)')" Condition="'%(NuGetPackageId)' != '' And Exists('%(RootDir)%(Directory)$(_StrideGraphicsApiCurrent)')">
+      </_StrideGraphicsRuntimeCopyLocalFolders>
       <RuntimeCopyLocalItems Remove="@(RuntimeCopyLocalItems)" Condition="'%(NuGetPackageId)' != '' And Exists('%(RootDir)%(Directory)$(_StrideGraphicsApiCurrent)\')">
       </RuntimeCopyLocalItems>
     </ItemGroup>
 
-    <!-- There might have been multiple RuntimeCopyLocalItems in the same folder, resulting in multiple identical _StrideGraphicsRuntimeCopyLocalFodlers -->
-    <RemoveDuplicates Inputs="@(_StrideGraphicsRuntimeCopyLocalFodlers)">
-      <Output TaskParameter="Filtered" ItemName="_StrideGraphicsRuntimeCopyLocalFodlersFiltered" />
+    <!-- There might have been multiple RuntimeCopyLocalItems in the same folder, resulting in multiple identical _StrideGraphicsRuntimeCopyLocalFolders -->
+    <RemoveDuplicates Inputs="@(_StrideGraphicsRuntimeCopyLocalFolders)">
+      <Output TaskParameter="Filtered" ItemName="_StrideGraphicsRuntimeCopyLocalFoldersFiltered" />
     </RemoveDuplicates>
 
     <!-- Expand .DLL / .EXE specific to this Graphics API -->
-    <CreateItem Include="@(_StrideGraphicsRuntimeCopyLocalFodlersFiltered->'%(Identity)\*.dll')" AdditionalMetadata="CopyLocal=true;AssetType=runtime" PreserveExistingMetadata="false">
+    <CreateItem Include="@(_StrideGraphicsRuntimeCopyLocalFoldersFiltered->'%(Identity)\*.dll')" AdditionalMetadata="CopyLocal=true;AssetType=runtime" PreserveExistingMetadata="false">
       <Output TaskParameter="Include" ItemName="_StrideGraphicsRuntimeCopyLocal" />
     </CreateItem>
-    <CreateItem Include="@(_StrideGraphicsRuntimeCopyLocalFodlersFiltered->'%(Identity)\*.exe')" AdditionalMetadata="CopyLocal=true;AssetType=runtime" PreserveExistingMetadata="false">
+    <CreateItem Include="@(_StrideGraphicsRuntimeCopyLocalFoldersFiltered->'%(Identity)\*.exe')" AdditionalMetadata="CopyLocal=true;AssetType=runtime" PreserveExistingMetadata="false">
       <Output TaskParameter="Include" ItemName="_StrideGraphicsRuntimeCopyLocal" />
     </CreateItem>
 

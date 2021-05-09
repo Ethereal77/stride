@@ -1,39 +1,55 @@
-using Stride.Assets.Entities.ComponentChecks;
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
+// See the LICENSE.md file in the project root for full license information.
+
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Assets.Compiler;
+using Stride.Assets.Entities.ComponentChecks;
 using Stride.Engine;
+
 using Xunit;
 
 namespace Stride.Assets.Tests
 {
     /// <summary>
-    /// Tests the behaviour of <see cref="RequiredMembersCheck"/>.
+    ///   Tests the behaviour of the <see cref="RequiredMembersCheck"/> attribute.
     /// </summary>
     public class TestMemberRequiredComponentChecks
     {
         [DataContract]
         public abstract class VirtualBaseComponent : EntityComponent
         {
-            [MemberRequired] public virtual object VirtualProp { get; set; }
+            [MemberRequired]
+            public virtual object VirtualProp { get; set; }
         }
 
+
         /// <summary>
-        /// Test component that has <see cref="MemberRequiredAttribute"/> on serializable members.
+        ///   Test component that has <see cref="MemberRequiredAttribute"/> on serializable members.
         /// </summary>
         [DataContract]
         public class MemberRequiredComponent : VirtualBaseComponent
         {
-            // We won't test the (ReportAs = Error) case
-            // it would duplicate tests and it's more important to assert
-            // that presence of the attribute gives a warning
-            [MemberRequired] public object PublicField;
-            [MemberRequired] public object PublicProp { get; set; }
+            // We won't test the (ReportAs = Error) case.
+            //   It would duplicate tests and it's more important to assert the presence of the attribute gives a warning.
+
             [MemberRequired]
-            [DataMember] private object PrivateProp { get; set; }
+            public object PublicField;
+
             [MemberRequired]
-            [DataMember] protected object ProtectedProp { get; set; }
+            public object PublicProp { get; set; }
+
+            [MemberRequired]
+            [DataMember]
+            private object PrivateProp { get; set; }
+
+            [MemberRequired]
+            [DataMember]
+            protected object ProtectedProp { get; set; }
+
             public override object VirtualProp { get; set; } = new object();
+
             public MemberRequiredComponent(object privateData, object protectedData)
             {
                 PrivateProp = privateData;
@@ -41,13 +57,14 @@ namespace Stride.Assets.Tests
             }
         }
 
+
         [Fact]
         void EntityIsNotMissingRequiredMembers()
         {
             var memberRequiredComponent = new MemberRequiredComponent(new object(), new object())
             {
                 PublicProp = new object(),
-                PublicField = new object(),
+                PublicField = new object()
             };
             var entity = new Entity("test");
             entity.Add(memberRequiredComponent);
@@ -66,9 +83,10 @@ namespace Stride.Assets.Tests
             var memberRequiredComponent = new MemberRequiredComponent(new object(), new object())
             {
                 PublicProp = new object(),
-                PublicField = null,
+                PublicField = null
             };
             var memberName = nameof(memberRequiredComponent.PublicField);
+
             TestSingle(memberRequiredComponent, memberName);
         }
 
@@ -78,9 +96,10 @@ namespace Stride.Assets.Tests
             var memberRequiredComponent = new MemberRequiredComponent(new object(), new object())
             {
                 PublicProp = null,
-                PublicField = new object(),
+                PublicField = new object()
             };
             var memberName = nameof(memberRequiredComponent.PublicProp);
+
             TestSingle(memberRequiredComponent, memberName);
         }
 
@@ -90,9 +109,10 @@ namespace Stride.Assets.Tests
             var memberRequiredComponent = new MemberRequiredComponent(null, new object())
             {
                 PublicProp = new object(),
-                PublicField = new object(),
+                PublicField = new object()
             };
             var memberName = "PrivateProp";
+
             TestSingle(memberRequiredComponent, memberName);
         }
 
@@ -102,9 +122,10 @@ namespace Stride.Assets.Tests
             var memberRequiredComponent = new MemberRequiredComponent(new object(), null)
             {
                 PublicProp = new object(),
-                PublicField = new object(),
+                PublicField = new object()
             };
             var memberName = "ProtectedProp";
+
             TestSingle(memberRequiredComponent, memberName);
         }
 
@@ -114,7 +135,7 @@ namespace Stride.Assets.Tests
             var memberRequiredComponent = new MemberRequiredComponent(null, null)
             {
                 PublicProp = null,
-                PublicField = null,
+                PublicField = null
             };
             var entity = new Entity("test");
             entity.Add(memberRequiredComponent);
@@ -134,11 +155,13 @@ namespace Stride.Assets.Tests
             {
                 PublicProp = new object(),
                 PublicField = new object(),
-                VirtualProp = null,
+                VirtualProp = null
             };
             var memberName = nameof(memberRequiredComponent.VirtualProp);
+
             TestSingle(memberRequiredComponent, memberName);
         }
+
 
         private static void TestSingle(MemberRequiredComponent memberRequiredComponent, string memberName)
         {

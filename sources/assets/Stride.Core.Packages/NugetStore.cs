@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
@@ -280,7 +281,7 @@ namespace Stride.Core.Packages
         /// <remarks>
         ///   It is safe to call it concurrently because the operations are done by acquiring a lock.
         /// </remarks>
-        public async Task<NugetLocalPackage> InstallPackage(string packageId, PackageVersion version, ProgressReport progress)
+        public async Task<NugetLocalPackage> InstallPackage(string packageId, PackageVersion version, IEnumerable<string> targetFrameworks, ProgressReport progress)
         {
             using (GetLocalRepositoryLock())
             {
@@ -329,13 +330,6 @@ namespace Stride.Core.Packages
                                     LibraryRange = new LibraryRange(packageId, new VersionRange(version.ToNuGetVersion()), LibraryDependencyTarget.Package)
                                 }
                             },
-                            TargetFrameworks =
-                            {
-                                new TargetFrameworkInformation
-                                {
-                                    FrameworkName = NuGetFramework.Parse("net472")
-                                }
-                            },
                             RestoreMetadata = new ProjectRestoreMetadata
                             {
                                 ProjectPath = projectPath,
@@ -343,13 +337,17 @@ namespace Stride.Core.Packages
                                 ProjectStyle = ProjectStyle.PackageReference,
                                 ProjectUniqueName = projectPath,
                                 OutputPath = Path.Combine(Path.GetTempPath(), $"StrideLauncher-{packageId}-{version.ToString()}"),
-                                OriginalTargetFrameworks = new[] { "net472" },
+                                OriginalTargetFrameworks = targetFrameworks.ToList(),
                                 ConfigFilePaths = settings.GetConfigFilePaths(),
                                 PackagesPath = installPath,
                                 Sources = SettingsUtility.GetEnabledSources(settings).ToList(),
                                 FallbackFolders = SettingsUtility.GetFallbackPackageFolders(settings).ToList()
                             }
                         };
+                        foreach (var targetFramework in targetFrameworks)
+                        {
+                            spec.TargetFrameworks.Add(new TargetFrameworkInformation { FrameworkName = NuGetFramework.Parse(targetFramework) });
+                        }
 
                         using (var context = new SourceCacheContext { MaxAge = DateTimeOffset.UtcNow })
                         {
@@ -479,8 +477,7 @@ namespace Stride.Core.Packages
         }
 
         /// <summary>
-        ///   Finds a installed package matching a version or some constraints.
-        ///   If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
+        ///   Finds an installed package matching a version or some constraints.
         /// </summary>
         /// <param name="packageId">Name of the package.</param>
         /// <param name="version">The version range.</param>
@@ -489,51 +486,54 @@ namespace Stride.Core.Packages
         /// <param name="allowUnlisted">A value indicating whether to allow unlisted packages.</param>
         /// <returns>A package matching the search criteria; or <c>null</c> if not found.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="packageId"/> is a <c>null</c> reference.</exception>
+        /// <remarks>
+        ///   If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
+        /// </remarks>
         public NugetPackage FindLocalPackage(string packageId, PackageVersion version = null, ConstraintProvider constraintProvider = null, bool allowPrereleaseVersions = true, bool allowUnlisted = false)
         {
             var versionRange = new PackageVersionRange(version);
+
             return FindLocalPackage(packageId, versionRange, constraintProvider, allowPrereleaseVersions, allowUnlisted);
         }
 
         /// <summary>
-        ///   Finds a installed package using a version range or some constraints.
-        ///   If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
+        ///   Finds an installed local package using a version range or some constraints.
         /// </summary>
-        /// <param name="packageId">Name of the package.</param>
-        /// <param name="versionRange">The version range.</param>
-        /// <param name="constraintProvider">The package constraint provider.</param>
-        /// <param name="allowPrereleaseVersions">A value indicating whether to allow prerelease versions.</param>
-        /// <param name="allowUnlisted">A value indicating whether to allow unlisted packages.</param>
+        /// <param name="packageId">The Id of the package.</param>
+        /// <param name="versionRange">The range of versions of the package to look for.</param>
+        /// <param name="constraintProvider">Version constraints for the packages.</param>
+        /// <param name="allowPrereleaseVersions">Value indicating whether to allow pre-release versions of the packages.</param>
+        /// <param name="allowUnlisted">Value indicating whether to look for packages not listed publically.</param>
         /// <returns>A package matching the search criteria; or <c>null</c> if not found.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="packageId"/> is a <c>null</c> reference.</exception>
+        /// <remarks>
+        ///   If no constraints are specified, the first found entry, whatever it means for NuGet, is used.
+        /// </remarks>
         public NugetLocalPackage FindLocalPackage(string packageId, PackageVersionRange versionRange = null, ConstraintProvider constraintProvider = null, bool allowPrereleaseVersions = true, bool allowUnlisted = false)
         {
             // If an explicit version is specified, disregard the 'allowUnlisted' argument and always allow unlisted packages.
-            if (versionRange != null)
+            if (versionRange is not null)
             {
                 allowUnlisted = true;
             }
             else if (!allowUnlisted && ((constraintProvider is null) || !constraintProvider.HasConstraints))
             {
-                // Simple case, we just get the most recent version based on `allowPrereleaseVersions`.
-                return GetPackagesInstalled(new[] { packageId }).FirstOrDefault(p => allowPrereleaseVersions || string.IsNullOrEmpty(p.Version.SpecialVersion));
+                // Simple case: We just get the most recent version based on `allowPrereleaseVersions`
+                return GetPackagesInstalled(new[] { packageId })
+                    .FirstOrDefault(p => allowPrereleaseVersions || string.IsNullOrEmpty(p.Version.SpecialVersion));
             }
 
             var packages = GetLocalPackages(packageId);
 
             if (!allowUnlisted)
-            {
-                packages = packages.Where(p=>p.Listed);
-            }
+                packages = packages.Where(p => p.Listed);
 
-            if (constraintProvider != null)
-            {
+            if (constraintProvider is not null)
                 versionRange = constraintProvider.GetConstraint(packageId) ?? versionRange;
-            }
-            if (versionRange != null)
-            {
+
+            if (versionRange is not null)
                 packages = packages.Where(p => versionRange.Contains(p.Version));
-            }
+
             return packages?.FirstOrDefault(p => allowPrereleaseVersions || string.IsNullOrEmpty(p.Version.SpecialVersion));
         }
 

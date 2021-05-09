@@ -1,5 +1,7 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// See the LICENSE.md file in the project root for full license information.
 
 #pragma warning disable SA1402 // File may only contain a single class
 #pragma warning disable SA1025 // Code must not contain multiple whitespace in a row

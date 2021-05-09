@@ -8,7 +8,7 @@
   signing of assemblies.
   Also, for unit tests, disable custom Stride compilation steps, and setup the output paths.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" TreatAsLocalProperty="StrideGraphicsApis">

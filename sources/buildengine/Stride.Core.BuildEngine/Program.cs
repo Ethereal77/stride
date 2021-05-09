@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.Diagnostics;
@@ -11,6 +12,8 @@ using System.Text;
 using Mono.Options;
 
 using Stride.Core.Diagnostics;
+
+using static System.String;
 
 namespace Stride.Core.BuildEngine
 {
@@ -35,26 +38,24 @@ namespace Stride.Core.BuildEngine
 
             var p = new OptionSet
                 {
-                    "Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)",
+                    "Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)",
                     "Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)",
-                    "Stride Build Tool - Version: "
-                    +
-                    String.Format(
-                        "{0}.{1}.{2}",
+                    "Stride Build Tool - Version: " + Format("{0}.{1}.{2}",
                         typeof(Program).Assembly.GetName().Version.Major,
                         typeof(Program).Assembly.GetName().Version.Minor,
-                        typeof(Program).Assembly.GetName().Version.Build) + string.Empty,
-                    string.Format("Usage: {0} [options]* inputfile -o outputfile", exeName),
-                    string.Empty,
+                        typeof(Program).Assembly.GetName().Version.Build),
+                    Empty,
+                    Format("Usage: {0} [options]* inputfile -o outputfile", exeName),
+                    Empty,
                     "=== Options ===",
-                    string.Empty,
+                    Empty,
                     { "h|help", "Show this message and exit", v => showHelp = v != null },
                     { "v|verbose", "Show more verbose progress logs", v => options.Verbose = v != null },
                     { "d|debug", "Show debug logs (imply verbose)", v => options.Debug = v != null },
                     { "c|clean", "Clean the command cache, forcing to rebuild everything at the next build.", v => options.BuilderMode = Builder.Mode.Clean },
                     { "cd|clean-delete", "Clean the command cache and delete output objects", v => options.BuilderMode = Builder.Mode.CleanAndDelete },
                     { "b|build-path=", "Build path", v => options.BuildDirectory = v },
-                    { "mdb|metadata-database=", "Optional ; indicate the directory containing the Metadata database, if used.", v => { if (!string.IsNullOrEmpty(v)) options.MetadataDatabaseDirectory = v; } },
+                    { "mdb|metadata-database=", "Optional ; indicate the directory containing the Metadata database, if used.", v => { if (!IsNullOrEmpty(v)) options.MetadataDatabaseDirectory = v; } },
                     { "o|output-path=", "Optional ; indicate an output path to copy the built assets in.", v => options.OutputDirectory = v },
                     { "cfg|config=", "Configuration name", v => options.Configuration = v },
                     { "log", "Enable file logging", v => options.EnableFileLogging = v != null },
@@ -65,7 +66,7 @@ namespace Stride.Core.BuildEngine
                         } },
                     { "monitor-pipe=", "Monitor pipe.", v =>
                         {
-                            if (!string.IsNullOrEmpty(v))
+                            if (!IsNullOrEmpty(v))
                                 options.MonitorPipeNames.Add(v);
                         } },
                     { "slave=", "Slave pipe", v => options.SlavePipe = v }, // Benlitz: I don't think this should be documented
@@ -74,7 +75,7 @@ namespace Stride.Core.BuildEngine
                     { "t|threads=", "Number of threads to create. Default value is the number of hardware threads available.", v => options.ThreadCount = int.Parse(v) },
                     { "p|plugin=", "Add plugin directory.", v =>
                         {
-                            if (!string.IsNullOrEmpty(v))
+                            if (!IsNullOrEmpty(v))
                                 options.Plugins.AddPluginFolder(v);
                         } },
                     { "test=", "Run a test session.", v => options.TestName = v }
@@ -100,7 +101,7 @@ namespace Stride.Core.BuildEngine
                 options.InputFiles = p.Parse(args);
 
                 // Also write logs from master process into a file
-                if (options.SlavePipe == null)
+                if (options.SlavePipe is null)
                 {
                     if (options.EnableFileLogging)
                     {
@@ -141,14 +142,14 @@ namespace Stride.Core.BuildEngine
                     exitCode = BuildEngineCommands.Build(options);
                 }
             }
-            catch (OptionException e)
+            catch (OptionException ex)
             {
-                options.Logger.Error("{0}", e);
+                options.Logger.Error("{0}", ex);
                 exitCode = BuildResultCode.CommandLineError;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                options.Logger.Error("{0}", e);
+                options.Logger.Error("{0}", ex);
                 exitCode = BuildResultCode.BuildError;
             }
             finally

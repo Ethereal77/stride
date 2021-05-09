@@ -1,6 +1,7 @@
-// Copyright (c) 2018-2020 Stride and its contributors (https://stride3d.net)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+// See the LICENSE.md file in the project root for full license information.
 
 using System;
 using System.Threading.Tasks;
@@ -264,9 +265,10 @@ namespace Stride.LauncherApp.ViewModels
                     progressReport.ProgressChanged += (action, progress) =>
                         Dispatcher.InvokeAsync(() => UpdateProgress(action, progress)).Forget();
                     progressReport.UpdateProgress(ProgressAction.Install, -1);
+
                     MetricsHelper.NotifyDownloadStarting(ServerPackage.Id, ServerPackage.Version.ToString());
 
-                    await Store.InstallPackage(ServerPackage.Id, ServerPackage.Version, progressReport);
+                    await Store.InstallPackage(ServerPackage.Id, ServerPackage.Version, ServerPackage.TargetFrameworks, progressReport);
                     downloadCompleted = true;
 
                     MetricsHelper.NotifyDownloadCompleted(ServerPackage.Id, ServerPackage.Version.ToString());

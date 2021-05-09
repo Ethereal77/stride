@@ -6,7 +6,7 @@
   Platform, setup the Assembly Processor location, parameters and processing steps, and to
   configure the compilation and copying of dependencies, both content and native libraries.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project InitialTargets="_StrideCheckVisualCRuntime2019" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

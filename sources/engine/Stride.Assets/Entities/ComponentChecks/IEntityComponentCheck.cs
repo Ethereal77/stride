@@ -1,4 +1,9 @@
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
+// See the LICENSE.md file in the project root for full license information.
+
 using System;
+
 using Stride.Core.Assets;
 using Stride.Core.Assets.Compiler;
 using Stride.Engine;
@@ -6,25 +11,28 @@ using Stride.Engine;
 namespace Stride.Assets.Entities.ComponentChecks
 {
     /// <summary>
-    /// Interface for component checks executed during asset compilation.
+    ///   Defines the interface of Component checks executed during Asset Compilation.
     /// </summary>
     public interface IEntityComponentCheck
     {
         /// <summary>
-        /// A predicate determining if a component can be passed to <see cref="Check(EntityComponent)"/>.
+        ///   Determines if a Component can be passed to <see cref="Check(EntityComponent)"/>.
         /// </summary>
-        /// <param name="componentType">Type of the component to be checked.</param>
-        /// <returns>Returns <c>true</c> if the component of <paramref name="componentType"/> can be passed to <see cref="Check(EntityComponent)"/>.</returns>
+        /// <param name="componentType">Type of the Component to be checked.</param>
+        /// <returns>
+        ///   <c>true</c> if the Component of type <paramref name="componentType"/> can be passed to <see cref="Check(EntityComponent)"/>;
+        ///   <c>false</c> otherwise.
+        /// </returns>
         bool AppliesTo(Type componentType);
 
         /// <summary>
-        /// Checks if the component state is valid and reports appropriate errors/warnings.
+        ///   Checks if the Component state is valid and reports appropriate errors / warnings if not.
         /// </summary>
-        /// <param name="component">Component to check.</param>
-        /// <param name="entity">Entity the <paramref name="component"/> is associated with.</param>
-        /// <param name="assetItem">Asset item the <paramref name="entity"/> belongs to.</param>
-        /// <param name="targetUrlInStorage">URL of the <paramref name="assetItem"/>.</param>
-        /// <param name="result">Logger result to write information to.</param>
+        /// <param name="component">The Component to check.</param>
+        /// <param name="entity">The Entity the <paramref name="component"/> is associated with.</param>
+        /// <param name="assetItem">The Asset item the <paramref name="entity"/> belongs to.</param>
+        /// <param name="targetUrlInStorage">The URL of the <paramref name="assetItem"/>.</param>
+        /// <param name="result">The Asset Compilation result to report to.</param>
         void Check(EntityComponent component, Entity entity, AssetItem assetItem, string targetUrlInStorage, AssetCompilerResult result);
     }
 }

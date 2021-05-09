@@ -1,19 +1,23 @@
-// Copyright (c) Stride contributors (https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
-// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using Xunit;
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// See the LICENSE.md file in the project root for full license information.
 
-using Stride.Core.Diagnostics;
-using Stride.Core.IO;
-using Stride.Core.Storage;
-using Stride.Graphics;
-using Stride.Shaders.Compiler;
-using System.Linq;
-using Stride.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using Stride.Core.Shaders.Ast;
+
+using Stride.Core.IO;
+using Stride.Core.Storage;
 using Stride.Core.Mathematics;
+using Stride.Core.Diagnostics;
+using Stride.Graphics;
+using Stride.Core.Shaders.Ast;
+using Stride.Shaders.Compiler;
+using Stride.Rendering;
+
+using Xunit;
 
 namespace Stride.Shaders.Tests
 {

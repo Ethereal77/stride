@@ -6,7 +6,7 @@
   defaults, platforms, Target Frameworks (TFMs), language, runtime identifiers (RIDs), and
   prepare the steps for building the project and package the output.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

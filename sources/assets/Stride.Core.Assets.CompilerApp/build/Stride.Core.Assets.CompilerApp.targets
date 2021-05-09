@@ -6,7 +6,7 @@
   paths for the Asset Compiler, setup its parameters, and define the compilation targets to
   build, clean, publish and pack assets.
 
-  Copyright (C) 2020 Stride and its contributors
+  Copyright (C) 2021 Stride and its contributors
 ***********************************************************************************************
 -->
 <Project InitialTargets="_StrideCheckVisualCRuntime2013">
