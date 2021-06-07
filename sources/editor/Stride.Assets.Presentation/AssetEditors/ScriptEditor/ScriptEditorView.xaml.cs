@@ -20,7 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using RoslynPad.Roslyn.Diagnostics;
+using Stride.Roslyn.EditorServices.Diagnostics;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Assets.Presentation.ViewModel;
@@ -49,7 +49,7 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
         public async Task<IAssetEditorViewModel> InitializeEditor(AssetViewModel asset)
         {
             var script = (ScriptSourceFileAssetViewModel)asset;
-            
+
             editor = new ScriptEditorViewModel(script, script.TextContainer);
 
             // Ctrl + mouse wheel => zoom/unzoom

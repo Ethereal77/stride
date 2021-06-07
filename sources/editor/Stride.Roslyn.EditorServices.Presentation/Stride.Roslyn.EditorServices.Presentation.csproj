@@ -1,0 +1,22 @@
+<Project>
+  <Import Project="..\..\targets\Stride.props" />
+
+  <PropertyGroup>
+    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+    <UseWPF>true</UseWPF>
+
+    <AssemblyTitle>Stride Editor UI for WPF</AssemblyTitle>
+    <Description>Provides platform-specific (WPF) implementations for UI elements required by the Stride.Roslyn.Editor package.</Description>
+
+    <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
+
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\build\</SolutionDir>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stride.Roslyn.EditorServices\Stride.Roslyn.EditorServices.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(StrideSdkTargets)" />
+</Project>

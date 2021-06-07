@@ -11,10 +11,10 @@ using System.Windows.Media;
 
 using Microsoft.CodeAnalysis;
 
-using RoslynPad.Editor;
-using RoslynPad.Roslyn.BraceMatching;
-using RoslynPad.Roslyn.Diagnostics;
-using RoslynPad.Roslyn.QuickInfo;
+using Stride.Roslyn.Editor;
+using Stride.Roslyn.EditorServices.BraceMatching;
+using Stride.Roslyn.EditorServices.Diagnostics;
+using Stride.Roslyn.EditorServices.QuickInfo;
 
 using Stride.Core.Presentation.Themes;
 

@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 using Microsoft.CodeAnalysis;
 
-using RoslynPad.Editor;
-using RoslynPad.Roslyn.Diagnostics;
+using Stride.Roslyn.Editor;
+using Stride.Roslyn.EditorServices.Diagnostics;
 
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel;

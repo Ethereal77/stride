@@ -17,7 +17,7 @@ using Microsoft.CodeAnalysis.Text;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Utils;
 
-using RoslynPad.Editor;
+using Stride.Roslyn.Editor;
 
 using Stride.Core.Assets;
 using Stride.Core.Assets.Editor.ViewModel;

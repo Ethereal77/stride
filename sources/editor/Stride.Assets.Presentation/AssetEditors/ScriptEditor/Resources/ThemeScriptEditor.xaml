@@ -3,15 +3,15 @@
                     xmlns:cc="clr-namespace:ICSharpCode.AvalonEdit.CodeCompletion;assembly=ICSharpCode.AvalonEdit"
                     xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
                     xmlns:scriptEditor="clr-namespace:Stride.Assets.Presentation.AssetEditors.ScriptEditor"
-                    xmlns:editor="clr-namespace:RoslynPad.Editor;assembly=RoslynPad.Editor.Windows"
-                    xmlns:codeFixes="clr-namespace:RoslynPad.Roslyn.CodeFixes;assembly=RoslynPad.Roslyn"
+                    xmlns:editor="clr-namespace:Stride.Roslyn.Editor;assembly=Stride.Roslyn.Editor"
+                    xmlns:codeFixes="clr-namespace:Stride.Roslyn.EditorServices.CodeFixes;assembly=Stride.Roslyn.EditorServices"
                     xmlns:converters="clr-namespace:Stride.Assets.Presentation.AssetEditors.ScriptEditor.Converters"
                     xmlns:codeActions="clr-namespace:Microsoft.CodeAnalysis.CodeActions;assembly=Microsoft.CodeAnalysis.Workspaces"
                     xmlns:codeAnalysis="clr-namespace:Microsoft.CodeAnalysis;assembly=Microsoft.CodeAnalysis"
                     xmlns:sd="http://schemas.stride3d.net/xaml/presentation">
   <!-- Various styles and resources needed for the code editor; some of them are based on templates from AvalonEdit (MIT license) and RoslyPad (Apache license) -->
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="/RoslynPad.Editor.Windows;component/Themes/Generic.xaml"/>
+    <ResourceDictionary Source="/Stride.Roslyn.Editor;component/Themes/Generic.xaml"/>
   </ResourceDictionary.MergedDictionaries>
 
   <Style TargetType="cc:CompletionWindow" BasedOn="{StaticResource {x:Type cc:CompletionWindow}}">

@@ -11,7 +11,7 @@ using System.Windows.Markup;
 
 using Microsoft.CodeAnalysis.CodeActions;
 
-using RoslynPad.Roslyn.CodeActions;
+using Stride.Roslyn.EditorServices.CodeActions;
 
 using Stride.Core.Presentation.ValueConverters;
 

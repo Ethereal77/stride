@@ -15,7 +15,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-using RoslynPad.Roslyn.Diagnostics;
+using Stride.Roslyn.EditorServices.Diagnostics;
 
 namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 {

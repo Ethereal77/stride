@@ -51,18 +51,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="RoslynPad.Editor.Windows">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net5.0-windows\RoslynPad.Editor.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="RoslynPad.Roslyn.Windows">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net5.0-windows\RoslynPad.Roslyn.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="RoslynPad.Roslyn">
-      <HintPath>$(StrideCommonDependenciesDir)RoslynPad\net5.0-windows\RoslynPad.Roslyn.dll</HintPath>
-    </Reference>
-
-    <PackageReference Include="AvalonEdit" Version="6.1.1" />
+    <PackageReference Include="AvalonEdit" Version="6.1.2.30" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="3.9.0" />
+
+    <ProjectReference Include="..\Stride.Roslyn.EditorServices\Stride.Roslyn.EditorServices.csproj" />
+    <ProjectReference Include="..\Stride.Roslyn.EditorServices.Presentation\Stride.Roslyn.EditorServices.Presentation.csproj" />
+    <ProjectReference Include="..\Stride.Roslyn.Editor\Stride.Roslyn.Editor.csproj" />
 
     <ProjectReference Include="..\..\assets\Stride.Core.Assets.Quantum\Stride.Core.Assets.Quantum.csproj" />
     <ProjectReference Include="..\..\presentation\Stride.Core.Presentation.Dialogs\Stride.Core.Presentation.Dialogs.csproj" />
@@ -78,14 +73,6 @@
 
   <Import Project="$(StrideSdkTargets)" />
 
-  <PropertyGroup>
-    <TargetsForTfmSpecificBuildOutput>_StrideIncludeExtraAssemblies;$(TargetsForTfmSpecificBuildOutput)</TargetsForTfmSpecificBuildOutput>
-  </PropertyGroup>
-  <Target Name="_StrideIncludeExtraAssemblies">
-    <ItemGroup>
-      <BuildOutputInPackage Include="$(OutputPath)RoslynPad*.dll" />
-    </ItemGroup>
-  </Target>
   <Target Name="RemoveVisualStudioRoslynDependencies" AfterTargets="ResolveAssemblyReferences">
     <ItemGroup>
       <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="$([System.String]::Copy('%(ReferenceCopyLocalPaths.FileName)').StartsWith('Microsoft.VisualStudio.'))" />

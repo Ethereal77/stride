@@ -13,8 +13,8 @@ using System.Windows.Media;
 
 using Microsoft.CodeAnalysis.CodeActions;
 
-using RoslynPad.Roslyn.CodeActions;
-using RoslynPad.Roslyn.Completion;
+using Stride.Roslyn.EditorServices.CodeActions;
+using Stride.Roslyn.EditorServices.Completion;
 
 using Stride.Core.Presentation.ValueConverters;
 

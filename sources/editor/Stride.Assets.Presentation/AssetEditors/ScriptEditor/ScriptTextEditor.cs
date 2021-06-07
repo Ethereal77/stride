@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 using Microsoft.CodeAnalysis;
 
-using RoslynPad.Editor;
+using Stride.Roslyn.Editor;
 
 using Stride.Core.Presentation.Controls;
 using Stride.Core.Presentation.Core;

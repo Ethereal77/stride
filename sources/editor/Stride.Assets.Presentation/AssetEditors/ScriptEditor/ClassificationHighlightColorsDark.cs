@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis.Classification;
-using RoslynPad.Editor;
+using Stride.Roslyn.Editor;
 
 namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 {

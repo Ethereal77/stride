@@ -15,9 +15,11 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host.Mef;
 
-using RoslynPad.Roslyn;
-using RoslynPad.Roslyn.Diagnostics;
-using RoslynPad.Editor;
+using Stride.Roslyn.EditorServices.Diagnostics;
+using Stride.Roslyn.Editor;
+using System.Collections.Generic;
+using Stride.Roslyn.EditorServices;
+using Stride.Roslyn.EditorServices.Presentation;
 
 namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
 {
@@ -59,16 +61,28 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
                 Assembly.Load("Microsoft.CodeAnalysis.Workspaces.MSBuild"),
                 typeof(IRoslynHost).Assembly,                               // RoslynPad.Roslyn
                 typeof(SymbolDisplayPartExtensions).Assembly,               // RoslynPad.Roslyn.Windows
-                typeof(AvalonEditTextContainer).Assembly                    // RoslynPad.Editor.Windows
+                typeof(AvalonEditTextContainer).Assembly                    // Stride.Roslyn.Editor.Windows
             };
 
             var partTypes = assemblies
-                .SelectMany(x => x.DefinedTypes)
-                .Select(x => x.AsType());
+                .Where(a => a is not null)
+                .SelectMany(a => SafeGetTypes(a));
 
             return new ContainerConfiguration()
                 .WithParts(partTypes)
                 .CreateContainer();
+
+            static IEnumerable<Type> SafeGetTypes(Assembly a)
+            {
+                try
+                {
+                    return a.DefinedTypes.Select(t => t.AsType());
+                }
+                catch (ReflectionTypeLoadException e)
+                {
+                    return e.Types.Where(t => t is not null);
+                }
+            }
         }
 
         internal static readonly ImmutableArray<string> PreprocessorSymbols =

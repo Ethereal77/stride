@@ -33,9 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="16.9.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build" Version="16.10.0" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.4.1" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.9.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.10.0" ExcludeAssets="runtime" />
 
     <ProjectReference Include="..\..\buildengine\Stride.Core.BuildEngine.Common\Stride.Core.BuildEngine.Common.csproj" />
     <ProjectReference Include="..\Stride.Core.Packages\Stride.Core.Packages.csproj" />
