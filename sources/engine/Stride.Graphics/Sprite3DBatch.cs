@@ -124,7 +124,7 @@ namespace Stride.Graphics
                 depthSprite = projectedPosition.Z / projectedPosition.W;
             }
 
-            var elementInfo = new ElementInfo(StaticQuadBufferInfo.VertexByElement, StaticQuadBufferInfo.IndicesByElement, in drawInfo, depthSprite);
+            var elementInfo = new ElementInfo(StaticQuadBufferInfo.VerticesByElement, StaticQuadBufferInfo.IndicesByElement, in drawInfo, depthSprite);
 
             Draw(texture, in elementInfo);
         }

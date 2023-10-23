@@ -480,7 +480,7 @@ namespace Stride.Graphics
             font.InternalUIDraw(GraphicsContext.CommandList, ref proxy, ref drawCommand);
         }
 
-        protected override unsafe void UpdateBufferValuesFromElementInfo(ref ElementInfo elementInfo, IntPtr vertexPtr, IntPtr indexPtr, int vertexOffset)
+        protected override unsafe void UpdateBufferValuesFromElementInfo(in ElementInfo elementInfo, IntPtr vertexPtr, IntPtr indexPtr, int vertexOffset)
         {
             // the vertex buffer
             var vertex = (VertexPositionColorTextureSwizzle*)vertexPtr;
@@ -491,13 +491,16 @@ namespace Stride.Graphics
                     case PrimitiveType.Rectangle:
                         CalculateRectangleVertices(drawInfo, vertex);
                         break;
+
                     case PrimitiveType.BorderRectangle:
                         CalculateBorderRectangleVertices(drawInfo, vertex);
                         break;
+
                     case PrimitiveType.Cube:
                     case PrimitiveType.ReverseCube:
                         CalculateCubeVertices(drawInfo, vertex);
                         break;
+
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

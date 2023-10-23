@@ -71,7 +71,7 @@ namespace Stride.Graphics.Font
                     return;
 
                 base.FontSystem = value;
-                
+
                 // retrieve needed info from the font
                 float relativeLineSpacing;
                 float relativeBaseOffsetY;
@@ -127,7 +127,7 @@ namespace Stride.Graphics.Font
             return characterData.Glyph;
         }
 
-        internal override void PreGenerateGlyphs(ref StringProxy text, ref Vector2 size)
+        internal override void PreGenerateGlyphs(in StringProxy text, Vector2 size)
         {
             for (int i = 0; i < text.Length; i++)
             {
