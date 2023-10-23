@@ -1,4 +1,4 @@
-// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -11,9 +11,9 @@ using Stride.Rendering;
 namespace Stride.Graphics
 {
     /// <summary>
-    ///   Renders groups of sprites.
+    ///   Renders a group of lines.
     /// </summary>
-    public partial class SpriteBatch : BatchBase<SpriteBatch.SpriteDrawInfo>
+    public partial class LineBatch : BatchBase<LineBatch.SpriteDrawInfo>
     {
         /// <summary>
         ///   Contains the data needed to draw a sprite.
@@ -45,7 +45,7 @@ namespace Stride.Graphics
         public EffectInstance TextureSpriteFontEffect { get; }
 
         /// <summary>
-        ///   Gets or sets the default depth value used by the <see cref="SpriteBatch"/> when the <see cref="VirtualResolution"/> is not set.
+        ///   Gets or sets the default depth value used by the <see cref="LineBatch"/> when the <see cref="VirtualResolution"/> is not set.
         /// </summary>
         /// <remarks>
         ///   More precisely, this value represents the length "farPlane - nearPlane" used by the default projection matrix.
@@ -53,21 +53,21 @@ namespace Stride.Graphics
         public float DefaultDepth { get; set; } = 200;
 
         /// <summary>
-        ///   Gets or sets the virtual resolution used for this <see cref="SpriteBatch"/>
+        ///   Gets or sets the virtual resolution used for this <see cref="LineBatch"/>
         /// </summary>
         public Vector3? VirtualResolution { get; set; }
 
 
         /// <summary>
-        ///   Initializes a new instance of the <see cref="SpriteBatch" /> class.
+        ///   Initializes a new instance of the <see cref="LineBatch" /> class.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="bufferElementCount">The maximum number of elements that can be batched in one time.</param>
         /// <param name="batchCapacity">The batch capacity default to 64.</param>
-        public SpriteBatch(GraphicsDevice graphicsDevice, int bufferElementCount = 1024, int batchCapacity = 64)
+        public LineBatch(GraphicsDevice graphicsDevice, int bufferElementCount = 1024, int batchCapacity = 64)
 
             : base(graphicsDevice, Bytecode, BytecodeSRgb,
-                   StaticQuadBufferInfo.CreateQuadBufferInfo("SpriteBatch.VertexIndexBuffer", cycle: true, bufferElementCount, batchCapacity),
+                   StaticQuadBufferInfo.CreateQuadBufferInfo("LineBatch.VertexIndexBuffer", cycle: true, bufferElementCount, batchCapacity),
                    VertexPositionColorTextureSwizzle.Layout)
         {
             // For signed distance field thumbnail rendering
@@ -82,7 +82,7 @@ namespace Stride.Graphics
         /// <param name="virtualResolution">The virtual resolution of the viewport to render to.</param>
         /// <returns>The default projection matrix for the provided virtual resolution.</returns>
         /// <remarks>
-        ///   The sprite batch default projection is an orthogonal matrix such that <c>(0,0)</c> is the Top / Left corner of
+        ///   The line batch default projection is an orthogonal matrix such that <c>(0,0)</c> is the Top / Left corner of
         ///   the screen and <c>(VirtualResolution.X, VirtualResolution.Y)</c> is the Bottom / Right corner of the screen.
         /// </remarks>
         public static Matrix CalculateDefaultProjection(in Vector3 virtualResolution)
@@ -98,7 +98,7 @@ namespace Stride.Graphics
         /// <param name="virtualResolution">The virtual resolution of the viewport to render to.</param>
         /// <param name="projection">When this method completes, contains the calculated projection matrix.</param>
         /// <remarks>
-        ///   The sprite batch default projection is an orthogonal matrix such that <c>(0,0)</c> is the Top / Left corner of
+        ///   The line batch default projection is an orthogonal matrix such that <c>(0,0)</c> is the Top / Left corner of
         ///   the screen and <c>(VirtualResolution.X, VirtualResolution.Y)</c> is the Bottom / Right corner of the screen.
         /// </remarks>
         public static void CalculateDefaultProjection(in Vector3 virtualResolution, out Matrix projection)
@@ -138,7 +138,7 @@ namespace Stride.Graphics
         #region Begin
 
         /// <summary>
-        ///   Begins a sprite batch operation using deferred sort and default state objects.
+        ///   Begins a line batch operation using deferred sort and default state objects.
         /// </summary>
         /// <param name="graphicsContext">The graphics context to use.</param>
         /// <param name="sortMode">The sprite drawing order to use for the batch session.</param>
@@ -161,7 +161,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Begins a sprite batch rendering using the specified sorting mode and blend state, sampler, depth stencil,
+        ///   Begins a line batch rendering using the specified sorting mode and blend state, sampler, depth stencil,
         ///   and rasterizer state objects, plus a custom effect.
         /// </summary>
         /// <param name="graphicsContext">The graphics context to use.</param>
@@ -170,11 +170,11 @@ namespace Stride.Graphics
         /// <param name="samplerState">The sampling state to use for the batch session, or <see langword="null"/> to use the default <see cref="SamplerStateFactory.LinearClamp"/>.</param>
         /// <param name="depthStencilState">The depth stencil state to use for the batch session, or <see langword="null"/> to use the default <see cref="DepthStencilStates.Default"/>.</param>
         /// <param name="rasterizerState">The rasterizer state to use for the batch session, or <see langword="null"/> to use the default <see cref="RasterizerStates.CullBack"/>.</param>
-        /// <param name="effect">The effect to use for the batch session, or <see langword="null"/> to use the default SpriteBatch Class shader.</param>
+        /// <param name="effect">The effect to use for the batch session, or <see langword="null"/> to use the default LineBatch Class shader.</param>
         /// <param name="stencilValue">The value of the stencil buffer to take as reference for the batch session.</param>
         /// <remarks>
         ///   Passing <see langword="null"/> for any of the state objects indicates the default default state object
-        ///   should be used. Passing a <see langword="null"/> <paramref name="effect"/> selects the default SpriteBatch Class shader.
+        ///   should be used. Passing a <see langword="null"/> <paramref name="effect"/> selects the default LineBatch Class shader.
         /// </remarks>
         public void Begin(GraphicsContext graphicsContext, SpriteSortMode sortMode = SpriteSortMode.Deferred,
                           BlendStateDescription? blendState = null, SamplerState samplerState = null,
@@ -187,7 +187,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Begins a sprite batch rendering using the specified sorting mode and blend state, sampler, depth stencil,
+        ///   Begins a line batch rendering using the specified sorting mode and blend state, sampler, depth stencil,
         ///   rasterizer state objects, plus a custom effect and a 2D transformation matrix.
         /// </summary>
         /// <param name="graphicsContext">The graphics context to use.</param>
@@ -197,11 +197,11 @@ namespace Stride.Graphics
         /// <param name="samplerState">The sampling state to use for the batch session, or <see langword="null"/> to use the default <see cref="SamplerStateFactory.LinearClamp"/>.</param>
         /// <param name="depthStencilState">The depth stencil state to use for the batch session, or <see langword="null"/> to use the default <see cref="DepthStencilStates.Default"/>.</param>
         /// <param name="rasterizerState">The rasterizer state to use for the batch session, or <see langword="null"/> to use the default <see cref="RasterizerStates.CullBack"/>.</param>
-        /// <param name="effect">The effect to use for the batch session, or <see langword="null"/> to use the default SpriteBatch Class shader.</param>
+        /// <param name="effect">The effect to use for the batch session, or <see langword="null"/> to use the default LineBatch Class shader.</param>
         /// <param name="stencilValue">The value of the stencil buffer to take as reference for the batch session.</param>
         /// <remarks>
         ///   Passing <see langword="null"/> for any of the state objects indicates the default default state object
-        ///   should be used. Passing a <see langword="null"/> <paramref name="effect"/> selects the default SpriteBatch Class shader.
+        ///   should be used. Passing a <see langword="null"/> <paramref name="effect"/> selects the default LineBatch Class shader.
         /// </remarks>
         public void Begin(GraphicsContext graphicsContext, in Matrix viewMatrix, SpriteSortMode sortMode = SpriteSortMode.Deferred,
                           BlendStateDescription? blendState = null, SamplerState samplerState = null,
@@ -214,7 +214,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Begins a sprite batch rendering using the specified sorting mode and blend state, sampler, depth stencil,
+        ///   Begins a line batch rendering using the specified sorting mode and blend state, sampler, depth stencil,
         ///   rasterizer state objects, plus a custom effect and a 2D transformation matrix.
         /// </summary>
         /// <param name="graphicsContext">The graphics context to use.</param>
@@ -225,11 +225,11 @@ namespace Stride.Graphics
         /// <param name="samplerState">The sampling state to use for the batch session, or <see langword="null"/> to use the default <see cref="SamplerStateFactory.LinearClamp"/>.</param>
         /// <param name="depthStencilState">The depth stencil state to use for the batch session, or <see langword="null"/> to use the default <see cref="DepthStencilStates.Default"/>.</param>
         /// <param name="rasterizerState">The rasterizer state to use for the batch session, or <see langword="null"/> to use the default <see cref="RasterizerStates.CullBack"/>.</param>
-        /// <param name="effect">The effect to use for the batch session, or <see langword="null"/> to use the default SpriteBatch Class shader.</param>
+        /// <param name="effect">The effect to use for the batch session, or <see langword="null"/> to use the default LineBatch Class shader.</param>
         /// <param name="stencilValue">The value of the stencil buffer to take as reference for the batch session.</param>
         /// <remarks>
         ///   Passing <see langword="null"/> for any of the state objects indicates the default default state object
-        ///   should be used. Passing a <see langword="null"/> <paramref name="effect"/> selects the default SpriteBatch Class shader.
+        ///   should be used. Passing a <see langword="null"/> <paramref name="effect"/> selects the default LineBatch Class shader.
         /// </remarks>
         public void Begin(GraphicsContext graphicsContext, in Matrix viewMatrix, in Matrix projectionMatrix,
                           SpriteSortMode sortMode = SpriteSortMode.Deferred,
@@ -250,9 +250,9 @@ namespace Stride.Graphics
         #region Draw sprites
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, destination rectangle, and color.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, destination rectangle, and color.
         /// </summary>
-        /// <param name="texture">The sprite texture.</param>
+        /// <param name="texture">The line texture.</param>
         /// <param name="destinationRectangle">A rectangle that specifies the destination for drawing the sprite, in screen coordinates.</param>
         /// <param name="color">The color to tint the sprite. Specify <see cref="Color.White"/> for full color with no tinting.</param>
         /// <remarks>
@@ -265,7 +265,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, position and color.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, position and color.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -279,7 +279,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, position and color.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, position and color.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -296,7 +296,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, destination rectangle, source rectangle, color, rotation, origin, effects and layer.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, destination rectangle, source rectangle, color, rotation, origin, effects and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="destinationRectangle">A rectangle that specifies (in screen coordinates) the destination for drawing the sprite. If this rectangle is not the same size as the source rectangle, the sprite will be scaled to fit.</param>
@@ -320,7 +320,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -343,7 +343,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -366,7 +366,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, and color.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, position, source rectangle, and color.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -384,7 +384,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -410,7 +410,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
+        ///   Adds a line to a batch of lines for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -558,7 +558,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.
+        ///   Adds a string to a batch of lines for rendering using the specified font, text, position, and color.
         /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">A text string.</param>
@@ -577,7 +577,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.
+        ///   Adds a string to a batch of lines for rendering using the specified font, text, position, and color.
         /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">Text string.</param>
@@ -596,7 +596,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.
+        ///   Adds a string to a batch of lines for rendering using the specified font, text, position, and color.
         /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">A text string.</param>
@@ -616,7 +616,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.
+        ///   Adds a string to a batch of lines for rendering using the specified font, text, position, and color.
         /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">Text string.</param>
@@ -636,7 +636,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
+        ///   Adds a string to a batch of lines for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
         /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">A text string.</param>
@@ -660,7 +660,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
+        ///   Adds a string to a batch of lines for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
         /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">Text string.</param>
@@ -684,7 +684,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
+        ///   Adds a string to a batch of lines for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
         /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">A text string.</param>
@@ -709,7 +709,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        ///   Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
+        ///   Adds a string to a batch of lines for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
         /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">Text string.</param>
@@ -760,7 +760,7 @@ namespace Stride.Graphics
             drawCommand.Position.X /= resolutionRatio.X;
             drawCommand.Position.Y /= resolutionRatio.Y;
 
-            spriteFont.InternalDraw(commandList, text, ref drawCommand, alignment);
+            spriteFont.InternalDraw(commandList, ref text, ref drawCommand, alignment);
 
             //
             // Helper to throw an exception when the text is null.
@@ -812,11 +812,11 @@ namespace Stride.Graphics
                 vertex->ColorScale = drawInfo.ColorScale;
                 vertex->ColorAdd = drawInfo.ColorAdd;
 
-                corner = CornerOffsets[((j ^ (int)drawInfo.SpriteEffects) + (int)drawInfo.Orientation) % 4];
+                corner = CornerOffsets[((j ^ (int) drawInfo.SpriteEffects) + (int) drawInfo.Orientation) % 4];
                 vertex->TextureCoordinate.X = (drawInfo.Source.X + corner.X * drawInfo.Source.Width) * deltaX;
                 vertex->TextureCoordinate.Y = (drawInfo.Source.Y + corner.Y * drawInfo.Source.Height) * deltaY;
 
-                vertex->Swizzle = (int)drawInfo.Swizzle;
+                vertex->Swizzle = (int) drawInfo.Swizzle;
 
                 vertex++;
             }
