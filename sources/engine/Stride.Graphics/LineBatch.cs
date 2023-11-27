@@ -13,25 +13,19 @@ namespace Stride.Graphics
     /// <summary>
     ///   Renders a group of lines.
     /// </summary>
-    public partial class LineBatch : BatchBase<LineBatch.SpriteDrawInfo>
+    public partial class LineBatch : BatchBase<LineBatch.LineDrawInfo>
     {
         /// <summary>
-        ///   Contains the data needed to draw a sprite.
+        ///   Contains the data needed to draw a line.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
-        public struct SpriteDrawInfo
+        public struct LineDrawInfo
         {
-            public RectangleF Source;
-            public RectangleF Destination;
-            public Vector2 Origin;
-            public float Rotation;
+            public Vector2 Source;
+            public Vector2 Destination;
             public float Depth;
-            public SpriteEffects SpriteEffects;
-            public Color4 ColorScale;
-            public Color4 ColorAdd;
-            public SwizzleMode Swizzle;
-            public Vector2 TextureSize;
-            public ImageOrientation Orientation;
+            public Color4 ColorSource;
+            public Color4 ColorDestination;
         }
 
 
@@ -42,7 +36,7 @@ namespace Stride.Graphics
 
         private Matrix defaultProjectionMatrix;
 
-        public EffectInstance TextureSpriteFontEffect { get; }
+        public EffectInstance LineEffect { get; }
 
         /// <summary>
         ///   Gets or sets the default depth value used by the <see cref="LineBatch"/> when the <see cref="VirtualResolution"/> is not set.
@@ -70,8 +64,6 @@ namespace Stride.Graphics
                    StaticQuadBufferInfo.CreateQuadBufferInfo("LineBatch.VertexIndexBuffer", cycle: true, bufferElementCount, batchCapacity),
                    VertexPositionColorTextureSwizzle.Layout)
         {
-            // For signed distance field thumbnail rendering
-            //textureSpriteFontEffect = new EffectInstance(new Effect(graphicsDevice, SpriteSignedDistanceFieldFontShader.Bytecode) { Name = "TextureSpriteFontEffect" });
         }
 
         #region Projection
@@ -779,19 +771,11 @@ namespace Stride.Graphics
         {
             var vertex = (VertexPositionColorTextureSwizzle*) vertexPtr;
 
-            ref SpriteDrawInfo drawInfo = ref Unsafe.AsRef(elementInfo.DrawInfo);
+            ref LineDrawInfo drawInfo = ref Unsafe.AsRef(elementInfo.DrawInfo);
 
             float deltaX = 1 / drawInfo.TextureSize.X;
             float deltaY = 1 / drawInfo.TextureSize.Y;
 
-            Vector2 rotation = new(1, 0);
-
-            if (MathF.Abs(drawInfo.Rotation) > float.Epsilon)
-            {
-                (rotation.X, rotation.Y) = MathF.SinCos(drawInfo.Rotation);
-            }
-
-            Vector2 origin = drawInfo.Origin;
             origin.X /= Math.Max(float.Epsilon, drawInfo.Source.Width);
             origin.Y /= Math.Max(float.Epsilon, drawInfo.Source.Height);
 
