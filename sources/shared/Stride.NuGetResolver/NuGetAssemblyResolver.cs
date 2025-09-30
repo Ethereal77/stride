@@ -18,6 +18,8 @@ public static partial class NuGetAssemblyResolver
     public static string AvaloniaVersion = string.Empty;
 #endif
 
+    private static ISettings? nugetSettings;
+
     static bool assembliesResolved;
     static readonly object assembliesLock = new();
     static Dictionary<string, string>? assemblyNameToPath;
@@ -39,25 +41,20 @@ public static partial class NuGetAssemblyResolver
 
     public static void SetupNuGet(List<(string targetFramework, string packageName, string packageVersion)> packagesConfigs)
     {
-        if (packagesConfigs.Count == 0) return;
+        if (packagesConfigs.Count == 0)
+            return;
 
         // Make sure our nuget local store is added to nuget config
-        var folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        var devSourcePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DevSource);
+        var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-        while (folder != null)
+        while (directory is not null)
         {
-            if (File.Exists(Path.Combine(folder, @"build\Stride.sln")))
+            if (File.Exists(Path.Combine(directory, @"build\Stride.sln")))
             {
-                var settings = Settings.LoadDefaultSettings(null);
-
-                Directory.CreateDirectory(devSourcePath);
-                CheckPackageSource(settings, "Stride Dev", devSourcePath);
-
-                settings.SaveToDisk();
+                nugetSettings = Settings.LoadDefaultSettings(root: directory);
                 break;
             }
-            folder = Path.GetDirectoryName(folder);
+            directory = Path.GetDirectoryName(directory);
         }
 
         // Note: we perform nuget restore inside the assembly resolver rather than top level module ctor (otherwise it freezes)
@@ -116,7 +113,7 @@ public static partial class NuGetAssemblyResolver
 
                             // Only allow this specific version
                             var versionRange = new VersionRange(new NuGetVersion(packageVersion), true, new NuGetVersion(packageVersion), true);
-                            var (request, result) = RestoreHelper.Restore(logger, nugetFramework, RuntimeInformation.RuntimeIdentifier, packageName, versionRange);
+                            var (request, result) = RestoreHelper.Restore(logger, nugetFramework, RuntimeInformation.RuntimeIdentifier, packageName, versionRange, nugetSettings);
                             if (!result.Success)
                             {
                                 throw new InvalidOperationException("Could not restore NuGet packages");

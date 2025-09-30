@@ -137,9 +137,9 @@ namespace Stride.Core.Assets
             return libPaths;
         }
 
-        public static (RestoreRequest, RestoreResult) Restore(ILogger logger, NuGetFramework nugetFramework, string runtimeIdentifier, string packageName, VersionRange versionRange, string settingsRoot = null)
+        public static (RestoreRequest, RestoreResult) Restore(ILogger logger, NuGetFramework nugetFramework, string runtimeIdentifier, string packageName, VersionRange versionRange, ISettings? settings)
         {
-            var settings = NuGet.Configuration.Settings.LoadDefaultSettings(settingsRoot);
+            settings ??= Settings.LoadDefaultSettings(root: null);
 
             var assemblies = new List<string>();
 
