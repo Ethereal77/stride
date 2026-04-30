@@ -59,7 +59,8 @@ namespace Stride.TextureConverter.Tests
 
         public Dictionary<String, String> Checksum { get; private set; }
 
-        private TestTools() {
+        private TestTools()
+        {
             Checksum = new Dictionary<string, string>
             {
                 // StrideTexLibrary

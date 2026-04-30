@@ -159,8 +159,12 @@ namespace Stride.Assets.Presentation.AssetEditors.ScriptEditor
                 if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
                     continue;
 
-                var text = diagnosticData.GetTextSpan() ?? default;
-                var marker = textMarkerService.TryCreate(text.Start, text.Length);
+                if (diagnosticData.GetTextSpan() is Microsoft.CodeAnalysis.Text.TextSpan diag == false)
+                {
+                    continue;
+                }
+
+                var marker = textMarkerService.TryCreate(diag.Start, diag.Length);
                 if (marker != null)
                 {
                     marker.Tag = args.Id;

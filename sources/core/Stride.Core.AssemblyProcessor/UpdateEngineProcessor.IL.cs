@@ -193,7 +193,10 @@ namespace Stride.Core.AssemblyProcessor
             public override void EmitGetCode(ILProcessor il, TypeReference type)
             {
                 var calliInstance = Instruction.Create(OpCodes.Calli, new CallSite(type) { HasThis = true });
-                var calliVirtualDispatch = Instruction.Create(OpCodes.Calli, new CallSite(type) { HasThis = false, Parameters = { new ParameterDefinition(assembly.MainModule.TypeSystem.Object) } });
+
+                // NOTE: .NET 6 (C# 10) doesn't like IntPtr => object implicit conversion so we pretend the method expect a IntPtr rather than object
+                //       (another option would be to use "castclass object" after pushing the IntPtr on the stack)
+                var calliVirtualDispatch = Instruction.Create(OpCodes.Calli, new CallSite(type) { HasThis = false, Parameters = { new ParameterDefinition(assembly.MainModule.TypeSystem.IntPtr) } });
                 var postCalli = Instruction.Create(OpCodes.Nop);
 
                 il.Emit(OpCodes.Ldarg_0);
@@ -202,9 +205,9 @@ namespace Stride.Core.AssemblyProcessor
                 // For normal calls, we use ldftn and an instance calls
                 // For virtual and interface calls, we generate a dispatch function that calls ldvirtftn on the actual object, then call the method on the object
                 // this dispatcher method is static, so the calli has a different signature
-                // Note: we could later optimize the bool check by having two variant of Get/SetObject
-                // and two different implementations of both UpdatableProperty<T> and UpdatablePropertyObject<T>
-                // (not sure if worth it)
+                // NOTE: We could later optimize the bool check by having two variant of Get/SetObject
+                //       and two different implementations of both UpdatableProperty<T> and UpdatablePropertyObject<T>
+                //       (not sure if worth it)
                 il.Emit(OpCodes.Ldfld, updatablePropertyVirtualDispatchGetter);
                 il.Emit(OpCodes.Brfalse, calliInstance);
                 il.Append(calliVirtualDispatch);
@@ -216,7 +219,9 @@ namespace Stride.Core.AssemblyProcessor
             public override void EmitSetCodeAfterValue(ILProcessor il, TypeReference type)
             {
                 var calliInstance = Instruction.Create(OpCodes.Calli, new CallSite(assembly.MainModule.TypeSystem.Void) { HasThis = true, Parameters = { new ParameterDefinition(type) } });
-                var calliVirtualDispatch = Instruction.Create(OpCodes.Calli, new CallSite(assembly.MainModule.TypeSystem.Void) { HasThis = false, Parameters = { new ParameterDefinition(assembly.MainModule.TypeSystem.Object), new ParameterDefinition(type) } });
+                // NOTE: .NET 6 (C# 10) doesn't like IntPtr => object implicit conversion so we pretend the method expect a IntPtr rather than object
+                //       (another option would be to use "castclass object" after pushing the IntPtr on the stack)
+                var calliVirtualDispatch = Instruction.Create(OpCodes.Calli, new CallSite(assembly.MainModule.TypeSystem.Void) { HasThis = false, Parameters = { new ParameterDefinition(assembly.MainModule.TypeSystem.IntPtr), new ParameterDefinition(type) } });
                 var postCalli = Instruction.Create(OpCodes.Nop);
 
                 il.Emit(OpCodes.Ldarg_0);

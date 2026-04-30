@@ -9,6 +9,7 @@ using Stride.Core.Mathematics;
 using Stride.Core.Threading;
 using Stride.Graphics;
 using Stride.Rendering;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Engine.Processors
@@ -26,8 +27,8 @@ namespace Stride.Engine.Processors
             public RenderInstancing RenderInstancing = new RenderInstancing();
         }
 
-        public InstancingProcessor() 
-            : base (typeof(TransformComponent), typeof(ModelComponent)) // Requires TransformComponent and ModelComponent
+        public InstancingProcessor()
+            : base(typeof(TransformComponent), typeof(ModelComponent)) // Requires TransformComponent and ModelComponent
         {
             // After TransformProcessor but before ModelRenderProcessor
             Order = -100;
@@ -76,7 +77,7 @@ namespace Stride.Engine.Processors
                     renderInstancing.BuffersManagedByUser = true;
                     renderInstancing.InstanceWorldBuffer = instancingUserBuffer.InstanceWorldBuffer;
                     renderInstancing.InstanceWorldInverseBuffer = instancingUserBuffer.InstanceWorldInverseBuffer;
-                } 
+                }
             }
         }
 
@@ -151,7 +152,6 @@ namespace Stride.Engine.Processors
 
         private static void BoundingBoxPreMultiplyWorld(InstancingData instancingData, IInstancing instancing, ModelComponent.MeshInfo meshInfo, Mesh mesh)
         {
-            
             var ibb = instancing.BoundingBox;
 
             var center = meshInfo.BoundingBox.Center;
@@ -211,6 +211,11 @@ namespace Stride.Engine.Processors
             VisibilityGroup.Tags.Set(InstancingRenderFeature.ModelToInstancingMap, modelInstancingMap);
 
             modelRenderProcessor = EntityManager.GetProcessor<ModelRenderProcessor>();
+            if (modelRenderProcessor == null)
+            {
+                modelRenderProcessor = new ModelRenderProcessor();
+                EntityManager.Processors.Add(modelRenderProcessor);
+            }
         }
 
         protected internal override void OnSystemRemove()

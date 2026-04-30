@@ -89,6 +89,15 @@ namespace Stride.Rendering.ProceduralModels
         [DataMemberIgnore]
         public IEnumerable<KeyValuePair<string, MaterialInstance>> MaterialInstances { get { yield return new KeyValuePair<string, MaterialInstance>("Material", MaterialInstance); } }
 
+        public Model Generate(IServiceRegistry services)
+        {
+            var model = new Model();
+
+            Generate(services, model);
+
+            return model;
+        }
+
 
         /// <inheritdoc/>
         public void Generate(IServiceRegistry services, Model model)

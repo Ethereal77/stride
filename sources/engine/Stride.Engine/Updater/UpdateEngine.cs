@@ -3,10 +3,13 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // See the LICENSE.md file in the project root for full license information.
 
+#pragma warning disable STRIDE2000 // TODO: Remove this suppression
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using Stride.Core;
@@ -491,17 +494,16 @@ namespace Stride.Updater
 
             // This object needs to be pinned since we will have a pointer to its memory
             // Note that the stack don't need to have each of its object pinned since we store entries as object + offset
-            Interop.Pin(currentObj);
+            Core.Interop.Pin(currentObj);
 
             // pinned test (this will need to be on a stack somehow)
-            IntPtr currentPtr = UpdateEngineHelper.ObjectToPtr(currentObj);
+            var currentPtr = (nint)UpdateEngineHelper.ObjectToPointer(currentObj);
 
-            var operationCount = operations.Length;
-            if (operationCount == 0)
+            if (operations.Length == 0)
                 return;
 
-            var operation = Interop.Pin(ref operations[0]);
-            for (int index = 0; index < operationCount; index++)
+            ref var operation = ref MemoryMarshal.GetArrayDataReference(operations);
+            for (int index = 0; index < operations.Length; index++)
             {
                 // Adjust offset
                 currentPtr += operation.AdjustOffset;
@@ -514,18 +516,18 @@ namespace Stride.Updater
                         if ((nextObject == null || (!operation.EnterChecker?.CanEnter(nextObject) ?? false)) && operation.SkipCountIfNull != -1)
                         {
                             index += operation.SkipCountIfNull;
-                            operation = Interop.AddPinned(operation, operation.SkipCountIfNull);
+                            operation = ref Unsafe.Add(ref operation, operation.SkipCountIfNull);
                             break;
                         }
 
                         // Compute offset and push to stack
                         stack.Push(new UpdateStackEntry(
                             currentObj,
-                            (int)((byte*)currentPtr - (byte*)UpdateEngineHelper.ObjectToPtr(currentObj))));
+                            (int)((byte*)currentPtr - (byte*)UpdateEngineHelper.ObjectToPointer(currentObj))));
 
                         // Get object
                         currentObj = nextObject;
-                        currentPtr = UpdateEngineHelper.ObjectToPtr(currentObj);
+                        currentPtr = UpdateEngineHelper.ObjectToPointer(currentObj);
 
                         break;
                     }
@@ -534,7 +536,7 @@ namespace Stride.Updater
                         // Compute offset and push to stack
                         stack.Push(new UpdateStackEntry(
                             currentObj,
-                            (int)((byte*)currentPtr - (byte*)UpdateEngineHelper.ObjectToPtr(currentObj))));
+                            (int)((byte*)currentPtr - (byte*)UpdateEngineHelper.ObjectToPointer(currentObj))));
 
                         currentObj = temporaryObjects[operation.DataOffset];
                         currentPtr = ((UpdatablePropertyBase)operation.Member).GetStructAndUnbox(currentPtr, currentObj);
@@ -547,18 +549,18 @@ namespace Stride.Updater
                         if ((nextObject == null || (!operation.EnterChecker?.CanEnter(nextObject) ?? false)) && operation.SkipCountIfNull != -1)
                         {
                             index += operation.SkipCountIfNull;
-                            operation = Interop.AddPinned(operation, operation.SkipCountIfNull);
+                            operation = ref Unsafe.Add(ref operation, operation.SkipCountIfNull);
                             break;
                         }
 
                         // Compute offset and push to stack
                         stack.Push(new UpdateStackEntry(
                             currentObj,
-                            (int)((byte*)currentPtr - (byte*)UpdateEngineHelper.ObjectToPtr(currentObj))));
+                            (int)((byte*)currentPtr - (byte*)UpdateEngineHelper.ObjectToPointer(currentObj))));
 
                         // Get object
                         currentObj = nextObject;
-                        currentPtr = UpdateEngineHelper.ObjectToPtr(currentObj);
+                        currentPtr = UpdateEngineHelper.ObjectToPointer(currentObj);
                         break;
                     }
                     case UpdateOperationType.EnterObjectCustom:
@@ -567,18 +569,18 @@ namespace Stride.Updater
                         if ((nextObject == null || (!operation.EnterChecker?.CanEnter(nextObject) ?? false)) && operation.SkipCountIfNull != -1)
                         {
                             index += operation.SkipCountIfNull;
-                            operation = Interop.AddPinned(operation, operation.SkipCountIfNull);
+                            operation = ref Unsafe.Add(ref operation, operation.SkipCountIfNull);
                             break;
                         }
 
                         // Compute offset and push to stack
                         stack.Push(new UpdateStackEntry(
                             currentObj,
-                            (int)((byte*)currentPtr - (byte*)UpdateEngineHelper.ObjectToPtr(currentObj))));
+                            (int)((byte*)currentPtr - (byte*)UpdateEngineHelper.ObjectToPointer(currentObj))));
 
                         // Get object
                         currentObj = nextObject;
-                        currentPtr = UpdateEngineHelper.ObjectToPtr(currentObj);
+                        currentPtr = UpdateEngineHelper.ObjectToPointer(currentObj);
                         break;
                     }
 
@@ -590,7 +592,7 @@ namespace Stride.Updater
                         // Restore currentObj and currentPtr from stack
                         var stackEntry = stack.Pop();
                         currentObj = stackEntry.Object;
-                        currentPtr = UpdateEngineHelper.ObjectToPtr(currentObj) + stackEntry.Offset;
+                        currentPtr = UpdateEngineHelper.ObjectToPointer(currentObj) + stackEntry.Offset;
 
                         // Use setter to set back struct
                         ((UpdatablePropertyBase)operation.Member).SetBlittable(currentPtr, oldPtr);
@@ -602,7 +604,7 @@ namespace Stride.Updater
                         // Restore currentObj and currentPtr from stack
                         var stackEntry = stack.Pop();
                         currentObj = stackEntry.Object;
-                        currentPtr = UpdateEngineHelper.ObjectToPtr(currentObj) + stackEntry.Offset;
+                        currentPtr = UpdateEngineHelper.ObjectToPointer(currentObj) + stackEntry.Offset;
                         break;
                     }
                     case UpdateOperationType.ConditionalSetObjectProperty:
@@ -699,7 +701,7 @@ namespace Stride.Updater
                         throw new ArgumentOutOfRangeException();
                 }
 
-                operation = Interop.IncrementPinned(operation);
+                operation = ref Unsafe.Add(ref operation, 1);
             }
 
             StackPool.Release(stack);

@@ -4,6 +4,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -130,11 +131,11 @@ namespace Stride.Rendering
                 if (renderModelObjectInfo == null)
                     return;
 
-                var mappedCB = renderNode.Resources.ConstantBuffer.Data + blendMatricesOffset;
+                var mappedCB = (byte*)renderNode.Resources.ConstantBuffer.Data + blendMatricesOffset;
 
-                fixed (Matrix* blendMatricesPtr = &renderModelObjectInfo[0])
+                fixed (Matrix* blendMatricesPtr = renderModelObjectInfo)
                 {
-                    Utilities.CopyMemory(mappedCB, new IntPtr(blendMatricesPtr), renderModelObjectInfo.Length * sizeof(Matrix));
+                    Unsafe.CopyBlockUnaligned(mappedCB, blendMatricesPtr, (uint)renderModelObjectInfo.Length * (uint)sizeof(Matrix));
                 }
             });
         }

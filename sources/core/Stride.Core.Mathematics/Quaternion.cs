@@ -6,7 +6,10 @@
 
 using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+using static System.MathF;
 
 namespace Stride.Core.Mathematics
 {
@@ -21,7 +24,7 @@ namespace Stride.Core.Mathematics
         /// <summary>
         /// The size of the <see cref="Stride.Core.Mathematics.Quaternion"/> type, in bytes.
         /// </summary>
-        public static readonly int SizeInBytes = Utilities.SizeOf<Quaternion>();
+        public static readonly int SizeInBytes = Unsafe.SizeOf<Quaternion>();
 
         /// <summary>
         /// A <see cref="Stride.Core.Mathematics.Quaternion"/> with all of its components set to zero.
@@ -159,7 +162,7 @@ namespace Stride.Core.Mathematics
         /// </summary>
         public bool IsNormalized
         {
-            get { return Math.Abs((X * X) + (Y * Y) + (Z * Z) + (W * W) - 1f) < MathUtil.ZeroTolerance; }
+            get { return MathF.Abs((X * X) + (Y * Y) + (Z * Z) + (W * W) - 1f) < MathUtil.ZeroTolerance; }
         }
 
         /// <summary>
@@ -174,7 +177,7 @@ namespace Stride.Core.Mathematics
                 if (length < MathUtil.ZeroTolerance)
                     return 0.0f;
 
-                return (float)(2.0 * Math.Acos(W));
+                return 2.0f * MathF.Acos(W);
             }
         }
 
@@ -278,9 +281,9 @@ namespace Stride.Core.Mathematics
         /// <see cref="Stride.Core.Mathematics.Quaternion.LengthSquared"/> may be preferred when only the relative length is needed
         /// and speed is of the essence.
         /// </remarks>
-        public float Length()
+        public readonly float Length()
         {
-            return (float)Math.Sqrt((X * X) + (Y * Y) + (Z * Z) + (W * W));
+            return MathF.Sqrt((X * X) + (Y * Y) + (Z * Z) + (W * W));
         }
 
         /// <summary>
@@ -291,7 +294,7 @@ namespace Stride.Core.Mathematics
         /// This method may be preferred to <see cref="Stride.Core.Mathematics.Quaternion.Length"/> when only a relative length is needed
         /// and speed is of the essence.
         /// </remarks>
-        public float LengthSquared()
+        public readonly float LengthSquared()
         {
             return (X * X) + (Y * Y) + (Z * Z) + (W * W);
         }
@@ -431,13 +434,24 @@ namespace Stride.Core.Mathematics
         /// <param name="left">The first quaternion to modulate.</param>
         /// <param name="right">The second quaternion to modulate.</param>
         /// <returns>The modulated quaternion.</returns>
-        public static Quaternion Multiply(Quaternion left, Quaternion right)
+        public static Quaternion Multiply(in Quaternion left, in Quaternion right)
         {
-            Quaternion result;
-            Multiply(ref left, ref right, out result);
-            return result;
+            float lx = left.X;
+            float ly = left.Y;
+            float lz = left.Z;
+            float lw = left.W;
+            float rx = right.X;
+            float ry = right.Y;
+            float rz = right.Z;
+            float rw = right.W;
+
+            return new Quaternion(
+                (rx * lw + lx * rw + ry * lz) - (rz * ly),
+                (ry * lw + ly * rw + rz * lx) - (rx * lz),
+                (rz * lw + lz * rw + rx * ly) - (ry * lx),
+                (rw * lw) - (rx * lx + ry * ly + rz * lz));
         }
-        
+
         /// <summary>
         /// Reverses the direction of a given quaternion.
         /// </summary>
@@ -514,11 +528,9 @@ namespace Stride.Core.Mathematics
         /// </summary>
         /// <param name="value">The quaternion to conjugate.</param>
         /// <returns>The conjugated quaternion.</returns>
-        public static Quaternion Conjugate(Quaternion value)
+        public static Quaternion Conjugate(in Quaternion value)
         {
-            Quaternion result;
-            Conjugate(ref value, out result);
-            return result;
+            return new Quaternion( -value.X, -value.Y, -value.Z, value.W );
         }
 
         /// <summary>
@@ -538,9 +550,17 @@ namespace Stride.Core.Mathematics
         /// <param name="left">First source quaternion.</param>
         /// <param name="right">Second source quaternion.</param>
         /// <returns>The dot product of the two quaternions.</returns>
-        public static float Dot(Quaternion left, Quaternion right)
+        public static float Dot(in Quaternion left, in Quaternion right)
         {
             return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
+        }
+
+        /// <summary>
+        /// Returns the absolute angle in radians between <paramref name="a"/> and <paramref name="b"/>
+        /// </summary>
+        public static float AngleBetween(in Quaternion a, in Quaternion b)
+        {
+            return Acos(Min(Abs(Dot(a, b)), 1f)) * 2f;
         }
 
         /// <summary>
@@ -550,10 +570,10 @@ namespace Stride.Core.Mathematics
         /// <param name="result">When the method completes, contains the exponentiated quaternion.</param>
         public static void Exponential(ref Quaternion value, out Quaternion result)
         {
-            float angle = (float)Math.Sqrt((value.X * value.X) + (value.Y * value.Y) + (value.Z * value.Z));
-            float sin = (float)Math.Sin(angle);
+            float angle = MathF.Sqrt((value.X * value.X) + (value.Y * value.Y) + (value.Z * value.Z));
+            float sin = MathF.Sin(angle);
 
-            if (Math.Abs(sin) >= MathUtil.ZeroTolerance)
+            if (MathF.Abs(sin) >= MathUtil.ZeroTolerance)
             {
                 float coeff = sin / angle;
                 result.X = coeff * value.X;
@@ -565,7 +585,7 @@ namespace Stride.Core.Mathematics
                 result = value;
             }
 
-            result.W = (float)Math.Cos(angle);
+            result.W = MathF.Cos(angle);
         }
 
         /// <summary>
@@ -613,7 +633,7 @@ namespace Stride.Core.Mathematics
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
         /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Quaternion start, ref Quaternion end, float amount, out Quaternion result)
         {
@@ -647,7 +667,7 @@ namespace Stride.Core.Mathematics
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
         /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Quaternion Lerp(Quaternion start, Quaternion end, float amount)
         {
@@ -657,18 +677,36 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
+        /// Returns a rotation whose facing direction points towards <paramref name="forward"/>
+        /// and whose up direction points as close as possible to <paramref name="up"/>.
+        /// </summary>
+        public static Quaternion LookRotation(in Vector3 forward, in Vector3 up)
+        {
+            var right = Vector3.Normalize(Vector3.Cross(up, forward));
+            var orthoUp = Vector3.Cross(forward, right);
+            var m = new Matrix
+            {
+                M11 = right.X, M12 = right.Y, M13 = right.Z,
+                M21 = orthoUp.X, M22 = orthoUp.Y, M23 = orthoUp.Z,
+                M31 = forward.X, M32 = forward.Y, M33 = forward.Z,
+            };
+            RotationMatrix(ref m, out var lQuaternion);
+            return lQuaternion;
+        }
+
+        /// <summary>
         /// Calculates the natural logarithm of the specified quaternion.
         /// </summary>
         /// <param name="value">The quaternion whose logarithm will be calculated.</param>
         /// <param name="result">When the method completes, contains the natural logarithm of the quaternion.</param>
         public static void Logarithm(ref Quaternion value, out Quaternion result)
         {
-            if (Math.Abs(value.W) < 1.0)
+            if (MathF.Abs(value.W) < 1.0f)
             {
-                float angle = (float)Math.Acos(value.W);
-                float sin = (float)Math.Sin(angle);
+                float angle = MathF.Acos(value.W);
+                float sin = MathF.Sin(angle);
 
-                if (Math.Abs(sin) >= MathUtil.ZeroTolerance)
+                if (MathF.Abs(sin) >= MathUtil.ZeroTolerance)
                 {
                     float coeff = angle / sin;
                     result.X = value.X * coeff;
@@ -727,7 +765,7 @@ namespace Stride.Core.Mathematics
         /// Rotates a Vector3 by the specified quaternion rotation.
         /// </summary>
         /// <param name="vector">The vector to rotate.</param>
-        public void Rotate(ref Vector3 vector)
+        public readonly void Rotate(ref Vector3 vector)
         {
             var pureQuaternion = new Quaternion(vector, 0);
             pureQuaternion = Conjugate(this) * pureQuaternion * this;
@@ -749,8 +787,8 @@ namespace Stride.Core.Mathematics
             Vector3.Normalize(ref axis, out normalized);
 
             float half = angle * 0.5f;
-            float sin = (float)Math.Sin(half);
-            float cos = (float)Math.Cos(half);
+            float sin = MathF.Sin(half);
+            float cos = MathF.Cos(half);
 
             result.X = normalized.X * sin;
             result.Y = normalized.Y * sin;
@@ -784,7 +822,7 @@ namespace Stride.Core.Mathematics
 
             if (scale > 0.0f)
             {
-                sqrt = (float)Math.Sqrt(scale + 1.0f);
+                sqrt = MathF.Sqrt(scale + 1.0f);
                 result.W = sqrt * 0.5f;
                 sqrt = 0.5f / sqrt;
 
@@ -794,7 +832,7 @@ namespace Stride.Core.Mathematics
             }
             else if ((matrix.M11 >= matrix.M22) && (matrix.M11 >= matrix.M33))
             {
-                sqrt = (float)Math.Sqrt(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
+                sqrt = MathF.Sqrt(1.0f + matrix.M11 - matrix.M22 - matrix.M33);
                 half = 0.5f / sqrt;
 
                 result.X = 0.5f * sqrt;
@@ -804,7 +842,7 @@ namespace Stride.Core.Mathematics
             }
             else if (matrix.M22 > matrix.M33)
             {
-                sqrt = (float)Math.Sqrt(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
+                sqrt = MathF.Sqrt(1.0f + matrix.M22 - matrix.M11 - matrix.M33);
                 half = 0.5f / sqrt;
 
                 result.X = (matrix.M21 + matrix.M12) * half;
@@ -814,7 +852,7 @@ namespace Stride.Core.Mathematics
             }
             else
             {
-                sqrt = (float)Math.Sqrt(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
+                sqrt = MathF.Sqrt(1.0f + matrix.M33 - matrix.M11 - matrix.M22);
                 half = 0.5f / sqrt;
 
                 result.X = (matrix.M31 + matrix.M13) * half;
@@ -844,7 +882,7 @@ namespace Stride.Core.Mathematics
         public static void RotationX(float angle, out Quaternion result)
         {
             float halfAngle = angle * 0.5f;
-            result = new Quaternion((float)Math.Sin(halfAngle), 0.0f, 0.0f, (float)Math.Cos(halfAngle));
+            result = new Quaternion(MathF.Sin(halfAngle), 0.0f, 0.0f, MathF.Cos(halfAngle));
         }
 
         /// <summary>
@@ -867,7 +905,7 @@ namespace Stride.Core.Mathematics
         public static void RotationY(float angle, out Quaternion result)
         {
             float halfAngle = angle * 0.5f;
-            result = new Quaternion(0.0f, (float)Math.Sin(halfAngle), 0.0f, (float)Math.Cos(halfAngle));
+            result = new Quaternion(0.0f, MathF.Sin(halfAngle), 0.0f, MathF.Cos(halfAngle));
         }
 
         /// <summary>
@@ -890,7 +928,7 @@ namespace Stride.Core.Mathematics
         public static void RotationZ(float angle, out Quaternion result)
         {
             float halfAngle = angle * 0.5f;
-            result = new Quaternion(0.0f, 0.0f, (float)Math.Sin(halfAngle), (float)Math.Cos(halfAngle));
+            result = new Quaternion(0.0f, 0.0f, MathF.Sin(halfAngle), MathF.Cos(halfAngle));
         }
 
         /// <summary>
@@ -929,16 +967,15 @@ namespace Stride.Core.Mathematics
             var yz = rotation.Y * rotation.Z;
             var xw = rotation.X * rotation.W;
 
-            pitch = (float)Math.Asin(2.0f * (xw - yz));
-            double test = Math.Cos(pitch);
-            if (test > MathUtil.ZeroTolerance)
+            pitch = MathF.Asin(2.0f * (xw - yz));
+            if (MathF.Cos(pitch) > MathUtil.ZeroTolerance)
             {
-                roll = (float)Math.Atan2(2.0f * (xy + zw), 1.0f - (2.0f * (zz + xx)));
-                yaw = (float)Math.Atan2(2.0f * (zx + yw), 1.0f - (2.0f * (yy + xx)));
+                roll = MathF.Atan2(2.0f * (xy + zw), 1.0f - (2.0f * (zz + xx)));
+                yaw = MathF.Atan2(2.0f * (zx + yw), 1.0f - (2.0f * (yy + xx)));
             }
             else
             {
-                roll = (float)Math.Atan2(-2.0f * (xy - zw), 1.0f - (2.0f * (yy + zz)));
+                roll = MathF.Atan2(-2.0f * (xy - zw), 1.0f - (2.0f * (yy + zz)));
                 yaw = 0.0f;
             }
         }
@@ -955,13 +992,13 @@ namespace Stride.Core.Mathematics
             var halfRoll = roll * 0.5f;
             var halfPitch = pitch * 0.5f;
             var halfYaw = yaw * 0.5f;
-            
-            var sinRoll = (float)Math.Sin(halfRoll);
-            var cosRoll = (float)Math.Cos(halfRoll);
-            var sinPitch = (float)Math.Sin(halfPitch);
-            var cosPitch = (float)Math.Cos(halfPitch);
-            var sinYaw = (float)Math.Sin(halfYaw);
-            var cosYaw = (float)Math.Cos(halfYaw);
+
+            var sinRoll = MathF.Sin(halfRoll);
+            var cosRoll = MathF.Cos(halfRoll);
+            var sinPitch = MathF.Sin(halfPitch);
+            var cosPitch = MathF.Cos(halfPitch);
+            var sinYaw = MathF.Sin(halfYaw);
+            var cosYaw = MathF.Cos(halfYaw);
 
             var cosYawPitch = cosYaw * cosPitch;
             var sinYawPitch = sinYaw * sinPitch;
@@ -1007,13 +1044,13 @@ namespace Stride.Core.Mathematics
         /// <param name="result">The resulting quaternion corresponding to the transformation of the source vector to the target vector.</param>
         public static void BetweenDirections(ref Vector3 source, ref Vector3 target, out Quaternion result)
         {
-            var norms = (float)Math.Sqrt(source.LengthSquared() * target.LengthSquared());
+            var norms = MathF.Sqrt(source.LengthSquared() * target.LengthSquared());
             var real = norms + Vector3.Dot(source, target);
             if (real < MathUtil.ZeroTolerance * norms)
             {
                 // If source and target are exactly opposite, rotate 180 degrees around an arbitrary orthogonal axis.
                 // Axis normalisation can happen later, when we normalise the quaternion.
-                result = Math.Abs(source.X) > Math.Abs(source.Z)
+                result = MathF.Abs(source.X) > MathF.Abs(source.Z)
                     ? new Quaternion(-source.Y, source.X, 0.0f, 0.0f)
                     : new Quaternion(0.0f, -source.Z, source.Y, 0.0f);
             }
@@ -1039,18 +1076,18 @@ namespace Stride.Core.Mathematics
             float inverse;
             float dot = Dot(start, end);
 
-            if (Math.Abs(dot) > 1.0f - MathUtil.ZeroTolerance)
+            if (MathF.Abs(dot) > 1.0f - MathUtil.ZeroTolerance)
             {
                 inverse = 1.0f - amount;
-                opposite = amount * Math.Sign(dot);
+                opposite = amount * MathF.Sign(dot);
             }
             else
             {
-                float acos = (float)Math.Acos(Math.Abs(dot));
-                float invSin = (float)(1.0 / Math.Sin(acos));
+                float acos = MathF.Acos(MathF.Abs(dot));
+                float invSin = 1.0f / MathF.Sin(acos);
 
-                inverse = (float)Math.Sin((1.0f - amount) * acos) * invSin;
-                opposite = (float)Math.Sin(amount * acos) * invSin * Math.Sign(dot);
+                inverse = MathF.Sin((1.0f - amount) * acos) * invSin;
+                opposite = MathF.Sin(amount * acos) * invSin * MathF.Sign(dot);
             }
 
             result.X = (inverse * start.X) + (opposite * end.X);
@@ -1066,11 +1103,45 @@ namespace Stride.Core.Mathematics
         /// <param name="end">End quaternion.</param>
         /// <param name="amount">Value between 0 and 1 indicating the weight of <paramref name="end"/>.</param>
         /// <returns>The spherical linear interpolation of the two quaternions.</returns>
-        public static Quaternion Slerp(Quaternion start, Quaternion end, float amount)
+        public static Quaternion Slerp(in Quaternion start, in Quaternion end, float amount)
         {
+            float opposite;
+            float inverse;
+            float dot = Dot(start, end);
+
+            if (Abs(dot) > 1.0f - MathUtil.ZeroTolerance)
+            {
+                inverse = 1.0f - amount;
+                opposite = amount * Sign(dot);
+            }
+            else
+            {
+                float acos = Acos(Abs(dot));
+                float invSin = 1.0f / Sin(acos);
+
+                inverse = Sin((1.0f - amount) * acos) * invSin;
+                opposite = Sin(amount * acos) * invSin * Sign(dot);
+            }
+
             Quaternion result;
-            Slerp(ref start, ref end, amount, out result);
+            result.X = (inverse * start.X) + (opposite * end.X);
+            result.Y = (inverse * start.Y) + (opposite * end.Y);
+            result.Z = (inverse * start.Z) + (opposite * end.Z);
+            result.W = (inverse * start.W) + (opposite * end.W);
             return result;
+        }
+
+        /// <summary>
+        /// Rotate <paramref name="current"/> towards <paramref name="target"/> by <paramref name="angle"/>.
+        /// </summary>
+        /// <remarks>
+        /// When the angle difference between <paramref name="current"/> and <paramref name="target"/> is less than
+        /// the given <paramref name="angle"/>, returns <paramref name="target"/> instead of overshooting past it.
+        /// </remarks>
+        public static Quaternion RotateTowards(in Quaternion current, in Quaternion target, float angle)
+        {
+            var maxAngle = AngleBetween(current, target);
+            return maxAngle == 0f ? target : Slerp(current, target, Min(1f, angle / maxAngle));
         }
 
         /// <summary>
@@ -1203,11 +1274,22 @@ namespace Stride.Core.Mathematics
         /// <param name="left">The first quaternion to multiply.</param>
         /// <param name="right">The second quaternion to multiply.</param>
         /// <returns>The multiplied quaternion.</returns>
-        public static Quaternion operator *(Quaternion left, Quaternion right)
+        public static Quaternion operator *(in Quaternion left, in Quaternion right)
         {
-            Quaternion result;
-            Multiply(ref left, ref right, out result);
-            return result;
+            return Multiply(left, right);
+        }
+
+        /// <summary>
+        /// Return the vector rotated by the quaternion.
+        /// </summary>
+        /// <remarks>
+        /// Shorthand for <see cref="Rotate"/>
+        /// </remarks>
+        public static Vector3 operator *(in Quaternion left, in Vector3 right)
+        {
+            var pureQuaternion = new Quaternion(right, 0);
+            pureQuaternion = Conjugate(left) * pureQuaternion * left;
+            return new Vector3(pureQuaternion.X, pureQuaternion.Y, pureQuaternion.Z);
         }
 
         /// <summary>
@@ -1216,7 +1298,7 @@ namespace Stride.Core.Mathematics
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> has the same value as <paramref name="right"/>; otherwise, <c>false</c>.</returns>
-        public static bool operator ==(Quaternion left, Quaternion right)
+        public static bool operator ==(in Quaternion left, in Quaternion right)
         {
             return left.Equals(right);
         }
@@ -1227,7 +1309,7 @@ namespace Stride.Core.Mathematics
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns><c>true</c> if <paramref name="left"/> has a different value than <paramref name="right"/>; otherwise, <c>false</c>.</returns>
-        public static bool operator !=(Quaternion left, Quaternion right)
+        public static bool operator !=(in Quaternion left, in Quaternion right)
         {
             return !left.Equals(right);
         }
@@ -1238,7 +1320,7 @@ namespace Stride.Core.Mathematics
         /// <returns>
         /// A <see cref="string"/> that represents this instance.
         /// </returns>
-        public override string ToString()
+        public override readonly string ToString()
         {
             return string.Format(CultureInfo.CurrentCulture, "X:{0} Y:{1} Z:{2} W:{3}", X, Y, Z, W);
         }
@@ -1250,7 +1332,7 @@ namespace Stride.Core.Mathematics
         /// <returns>
         /// A <see cref="string"/> that represents this instance.
         /// </returns>
-        public string ToString(string format)
+        public readonly string ToString(string format)
         {
             if (format == null)
                 return ToString();
@@ -1266,7 +1348,7 @@ namespace Stride.Core.Mathematics
         /// <returns>
         /// A <see cref="string"/> that represents this instance.
         /// </returns>
-        public string ToString(IFormatProvider formatProvider)
+        public readonly string ToString(IFormatProvider formatProvider)
         {
             return string.Format(formatProvider, "X:{0} Y:{1} Z:{2} W:{3}", X, Y, Z, W);
         }
@@ -1279,7 +1361,7 @@ namespace Stride.Core.Mathematics
         /// <returns>
         /// A <see cref="string"/> that represents this instance.
         /// </returns>
-        public string ToString(string format, IFormatProvider formatProvider)
+        public readonly string ToString(string format, IFormatProvider formatProvider)
         {
             if (format == null)
                 return ToString(formatProvider);
@@ -1292,9 +1374,9 @@ namespace Stride.Core.Mathematics
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return X.GetHashCode() + Y.GetHashCode() + Z.GetHashCode() + W.GetHashCode();
         }
@@ -1306,12 +1388,12 @@ namespace Stride.Core.Mathematics
         /// <returns>
         /// <c>true</c> if the specified <see cref="Stride.Core.Mathematics.Quaternion"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public bool Equals(Quaternion other)
+        public readonly bool Equals(Quaternion other)
         {
-            return ((float)Math.Abs(other.X - X) < MathUtil.ZeroTolerance &&
-                (float)Math.Abs(other.Y - Y) < MathUtil.ZeroTolerance &&
-                (float)Math.Abs(other.Z - Z) < MathUtil.ZeroTolerance &&
-                (float)Math.Abs(other.W - W) < MathUtil.ZeroTolerance);
+            return (Abs(other.X - X) < MathUtil.ZeroTolerance &&
+                Abs(other.Y - Y) < MathUtil.ZeroTolerance &&
+                Abs(other.Z - Z) < MathUtil.ZeroTolerance &&
+                Abs(other.W - W) < MathUtil.ZeroTolerance);
         }
 
         /// <summary>
@@ -1321,15 +1403,9 @@ namespace Stride.Core.Mathematics
         /// <returns>
         /// <c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object value)
+        public override readonly bool Equals(object value)
         {
-            if (value == null)
-                return false;
-
-            if (value.GetType() != GetType())
-                return false;
-
-            return Equals((Quaternion)value);
+            return value is Quaternion q && Equals(q);
         }
 
 #if SlimDX1xInterop

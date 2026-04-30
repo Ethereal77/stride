@@ -4,6 +4,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Graphics;
@@ -55,10 +56,10 @@ namespace Stride.Rendering
             // Update cbuffer
             if (logicalGroup.ConstantBufferSize > 0)
             {
-                var mappedDrawLighting = resourceGroup.ConstantBuffer.Data + logicalGroup.ConstantBufferOffset;
+                var mappedDrawLighting = (byte*)resourceGroup.ConstantBuffer.Data + logicalGroup.ConstantBufferOffset;
 
                 fixed (byte* dataValues = sourceParameters.DataValues)
-                    Utilities.CopyMemory(mappedDrawLighting, (IntPtr)dataValues + sourceOffset, logicalGroup.ConstantBufferSize);
+                    Unsafe.CopyBlockUnaligned(mappedDrawLighting, dataValues + sourceOffset, (uint)logicalGroup.ConstantBufferSize);
             }
         }
     }

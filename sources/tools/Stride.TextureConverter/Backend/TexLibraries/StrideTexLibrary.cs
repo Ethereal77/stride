@@ -13,7 +13,7 @@ using Stride.Graphics;
 using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.TextureConverter.Requests;
-
+using System.Runtime.CompilerServices;
 
 namespace Stride.TextureConverter.TexLibraries
 {
@@ -41,12 +41,12 @@ namespace Stride.TextureConverter.TexLibraries
         /// <summary>
         /// Initializes a new instance of the <see cref="StrideTexLibrary"/> class.
         /// </summary>
-        public StrideTexLibrary(){}
+        public StrideTexLibrary() { }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. Nothing in this case
         /// </summary>
-        public void Dispose(){}
+        public void Dispose() { }
 
 
         public void Dispose(TexImage image)
@@ -173,7 +173,7 @@ namespace Stride.TextureConverter.TexLibraries
         /// </exception>
         /// <exception cref="System.NotImplementedException"></exception>
         /// <exception cref="TexLibraryException">Unsupported file extension.</exception>
-        private void Export(TexImage image, StrideTextureLibraryData libraryDataf, ExportRequest request)
+        private unsafe void Export(TexImage image, StrideTextureLibraryData libraryDataf, ExportRequest request)
         {
             Log.Verbose("Exporting to " + request.FilePath + " ...");
 
@@ -213,7 +213,10 @@ namespace Stride.TextureConverter.TexLibraries
                         {
                             for (int j = 0; j < ct; ++j)
                             {
-                                Utilities.CopyMemory(sdImage.PixelBuffer[ct2].DataPointer, sdImage.PixelBuffer[j + i * SubImagePerArrayElement].DataPointer, sdImage.PixelBuffer[j + i * SubImagePerArrayElement].BufferStride);
+                                Unsafe.CopyBlockUnaligned(
+                                    (void*)sdImage.PixelBuffer[ct2].DataPointer,
+                                    (void*)sdImage.PixelBuffer[j + i * SubImagePerArrayElement].DataPointer,
+                                    (uint)sdImage.PixelBuffer[j + i * SubImagePerArrayElement].BufferStride);
                                 ++ct2;
                             }
                         }
@@ -268,7 +271,7 @@ namespace Stride.TextureConverter.TexLibraries
                         for (int i = 0; i < image.ArraySize * newMipMapCount; ++i)
                         {
                             if (i == newMipMapCount || (i > newMipMapCount && (i % newMipMapCount == 0))) j += gap;
-                            Utilities.CopyMemory(sdImage.PixelBuffer[i].DataPointer, image.SubImageArray[j].Data, image.SubImageArray[j].DataSize);
+                            Unsafe.CopyBlockUnaligned((void*)sdImage.PixelBuffer[i].DataPointer, (void*)image.SubImageArray[j].Data, (uint)image.SubImageArray[j].DataSize);
                             ++j;
                         }
                     }
@@ -305,7 +308,7 @@ namespace Stride.TextureConverter.TexLibraries
                     throw new InvalidOperationException("Image size different than expected.");
                 }
 
-                Utilities.CopyMemory(sdImage.DataPointer, image.Data, image.DataSize);
+                Unsafe.CopyBlockUnaligned((void*)sdImage.DataPointer, (void*)image.Data, (uint)image.DataSize);
             }
 
             using (var fileStream = new FileStream(request.FilePath, FileMode.Create, FileAccess.Write))
@@ -339,7 +342,7 @@ namespace Stride.TextureConverter.TexLibraries
         /// Failed to convert texture into Stride Image.
         /// </exception>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void ExportToStride(TexImage image, StrideTextureLibraryData libraryData, ExportToStrideRequest request)
+        private unsafe void ExportToStride(TexImage image, StrideTextureLibraryData libraryData, ExportToStrideRequest request)
         {
             Log.Verbose("Exporting to Stride Image ...");
 
@@ -367,7 +370,7 @@ namespace Stride.TextureConverter.TexLibraries
                 throw new InvalidOperationException("Image size different than expected.");
             }
 
-            Utilities.CopyMemory(sdImage.DataPointer, image.Data, image.DataSize);
+            Unsafe.CopyBlockUnaligned((void*)sdImage.DataPointer, (void*)image.Data, (uint)image.DataSize);
 
             request.SdImage = sdImage;
         }
@@ -420,7 +423,7 @@ namespace Stride.TextureConverter.TexLibraries
             var bufferStepFactor = request.KeepMipMap ? 1 : inputImage.Description.MipLevels;
             int imageCount = inputImage.PixelBuffer.Count / bufferStepFactor;
             image.SubImageArray = new TexImage.SubImage[imageCount];
-            
+
             for (int i = 0; i < imageCount; ++i)
             {
                 image.SubImageArray[i] = new TexImage.SubImage();

@@ -90,7 +90,7 @@ namespace Stride.Animations
             public int Compare(LinkedListNode<ErrorNode> x, LinkedListNode<ErrorNode> y)
             {
                 if (x.Value.Error != y.Value.Error)
-                    return Math.Sign(x.Value.Error - y.Value.Error);
+                    return MathF.Sign(x.Value.Error - y.Value.Error);
 
                 return x.Value.GetHashCode() - y.Value.GetHashCode();
             }
@@ -229,7 +229,7 @@ namespace Stride.Animations
             animationChannel.ValueEnd = animationChannel.ValueNext;
             animationChannel.ValueNext = animationValue;
         }
-        
+
         public class Evaluator
         {
             private EvaluatorData data;
@@ -239,7 +239,7 @@ namespace Stride.Animations
             private IEnumerator<KeyFrameData<float>> currentKeyFrame;
             //private KeyFrameData<float> ValueStart;
             //private KeyFrameData<float> ValueEnd;
-            
+
             public Evaluator(IEnumerable<KeyFrameData<float>> keyFrames)
             {
                 this.keyFrames = keyFrames;

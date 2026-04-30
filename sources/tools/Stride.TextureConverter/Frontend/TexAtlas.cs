@@ -47,7 +47,6 @@ namespace Stride.TextureConverter
             CurrentLibrary = atlas.CurrentLibrary;
             LibraryData = atlas.LibraryData;
             Layout = layout;
-            Name = "";
         }
 
         public override Object Clone(bool CopyMemory)

@@ -135,7 +135,7 @@ namespace Stride.Assets.Models
 
             return result;
         }
-        
+
         protected abstract Model LoadModel(ICommandContext commandContext, ContentManager contentManager);
 
         protected abstract Dictionary<string, AnimationClip> LoadAnimation(ICommandContext commandContext, ContentManager contentManager, out TimeSpan duration);
@@ -177,7 +177,7 @@ namespace Stride.Assets.Models
                 return false;
             return IsSubsetOf(localParams, newMesh.Parameters) && IsSubsetOf(newMesh.Parameters, localParams);
         }
-        
+
         /// <summary>
         /// Compares the shadow options between the two meshes.
         /// </summary>
@@ -215,8 +215,13 @@ namespace Stride.Assets.Models
                     // Data
                     fixed (byte* dataValues0 = parameters0.DataValues)
                     fixed (byte* dataValues1 = parameters1.DataValues)
-                        if (!Core.Utilities.CompareMemory((IntPtr)dataValues0 + parameterKeyInfo.Offset, (IntPtr)dataValues1 + otherParameterKeyInfo.Offset, parameterKeyInfo.Count))
+                    {
+                        var lhs = new Span<byte>(dataValues0 + parameterKeyInfo.Offset, parameterKeyInfo.Count);
+                        var rhs = new Span<byte>(dataValues1 + otherParameterKeyInfo.Offset, parameterKeyInfo.Count);
+
+                        if (!lhs.SequenceEqual(rhs))
                             return false;
+                    }
                 }
                 else if (parameterKeyInfo.BindingSlot != -1)
                 {

@@ -16,7 +16,7 @@ namespace Stride.Graphics
         private const bool UseBufferOffsets = false;
 #endif
 
-        private int constantBufferAlignment;
+        private readonly int constantBufferAlignment;
         public int Size;
         public IntPtr Data;
 
@@ -36,8 +36,11 @@ namespace Stride.Graphics
             this.allocator = allocator;
 
             Size = size;
+
+#pragma warning disable 162 // Unreachable code detected
             if (!UseBufferOffsets)
                 Data = Marshal.AllocHGlobal(size);
+#pragma warning disable 162 // Unreachable code detected
 
             Reset();
         }
@@ -49,8 +52,10 @@ namespace Stride.Graphics
 
         public void Dispose()
         {
+#pragma warning disable 162 // Unreachable code detected
             if (UseBufferOffsets)
                 allocator.ReleaseReference(constantBuffer);
+#pragma warning restore 162
             else
                 Marshal.FreeHGlobal(Data);
             Data = IntPtr.Zero;
@@ -58,6 +63,7 @@ namespace Stride.Graphics
 
         public void Map(CommandList commandList)
         {
+#pragma warning disable 162 // Unreachable code detected
             if (UseBufferOffsets)
             {
                 using (new DefaultCommandListLock(commandList))
@@ -67,10 +73,12 @@ namespace Stride.Graphics
                     Data = mappedConstantBuffer.DataBox.DataPointer;
                 }
             }
+#pragma warning restore 162
         }
 
         public void Unmap()
         {
+#pragma warning disable 162
             if (UseBufferOffsets && mappedConstantBuffer.Resource != null)
             {
                 using (new DefaultCommandListLock(commandList))
@@ -79,10 +87,12 @@ namespace Stride.Graphics
                     mappedConstantBuffer = new MappedResource();
                 }
             }
+#pragma warning restore 162
         }
 
         public void Reset()
         {
+#pragma warning disable 162
             if (UseBufferOffsets)
             {
                 // Release previous buffer
@@ -91,6 +101,7 @@ namespace Stride.Graphics
 
                 constantBuffer = allocator.GetTemporaryBuffer(new BufferDescription(Size, BufferFlags.ConstantBuffer, GraphicsResourceUsage.Dynamic));
             }
+#pragma warning restore 162
 
             bufferAllocationOffset = 0;
         }
@@ -113,12 +124,15 @@ namespace Stride.Graphics
                 throw new InvalidOperationException();
 
             // Map (if needed)
+#pragma warning disable 162
             if (UseBufferOffsets && mappedConstantBuffer.Resource == null)
                 Map(commandList);
+#pragma warning restore 162
 
             bufferPoolAllocationResult.Data = Data + result;
             bufferPoolAllocationResult.Size = size;
 
+#pragma warning disable 162
             if (UseBufferOffsets)
             {
                 bufferPoolAllocationResult.Uploaded = true;
@@ -142,6 +156,7 @@ namespace Stride.Graphics
                     }
                 }
             }
+#pragma warning restore 162
         }
     }
 

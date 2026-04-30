@@ -167,16 +167,15 @@ namespace Stride.Engine
                 float yz = rotation.Y * rotation.Z;
                 float xw = rotation.X * rotation.W;
 
-                rotationEuler.Y = (float) Math.Asin(2.0f * (yw - zx));
-                double test = Math.Cos(rotationEuler.Y);
-                if (test > 1e-6f)
+                rotationEuler.Y = MathF.Asin(2.0f * (yw - zx));
+                if (MathF.Cos(rotationEuler.Y) > MathUtil.ZeroTolerance)
                 {
-                    rotationEuler.Z = (float) Math.Atan2(2.0f * (xy + zw), 1.0f - (2.0f * (yy + zz)));
-                    rotationEuler.X = (float) Math.Atan2(2.0f * (yz + xw), 1.0f - (2.0f * (yy + xx)));
+                    rotationEuler.Z = MathF.Atan2(2.0f * (xy + zw), 1.0f - (2.0f * (yy + zz)));
+                    rotationEuler.X = MathF.Atan2(2.0f * (yz + xw), 1.0f - (2.0f * (yy + xx)));
                 }
                 else
                 {
-                    rotationEuler.Z = (float) Math.Atan2(2.0f * (zw - xy), 2.0f * (zx + yw));
+                    rotationEuler.Z = MathF.Atan2(2.0f * (zw - xy), 2.0f * (zx + yw));
                     rotationEuler.X = 0.0f;
                 }
                 return rotationEuler;

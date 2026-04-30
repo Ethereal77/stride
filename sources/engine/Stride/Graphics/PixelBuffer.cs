@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 
@@ -132,7 +133,7 @@ namespace Stride.Graphics
             // If buffers have same size, than we can copy it directly
             if (BufferStride == pixelBuffer.BufferStride)
             {
-                Utilities.CopyMemory(pixelBuffer.DataPointer, DataPointer, BufferStride);
+                Unsafe.CopyBlockUnaligned((void*) pixelBuffer.DataPointer, source: (void*) DataPointer, (uint) BufferStride);
             }
             else
             {
@@ -143,7 +144,7 @@ namespace Stride.Graphics
                 // Copy per scanline
                 for (int i = 0; i < Height; i++)
                 {
-                    Utilities.CopyMemory(new IntPtr(dstPointer), new IntPtr(srcPointer), rowStride);
+                    Unsafe.CopyBlockUnaligned(dstPointer, srcPointer, (uint) rowStride);
                     srcPointer += RowStride;
                     dstPointer += pixelBuffer.RowStride;
                 }
@@ -185,9 +186,7 @@ namespace Stride.Graphics
         ///   This method doesn't check bounding.
         /// </remarks>
         public unsafe T GetPixel<T>(int x, int y) where T : struct
-        {
-            return Utilities.Read<T>(new IntPtr(((byte*) DataPointer + RowStride * y + x * PixelSize)));
-        }
+            => Unsafe.ReadUnaligned<T>((byte*) DataPointer + RowStride * y + x * PixelSize);
 
         /// <summary>
         ///   Sets the pixel value at a specified position.
@@ -200,9 +199,7 @@ namespace Stride.Graphics
         ///   This method doesn't check bounding.
         /// </remarks>
         public unsafe void SetPixel<T>(int x, int y, T value) where T : struct
-        {
-            Utilities.Write(new IntPtr((byte*) DataPointer + RowStride * y + x * PixelSize), ref value);
-        }
+            => Unsafe.WriteUnaligned((byte*) DataPointer + RowStride * y + x * PixelSize, value);
 
         /// <summary>
         ///   Gets the pixel values of a scanline from the buffer.
@@ -216,7 +213,7 @@ namespace Stride.Graphics
         /// </remarks>
         public T[] GetPixels<T>(int yOffset = 0) where T : struct
         {
-            var sizeOfOutputPixel = Utilities.SizeOf<T>();
+            var sizeOfOutputPixel = Unsafe.SizeOf<T>();
             var totalSize = Width * Height * pixelSize;
             if ((totalSize % sizeOfOutputPixel) != 0)
                 throw new ArgumentException($"Invalid sizeof({nameof(T)}). Not a multiple of current size [{totalSize}].");
@@ -259,22 +256,22 @@ namespace Stride.Graphics
             var pixelPointer = (byte*) DataPointer + yOffset * rowStride;
             if (isStrictRowStride)
             {
-                Utilities.Read(new IntPtr(pixelPointer), pixels, 0, pixelCount);
+                new Span<T>(pixelPointer, pixelCount).CopyTo(pixels);
             }
             else
             {
-                var sizeOfOutputPixel = Utilities.SizeOf<T>() * pixelCount;
+                var sizeOfOutputPixel = Unsafe.SizeOf<T>() * pixelCount;
                 var sizePerWidth = sizeOfOutputPixel / Width;
                 var remainingPixels = sizeOfOutputPixel % Width;
                 for (int i = 0; i < sizePerWidth; i++)
                 {
-                    Utilities.Read(new IntPtr(pixelPointer), pixels, pixelIndex, Width);
+                    new Span<T>(pixelPointer, Width).CopyTo(pixels.AsSpan(pixelIndex));
                     pixelPointer += rowStride;
                     pixelIndex += Width;
                 }
                 if (remainingPixels > 0)
                 {
-                    Utilities.Read(new IntPtr(pixelPointer), pixels, pixelIndex, remainingPixels);
+                    new Span<T>(pixelPointer, remainingPixels).CopyTo(pixels.AsSpan(pixelIndex));
                 }
             }
         }
@@ -311,22 +308,22 @@ namespace Stride.Graphics
             var pixelPointer = (byte*) DataPointer + yOffset * rowStride;
             if (isStrictRowStride)
             {
-                Utilities.Write(new IntPtr(pixelPointer), sourcePixels, 0, pixelCount);
+                sourcePixels.AsSpan(0, pixelCount).CopyTo(new Span<T>(pixelPointer, pixelCount));
             }
             else
             {
-                var sizeOfOutputPixel = Utilities.SizeOf<T>() * pixelCount;
+                var sizeOfOutputPixel = Unsafe.SizeOf<T>() * pixelCount;
                 var sizePerWidth = sizeOfOutputPixel / Width;
                 var remainingPixels = sizeOfOutputPixel % Width;
                 for (int i = 0; i < sizePerWidth; i++)
                 {
-                    Utilities.Write(new IntPtr(pixelPointer), sourcePixels, pixelIndex, Width);
+                    sourcePixels.AsSpan(pixelIndex, Width).CopyTo(new Span<T>(pixelPointer, Width));
                     pixelPointer += rowStride;
                     pixelIndex += Width;
                 }
                 if (remainingPixels > 0)
                 {
-                    Utilities.Write(new IntPtr(pixelPointer), sourcePixels, pixelIndex, remainingPixels);
+                    sourcePixels.AsSpan(pixelIndex, remainingPixels).CopyTo(new Span<T>(pixelPointer, remainingPixels));
                 }
             }
         }

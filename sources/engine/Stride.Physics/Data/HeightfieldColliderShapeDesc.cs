@@ -108,7 +108,7 @@ namespace Stride.Physics
                 : 0f;
         }
 
-        public ColliderShape CreateShape()
+        public ColliderShape CreateShape(IServiceRegistry services)
         {
             object unmanagedArray;
 
@@ -147,6 +147,7 @@ namespace Stride.Physics
                         {
                             LocalOffset = LocalOffset + new Vector3(0, GetCenteringOffset(), 0),
                             LocalRotation = LocalRotation,
+                            Description = this
                         };
 
             return shape;

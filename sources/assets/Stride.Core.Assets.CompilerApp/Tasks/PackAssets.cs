@@ -18,6 +18,8 @@ using Stride.Core.IO;
 using Stride.Core.Yaml;
 using Stride.Core.Yaml.Events;
 
+using Task = Microsoft.Build.Utilities.Task;
+
 namespace Stride.Core.Assets.CompilerApp.Tasks
 {
     public static class PackAssetsHelper

@@ -5,6 +5,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Graphics;
@@ -129,7 +131,10 @@ namespace Stride.Extensions
                         {
                             //copy vertex buffer
                             foreach (var index in splitInfo.UsedIndices)
-                                Utilities.CopyMemory((IntPtr)(newVertexBufferPtr + stride * splitInfo.IndexRemapping[index]), (IntPtr)(vertexBufferPtr + stride * index), stride);
+                                Unsafe.CopyBlockUnaligned(
+                                    destination: newVertexBufferPtr + stride * splitInfo.IndexRemapping[index],
+                                    source: vertexBufferPtr + stride * index,
+                                    byteCount: (uint)stride);
                         }
 
                         newMeshDrawData.VertexBuffers[vbIndex] = new VertexBufferBinding(

@@ -11,6 +11,7 @@ using System.Linq;
 using Stride.Core;
 using Stride.Core.Assets;
 using Stride.Core.VisualStudio;
+using System.Runtime.InteropServices;
 
 namespace Stride.Assets
 {
@@ -47,7 +48,7 @@ namespace Stride.Assets
                 {
                     Name = PlatformType.Windows.ToString(),
                     IsAvailable = true,
-                    TargetFramework = "net5.0",
+                    TargetFramework = "net6.0-windows",
                     RuntimeIdentifier = "win-x64",
                     Type = PlatformType.Windows
                 }
@@ -75,37 +76,6 @@ namespace Stride.Assets
                     return VisualStudioVersions.AvailableVisualStudioInstances.Any(
                         ideInfo => ideInfo.PackageVersions.ContainsKey(pair.Value));
                 }
-            }
-            return false;
-        }
-
-        /// <summary>
-        ///   Checks if a particular component set is available for the specified IDE version.
-        /// </summary>
-        /// <param name="ideInfo">The IDE info to search for the components.</param>
-        /// <param name="vsVersionToComponent">A dictionary of Visual Studio versions to their respective paths for a given component.</param>
-        /// <returns><c>true</c> if any of the components in the dictionary are available, <c>false</c> otherwise.</returns>
-        internal static bool IsVSComponentAvailableForIDE(IDEInfo ideInfo, IDictionary<Version, string> vsVersionToComponent)
-        {
-            if (ideInfo is null)
-                throw new ArgumentNullException(nameof(ideInfo));
-            if (vsVersionToComponent is null)
-                throw new ArgumentNullException(nameof(vsVersionToComponent));
-
-            if (vsVersionToComponent.TryGetValue(ideInfo.Version, out string path))
-            {
-                if (ideInfo.Version == VS2015Version)
-                {
-                    return IsFileInProgramFilesx86Exist(path);
-                }
-                else
-                {
-                    return ideInfo.PackageVersions.ContainsKey(path);
-                }
-            }
-            else if (vsVersionToComponent.TryGetValue(VSAnyVersion, out path))
-            {
-                return ideInfo.PackageVersions.ContainsKey(path);
             }
             return false;
         }

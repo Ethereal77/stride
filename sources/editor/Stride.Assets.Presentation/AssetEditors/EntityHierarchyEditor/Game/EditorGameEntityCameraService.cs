@@ -17,6 +17,7 @@ using Stride.Editor.Engine;
 using Stride.Engine;
 using Stride.Engine.Processors;
 using Stride.Input;
+
 using static Stride.Assets.Presentation.SceneEditor.SceneEditorSettings;
 
 namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
@@ -58,10 +59,10 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
         public override void ResetCamera(Vector3 viewDirection)
         {
             var isViewVertical = MathUtil.NearEqual(viewDirection.X, 0) && MathUtil.NearEqual(viewDirection.Z, 0);
-            SetCurrentYaw(isViewVertical ? 0 : (float)Math.Atan2(-viewDirection.X, -viewDirection.Z));
+            SetCurrentYaw(isViewVertical ? 0 : MathF.Atan2(-viewDirection.X, -viewDirection.Z));
 
             var horizontalViewDirection = new Vector2(viewDirection.X, viewDirection.Z);
-            SetCurrentPitch((float)Math.Atan2(viewDirection.Y, horizontalViewDirection.Length()));
+            SetCurrentPitch(MathF.Atan2(viewDirection.Y, horizontalViewDirection.Length()));
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             }
             else
             {
-                distance = 3*(Math.Abs(sphere.Radius) > MathUtil.ZeroTolerance ? sphere.Radius : 0.5f * SceneUnit);
+                distance = 3*(MathF.Abs(sphere.Radius) > MathUtil.ZeroTolerance ? sphere.Radius : 0.5f * SceneUnit);
             }
 
             SetCurrentPosition(targetPos - direction*distance);
@@ -173,7 +174,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
             input.isPanning = !isAltDown && mbDown && !rbDown;
             input.isRotating = !isAltDown && !mbDown && rbDown;
             input.isMoving = !isAltDown && mbDown && rbDown;
-            input.isZooming = (isAltDown && !lbDown && !mbDown && rbDown) || (Math.Abs(Game.Input.MouseWheelDelta) > MathUtil.ZeroTolerance);
+            input.isZooming = (isAltDown && !lbDown && !mbDown && rbDown) || (MathF.Abs(Game.Input.MouseWheelDelta) > MathUtil.ZeroTolerance);
             input.isOrbiting = isAltDown && lbDown && !mbDown && !rbDown;
 
             return input;
@@ -222,7 +223,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
                 var inputSystem = Game.Input;
                 float x, y, z;
                 x = y = z = 0f;
-                
+
                 if (inputSystem.IsKeyDown(MoveCamLeft.GetValue()) || inputSystem.IsKeyDown(Keys.Left))
                     x -= 1f;
                 if (inputSystem.IsKeyDown(MoveCamRight.GetValue()) || inputSystem.IsKeyDown(Keys.Right))

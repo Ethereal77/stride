@@ -14,7 +14,7 @@ namespace Stride.Core.Collections
 {
     public struct FastListStruct<T> : IEnumerable<T>
     {
-        private static readonly T[] EmptyArray = new T[0];
+        private static readonly T[] EmptyArray = Array.Empty<T>();
 
         public int Count;
 
@@ -114,7 +114,7 @@ namespace Stride.Core.Collections
         {
             var destinationArray = new T[Count];
             Array.Copy(Items, 0, destinationArray, 0, Count);
-            return destinationArray;            
+            return destinationArray;
         }
 
         public void EnsureCapacity(int newCapacity)
@@ -140,7 +140,7 @@ namespace Stride.Core.Collections
         {
             return new Enumerator(Items, Count);
         }
-        
+
         public Enumerator GetEnumerator()
         {
             return new Enumerator(Items, Count);

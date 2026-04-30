@@ -13,7 +13,7 @@ using Stride.Core.Annotations;
 namespace Stride.Core.Reflection
 {
     /// <summary>
-    /// Allows to get/set a property/field value on a deeply nested object instance (supporting 
+    /// Allows to get/set a property/field value on a deeply nested object instance (supporting
     /// members, list access and dictionary access)
     /// </summary>
     // TODO: This data contract has been added because we are using a PropertyKey<MemberPath> somewhere, and the assembly processor expect the generic type of PropertyKey to be serializable. MemberPath is actually not serializable. We need to allow to use PropertyContainer/Key without serializable object.
@@ -145,18 +145,22 @@ namespace Stride.Core.Reflection
 
         public void Push(ITypeDescriptor descriptor, object key)
         {
-            var arrayDescriptor = descriptor as ArrayDescriptor;
-            var collectionDescriptor = descriptor as CollectionDescriptor;
-            var dictionaryDescriptor = descriptor as DictionaryDescriptor;
-            if (arrayDescriptor != null)
+            if (descriptor is ArrayDescriptor arrayDescriptor)
             {
                 Push(arrayDescriptor, (int)key);
             }
-            if (collectionDescriptor != null)
+            else if (descriptor is CollectionDescriptor collectionDescriptor)
             {
-                Push(collectionDescriptor, (int)key);
+                if (descriptor.Category == DescriptorCategory.Set)
+                {
+                    Push(collectionDescriptor as SetDescriptor, key);
+                }
+                else
+                {
+                    Push(collectionDescriptor, (int)key);
+                }
             }
-            if (dictionaryDescriptor != null)
+            else if (descriptor is DictionaryDescriptor dictionaryDescriptor)
             {
                 Push(dictionaryDescriptor, key);
             }
@@ -199,6 +203,18 @@ namespace Stride.Core.Reflection
         }
 
         /// <summary>
+        /// Pushes an collection access on the path.
+        /// </summary>
+        /// <param name="descriptor">The descriptor of the set.</param>
+        /// <param name="index">The index in the set.</param>
+        /// <exception cref="System.ArgumentNullException">descriptor</exception>
+        public void Push(SetDescriptor descriptor, object index)
+        {
+            if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
+            AddItem(new SetPathItem(descriptor, index));
+        }
+
+        /// <summary>
         /// Pops the last item from the current path.
         /// </summary>
         public void Pop()
@@ -233,7 +249,7 @@ namespace Stride.Core.Reflection
                     }
                     break;
                 case MemberPathAction.CollectionRemove:
-                    if (!(lastItem is CollectionPathItem) && !(lastItem is ArrayPathItem))
+                    if (!(lastItem is CollectionPathItem || lastItem is ArrayPathItem))
                     {
                         throw new ArgumentException("Invalid path [{0}] for action [{1}]. Expecting last path to be a collection/array item".ToFormat(this, actionType));
                     }
@@ -273,7 +289,11 @@ namespace Stride.Core.Reflection
                 if (actionType == MemberPathAction.ValueClear)
                 {
                     if (lastItem is CollectionPathItem)
-                        actionType = MemberPathAction.CollectionRemove;
+                    {
+                        actionType = lastItem.TypeDescriptor.Category == DescriptorCategory.Set
+                            ? MemberPathAction.ValueSet
+                            : MemberPathAction.CollectionRemove;
+                    }
                     else if (lastItem is DictionaryPathItem)
                         actionType = MemberPathAction.DictionaryRemove;
                     else
@@ -295,7 +315,7 @@ namespace Stride.Core.Reflection
                         break;
 
                     case MemberPathAction.CollectionRemove:
-                        ((CollectionPathItem)lastItem).Descriptor.RemoveAt(nextObject, ((CollectionPathItem)lastItem).Index);
+                        ((CollectionPathItem)lastItem).Descriptor.RemoveAt(nextObject, (int)((CollectionPathItem)lastItem).Index);
                         break;
                 }
             }
@@ -536,7 +556,7 @@ namespace Stride.Core.Reflection
         {
             private readonly FieldDescriptor descriptor;
             private readonly bool isValueType;
- 
+
             public FieldPathItem(FieldDescriptor descriptor)
             {
                 if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
@@ -627,7 +647,7 @@ namespace Stride.Core.Reflection
             {
                 return "[" + Index + "]";
             }
-            
+
             public override object GetIndex()
             {
                 return Index;
@@ -715,7 +735,7 @@ namespace Stride.Core.Reflection
             {
                 unchecked
                 {
-                    return (Descriptor.GetHashCode()*397) ^ Index;
+                    return (Descriptor.GetHashCode() * 397) ^ ((int)Index);
                 }
             }
         }
@@ -781,6 +801,66 @@ namespace Stride.Core.Reflection
                 unchecked
                 {
                     return (Descriptor.GetHashCode()*397) ^ (Key?.GetHashCode() ?? 0);
+                }
+            }
+        }
+
+        public sealed class SetPathItem : SpecialMemberPathItemBase, IEquatable<SetPathItem>
+        {
+            public readonly SetDescriptor Descriptor;
+            public readonly object Index;
+
+            public SetPathItem(SetDescriptor descriptor, object index)
+            {
+                if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
+                Descriptor = descriptor;
+                Index = index;
+            }
+
+            public override ITypeDescriptor TypeDescriptor => Descriptor;
+
+            public override object GetValue(object thisObj)
+            {
+                return Descriptor.GetValue(thisObj, Index);
+            }
+
+            public override void SetValue(List<object> stack, int objectIndex, object thisObject, object value)
+            {
+                Descriptor.SetValue(thisObject, Index, value);
+            }
+
+            public override string GetName(bool isFirst)
+            {
+                return "[" + Index + "]";
+            }
+
+            public override object GetIndex()
+            {
+                return Index;
+            }
+
+            public override MemberPathItem Clone(MemberPathItem parent)
+            {
+                return new SetPathItem(Descriptor, Index) { Parent = parent };
+            }
+
+            public bool Equals(SetPathItem other)
+            {
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
+                return Equals(Descriptor, other.Descriptor) && Index == other.Index;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is SetPathItem spi && Equals(spi);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (Descriptor.GetHashCode() * 397) ^ (Index?.GetHashCode() ?? 0);
                 }
             }
         }

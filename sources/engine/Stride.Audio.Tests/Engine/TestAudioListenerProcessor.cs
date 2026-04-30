@@ -14,7 +14,7 @@ using Stride.Engine;
 namespace Stride.Audio.Tests.Engine
 {
     /// <summary>
-    /// Test the <see cref="AudioListenerProcessor"/>. All the test are performed on internal members. 
+    /// Test the <see cref="AudioListenerProcessor"/>. All the test are performed on internal members.
     /// If the implementation of the <see cref="AudioListenerProcessor"/> is modified, those tests may not be valid anymore.
     /// </summary>
     public class TestAudioListenerProcessor
@@ -28,12 +28,14 @@ namespace Stride.Audio.Tests.Engine
         private Entity listComp1Entity;
         private Entity listComp2Entity;
 
-        // build a simple entity hierarchy as follow
+        // Build a simple entity hierarchy as follow
+        //
         //       o root
         //      / \
         //     o   o subEntities
-        //     |   | 
+        //     |   |
         //     o   o listCompEntities
+
         private void BuildEntityHierarchy()
         {
             rootEntity = new Entity();
@@ -76,7 +78,7 @@ namespace Stride.Audio.Tests.Engine
             audio.AddListener(listComp1);
             audio.AddListener(listComp2);
 
-            listComp2Entity.Transform.RotationEulerXYZ = new Vector3((float)Math.PI/2,0,0);
+            listComp2Entity.Transform.RotationEulerXYZ = new Vector3(MathF.PI/2,0,0);
         }
 
         private void EntityPositionUpdate(Game game, int loopCount, int loopCountSum)
@@ -90,7 +92,7 @@ namespace Stride.Audio.Tests.Engine
 
         private void TestAddAudioSysThenEntitySysLoopImpl(Game game, int loopCount, int loopCountSum)
         {
-            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer"); 
+            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer");
             //var listenerProcessor = game.Entities.Processors.OfType<AudioListenerProcessor>().First();
 
             //if (loopCount == 1)
@@ -99,15 +101,15 @@ namespace Stride.Audio.Tests.Engine
             //    game.Entities.Add(rootEntity);
             //    AudioListenerProcessor.AssociatedData list1Data = null;
             //    AudioListenerProcessor.AssociatedData list2Data = null;
-                
+
             //    // check that the entities are immediately present in the matching entity list after addition to the Entity system.
             //    Assert.DoesNotThrow(() => list1Data = listenerProcessor.MatchingEntitiesForDebug[listComp1Entity], "Listener Component 1 entity is not present in listener processor matching entities");
             //    Assert.DoesNotThrow(() => list2Data = listenerProcessor.MatchingEntitiesForDebug[listComp2Entity], "Listener Component 2 entity is not present in listener processor matching entities");
-                
+
             //    // check that the entities' position are immediately computed after addition to the Entity system.
             //    Assert.Equal(2 * new Vector3(loopCountSum, 2 * loopCountSum, 3 * loopCountSum), list1Data.AudioListener.Position, "The Position of the listener1 is not valid at loop turn " + loopCount);
             //    Assert.Equal(Vector3.Zero, list2Data.AudioListener.Position, "The Position of the listener2 is not valid at loop turn " + loopCount);
-                
+
             //    // check that the listener components are marked for update immediately after addition to the Entity system.
             //    Assert.True(list1Data.ShouldBeComputed, "The value of should be computed for listener 1 is not valid at loop turn " + loopCount);
             //}
@@ -154,17 +156,17 @@ namespace Stride.Audio.Tests.Engine
         {
             BuildEntityHierarchy();
             CreateAndComponentToEntities();
-            
-            listComp2Entity.Transform.RotationEulerXYZ = new Vector3((float)Math.PI / 2, 0, 0);
 
-            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer"); 
+            listComp2Entity.Transform.RotationEulerXYZ = new Vector3(MathF.PI / 2, 0, 0);
+
+            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer");
             // game.Entities.Add(rootEntity);
         }
 
         private void TestAddEntitySysThenAudioSysLoopImpl(Game game, int loopCount, int loopCountSum)
         {
             var audio = game.Audio;
-            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer"); 
+            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer");
             //var listenerProcessor = game.Entities.Processors.OfType<AudioListenerProcessor>().First();
 
             //if (loopCount == 1)
@@ -262,16 +264,16 @@ namespace Stride.Audio.Tests.Engine
             audio.AddListener(listComp1);
             audio.AddListener(listComp2);
 
-            listComp2Entity.Transform.RotationEulerXYZ = new Vector3((float)Math.PI / 2, 0, 0);
+            listComp2Entity.Transform.RotationEulerXYZ = new Vector3(MathF.PI / 2, 0, 0);
 
-            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer"); 
+            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer");
             //game.Entities.Add(rootEntity);
         }
 
         private void TestRemoveListenerFromAudioSystemLoopImpl(Game game, int loopCount, int loopCountSum)
         {
             var audio = game.Audio;
-            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer"); 
+            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer");
             //var listenerProcessor = game.Entities.Processors.OfType<AudioListenerProcessor>().First();
 
             //var list1Data = listenerProcessor.MatchingEntitiesForDebug[listComp1Entity];
@@ -283,7 +285,7 @@ namespace Stride.Audio.Tests.Engine
             //    Assert.True(list1Data.ShouldBeComputed, "The value of should be computed for listener 1 is not valid at loop turn " + loopCount);
             //    Assert.True(list2Data.ShouldBeComputed, "The value of should be computed for listener 2 is not valid at loop turn " + loopCount);
 
-            //    // remove listener 1 only 
+            //    // remove listener 1 only
             //    audio.RemoveListener(listComp1);
 
             //    // check that listener 1 is not marked for update but listener 2 still is.
@@ -322,7 +324,7 @@ namespace Stride.Audio.Tests.Engine
         }
 
         /// <summary>
-        /// Check that <see cref="AudioListenerComponent"/> are removed from the matching list of the processor 
+        /// Check that <see cref="AudioListenerComponent"/> are removed from the matching list of the processor
         /// when removed from the entity system and that <see cref="AudioListener"/> associated value is put to null in the <see cref="AudioSystem"/>.
         /// </summary>
         [Fact(Skip = "TODO: UPDATE TO USE Scene and Graphics Composer")]
@@ -334,7 +336,7 @@ namespace Stride.Audio.Tests.Engine
         private void TestRemoveListenerFromEntitySystemLoopImpl(Game game, int loopCount, int loopCountSum)
         {
             var audio = game.Audio;
-            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer"); 
+            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer");
             //var listenerProcessor = game.Entities.Processors.OfType<AudioListenerProcessor>().First();
 
             //var list1Data = listenerProcessor.MatchingEntitiesForDebug[listComp1Entity];
@@ -361,7 +363,7 @@ namespace Stride.Audio.Tests.Engine
 
             //game.Exit();
         }
-        
+
         /// <summary>
         /// Check that the <see cref="AudioListener"/> associated to the <see cref="AudioListenerComponent"/> are correctly updated
         /// when at least one of the <see cref="AudioEmitter"/> is added to the system.
@@ -381,7 +383,7 @@ namespace Stride.Audio.Tests.Engine
         {
             BuildEntityHierarchy();
             CreateAndComponentToEntities();
-            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer"); 
+            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer");
             //game.Entities.Add(rootEntity);
             game.Audio.AddListener(listComp1);
             game.Audio.AddListener(listComp2);
@@ -403,19 +405,19 @@ namespace Stride.Audio.Tests.Engine
 
             if (loopCount >= 10)
             {
-                listComp1Entity.Transform.RotationEulerXYZ = new Vector3((float)Math.PI / 2, 0, 0);
-                listComp2Entity.Transform.RotationEulerXYZ = new Vector3(0, (float)Math.PI / 2, 0);
+                listComp1Entity.Transform.RotationEulerXYZ = new Vector3(MathF.PI / 2, 0, 0);
+                listComp2Entity.Transform.RotationEulerXYZ = new Vector3(0, MathF.PI / 2, 0);
             }
         }
 
         private void UpdateListenerTestValues(Game game, int loopCount, int loopCountSum)
         {
-            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer"); 
+            Internal.Refactor.ThrowNotImplementedException("TODO: UPDATE TO USE Scene and Graphics Composer");
             //var matchingEntities = game.Entities.Processors.OfType<AudioListenerProcessor>().First().MatchingEntitiesForDebug;
 
             //var dataComp1 = matchingEntities[listComp1Entity];
             //var dataComp2 = matchingEntities[listComp2Entity];
-            
+
             //// check that AudioEmitters position is always valid. (this is required to ensure that the velocity is valid from the first update).
             //Assert.Equal(2 * new Vector3(loopCountSum, 2 * loopCountSum, 3 * loopCountSum) + (loopCount + 1) * Vector3.One, dataComp1.AudioListener.Position, "Position of the listener 1 is not correct");
             //Assert.Equal(new Vector3(loopCountSum, 2 * loopCountSum, 3 * loopCountSum), dataComp2.AudioListener.Position, "Position of the listener 2 is not correct");

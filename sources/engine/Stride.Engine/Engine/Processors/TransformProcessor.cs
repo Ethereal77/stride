@@ -91,7 +91,7 @@ namespace Stride.Engine.Processors
         /// <param name="transformationComponents">The transformation components to update.</param>
         internal void UpdateTransformations(FastCollection<TransformComponent> transformationComponents)
         {
-            Dispatcher.ForEach(transformationComponents, UpdateTransformationAndChildren);
+            Dispatcher.ForEach(transformationComponents, UpdateTransformationsRecursive);
 
             // Re-update Model Node Links to avoid one frame delay compared to reference Model
             // TODO: Entities should be sorted to avoid this in future
@@ -102,45 +102,21 @@ namespace Stride.Engine.Processors
                 {
                     modelNodeLinkComponents.Add(modelNodeLink.Entity.Transform);
                 }
-                Dispatcher.ForEach(modelNodeLinkComponents, UpdateTransformationAndChildren);
+                Dispatcher.ForEach(modelNodeLinkComponents, UpdateTransformationsRecursive);
             }
         }
 
         //
         // Updates the transformation of an Entity and recursively does the same with its children.
         //
-        private static void UpdateTransformationAndChildren(TransformComponent transformation)
+        private static void UpdateTransformationsRecursive(TransformComponent transform)
         {
-            UpdateTransformation(transformation);
-
-            // Recurse
-            if (transformation.Children.Count > 0)
-                UpdateTransformationsRecursive(transformation.Children);
-        }
-
-        //
-        // Updates the transformation of a collection of Entities and recursively does the same with their children.
-        //
-        private static void UpdateTransformationsRecursive(FastCollection<TransformComponent> transformationComponents)
-        {
-            foreach (var transformation in transformationComponents)
-            {
-                UpdateTransformation(transformation);
-
-                // Recurse
-                if (transformation.Children.Count > 0)
-                    UpdateTransformationsRecursive(transformation.Children);
-            }
-        }
-
-        //
-        // Updates the local and world matrices of an Entity based on the transform hierarchy.
-        //
-        private static void UpdateTransformation(TransformComponent transform)
-        {
-            // Update transform
             transform.UpdateLocalMatrix();
             transform.UpdateWorldMatrixInternal(false);
+            foreach (var child in transform.Children)
+            {
+                UpdateTransformationsRecursive(child);
+            }
         }
 
         /// <summary>

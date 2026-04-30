@@ -40,6 +40,7 @@ namespace Stride.Rendering.Materials
         public MaterialNormalMapFeature(IComputeColor normalMap)
         {
             ScaleAndBias = true;
+            IsXYNormal = true;
             NormalMap = normalMap;
         }
 
@@ -75,7 +76,7 @@ namespace Stride.Rendering.Materials
         /// If there's no Z component in the texture, reconstruct it from the X and Y components. This assumes that Z = sqrt(1 - x*x - y*y) and that Z is always positive, so no normal vector can point to the back side of the surface. We recommend you enable this option, as Stride might remove the Z component when you compress normal maps.
         /// </userdoc>
         [DataMember(30)]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         [Display("Reconstruct Z")]
         public bool IsXYNormal { get; set; }
 
@@ -88,7 +89,7 @@ namespace Stride.Rendering.Materials
                 context.Parameters.Set(MaterialKeys.HasNormalMap, true);
 
                 var normalMap = NormalMap;
-                // Workaround to make sure that normal map are setup 
+                // Workaround to make sure that normal map are setup
                 var computeTextureColor = normalMap as ComputeTextureColor;
                 if (computeTextureColor != null)
                 {

@@ -16,6 +16,9 @@ namespace Stride.Physics
         {
             if (InternalConstraint == null) return;
 
+            if (Simulation != null)
+                Simulation.RemoveConstraint(this);
+
             InternalConstraint.Dispose();
             InternalConstraint = null;
 

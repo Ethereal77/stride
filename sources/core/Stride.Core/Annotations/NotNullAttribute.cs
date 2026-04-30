@@ -12,7 +12,8 @@ namespace Stride.Core.Annotations
     /// </summary>
     /// <example>
     /// <code>
-    /// [NotNull] object Foo() {
+    /// [NotNull] object Foo()
+    /// {
     ///   return null; // Warning: Possible 'null' assignment
     /// }
     /// </code>

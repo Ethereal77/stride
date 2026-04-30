@@ -44,7 +44,11 @@ namespace Stride.Core.Assets.Analysis
 
         public static LoggerResult FixAssetReferences(IEnumerable<AssetItem> items)
         {
-            var parameters = new AssetAnalysisParameters() { IsProcessingAssetReferences = true, IsLoggingAssetNotFoundAsError =  true};
+            var parameters = new AssetAnalysisParameters()
+            {
+                IsProcessingAssetReferences = true,
+                IsLoggingAssetNotFoundAsError =  true
+            };
             var result = new LoggerResult();
             Run(items, result, parameters);
             return result;

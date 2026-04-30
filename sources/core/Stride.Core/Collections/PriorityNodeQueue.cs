@@ -12,14 +12,14 @@ namespace Stride.Core.Collections
 {
     /// <summary>
     /// Implements a priority queue of type T.
-    /// 
+    ///
     /// Elements may be added to the queue in any order, but when we pull
     /// elements out of the queue, they will be returned in 'ascending' order.
     /// Adding new elements into the queue may be done at any time, so this is
     /// useful to implement a dynamically growing and shrinking queue. Both adding
-    /// an element and removing the first element are log(N) operations. 
-    /// 
-    /// The queue is implemented using a priority-heap data structure. For more 
+    /// an element and removing the first element are log(N) operations.
+    ///
+    /// The queue is implemented using a priority-heap data structure. For more
     /// details on this elegant and simple data structure see "Programming Pearls"
     /// in our library. The tree is implemented atop a list, where 2N and 2N+1 are
     /// the child nodes of node N. The tree is balanced and left-aligned so there
@@ -28,7 +28,9 @@ namespace Stride.Core.Collections
     /// <typeparam name="T">Type T.</typeparam>
     public class PriorityNodeQueue<T>
     {
-        /// <summary>The List we use for implementation.</summary>
+        /// <summary>
+        /// The List we use for implementation.
+        /// </summary>
         private readonly List<PriorityQueueNode<T>> items = new List<PriorityQueueNode<T>>();
 
         // Used for comparing and sorting elements.
@@ -44,7 +46,9 @@ namespace Stride.Core.Collections
             this.comparer = Comparer<T>.Default;
         }
 
-        /// <summary>Clear all the elements from the priority queue</summary>
+        /// <summary>
+        /// Clear all the elements from the priority queue.
+        /// </summary>
         public void Clear()
         {
             items.Clear();
@@ -60,9 +64,9 @@ namespace Stride.Core.Collections
             if (index == -1)
                 return;
 
-            // The element to return is of course the first element in the array, 
+            // The element to return is of course the first element in the array,
             // or the root of the tree. However, this will leave a 'hole' there. We
-            // fill up this hole with the last element from the array. This will 
+            // fill up this hole with the last element from the array. This will
             // break the heap property. So we bubble the element downwards by swapping
             // it with it's lower child until it reaches it's correct level. The lower
             // child (one of the orignal elements with index 1 or 2) will now be at the
@@ -104,7 +108,9 @@ namespace Stride.Core.Collections
             item.Index = -1;
         }
 
-        /// <summary>Add an element to the priority queue - O(log(n)) time operation.</summary>
+        /// <summary>
+        /// Add an element to the priority queue - O(log(n)) time operation.
+        /// </summary>
         /// <param name="item">The item to be added to the queue</param>
         /// <returns>A node representing the item.</returns>
         [NotNull]
@@ -115,7 +121,9 @@ namespace Stride.Core.Collections
             return result;
         }
 
-        /// <summary>Add an element to the priority queue - O(log(n)) time operation.</summary>
+        /// <summary>
+        /// Add an element to the priority queue - O(log(n)) time operation.
+        /// </summary>
         /// <param name="item">The item to be added to the queue</param>
         public void Enqueue([NotNull] PriorityQueueNode<T> item)
         {
@@ -124,12 +132,12 @@ namespace Stride.Core.Collections
 
             // We add the item to the end of the list (at the bottom of the
             // tree). Then, the heap-property could be violated between this element
-            // and it's parent. If this is the case, we swap this element with the 
+            // and it's parent. If this is the case, we swap this element with the
             // parent (a safe operation to do since the element is known to be less
             // than it's parent). Now the element move one level up the tree. We repeat
             // this test with the element and it's new parent. The element, if lesser
             // than everybody else in the tree will eventually bubble all the way up
-            // to the root of the tree (or the head of the list). It is easy to see 
+            // to the root of the tree (or the head of the list). It is easy to see
             // this will take log(N) time, since we are working with a balanced binary
             // tree.
             var n = items.Count;
@@ -153,28 +161,36 @@ namespace Stride.Core.Collections
             }
         }
 
-        /// <summary>Returns the number of elements in the queue.</summary>
+        /// <summary>
+        /// Returns the number of elements in the queue.
+        /// </summary>
         public int Count => items.Count;
 
-        /// <summary>Returns true if the queue is empty.</summary>
+        /// <summary>
+        /// Returns true if the queue is empty.
+        /// </summary>
         /// Trying to call Peek() or Next() on an empty queue will throw an exception.
         /// Check using Empty first before calling these methods.
         public bool Empty => items.Count == 0;
 
-        /// <summary>Allows you to look at the first element waiting in the queue, without removing it.</summary>
+        /// <summary>
+        /// Allows you to look at the first element waiting in the queue, without removing it.
+        /// </summary>
         /// This element will be the one that will be returned if you subsequently call Next().
         public T Peek()
         {
             return items[0].Value;
         }
 
-        /// <summary>Removes and returns the first element from the queue (least element)</summary>
+        /// <summary>
+        /// Removes and returns the first element from the queue (least element).
+        /// </summary>
         /// <returns>The first element in the queue, in ascending order.</returns>
         public T Dequeue()
         {
-            // The element to return is of course the first element in the array, 
+            // The element to return is of course the first element in the array,
             // or the root of the tree. However, this will leave a 'hole' there. We
-            // fill up this hole with the last element from the array. This will 
+            // fill up this hole with the last element from the array. This will
             // break the heap property. So we bubble the element downwards by swapping
             // it with it's lower child until it reaches it's correct level. The lower
             // child (one of the orignal elements with index 1 or 2) will now be at the
@@ -211,7 +227,7 @@ namespace Stride.Core.Collections
                 tmp2.Index = p;
                 items[p] = tmp2;
                 items[c] = tmp;
-                
+
                 p = c;
             }
 

@@ -6,6 +6,7 @@
 
 using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Stride.Core.Mathematics
@@ -21,7 +22,7 @@ namespace Stride.Core.Mathematics
         /// <summary>
         /// The size of the <see cref="Int3"/> type, in bytes.
         /// </summary>
-        public static readonly int SizeInBytes = Utilities.SizeOf<Int3>();
+        public static readonly int SizeInBytes = Unsafe.SizeOf<Int3>();
 
         /// <summary>
         /// A <see cref="Int3"/> with all of its components set to zero.
@@ -399,7 +400,7 @@ namespace Stride.Core.Mathematics
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
         /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Int3 start, ref Int3 end, float amount, out Int3 result)
         {
@@ -418,7 +419,7 @@ namespace Stride.Core.Mathematics
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
         /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Int3 Lerp(Int3 start, Int3 end, float amount)
         {
@@ -509,7 +510,7 @@ namespace Stride.Core.Mathematics
             Min(ref left, ref right, out result);
             return result;
         }
-   
+
         /// <summary>
         /// Adds two vectors.
         /// </summary>
@@ -660,7 +661,7 @@ namespace Stride.Core.Mathematics
             if (format == null)
                 return ToString();
 
-            return string.Format(CultureInfo.CurrentCulture, "X:{0} Y:{1} Z:{2}", X.ToString(format, CultureInfo.CurrentCulture), 
+            return string.Format(CultureInfo.CurrentCulture, "X:{0} Y:{1} Z:{2}", X.ToString(format, CultureInfo.CurrentCulture),
                 Y.ToString(format, CultureInfo.CurrentCulture), Z.ToString(format, CultureInfo.CurrentCulture));
         }
 
@@ -697,7 +698,7 @@ namespace Stride.Core.Mathematics
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -713,9 +714,9 @@ namespace Stride.Core.Mathematics
         /// </returns>
         public bool Equals(Int3 other)
         {
-            return ((float)Math.Abs(other.X - X) < MathUtil.ZeroTolerance &&
-                (float)Math.Abs(other.Y - Y) < MathUtil.ZeroTolerance &&
-                (float)Math.Abs(other.Z - Z) < MathUtil.ZeroTolerance);
+            return (MathF.Abs(other.X - X) < MathUtil.ZeroTolerance &&
+                MathF.Abs(other.Y - Y) < MathUtil.ZeroTolerance &&
+                MathF.Abs(other.Z - Z) < MathUtil.ZeroTolerance);
         }
 
         /// <summary>

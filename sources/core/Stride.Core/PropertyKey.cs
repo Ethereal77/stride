@@ -84,7 +84,9 @@ namespace Stride.Core
         [DataMemberIgnore]
         internal AccessorMetadata AccessorMetadata { get; private set; }
 
-        /// <summary>Gets the property update callback.</summary>
+        /// <summary>
+        /// Gets the property update callback.
+        /// </summary>
         /// <value>The property update callback.</value>
         [DataMemberIgnore]
         internal PropertyContainer.PropertyUpdatedDelegate PropertyUpdateCallback { get; private set; }

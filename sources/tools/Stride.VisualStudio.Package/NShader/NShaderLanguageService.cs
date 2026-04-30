@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
 // Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2009 NShader - Alexandre Mutel, Microsoft Corporation
@@ -427,7 +427,7 @@ namespace NShader
 
         private void NavigateToSourceError(object sender, EventArgs e)
         {
-            var task = sender as Microsoft.VisualStudio.Shell.Task;
+            var task = sender as TaskListItem;
             if (task != null)
             {
                 GoToLocation(new RawSourceSpan(task.Document, task.Line + 1, task.Column + 1), null, false);

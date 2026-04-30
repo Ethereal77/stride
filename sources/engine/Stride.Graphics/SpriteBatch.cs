@@ -21,7 +21,7 @@ namespace Stride.Graphics
         private static readonly Vector2[] CornerOffsets = { Vector2.Zero, Vector2.UnitX, Vector2.One, Vector2.UnitY };
         private static Vector2 vector2Zero = Vector2.Zero;
         private static RectangleF? nullRectangle;
-        
+
         private Matrix userViewMatrix;
         private Matrix userProjectionMatrix;
 
@@ -33,7 +33,7 @@ namespace Stride.Graphics
         public EffectInstance TextureSpriteFontEffect { get { return textureSpriteFontEffect; } }
 
         /// <summary>
-        /// Gets or sets the default depth value used by the <see cref="SpriteBatch"/> when the <see cref="VirtualResolution"/> is not set. 
+        /// Gets or sets the default depth value used by the <see cref="SpriteBatch"/> when the <see cref="VirtualResolution"/> is not set.
         /// </summary>
         /// <remarks>More precisely, this value represents the length "farPlane-nearPlane" used by the default projection matrix.</remarks>
         public float DefaultDepth { get; set; }
@@ -62,7 +62,7 @@ namespace Stride.Graphics
         /// Calculate the default projection matrix for the provided virtual resolution.
         /// </summary>
         /// <returns>The default projection matrix for the provided virtual resolution</returns>
-        /// <remarks>The sprite batch default projection is an orthogonal matrix such as (0,0) is the Top/Left corner of the screen and 
+        /// <remarks>The sprite batch default projection is an orthogonal matrix such as (0,0) is the Top/Left corner of the screen and
         /// (VirtualResolution.X, VirtualResolution.Y) is the Bottom/Right corner of the screen.</remarks>
         public static Matrix CalculateDefaultProjection(Vector3 virtualResolution)
         {
@@ -167,13 +167,13 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, destination rectangle, and color. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, destination rectangle, and color.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="destinationRectangle">A rectangle that specifies (in screen coordinates) the destination for drawing the sprite.</param>
         /// <param name="color">The color to tint a sprite. Use Color.White for full color with no tinting.</param>
         /// <remarks>
-        /// Before making any calls to Draw, you must call Begin. Once all calls to Draw are complete, call End. 
+        /// Before making any calls to Draw, you must call Begin. Once all calls to Draw are complete, call End.
         /// </remarks>
         public void Draw(Texture texture, RectangleF destinationRectangle, Color4 color, Color4 colorAdd = default(Color4))
         {
@@ -181,7 +181,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position and color. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position and color.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -191,7 +191,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position and color. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position and color.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -203,7 +203,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, destination rectangle, source rectangle, color, rotation, origin, effects and layer. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, destination rectangle, source rectangle, color, rotation, origin, effects and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="destinationRectangle">A rectangle that specifies (in screen coordinates) the destination for drawing the sprite. If this rectangle is not the same size as the source rectangle, the sprite will be scaled to fit.</param>
@@ -214,14 +214,14 @@ namespace Stride.Graphics
         /// <param name="effects">Effects to apply.</param>
         /// <param name="orientation">The source image orientation</param>
         /// <param name="layerDepth">The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer. Use SpriteSortMode if you want sprites to be sorted during drawing.</param>
-        public void Draw(Texture texture, RectangleF destinationRectangle, RectangleF? sourceRectangle, Color4 color, float rotation, Vector2 origin, 
-            SpriteEffects effects = SpriteEffects.None, ImageOrientation orientation = ImageOrientation.AsIs, float layerDepth = 0f, Color4 colorAdd = default(Color4), SwizzleMode swizzle = SwizzleMode.None) 
+        public void Draw(Texture texture, RectangleF destinationRectangle, RectangleF? sourceRectangle, Color4 color, float rotation, Vector2 origin,
+            SpriteEffects effects = SpriteEffects.None, ImageOrientation orientation = ImageOrientation.AsIs, float layerDepth = 0f, Color4 colorAdd = default(Color4), SwizzleMode swizzle = SwizzleMode.None)
         {
             DrawSprite(texture, ref destinationRectangle, false, ref sourceRectangle, color, colorAdd, rotation, ref origin, effects, orientation, layerDepth, swizzle);
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -232,14 +232,14 @@ namespace Stride.Graphics
         /// <param name="effects">Effects to apply.</param>
         /// <param name="orientation">The source image orientation</param>
         /// <param name="layerDepth">The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer. Use SpriteSortMode if you want sprites to be sorted during drawing.</param>
-        public void Draw(Texture texture, Vector2 position, Color4 color, float rotation, Vector2 origin, float scale = 1.0f, 
+        public void Draw(Texture texture, Vector2 position, Color4 color, float rotation, Vector2 origin, float scale = 1.0f,
             SpriteEffects effects = SpriteEffects.None, ImageOrientation orientation = ImageOrientation.AsIs, float layerDepth = 0)
         {
             Draw(texture, position, null, color, rotation, origin, scale, effects, orientation, layerDepth);
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -250,14 +250,14 @@ namespace Stride.Graphics
         /// <param name="effects">Effects to apply.</param>
         /// <param name="orientation">The source image orientation</param>
         /// <param name="layerDepth">The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer. Use SpriteSortMode if you want sprites to be sorted during drawing.</param>
-        public void Draw(Texture texture, Vector2 position, Color4 color, float rotation, Vector2 origin, Vector2 scale, 
+        public void Draw(Texture texture, Vector2 position, Color4 color, float rotation, Vector2 origin, Vector2 scale,
             SpriteEffects effects = SpriteEffects.None, ImageOrientation orientation = ImageOrientation.AsIs, float layerDepth = 0)
         {
             Draw(texture, position, null, color, rotation, origin, scale, effects, orientation, layerDepth);
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, and color. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, and color.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -270,7 +270,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -282,7 +282,7 @@ namespace Stride.Graphics
         /// <param name="effects">Effects to apply.</param>
         /// <param name="orientation">The source image orientation</param>
         /// <param name="layerDepth">The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer. Use SpriteSortMode if you want sprites to be sorted during drawing.</param>
-        public void Draw(Texture texture, Vector2 position, RectangleF? sourceRectangle, Color4 color, float rotation, 
+        public void Draw(Texture texture, Vector2 position, RectangleF? sourceRectangle, Color4 color, float rotation,
             Vector2 origin, float scale = 1f, SpriteEffects effects = SpriteEffects.None, ImageOrientation orientation = ImageOrientation.AsIs, float layerDepth = 0, Color4 colorAdd = default(Color4), SwizzleMode swizzle = SwizzleMode.None)
         {
             var destination = new RectangleF(position.X, position.Y, scale, scale);
@@ -290,7 +290,7 @@ namespace Stride.Graphics
         }
 
         /// <summary>
-        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer. 
+        /// Adds a sprite to a batch of sprites for rendering using the specified texture, position, source rectangle, color, rotation, origin, scale, effects, and layer.
         /// </summary>
         /// <param name="texture">A texture.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -302,7 +302,7 @@ namespace Stride.Graphics
         /// <param name="effects">Effects to apply.</param>
         /// <param name="orientation">The source image orientation</param>
         /// <param name="layerDepth">The depth of a layer. By default, 0 represents the front layer and 1 represents a back layer. Use SpriteSortMode if you want sprites to be sorted during drawing.</param>
-        public void Draw(Texture texture, Vector2 position, RectangleF? sourceRectangle, Color4 color, float rotation, 
+        public void Draw(Texture texture, Vector2 position, RectangleF? sourceRectangle, Color4 color, float rotation,
             Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, ImageOrientation orientation = ImageOrientation.AsIs, float layerDepth = 0, Color4 colorAdd = default(Color4))
         {
             var destination = new RectangleF(position.X, position.Y, scale.X, scale.Y);
@@ -348,7 +348,7 @@ namespace Stride.Graphics
 
             var realSize = spriteFont.MeasureString(text, fontSize * ratio);
 
-            // convert pixel size into virtual pixel size (if needed) 
+            // convert pixel size into virtual pixel size (if needed)
             var virtualSize = realSize;
             virtualSize.X /= ratio.X;
             virtualSize.Y /= ratio.Y;
@@ -356,7 +356,9 @@ namespace Stride.Graphics
             return virtualSize;
         }
 
-        /// <summary>Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.</summary>
+        /// <summary>
+        /// Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.
+        /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">A text string.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -368,7 +370,9 @@ namespace Stride.Graphics
             DrawString(spriteFont, ref proxy, -1, ref position, ref color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f, alignment);
         }
 
-        /// <summary>Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.</summary>
+        /// <summary>
+        /// Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.
+        /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">Text string.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -380,7 +384,9 @@ namespace Stride.Graphics
             DrawString(spriteFont, ref proxy, -1, ref position, ref color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f, alignment);
         }
 
-        /// <summary>Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.</summary>
+        /// <summary>
+        /// Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.
+        /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">A text string.</param>
         /// <param name="fontSize">The font size in pixels (ignored in the case of static fonts)</param>
@@ -393,7 +399,9 @@ namespace Stride.Graphics
             DrawString(spriteFont, ref proxy, fontSize, ref position, ref color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f, alignment);
         }
 
-        /// <summary>Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.</summary>
+        /// <summary>
+        /// Adds a string to a batch of sprites for rendering using the specified font, text, position, and color.
+        /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">Text string.</param>
         /// <param name="fontSize">The font size in pixels (ignored in the case of static fonts)</param>
@@ -406,7 +414,9 @@ namespace Stride.Graphics
             DrawString(spriteFont, ref proxy, fontSize, ref position, ref color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f, alignment);
         }
 
-        /// <summary>Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.</summary>
+        /// <summary>
+        /// Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
+        /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">A text string.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -423,7 +433,9 @@ namespace Stride.Graphics
             DrawString(spriteFont, ref proxy, -1, ref position, ref color, rotation, ref origin, ref scale, effects, layerDepth, alignment);
         }
 
-        /// <summary>Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.</summary>
+        /// <summary>
+        /// Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
+        /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">Text string.</param>
         /// <param name="position">The location (in screen coordinates) to draw the sprite.</param>
@@ -440,7 +452,9 @@ namespace Stride.Graphics
             DrawString(spriteFont, ref proxy, -1, ref position, ref color, rotation, ref origin, ref scale, effects, layerDepth, alignment);
         }
 
-        /// <summary>Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.</summary>
+        /// <summary>
+        /// Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
+        /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">A text string.</param>
         /// <param name="fontSize">The font size in pixels (ignored in the case of static fonts)</param>
@@ -458,7 +472,9 @@ namespace Stride.Graphics
             DrawString(spriteFont, ref proxy, fontSize, ref position, ref color, rotation, ref origin, ref scale, effects, layerDepth, alignment);
         }
 
-        /// <summary>Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.</summary>
+        /// <summary>
+        /// Adds a string to a batch of sprites for rendering using the specified font, text, position, color, rotation, origin, scale, effects and layer.
+        /// </summary>
         /// <param name="spriteFont">A font for displaying text.</param>
         /// <param name="text">Text string.</param>
         /// <param name="fontSize">The font size in pixels (ignored in the case of static fonts)</param>
@@ -507,14 +523,14 @@ namespace Stride.Graphics
 
             // snap the position the closest 'real' pixel
             Vector2.Modulate(ref drawCommand.Position, ref resolutionRatio, out drawCommand.Position);
-            drawCommand.Position.X = (float)Math.Round(drawCommand.Position.X);
-            drawCommand.Position.Y = (float)Math.Round(drawCommand.Position.Y);
+            drawCommand.Position.X = MathF.Round(drawCommand.Position.X);
+            drawCommand.Position.Y = MathF.Round(drawCommand.Position.Y);
             drawCommand.Position.X /= resolutionRatio.X;
             drawCommand.Position.Y /= resolutionRatio.Y;
 
             spriteFont.InternalDraw(commandList, ref text, ref drawCommand, alignment);
         }
-        
+
         internal unsafe void DrawSprite(Texture texture, ref RectangleF destination, bool scaleDestination, ref RectangleF? sourceRectangle, Color4 color, Color4 colorAdd,
             float rotation, ref Vector2 origin, SpriteEffects effects, ImageOrientation orientation, float depth, SwizzleMode swizzle = SwizzleMode.None, bool realSize = false)
         {
@@ -523,7 +539,7 @@ namespace Stride.Graphics
             {
                 throw new ArgumentNullException("texture");
             }
-            
+
             // Put values in next ElementInfo
             var elementInfo = new ElementInfo();
             var spriteInfo = &elementInfo.DrawInfo;
@@ -602,7 +618,7 @@ namespace Stride.Graphics
         protected override void PrepareForRendering()
         {
             Matrix viewProjection;
-            Matrix.MultiplyTo(ref userViewMatrix, ref userProjectionMatrix, out viewProjection);
+            Matrix.Multiply(ref userViewMatrix, ref userProjectionMatrix, out viewProjection);
 
             // Setup effect states and parameters: SamplerState and MatrixTransform
             // Sets the sampler state
@@ -610,7 +626,7 @@ namespace Stride.Graphics
 
             base.PrepareForRendering();
         }
-        
+
         [StructLayout(LayoutKind.Sequential)]
         public struct SpriteDrawInfo
         {

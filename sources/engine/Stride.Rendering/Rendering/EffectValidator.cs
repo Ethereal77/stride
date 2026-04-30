@@ -4,11 +4,9 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 using Stride.Core.Collections;
-using Stride.Core.Extensions;
-using Stride.Core.IL;
-using Stride.Rendering;
 
 namespace Stride.Rendering
 {
@@ -34,10 +32,11 @@ namespace Stride.Rendering
 
         public void Initialize()
         {
-            EffectValues = new FastListStruct<EffectParameterEntry>(4);
-            
-            // Add a dummy value so that an effect without parameter fails validation first time
-            EffectValues.Add(new EffectParameterEntry());
+            EffectValues = new FastListStruct<EffectParameterEntry>(4)
+            {
+                // Add a dummy value so that an effect without parameter fails validation first time
+                new EffectParameterEntry()
+            };
         }
 
         public void BeginEffectValidation()
@@ -47,7 +46,7 @@ namespace Stride.Rendering
             ShouldSkip = false;
         }
 
-        [RemoveInitLocals]
+        [SkipLocalsInit]
         public void ValidateParameter<T>(PermutationParameterKey<T> key, T value)
         {
             // Check if value was existing and/or same
@@ -72,7 +71,7 @@ namespace Stride.Rendering
                 effectChanged = true;
             }
         }
-        
+
         public bool EndEffectValidation()
         {
             if (effectValuesValidated < EffectValues.Count)

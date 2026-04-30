@@ -35,9 +35,9 @@ namespace Stride.Physics
             return other.Normal == Normal && Math.Abs(other.Offset - Offset) < float.Epsilon;
         }
 
-        public ColliderShape CreateShape()
+        public ColliderShape CreateShape(IServiceRegistry services)
         {
-            return new StaticPlaneColliderShape(Normal, Offset);
+            return new StaticPlaneColliderShape(Normal, Offset) { Description = this };
         }
     }
 }

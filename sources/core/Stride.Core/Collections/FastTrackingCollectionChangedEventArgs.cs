@@ -45,7 +45,9 @@ namespace Stride.Core.Collections
         /// </summary>
         public object OldItem { get; private set; }
 
-        /// <summary>Gets the added or removed key (if dictionary).</summary>
+        /// <summary>
+        /// Gets the added or removed key (if dictionary).
+        /// </summary>
         public object Key { get; private set; }
 
         /// <summary>

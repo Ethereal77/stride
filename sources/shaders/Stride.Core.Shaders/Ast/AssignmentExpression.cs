@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Stride.Core.Shaders.Ast
 {
     /// <summary>
-    /// An assigment expression
+    /// An assignment expression
     /// </summary>
     public partial class AssignmentExpression : Expression
     {
@@ -63,7 +63,7 @@ namespace Stride.Core.Shaders.Ast
         #endregion
 
         #region Public Methods
-        
+
         /// <inheritdoc />
         public override IEnumerable<Node> Childrens()
         {

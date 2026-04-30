@@ -405,7 +405,7 @@ namespace FreeImageAPI
 		/// background color, the newly created image should initially be filled with.
 		/// <para/>
 		/// Basically, this function internally relies on function <see cref="AllocateT"/>, followed by a
-		/// call to <see cref="FillBackground&lt;T&gt;"/>. This is why both parameters 
+		/// call to <see cref="FillBackground&lt;T&gt;"/>. This is why both parameters
 		/// <paramref name="color"/> and <paramref name="options"/> behave the same as it is
 		/// documented for function <see cref="FillBackground&lt;T&gt;"/>. So, please refer to the
 		/// documentation of <see cref="FillBackground&lt;T&gt;"/> to learn more about parameters color and options.
@@ -475,7 +475,7 @@ namespace FreeImageAPI
 		/// background color, the newly created image should initially be filled with.
 		/// <para/>
 		/// Basically, this function internally relies on function <see cref="AllocateT"/>, followed by a
-		/// call to <see cref="FillBackground&lt;T&gt;"/>. This is why both parameters 
+		/// call to <see cref="FillBackground&lt;T&gt;"/>. This is why both parameters
 		/// <paramref name="color"/> and <paramref name="options"/> behave the same as it is
 		/// documented for function <see cref="FillBackground&lt;T&gt;"/>. So, please refer to the
 		/// documentation of <see cref="FillBackground&lt;T&gt;"/> to learn more about parameters color and options.
@@ -518,7 +518,7 @@ namespace FreeImageAPI
 			uint red_mask, uint green_mask, uint blue_mask) where T : struct
 		{
 			if ((palette != null) && (bpp <= 8) && (palette.Length < (1 << bpp)))
-				return FIBITMAP.Zero;			
+				return FIBITMAP.Zero;
 
 			if (color.HasValue)
 			{
@@ -606,9 +606,9 @@ namespace FreeImageAPI
 			// Unlock the bitmap
 			result.UnlockBits(data);
 			// Apply the bitmap resolution
-            if((GetResolutionX(dib) > 0) && (GetResolutionY(dib) > 0)) 
+            if((GetResolutionX(dib) > 0) && (GetResolutionY(dib) > 0))
             {
-                // SetResolution will throw an exception when zero values are given on input 
+                // SetResolution will throw an exception when zero values are given on input
                 result.SetResolution(GetResolutionX(dib), GetResolutionY(dib));
             }
 			// Check whether the bitmap has a palette
@@ -803,7 +803,7 @@ namespace FreeImageAPI
 		/// <param name="pitch">Defines the total width of a scanline in the raw bitmap,
 		/// including padding bytes.</param>
 		/// <param name="bpp">The bit depth (bits per pixel) of the raw bitmap.</param>
-		/// <param name="redMask">The bit mask describing the bits used to store a single 
+		/// <param name="redMask">The bit mask describing the bits used to store a single
 		/// pixel's red component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
 		/// <param name="greenMask">The bit mask describing the bits used to store a single
 		/// pixel's green component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
@@ -850,7 +850,7 @@ namespace FreeImageAPI
 		/// <param name="pitch">Defines the total width of a scanline in the raw bitmap,
 		/// including padding bytes.</param>
 		/// <param name="bpp">The bit depth (bits per pixel) of the raw bitmap.</param>
-		/// <param name="redMask">The bit mask describing the bits used to store a single 
+		/// <param name="redMask">The bit mask describing the bits used to store a single
 		/// pixel's red component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
 		/// <param name="greenMask">The bit mask describing the bits used to store a single
 		/// pixel's green component in the raw bitmap. This is only applied to 16-bpp raw bitmaps.</param>
@@ -1967,7 +1967,7 @@ namespace FreeImageAPI
 		/// Load flags can be provided by the flags parameter.
 		/// </summary>
 		/// <param name="filename">The complete name of the file to load.</param>
-		/// <param name="format">Format of the image. If the format is unknown use 
+		/// <param name="format">Format of the image. If the format is unknown use
 		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/>.
 		/// In case a suitable format was found by LoadEx it will be returned in format.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
@@ -2021,7 +2021,7 @@ namespace FreeImageAPI
 		/// Load flags can be provided by the flags parameter.
 		/// </summary>
 		/// <param name="stream">The stream to load the bitmap from.</param>
-		/// <param name="format">Format of the image. If the format is unknown use 
+		/// <param name="format">Format of the image. If the format is unknown use
 		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/></param>.
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <returns>Handle to a FreeImage multi-paged bitmap.</returns>
@@ -2065,7 +2065,7 @@ namespace FreeImageAPI
 				if (!mdib.IsNull)
 					CloseMultiBitmap(mdib, FREE_IMAGE_SAVE_FLAGS.DEFAULT);
 
-				if (handle != null)
+				if (handle.IsNull == false)
 					handle.Dispose();
 
 				throw;
@@ -3661,7 +3661,7 @@ namespace FreeImageAPI
 		/// </summary>
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
 		/// <param name="conversion">The desired output format.</param>
-		/// <param name="ditherMethod">Dither algorithm when converting 
+		/// <param name="ditherMethod">Dither algorithm when converting
 		/// with <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_DITHER"/>.</param>
 		/// <returns>Handle to a FreeImage bitmap.</returns>
 		/// <exception cref="ArgumentNullException">
@@ -4595,7 +4595,7 @@ namespace FreeImageAPI
 			T? color, FREE_IMAGE_COLOR_OPTIONS options) where T : struct
 		{
 			if (dib.IsNull)
-				return FIBITMAP.Zero;			
+				return FIBITMAP.Zero;
 
 			if (color.HasValue)
 			{

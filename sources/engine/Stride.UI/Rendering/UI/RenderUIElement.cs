@@ -9,6 +9,18 @@ using Stride.UI;
 
 namespace Stride.Rendering.UI
 {
+    public enum UIElementSampler
+    {
+        [Display("Point (Nearest)")]
+        PointClamp,
+
+        [Display("Linear")]
+        LinearClamp,
+
+        [Display("Anisotropic")]
+        AnisotropicClamp
+    }
+
     public class RenderUIElement : RenderObject
     {
         public RenderUIElement()
@@ -19,6 +31,7 @@ namespace Stride.Rendering.UI
 
         // UIComponent values
         public UIPage Page;
+        public UIElementSampler Sampler;
         public bool IsFullScreen;
         public Vector3 Resolution;
         public Vector3 Size;

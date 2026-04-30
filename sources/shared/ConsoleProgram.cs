@@ -107,7 +107,7 @@ namespace Stride
         {
             Console.WriteLine("{0} - {1}", GetAssemblyTitle(), Assembly.GetEntryAssembly().GetName().Version);
             Console.WriteLine("{0}", GetAssemblyCopyright());
-            Console.WriteLine();            
+            Console.WriteLine();
         }
 
         public static bool ParseCommandLine(object options, string[] args, int padOptions = 16)
@@ -320,7 +320,7 @@ namespace Stride
                 if (!string.IsNullOrEmpty(titleAttribute.Title))
                     return titleAttribute.Title;
             }
-            return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+            return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
         }
 
         /// <summary>

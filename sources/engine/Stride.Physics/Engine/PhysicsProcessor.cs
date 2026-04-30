@@ -59,7 +59,7 @@ namespace Stride.Physics
         public PhysicsProcessor()
             : base(typeof(TransformComponent))
         {
-            Order = 0xFFFF;
+            Order = 0xFFFE;
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace Stride.Physics
 
         private void ComponentRemoval(PhysicsComponent component)
         {
-            Simulation.CleanContacts(component);
+            Simulation.ClearCollisionDataOf(component);
 
             if (component.BoneIndex != -1)
             {
@@ -286,19 +286,6 @@ namespace Stride.Physics
             foreach (var element in boneElements)
             {
                 element.UpdateBones();
-            }
-        }
-
-        public void UpdateContacts()
-        {
-            foreach (var dataPair in ComponentDatas)
-            {
-                var data = dataPair.Value;
-                var shouldProcess = data.PhysicsComponent.ProcessCollisions || ((data.PhysicsComponent as PhysicsTriggerComponentBase)?.IsTrigger ?? false);
-                if (data.PhysicsComponent.Enabled && shouldProcess && data.PhysicsComponent.ColliderShape != null)
-                {
-                    Simulation.ContactTest(data.PhysicsComponent);
-                }
             }
         }
 

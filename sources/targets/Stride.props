@@ -21,8 +21,7 @@
 
   <!-- Default GraphicsApi -->
   <PropertyGroup>
-    <StrideGraphicsApisWindows Condition="'$(StrideGraphicsApisWindows)' == ''">Direct3D11;Direct3D12</StrideGraphicsApisWindows>
-    <StrideGraphicsApis Condition="'$(StrideGraphicsApis)' == '' Or '$(StrideGraphicsApiDependentBuildAll)' == 'true'">$(StrideGraphicsApisWindows)</StrideGraphicsApis>
+    <StrideGraphicsApis Condition="('$(StrideGraphicsApis)' == '' Or '$(StrideGraphicsApiDependentBuildAll)' == 'true') And ('$(TargetFramework)' == '$(StrideFramework)' Or '$(TargetFramework)' == '$(StrideFrameworkWindows)')">Direct3D11;Direct3D12</StrideGraphicsApis>
 
     <StrideDefaultGraphicsApi Condition="'$(StrideGraphicsApis)' != ''">$(StrideGraphicsApis.Split(';', StringSplitOptions.RemoveEmptyEntries)[0])</StrideDefaultGraphicsApi>
   </PropertyGroup>
@@ -41,15 +40,15 @@
   <!--
     Settings StrideGraphicsApi specific
   -->
-  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Direct3D11' ">
+  <PropertyGroup Condition="'$(StrideGraphicsApi)' == 'Direct3D11'">
     <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_DIRECT3D;STRIDE_GRAPHICS_API_DIRECT3D11</StrideGraphicsApiDefines>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Direct3D12' ">
+  <PropertyGroup Condition="'$(StrideGraphicsApi)' == 'Direct3D12'">
     <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_DIRECT3D;STRIDE_GRAPHICS_API_DIRECT3D12</StrideGraphicsApiDefines>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Null' ">
+  <PropertyGroup Condition="'$(StrideGraphicsApi)' == 'Null'">
     <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_NULL</StrideGraphicsApiDefines>
   </PropertyGroup>
 
@@ -61,7 +60,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <StrideUI Condition="$(TargetFramework.EndsWith('-windows')) AND ('$(StrideGraphicsApi)' == 'Direct3D11' Or '$(StrideGraphicsApi)' == 'Direct3D12')">WINFORMS;WPF</StrideUI>
+    <StrideUI>$(StrideUI);WINFORMS;WPF</StrideUI>
 
     <DefineConstants Condition="$(StrideUI.Contains('WINFORMS'))">$(DefineConstants);STRIDE_UI_WINFORMS</DefineConstants>
     <DefineConstants Condition="$(StrideUI.Contains('WPF'))">$(DefineConstants);STRIDE_UI_WPF</DefineConstants>

@@ -151,7 +151,7 @@ namespace Stride.Assets.SpriteFont.Compiler
 
             // Remap the LineMap coming from the font with a user defined remapping
             // Note:
-            // We are remapping the lineMap to allow to shrink the LineGap and to reposition it at the top and/or bottom of the 
+            // We are remapping the lineMap to allow to shrink the LineGap and to reposition it at the top and/or bottom of the
             // font instead of using only the top
             // According to http://stackoverflow.com/questions/13939264/how-to-determine-baseline-position-using-directwrite#comment27947684_14061348
             // (The response is from a MSFT employee), the BaseLine should be = LineGap + Ascent but this is not what
@@ -164,7 +164,7 @@ namespace Stride.Assets.SpriteFont.Compiler
             // Store the font height.
             LineSpacing = (float)(lineGap + fontMetrics.Ascent + fontMetrics.Descent) / fontMetrics.DesignUnitsPerEm * fontSize;
 
-            // And then the baseline is also changed in order to allow the linegap to be distributed between the top and the 
+            // And then the baseline is also changed in order to allow the linegap to be distributed between the top and the
             // bottom of the font:
             //     BaseLine = NewLineGap * LineGapBaseLineFactor
             BaseLine = (float)(lineGap * options.LineGapBaseLineFactor + fontMetrics.Ascent) / fontMetrics.DesignUnitsPerEm * fontSize;
@@ -206,8 +206,8 @@ namespace Stride.Assets.SpriteFont.Compiler
             var pixelHeight = (int)Math.Ceiling(height + 4);
 
 
-            var matrixM31 = -(float)Math.Floor(xOffset) + 1;
-            var matrixM32 = -(float)Math.Floor(yOffset) + 1;
+            var matrixM31 = -MathF.Floor(xOffset) + 1;
+            var matrixM32 = -MathF.Floor(yOffset) + 1;
 
             Bitmap bitmap;
             if (char.IsWhiteSpace(character))

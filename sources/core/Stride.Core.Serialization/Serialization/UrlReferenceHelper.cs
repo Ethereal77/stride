@@ -26,7 +26,7 @@ namespace Stride.Core.Serialization
         /// <remarks>A reference type is either an <see cref="UrlReference"/> or a <see cref="UrlReference{T}"/>.</remarks>
         public static object CreateReference(Type referenceType, AssetId assetId, string assetUrl)
         {
-            if (assetId != AssetId.Empty && assetUrl != null && IsUrlReferenceType(referenceType))
+            if (assetUrl != null && IsUrlReferenceType(referenceType))
             {
                 var urlReference = (UrlReferenceBase) AttachedReferenceManager.CreateProxyObject(referenceType, assetId, assetUrl);
                 urlReference.Url = assetUrl;

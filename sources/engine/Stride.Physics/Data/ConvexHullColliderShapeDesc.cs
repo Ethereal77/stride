@@ -19,7 +19,6 @@ namespace Stride.Physics
     [Display(500, "Convex Hull")]
     public class ConvexHullColliderShapeDesc : IAssetColliderShapeDesc
     {
-
         [Display(Browsable = false)]
         [DataMember(10)]
         public List<List<List<Vector3>>> ConvexHulls; // Multiple meshes -> Multiple Hulls -> Hull points
@@ -73,7 +72,7 @@ namespace Stride.Physics
                    other.Decomposition.Match(Decomposition);
         }
 
-        public ColliderShape CreateShape()
+        public ColliderShape CreateShape(IServiceRegistry services)
         {
             if (ConvexHulls == null) return null;
             ColliderShape shape;

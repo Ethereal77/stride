@@ -228,12 +228,13 @@ namespace Stride.Core.Storage
         /// <param name="size">The size.</param>
         /// <param name="forceWrite"><c>true</c> to force writing the data even if a content is already stored with the same id. Default is <c>false</c>.</param>
         /// <returns>The <see cref="ObjectId"/> of the given data.</returns>
-        public ObjectId Write(IntPtr data, int size, bool forceWrite = false)
+        public unsafe ObjectId Write(IntPtr data, int size, bool forceWrite = false)
         {
             if (backendWrite is null)
                 throw new InvalidOperationException("Read-only object database.");
 
-            return backendWrite.Write(ObjectId.Empty, new NativeMemoryStream(data, size), size, forceWrite);
+            var ums = new UnmanagedMemoryStream((byte*)data, size, capacity: size, access: FileAccess.Write);
+            return backendWrite.Write(ObjectId.Empty, ums, size, forceWrite);
         }
 
         /// <summary>
@@ -343,7 +344,7 @@ namespace Stride.Core.Storage
         {
             // Generate hash
             ObjectId objectId;
-            var nativeMemoryStream = new NativeMemoryStream(data, size);
+            var nativeMemoryStream = new UnmanagedMemoryStream((byte*)data, size, capacity: size, access: FileAccess.Write);
 
             using (var digestStream = new DigestStream(Stream.Null))
             {
@@ -396,7 +397,7 @@ namespace Stride.Core.Storage
                         return null;
 
                     // Load blob if not cached
-                    var stream = OpenStream(objectId).ToNativeStream();
+                    var stream = OpenStream(objectId);
 
                     // Create blob and add to cache
                     blob = new Blob(this, objectId, stream);

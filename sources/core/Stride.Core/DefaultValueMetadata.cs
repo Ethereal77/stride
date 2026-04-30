@@ -34,7 +34,9 @@ namespace Stride.Core
             get { return false; }
         }
 
-        /// <summary>Gets or sets the property update callback.</summary>
+        /// <summary>
+        /// Gets or sets the property update callback.
+        /// </summary>
         /// <value>The property update callback.</value>
         public PropertyContainer.PropertyUpdatedDelegate PropertyUpdateCallback { get; set; }
 

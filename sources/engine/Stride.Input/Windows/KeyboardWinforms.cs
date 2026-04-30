@@ -177,7 +177,7 @@ namespace Stride.Input
 
             fixed (byte* dataPtr = data)
             {
-                Win32Native.ImmGetCompositionString(context, type, new IntPtr(dataPtr), len);
+                Win32Native.ImmGetCompositionString(context, type, (nint)dataPtr, len);
             }
 
             return Encoding.Unicode.GetString(data);

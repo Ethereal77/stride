@@ -105,6 +105,7 @@ namespace Stride.Engine
         /// </userdoc>
         [Display("Record collision events")]
         [DataMemberIgnore]
+        [Obsolete("Always processed and stored by now")]
         public bool ProcessCollisions { get; set; } = false;
 
         /// <summary>
@@ -618,19 +619,16 @@ namespace Stride.Engine
             }
 
             CanScaleShape = true;
-
-            // Single shape case
-            if (ColliderShapes.Count == 1)
+            foreach (var desc in ColliderShapes)
             {
-                if (ColliderShapes[0] is null)
-                    return;
-
-                if (ColliderShapes[0] is ColliderShapeAssetDesc)
-                {
+                if(desc is ColliderShapeAssetDesc)
                     CanScaleShape = false;
-                }
+            }
 
-                ColliderShape = PhysicsColliderShape.CreateShape(ColliderShapes[0]);
+            var services = Entity?.EntityManager?.Services;
+            if (ColliderShapes.Count == 1) //single shape case
+            {
+                ColliderShape = ColliderShapes[0]?.CreateShape(services);
             }
             // Need a compound shape in this case
             else if (ColliderShapes.Count > 1)
@@ -638,14 +636,9 @@ namespace Stride.Engine
                 var compound = new CompoundColliderShape();
                 foreach (var desc in ColliderShapes)
                 {
-                    if (desc is null)
-                        continue;
-                    if (desc is ColliderShapeAssetDesc)
-                    {
-                        CanScaleShape = false;
-                    }
+                    if (desc == null) continue;
 
-                    var subShape = PhysicsColliderShape.CreateShape(desc);
+                    var subShape = desc.CreateShape(services);
                     if (subShape != null)
                         compound.AddChildShape(subShape);
                 }

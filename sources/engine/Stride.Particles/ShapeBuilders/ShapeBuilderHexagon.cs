@@ -83,15 +83,15 @@ namespace Stride.Particles.ShapeBuilders
                 }
 
                 // Use half size to make a Size = 1 result in a Billboard of 1m x 1m
-                var unitX = invViewX * (particleSize * 0.5f); 
-                var unitY = invViewY * (particleSize * 0.5f); 
+                var unitX = invViewX * (particleSize * 0.5f);
+                var unitY = invViewY * (particleSize * 0.5f);
 
                 // Particle rotation. Positive value means clockwise rotation.
                 if (hasAngle)
                 {
                     var rotationAngle = GetParticleRotation(particle, angleField, lifeField);
-                    var cosA = (float)Math.Cos(rotationAngle);
-                    var sinA = (float)Math.Sin(rotationAngle);
+                    var cosA = MathF.Cos(rotationAngle);
+                    var sinA = MathF.Sin(rotationAngle);
                     var tempX = unitX * cosA - unitY * sinA;
                     unitY = unitY * cosA + unitX * sinA;
                     unitX = tempX;

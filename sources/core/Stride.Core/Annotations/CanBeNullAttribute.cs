@@ -16,7 +16,8 @@ namespace Stride.Core.Annotations
     /// <code>
     /// [CanBeNull] object Test() => null;
     ///
-    /// void UseTest() {
+    /// void UseTest()
+    /// {
     ///   var p = Test();
     ///   var s = p.ToString(); // Warning: Possible 'System.NullReferenceException'
     /// }

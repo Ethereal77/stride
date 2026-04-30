@@ -41,9 +41,9 @@
     </PrepareForRunDependsOn>
 
     <!-- This variable can be overriden by a platform specific targets (in case the executable is located into an assembly dll )-->
-    <StrideIsExecutable Condition=" '$(OutputType)' == 'Exe'">true</StrideIsExecutable>
-    <StrideIsExecutable Condition=" '$(OutputType)' == 'WinExe'">true</StrideIsExecutable>
-    <StrideIsExecutable Condition=" '$(OutputType)' == 'AppContainerExe'">true</StrideIsExecutable>
+    <StrideIsExecutable Condition="'$(OutputType)' == 'Exe'">true</StrideIsExecutable>
+    <StrideIsExecutable Condition="'$(OutputType)' == 'WinExe'">true</StrideIsExecutable>
+    <StrideIsExecutable Condition="'$(OutputType)' == 'AppContainerExe'">true</StrideIsExecutable>
 
     <!-- Asset BuildPath for all platforms (same as package) -->
     <StrideCompileAssetBuildPath Condition="'$(StrideCompileAssetBuildPath)' == ''">$(ProjectDir)$(BaseIntermediateOutputPath)stride\assetbuild\data</StrideCompileAssetBuildPath>
@@ -115,8 +115,8 @@
   <Target Name="_StridePrepareAssetCompiler">
     <PropertyGroup>
       <!-- First try NuGet layout, then git checkout -->
-      <StrideCompileAssetCommand Condition="'$(StrideCompileAssetCommand)' == '' And Exists('$(MSBuildThisFileDirectory)..\lib\net5.0-windows7.0\')">$(MSBuildThisFileDirectory)..\lib\net5.0-windows7.0\Stride.Core.Assets.CompilerApp.exe</StrideCompileAssetCommand>
-      <StrideCompileAssetCommand Condition="'$(StrideCompileAssetCommand)' == '' And Exists('$(MSBuildThisFileDirectory)..\Stride.Core.Assets.CompilerApp.csproj')">$(MSBuildThisFileDirectory)..\bin\$(Configuration)\net5.0-windows\Stride.Core.Assets.CompilerApp.exe</StrideCompileAssetCommand>
+      <StrideCompileAssetCommand Condition="'$(StrideCompileAssetCommand)' == '' And Exists('$(MSBuildThisFileDirectory)..\lib\net6.0-windows\')">$(MSBuildThisFileDirectory)..\tools\net6.0-windows7.0\Stride.Core.Assets.CompilerApp.exe</StrideCompileAssetCommand>
+      <StrideCompileAssetCommand Condition="'$(StrideCompileAssetCommand)' == '' And Exists('$(MSBuildThisFileDirectory)..\Stride.Core.Assets.CompilerApp.csproj')">$(MSBuildThisFileDirectory)..\bin\$(Configuration)\net6.0-windows\Stride.Core.Assets.CompilerApp.exe</StrideCompileAssetCommand>
     </PropertyGroup>
 
     <Error Condition="!Exists('$(StrideCompileAssetCommand)')" Text="Stride AssetCompiler could not be found (Command: &quot;$(StrideCompileAssetCommand)&quot;)"/>

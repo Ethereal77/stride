@@ -418,7 +418,7 @@ namespace Stride.Rendering.Images
                 var downSizedTexture = originalColorBuffer;
                 if (i > 0)
                 {
-                    downSizedTexture = GetScopedRenderTarget(originalColorBuffer.Description, 1.0f / (float) Math.Pow(2.0f, i), originalColorBuffer.Description.Format);
+                    downSizedTexture = GetScopedRenderTarget(originalColorBuffer.Description, 1 / MathF.Pow(2, i), originalColorBuffer.Description.Format);
                     textureScaler.SetInput(0, downscaledSources[i - 1]);
                     textureScaler.SetOutput(downSizedTexture);
                     textureScaler.Draw(context, "DownScale_Factor{0}", i);
@@ -438,6 +438,7 @@ namespace Stride.Rendering.Images
             // Creates all the levels with different CoC strengths.
             // (Skips level with CoC 0 which is always the original buffer.)
             combineLevelsEffect.Parameters.Set(CombineLevelsFromCoCKeys.LevelCount, cocLevels.Count);
+            combineLevelsEffect.EffectInstance.UpdateEffect(GraphicsDevice); //update needed if permutation changed and shader has a value array parameter
             combineLevelsEffect.SetInput(0, cocLinearDepthTexture);
             combineLevelsEffect.SetInput(1, blurredCoCTexture);
             combineLevelsEffect.SetInput(2, originalColorBuffer);
@@ -455,7 +456,7 @@ namespace Stride.Rendering.Images
 
                 var levelConfig = cocLevels[i];
                 var textureToBlur = downscaledSources[levelConfig.DownscaleFactor];
-                float downscaleFactor = 1.0f / (float)(Math.Pow(2f, levelConfig.DownscaleFactor));
+                float downscaleFactor = 1 / MathF.Pow(2, levelConfig.DownscaleFactor);
                 var blurOutput = GetScopedRenderTarget(originalColorBuffer.Description, downscaleFactor, originalColorBuffer.Description.Format);
                 var blurOutputFront = NewScopedRenderTarget2D(blurOutput.Description);
                 float blurRadius = (MaxBokehSize * BokehSizeFactor) * levelConfig.CoCValue * downscaleFactor * originalColorBuffer.Width;

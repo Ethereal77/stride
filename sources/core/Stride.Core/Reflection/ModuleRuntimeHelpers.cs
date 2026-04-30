@@ -3,6 +3,8 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // See the LICENSE.md file in the project root for full license information.
 
+using System;
+using System.Linq;
 using System.Reflection;
 
 using Stride.Core.Annotations;
@@ -13,7 +15,16 @@ namespace Stride.Core.Reflection
     {
         public static void RunModuleConstructor([NotNull] Module module)
         {
-            System.Runtime.CompilerServices.RuntimeHelpers.RunModuleConstructor(module.ModuleHandle);
+            // On some platforms such as Android, ModuleHandle is not set
+            if (module.ModuleHandle == ModuleHandle.EmptyHandle)
+            {
+                // Instead, initialize any type
+                System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(module.Assembly.DefinedTypes.First().TypeHandle);
+            }
+            else
+            {
+                System.Runtime.CompilerServices.RuntimeHelpers.RunModuleConstructor(module.ModuleHandle);
+            }
         }
     }
 }

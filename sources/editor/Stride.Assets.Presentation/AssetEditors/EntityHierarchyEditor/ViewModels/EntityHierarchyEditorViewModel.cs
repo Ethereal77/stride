@@ -317,8 +317,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
             Transform.LoadSettings(settings);
             EntityGizmos.LoadSettings(settings);
             DisplaySelectionMask = settings.SelectionMaskVisible;
-            Grid.IsVisible = settings.GridVisible;
-            Grid.Color = settings.GridColor;
+            Grid.LoadSettings(settings);
             Lighting.LightProbeWireframeVisible = settings.LightProbeWireframe;
             Lighting.LightProbeBounces = settings.LightProbeBounces;
             MaterialSelectionMode = false;
@@ -331,8 +330,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
             Camera.SaveSettings(settings);
             Transform.SaveSettings(settings);
             settings.SelectionMaskVisible = DisplaySelectionMask;
-            settings.GridVisible = Grid.IsVisible;
-            settings.GridColor = Grid.Color;
+            Grid.SaveSettings(settings);
             settings.LightProbeWireframe = Lighting.LightProbeWireframeVisible;
             settings.LightProbeBounces = Lighting.LightProbeBounces;
             Navigation.SaveSettings(settings);

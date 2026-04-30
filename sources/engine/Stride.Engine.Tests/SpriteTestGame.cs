@@ -47,7 +47,7 @@ namespace Stride.Engine.Tests
         protected override async Task LoadContent()
         {
             await base.LoadContent();
-            
+
             // sets the virtual resolution
             areaSize = new Vector2(GraphicsDevice.Presenter.BackBuffer.Width, GraphicsDevice.Presenter.BackBuffer.Height);
 
@@ -132,7 +132,7 @@ namespace Stride.Engine.Tests
 
         private void UpdateBall(float totalSeconds)
         {
-            const float rotationSpeed = (float)Math.PI / 2;
+            const float rotationSpeed = MathF.PI / 2;
 
             var deltaRotation = rotationSpeed * totalSeconds;
 

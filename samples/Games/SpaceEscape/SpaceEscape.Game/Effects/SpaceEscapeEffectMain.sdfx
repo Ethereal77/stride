@@ -15,7 +15,7 @@ namespace SpaceEscape.Effects
     effect SpaceEscapeEffectMain
     {
         using params GameParameters;
-        
+
         mixin StrideForwardShadingEffect;
 
         if(GameParameters.EnableOnflyTextureUVChange)
@@ -25,6 +25,6 @@ namespace SpaceEscape.Effects
             mixin TransformationBendWorld;
 
         if(GameParameters.EnableFog)
-            mixin FogEffect;
+            mixin CustomFogEffect;
     };
 }

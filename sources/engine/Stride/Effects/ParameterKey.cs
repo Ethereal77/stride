@@ -7,6 +7,7 @@
 
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Serialization;
@@ -228,7 +229,7 @@ namespace Stride.Rendering
         [DataMemberIgnore]
         public ParameterKeyValueMetadata<T> DefaultValueMetadataT { get; private set; }
 
-        public override int Size => Interop.SizeOf<T>();
+        public override int Size => Unsafe.SizeOf<T>();
 
         public override string ToString() => Name;
 
@@ -274,10 +275,8 @@ namespace Stride.Rendering
             : base(ParameterKeyType.Value, name, length, metadatas)
         { }
 
-        internal override object ReadValue(IntPtr data)
-        {
-            return Utilities.Read<T>(data);
-        }
+        internal override unsafe object ReadValue(nint data)
+            => Unsafe.ReadUnaligned<T>((void*)data);
     }
 
     /// <summary>

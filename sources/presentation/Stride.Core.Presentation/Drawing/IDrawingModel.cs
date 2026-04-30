@@ -13,7 +13,7 @@ namespace Stride.Core.Presentation.Drawing
         /// <param name="view"></param>
         void Attach(IDrawingView view);
 
-        /// <summary> 
+        /// <summary>
         /// Detaches this item with the specified drawing view.
         /// </summary>
         /// <param name="view"></param>

@@ -1,11 +1,13 @@
-#define USE_UNMANAGED
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
 // Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // See the LICENSE.md file in the project root for full license information.
 
+#define USE_UNMANAGED
+
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 #if !USE_UNMANAGED
 using System.Runtime.InteropServices;
 #endif
@@ -61,6 +63,8 @@ namespace Stride.Core.Streaming
 
         internal ContentChunk(ContentStorage storage, int location, int size)
         {
+            Debug.Assert(size >= 0);
+
             Storage = storage;
             Location = location;
             Size = size;
@@ -93,20 +97,19 @@ namespace Stride.Core.Streaming
 #if USE_UNMANAGED
                 var chunkBytes = Utilities.AllocateMemory(Size);
 
-                int bufferCapacity = Math.Min(8192, Size);
+                var bufferCapacity = Math.Min(8192u, (uint)Size);
                 var buffer = new byte[bufferCapacity];
 
-                int count = Size;
-                fixed (byte* bufferFixed = buffer)
+                var count = (uint)Size;
+                fixed (byte* bufferStart = buffer) // null if array is empty or null
                 {
-                    var chunkBytesPtr = chunkBytes;
-                    var bufferPtr = new IntPtr(bufferFixed);
+                    var chunkBytesPtr = (byte*)chunkBytes;
                     do
                     {
-                        int read = stream.Read(buffer, 0, Math.Min(count, bufferCapacity));
+                        var read = (uint)stream.Read(buffer, 0, (int)Math.Min(count, bufferCapacity));
                         if (read <= 0)
                             break;
-                        Utilities.CopyMemory(chunkBytesPtr, bufferPtr, read);
+                        Unsafe.CopyBlockUnaligned(chunkBytesPtr, bufferStart, read);
                         chunkBytesPtr += read;
                         count -= read;
                     } while (count > 0);

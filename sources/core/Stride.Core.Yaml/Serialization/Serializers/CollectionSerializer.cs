@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
 // Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2015 SharpYaml - Alexandre Mutel
@@ -104,11 +104,11 @@ namespace Stride.Core.Yaml.Serialization.Serializers
 
             if (!collectionDescriptor.HasAdd)
             {
-                throw new InvalidOperationException($"Cannot deserialize list to type [{thisObject.GetType()}]. No Add method found");
+                throw new InvalidOperationException($"Cannot deserialize collection to type [{thisObject.GetType()}]. No Add method found");
             }
             if (collectionDescriptor.IsReadOnly(thisObject))
             {
-                throw new InvalidOperationException($"Cannot deserialize list to readonly collection type [{thisObject.GetType()}].");
+                throw new InvalidOperationException($"Cannot deserialize collection to readonly collection type [{thisObject.GetType()}].");
             }
 
             var reader = objectContext.Reader;

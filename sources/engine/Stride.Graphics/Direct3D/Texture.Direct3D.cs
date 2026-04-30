@@ -7,6 +7,7 @@
 #if STRIDE_GRAPHICS_API_DIRECT3D11
 
 using System;
+using System.Runtime.CompilerServices;
 
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -538,10 +539,9 @@ namespace Stride.Graphics
             if (dataBoxes is null || dataBoxes.Length == 0)
                 return null;
 
+            // TODO: PERF: return Unsafe.As<SharpDX.DataBox[]>(dataBoxes);
             var sharpDXDataBoxes = new SharpDX.DataBox[dataBoxes.Length];
-            fixed (void* pDataBoxes = sharpDXDataBoxes)
-                Utilities.Write((IntPtr) pDataBoxes, dataBoxes, 0, dataBoxes.Length);
-
+            Unsafe.As<SharpDX.DataBox[]>(dataBoxes).AsSpan().CopyTo(sharpDXDataBoxes.AsSpan());
             return sharpDXDataBoxes;
         }
 

@@ -21,7 +21,7 @@ namespace Stride.Rendering.Shadows
     public class LightPointShadowMapRendererParaboloid : LightShadowMapRendererBase
     {
         private PoolListStruct<ShaderData> shaderDataPool;
-        private PoolListStruct<ShadowMapTexture> shadowMaps;
+        protected new PoolListStruct<ShadowMapTexture> shadowMaps;
 
         public LightPointShadowMapRendererParaboloid()
         {
@@ -183,7 +183,7 @@ namespace Stride.Rendering.Shadows
             view *= flippingMatrix;
         }
 
-        private class ShadowMapTexture : LightShadowMapTexture
+        protected class ShadowMapTexture : LightShadowMapTexture
         {
             public Matrix ForwardMatrix;
         }

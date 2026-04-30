@@ -12,6 +12,7 @@ using Stride.Engine;
 using Stride.Engine.Processors;
 using Stride.Graphics;
 using Stride.Rendering;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Assets.Presentation.AssetEditors.Gizmos
@@ -66,7 +67,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
             frustumMesh = new CameraFrustumMesh(GraphicsDevice);
             frustumMesh.Build(GraphicsCommandList, cameraParameters);
 
-            var frustumMaterial = GizmoUniformColorMaterial.Create(GraphicsDevice, new Color(0.75f, 0.75f, 1f, 1f));
+            var frustumMaterial = GizmoEmissiveColorMaterial.Create(GraphicsDevice, new Color(0.75f, 0.75f, 1f, 1f));
 
             frustum = new Entity("Camera frustumMesh of {0}".ToFormat(root.Id))
             {
@@ -98,7 +99,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
                 cameraParameters = newCameraParameters;
                 frustumMesh.RebuildVertexBuffer(GraphicsCommandList, cameraParameters);
             }
-            
+
             // update frustumMesh transformation
             frustum.Transform.UseTRS = false;
             frustum.Transform.UpdateWorldMatrix();
@@ -142,10 +143,10 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
             {
                 var indices = new []
                 {
-                    0, 1, 
-                    1, 2, 
-                    2, 3, 
-                    3, 0, 
+                    0, 1,
+                    1, 2,
+                    2, 3,
+                    3, 0,
 
                     4, 5,
                     5, 6,
@@ -183,7 +184,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
                     var zDist = i < 4 ? parameters.NearPlane : parameters.FarPlane;
 
                     var y = parameters.ProjectionMode == CameraProjectionMode.Perspective
-                        ? zDist * (float)Math.Tan(MathUtil.DegreesToRadians(parameters.VerticalFov) / 2)
+                        ? zDist * MathF.Tan(MathUtil.DegreesToRadians(parameters.VerticalFov) / 2)
                         : parameters.OrthographicSize / 2f;
 
                     vertex->Position = new Vector3(new Vector2(parameters.AspectRatio*y, y) * offsets[index], -zDist);

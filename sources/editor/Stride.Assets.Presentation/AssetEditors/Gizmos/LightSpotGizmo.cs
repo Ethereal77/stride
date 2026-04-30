@@ -11,6 +11,7 @@ using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering;
 using Stride.Rendering.Lights;
+
 using Buffer = Stride.Graphics.Buffer;
 using Material = Stride.Rendering.Material;
 
@@ -60,7 +61,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
             spotMesh = new LightSpotMesh(GraphicsDevice);
             spotMesh.Build(GraphicsCommandList, LightSpot);
 
-            spotMaterial = GizmoUniformColorMaterial.Create(GraphicsDevice, (Color)new Color4(GetLightColor(GraphicsDevice), 1f));
+            spotMaterial = GizmoEmissiveColorMaterial.Create(GraphicsDevice, (Color)new Color4(GetLightColor(GraphicsDevice), 1f));
 
             spotEntity = new Entity("Spot Mesh of {0}".ToFormat(root.Id))
             {
@@ -116,7 +117,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
             }
 
             // update the spot color
-            GizmoUniformColorMaterial.UpdateColor(GraphicsDevice, spotMaterial, (Color)new Color4(GetLightColor(GraphicsDevice), 1f));
+            GizmoEmissiveColorMaterial.UpdateColor(GraphicsDevice, spotMaterial, (Color)new Color4(GetLightColor(GraphicsDevice), 1f));
         }
 
         public override bool IsSelected
@@ -201,9 +202,9 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
                 {
                     var z = -lightSpot.Range;
                     var theta = 2 * i * MathUtil.Pi / (4 * Tesselation);
-                    var radiusBeam = Math.Abs(z) * (float)Math.Tan(MathUtil.DegreesToRadians(angleOuter / 2));
+                    var radiusBeam = MathF.Abs(z) * MathF.Tan(MathUtil.DegreesToRadians(angleOuter / 2));
 
-                    vertex[i].Position = new Vector3(radiusBeam * (float)Math.Cos(theta), radiusBeam * (float)Math.Sin(theta), z);
+                    vertex[i].Position = new Vector3(radiusBeam * MathF.Cos(theta), radiusBeam * MathF.Sin(theta), z);
                     vertex[i].Normal = new Vector3(0, 0, -1);
                 }
 
@@ -228,8 +229,8 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
 
                 // The four corners at the end:
                 float angleOuterInRadians = MathUtil.DegreesToRadians(Math.Max(lightSpot.AngleInner, lightSpot.AngleOuter));
-                float y = (float)Math.Tan(angleOuterInRadians / 2.0f) * lightSpot.Range;  // TODO: Is this correct?
-                //float y = (float)Math.Tan(lightSpot.AngleOuter) * lightSpot.Range * 2.0f;  // TODO: Is this correct?
+                float y = MathF.Tan(angleOuterInRadians / 2.0f) * lightSpot.Range;  // TODO: Is this correct?
+                //float y = MathF.Tan(lightSpot.AngleOuter) * lightSpot.Range * 2.0f;  // TODO: Is this correct?
                 float x = y * lightSpot.AspectRatio;  // TODO: Is this correct?
 
                 vertex[1].Position = new Vector3(-x, -y, -lightSpot.Range);

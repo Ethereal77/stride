@@ -31,7 +31,7 @@ namespace Stride.Rendering.Images
             new Vector2(-1.0f,  1.0f),
             new Vector2( 0.0f,  1.0f),
             new Vector2( 1.0f,  1.0f),
-            new Vector2( 0.0f,  0.0f),
+            new Vector2( 0.0f,  0.0f)
         };
 #pragma warning restore SA1008 // Opening parenthesis should be spaced correctly
 
@@ -121,7 +121,7 @@ namespace Stride.Rendering.Images
                 float pixelOffsetY = SampleOffsets[i][1] - jitterPixels[1];
                 pixelOffsetX *= Sharpness;
                 pixelOffsetY *= Sharpness;
-                weights[i] = (float)Math.Exp(-2.29f * (pixelOffsetX * pixelOffsetX + pixelOffsetY * pixelOffsetY));
+                weights[i] = MathF.Exp(-2.29f * (pixelOffsetX * pixelOffsetX + pixelOffsetY * pixelOffsetY));
                 totalWeight += weights[i];
 
                 // Lowpass.
@@ -131,7 +131,7 @@ namespace Stride.Rendering.Images
                 pixelOffsetY *= 0.25f;
                 pixelOffsetX *= Sharpness;
                 pixelOffsetY *= Sharpness;
-                weightLows[i] = (float)Math.Exp(-2.29f * (pixelOffsetX * pixelOffsetX + pixelOffsetY * pixelOffsetY));
+                weightLows[i] = MathF.Exp(-2.29f * (pixelOffsetX * pixelOffsetX + pixelOffsetY * pixelOffsetY));
                 totalWeightLow += weightLows[i];
             }
 
@@ -140,7 +140,7 @@ namespace Stride.Rendering.Images
                 float pixelOffsetY = SampleOffsets[8][1] - jitterPixels[1];
                 pixelOffsetX *= Sharpness;
                 pixelOffsetY *= Sharpness;
-                weightCenter = (float)Math.Exp(-2.29f * (pixelOffsetX * pixelOffsetX + pixelOffsetY * pixelOffsetY));
+                weightCenter = MathF.Exp(-2.29f * (pixelOffsetX * pixelOffsetX + pixelOffsetY * pixelOffsetY));
                 totalWeight += weightCenter;
                 weightCenter /= totalWeight;
 
@@ -151,7 +151,7 @@ namespace Stride.Rendering.Images
                 pixelOffsetY *= 0.25f;
                 pixelOffsetX *= Sharpness;
                 pixelOffsetY *= Sharpness;
-                weightLowCenter = (float)Math.Exp(-2.29f * (pixelOffsetX * pixelOffsetX + pixelOffsetY * pixelOffsetY));
+                weightLowCenter = MathF.Exp(-2.29f * (pixelOffsetX * pixelOffsetX + pixelOffsetY * pixelOffsetY));
                 totalWeightLow += weightLowCenter;
                 weightLowCenter /= totalWeightLow;
             }

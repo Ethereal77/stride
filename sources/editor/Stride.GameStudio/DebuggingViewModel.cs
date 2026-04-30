@@ -276,6 +276,9 @@ namespace Stride.GameStudio
                         var assemblyToReload = modifiedAssembly.Value;
                         assemblyToReload.LoadedAssemblyPath = result.AssemblyPath;
                         assembliesToReload.Add(assemblyToReload);
+
+                        var userDocumentationService = Session.ServiceProvider.Get<UserDocumentationService>();
+                        userDocumentationService.ClearCachedAssemblyDocumentation(assemblyToReload.LoadedAssembly.Assembly);
                     }
                     else
                     {

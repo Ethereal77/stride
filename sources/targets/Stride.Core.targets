@@ -65,7 +65,7 @@
   </Target>
 
   <PropertyGroup>
-    <StrideCompilerTargetsEnable Condition=" '$(StridePlatform)' != 'Windows' and $(StrideWindowsOnly) == 'true'">false</StrideCompilerTargetsEnable>
+    <StrideCompilerTargetsEnable Condition="'$(TargetFramework)' != '$(StrideFramework)' and '$(TargetFramework)' == '$(StrideFrameworkWindows)' and $(StrideWindowsOnly) == 'true'">false</StrideCompilerTargetsEnable>
 
     <!-- Skip unit tests if requested -->
     <StrideCompilerTargetsEnable Condition="'$(StrideSkipUnitTests)' == 'true' And $(StrideOutputFolder.StartsWith('Tests'))">false</StrideCompilerTargetsEnable>
@@ -88,9 +88,9 @@
   <Import Condition="'$(StrideProjectType)' == 'Cpp' And '$(StrideCompilerTargetsEnable)' != 'false'" Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 
   <!-- Assembly Processor -->
-  <UsingTask TaskName="AssemblyProcessorTask" AssemblyFile="$(StrideAssemblyProcessorTempPath)" Condition=" '$(StrideAssemblyProcessorTempPath)' != '' And '$(StrideAssemblyProcessorDev)' != 'true' "/>
+  <UsingTask TaskName="AssemblyProcessorTask" AssemblyFile="$(StrideAssemblyProcessorTempPath)" Condition="'$(StrideAssemblyProcessorTempPath)' != '' And '$(StrideAssemblyProcessorDev)' != 'true' "/>
 
-  <Target Name="RunStrideAssemblyProcessor" BeforeTargets="CopyFilesToOutputDirectory" Condition=" '$(StrideAssemblyProcessor)' == 'true' and '$(StrideAssemblyProcessorTempPath)' != '' and '$(StrideAssemblyProcessorGlobal)' == 'true' and '$(StrideAssemblyProcessorOptions)' != '' ">
+  <Target Name="RunStrideAssemblyProcessor" BeforeTargets="CopyFilesToOutputDirectory" Condition="'$(StrideAssemblyProcessor)' == 'true' and '$(StrideAssemblyProcessorTempPath)' != '' and '$(StrideAssemblyProcessorGlobal)' == 'true' and '$(StrideAssemblyProcessorOptions)' != ''">
     <PropertyGroup>
       <!-- Add Stride.Core path to assembly search directory -->
       <StrideAssemblyProcessorOptions Condition="'$(StrideCoreAssemblyPath)' != ''">$(StrideAssemblyProcessorOptions) --assembly="$(StrideCoreAssemblyPath)"</StrideAssemblyProcessorOptions>
@@ -113,9 +113,9 @@
 
     <!-- Run the Assembly Processor -->
     <Message Importance="High" Text="&quot;$(StrideAssemblyProcessorTempPath)&quot; $(StrideAssemblyProcessorOptions)"/>
-    <AssemblyProcessorTask Condition=" '$(StrideAssemblyProcessorDev)' != 'true' " Arguments="$(StrideAssemblyProcessorOptions)"/>
+    <AssemblyProcessorTask Condition="'$(StrideAssemblyProcessorDev)' != 'true' " Arguments="$(StrideAssemblyProcessorOptions)"/>
     <!-- Dev mode: don't use task to avoid locking the file -->
-    <Exec Condition=" '$(StrideAssemblyProcessorDev)' == 'true' " Command="&quot;$(StrideAssemblyProcessorTempPath)&quot; $(StrideAssemblyProcessorOptions)"/>
+    <Exec Condition="'$(StrideAssemblyProcessorDev)' == 'true' " Command="&quot;$(StrideAssemblyProcessorTempPath)&quot; $(StrideAssemblyProcessorOptions)"/>
 
     <!-- Copy User Documentation (.usrdoc) file to output -->
     <Copy
@@ -133,7 +133,6 @@
     </Copy>
   </Target>
 
-  <Import Project="$(MSBuildThisFileDirectory)Stride.Core.Sign.targets" />
   <Import Project="$(MSBuildThisFileDirectory)Stride.Core.PostSettings.Dependencies.targets"/>
   <Import Condition="'$(StrideNativeOutputName)' != ''" Project="$(MSBuildThisFileDirectory)..\native\Stride.Native.targets" />
 
@@ -202,6 +201,14 @@
   <Import Condition="'$(TargetFramework)' != ''" Project="$(MSBuildThisFileDirectory)MSBuild.Sdk.Extras\Inference.targets" />
   <Import Condition="'$(TargetFramework)' != ''" Project="$(MSBuildThisFileDirectory)MSBuild.Sdk.Extras\Platforms.targets" />
   <Import Condition="'$(TargetFramework)' != ''" Project="$(MSBuildThisFileDirectory)MSBuild.Sdk.Extras\DefaultItems\ImplicitPackages.targets"/>
+
+    <!-- A workaround for https://github.com/microsoft/msbuild/issues/4584 and resolves https://github.com/onovotny/MSBuildSdkExtras/issues/176 -->
+  <Target Name="_RemoveNativeReferencesManifest" Condition="'$(TargetFramework)' == '$(StrideFrameworkiOS)'" AfterTargets="BuiltProjectOutputGroup">
+    <ItemGroup>
+      <_BuiltProjectOutputGroupOutputIntermediate Remove="$(OutDir)$(_DeploymentTargetApplicationManifestFileName)" />
+      <BuiltProjectOutputGroupOutput Remove="$(ProjectDir)$(OutDir)$(_DeploymentTargetApplicationManifestFileName)" />
+    </ItemGroup>
+  </Target>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(StrideProjectType)' != 'Cpp'" />
 </Project>

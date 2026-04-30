@@ -57,16 +57,16 @@ namespace UIElementLink
                 Size = longSize,
 
                 // This element will be followed, because we have specified the same name in the FollowingEntity's UI Element Link
-                Name = "ElementName",
+                Name = "ElementName"
             };
 
             // Load the next scene when the user clicks the button
             followedButton.Click += delegate { LoadNextScene(); };
 
             // Corner buttons
-            var boxButton = (SpriteFromTexture)SplashScreenImages["button_box"];
+            var boxButton = (SpriteFromTexture) SplashScreenImages["button_box"];
             var boxSize = new Vector3(SplashScreenImages["button_box"].SizeInPixels.X,
-                SplashScreenImages["button_box"].SizeInPixels.Y, 0);
+                                      SplashScreenImages["button_box"].SizeInPixels.Y, 0);
 
             var cornerTL = new Button { PressedImage = boxButton, NotPressedImage = boxButton, MouseOverImage = boxButton, Size = boxSize };
             cornerTL.SetCanvasAbsolutePosition(new Vector3(0, 0, 0));
@@ -80,8 +80,12 @@ namespace UIElementLink
             var cornerBR = new Button { PressedImage = boxButton, NotPressedImage = boxButton, MouseOverImage = boxButton, Size = boxSize };
             cornerBR.SetCanvasAbsolutePosition(new Vector3(backBufferSize.X - boxSize.X, backBufferSize.Y - boxSize.Y, 0));
 
-            var rootElement = new Canvas() { Children = { followedButton, cornerTL, cornerTR, cornerBL, cornerBR },
-                MaximumWidth = backBufferSize.X, MaximumHeight = backBufferSize.Y };
+            var rootElement = new Canvas()
+            {
+                Children = { followedButton, cornerTL, cornerTR, cornerBL, cornerBR },
+                MaximumWidth = backBufferSize.X,
+                MaximumHeight = backBufferSize.Y
+            };
 
             Entity.Get<UIComponent>().Page = new UIPage { RootElement = rootElement };
         }

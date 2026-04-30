@@ -28,13 +28,13 @@ namespace Stride.Core.Collections
             Index = -1;
             CollectionChanged = collectionChanged;
         }
-        
+
         /// <summary>
         /// Gets the type of action performed.
         /// Allowed values are <see cref="NotifyCollectionChangedAction.Add"/> and <see cref="NotifyCollectionChangedAction.Remove"/>.
         /// </summary>
         public NotifyCollectionChangedAction Action { get; private set; }
-        
+
         /// <summary>
         /// Gets the added or removed item (if dictionary, value only).
         /// </summary>
@@ -45,9 +45,11 @@ namespace Stride.Core.Collections
         /// </summary>
         public object OldItem { get; private set; }
 
-        /// <summary>Gets the added or removed key (if dictionary).</summary>
+        /// <summary>
+        /// Gets the added or removed key (if dictionary).
+        /// </summary>
         public object Key { get; private set; }
-        
+
         /// <summary>
         /// Gets the index in the collection (if applicable).
         /// </summary>

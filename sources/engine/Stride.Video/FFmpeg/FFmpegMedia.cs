@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 using FFmpeg.AutoGen;
 
@@ -296,7 +297,7 @@ namespace Stride.Video.FFmpeg
                     ret = ffmpeg.avcodec_receive_frame(pCodecContext, pDecodedFrame);
                     if (ret == ffmpeg.AVERROR(ffmpeg.EAGAIN)) // the media file is not ready yet.
                     {
-                        Utilities.Sleep(5);
+                        Thread.Sleep(5);
                         continue;
                     }
                     if (ret < 0)

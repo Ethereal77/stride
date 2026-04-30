@@ -97,7 +97,7 @@ namespace Stride.Core.Presentation.Controls
         /// Gets or sets the value that will be used by the <see cref="VectorEditorBase.ResetValue"/> method to reset the <see cref="Value"/> of this control.
         /// </summary>
         public T DefaultValue { get { return (T)GetValue(DefaultValueProperty); } set { SetValue(DefaultValueProperty, value); } }
-        
+
         /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
@@ -202,7 +202,7 @@ namespace Stride.Core.Presentation.Controls
 
             var editor = (VectorEditorBase<T>)sender;
             var decimalPlaces = editor.DecimalPlaces;
-            return decimalPlaces < 0 ? basevalue : (float)Math.Round((float)basevalue, decimalPlaces);
+            return decimalPlaces < 0 ? basevalue : MathF.Round((float)basevalue, decimalPlaces);
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace Stride.Core.Mathematics
         /// <summary>
         /// The size of the <see cref="Stride.Core.Mathematics.Vector2"/> type, in bytes.
         /// </summary>
-        public static readonly int SizeInBytes = Utilities.SizeOf<Vector2>();
+        public static readonly int SizeInBytes = Unsafe.SizeOf<Vector2>();
 
         /// <summary>
         /// A <see cref="Stride.Core.Mathematics.Vector2"/> with all of its components set to zero.
@@ -99,7 +99,7 @@ namespace Stride.Core.Mathematics
         /// </summary>
         public bool IsNormalized
         {
-            get { return Math.Abs((X * X) + (Y * Y) - 1f) < MathUtil.ZeroTolerance; }
+            get { return MathF.Abs((X * X) + (Y * Y) - 1f) < MathUtil.ZeroTolerance; }
         }
 
         /// <summary>
@@ -142,9 +142,9 @@ namespace Stride.Core.Mathematics
         /// and speed is of the essence.
         /// </remarks>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public float Length()
+        public readonly float Length()
         {
-            return (float)Math.Sqrt((X * X) + (Y * Y));
+            return MathF.Sqrt((X * X) + (Y * Y));
         }
 
         /// <summary>
@@ -183,6 +183,24 @@ namespace Stride.Core.Mathematics
         public float[] ToArray()
         {
             return new float[] { X, Y };
+        }
+
+        /// <summary>
+        /// Moves the first vector2 to the second one in a straight line.
+        /// </summary>
+        /// <param name="from">The first point.</param>
+        /// <param name="to">The second point.</param>
+        /// <param name="maxTravelDistance">The rate at which the first point is going to move towards the second point.</param>
+        public static Vector2 MoveTo(in Vector2 from, in Vector2 to, float maxTravelDistance)
+        {
+            Vector2 distance = Subtract(to, from);
+
+            float length = distance.Length();
+
+            if (maxTravelDistance >= length || length == 0)
+                return to;
+            else
+                return new Vector2(from.X + distance.X / length * maxTravelDistance, from.Y + distance.Y / length * maxTravelDistance);
         }
 
         /// <summary>
@@ -228,7 +246,7 @@ namespace Stride.Core.Mathematics
         /// <param name="right">The second vector to subtract.</param>
         /// <returns>The difference of the two vectors.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Subtract(Vector2 left, Vector2 right)
+        public static Vector2 Subtract(in Vector2 left, in Vector2 right)
         {
             return new Vector2(left.X - right.X, left.Y - right.Y);
         }
@@ -256,7 +274,7 @@ namespace Stride.Core.Mathematics
         {
             return new Vector2(value.X * scale, value.Y * scale);
         }
-        
+
         /// <summary>
         /// Modulates a vector with another by performing component-wise multiplication.
         /// </summary>
@@ -304,7 +322,7 @@ namespace Stride.Core.Mathematics
         {
             return new Vector2(value.X / scale, value.Y / scale);
         }
-        
+
         /// <summary>
         /// Demodulates a vector with another by performing component-wise division.
         /// </summary>
@@ -432,7 +450,7 @@ namespace Stride.Core.Mathematics
             float x = value1.X - value2.X;
             float y = value1.Y - value2.Y;
 
-            result = (float)Math.Sqrt((x * x) + (y * y));
+            result = MathF.Sqrt((x * x) + (y * y));
         }
 
         /// <summary>
@@ -450,7 +468,7 @@ namespace Stride.Core.Mathematics
             float x = value1.X - value2.X;
             float y = value1.Y - value2.Y;
 
-            return (float)Math.Sqrt((x * x) + (y * y));
+            return MathF.Sqrt((x * x) + (y * y));
         }
 
         /// <summary>
@@ -459,11 +477,11 @@ namespace Stride.Core.Mathematics
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector</param>
         /// <param name="result">When the method completes, contains the squared distance between the two vectors.</param>
-        /// <remarks>Distance squared is the value before taking the square root. 
-        /// Distance squared can often be used in place of distance if relative comparisons are being made. 
-        /// For example, consider three points A, B, and C. To determine whether B or C is further from A, 
-        /// compare the distance between A and B to the distance between A and C. Calculating the two distances 
-        /// involves two square roots, which are computationally expensive. However, using distance squared 
+        /// <remarks>Distance squared is the value before taking the square root.
+        /// Distance squared can often be used in place of distance if relative comparisons are being made.
+        /// For example, consider three points A, B, and C. To determine whether B or C is further from A,
+        /// compare the distance between A and B to the distance between A and C. Calculating the two distances
+        /// involves two square roots, which are computationally expensive. However, using distance squared
         /// provides the same information and avoids calculating two square roots.
         /// </remarks>
         public static void DistanceSquared(ref Vector2 value1, ref Vector2 value2, out float result)
@@ -480,11 +498,11 @@ namespace Stride.Core.Mathematics
         /// <param name="value1">The first vector.</param>
         /// <param name="value2">The second vector.</param>
         /// <returns>The squared distance between the two vectors.</returns>
-        /// <remarks>Distance squared is the value before taking the square root. 
-        /// Distance squared can often be used in place of distance if relative comparisons are being made. 
-        /// For example, consider three points A, B, and C. To determine whether B or C is further from A, 
-        /// compare the distance between A and B to the distance between A and C. Calculating the two distances 
-        /// involves two square roots, which are computationally expensive. However, using distance squared 
+        /// <remarks>Distance squared is the value before taking the square root.
+        /// Distance squared can often be used in place of distance if relative comparisons are being made.
+        /// For example, consider three points A, B, and C. To determine whether B or C is further from A,
+        /// compare the distance between A and B to the distance between A and C. Calculating the two distances
+        /// involves two square roots, which are computationally expensive. However, using distance squared
         /// provides the same information and avoids calculating two square roots.
         /// </remarks>
         public static float DistanceSquared(Vector2 value1, Vector2 value2)
@@ -553,7 +571,7 @@ namespace Stride.Core.Mathematics
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
         /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Vector2 start, ref Vector2 end, float amount, out Vector2 result)
         {
@@ -571,7 +589,7 @@ namespace Stride.Core.Mathematics
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
         /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Vector2 Lerp(Vector2 start, Vector2 end, float amount)
         {
@@ -742,12 +760,12 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Returns the reflection of a vector off a surface that has the specified normal. 
+        /// Returns the reflection of a vector off a surface that has the specified normal.
         /// </summary>
         /// <param name="vector">The source vector.</param>
         /// <param name="normal">Normal of the surface.</param>
         /// <param name="result">When the method completes, contains the reflected vector.</param>
-        /// <remarks>Reflect only gives the direction of a reflection off a surface, it does not determine 
+        /// <remarks>Reflect only gives the direction of a reflection off a surface, it does not determine
         /// whether the original vector was close enough to the surface to hit it.</remarks>
         public static void Reflect(ref Vector2 vector, ref Vector2 normal, out Vector2 result)
         {
@@ -758,12 +776,12 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Returns the reflection of a vector off a surface that has the specified normal. 
+        /// Returns the reflection of a vector off a surface that has the specified normal.
         /// </summary>
         /// <param name="vector">The source vector.</param>
         /// <param name="normal">Normal of the surface.</param>
         /// <returns>The reflected vector.</returns>
-        /// <remarks>Reflect only gives the direction of a reflection off a surface, it does not determine 
+        /// <remarks>Reflect only gives the direction of a reflection off a surface, it does not determine
         /// whether the original vector was close enough to the surface to hit it.</remarks>
         public static Vector2 Reflect(Vector2 vector, Vector2 normal)
         {
@@ -1353,7 +1371,7 @@ namespace Stride.Core.Mathematics
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -1369,8 +1387,8 @@ namespace Stride.Core.Mathematics
         /// </returns>
         public bool Equals(Vector2 other)
         {
-            return ((float)Math.Abs(other.X - X) < MathUtil.ZeroTolerance &&
-                (float)Math.Abs(other.Y - Y) < MathUtil.ZeroTolerance);
+            return (MathF.Abs(other.X - X) < MathUtil.ZeroTolerance &&
+                MathF.Abs(other.Y - Y) < MathUtil.ZeroTolerance);
         }
 
         /// <summary>

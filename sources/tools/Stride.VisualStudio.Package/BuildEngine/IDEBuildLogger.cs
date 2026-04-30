@@ -22,7 +22,6 @@ using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
 namespace Stride.VisualStudio.BuildEngine
 {
-
     /// <summary>
     /// This class implements an MSBuild logger that output events to VS outputwindow and tasklist.
     /// </summary>
@@ -204,7 +203,7 @@ namespace Stride.VisualStudio.BuildEngine
 
         /// <summary>
         /// This is the delegate for Message event types
-        /// </summary>		
+        /// </summary>
         private void MessageHandler(object sender, BuildMessageEventArgs messageEvent)
         {
             if (LogAtImportance(messageEvent.Importance))
@@ -215,7 +214,7 @@ namespace Stride.VisualStudio.BuildEngine
 
         private void NavigateTo(object sender, EventArgs arguments)
         {
-            Microsoft.VisualStudio.Shell.Task task = sender as Microsoft.VisualStudio.Shell.Task;
+            TaskListItem task = sender as TaskListItem;
             if (task == null)
                 throw new ArgumentException("Sender is not a Microsoft.VisualStudio.Shell.Task", "sender");
 

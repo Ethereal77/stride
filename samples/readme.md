@@ -17,6 +17,7 @@ Stride Samples
 	- `Graphics` : Graphics samples (display 3D models, sprites, text, etc).
 	- `Input` : Input samples (touch, mouse, gamepad, etc).
 	- `UI` : UI samples.
+	- `Tutorials` : All Tutorial sample projects with a related video or Stride documentation page.
 
 * `StrideSamples.sln` ia a top level solution referencing all Game Packages (`sdpkg`).
 

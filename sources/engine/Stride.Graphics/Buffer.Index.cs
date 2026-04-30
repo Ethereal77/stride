@@ -34,7 +34,7 @@ namespace Stride.Graphics
             /// <param name="device">The <see cref="GraphicsDevice"/>.</param>
             /// <param name="usage">The usage.</param>
             /// <returns>A index buffer</returns>
-            public static Buffer<T> New<T>(GraphicsDevice device, GraphicsResourceUsage usage = GraphicsResourceUsage.Default) where T : struct
+            public static Buffer<T> New<T>(GraphicsDevice device, GraphicsResourceUsage usage = GraphicsResourceUsage.Default) where T : unmanaged
             {
                 return Buffer.New<T>(device, 1, BufferFlags.IndexBuffer, usage);
             }
@@ -47,7 +47,7 @@ namespace Stride.Graphics
             /// <param name="value">The value to initialize the index buffer.</param>
             /// <param name="usage">The usage of this resource.</param>
             /// <returns>A index buffer</returns>
-            public static Buffer<T> New<T>(GraphicsDevice device, ref T value, GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable) where T : struct
+            public static Buffer<T> New<T>(GraphicsDevice device, ref T value, GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable) where T : unmanaged
             {
                 return Buffer.New(device, ref value, BufferFlags.IndexBuffer, usage);
             }
@@ -60,7 +60,7 @@ namespace Stride.Graphics
             /// <param name="value">The value to initialize the index buffer.</param>
             /// <param name="usage">The usage of this resource.</param>
             /// <returns>A index buffer</returns>
-            public static Buffer<T> New<T>(GraphicsDevice device, T[] value, GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable) where T : struct
+            public static Buffer<T> New<T>(GraphicsDevice device, T[] value, GraphicsResourceUsage usage = GraphicsResourceUsage.Immutable) where T : unmanaged
             {
                 return Buffer.New(device, value, BufferFlags.IndexBuffer, usage);
             }

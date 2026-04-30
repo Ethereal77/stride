@@ -35,6 +35,7 @@ namespace Stride.Rendering
             NodeIndex = mesh.NodeIndex;
             Name = mesh.Name;
             BoundingBox = mesh.BoundingBox;
+            BoundingSphere = mesh.BoundingSphere;
             Skinning = mesh.Skinning;
         }
 
@@ -55,9 +56,9 @@ namespace Stride.Rendering
         public MeshDraw Draw { get; set; }
 
         public int MaterialIndex { get; set; }
-        
+
         public ParameterCollection Parameters { get; private set; }
-        
+
         /// <summary>
         /// Index of the transformation node in <see cref="Model"/>.
         /// </summary>

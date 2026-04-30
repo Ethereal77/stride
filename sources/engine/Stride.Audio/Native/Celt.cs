@@ -6,6 +6,7 @@
 #pragma warning disable SA1300 // Element must begin with upper-case letter
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -70,6 +71,7 @@ namespace Stride.Audio
         /// <returns></returns>
         public unsafe int Decode(byte[] inputBuffer, int inputBufferSize, short[] outputSamples)
         {
+            Debug.Assert((uint)inputBufferSize <= (uint)inputBuffer.Length);
             fixed (short* samplesPtr = outputSamples)
             fixed (byte* bufferPtr = inputBuffer)
             {
@@ -86,6 +88,7 @@ namespace Stride.Audio
         /// <returns></returns>
         public unsafe int Decode(byte[] inputBuffer, int inputBufferSize, short* outputSamples)
         {
+            Debug.Assert((uint)inputBufferSize <= (uint)inputBuffer.Length);
             fixed (byte* bufferPtr = inputBuffer)
             {
                 return xnCeltDecodeShort(celtPtr, bufferPtr, inputBufferSize, outputSamples, BufferSize);

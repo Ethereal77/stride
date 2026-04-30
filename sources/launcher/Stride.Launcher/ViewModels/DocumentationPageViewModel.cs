@@ -6,8 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -21,6 +20,7 @@ namespace Stride.LauncherApp.ViewModels
     internal class DocumentationPageViewModel : DispatcherViewModel
     {
         private static readonly Regex ParsingRegex = new Regex(@"\{([^\{\}]+)\}\{([^\{\}]+)\}\{([^\{\}]+)\}");
+        private static readonly HttpClient httpClient = new();
         private const string DocPageScheme = "page:";
         private const string PageUrlFormatString = "{0}{1}";
 
@@ -75,48 +75,37 @@ namespace Stride.LauncherApp.ViewModels
 
         public static async Task<List<DocumentationPageViewModel>> FetchGettingStartedPages(IViewModelServiceProvider serviceProvider, string version)
         {
-            string urlData = null;
             var result = new List<DocumentationPageViewModel>();
+            string urlData;
             try
             {
-                WebRequest request = WebRequest.Create(string.Format(Urls.GettingStarted, version));
-                using WebResponse reponse = await request.GetResponseAsync();
-                using Stream str = reponse.GetResponseStream();
-                if (str != null)
+                using (var response = await httpClient.GetAsync(string.Format(Urls.GettingStarted, version)))
                 {
-                    using var reader = new StreamReader(str);
-                    urlData = reader.ReadToEnd();
-                }
-            }
-            catch
-            {
-                // Unable to reach the URL: return an empty list
-                return result;
-            }
+                    response.EnsureSuccessStatusCode();
+                    urlData = await response.Content.ReadAsStringAsync();
 
-            if (urlData is null)
-                return result;
-
-            try
-            {
-                var urls = urlData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var url in urls)
-                {
-                    var match = ParsingRegex.Match(url);
-                    if (match.Success && match.Groups.Count == 4)
+                    if (urlData != null)
                     {
-                        var link = match.Groups[3].Value;
-                        if (link.StartsWith(DocPageScheme))
+                        var urls = urlData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var url in urls)
                         {
-                            link = GetDocumentationPageUrl(version, link[DocPageScheme.Length..]);
+                            var match = ParsingRegex.Match(url);
+                            if (match.Success && match.Groups.Count == 4)
+                            {
+                                var link = match.Groups[3].Value;
+                                if (link.StartsWith(DocPageScheme))
+                                {
+                                    link = GetDocumentationPageUrl(version, link.Substring(DocPageScheme.Length));
+                                }
+                                var page = new DocumentationPageViewModel(serviceProvider, version)
+                                {
+                                    Title = match.Groups[1].Value.Trim(),
+                                    Description = match.Groups[2].Value.Trim(),
+                                    Url = link.Trim()
+                                };
+                                result.Add(page);
+                            }
                         }
-                        var page = new DocumentationPageViewModel(serviceProvider, version)
-                        {
-                            Title = match.Groups[1].Value.Trim(),
-                            Description = match.Groups[2].Value.Trim(),
-                            Url = link.Trim()
-                        };
-                        result.Add(page);
                     }
                 }
             }

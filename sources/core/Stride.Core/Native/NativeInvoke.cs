@@ -19,14 +19,6 @@ namespace Stride.Core.Native
             NativeLibraryHelper.Load("libcore", typeof(NativeInvoke));
         }
 
-        /// <summary>
-        ///   Suspends the current thread for a specified timespan.
-        /// </summary>
-        /// <param name="ms">Number of milliseconds to sleep.</param>
-        [SuppressUnmanagedCodeSecurity]
-        [DllImport(Library, EntryPoint = "cnSleep", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void Sleep(int ms);
-
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void ManagedLogDelegate(string log);
 

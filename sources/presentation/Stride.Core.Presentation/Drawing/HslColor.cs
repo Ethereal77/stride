@@ -23,7 +23,9 @@ namespace Stride.Core.Presentation.Drawing
         private double _luminosity;
         private double _alpha;
 
-        /// <summary>Initializes a new instance of the HslColor class with the specified hue, saturation, and luminosity.</summary>
+        /// <summary>
+        /// Initializes a new instance of the HslColor class with the specified hue, saturation, and luminosity.
+        /// </summary>
         /// <param name="hue">The hue.</param>
         /// <param name="saturation">Ths saturation.</param>
         /// <param name="luminosity">The luminosity.</param>
@@ -32,7 +34,9 @@ namespace Stride.Core.Presentation.Drawing
             this = new HslColor(hue, saturation, luminosity, 1.0);
         }
 
-        /// <summary>Initializes a new instance of the HslColor class with the specified hue, saturation, luminosity, and alpha.</summary>
+        /// <summary>
+        /// Initializes a new instance of the HslColor class with the specified hue, saturation, luminosity, and alpha.
+        /// </summary>
         /// <param name="hue">The hue.</param>
         /// <param name="saturation">The saturation.</param>
         /// <param name="luminosity">The luminosity.</param>
@@ -45,7 +49,9 @@ namespace Stride.Core.Presentation.Drawing
             _alpha = LimitRange(alpha, 0.0, 1.0);
         }
 
-        /// <summary>Gets or sets the HslColor's Hue component</summary>
+        /// <summary>
+        /// Gets or sets the HslColor's Hue component.
+        /// </summary>
         /// <returns>The HslColor's Hue component.</returns>
         public double Hue
         {
@@ -53,7 +59,9 @@ namespace Stride.Core.Presentation.Drawing
             set => _hue = LimitRange(value, 0.0, 360.0);
         }
 
-        /// <summary>Gets or sets the HslColor's Saturation component.</summary>
+        /// <summary>
+        /// Gets or sets the HslColor's Saturation component.
+        /// </summary>
         /// <returns>The HslColor's Saturation component.</returns>
         public double Saturation
         {
@@ -61,7 +69,9 @@ namespace Stride.Core.Presentation.Drawing
             set => _saturation = LimitRange(value, 0.0, 1.0);
         }
 
-        /// <summary>Gets or sets the HslColor's Luminosity component</summary>
+        /// <summary>
+        /// Gets or sets the HslColor's Luminosity component
+        /// </summary>
         /// <returns>The HslColor's Luminosity component.</returns>
         public double Luminosity
         {
@@ -69,7 +79,9 @@ namespace Stride.Core.Presentation.Drawing
             set => _luminosity = LimitRange(value, 0.0, 1.0);
         }
 
-        /// <summary>Gets or sets the HslColor's Alpha component.</summary>
+        /// <summary>
+        /// Gets or sets the HslColor's Alpha component.
+        /// </summary>
         /// <returns>The HslColor's Alpha component.</returns>
         public double Alpha
         {
@@ -77,7 +89,9 @@ namespace Stride.Core.Presentation.Drawing
             set => _alpha = LimitRange(value, 0.0, 1.0);
         }
 
-        /// <summary>Converts a Color value to an HslColor. The algorithm is based on pseudocode available on HSL and HSV.</summary>
+        /// <summary>
+        /// Converts a Color value to an HslColor. The algorithm is based on pseudocode available on HSL and HSV.
+        /// </summary>
         /// <param name="color">The color to convert.</param>
         /// <returns>The converted color.</returns>
         public static HslColor FromColor(Color color)
@@ -97,7 +111,9 @@ namespace Stride.Core.Presentation.Drawing
             return new HslColor(hue, saturation, luminosity, alpha);
         }
 
-        /// <summary>Converts an HslColor value to a Color. The algorithm is based on pseudocode available on HSL and HSV.</summary>
+        /// <summary>
+        /// Converts an HslColor value to a Color. The algorithm is based on pseudocode available on HSL and HSV.
+        /// </summary>
         /// <returns>The converted color.</returns>
         public Color ToColor()
         {

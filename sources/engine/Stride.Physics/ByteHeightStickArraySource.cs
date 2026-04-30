@@ -3,6 +3,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+
 using Stride.Core;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
@@ -67,7 +68,7 @@ namespace Stride.Physics
 
             return other.HeightStickSize == HeightStickSize &&
                    other.HeightRange == HeightRange &&
-                   Math.Abs(other.HeightScale - HeightScale) < float.Epsilon &&
+                   MathF.Abs(other.HeightScale - HeightScale) < float.Epsilon &&
                    other.InitialByte == InitialByte;
         }
     }

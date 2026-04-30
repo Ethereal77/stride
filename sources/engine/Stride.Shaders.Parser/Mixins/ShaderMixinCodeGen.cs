@@ -298,6 +298,19 @@ namespace Stride.Shaders.Parser.Mixins
             ProcessInitialValueStatus = false;
         }
 
+        public override void Visit(TypeName typeName)
+        {
+            if (typeName.IsByteAddressBufferType())
+            {
+                Write("Buffer");
+                ProcessInitialValueStatus = false;
+            }
+            else
+            {
+                base.Visit(typeName);
+            }
+        }
+
         /// <summary>
         /// Visits the specified for each statement.
         /// </summary>
@@ -401,7 +414,7 @@ namespace Stride.Shaders.Parser.Mixins
                 }
                 CloseBrace();
             }
-    
+
             VariableAsParameterKey = true;
             currentBlock = null;
         }
@@ -677,7 +690,7 @@ namespace Stride.Shaders.Parser.Mixins
                 }
             }
         }
-        
+
         private void WriteGenericParameters(IEnumerable<Expression> genericParameters)
         {
             foreach (Expression genericParameter in genericParameters)

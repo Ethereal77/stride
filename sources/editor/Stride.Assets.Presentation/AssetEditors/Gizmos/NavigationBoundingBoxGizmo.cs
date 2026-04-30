@@ -12,12 +12,13 @@ using Stride.Graphics;
 using Stride.Navigation;
 using Stride.Rendering;
 using Stride.Rendering.Lights;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Assets.Presentation.AssetEditors.Gizmos
 {
     /// <summary>
-    /// A gizmo to display the bounding boxes for navigation meshes inside the editor as a gizmo. 
+    /// A gizmo to display the bounding boxes for navigation meshes inside the editor as a gizmo.
     /// this gizmo uses scale as the extent of the bounding box and is not affected by rotation
     /// </summary>
     [GizmoComponent(typeof(NavigationBoundingBoxComponent), false)]
@@ -33,7 +34,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
 
         protected override Entity Create()
         {
-            material = GizmoUniformColorMaterial.Create(GraphicsDevice, Color.CornflowerBlue);
+            material = GizmoEmissiveColorMaterial.Create(GraphicsDevice, Color.CornflowerBlue);
 
             box = new BoxMesh(GraphicsDevice);
             box.Build();
@@ -57,14 +58,14 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
         {
             if (ContentEntity == null || GizmoRootEntity == null)
                 return;
-            
+
             // calculate the world matrix of the gizmo so that it is positioned exactly as the corresponding scene entity
             // except the scale that is re-adjusted to the gizmo desired size (gizmo are insert at scene root so LocalMatrix = WorldMatrix)
             Vector3 scale;
             Quaternion rotation;
             Vector3 translation;
             ContentEntity.Transform.WorldMatrix.Decompose(out scale, out rotation, out translation);
-            
+
             // Translation and Scale but no rotation on bounding boxes
             GizmoRootEntity.Transform.Position = translation;
             GizmoRootEntity.Transform.Scale = Component.Size * scale;

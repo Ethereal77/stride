@@ -7,6 +7,8 @@ using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 
+using Buffer = Stride.Graphics.Buffer;
+
 namespace Stride.Engine
 {
     [DataContract("InstancingUserBuffer")]

@@ -25,7 +25,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
         private static readonly Color RedUniformColor = new Color(0xFC, 0x37, 0x37);
         private static readonly Color GreenUniformColor = new Color(0x32, 0xE3, 0x35);
         private static readonly Color BlueUniformColor = new Color(0x2F, 0x6A, 0xE1);
-      
+
         /// <summary>
         /// A uniform red material
         /// </summary>
@@ -48,10 +48,30 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
 
         protected override Entity Create()
         {
-            RedUniformMaterial = CreateUniformColorMaterial(RedUniformColor);
-            GreenUniformMaterial = CreateUniformColorMaterial(GreenUniformColor);
-            BlueUniformMaterial = CreateUniformColorMaterial(BlueUniformColor);
+            RedUniformMaterial = CreateEmissiveColorMaterial(RedUniformColor);
+            GreenUniformMaterial = CreateEmissiveColorMaterial(GreenUniformColor);
+            BlueUniformMaterial = CreateEmissiveColorMaterial(BlueUniformColor);
             return null;
+        }
+
+        /// <summary>
+        /// Gets the default color associated to the provided axis index.
+        /// </summary>
+        /// <param name="axisIndex">The index of the axis</param>
+        /// <returns>The default color associated</returns>
+        protected Color GetAxisDefaultColor(int axisIndex)
+        {
+            switch (axisIndex)
+            {
+                case 0:
+                    return RedUniformColor;
+                case 1:
+                    return GreenUniformColor;
+                case 2:
+                    return BlueUniformColor;
+                default:
+                    throw new ArgumentOutOfRangeException("axisIndex");
+            }
         }
 
         /// <summary>
@@ -81,16 +101,36 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
         /// <returns>the material</returns>
         protected Material CreateUniformColorMaterial(Color color)
         {
-            return GizmoUniformColorMaterial.Create(GraphicsDevice, color, false);
+            return GizmoUniformColorMaterial.Create(GraphicsDevice, color);
+        }
+
+        /// <summary>
+        /// Creates an emissive color material.
+        /// </summary>
+        /// <param name="color">The color of the material</param>
+        /// <returns>the material</returns>
+        protected Material CreateEmissiveColorMaterial(Color color)
+        {
+            return GizmoEmissiveColorMaterial.Create(GraphicsDevice, color, 0.75f);
+        }
+
+        /// <summary>
+        /// Creates a material from a shader.
+        /// </summary>
+        /// <param name="shaderName">the shader's name</param>
+        /// <returns>the material</returns>
+        protected Material CreateShaderMaterial(string shaderName)
+        {
+            return GizmoShaderMaterial.Create(GraphicsDevice, shaderName);
         }
 
         protected virtual void UpdateColors()
         {
             if (IsEnabled && RedUniformMaterial != null)
             {
-                GizmoUniformColorMaterial.UpdateColor(GraphicsDevice, RedUniformMaterial, RedUniformColor);
-                GizmoUniformColorMaterial.UpdateColor(GraphicsDevice, GreenUniformMaterial, GreenUniformColor);
-                GizmoUniformColorMaterial.UpdateColor(GraphicsDevice, BlueUniformMaterial, BlueUniformColor);
+                GizmoEmissiveColorMaterial.UpdateColor(GraphicsDevice, RedUniformMaterial, RedUniformColor);
+                GizmoEmissiveColorMaterial.UpdateColor(GraphicsDevice, GreenUniformMaterial, GreenUniformColor);
+                GizmoEmissiveColorMaterial.UpdateColor(GraphicsDevice, BlueUniformMaterial, BlueUniformColor);
             }
         }
     }

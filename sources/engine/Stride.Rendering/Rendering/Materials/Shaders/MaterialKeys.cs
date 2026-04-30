@@ -16,7 +16,7 @@ namespace Stride.Rendering.Materials
         public static readonly PermutationParameterKey<ShaderSource> VertexStageSurfaceShaders = ParameterKeys.NewPermutation<ShaderSource>();
         public static readonly PermutationParameterKey<ShaderSource> DomainStageSurfaceShaders = ParameterKeys.NewPermutation<ShaderSource>();
         public static readonly PermutationParameterKey<ShaderSource> PixelStageSurfaceShaders = ParameterKeys.NewPermutation<ShaderSource>();
-        
+
         public static readonly PermutationParameterKey<ShaderSource> VertexStageStreamInitializer = ParameterKeys.NewPermutation<ShaderSource>();
         public static readonly PermutationParameterKey<ShaderSource> DomainStageStreamInitializer = ParameterKeys.NewPermutation<ShaderSource>();
         public static readonly PermutationParameterKey<ShaderSource> PixelStageStreamInitializer = ParameterKeys.NewPermutation<ShaderSource>();
@@ -52,7 +52,7 @@ namespace Stride.Rendering.Materials
         public static readonly ObjectParameterKey<Texture> SpecularMap = ParameterKeys.NewObject<Texture>();
         public static readonly ValueParameterKey<Color3> SpecularValue = ParameterKeys.NewValue<Color3>();
         public static readonly ValueParameterKey<float> SpecularIntensityValue = ParameterKeys.NewValue<float>();
-        
+
         public static readonly ObjectParameterKey<Texture> GlossinessMap = ParameterKeys.NewObject<Texture>();
         public static readonly ValueParameterKey<float> GlossinessValue = ParameterKeys.NewValue<float>();
 
@@ -127,8 +127,10 @@ namespace Stride.Rendering.Materials
         public static readonly PermutationParameterKey<bool> HasSkinningTangent = ParameterKeys.NewPermutation<bool>();
 
         public static readonly PermutationParameterKey<int> SkinningMaxBones = ParameterKeys.NewPermutation<int>(56);
-        
+
         public static readonly PermutationParameterKey<bool> UsePixelShaderWithDepthPass = ParameterKeys.NewPermutation<bool>();
+
+        public static readonly PermutationParameterKey<bool> UseDitheredShadows = ParameterKeys.NewPermutation<bool>();
 
         static MaterialKeys()
         {
@@ -137,7 +139,7 @@ namespace Stride.Rendering.Materials
 
         private static void ScaleSpecularPower(ref float specularPower, ref float scaledSpecularPower)
         {
-            scaledSpecularPower = (float)Math.Pow(2.0f, 1.0f + specularPower * 13.0f);
+            scaledSpecularPower = MathF.Pow(2.0f, 1.0f + specularPower * 13.0f);
         }
     }
 }

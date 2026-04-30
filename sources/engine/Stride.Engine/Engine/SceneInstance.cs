@@ -97,13 +97,15 @@ namespace Stride.Engine
                     RemoveRendererTypes();
                 }
 
+                // set rootScene before adding entities because component processors might want to reference it
+                rootScene = value;
+
                 if (value != null)
                 {
                     Add(value);
                     HandleRendererTypes();
                 }
 
-                rootScene = value;
                 OnRootSceneChanged();
             }
         }
@@ -137,7 +139,7 @@ namespace Stride.Engine
             if (scene.Entities.Count > 0)
             {
                 var entitiesToAdd = new FastList<Entity>();
-                // Reverse order, we're adding and removing from the tail to 
+                // Reverse order, we're adding and removing from the tail to
                 // avoid forcing the list to move all items when removing at [0]
                 for (int i = scene.Entities.Count -1; i >= 0; i-- )
                     entitiesToAdd.Add(scene.Entities[i]);
@@ -168,7 +170,7 @@ namespace Stride.Engine
             if (scene.Children.Count > 0)
             {
                 var scenesToAdd = new FastList<Scene>();
-                // Reverse order, we're adding and removing from the tail to 
+                // Reverse order, we're adding and removing from the tail to
                 // avoid forcing the list to move all items when removing at [0]
                 for (int i = scene.Children.Count - 1; i >= 0; i--)
                     scenesToAdd.Add(scene.Children[i]);

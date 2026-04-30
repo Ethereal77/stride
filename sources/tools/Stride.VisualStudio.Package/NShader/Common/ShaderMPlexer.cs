@@ -90,7 +90,8 @@ namespace NShader.Lexer
         private IErrorHandler handler;
         int scState;
 
-        private static int GetMaxParseToken() {
+        private static int GetMaxParseToken()
+        {
             System.Reflection.FieldInfo f = typeof(Tokens).GetField("maxParseToken");
             return (f == null ? int.MaxValue : (int)f.GetValue(null));
         }
@@ -157,10 +158,12 @@ public IShaderTokenProvider ShaderTokenProvider = null; // Token provider
 #endif // STACK
 
 #region ScannerTables
-    struct Table {
+    struct Table
+    {
         public int min; public int rng; public int dflt;
         public sbyte[] nxt;
-        public Table(int m, int x, int d, sbyte[] n) {
+        public Table(int m, int x, int d, sbyte[] n)
+        {
             min = m; rng = x; dflt = d; nxt = n;
         }
     };
@@ -176,207 +179,213 @@ public IShaderTokenProvider ShaderTokenProvider = null; // Token provider
     // There are 1 tables, 126 entries
     // There are 1 runs, 0 singletons
     //
-    static sbyte[] map0 = new sbyte[126] {
-/* \0     */ 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 0, 5, 5, 5, 2, 2,
-/* \020   */ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-/* \040   */ 5, 26, 17, 19, 2, 21, 22, 2, 31, 32, 3, 12, 30, 13, 14, 1,
-/* 0      */ 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 27, 24, 20, 25, 2,
-/* @      */ 2, 10, 10, 10, 10, 11, 16, 6, 15, 6, 6, 6, 6, 6, 6, 6,
-/* P      */ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 33, 18, 34, 2, 6,
-/* `      */ 2, 10, 10, 10, 10, 11, 16, 6, 15, 6, 6, 6, 6, 6, 6, 6,
-/* p      */ 6, 6, 6, 6, 6, 6, 6, 6, 9, 6, 6, 28, 23, 29 };
+    static sbyte[] map0 = new sbyte[126]
+    {
+        /* \0     */ 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 0, 5, 5, 5, 2, 2,
+        /* \020   */ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        /* \040   */ 5, 26, 17, 19, 2, 21, 22, 2, 31, 32, 3, 12, 30, 13, 14, 1,
+        /* 0      */ 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 4, 27, 24, 20, 25, 2,
+        /* @      */ 2, 10, 10, 10, 10, 11, 16, 6, 15, 6, 6, 6, 6, 6, 6, 6,
+        /* P      */ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 33, 18, 34, 2, 6,
+        /* `      */ 2, 10, 10, 10, 10, 11, 16, 6, 15, 6, 6, 6, 6, 6, 6, 6,
+        /* p      */ 6, 6, 6, 6, 6, 6, 6, 6, 9, 6, 6, 28, 23, 29
+    };
 
     sbyte Map(int chr)
-    { // '\0' <= chr <= '\uFFFF'
-      if (chr < 126) return map0[chr - 0];
-      else return (sbyte)2;
+    {
+        // '\0' <= chr <= '\uFFFF'
+        if (chr < 126) return map0[chr - 0];
+        else return (sbyte)2;
     }
 #endregion
 
     static Table[] NxS = new Table[75];
 
-    static Scanner() {
-    NxS[0] = // Shortest string ""
-        new Table(0, 0, 0, null);
-    NxS[1] = // Shortest string "^\t"
-        new Table(0, 20, -1, new sbyte[] {72, -1, -1, -1, -1, 72,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 73});
-    NxS[2] = // Shortest string "/"
-        new Table(20, 19, -1, new sbyte[] {52, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 50, -1, 51});
-    NxS[3] = // Shortest string "\0"
-        new Table(0, 0, -1, null);
-    NxS[4] = // Shortest string "*"
-        new Table(20, 1, -1, new sbyte[] {49});
-    NxS[5] = // Shortest string ":"
-        new Table(0, 17, -1, new sbyte[] {74, -1, -1, -1, -1, 74,
-        48, -1, -1, 48, 48, 48, -1, -1, -1, 48, 48});
-    NxS[6] = // Shortest string "G"
-        new Table(6, 11, -1, new sbyte[] {6, 6, 6, 6, 6, 6,
-        -1, -1, -1, 6, 6});
-    NxS[7] = // Shortest string "1"
-        new Table(7, 8, -1, new sbyte[] {7, 7, -1, -1, 68, -1,
-        -1, 43});
-    NxS[8] = // Shortest string "0"
-        new Table(7, 8, -1, new sbyte[] {7, 7, 67, -1, 68, -1,
-        -1, 43});
-    NxS[9] = // Shortest string "+"
-        new Table(20, 1, -1, new sbyte[] {42});
-    NxS[10] = // Shortest string "-"
-        new Table(20, 1, -1, new sbyte[] {41});
-    NxS[11] = // Shortest string "."
-        new Table(7, 2, -1, new sbyte[] {38, 38});
-    NxS[12] = // Shortest string """
-        new Table(17, 2, 63, new sbyte[] {37, 64});
-    NxS[13] = // Shortest string "^#"
-        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
-        -1, -1, -1, 36, 36});
-    NxS[14] = // Shortest string "="
-        new Table(20, 1, -1, new sbyte[] {35});
-    NxS[15] = // Shortest string "%"
-        new Table(20, 1, -1, new sbyte[] {34});
-    NxS[16] = // Shortest string "&"
-        new Table(22, 1, -1, new sbyte[] {33});
-    NxS[17] = // Shortest string "|"
-        new Table(23, 1, -1, new sbyte[] {32});
-    NxS[18] = // Shortest string "<"
-        new Table(20, 1, -1, new sbyte[] {31});
-    NxS[19] = // Shortest string ">"
-        new Table(20, 1, -1, new sbyte[] {30});
-    NxS[20] = // Shortest string "!"
-        new Table(20, 1, -1, new sbyte[] {29});
-    NxS[21] = // Shortest string ";"
-        new Table(0, 0, -1, null);
-    NxS[22] = // Shortest string "{"
-        new Table(0, 0, -1, null);
-    NxS[23] = // Shortest string "}"
-        new Table(0, 0, -1, null);
-    NxS[24] = // Shortest string ","
-        new Table(0, 0, -1, null);
-    NxS[25] = // Shortest string "("
-        new Table(0, 0, -1, null);
-    NxS[26] = // Shortest string ")"
-        new Table(0, 0, -1, null);
-    NxS[27] = // Shortest string "["
-        new Table(0, 0, -1, null);
-    NxS[28] = // Shortest string "]"
-        new Table(0, 0, -1, null);
-    NxS[29] = // Shortest string "!="
-        new Table(0, 0, -1, null);
-    NxS[30] = // Shortest string ">="
-        new Table(0, 0, -1, null);
-    NxS[31] = // Shortest string "<="
-        new Table(0, 0, -1, null);
-    NxS[32] = // Shortest string "||"
-        new Table(0, 0, -1, null);
-    NxS[33] = // Shortest string "&&"
-        new Table(0, 0, -1, null);
-    NxS[34] = // Shortest string "%="
-        new Table(0, 0, -1, null);
-    NxS[35] = // Shortest string "=="
-        new Table(0, 0, -1, null);
-    NxS[36] = // Shortest string "^#G"
-        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
-        -1, -1, -1, 36, 36});
-    NxS[37] = // Shortest string """"
-        new Table(0, 0, -1, null);
-    NxS[38] = // Shortest string ".1"
-        new Table(7, 10, -1, new sbyte[] {38, 38, -1, -1, 65, -1,
-        -1, -1, 39, 39});
-    NxS[39] = // Shortest string ".1H"
-        new Table(0, 0, -1, null);
-    NxS[40] = // Shortest string ".1E1"
-        new Table(7, 10, -1, new sbyte[] {40, 40, -1, -1, -1, -1,
-        -1, -1, 39, 39});
-    NxS[41] = // Shortest string "-="
-        new Table(0, 0, -1, null);
-    NxS[42] = // Shortest string "+="
-        new Table(0, 0, -1, null);
-    NxS[43] = // Shortest string "0."
-        new Table(7, 10, -1, new sbyte[] {38, 38, -1, -1, 69, -1,
-        -1, -1, 44, 44});
-    NxS[44] = // Shortest string "0.H"
-        new Table(0, 0, -1, null);
-    NxS[45] = // Shortest string "0.E1"
-        new Table(7, 10, -1, new sbyte[] {45, 45, -1, -1, -1, -1,
-        -1, -1, 44, 44});
-    NxS[46] = // Shortest string "0E1"
-        new Table(7, 2, -1, new sbyte[] {46, 46});
-    NxS[47] = // Shortest string "0x1"
-        new Table(7, 10, -1, new sbyte[] {47, 47, -1, 47, 47, -1,
-        -1, -1, -1, 47});
-    NxS[48] = // Shortest string ":G"
-        new Table(6, 11, -1, new sbyte[] {48, 48, 48, 48, 48, 48,
-        -1, -1, -1, 48, 48});
-    NxS[49] = // Shortest string "*="
-        new Table(0, 0, -1, null);
-    NxS[50] = // Shortest string "//"
-        new Table(0, 1, 50, new sbyte[] {-1});
-    NxS[51] = // Shortest string "/*"
-        new Table(0, 4, 51, new sbyte[] {-1, 51, 51, 53});
-    NxS[52] = // Shortest string "/="
-        new Table(0, 0, -1, null);
-    NxS[53] = // Shortest string "/**"
-        new Table(1, 3, -1, new sbyte[] {54, -1, 53});
-    NxS[54] = // Shortest string "/**/"
-        new Table(0, 0, -1, null);
-    NxS[55] = // Shortest string "\t"
-        new Table(0, 0, -1, null);
-    NxS[56] = // Shortest string ""
-        new Table(0, 4, 58, new sbyte[] {57, 58, 58, 59});
-    NxS[57] = // Shortest string ""
-        new Table(0, 0, -1, null);
-    NxS[58] = // Shortest string "/"
-        new Table(0, 4, 58, new sbyte[] {-1, 58, 58, 59});
-    NxS[59] = // Shortest string "*"
-        new Table(1, 3, -1, new sbyte[] {60, -1, 59});
-    NxS[60] = // Shortest string "*/"
-        new Table(0, 0, -1, null);
-    NxS[61] = // Shortest string ""
-        new Table(12, 32, 6, new sbyte[] {9, 10, 11, 6, 6, 12,
-        3, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-        28, 55, 2, 3, 4, 5, 55, 6, 7, 8});
-    NxS[62] = // Shortest string "^"
-        new Table(12, 32, 6, new sbyte[] {9, 10, 11, 6, 6, 12,
-        3, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-        28, 1, 2, 3, 4, 5, 1, 6, 7, 8});
-    NxS[63] = // Shortest string ""/"
-        new Table(17, 2, 63, new sbyte[] {37, 64});
-    NxS[64] = // Shortest string ""\"
-        new Table(0, 1, 63, new sbyte[] {-1});
-    NxS[65] = // Shortest string ".1E"
-        new Table(7, 7, -1, new sbyte[] {40, 40, -1, -1, -1, 66,
-        66});
-    NxS[66] = // Shortest string ".1E+"
-        new Table(7, 2, -1, new sbyte[] {40, 40});
-    NxS[67] = // Shortest string "0x"
-        new Table(7, 10, -1, new sbyte[] {47, 47, -1, 47, 47, -1,
-        -1, -1, -1, 47});
-    NxS[68] = // Shortest string "0E"
-        new Table(7, 7, -1, new sbyte[] {46, 46, -1, -1, -1, 71,
-        71});
-    NxS[69] = // Shortest string "0.E"
-        new Table(7, 7, -1, new sbyte[] {45, 45, -1, -1, -1, 70,
-        70});
-    NxS[70] = // Shortest string "0.E+"
-        new Table(7, 2, -1, new sbyte[] {45, 45});
-    NxS[71] = // Shortest string "0E+"
-        new Table(7, 2, -1, new sbyte[] {46, 46});
-    NxS[72] = // Shortest string "^\t\t"
-        new Table(0, 20, -1, new sbyte[] {72, -1, -1, -1, -1, 72,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 73});
-    NxS[73] = // Shortest string "^\t#"
-        new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
-        -1, -1, -1, 36, 36});
-    NxS[74] = // Shortest string ":\t"
-        new Table(0, 17, -1, new sbyte[] {74, -1, -1, -1, -1, 74,
-        48, -1, -1, 48, 48, 48, -1, -1, -1, 48, 48});
+    static Scanner()
+    {
+        NxS[0] = // Shortest string ""
+            new Table(0, 0, 0, null);
+        NxS[1] = // Shortest string "^\t"
+            new Table(0, 20, -1, new sbyte[] {72, -1, -1, -1, -1, 72,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 73});
+        NxS[2] = // Shortest string "/"
+            new Table(20, 19, -1, new sbyte[] {52, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 50, -1, 51});
+        NxS[3] = // Shortest string "\0"
+            new Table(0, 0, -1, null);
+        NxS[4] = // Shortest string "*"
+            new Table(20, 1, -1, new sbyte[] {49});
+        NxS[5] = // Shortest string ":"
+            new Table(0, 17, -1, new sbyte[] {74, -1, -1, -1, -1, 74,
+            48, -1, -1, 48, 48, 48, -1, -1, -1, 48, 48});
+        NxS[6] = // Shortest string "G"
+            new Table(6, 11, -1, new sbyte[] {6, 6, 6, 6, 6, 6,
+            -1, -1, -1, 6, 6});
+        NxS[7] = // Shortest string "1"
+            new Table(7, 8, -1, new sbyte[] {7, 7, -1, -1, 68, -1,
+            -1, 43});
+        NxS[8] = // Shortest string "0"
+            new Table(7, 8, -1, new sbyte[] {7, 7, 67, -1, 68, -1,
+            -1, 43});
+        NxS[9] = // Shortest string "+"
+            new Table(20, 1, -1, new sbyte[] {42});
+        NxS[10] = // Shortest string "-"
+            new Table(20, 1, -1, new sbyte[] {41});
+        NxS[11] = // Shortest string "."
+            new Table(7, 2, -1, new sbyte[] {38, 38});
+        NxS[12] = // Shortest string """
+            new Table(17, 2, 63, new sbyte[] {37, 64});
+        NxS[13] = // Shortest string "^#"
+            new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
+            -1, -1, -1, 36, 36});
+        NxS[14] = // Shortest string "="
+            new Table(20, 1, -1, new sbyte[] {35});
+        NxS[15] = // Shortest string "%"
+            new Table(20, 1, -1, new sbyte[] {34});
+        NxS[16] = // Shortest string "&"
+            new Table(22, 1, -1, new sbyte[] {33});
+        NxS[17] = // Shortest string "|"
+            new Table(23, 1, -1, new sbyte[] {32});
+        NxS[18] = // Shortest string "<"
+            new Table(20, 1, -1, new sbyte[] {31});
+        NxS[19] = // Shortest string ">"
+            new Table(20, 1, -1, new sbyte[] {30});
+        NxS[20] = // Shortest string "!"
+            new Table(20, 1, -1, new sbyte[] {29});
+        NxS[21] = // Shortest string ";"
+            new Table(0, 0, -1, null);
+        NxS[22] = // Shortest string "{"
+            new Table(0, 0, -1, null);
+        NxS[23] = // Shortest string "}"
+            new Table(0, 0, -1, null);
+        NxS[24] = // Shortest string ","
+            new Table(0, 0, -1, null);
+        NxS[25] = // Shortest string "("
+            new Table(0, 0, -1, null);
+        NxS[26] = // Shortest string ")"
+            new Table(0, 0, -1, null);
+        NxS[27] = // Shortest string "["
+            new Table(0, 0, -1, null);
+        NxS[28] = // Shortest string "]"
+            new Table(0, 0, -1, null);
+        NxS[29] = // Shortest string "!="
+            new Table(0, 0, -1, null);
+        NxS[30] = // Shortest string ">="
+            new Table(0, 0, -1, null);
+        NxS[31] = // Shortest string "<="
+            new Table(0, 0, -1, null);
+        NxS[32] = // Shortest string "||"
+            new Table(0, 0, -1, null);
+        NxS[33] = // Shortest string "&&"
+            new Table(0, 0, -1, null);
+        NxS[34] = // Shortest string "%="
+            new Table(0, 0, -1, null);
+        NxS[35] = // Shortest string "=="
+            new Table(0, 0, -1, null);
+        NxS[36] = // Shortest string "^#G"
+            new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
+            -1, -1, -1, 36, 36});
+        NxS[37] = // Shortest string """"
+            new Table(0, 0, -1, null);
+        NxS[38] = // Shortest string ".1"
+            new Table(7, 10, -1, new sbyte[] {38, 38, -1, -1, 65, -1,
+            -1, -1, 39, 39});
+        NxS[39] = // Shortest string ".1H"
+            new Table(0, 0, -1, null);
+        NxS[40] = // Shortest string ".1E1"
+            new Table(7, 10, -1, new sbyte[] {40, 40, -1, -1, -1, -1,
+            -1, -1, 39, 39});
+        NxS[41] = // Shortest string "-="
+            new Table(0, 0, -1, null);
+        NxS[42] = // Shortest string "+="
+            new Table(0, 0, -1, null);
+        NxS[43] = // Shortest string "0."
+            new Table(7, 10, -1, new sbyte[] {38, 38, -1, -1, 69, -1,
+            -1, -1, 44, 44});
+        NxS[44] = // Shortest string "0.H"
+            new Table(0, 0, -1, null);
+        NxS[45] = // Shortest string "0.E1"
+            new Table(7, 10, -1, new sbyte[] {45, 45, -1, -1, -1, -1,
+            -1, -1, 44, 44});
+        NxS[46] = // Shortest string "0E1"
+            new Table(7, 2, -1, new sbyte[] {46, 46});
+        NxS[47] = // Shortest string "0x1"
+            new Table(7, 10, -1, new sbyte[] {47, 47, -1, 47, 47, -1,
+            -1, -1, -1, 47});
+        NxS[48] = // Shortest string ":G"
+            new Table(6, 11, -1, new sbyte[] {48, 48, 48, 48, 48, 48,
+            -1, -1, -1, 48, 48});
+        NxS[49] = // Shortest string "*="
+            new Table(0, 0, -1, null);
+        NxS[50] = // Shortest string "//"
+            new Table(0, 1, 50, new sbyte[] {-1});
+        NxS[51] = // Shortest string "/*"
+            new Table(0, 4, 51, new sbyte[] {-1, 51, 51, 53});
+        NxS[52] = // Shortest string "/="
+            new Table(0, 0, -1, null);
+        NxS[53] = // Shortest string "/**"
+            new Table(1, 3, -1, new sbyte[] {54, -1, 53});
+        NxS[54] = // Shortest string "/**/"
+            new Table(0, 0, -1, null);
+        NxS[55] = // Shortest string "\t"
+            new Table(0, 0, -1, null);
+        NxS[56] = // Shortest string ""
+            new Table(0, 4, 58, new sbyte[] {57, 58, 58, 59});
+        NxS[57] = // Shortest string ""
+            new Table(0, 0, -1, null);
+        NxS[58] = // Shortest string "/"
+            new Table(0, 4, 58, new sbyte[] {-1, 58, 58, 59});
+        NxS[59] = // Shortest string "*"
+            new Table(1, 3, -1, new sbyte[] {60, -1, 59});
+        NxS[60] = // Shortest string "*/"
+            new Table(0, 0, -1, null);
+        NxS[61] = // Shortest string ""
+            new Table(12, 32, 6, new sbyte[] {9, 10, 11, 6, 6, 12,
+            3, 3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+            28, 55, 2, 3, 4, 5, 55, 6, 7, 8});
+        NxS[62] = // Shortest string "^"
+            new Table(12, 32, 6, new sbyte[] {9, 10, 11, 6, 6, 12,
+            3, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+            28, 1, 2, 3, 4, 5, 1, 6, 7, 8});
+        NxS[63] = // Shortest string ""/"
+            new Table(17, 2, 63, new sbyte[] {37, 64});
+        NxS[64] = // Shortest string ""\"
+            new Table(0, 1, 63, new sbyte[] {-1});
+        NxS[65] = // Shortest string ".1E"
+            new Table(7, 7, -1, new sbyte[] {40, 40, -1, -1, -1, 66,
+            66});
+        NxS[66] = // Shortest string ".1E+"
+            new Table(7, 2, -1, new sbyte[] {40, 40});
+        NxS[67] = // Shortest string "0x"
+            new Table(7, 10, -1, new sbyte[] {47, 47, -1, 47, 47, -1,
+            -1, -1, -1, 47});
+        NxS[68] = // Shortest string "0E"
+            new Table(7, 7, -1, new sbyte[] {46, 46, -1, -1, -1, 71,
+            71});
+        NxS[69] = // Shortest string "0.E"
+            new Table(7, 7, -1, new sbyte[] {45, 45, -1, -1, -1, 70,
+            70});
+        NxS[70] = // Shortest string "0.E+"
+            new Table(7, 2, -1, new sbyte[] {45, 45});
+        NxS[71] = // Shortest string "0E+"
+            new Table(7, 2, -1, new sbyte[] {46, 46});
+        NxS[72] = // Shortest string "^\t\t"
+            new Table(0, 20, -1, new sbyte[] {72, -1, -1, -1, -1, 72,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 73});
+        NxS[73] = // Shortest string "^\t#"
+            new Table(6, 11, -1, new sbyte[] {36, -1, -1, 36, 36, 36,
+            -1, -1, -1, 36, 36});
+        NxS[74] = // Shortest string ":\t"
+            new Table(0, 17, -1, new sbyte[] {74, -1, -1, -1, -1, 74,
+            48, -1, -1, 48, 48, 48, -1, -1, -1, 48, 48});
     }
 
-int NextState(int qStat) {
+int NextState(int qStat)
+{
     if (chr == ScanBuff.EOF)
         return (qStat <= maxAccept && qStat != currentStart ? currentStart : eofNum);
-    else {
+    else
+    {
         int rslt;
         int idx = Map(chr) - NxS[qStat].min;
         if (idx < 0) idx += 35;
@@ -386,10 +395,12 @@ int NextState(int qStat) {
     }
 }
 
-int NextState() {
+int NextState()
+{
     if (chr == ScanBuff.EOF)
         return (state <= maxAccept && state != currentStart ? currentStart : eofNum);
-    else {
+    else
+    {
         int rslt;
         int idx = Map(chr) - NxS[state].min;
         if (idx < 0) idx += 35;
@@ -472,11 +483,13 @@ int NextState() {
 
             public StreamBuff(Stream str) { this.bStrm = new BufferedStream(str); }
 
-            public override int Read() {
+            public override int Read()
+            {
                 return bStrm.ReadByte();
             }
 
-            public override int ReadPos {
+            public override int ReadPos
+            {
                 get { return (int)bStrm.Position - delta; }
             }
 
@@ -521,7 +534,9 @@ int NextState() {
             protected int delta = 1;
 
             private Exception BadUTF8()
-            { return new Exception(String.Format("BadUTF8 Character")); }
+            {
+                return new Exception(String.Format("BadUTF8 Character"));
+            }
 
             /// <summary>
             /// TextBuff factory.  Reads the file preamble
@@ -553,7 +568,8 @@ int NextState() {
                 return new TextBuff(strm);
             }
 
-            protected TextBuff(Stream str) {
+            protected TextBuff(Stream str)
+            {
                 this.bStrm = new BufferedStream(str);
             }
 
@@ -666,7 +682,8 @@ int NextState() {
 
         // =================== End Nested classes =======================
 
-        public Scanner(Stream file) {
+        public Scanner(Stream file)
+        {
             buffer = TextBuff.NewTextBuff(file); // selected by /unicode option
             this.cNum = -1;
             this.chr = '\n'; // to initialize yyline, yycol and lineStart
@@ -753,19 +770,24 @@ int NextState() {
             }
         }
 
-        void yyless(int n) {
+        void yyless(int n)
+        {
             buffer.Pos = tokPos;
             cNum = tokNum;
             for (int i = 0; i <= n; i++) GetChr();
             MarkEnd();
         }
 
-        public IErrorHandler Handler { get { return this.handler; }
-                                       set { this.handler = value; }}
+        public IErrorHandler Handler
+        {
+            get { return this.handler; }
+            set { this.handler = value; }
+        }
 
         // ============ methods available in actions ==============
 
-        internal int YY_START {
+        internal int YY_START
+        {
             get { return CurrentSc; }
             set { CurrentSc = value; }
         }
@@ -784,13 +806,17 @@ int NextState() {
 #if LEFTANCHORS
                     if (lineStartNum == cNum && NextState(anchorState[CurrentSc]) != currentStart)
                         state = anchorState[CurrentSc];
-                    else {
+                    else
+                    {
                         state = currentStart;
-                        while (NextState() == state) {
+                        while (NextState() == state)
+                        {
                             GetChr();
-                            if (lineStartNum == cNum) {
+                            if (lineStartNum == cNum)
+                            {
                                 int anchor = anchorState[CurrentSc];
-                                if (NextState(anchor) != state) {
+                                if (NextState(anchor) != state)
+                                {
                                     state = anchor;
                                     break;
                                 }
@@ -821,18 +847,23 @@ int NextState() {
                         }
 #else // !BACKUP
 #if LEFTANCHORS
-                    if (lineStartNum == cNum) {
+                    if (lineStartNum == cNum)
+                    {
                         int anchor = anchorState[CurrentSc];
                         if (NextState(anchor) != currentStart)
                             state = anchor;
                     }
-                    else {
+                    else
+                    {
                         state = currentStart;
-                        while (NextState() == state) {
+                        while (NextState() == state)
+                        {
                             GetChr();
-                            if (lineStartNum == cNum) {
+                            if (lineStartNum == cNum)
+                            {
                                 anchor = anchorState[CurrentSc];
-                                if (NextState(anchor) != state) {
+                                if (NextState(anchor) != state)
+                                {
                                     state = anchor;
                                     break;
                                 }
@@ -1087,7 +1118,8 @@ BEGIN(INITIAL); return (int)ShaderToken.COMMENT;
         internal void yy_pop_state()
         {
             // Protect against input errors that pop too far ...
-            if (scStack.Count > 0) {
+            if (scStack.Count > 0)
+            {
 				int newSc = scStack.Pop();
 				CurrentSc = newSc;
             } // Otherwise leave stack unchanged.

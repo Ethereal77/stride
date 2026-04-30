@@ -100,7 +100,7 @@ namespace Stride.Core.Mathematics
         /// </summary>
         public void Wrap()
         {
-            float newangle = (float)Math.IEEERemainder(radians, MathUtil.TwoPi);
+            float newangle = MathF.IEEERemainder(radians, MathUtil.TwoPi);
 
             if (newangle <= -MathUtil.Pi)
                 newangle += MathUtil.TwoPi;
@@ -158,19 +158,19 @@ namespace Stride.Core.Mathematics
 
                 if (degrees < 0)
                 {
-                    float degreesfloor = (float)Math.Ceiling(degrees);
+                    float degreesfloor = MathF.Ceiling(degrees);
                     return (degrees - degreesfloor) * 60.0f;
                 }
                 else
                 {
-                    float degreesfloor = (float)Math.Floor(degrees);
+                    float degreesfloor = MathF.Floor(degrees);
                     return (degrees - degreesfloor) * 60.0f;
                 }
             }
             set
             {
                 float degrees = MathUtil.RadiansToDegrees(radians);
-                float degreesfloor = (float)Math.Floor(degrees);
+                float degreesfloor = MathF.Floor(degrees);
 
                 degreesfloor += value / 60.0f;
                 radians = MathUtil.DegreesToRadians(degreesfloor);
@@ -192,19 +192,19 @@ namespace Stride.Core.Mathematics
 
                 if (degrees < 0)
                 {
-                    float degreesfloor = (float)Math.Ceiling(degrees);
+                    float degreesfloor = MathF.Ceiling(degrees);
 
                     float minutes = (degrees - degreesfloor) * 60.0f;
-                    float minutesfloor = (float)Math.Ceiling(minutes);
+                    float minutesfloor = MathF.Ceiling(minutes);
 
                     return (minutes - minutesfloor) * 60.0f;
                 }
                 else
                 {
-                    float degreesfloor = (float)Math.Floor(degrees);
+                    float degreesfloor = MathF.Floor(degrees);
 
                     float minutes = (degrees - degreesfloor) * 60.0f;
-                    float minutesfloor = (float)Math.Floor(minutes);
+                    float minutesfloor = MathF.Floor(minutes);
 
                     return (minutes - minutesfloor) * 60.0f;
                 }
@@ -212,17 +212,17 @@ namespace Stride.Core.Mathematics
             set
             {
                 float degrees = MathUtil.RadiansToDegrees(radians);
-                float degreesfloor = (float)Math.Floor(degrees);
+                float degreesfloor = MathF.Floor(degrees);
 
                 float minutes = (degrees - degreesfloor) * 60.0f;
-                float minutesfloor = (float)Math.Floor(minutes);
+                float minutesfloor = MathF.Floor(minutes);
 
                 minutesfloor += value / 60.0f;
                 degreesfloor += minutesfloor / 60.0f;
                 radians = MathUtil.DegreesToRadians(degreesfloor);
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the total number of radians this Stride.Core.Mathematics.AngleSingle represents.
         /// </summary>

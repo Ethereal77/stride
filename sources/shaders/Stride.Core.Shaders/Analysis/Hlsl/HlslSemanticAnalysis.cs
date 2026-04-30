@@ -32,7 +32,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
         protected static readonly List<IDeclaration> defaultDeclarations = new List<IDeclaration>();
         private static readonly Dictionary<string, TypeBase> BuiltinObjects = new Dictionary<string, TypeBase>();
         private static readonly Dictionary<GenericInstanceKey, TypeBase> InstanciatedTypes = new Dictionary<GenericInstanceKey, TypeBase>();
-        
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -145,8 +145,8 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
                     case "CompileShader":
                         return expression;
                 }
-            }            
-            
+            }
+
             return base.Visit(expression);
         }
 
@@ -226,7 +226,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
 
         protected override void ProcessMethodInvocation(MethodInvocationExpression expression, string methodName, List<IDeclaration> declarations)
         {
-            // Check for typedef method 
+            // Check for typedef method
             if (methodName != null)
             {
                 var varExp = expression.Target as VariableReferenceExpression;
@@ -257,7 +257,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
                     }
                 }
             }
-            
+
             base.ProcessMethodInvocation(expression, methodName, declarations);
         }
 
@@ -272,7 +272,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
 
         private void AssociatePredefinedObjects(TypeBase typebase)
         {
-            // Use the returned name in order to support case insensitive names 
+            // Use the returned name in order to support case insensitive names
             TypeBase predefinedType;
             if (typebase.TypeInference.TargetType == null && BuiltinObjects.TryGetValue(typebase.Name.Text, out predefinedType))
             {
@@ -317,6 +317,17 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
             if (value != null)
                 return value;
 
+            value = ByteAddressBufferType.Parse(name);
+            if (value != null)
+            {
+                if (value.TypeInference.TargetType == null && BuiltinObjects.TryGetValue(value.Name, out var predefinedType))
+                {
+                    value.TypeInference.TargetType = predefinedType;
+                }
+
+                return value;
+            }
+
             // Replace shader objects
             if (name == "VertexShader" || name == "GeometryShader" || name == "PixelShader")
                 return new ObjectType(name);
@@ -347,7 +358,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
         protected override void CommonVisit(MemberReferenceExpression memberReference)
         {
             var thisType = memberReference.Target.TypeInference.TargetType;
-            
+
             if (thisType is MatrixType)
             {
                 FindMemberTypeReference((MatrixType)thisType, memberReference);
@@ -583,7 +594,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
 
                 // ret tex1D(s, t) : http://msdn.microsoft.com/en-us/library/windows/desktop/bb509672%28v=VS.85%29.aspx
                 GenericMethod("tex1D", VectorType.Float4, GenericParam("s", SamplerType.Sampler1D), GenericParam("t", ScalarType.Float)),
-                 
+
                 // ret tex1D(s, t, ddx, ddy) http://msdn.microsoft.com/en-us/library/windows/desktop/ff471388%28v=VS.85%29.aspx
                 GenericMethod("tex1D", VectorType.Float4, GenericParam("s", SamplerType.Sampler1D), GenericParam("t", ScalarType.Float), GenericParam("ddx", ScalarType.Float), GenericParam("ddy", ScalarType.Float)),
 
@@ -598,14 +609,14 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
 
                 // ret tex1Dproj(s, t) http://msdn.microsoft.com/en-us/library/windows/desktop/bb509676%28v=VS.85%29.aspx
                 GenericMethod("tex1Dproj", VectorType.Float4, GenericParam("s", SamplerType.Sampler1D), GenericParam("t", VectorType.Float4)),
-                
+
                 // -----------------------------------------
                 // tex2D functions
                 // -----------------------------------------
 
                 // ret tex2D(s, t) : http://msdn.microsoft.com/en-us/library/windows/desktop/bb509677%28v=VS.85%29.aspx
                 GenericMethod("tex2D", VectorType.Float4, GenericParam("s", SamplerType.Sampler2D), GenericParam("t", VectorType.Float2)),
-                 
+
                 // ret tex2D(s, t, ddx, ddy) http://msdn.microsoft.com/en-us/library/windows/desktop/ff471389%28v=VS.85%29.aspx
                 GenericMethod("tex2D", VectorType.Float4, GenericParam("s", SamplerType.Sampler2D), GenericParam("t", VectorType.Float2), GenericParam("ddx", VectorType.Float2), GenericParam("ddy", VectorType.Float2)),
 
@@ -627,7 +638,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
 
                 // ret tex3D(s, t) : http://msdn.microsoft.com/en-us/library/windows/desktop/bb509682%28v=VS.85%29.aspx
                 GenericMethod("tex3D", VectorType.Float4, GenericParam("s", SamplerType.Sampler3D), GenericParam("t", VectorType.Float3)),
-                 
+
                 // ret tex3D(s, t, ddx, ddy) http://msdn.microsoft.com/en-us/library/windows/desktop/ff471391%28v=VS.85%29.aspx
                 GenericMethod("tex3D", VectorType.Float4, GenericParam("s", SamplerType.Sampler3D), GenericParam("t", VectorType.Float3), GenericParam("ddx", VectorType.Float3), GenericParam("ddy", VectorType.Float3)),
 
@@ -649,7 +660,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
 
                 // ret texCUBE(s, t) : http://msdn.microsoft.com/en-us/library/windows/desktop/bb509687%28v=VS.85%29.aspx
                 GenericMethod("texCUBE", VectorType.Float4, GenericParam("s", SamplerType.SamplerCube), GenericParam("t", VectorType.Float3)),
-                 
+
                 // ret texCUBE(s, t, ddx, ddy) http://msdn.microsoft.com/en-us/library/windows/desktop/ff471392%28v=VS.85%29.aspx
                 GenericMethod("texCUBE", VectorType.Float4, GenericParam("s", SamplerType.SamplerCube), GenericParam("t", VectorType.Float3), GenericParam("ddx", VectorType.Float3), GenericParam("ddy", VectorType.Float3)),
 
@@ -666,7 +677,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
                 GenericMethod("texCUBEproj", VectorType.Float4, GenericParam("s", SamplerType.SamplerCube), GenericParam("t", VectorType.Float4)),
 
                 //// tex2Dlod(s, t)
-                //GenericMethod("tex2Dlod", VectorType.Float4, GenericContraint("SamplerState", type => type == StateType.SamplerState || type == StateType.SamplerStateOld), 
+                //GenericMethod("tex2Dlod", VectorType.Float4, GenericContraint("SamplerState", type => type == StateType.SamplerState || type == StateType.SamplerStateOld),
                 //    GenericParam("s", "SamplerState"), GenericParam("t", VectorType.Float4)),
             };
 
@@ -1008,7 +1019,7 @@ namespace Stride.Core.Shaders.Analysis.Hlsl
             bool res = true;
             for (int i = 0; i < GenericParameters.Count; ++i)
                 res &= GenericParameters[i] == genInstKey.GenericParameters[i];
-            
+
             return res;
         }
 

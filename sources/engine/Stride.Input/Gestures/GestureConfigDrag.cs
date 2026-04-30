@@ -43,7 +43,7 @@ namespace Stride.Input
         /// </summary>
         /// <exception cref="InvalidOperationException">Tried to modify the configuration after it has been frozen by the system.</exception>
         /// <exception cref="ArgumentOutOfRangeException">The provided x or y value was not positive.</exception>
-        /// <remarks>Those values are used only for directional (vertical or horizontal) dragging. 
+        /// <remarks>Those values are used only for directional (vertical or horizontal) dragging.
         /// Decrease those values to trigger the gesture only when the dragging is perfectly in the desired direction.
         /// Increase those values to allow directional gestures to be more approximative.</remarks>
         public Vector2 AllowedErrorMargins
@@ -77,7 +77,7 @@ namespace Stride.Input
             }
         }
         private GestureShape dragShape;
-        
+
         /// <summary>
         /// Create a default drag gesture configuration for one finger free dragging.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Stride.Input
         {
         }
 
-        /// <summary> 
+        /// <summary>
         /// Create a default drag gesture configuration for one finger dragging.
         /// </summary>
         /// <param name="dragShape">The dragging shape</param>

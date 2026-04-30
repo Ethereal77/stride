@@ -15,44 +15,81 @@ namespace Stride.Core.VisualStudio
 {
     public class IDEInfo
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IDEInfo"/> class.
+        /// </summary>
+        /// <param name="installationVersion">The version of the VS instance.</param>
+        /// <param name="displayName">The display name of the VS instance</param>
+        /// <param name="installationPath">The path to the installation root of the VS instance.</param>
+        /// <param name="instanceId">The unique identifier for this installation instance.</param>
+        /// <param name="isComplete">Indicates whehter the VS instance is complete.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public IDEInfo(Version installationVersion, string displayName, string installationPath, string instanceId, bool isComplete = true)
+        {
+            DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
+            InstallationVersion = installationVersion ?? throw new ArgumentNullException(nameof(installationVersion));
+            InstallationPath = installationPath ?? throw new ArgumentNullException(nameof(installationPath));
+            InstanceId = instanceId ?? throw new ArgumentNullException(nameof(instanceId));
+            IsComplete = isComplete;
+
+            var idePath = Path.Combine(InstallationPath, "Common7", "IDE");
+            DevenvPath = Path.Combine(idePath, "devenv.exe");
+            if (!File.Exists(DevenvPath))
+            {
+                DevenvPath = null;
+            }
+
+            VsixInstallerPath = Path.Combine(idePath, "VSIXInstaller.exe");
+            if (!File.Exists(VsixInstallerPath))
+            {
+                VsixInstallerPath = null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the instance is complete.
+        /// </summary>
+        /// <value>Whether the instance is complete.</value>
+        /// <remarks>An instance is complete if it had no errors during install, resume, or repair.</remarks>
         public bool IsComplete { get; }
 
+        /// <summary>
+        /// Gets the display name (title) of the product installed in this instance.
+        /// </summary>
         public string DisplayName { get; }
 
-        public Version Version { get; }
+        /// <summary>
+        /// Gets the version of the product installed in this instance.
+        /// </summary>
+        /// <value>The version of the product installed in this instance.</value>
+        public Version InstallationVersion { get; }
 
         /// <summary>
-        ///   Gets the path to the build tools of this IDE.
+        /// The path to the development environment executable of this IDE, or <c>null</c>.
         /// </summary>
-        /// <value>The path to the build tools of this IDE, or <c>null</c>.</value>
-        public string BuildToolsPath { get; internal set; }
+        public string DevenvPath { get; }
 
         /// <summary>
-        ///   Gets the path to the development environment executable of this IDE.
+        /// The root installation path of this IDE.
         /// </summary>
-        /// <value>The path to the development environment executable of this IDE, or <c>null</c>.</value>
-        public string DevenvPath { get; internal set; }
-
-        /// <summary>
-        ///   Gets the root installation path of this IDE.
-        /// </summary>
-        /// <value>The root installation path of this IDE. This can be empty but not <c>null</c>.</value>
+        /// <remarks>Can be empty but not <c>null</c>./remarks>
         public string InstallationPath { get; }
 
         /// <summary>
-        ///   Gets the path to the VSIX installer of this IDE.
+        /// The hex code for this installation instance. It is used, for example, to create a unique folder in %LocalAppData%
         /// </summary>
-        /// <value>The path to the VSIX installer of this IDE, or <c>null</c>.</value>
-        public string VsixInstallerPath { get; internal set; }
-
-        public VSIXInstallerVersion VsixInstallerVersion { get; internal set; }
-
-        public Dictionary<string, string> PackageVersions { get; } = new Dictionary<string, string>();
+        public string InstanceId { get; }
 
         /// <summary>
-        ///   Gets a value indicating whether this IDE has integrated build tools.
+        /// The path to the VSIX installer of this IDE, or <c>null</c>.
         /// </summary>
-        public bool HasBuildTools => !string.IsNullOrEmpty(BuildToolsPath);
+        public string VsixInstallerPath { get; }
+
+        /// <summary>
+        /// The package names and versions of packages installed to this instance.
+        /// </summary>
+        /// <value></value>
+        public Dictionary<string, string> PackageVersions { get; } = new Dictionary<string, string>();
 
         /// <summary>
         ///   Gets a value indicating whether this IDE has a development environment.
@@ -62,58 +99,24 @@ namespace Stride.Core.VisualStudio
         /// <summary>
         ///   Gets a value indicating whether this IDE has a VSIX installer.
         /// </summary>
-        public bool HasVsixInstaller => !string.IsNullOrEmpty(VsixInstallerPath) && VsixInstallerVersion != VSIXInstallerVersion.None;
-
-
-        public IDEInfo(Version version, string displayName, string installationPath, bool complete = true)
-        {
-            if (version is null)
-                throw new ArgumentNullException(nameof(version));
-
-            IsComplete = complete;
-            DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-            Version = version;
-            InstallationPath = installationPath ?? throw new ArgumentNullException(nameof(installationPath));
-        }
-
+        public bool HasVsixInstaller => !string.IsNullOrEmpty(VsixInstallerPath);
 
         /// <inheritdoc />
         public override string ToString() => DisplayName;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "InconsistentNaming")]
-    public enum VSIXInstallerVersion
-    {
-        None,
-        VS2019AndFutureVersions
-    }
-
     public static class VisualStudioVersions
     {
-        // ReSharper disable once InconsistentNaming
         private const int REGDB_E_CLASSNOTREG = unchecked((int) 0x80040154);
-        private static Lazy<List<IDEInfo>> IDEInfos = new Lazy<List<IDEInfo>>(BuildIDEInfos);
+        private static readonly Lazy<List<IDEInfo>> IDEInfos = new Lazy<List<IDEInfo>>(BuildIDEInfos);
 
-        public static IDEInfo DefaultIDE = new IDEInfo(new Version("0.0"), "Default IDE", string.Empty);
+        public static IDEInfo DefaultIDE = new IDEInfo(new Version("0.0"), "Default IDE", string.Empty, string.Empty);
 
         /// <summary>
         ///   Gets a list of the available instances of Visual Studio 2019 or later versions.
         /// </summary>
         /// <remarks>Previous versions are not supported due to lack of <c>buildTransitive</c> targets.</remarks>
-        public static IEnumerable<IDEInfo> AvailableVisualStudioInstances => IDEInfos.Value.Where(x => x.Version.Major >= 16 && x.HasDevenv);
-
-        /// <summary>
-        ///   Gets a list of the available compatible instances of Visual Studio.
-        /// </summary>
-        /// <remarks>Previous versions are not supported due to lack of <c>buildTransitive</c> targets.</remarks>
-        public static IEnumerable<IDEInfo> AllAvailableVisualStudioInstances => IDEInfos.Value.Where(x => x.Version.Major >= 16 && x.HasDevenv);
-
-        public static IEnumerable<IDEInfo> AvailableBuildTools => IDEInfos.Value.Where(x => x.HasBuildTools);
-
-        public static void Refresh()
-        {
-            IDEInfos = new Lazy<List<IDEInfo>>(BuildIDEInfos);
-        }
+        public static IEnumerable<IDEInfo> AvailableVisualStudioInstances => IDEInfos.Value.Where(x => x.InstallationVersion.Major >= 16 && x.HasDevenv);
 
         private static List<IDEInfo> BuildIDEInfos()
         {
@@ -122,49 +125,38 @@ namespace Stride.Core.VisualStudio
             // Visual Studio 16.0 (2019) and later
             try
             {
-                var configuration = new SetupConfiguration();
-
-                var instances = configuration.EnumAllInstances();
-                instances.Reset();
+                var setupInstancesEnum = new SetupConfiguration().EnumAllInstances();
+                setupInstancesEnum.Reset();
                 var vsInstance = new ISetupInstance[1];
 
                 while (true)
                 {
-                    instances.Next(1, vsInstance, out int pceltFetched);
-                    if (pceltFetched <= 0)
+                    setupInstancesEnum.Next(1, inst, out int numFetched);
+                    if (numFetched <= 0)
                         break;
 
                     try
                     {
-                        if (!(vsInstance[0] is ISetupInstance2 setupInstance))
+                        var setupInstance2 = inst[0] as ISetupInstance2;
+                        if (setupInstance2 == null)
                             continue;
 
-                        // Only deal with VS2019+
-                        if (!Version.TryParse(setupInstance.GetInstallationVersion(), out var version) || version.Major < 16)
+                        // Only examine VS2019+
+                        if (!Version.TryParse(setupInstance2.GetInstallationVersion(), out var installationVersion) ||
+                            installationVersion.Major < 16)
                             continue;
 
-                        var installationPath = setupInstance.GetInstallationPath();
-                        var buildToolsPath = Path.Combine(installationPath, "MSBuild", "Current", "Bin");
-                        if (!Directory.Exists(buildToolsPath))
-                            buildToolsPath = null;
-                        var idePath = Path.Combine(installationPath, "Common7", "IDE");
-                        var devenvPath = Path.Combine(idePath, "devenv.exe");
-                        if (!File.Exists(devenvPath))
-                            devenvPath = null;
-                        var vsixInstallerPath = Path.Combine(idePath, "VSIXInstaller.exe");
-                        if (!File.Exists(vsixInstallerPath))
-                            vsixInstallerPath = null;
-
-                        var displayName = setupInstance.GetDisplayName();
+                        var displayName = setupInstance2.GetDisplayName();
                         // Try to append nickname (if any)
                         try
                         {
-                            var nickname = setupInstance.GetProperties().GetValue("nickname") as string;
+                            var nickname = setupInstance2.GetProperties().GetValue("nickname") as string;
                             if (!string.IsNullOrEmpty(nickname))
                                 displayName = $"{displayName} ({nickname})";
                             else
                             {
-                                var installationName = setupInstance.GetInstallationName();
+                                var installationName = setupInstance2.GetInstallationName();
+
                                 // In case of a Preview version, we have:
                                 //   "installationName": "VisualStudioPreview/16.4.0-pre.6.0+29519.161"
                                 //   "channelId": "VisualStudio.16.Preview"
@@ -179,7 +171,7 @@ namespace Stride.Core.VisualStudio
                         try
                         {
                             var minimumRequiredState = InstanceState.Local | InstanceState.Registered;
-                            if ((setupInstance.GetState() & minimumRequiredState) != minimumRequiredState)
+                            if ((setupInstance2.GetState() & minimumRequiredState) != minimumRequiredState)
                                 continue;
                         }
                         catch (COMException)
@@ -187,16 +179,13 @@ namespace Stride.Core.VisualStudio
                             continue;
                         }
 
-                        var ideInfo = new IDEInfo(version, displayName, installationPath, setupInstance.IsComplete())
-                        {
-                            BuildToolsPath = buildToolsPath,
-                            DevenvPath = devenvPath,
-                            VsixInstallerVersion = VSIXInstallerVersion.VS2019AndFutureVersions,
-                            VsixInstallerPath = vsixInstallerPath,
-                        };
+                        var ideInfo = new IDEInfo(installationVersion, displayName,
+                                                  setupInstance2.GetInstallationPath(),
+                                                  setupInstance2.GetInstanceId(),
+                                                  setupInstance2.IsComplete());
 
                         // Fill packages
-                        foreach (var package in setupInstance.GetPackages())
+                        foreach (var package in setupInstance2.GetPackages())
                         {
                             ideInfo.PackageVersions[package.GetId()] = package.GetVersion();
                         }
@@ -205,7 +194,7 @@ namespace Stride.Core.VisualStudio
                     }
                     catch
                     {
-                        // Something might have happened inside Visual Studio Setup code (f.e, FileNotFoundException in GetInstallationPath())
+                        // Something might have happened inside Visual Studio Setup code (had FileNotFoundException in GetInstallationPath() for example)
                         // Let's ignore this instance
                     }
                 }

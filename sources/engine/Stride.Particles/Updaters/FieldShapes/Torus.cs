@@ -80,16 +80,16 @@ namespace Stride.Particles.Updaters.FieldShapes
         {
             alongAxis = new Vector3(0, 1, 0);
 
-            particlePosition -= fieldPosition;            
+            particlePosition -= fieldPosition;
             inverseRotation.Rotate(ref particlePosition);
             particlePosition /= fieldSize;
 
-            // Start by positioning hte particle on the torus' plane
+            // Start by positioning the particle on the torus' plane
             var projectedPosition = new Vector3(particlePosition.X, 0, particlePosition.Z);
             var distanceFromOrigin = projectedPosition.Length();
             var distSquared = 1 + distanceFromOrigin * distanceFromOrigin - 2 * distanceFromOrigin + particlePosition.Y * particlePosition.Y;
 
-            var totalStrength = (distSquared >= smallRadiusSquared) ? 1 : ((float) Math.Sqrt(distSquared) / smallRadius);
+            var totalStrength = (distSquared >= smallRadiusSquared) ? 1 : MathF.Sqrt(distSquared) / smallRadius;
 
             // Fix the field's axis back to world space
             var forceAxis = Vector3.Cross(alongAxis, projectedPosition);
@@ -97,7 +97,7 @@ namespace Stride.Particles.Updaters.FieldShapes
             forceAxis.Normalize();
             alongAxis = forceAxis;
 
-            projectedPosition = (distanceFromOrigin > 0) ? (projectedPosition/(float)distanceFromOrigin) : projectedPosition;
+            projectedPosition = (distanceFromOrigin > 0) ? (projectedPosition/distanceFromOrigin) : projectedPosition;
             projectedPosition -= particlePosition;
             projectedPosition *= fieldSize;
             fieldRotation.Rotate(ref projectedPosition);

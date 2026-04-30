@@ -14,7 +14,9 @@ using Stride.Core.Diagnostics;
 
 namespace Stride.Games
 {
-    /// <summary>A collection of game components.</summary>
+    /// <summary>
+    /// A collection of game components.
+    /// </summary>
     public class GameSystemCollection : TrackingCollection<IGameSystemBase>, IGameSystemCollection, IDisposable
     {
         private readonly List<IGameSystemBase> pendingGameSystems;
@@ -160,8 +162,8 @@ namespace Stride.Games
             if (State != GameSystemState.ContentLoaded)
             {
                 throw new InvalidOperationException("Not running.");
-            } 
-            
+            }
+
             State = GameSystemState.Initialized;
 
             lock (contentableGameSystems)

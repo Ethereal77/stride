@@ -5,15 +5,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
 using Stride.Core;
 using Stride.Core.Mathematics;
 using Stride.Core.Threading;
 using Stride.Graphics;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering
 {
-    public struct InstancingData 
+    public struct InstancingData
     {
         public int InstanceCount;
         public int ModelTransformUsage;
@@ -92,17 +95,20 @@ namespace Stride.Rendering
                 else
                 {
                     instancingData.InstanceCount = 0;
-                } 
-                
+                }
+
                 // Update instance count on mesh
                 renderMesh.InstanceCount = instancingData.InstanceCount;
             }
         }
 
-        private static unsafe void SetBufferData<TData>(CommandList commandList, Buffer buffer, TData[] fromData, int elementCount) where TData : struct
+        private static unsafe void SetBufferData<TData>(CommandList commandList, Buffer buffer, TData[] fromData, int elementCount) where TData : unmanaged
         {
-            var dataPointer = new DataPointer(Interop.Fixed(fromData), Math.Min(elementCount, fromData.Length) * Utilities.SizeOf<TData>());
-            buffer.SetData(commandList, dataPointer);
+            fixed (void* from = fromData)
+            {
+                var dataPointer = new DataPointer(from, Math.Min(elementCount, fromData.Length) * Unsafe.SizeOf<TData>());
+                buffer.SetData(commandList, dataPointer);
+            }
         }
 
         public override void PrepareEffectPermutations(RenderDrawContext context)
@@ -131,7 +137,7 @@ namespace Stride.Rendering
                     if (instancingData.InstanceCount > 0)
                     {
                         renderEffect.EffectValidator.ValidateParameter(StrideEffectBaseKeys.ModelTransformUsage, instancingData.ModelTransformUsage);
-                        renderEffect.EffectValidator.ValidateParameter(StrideEffectBaseKeys.HasInstancing, instancingData.InstanceCount > 0); 
+                        renderEffect.EffectValidator.ValidateParameter(StrideEffectBaseKeys.HasInstancing, instancingData.InstanceCount > 0);
                     }
                 }
             });
@@ -176,7 +182,7 @@ namespace Stride.Rendering
                 var group = perDrawLayout.GetLogicalGroup(instancingResourceGroupKey);
                 if (group.DescriptorEntryStart == -1)
                     continue;
-                
+
                 var renderMesh = renderNode.RenderObject as RenderMesh;
                 if (renderMesh == null)
                     continue;
@@ -184,7 +190,7 @@ namespace Stride.Rendering
                 ref var instancingData = ref renderObjectInstancingData[renderMesh.StaticObjectNode];
 
                 if (instancingData.InstanceCount > 0)
-                { 
+                {
                     renderNode.Resources.DescriptorSet.SetShaderResourceView(group.DescriptorEntryStart, instancingData.InstanceWorldBuffer);
                     renderNode.Resources.DescriptorSet.SetShaderResourceView(group.DescriptorEntryStart + 1, instancingData.InstanceWorldInverseBuffer);
                 }

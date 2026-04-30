@@ -246,12 +246,26 @@ namespace Stride.Rendering.UI
                     context.CommandList.Clear(renderingContext.DepthStencilBuffer, DepthStencilClearOptions.DepthBuffer | DepthStencilClearOptions.Stencil);
                 context.CommandList.SetRenderTarget(renderingContext.DepthStencilBuffer, renderingContext.RenderTarget);
 
+                var samplerState = context.GraphicsDevice.SamplerStates.LinearClamp;
+                if (renderObject.Sampler != UIElementSampler.LinearClamp)
+                {
+                    switch (renderObject.Sampler)
+                    {
+                        case UIElementSampler.PointClamp:
+                            samplerState = context.GraphicsDevice.SamplerStates.PointClamp;
+                            break;
+                        case UIElementSampler.AnisotropicClamp:
+                            samplerState = context.GraphicsDevice.SamplerStates.AnisotropicClamp;
+                            break;
+                    }
+                }
+
                 // Start the image draw session
                 renderingContext.StencilTestReferenceValue = 0;
-                batch.Begin(context.GraphicsContext, ref uiElementState.WorldViewProjectionMatrix, BlendStates.AlphaBlend, uiSystem.KeepStencilValueState, renderingContext.StencilTestReferenceValue);
+                batch.Begin(context.GraphicsContext, ref uiElementState.WorldViewProjectionMatrix, BlendStates.AlphaBlend, samplerState, null, uiSystem.KeepStencilValueState, renderingContext.StencilTestReferenceValue);
 
                 // Render the UI elements in the final render target
-                RecursiveDrawWithClipping(context, rootElement, ref uiElementState.WorldViewProjectionMatrix);
+                RecursiveDrawWithClipping(context, rootElement, ref uiElementState.WorldViewProjectionMatrix, samplerState);
 
                 // End the image draw session
                 batch.End();
@@ -269,7 +283,7 @@ namespace Stride.Rendering.UI
             }
         }
 
-        private void RecursiveDrawWithClipping(RenderDrawContext context, UIElement element, ref Matrix worldViewProj)
+        private void RecursiveDrawWithClipping(RenderDrawContext context, UIElement element, ref Matrix worldViewProj, SamplerState samplerState)
         {
             // If the element is not visible, we also remove all its children
             if (!element.IsVisible)
@@ -285,13 +299,13 @@ namespace Stride.Rendering.UI
                 batch.End();
 
                 // Render the clipping region
-                batch.Begin(context.GraphicsContext, ref worldViewProj, BlendStates.ColorDisabled, uiSystem.IncreaseStencilValueState, renderingContext.StencilTestReferenceValue);
+                batch.Begin(context.GraphicsContext, ref worldViewProj, BlendStates.ColorDisabled, samplerState, null, uiSystem.IncreaseStencilValueState, renderingContext.StencilTestReferenceValue);
                 renderer.RenderClipping(element, renderingContext);
                 batch.End();
 
                 // Update context and restart the batch
                 renderingContext.StencilTestReferenceValue += 1;
-                batch.Begin(context.GraphicsContext, ref worldViewProj, BlendStates.AlphaBlend, uiSystem.KeepStencilValueState, renderingContext.StencilTestReferenceValue);
+                batch.Begin(context.GraphicsContext, ref worldViewProj, BlendStates.AlphaBlend, samplerState, null, uiSystem.KeepStencilValueState, renderingContext.StencilTestReferenceValue);
             }
 
             // Render the design of the element
@@ -299,7 +313,7 @@ namespace Stride.Rendering.UI
 
             // Render the children
             foreach (var child in element.VisualChildrenCollection)
-                RecursiveDrawWithClipping(context, child, ref worldViewProj);
+                RecursiveDrawWithClipping(context, child, ref worldViewProj, samplerState);
 
             // Clear the element clipping region from the stencil buffer
             if (element.ClipToBounds)
@@ -310,13 +324,13 @@ namespace Stride.Rendering.UI
                 renderingContext.DepthBias = element.MaxChildrenDepthBias;
 
                 // Render the clipping region
-                batch.Begin(context.GraphicsContext, ref worldViewProj, BlendStates.ColorDisabled, uiSystem.DecreaseStencilValueState, renderingContext.StencilTestReferenceValue);
+                batch.Begin(context.GraphicsContext, ref worldViewProj, BlendStates.ColorDisabled, samplerState, null, uiSystem.DecreaseStencilValueState, renderingContext.StencilTestReferenceValue);
                 renderer.RenderClipping(element, renderingContext);
                 batch.End();
 
                 // Update context and restart the batch
                 renderingContext.StencilTestReferenceValue -= 1;
-                batch.Begin(context.GraphicsContext, ref worldViewProj, BlendStates.AlphaBlend, uiSystem.KeepStencilValueState, renderingContext.StencilTestReferenceValue);
+                batch.Begin(context.GraphicsContext, ref worldViewProj, BlendStates.AlphaBlend, samplerState, null, uiSystem.KeepStencilValueState, renderingContext.StencilTestReferenceValue);
             }
         }
 
@@ -345,7 +359,7 @@ namespace Stride.Rendering.UI
 
             public void Update(RenderUIElement renderObject, CameraComponent camera)
             {
-                var frustumHeight = 2 * (float) Math.Tan(MathUtil.DegreesToRadians(camera.VerticalFieldOfView) / 2);
+                var frustumHeight = 2 * MathF.Tan(MathUtil.DegreesToRadians(camera.VerticalFieldOfView) / 2);
 
                 var worldMatrix = renderObject.WorldMatrix;
 
@@ -412,7 +426,7 @@ namespace Stride.Rendering.UI
                 var farPlane = nearPlane + virtualResolution.Z;
                 var zOffset = nearPlane + virtualResolution.Z / 2;
                 var aspectRatio = virtualResolution.X / virtualResolution.Y;
-                var verticalFov = (float) Math.Atan2(virtualResolution.Y / 2, zOffset) * 2;
+                var verticalFov = MathF.Atan2(virtualResolution.Y / 2, zOffset) * 2;
 
                 var cameraComponent = new CameraComponent(nearPlane, farPlane)
                 {

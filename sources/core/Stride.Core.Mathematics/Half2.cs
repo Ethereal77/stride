@@ -6,6 +6,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using Stride.Core.Serialization;
@@ -22,7 +23,7 @@ namespace Stride.Core.Mathematics
         /// <summary>
         /// The size of the <see cref="Half2"/> type, in bytes.
         /// </summary>
-        public static readonly int SizeInBytes = Utilities.SizeOf<Half2>();
+        public static readonly int SizeInBytes = Unsafe.SizeOf<Half2>();
 
 
         /// <summary>
@@ -151,12 +152,12 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines whether the specified object instances are considered equal. 
+        /// Determines whether the specified object instances are considered equal.
         /// </summary>
         /// <param name="value1">The first value.</param>
         /// <param name="value2">The second value.</param>
         /// <returns>
-        /// <c>true</c> if <paramref name="value1" /> is the same instance as <paramref name="value2" /> or 
+        /// <c>true</c> if <paramref name="value1" /> is the same instance as <paramref name="value2" /> or
         /// if both are <c>null</c> references or if <c>value1.Equals(value2)</c> returns <c>true</c>; otherwise, <c>false</c>.</returns>
         public static bool Equals(ref Half2 value1, ref Half2 value2)
         {
@@ -164,7 +165,7 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Returns a value that indicates whether the current instance is equal to the specified object. 
+        /// Returns a value that indicates whether the current instance is equal to the specified object.
         /// </summary>
         /// <param name="other">Object to make the comparison with.</param>
         /// <returns>
@@ -175,7 +176,7 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Returns a value that indicates whether the current instance is equal to a specified object. 
+        /// Returns a value that indicates whether the current instance is equal to a specified object.
         /// </summary>
         /// <param name="obj">Object to make the comparison with.</param>
         /// <returns>

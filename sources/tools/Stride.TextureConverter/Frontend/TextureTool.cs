@@ -13,7 +13,6 @@ using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.TextureConverter.Requests;
 using Stride.TextureConverter.TexLibraries;
-
 using Stride.TextureConverter.Backend.Requests;
 
 namespace Stride.TextureConverter
@@ -43,11 +42,11 @@ namespace Stride.TextureConverter
         static TextureTool()
         {
             var type = typeof(TextureTool);
-            NativeLibraryHelper.Load("DxtWrapper", type);
-            NativeLibraryHelper.Load("PVRTexLib", type);
-            NativeLibraryHelper.Load("PvrttWrapper", type);
-            NativeLibraryHelper.Load("FreeImage", type);
-            NativeLibraryHelper.Load("FreeImageNET", type);
+            NativeLibraryHelper.PreloadLibrary("DxtWrapper", type);
+            NativeLibraryHelper.PreloadLibrary("PVRTexLib", type);
+            NativeLibraryHelper.PreloadLibrary("PvrttWrapper", type);
+            NativeLibraryHelper.PreloadLibrary("FreeImage", type);
+            NativeLibraryHelper.PreloadLibrary("FreeImageNET", type);
         }
 
         /// <summary>

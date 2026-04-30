@@ -4,6 +4,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -140,7 +141,7 @@ namespace Stride.Particles.ShapeBuilders
                 {
                     var orderValue = (*((uint*)particle[orderField]));
 
-                    if ((orderValue >> SpawnOrderConst.GroupBitOffset) != (oldOrderValue >> SpawnOrderConst.GroupBitOffset)) 
+                    if ((orderValue >> SpawnOrderConst.GroupBitOffset) != (oldOrderValue >> SpawnOrderConst.GroupBitOffset))
                     {
                         ribbonizer.Ribbonize(ref bufferState, invViewX, invViewY, QuadsPerParticle, ref viewProj);
                         ribbonizer.RibbonSplit();
@@ -159,7 +160,7 @@ namespace Stride.Particles.ShapeBuilders
                     centralPos = centralPos * spaceScale + spaceTranslation;
                     particleSize *= spaceScale;
                 }
-                
+
                 ribbonizer.AddParticle(ref centralPos, particleSize);
                 renderedParticles++;
             }
@@ -197,11 +198,11 @@ namespace Stride.Particles.ShapeBuilders
 
                 particleCapacity = requiredCapacity;
 
-                int positionDataSize = Utilities.SizeOf<Vector3>() * particleCapacity;
+                int positionDataSize = Unsafe.SizeOf<Vector3>() * particleCapacity;
                 positionDataSize = (positionDataSize % 4 == 0) ? positionDataSize : (positionDataSize + 4 - (positionDataSize % 4));
                 positionData = Utilities.AllocateMemory(positionDataSize);
 
-                int sizeDataSize = Utilities.SizeOf<float>() * particleCapacity;
+                int sizeDataSize = sizeof(float) * particleCapacity;
                 sizeDataSize = (sizeDataSize % 4 == 0) ? sizeDataSize : (sizeDataSize + 4 - (sizeDataSize % 4));
                 sizeData = Utilities.AllocateMemory(sizeDataSize);
             }
@@ -505,7 +506,7 @@ namespace Stride.Particles.ShapeBuilders
                     // Move the position to the next particle in the ribbon
                     particlePos += centralPos - oldPoint;
                     particlePos += unitX - oldUnitX;
-                    vCoordOld = (TextureCoordinatePolicy == TextureCoordinatePolicy.Stretched) ? 
+                    vCoordOld = (TextureCoordinatePolicy == TextureCoordinatePolicy.Stretched) ?
                         ((i + 1)/(float)(lastParticle) * TexCoordsFactor) : ((centralPos - oldPoint).Length() * TexCoordsFactor) + vCoordOld;
 
 

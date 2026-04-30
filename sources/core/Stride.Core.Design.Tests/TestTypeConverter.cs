@@ -13,6 +13,8 @@ using Xunit;
 using Stride.Core.Mathematics;
 using Stride.Core.TypeConverters;
 
+using Half = Stride.Core.Mathematics.Half;
+
 namespace Stride.Core.Design.Tests
 {
     /// <summary>
@@ -24,7 +26,7 @@ namespace Stride.Core.Design.Tests
         {
             RuntimeHelpers.RunModuleConstructor(typeof(BaseConverter).Assembly.ManifestModule.ModuleHandle);
         }
-        
+
         [Fact]
         public void TestColor()
         {

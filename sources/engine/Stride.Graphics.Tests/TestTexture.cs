@@ -9,13 +9,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
+using Xunit;
+
 using Stride.Core;
 using Stride.Core.Diagnostics;
 using Stride.Core.IO;
 using Stride.Core.Mathematics;
 using Stride.Graphics.Regression;
-
-using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -441,7 +441,7 @@ namespace Stride.Graphics.Tests
             var data2 = texture.GetData<byte>(graphicsContext.CommandList);
 
             // Assert that data are the same
-            Assert.True(Utilities.Compare(data, data2));
+            Assert.True(data.AsSpan().SequenceEqual(data2.AsSpan()));
 
             // Sets new data on the gpu
             data[0] = 1;
@@ -452,7 +452,7 @@ namespace Stride.Graphics.Tests
             data2 = texture.GetData<byte>(graphicsContext.CommandList);
 
             // Assert that data are the same
-            Assert.True(Utilities.Compare(data, data2));
+            Assert.True(data.AsSpan().SequenceEqual(data2.AsSpan()));
         }
 
         [Theory]

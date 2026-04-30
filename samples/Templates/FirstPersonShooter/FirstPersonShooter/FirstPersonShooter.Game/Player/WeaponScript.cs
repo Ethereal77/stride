@@ -16,9 +16,9 @@ namespace FirstPersonShooter.Player
 {
     public struct WeaponFiredResult
     {
-        public bool         DidFire;
-        public bool         DidHit;
-        public HitResult    HitResult;
+        public bool      DidFire;
+        public bool      DidHit;
+        public HitResult HitResult;
     }
 
     public class WeaponScript : SyncScript
@@ -81,7 +81,7 @@ namespace FirstPersonShooter.Player
             bool didReload;
             reloadEvent.TryReceive(out didReload);
 
-            cooldownRemaining = (cooldownRemaining > 0) ? (cooldownRemaining - this.GetSimulation().FixedTimeStep) : 0f;
+            cooldownRemaining = (cooldownRemaining > 0) ? (cooldownRemaining - (float)this.Game.UpdateTime.Elapsed.TotalSeconds) : 0f;
             if (cooldownRemaining > 0)
                 return; // Can't shoot yet
 

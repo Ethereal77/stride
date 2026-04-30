@@ -5,12 +5,14 @@
 
 using System;
 
+using Stride.Core;
+
 namespace Stride.Physics
 {
     public interface IColliderShapeDesc
     {
         bool Match(object obj);
-        ColliderShape CreateShape();
+        ColliderShape CreateShape(IServiceRegistry services);
     }
 
     public interface IAssetColliderShapeDesc : IColliderShapeDesc

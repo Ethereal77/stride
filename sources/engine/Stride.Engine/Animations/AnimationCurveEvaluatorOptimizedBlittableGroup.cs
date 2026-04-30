@@ -4,6 +4,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 
@@ -13,7 +14,7 @@ namespace Stride.Animations
     {
         protected override unsafe void ProcessChannel(ref Channel channel, CompressedTimeSpan currentTime, IntPtr location, float factor)
         {
-            Interop.CopyInline((void*)(location + channel.Offset), ref channel.ValueStart.Value);
+            Unsafe.AsRef<T>((void*)(location + channel.Offset)) = channel.ValueStart.Value;
         }
     }
 }

@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using SharpDX.Direct3D12;
 using SharpDX.Mathematics.Interop;
@@ -127,11 +128,11 @@ namespace Stride.Graphics
                     {
                         var commandList = GraphicsDevice.NativeCopyCommandList;
                         commandList.Reset(GraphicsDevice.NativeCopyCommandAllocator, null);
-                        
+
                         Resource uploadResource;
                         int uploadOffset;
                         var uploadMemory = GraphicsDevice.AllocateUploadBuffer(totalSize, out uploadResource, out uploadOffset, TextureSubresourceAlignment);
-                        
+
                         // Copy data to the upload buffer
                         int dataBoxIndex = 0;
                         var uploadMemoryMipStart = uploadMemory;
@@ -155,10 +156,10 @@ namespace Stride.Graphics
                                 uploadMemoryMipStart += ComputeSubresourceSize(mipLevel);
                             }
                         }
-                        
+
                         // Copy from upload heap to actual resource
                         commandList.CopyBufferRegion(NativeResource, 0, uploadResource, uploadOffset, totalSize);
-                        
+
                         commandList.Close();
 
                         StagingFenceValue = 0;
@@ -514,7 +515,7 @@ namespace Stride.Graphics
 
             if (IsMultisample)
                 throw new NotSupportedException("Multisampling is not supported for unordered access views");
-            
+
             int arrayCount;
             int mipCount;
             GetViewSliceBounds(viewType, ref arrayOrDepthSlice, ref mipIndex, out arrayCount, out mipCount);
@@ -567,7 +568,7 @@ namespace Stride.Graphics
                         throw new NotSupportedException("TextureCube dimension is expecting an array size > 1");
                 }
             }
-            
+
             var descriptorHandle = GraphicsDevice.UnorderedAccessViewAllocator.Allocate(1);
             NativeDevice.CreateUnorderedAccessView(NativeResource, null, uavDescription, descriptorHandle);
             return descriptorHandle;
@@ -593,15 +594,12 @@ namespace Stride.Graphics
             return result;
         }
 
-        internal static unsafe SharpDX.DataBox[] ConvertDataBoxes(DataBox[] dataBoxes)
+        internal static SharpDX.DataBox[] ConvertDataBoxes(DataBox[] dataBoxes)
         {
             if (dataBoxes == null || dataBoxes.Length == 0)
                 return null;
-
             var sharpDXDataBoxes = new SharpDX.DataBox[dataBoxes.Length];
-            fixed (void* pDataBoxes = sharpDXDataBoxes)
-                Utilities.Write((IntPtr)pDataBoxes, dataBoxes, 0, dataBoxes.Length);
-
+            dataBoxes.AsSpan().CopyTo(Unsafe.As<DataBox[]>(sharpDXDataBoxes));
             return sharpDXDataBoxes;
         }
 

@@ -15,7 +15,7 @@ namespace Stride.Core.Mathematics
     /// </summary>
     [DataContract]
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct BoundingBox : IEquatable<BoundingBox>, IFormattable
+    public struct BoundingBox : IEquatable<BoundingBox>, IFormattable, IIntersectableWithRay, IIntersectableWithPlane
     {
         /// <summary>
         /// A <see cref="BoundingBox"/> which represents an empty space.
@@ -294,7 +294,7 @@ namespace Stride.Core.Mathematics
             Vector3.Min(ref value1.Minimum, ref value2, out result.Minimum);
             Vector3.Max(ref value1.Maximum, ref value2, out result.Maximum);
         }
-        
+
         /// <summary>
         /// Constructs a <see cref="Stride.Core.Mathematics.BoundingBox"/> that is as large as the total combined area of the two specified boxes.
         /// </summary>
@@ -403,7 +403,7 @@ namespace Stride.Core.Mathematics
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {

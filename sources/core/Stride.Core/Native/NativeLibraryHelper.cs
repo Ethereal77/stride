@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -16,25 +17,12 @@ namespace Stride.Core
     /// </summary>
     public static class NativeLibraryHelper
     {
-        private static readonly string CpuArchitecture = RuntimeInformation.ProcessArchitecture switch
-        {
-            Architecture.X86 => "x86",
-            Architecture.X64 => "x64",
-            _ => throw new PlatformNotSupportedException()
-        };
-
-        private static readonly string PlatformName = Platform.Type switch
-        {
-            PlatformType.Windows => "win",
-            _ => throw new PlatformNotSupportedException()
-        };
-
-        private static readonly Dictionary<string, IntPtr> loadedLibraries = new();
+        private static readonly Dictionary<string, IntPtr> LoadedLibraries = new Dictionary<string, IntPtr>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        ///   Tries to load a native library.
+        ///   Tries to preload a native library.
         /// </summary>
-        /// <param name="libraryName">The name of the native library.</param>
+        /// <param name="libraryName">The name of the native library, without the extension.</param>
         /// <param name="owner">
         ///   The type whose assembly location is related to the native library
         ///   (we can't use GetCallingAssembly as it might be wrong due to optimizations).
@@ -48,7 +36,7 @@ namespace Stride.Core
         ///   or <paramref name="libraryName"/> is an empty <see langword="string"/>.
         /// </exception>
         /// <exception cref="DllNotFoundException">The library could not be loaded.</exception>
-        public static void Load(string libraryName, Type owner)
+        public static void PreloadLibrary(string libraryName, Type owner)
         {
             if (string.IsNullOrWhiteSpace(libraryName))
                 throw new ArgumentNullException(nameof(libraryName));
@@ -58,37 +46,62 @@ namespace Stride.Core
             lock (loadedLibraries)
             {
                 // If already loaded, just exit as we want to load it just once
-                if (loadedLibraries.ContainsKey(libraryName))
+                if (LoadedLibraries.ContainsKey(libraryName))
                     return;
 
-                // We are trying to load the DLL from a shadow path if it is already registered, otherwise we use it directly from the folder
-                var ownerTypeAssemblyPath = Path.GetDirectoryName(owner.GetTypeInfo().Assembly.Location);
-                var searchPaths = new[]
-                {
-                    Path.Combine(ownerTypeAssemblyPath, $"{PlatformName}-{CpuArchitecture}"),
-                    Path.Combine(Environment.CurrentDirectory, $"{PlatformName}-{CpuArchitecture}"),
-                    // Also try without platform for Windows-only packages (backward compat for editor packages)
-                    Path.Combine(ownerTypeAssemblyPath, $"{CpuArchitecture}"),
-                    Path.Combine(Environment.CurrentDirectory, $"{CpuArchitecture}"),
-                };
+                string cpu;
+                string platform = "win";
+                string extension = ".dll";
 
-                foreach (var libraryPath in searchPaths)
+                switch (RuntimeInformation.ProcessArchitecture)
                 {
-                    var libraryFilename = Path.Combine(libraryPath, libraryName);
-                    if (NativeLibrary.TryLoad(libraryFilename, out var result))
+                    case Architecture.X86:
+                        cpu = "x86";
+                        break;
+
+                    case Architecture.X64:
+                        cpu = "x64";
+                        break;
+
+                    case Architecture.Arm:
+                        cpu = "ARM";
+                        break;
+
+                    default:
+                        throw new PlatformNotSupportedException();
+                }
+
+                var libraryNameWithExtension = libraryName + extension;
+
+                // We are trying to load the DLL from a shadow path if it is already registered, otherwise we use it directly from the folder
+                {
+                    var platformNativeLibsFolder = $"{platform}-{cpu}";
+                    foreach (var libraryPath in new[]
                     {
-                        loadedLibraries.Add(libraryName.ToLowerInvariant(), result);
-                        return;
+                        Path.Combine(Path.GetDirectoryName(owner.GetTypeInfo().Assembly.Location) ?? string.Empty, platformNativeLibsFolder),
+                        Path.Combine(Environment.CurrentDirectory ?? string.Empty, platformNativeLibsFolder),
+                        Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) ?? string.Empty, platformNativeLibsFolder),
+                        // Also try without platform for Windows-only packages (backward compat for editor packages)
+                        Path.Combine(Path.GetDirectoryName(owner.GetTypeInfo().Assembly.Location) ?? string.Empty, cpu),
+                        Path.Combine(Environment.CurrentDirectory ?? string.Empty, cpu),
+                    })
+                    {
+                        var libraryFilename = Path.Combine(libraryPath, libraryNameWithExtension);
+                        if (NativeLibrary.TryLoad(libraryFilename, out var result))
+                        {
+                            LoadedLibraries.Add(libraryName, result);
+                            return;
+                        }
                     }
                 }
 
                 // Attempt to load it from PATH
                 foreach (var p in Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator))
                 {
-                    var libraryFilename = Path.Combine(p, libraryName);
+                    var libraryFilename = Path.Combine(p, libraryNameWithExtension);
                     if (NativeLibrary.TryLoad(libraryFilename, out var result))
                     {
-                        loadedLibraries.Add(libraryName.ToLowerInvariant(), result);
+                        LoadedLibraries.Add(libraryName, result);
                         return;
                     }
                 }

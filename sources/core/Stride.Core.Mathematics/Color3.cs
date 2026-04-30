@@ -174,9 +174,9 @@ namespace Stride.Core.Mathematics
         /// <param name="exponent">The exponent.</param>
         public void Pow(float exponent)
         {
-            R = (float)Math.Pow(R, exponent);
-            G = (float)Math.Pow(G, exponent);
-            B = (float)Math.Pow(B, exponent);
+            R = MathF.Pow(R, exponent);
+            G = MathF.Pow(G, exponent);
+            B = MathF.Pow(B, exponent);
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace Stride.Core.Mathematics
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
         /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static void Lerp(ref Color3 start, ref Color3 end, float amount, out Color3 result)
         {
@@ -382,7 +382,7 @@ namespace Stride.Core.Mathematics
         /// <remarks>
         /// This method performs the linear interpolation based on the following formula.
         /// <code>start + (end - start) * amount</code>
-        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned. 
+        /// Passing <paramref name="amount"/> a value of 0 will cause <paramref name="start"/> to be returned; a value of 1 will cause <paramref name="end"/> to be returned.
         /// </remarks>
         public static Color3 Lerp(Color3 start, Color3 end, float amount)
         {
@@ -759,7 +759,7 @@ namespace Stride.Core.Mathematics
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {

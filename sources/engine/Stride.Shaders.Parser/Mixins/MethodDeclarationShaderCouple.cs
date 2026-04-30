@@ -15,7 +15,7 @@ namespace Stride.Shaders.Parser.Mixins
         public MethodDeclaration Method;
         public ShaderClassType Shader;
 
-        public MethodDeclarationShaderCouple() : this(null, null){}
+        public MethodDeclarationShaderCouple() : this(null, null) { }
 
         public MethodDeclarationShaderCouple(MethodDeclaration method, ShaderClassType shader)
         {

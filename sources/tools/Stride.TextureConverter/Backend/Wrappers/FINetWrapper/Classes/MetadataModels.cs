@@ -134,7 +134,7 @@ namespace FreeImageAPI.Metadata
             }
             set
             {
-                SetTagValue("GlobalPalette", (value != null) ? null : value.Data);
+                SetTagValue("GlobalPalette", value?.Data);
             }
         }
 
@@ -1225,7 +1225,7 @@ namespace FreeImageAPI.Metadata
 
         /// <summary>
         /// Gets or sets the exposure bias. The unit is the APEX value.
-        /// Ordinarily it is given in the range of –99.99 to 99.99.
+        /// Ordinarily it is given in the range of -99.99 to 99.99.
         /// </summary>
         /// <remarks>
         /// <b>Handling of null values</b><para/>
@@ -3327,7 +3327,7 @@ namespace FreeImageAPI.Metadata
         /// Gets or sets a character string recording the name of the GPS area.
         /// The first byte indicates the character code used, and this is followed by
         /// the name of the GPS area. Since the Type is not ASCII, NULL termination is
-        /// not necessary. 
+        /// not necessary.
         /// </summary>
         /// <remarks>
         /// <b>Handling of null values</b><para/>
@@ -3351,7 +3351,7 @@ namespace FreeImageAPI.Metadata
         }
 
         /// <summary>
-        /// Gets or sets date and time information relative to UTC (Coordinated Universal Time). 
+        /// Gets or sets date and time information relative to UTC (Coordinated Universal Time).
         /// </summary>
         /// <remarks>
         /// This is a derived property. There is no metadata tag directly associated
@@ -3451,7 +3451,7 @@ namespace FreeImageAPI.Metadata
 
         /// <summary>
         /// Gets or sets a value indicating whether differential correction was applied to
-        /// the GPS receiver. 
+        /// the GPS receiver.
         /// </summary>
         /// <remarks>
         /// <b>Handling of null values</b><para/>
@@ -4620,8 +4620,8 @@ namespace FreeImageAPI.Metadata
         /// <para/>
         /// AsciiTag="first_value|second_value|etc...last_value|"
         /// <para/>
-        /// A baseline GeoTIFF-reader must check for and convert the final "|" pipe 
-        /// character of a key back into a NULL before returning it to the client 
+        /// A baseline GeoTIFF-reader must check for and convert the final "|" pipe
+        /// character of a key back into a NULL before returning it to the client
         /// software.
         /// <para/>
         /// <br/><b>Handling of null values</b><para/>
@@ -4729,7 +4729,7 @@ namespace FreeImageAPI.Metadata
         /// <i>Count</i> indicates the number of values in this key.
         /// <para/>
         /// <i>Value_Offset</i> Value_Offset indicates the index-offset into the TagArray indicated
-        /// by TIFFTagLocation, if it is nonzero. If TIFFTagLocation is 0 (zero) , then Value_Offset 
+        /// by TIFFTagLocation, if it is nonzero. If TIFFTagLocation is 0 (zero) , then Value_Offset
         /// contains the actual (<see cref="UInt16"/>) value of the Key, and Count=1 is implied.
         /// Note that the offset is not a byte-offset, but rather an index based on the natural data
         /// type of the specified tag array.
@@ -4827,7 +4827,7 @@ namespace FreeImageAPI.Metadata
         /// <para/>
         /// ModelTiePoints = (...,I,J,K, X,Y,Z...),
         /// <para/>
-        /// where <i>(I,J,K)</i> is the point at location <i>(I,J)</i> in raster space with 
+        /// where <i>(I,J,K)</i> is the point at location <i>(I,J)</i> in raster space with
         /// pixel-value <i>K</i>, and <i>(X,Y,Z)</i> is a vector in model space. In most cases
         /// the model space is only two-dimensional, in which case both K and Z should be set
         /// to zero; this third dimension is provided in anticipation of future support for 3D

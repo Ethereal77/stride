@@ -62,7 +62,7 @@ namespace Stride.Core.Presentation.ViewModel
         }
 
         /// <summary>
-        /// Checks whether this view model has been disposed, and throws an <see cref="ObjectDisposedException"/> if it is the case. 
+        /// Checks whether this view model has been disposed, and throws an <see cref="ObjectDisposedException"/> if it is the case.
         /// </summary>
         /// <param name="name">The name to supply to the <see cref="ObjectDisposedException"/>.</param>
         protected void EnsureNotDestroyed(string name = null)
@@ -187,7 +187,7 @@ namespace Stride.Core.Presentation.ViewModel
 
         /// <summary>
         /// Manages a property modification and its notifications. The first parameter <see cref="hasChanged"/> should indicate whether the property
-        /// should actuallybe updated. If this parameter is <c>True</c>, it will invoke the provided update action. The <see cref="PropertyChanging"/>
+        /// should actually be updated. If this parameter is <c>True</c>, it will invoke the provided update action. The <see cref="PropertyChanging"/>
         /// event will be raised prior to the update action, and the <see cref="PropertyChanged"/> event will be raised after.
         /// </summary>
         /// <param name="hasChanged">A boolean that indicates whether the update must be actually done. If <c>null</c>, the update is always done.</param>

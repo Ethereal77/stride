@@ -32,7 +32,7 @@ namespace Stride.Assets.Physics
     {
         static ColliderShapeAssetCompiler()
         {
-            NativeLibraryHelper.Load("VHACD", typeof(ColliderShapeAssetCompiler));
+            NativeLibraryHelper.PreloadLibrary("VHACD", typeof(ColliderShapeAssetCompiler));
         }
 
         public override IEnumerable<BuildDependencyInfo> GetInputTypes(AssetItem assetItem)
@@ -71,7 +71,20 @@ namespace Stride.Assets.Physics
                             yield return new ObjectUrl(UrlType.Content, url);
                     }
                 }
-                else if (desc is HeightfieldColliderShapeDesc heightfieldDesc)
+                else if (desc is StaticMeshColliderShapeDesc)
+                {
+                    var staticDesc = desc as StaticMeshColliderShapeDesc;
+                    if (staticDesc.Model != null)
+                    {
+                        var url = AttachedReferenceManager.GetUrl(staticDesc.Model);
+
+                        if (!string.IsNullOrEmpty(url))
+                        {
+                            yield return new ObjectUrl(UrlType.Content, url);
+                        }
+                    }
+                }
+                else if (desc is HeightfieldColliderShapeDesc)
                 {
                     if (heightfieldDesc.HeightStickArraySource is HeightStickArraySourceFromHeightmap heightmapSource &&
                         heightmapSource.Heightmap is not null)
@@ -111,16 +124,10 @@ namespace Stride.Assets.Physics
 
                 // Cloned list of collider shapes
                 var descriptions = Parameters.ColliderShapes.ToList();
-
-                var validShapes = Parameters.ColliderShapes
-                    .Where(shape => shape is not null &&
-                                    (shape is not ConvexHullColliderShapeDesc ||
-                                     ((ConvexHullColliderShapeDesc) shape).Model is not null))
-                    .ToList();
-
-                // Pre-process special types
-                foreach (var convexHullDesc in validShapes.Where(s => s is ConvexHullColliderShapeDesc)
-                                                          .Cast<ConvexHullColliderShapeDesc>())
+                foreach (var convexHullDesc in
+                    from shape in Parameters.ColliderShapes
+                    where shape is ConvexHullColliderShapeDesc hullShape && hullShape.Model != null
+                    select ((ConvexHullColliderShapeDesc)shape))
                 {
                     // Clone the convex hull shape description so the fields that should not be serialized can be cleared (Model in this case)
                     var convexHullDescClone = new ConvexHullColliderShapeDesc

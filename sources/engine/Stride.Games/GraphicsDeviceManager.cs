@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using Stride.Core;
 using Stride.Core.Diagnostics;
@@ -419,11 +420,11 @@ namespace Stride.Games
             switch (GraphicsDevice.GraphicsDeviceStatus)
             {
                 case GraphicsDeviceStatus.Removed:
-                    Utilities.Sleep(TimeSpan.FromMilliseconds(20));
+                    Thread.Sleep(TimeSpan.FromMilliseconds(20));
                     return false;
 
                 case GraphicsDeviceStatus.Reset:
-                    Utilities.Sleep(TimeSpan.FromMilliseconds(20));
+                    Thread.Sleep(TimeSpan.FromMilliseconds(20));
                     try
                     {
                         ChangeOrCreateDevice(true);
@@ -965,6 +966,7 @@ namespace Stride.Games
                             {
                                 try
                                 {
+                                    GraphicsDevice.ColorSpace = graphicsDeviceInformation.PresentationParameters.ColorSpace;
                                     var newWidth = graphicsDeviceInformation.PresentationParameters.BackBufferWidth;
                                     var newHeight = graphicsDeviceInformation.PresentationParameters.BackBufferHeight;
                                     var newFormat = graphicsDeviceInformation.PresentationParameters.BackBufferFormat;

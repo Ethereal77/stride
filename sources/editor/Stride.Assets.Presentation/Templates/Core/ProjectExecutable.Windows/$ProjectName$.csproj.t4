@@ -4,11 +4,11 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework><#= Properties.TargetFramework #></TargetFramework>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier><#= Properties.RuntimeIdentifier #></RuntimeIdentifier>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
     <RootNamespace><#= Properties.Namespace #></RootNamespace>
 
-    <OutputPath>..\Bin\Windows\$(Configuration)\</OutputPath>
+    <OutputPath>..\Bin\<#= Properties.CurrentPlatform #>\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 
     <!-- Force MSBuild to check to rebuild this assembly instead of letting VS IDE guess -->

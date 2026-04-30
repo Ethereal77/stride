@@ -1,0 +1,24 @@
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
+// Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// See the LICENSE.md file in the project root for full license information.
+
+/// <summary>
+/// Defines a texture for the output of the opaque render pass
+/// and a helper function to extract the color of it.
+/// </summary>
+shader OpaqueBase : Texturing
+{
+    // -------------------------------------
+    // Resources
+    // -------------------------------------
+    rgroup PerView.Opaque
+    {
+        stage Texture2D OpaqueRenderTarget;
+    }
+
+    float3 GetOpaqueColor(float2 uv)
+    {
+        return OpaqueRenderTarget.SampleLevel(PointSampler, uv, 0.0).xyz;
+    }
+};

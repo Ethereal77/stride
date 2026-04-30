@@ -60,7 +60,7 @@
 //                Assert.DoesNotThrow(()=>oneSound.Play());
 //                ++count;
 //
-//                Utilities.Sleep(10);
+//                Thread.Sleep(10);
 //            }
 //
 //            oneSound.Stop();
@@ -84,7 +84,7 @@
 //                Assert.DoesNotThrow(() => sayuriPart.Play());
 //                engine.Update();
 //
-//                Utilities.Sleep(10);
+//                Thread.Sleep(10);
 //            }
 //
 //            sayuriPart.Stop();
@@ -128,7 +128,7 @@
 //            Assert.False(soundMusic.IsLooped);
 //            Assert.DoesNotThrow(() => soundMusic.IsLooped = true);
 //            Assert.True(soundMusic.IsLooped);
-//            
+//
 //            Assert.DoesNotThrow(() => soundMusic.Volume = 0.5f);
 //            Assert.Equal(0.5f, soundMusic.Volume);
 //            Assert.DoesNotThrow(() => soundMusic.Volume = 0.67f);
@@ -175,10 +175,10 @@
 //            Assert.Equal(0.5f, sound.Pan);
 //            Assert.DoesNotThrow(() => sound.Pan = 0.67f);
 //            Assert.Equal(0.67f, sound.Pan);
-//            
+//
 //            Assert.DoesNotThrow(() => sound.Apply3D(new AudioListener(), new AudioEmitter()));
 //            Assert.Equal(0f, sound.Pan);
-//            
+//
 //            Assert.DoesNotThrow(sound.Reset3D);
 //
 //            Assert.DoesNotThrow(sound.ExitLoop);

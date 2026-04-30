@@ -93,6 +93,7 @@ namespace Stride.Input
         public void UpdatePointerState(PointerEvent evt, bool updateDelta = true)
         {
             var data = GetPointerData(evt.PointerId);
+            data.Id = evt.PointerId;
 
             if (updateDelta)
             {

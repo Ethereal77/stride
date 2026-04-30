@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
 // Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Copyright (c) 2009 NShader - Alexandre Mutel, Microsoft Corporation
@@ -12,11 +12,13 @@ using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace NShader
 {
-    public class NShaderScannerFactory {
+    public class NShaderScannerFactory
+    {
         private static NShaderScanner strideShaderScanner;
         private static Dictionary<string, NShaderScanner> mapExtensionToScanner;
 
-        static void Init() {
+        static void Init()
+        {
             if (mapExtensionToScanner == null)
             {
                 mapExtensionToScanner = new Dictionary<string, NShaderScanner>();

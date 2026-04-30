@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 
 namespace Stride.TextureConverter.PvrttWrapper
 {
-
     #region Enum
     internal enum PixelType
     {
@@ -138,11 +137,9 @@ namespace Stride.TextureConverter.PvrttWrapper
         public const uint TOPMIPLEVEL = 0;
         public const int ALLMIPLEVELS = -1;
         public const uint PVRTEX3_IDENT = 0x03525650;	// 'P''V''R'3
-        public const uint PVRTEX3_PREMULTIPLIED = (1 << 1);		//	Texture has been premultiplied by alpha value.	
+        public const uint PVRTEX3_PREMULTIPLIED = (1 << 1);		//	Texture has been premultiplied by alpha value.
     }
     #endregion
-
-
 
 
     #region public class Utilities
@@ -335,7 +332,8 @@ namespace Stride.TextureConverter.PvrttWrapper
             return new PVRTextureHeader(pvrttGetHeader(texture));
         }
 
-        public IntPtr GetDataPtr(uint uiMIPLevel = 0, uint uiArrayMember = 0, uint uiFaceNumber = 0) {
+        public IntPtr GetDataPtr(uint uiMIPLevel = 0, uint uiArrayMember = 0, uint uiFaceNumber = 0)
+        {
             return pvrttGetDataPtr(texture, uiMIPLevel, uiArrayMember, uiFaceNumber);
         }
 
@@ -515,7 +513,7 @@ namespace Stride.TextureConverter.PvrttWrapper
             return pvrttGetNumArrayMembers(header);
         }
 
-        
+
         public uint GetNumFaces()
         {
             return pvrttGetNumFaces(header);
@@ -622,5 +620,4 @@ namespace Stride.TextureConverter.PvrttWrapper
         }
     }
     #endregion
-
 }

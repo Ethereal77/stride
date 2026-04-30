@@ -76,7 +76,7 @@
   -->
   <Target Name="_StrideSetupNativeLibraries" DependsOnTargets="_StrideBuildDependencies" AfterTargets="ResolveAssemblyReferences" Condition="'$(StrideDependenciesCopy)' != 'false'">
     <!-- Windows -->
-    <ItemGroup Condition=" '$(StridePlatform)' == '' Or '$(StridePlatform)' == 'Windows' ">
+    <ItemGroup Condition="'$(TargetFramework)' == '$(StrideFramework)' Or '$(TargetFramework)' == '$(StrideFrameworkWindows)'">
       <None Include="@(_StrideDependencyNativeLib)">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -111,7 +111,7 @@
         <Destination>$(OutDir)%(TargetPath)</Destination>
       </_StrideDependencyToCopy>
 
-      <_StrideDependencyToCopy Remove="@(_StrideNativeLibAssigned)" Condition=" '$(StridePackageBuild)' == 'true' And '%(_StrideNativeLibAssigned.Extension)' == '.pdb' "/>
+      <_StrideDependencyToCopy Remove="@(_StrideNativeLibAssigned)" Condition="'$(StridePackageBuild)' == 'true' And '%(_StrideNativeLibAssigned.Extension)' == '.pdb' "/>
     </ItemGroup>
 
     <!-- Copy files -->

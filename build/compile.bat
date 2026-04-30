@@ -5,9 +5,10 @@ setlocal
 set STARTTIME=%TIME%
 set __SkipTestBuild=true
 set __BuildType=Debug
-set __BuildVerbosity=m
+set __BuildVerbosity=n
 set __BuildDoc=0
 set __ContinueOnError=false
+set __SelectedProject=Stride.sln
 
 :Arg_Loop
 rem This does not check for duplicate arguments, the last one will take precedence
@@ -35,7 +36,7 @@ echo.
 echo   debug   : Build debug version
 echo   release : Build release version
 echo   tests   : Build tests
-echo verbosity : Verbosity level [q]uiet, [m]inimal, [n]ormal or [d]iagnostic. Default is [m]inimal
+echo verbosity : Verbosity level [q]uiet, [m]inimal, [n]ormal or [d]iagnostic. Default is [n]ormal
 echo   project : Chosen project
 echo.
 
@@ -92,7 +93,7 @@ rem Compile our solution. The following variables needs to be set:
 rem "Project" is the solution name
 rem "_platform_target" is the platform being targeted
 :compile
-set _option=/nologo /nr:false /m /verbosity:%__BuildVerbosity% /p:Configuration=%__BuildType% /p:Platform="%_platform_target%" /p:StrideSkipUnitTests=%__SkipTestBuild% %Project%
+set _option=/nologo /nr:false /m /verbosity:%__BuildVerbosity% /p:Configuration=%__BuildType% /p:Platform="%_platform_target%" /p:StrideSkipUnitTests=%__SkipTestBuild% %Project% /p:DeployExtension=false
 
 if "%__BuildDoc%" == "1" set _option=%_option% /p:StrideGenerateDoc=true
 

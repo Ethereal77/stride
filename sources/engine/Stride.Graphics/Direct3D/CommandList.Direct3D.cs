@@ -773,7 +773,7 @@ namespace Stride.Graphics
             if (resource is null)
                 throw new ArgumentNullException(nameof(resource));
 
-            NativeDeviceContext.UpdateSubresource(*(SharpDX.DataBox*)Interop.Cast(ref databox), resource.NativeResource, subResourceIndex);
+            NativeDeviceContext.UpdateSubresource(databox.AsSharpDX(), resource.NativeResource, subResourceIndex);
         }
 
         internal unsafe void UpdateSubresource(GraphicsResource resource, int subResourceIndex, DataBox databox, ResourceRegion region)
@@ -781,7 +781,7 @@ namespace Stride.Graphics
             if (resource is null)
                 throw new ArgumentNullException(nameof(resource));
 
-            NativeDeviceContext.UpdateSubresource(*(SharpDX.DataBox*)Interop.Cast(ref databox), resource.NativeResource, subResourceIndex, *(SharpDX.Direct3D11.ResourceRegion*)Interop.Cast(ref region));
+            NativeDeviceContext.UpdateSubresource(databox.AsSharpDX(), resource.NativeResource, subResourceIndex, region.AsSharpDX());
         }
 
         // TODO: GRAPHICS REFACTOR What should we do with this?
@@ -805,7 +805,7 @@ namespace Stride.Graphics
                 mapMode = MapMode.WriteDiscard;
 
             SharpDX.DataBox dataBox = NativeDeviceContext.MapSubresource(resource.NativeResource, subResourceIndex, (SharpDX.Direct3D11.MapMode)mapMode, doNotWait ? SharpDX.Direct3D11.MapFlags.DoNotWait : SharpDX.Direct3D11.MapFlags.None);
-            var databox = *(DataBox*)Interop.Cast(ref dataBox);
+            ref var databox = ref dataBox.AsStride();
             if (!dataBox.IsEmpty)
             {
                 databox.DataPointer = (IntPtr)((byte*) databox.DataPointer + offsetInBytes);

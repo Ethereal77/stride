@@ -304,19 +304,16 @@ namespace Stride.Shaders.Parser.Mixins
                 SourceHashes.Add(classSource.ClassName, shaderClass.SourceHash);
 
             // Check if it was a generic class and find out if the instanciation was correct
-            if (shaderType.GenericParameters.Count > 0)
+            var genCount = Math.Max(shaderType.GenericParameters.Count, shaderType.ShaderGenerics.Count);
+            var argCount = classSource.GenericArguments?.Length ?? 0;
+            if (genCount > argCount)
             {
-                if (classSource.GenericArguments is null ||
-                    classSource.GenericArguments.Length == 0 ||
-                    shaderType.GenericParameters.Count > classSource.GenericArguments.Length)
-                {
-                    mixinInfo.Instanciated = false;
-                    mixinInfo.Log.Error(StrideMessageCode.ErrorClassSourceNotInstantiated, shaderType.Span, classSource.ClassName);
-                }
-                else
-                {
-                    ModuleMixinInfo.CleanIdentifiers(shaderType.GenericParameters.Select(x => x.Name).ToList());
-                }
+                mixinInfo.Instanciated = false;
+                mixinInfo.Log.Error(StrideMessageCode.ErrorClassSourceNotInstantiated, shaderType.Span, classSource.ClassName, argCount, genCount);
+            }
+            else if (shaderType.GenericParameters.Count > 0)
+            {
+                ModuleMixinInfo.CleanIdentifiers(shaderType.GenericParameters.Select(x => x.Name).ToList());
             }
 
             mixinInfo.MixinAst = shaderType;

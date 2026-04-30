@@ -23,7 +23,7 @@ namespace Stride.Core.Serialization
         public BinarySerializationReader([NotNull] Stream inputStream)
         {
             Reader = new BinaryReader(inputStream);
-            NativeStream = inputStream.ToNativeStream();
+            NativeStream = inputStream;
         }
 
         private BinaryReader Reader { get; }
@@ -37,6 +37,7 @@ namespace Stride.Core.Serialization
             value = result != 0;
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         /// <inheritdoc />
         public override unsafe void Serialize(ref float value)
         {
@@ -86,6 +87,7 @@ namespace Stride.Core.Serialization
         {
             value = NativeStream.ReadUInt64();
         }
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <inheritdoc />
         public override void Serialize([NotNull] ref string value)
@@ -122,12 +124,8 @@ namespace Stride.Core.Serialization
         {
             Reader.Read(values, offset, count);
         }
-
         /// <inheritdoc/>
-        public override void Serialize(IntPtr memory, int count)
-        {
-            NativeStream.Read(memory, count);
-        }
+        public override void Serialize(Span<byte> buffer) => NativeStream.Read(buffer);
 
         /// <inheritdoc />
         public override void Flush()

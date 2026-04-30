@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -20,6 +20,7 @@ using Stride.Core.Packages;
 using Stride.Core.Extensions;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
+using Stride.LauncherApp.Resources;
 using Stride.LauncherApp.Views;
 using Stride.LauncherApp.Resources;
 
@@ -31,6 +32,7 @@ namespace Stride.LauncherApp.Services
     public static class SelfUpdater
     {
         public static readonly string Version;
+        private static readonly HttpClient httpClient = new();
 
         private static SelfUpdateWindow selfUpdateWindow;
 
@@ -217,9 +219,13 @@ namespace Stride.LauncherApp.Services
 
 
                 var strideInstaller = Path.Combine(Path.GetTempPath(), $"StrideSetup-{Guid.NewGuid()}.exe");
-                using (WebClient webClient = new WebClient())
+                using (var response = await httpClient.GetAsync(strideInstallerUrl))
                 {
-                    webClient.DownloadFile(strideInstallerUrl, strideInstaller);
+                    response.EnsureSuccessStatusCode();
+
+                    await using var responseStream = await response.Content.ReadAsStreamAsync();
+                    await using var fileStream = File.Create(strideInstaller);
+                    responseStream.CopyTo(fileStream);
                 }
 
                 // Release the mutex before starting the new process

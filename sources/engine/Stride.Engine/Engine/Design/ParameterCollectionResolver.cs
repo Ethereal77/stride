@@ -5,6 +5,8 @@
 
 using System;
 
+using Unsafe = System.Runtime.CompilerServices.Unsafe;
+
 using Stride.Core;
 using Stride.Rendering;
 using Stride.Updater;
@@ -58,39 +60,36 @@ namespace Stride.Engine.Design
             public override Type MemberType => parameterKey.PropertyType;
 
             /// <inheritdoc/>
-            public override void GetBlittable(IntPtr obj, IntPtr data)
+            public override void GetBlittable(nint obj, nint data)
             {
                 throw new NotSupportedException();
             }
 
             /// <inheritdoc/>
-            public override void SetBlittable(IntPtr obj, IntPtr data)
+            public override unsafe void SetBlittable(nint obj, nint data)
             {
-                var parameterCollection = UpdateEngineHelper.PtrToObject<ParameterCollection>(obj);
+                var parameterCollection = UpdateEngineHelper.PointerToObject<ParameterCollection>(obj);
 
-                // TODO: Avoid unecessary copy using assembly processor
-                var value = Utilities.Read<T>(data);
+                var value = Unsafe.ReadUnaligned<T>((void*)data);
                 parameterCollection.Set(parameterKey, ref value);
             }
 
             /// <inheritdoc/>
-            public override void SetStruct(IntPtr obj, object data)
+            public override void SetStruct(nint obj, object data)
             {
                 throw new NotSupportedException();
             }
 
             /// <inheritdoc/>
-            public override IntPtr GetStructAndUnbox(IntPtr obj, object data)
+            public override unsafe nint GetStructAndUnbox(nint obj, object data)
             {
-                var parameterCollection = UpdateEngineHelper.PtrToObject<ParameterCollection>(obj);
+                var parameterCollection = UpdateEngineHelper.PointerToObject<ParameterCollection>(obj);
 
-                var valuePtr = UpdateEngineHelper.Unbox<T>(data);
+                ref var valuePtr = ref Unsafe.Unbox<T>(data);
 
-                // TODO: Avoid unecessary copy using assembly processor
-                var value = parameterCollection.Get(parameterKey);
-                Utilities.Write(valuePtr, ref value);
+                valuePtr = parameterCollection.Get(parameterKey);
 
-                return valuePtr;
+                return (nint)Unsafe.AsPointer(ref valuePtr);
             }
 
             /// <inheritdoc/>
@@ -145,14 +144,14 @@ namespace Stride.Engine.Design
             /// <inheritdoc/>
             public override object GetObject(IntPtr obj)
             {
-                var parameterCollection = UpdateEngineHelper.PtrToObject<ParameterCollection>(obj);
+                var parameterCollection = UpdateEngineHelper.PointerToObject<ParameterCollection>(obj);
                 return parameterCollection.GetObject(parameterKey);
             }
 
             /// <inheritdoc/>
             public override void SetObject(IntPtr obj, object data)
             {
-                var parameterCollection = UpdateEngineHelper.PtrToObject<ParameterCollection>(obj);
+                var parameterCollection = UpdateEngineHelper.PointerToObject<ParameterCollection>(obj);
                 parameterCollection.SetObject(parameterKey, data);
             }
         }

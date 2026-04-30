@@ -13,6 +13,7 @@ using Stride.Graphics;
 using Stride.Particles.Materials;
 using Stride.Rendering;
 using Stride.Rendering.Materials;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Particles.Rendering
@@ -189,7 +190,7 @@ namespace Stride.Particles.Rendering
                 }
 
                 // Write some attributes back which we will need for rendering later
-                var vertexBuilder = renderParticleEmitter.ParticleEmitter.VertexBuilder; 
+                var vertexBuilder = renderParticleEmitter.ParticleEmitter.VertexBuilder;
                 var newNodeData = new RenderAttributesPerNode
                 {
                     VertexBufferOffset = totalVertexBufferSize,
@@ -272,8 +273,8 @@ namespace Stride.Particles.Rendering
 
                 renderParticleNodeData[renderNodeReference] = nodeData;
 
-                Matrix viewInverse; // TODO Build this per view, not per node!!!
-                Matrix.Invert(ref renderNode.RenderView.View, out viewInverse);
+                // TODO Build this per view, not per node!!!
+                Matrix.Invert(ref renderNode.RenderView.View, out var viewInverse);
                 renderParticleEmitter.ParticleEmitter.BuildVertexBuffer(sharedBufferPtr + nodeData.VertexBufferOffset, ref viewInverse, ref renderNode.RenderView.ViewProjection);
             });
 

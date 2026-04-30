@@ -23,7 +23,11 @@ namespace Stride.Graphics
 
         private int boundScissorCount;
         private readonly Rectangle[] scissors = new Rectangle[MaxViewportAndScissorRectangleCount];
+
+#pragma warning disable 414 // The field 'CommandList.scissorsDirty' is assigned but its value is never used
+        // This field is used in CommandList.Direct3D12.cs and CommandList.Vulkan.cs
         private bool scissorsDirty = false;
+#pragma warning restore 414
 
         private Texture depthStencilBuffer;
 
@@ -191,7 +195,7 @@ namespace Stride.Graphics
 
             CommonSetRenderTargetsAndViewport(depthStencilBuffer, renderTargetCount, renderTargets);
         }
- 
+
         public void SetRenderTargetAndViewport(Texture depthStencilView, Texture renderTargetView, Texture secondRenderTarget)
         {
             depthStencilBuffer = depthStencilView;
@@ -282,7 +286,7 @@ namespace Stride.Graphics
         {
             SetRenderTargets(null, renderTargetViews);
         }
-        
+
         /// <summary>
         /// Binds a depth-stencil buffer and a set of render targets to the output-merger stage. See <see cref="Textures+and+render+targets"/> to learn how to use it.
         /// </summary>
@@ -302,7 +306,7 @@ namespace Stride.Graphics
 
             SetRenderTargetsImpl(depthStencilBuffer, renderTargetCount, renderTargets);
         }
-        
+
         /// <summary>
         /// Binds a depth-stencil buffer and a set of render targets to the output-merger stage. See <see cref="Textures+and+render+targets"/> to learn how to use it.
         /// </summary>

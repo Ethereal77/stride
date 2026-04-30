@@ -15,22 +15,22 @@
     <!-- Process by default scripts with AssemblyProcessor -->
     <StrideAssemblyProcessor Condition="'$(StrideScript)' == 'true'">true</StrideAssemblyProcessor>
 
-    <StrideIsExecutable Condition=" '$(OutputType)' == 'Exe'">true</StrideIsExecutable>
-    <StrideIsExecutable Condition=" '$(OutputType)' == 'WinExe'">true</StrideIsExecutable>
+    <StrideIsExecutable Condition="'$(OutputType)' == 'Exe'">true</StrideIsExecutable>
+    <StrideIsExecutable Condition="'$(OutputType)' == 'WinExe'">true</StrideIsExecutable>
   </PropertyGroup>
 
-  <!-- 
+  <!--
     Settings StrideGraphicsApi specific
   -->
-  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Direct3D11' ">
+  <PropertyGroup Condition="'$(StrideGraphicsApi)' == 'Direct3D11'">
     <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_DIRECT3D;STRIDE_GRAPHICS_API_DIRECT3D11</StrideGraphicsApiDefines>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Direct3D12' ">
+  <PropertyGroup Condition="'$(StrideGraphicsApi)' == 'Direct3D12'">
     <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_DIRECT3D;STRIDE_GRAPHICS_API_DIRECT3D12</StrideGraphicsApiDefines>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(StrideGraphicsApi)' == 'Null' ">
+  <PropertyGroup Condition="'$(StrideGraphicsApi)' == 'Null'">
     <StrideGraphicsApiDefines>STRIDE_GRAPHICS_API_NULL</StrideGraphicsApiDefines>
   </PropertyGroup>
 

@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <MSBuildAllProjects Condition=" '$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0' ">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -46,7 +46,7 @@
     <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'netcoreapp' OR ('$(_SdkShortFrameworkIdentifier)' == 'net' AND $(_SdkShortFrameworkVersion[0]) >= 5)">.NETCoreApp</TargetFrameworkIdentifier>
 
     <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'win'">.NETCore</TargetFrameworkIdentifier>
-    <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'netcore'">.NETCore</TargetFrameworkIdentifier> 
+    <TargetFrameworkIdentifier Condition="'$(_SdkShortFrameworkIdentifier)' == 'netcore'">.NETCore</TargetFrameworkIdentifier>
   </PropertyGroup>
 
   <Choose>

@@ -10,7 +10,7 @@ namespace Stride.Samples.Templates
     static class ThisPackageVersion
     {
         // We version this package manually because most of the time the samples are big and don't need to be updated
-        public static string Current = "4.0.1.1";
+        public static string Current = "4.1.0.3";
     }
 }
 

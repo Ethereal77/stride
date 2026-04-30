@@ -13,13 +13,6 @@ namespace Stride.Games
     /// </summary>
     public static class GameContextFactory
     {
-        [Obsolete("Use NewGameContext with the proper AppContextType.")]
-        internal static GameContext NewDefaultGameContext(int requestedWidth = 0, int requestedHeight = 0, bool isUserManagingRun = false)
-        {
-            // Default context is Desktop
-            return NewGameContext(AppContextType.Desktop, requestedWidth, requestedHeight, isUserManagingRun);
-        }
-
         /// <summary>
         ///   Creates the appropriate <see cref="GameContext"/> for the current executing platform and <see cref="AppContextType"/>.
         /// </summary>

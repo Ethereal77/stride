@@ -30,7 +30,7 @@ namespace Stride.Core.Storage
         private uint H3;
         private uint H4;
         private uint length;
-        
+
         public ObjectIdSimpleBuilder(uint seed = 0)
         {
             this.seed = seed;
@@ -121,11 +121,11 @@ namespace Stride.Core.Storage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(T data) where T : struct
         {
-            var pData = (int*)Interop.Fixed(ref data);
-            var count = Utilities.SizeOf<T>() >> 2;
+            var pData = Unsafe.As<T, uint>(ref data);
+            var count = Unsafe.SizeOf<T>() >> 2;
             for (var i = 0; i < count; i++)
             {
-                Write(*pData++);
+                Write(Unsafe.Add(ref pData, i));
             }
         }
 

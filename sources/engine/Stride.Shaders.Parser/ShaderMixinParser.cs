@@ -133,6 +133,7 @@ namespace Stride.Shaders.Parser
             foreach (var moduleMixinInfo in mixinsToAnalyze)
             {
                 allMixinInfos.UnionWith(moduleMixinInfo.MinimalContext);
+                moduleMixinInfo.Log.CopyTo(parsingResult);
             }
             foreach (var moduleMixinInfo in allMixinInfos)
             {

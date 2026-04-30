@@ -47,7 +47,7 @@ namespace Stride.Physics.Tests
 
             return false;
         }
-        
+
         [Fact]
         public void CharacterTest1()
         {
@@ -95,9 +95,9 @@ namespace Stride.Physics.Tests
 
                 Assert.NotEqual(currentPos, character.Transform.Position);
                 var target = currentPos + Vector3.UnitX*3*simulation.FixedTimeStep;
-                Assert.Equal(character.Transform.Position.X, target.X, 15);
-                Assert.Equal(character.Transform.Position.Y, target.Y, 15);
-                Assert.Equal(character.Transform.Position.Z, target.Z, 15);
+                Assert.Equal(character.Transform.Position.X, target.X, 15f);
+                Assert.Equal(character.Transform.Position.Y, target.Y, 15f);
+                Assert.Equal(character.Transform.Position.Z, target.Z, 15f);
 
                 currentPos = character.Transform.Position;
 
@@ -105,9 +105,9 @@ namespace Stride.Physics.Tests
 
                 Assert.NotEqual(currentPos, character.Transform.Position);
                 target = currentPos + Vector3.UnitX * 3 * simulation.FixedTimeStep;
-                Assert.Equal(character.Transform.Position.X, target.X, 15);
-                Assert.Equal(character.Transform.Position.Y, target.Y, 15);
-                Assert.Equal(character.Transform.Position.Z, target.Z, 15);
+                Assert.Equal(character.Transform.Position.X, target.X, 15f);
+                Assert.Equal(character.Transform.Position.Y, target.Y, 15f);
+                Assert.Equal(character.Transform.Position.Z, target.Z, 15f);
 
                 controller.SetVelocity(Vector3.Zero);
 
@@ -120,7 +120,6 @@ namespace Stride.Physics.Tests
                 Assert.Equal(currentPos, character.Transform.Position);
 
                 var collider = game.SceneSystem.SceneInstance.RootScene.Entities.First(ent => ent.Name == "Collider").Get<StaticColliderComponent>();
-                collider.ProcessCollisions = true;
 
                 game.Script.AddTask(async () =>
                 {

@@ -207,6 +207,7 @@ namespace Stride.Rendering
         public struct ViewportRestore : IDisposable
         {
             private readonly RenderContext context;
+
             private readonly ViewportState previousValue;
 
             public ViewportRestore(RenderContext renderContext)

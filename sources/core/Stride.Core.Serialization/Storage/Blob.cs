@@ -4,6 +4,9 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using Stride.Core.IO;
@@ -58,13 +61,14 @@ namespace Stride.Core.Storage
         /// <param name="objectId">Hash that identifies the data.</param>
         /// <param name="content">Pointer to the data to store.</param>
         /// <param name="size">Size of the data, in bytes.</param>
-        internal Blob(ObjectDatabase objectDatabase, ObjectId objectId, IntPtr content, int size)
+        internal unsafe Blob(ObjectDatabase objectDatabase, ObjectId objectId, IntPtr content, int size)
             : this(objectDatabase, objectId)
         {
+            Debug.Assert(size >= 0);
             Size = size;
             Content = Marshal.AllocHGlobal(size);
 
-            Utilities.CopyMemory(dest: Content, content, size);
+            Unsafe.CopyBlockUnaligned((void*) Content, (void*) content, (uint) size);
         }
 
         /// <summary>
@@ -73,13 +77,13 @@ namespace Stride.Core.Storage
         /// <param name="objectDatabase">Object database that stores this blob.</param>
         /// <param name="objectId">Hash that identifies the data.</param>
         /// <param name="stream">A <see cref="NativeStream"/> with the data to store.</param>
-        internal Blob(ObjectDatabase objectDatabase, ObjectId objectId, NativeStream stream)
+        internal unsafe Blob(ObjectDatabase objectDatabase, ObjectId objectId, Stream stream)
             : this(objectDatabase, objectId)
         {
             Size = (int) stream.Length;
             Content = Marshal.AllocHGlobal(Size);
 
-            stream.Read(Content, Size);
+            stream.Read(new Span<byte>((void*) Content, Size));
         }
 
 
@@ -90,10 +94,7 @@ namespace Stride.Core.Storage
         ///   A <see cref="NativeStream"/> over the <see cref="Content"/> data. Note that the returned stream will keep a
         ///   reference to the <see cref="Blob"/> until disposed.
         /// </returns>
-        public NativeStream GetContentStream()
-        {
-            return new BlobStream(this);
-        }
+        public Stream GetContentStream() => new BlobStream(this);
 
         /// <inheritdoc/>
         protected override void Destroy()

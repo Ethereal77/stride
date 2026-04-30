@@ -106,9 +106,9 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.Game
 
                     // Setup material filter
                     materialFilterRenderFeature.MaterialFilter =
-                        (materialFilterRenderFeature != null && renderMode.Mode == GameEditor.RenderMode.SingleStream)
-                            ? renderMode.StreamDescriptor.Filter
-                            : null;
+                        renderMode.Mode == GameEditor.RenderMode.SingleStream
+                        ? renderMode.StreamDescriptor.Filter
+                        : null;
 
                     // Disable mouse services while we are in game preview, and reenable them after
                     // TODO: A more robust mechanism for filtering or redirecting input?

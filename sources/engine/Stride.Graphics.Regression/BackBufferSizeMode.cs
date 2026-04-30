@@ -20,9 +20,9 @@ namespace Stride.Graphics.Regression
         /// </summary>
         FitToWindowSize,
 
-        /// <summary> 
+        /// <summary>
         /// Calculate the back buffer size based on the window ratio and desired height/width.
         /// </summary>
-        FitToWindowRatio,
+        FitToWindowRatio
     };
 }

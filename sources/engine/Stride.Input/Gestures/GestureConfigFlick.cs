@@ -9,7 +9,7 @@ using Stride.Core.Mathematics;
 
 namespace Stride.Input
 {
-    /// <summary> 
+    /// <summary>
     /// Configuration class for the Flick gesture.
     /// </summary>
     /// <remarks>A Flick gesture can be composed of 1 or more fingers.</remarks>
@@ -37,7 +37,7 @@ namespace Stride.Input
 
         /// <summary>
         /// The shape of the flick gesture.
-        /// </summary>        
+        /// </summary>
         /// <exception cref="InvalidOperationException">Tried to modify the configuration after it has been frozen by the system.</exception>
         public GestureShape FlickShape
         {

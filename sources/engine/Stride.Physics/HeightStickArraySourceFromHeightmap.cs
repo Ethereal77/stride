@@ -3,6 +3,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -77,7 +78,7 @@ namespace Stride.Physics
             if (heightStickArrayLength < heightsLength)
                 throw new ArgumentException($"{ nameof(heightStickArray) }.{ nameof(heightStickArray.Length) } is not enough to copy.");
 
-            heightStickArray.Write(heights, index * Utilities.SizeOf<T>(), 0, heightsLength);
+            heightStickArray.Write(heights, index * Unsafe.SizeOf<T>(), 0, heightsLength);
         }
 
         public bool Match(object obj)

@@ -7,6 +7,7 @@
 
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 
@@ -46,11 +47,10 @@ namespace Stride.Rendering
         public override unsafe bool WriteBuffer(IntPtr dest, int alignment = 1)
         {
             // We only support structs (not sure how to deal with arrays yet)
-            if (typeof(T).GetTypeInfo().IsValueType)
+            if (typeof(T).IsValueType)
             {
                 // Struct copy
-                var value = DefaultValue;
-                Interop.CopyInline((void*) dest, ref value);
+                Unsafe.AsRef<T>((void*)dest) = DefaultValue;
                 return true;
             }
 

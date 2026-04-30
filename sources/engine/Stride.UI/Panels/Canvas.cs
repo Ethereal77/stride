@@ -11,7 +11,7 @@ using Stride.Core.Mathematics;
 
 namespace Stride.UI.Panels
 {
-    /// <summary> 
+    /// <summary>
     /// Defines an area within which you can position and size child elements with respect to in the Canvas area size.
     /// </summary>
     [DataContract(nameof(Canvas))]
@@ -44,15 +44,15 @@ namespace Stride.UI.Panels
         public static readonly PropertyKey<Vector3> RelativeSizePropertyKey = DependencyPropertyFactory.RegisterAttached(nameof(RelativeSizePropertyKey), typeof(Canvas), new Vector3(float.NaN), CoerceRelativeSize, InvalidateCanvasMeasure);
 
         /// <summary>
-        /// The key to the PinOrigin dependency property. The PinOrigin indicate which point of the <see cref="UIElement"/> should be pinned to the canvas. 
+        /// The key to the PinOrigin dependency property. The PinOrigin indicate which point of the <see cref="UIElement"/> should be pinned to the canvas.
         /// </summary>
         /// <remarks>
-        /// Those values are normalized between 0 and 1. (0,0,0) represent the Left/Top/Back corner and (1,1,1) represent the Right/Bottom/Front corner. 
-        /// <see cref="UIElement"/>'s margins are included in the normalization. 
+        /// Those values are normalized between 0 and 1. (0,0,0) represent the Left/Top/Back corner and (1,1,1) represent the Right/Bottom/Front corner.
+        /// <see cref="UIElement"/>'s margins are included in the normalization.
         /// Values beyond [0,1] are clamped.</remarks>
         [Display(category: LayoutCategory)]
         public static readonly PropertyKey<Vector3> PinOriginPropertyKey = DependencyPropertyFactory.RegisterAttached(nameof(PinOriginPropertyKey), typeof(Canvas), Vector3.Zero, CoercePinOriginValue, InvalidateCanvasMeasure);
-        
+
         private static void CoercePinOriginValue(ref Vector3 value)
         {
             // Values must be in the range [0, 1]
@@ -114,7 +114,7 @@ namespace Stride.UI.Panels
                 var pinOrigin = child.DependencyProperties.Get(PinOriginPropertyKey);
                 var childOrigin = ComputeAbsolutePinPosition(child, ref finalSizeWithoutMargins) - Vector3.Modulate(pinOrigin, child.RenderSize);
 
-                // compute the child offsets wrt parent origin (0,0,0). 
+                // compute the child offsets wrt parent origin (0,0,0).
                 var childOriginParentCenter = childOrigin - finalSizeWithoutMargins / 2;
 
                 // set the panel arrange matrix for the child

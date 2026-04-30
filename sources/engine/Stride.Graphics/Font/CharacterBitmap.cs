@@ -4,7 +4,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
-
+using System.Runtime.CompilerServices;
 using SharpFont;
 
 using Stride.Core;
@@ -25,7 +25,7 @@ namespace Stride.Graphics.Font
         private readonly PixelMode pixelMode;
 
         private readonly IntPtr buffer;
-        
+
         private bool disposed;
 
         /// <summary>
@@ -65,15 +65,15 @@ namespace Stride.Graphics.Font
             this.pixelMode = pixelMode;
         }
 
-        private static unsafe void CopyAndAddBordersFromGrays(IntPtr data, IntPtr dataBytes, ref Int2 borderSize, int width, int rows)
+        private static unsafe void CopyAndAddBordersFromGrays(nint data, nint dataBytes, ref Int2 borderSize, int width, int rows)
         {
             var widthLessBorders = width - (borderSize.X << 1);
             var rowsLessBorders = rows - (borderSize.Y << 1);
 
             var resetBorderLineSize = width * borderSize.Y;
-            Utilities.ClearMemory(dataBytes, 0, resetBorderLineSize);
-            Utilities.ClearMemory(dataBytes + width * rows - resetBorderLineSize, 0, resetBorderLineSize); // set last border lines to null
-            
+            Unsafe.InitBlockUnaligned((byte*)dataBytes, 0, (uint)resetBorderLineSize);
+            Unsafe.InitBlockUnaligned((byte*)dataBytes + width * rows - resetBorderLineSize, 0, (uint)resetBorderLineSize); // set last border lines to null
+
             var src = (byte*)data;
             var dst = (byte*)dataBytes + resetBorderLineSize;
 
@@ -102,13 +102,13 @@ namespace Stride.Graphics.Font
             }
         }
 
-        private static unsafe void CopyAndAddBordersFromMono(IntPtr data, IntPtr dataBytes, ref Int2 borderSize, int width, int rows, int srcPitch)
+        private static unsafe void CopyAndAddBordersFromMono(nint data, nint dataBytes, ref Int2 borderSize, int width, int rows, int srcPitch)
         {
             var rowsLessBorders = rows - (borderSize.Y << 1);
 
-            var resetBorderLineSize = width * borderSize.Y;
-            Utilities.ClearMemory(dataBytes, 0, resetBorderLineSize); // set first border lines to null 
-            Utilities.ClearMemory(dataBytes + rows * width - resetBorderLineSize, 0, resetBorderLineSize); // set last border lines to null
+            var resetBorderLineSize = (uint)(width * borderSize.Y);
+            Unsafe.InitBlockUnaligned((byte*)dataBytes, 0, resetBorderLineSize); // set first border lines to null
+            Unsafe.InitBlockUnaligned((byte*)dataBytes + rows * width - resetBorderLineSize, 0, resetBorderLineSize); // set last border lines to null
 
             var rowSrc = (byte*)data;
             var dst = (byte*)dataBytes + resetBorderLineSize;
@@ -128,7 +128,7 @@ namespace Stride.Graphics.Font
                     for (int k = 0; k < 8; k++)
                     {
                         dst[col] = (*src & mask) != 0 ? byte.MaxValue : (byte)0;
-                            
+
                         mask >>= 1;
                         ++col;
 
@@ -186,16 +186,20 @@ namespace Stride.Graphics.Font
             }
         }
 
-        /// <summary><para>
-        /// Gets the pitch's absolute value is the number of bytes taken by one bitmap row, including padding. However,
-        /// the pitch is positive when the bitmap has a ‘down’ flow, and negative when it has an ‘up’ flow. In all
-        /// cases, the pitch is an offset to add to a bitmap pointer in order to go down one row.
-        /// </para><para>
-        /// Note that ‘padding’ means the alignment of a bitmap to a byte border, and FreeType functions normally align
-        /// to the smallest possible integer value.
-        /// </para><para>
-        /// For the B/W rasterizer, ‘pitch’ is always an even number.
-        /// </para></summary>
+        /// <summary>
+        ///   <para>
+        ///     Gets the pitch's absolute value is the number of bytes taken by one bitmap row, including padding. However,
+        ///     the pitch is positive when the bitmap has a ‘down’ flow, and negative when it has an ‘up’ flow. In all
+        ///     cases, the pitch is an offset to add to a bitmap pointer in order to go down one row.
+        ///   </para>
+        ///   <para>
+        ///     Note that ‘padding’ means the alignment of a bitmap to a byte border, and FreeType functions normally align
+        ///     to the smallest possible integer value.
+        ///   </para>
+        ///   <para>
+        ///     For the B/W rasterizer, ‘pitch’ is always an even number.
+        ///   </para>
+        /// </summary>
         public int Pitch
         {
             get

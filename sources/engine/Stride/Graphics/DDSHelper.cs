@@ -11,6 +11,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using Stride.Core;
@@ -99,6 +100,13 @@ namespace Stride.Graphics
                 new LegacyMap(PixelFormat.B5G5R5A1_UNorm, ConversionFlags.Format5551, DDS.DDSPixelFormat.A1R5G5B5), // D3DFMT_A1R5G5B5
                 new LegacyMap(PixelFormat.B5G5R5A1_UNorm, ConversionFlags.Format5551 |
                                                           ConversionFlags.NoAlpha, new DDS.DDSPixelFormat(DDS.PixelFormatFlags.Rgb, 0, 16, 0x7c00, 0x03e0, 0x001f, 0x0000)), // D3DFMT_X1R5G5B5
+
+                new LegacyMap(PixelFormat.R8G8B8A8_UNorm, ConversionFlags.Expand | ConversionFlags.Format8332, new DDS.DDSPixelFormat(DDS.PixelFormatFlags.Rgb, 0, 16, 0x00e0, 0x001c, 0x0003, 0xff00)), // D3DFMT_A8R3G3B2
+                new LegacyMap(PixelFormat.B5G6R5_UNorm, ConversionFlags.Expand | ConversionFlags.Format332, new DDS.DDSPixelFormat(DDS.PixelFormatFlags.Rgb, 0, 8, 0xe0, 0x1c, 0x03, 0x00)), // D3DFMT_R3G3B2
+
+                new LegacyMap(PixelFormat.R8_UNorm, ConversionFlags.None, DDS.DDSPixelFormat.L8), // D3DFMT_L8
+                new LegacyMap(PixelFormat.R16_UNorm, ConversionFlags.None, DDS.DDSPixelFormat.L16), // D3DFMT_L16
+                new LegacyMap(PixelFormat.R8G8_UNorm, ConversionFlags.None, DDS.DDSPixelFormat.A8L8), // D3DFMT_A8L8
 
                 new LegacyMap(PixelFormat.R8G8B8A8_UNorm, ConversionFlags.Expand |
                                                           ConversionFlags.Format8332, new DDS.DDSPixelFormat(DDS.PixelFormatFlags.Rgb, 0, 16, 0x00e0, 0x001c, 0x0003, 0xff00)),
@@ -232,7 +240,7 @@ namespace Stride.Graphics
             if (headerPtr == IntPtr.Zero)
                 throw new ArgumentException("Pointer to DDS header cannot be null", "headerPtr");
 
-            if (size < (Utilities.SizeOf<DDS.Header>() + sizeof (uint)))
+            if (size < (Unsafe.SizeOf<DDS.Header>() + sizeof (uint)))
                 return false;
 
             // DDS files always start with the same magic number ("DDS ")
@@ -242,7 +250,7 @@ namespace Stride.Graphics
             var header = *(DDS.Header*) ((byte*) headerPtr + sizeof (int));
 
             // Verify header to validate DDS file
-            if (header.Size != Utilities.SizeOf<DDS.Header>() || header.PixelFormat.Size != Utilities.SizeOf<DDS.DDSPixelFormat>())
+            if (header.Size != Unsafe.SizeOf<DDS.Header>() || header.PixelFormat.Size != Unsafe.SizeOf<DDS.DDSPixelFormat>())
                 return false;
 
             // Setup MipLevels
@@ -254,10 +262,10 @@ namespace Stride.Graphics
             if ((header.PixelFormat.Flags & DDS.PixelFormatFlags.FourCC) != 0 && (new FourCC('D', 'X', '1', '0') == header.PixelFormat.FourCC))
             {
                 // Buffer must be big enough for both headers and magic value
-                if (size < (Utilities.SizeOf<DDS.Header>() + sizeof (uint) + Utilities.SizeOf<DDS.HeaderDXT10>()))
+                if (size < (Unsafe.SizeOf<DDS.Header>() + sizeof (uint) + Unsafe.SizeOf<DDS.HeaderDXT10>()))
                     return false;
 
-                var headerDX10 = *(DDS.HeaderDXT10*) ((byte*) headerPtr + sizeof (int) + Utilities.SizeOf<DDS.Header>());
+                var headerDX10 = *(DDS.HeaderDXT10*) ((byte*) headerPtr + sizeof (int) + Unsafe.SizeOf<DDS.Header>());
                 convFlags |= ConversionFlags.DX10;
 
                 description.ArraySize = headerDX10.ArraySize;
@@ -505,52 +513,52 @@ namespace Stride.Graphics
                 #endif
                     // Legacy D3DX formats using D3DFMT enum value as FourCC
                     case PixelFormat.R32G32B32A32_Float:
-                        ddpf.Size = Utilities.SizeOf<DDS.DDSPixelFormat>();
+                        ddpf.Size = Unsafe.SizeOf<DDS.DDSPixelFormat>();
                         ddpf.Flags = DDS.PixelFormatFlags.FourCC;
                         ddpf.FourCC = 116; // D3DFMT_A32B32G32R32F
                         break;
                     case PixelFormat.R16G16B16A16_Float:
-                        ddpf.Size = Utilities.SizeOf<DDS.DDSPixelFormat>();
+                        ddpf.Size = Unsafe.SizeOf<DDS.DDSPixelFormat>();
                         ddpf.Flags = DDS.PixelFormatFlags.FourCC;
                         ddpf.FourCC = 113; // D3DFMT_A16B16G16R16F
                         break;
                     case PixelFormat.R16G16B16A16_UNorm:
-                        ddpf.Size = Utilities.SizeOf<DDS.DDSPixelFormat>();
+                        ddpf.Size = Unsafe.SizeOf<DDS.DDSPixelFormat>();
                         ddpf.Flags = DDS.PixelFormatFlags.FourCC;
                         ddpf.FourCC = 36; // D3DFMT_A16B16G16R16
                         break;
                     case PixelFormat.R16G16B16A16_SNorm:
-                        ddpf.Size = Utilities.SizeOf<DDS.DDSPixelFormat>();
+                        ddpf.Size = Unsafe.SizeOf<DDS.DDSPixelFormat>();
                         ddpf.Flags = DDS.PixelFormatFlags.FourCC;
                         ddpf.FourCC = 110; // D3DFMT_Q16W16V16U16
                         break;
                     case PixelFormat.R32G32_Float:
-                        ddpf.Size = Utilities.SizeOf<DDS.DDSPixelFormat>();
+                        ddpf.Size = Unsafe.SizeOf<DDS.DDSPixelFormat>();
                         ddpf.Flags = DDS.PixelFormatFlags.FourCC;
                         ddpf.FourCC = 115; // D3DFMT_G32R32F
                         break;
                     case PixelFormat.R16G16_Float:
-                        ddpf.Size = Utilities.SizeOf<DDS.DDSPixelFormat>();
+                        ddpf.Size = Unsafe.SizeOf<DDS.DDSPixelFormat>();
                         ddpf.Flags = DDS.PixelFormatFlags.FourCC;
                         ddpf.FourCC = 112; // D3DFMT_G16R16F
                         break;
                     case PixelFormat.R32_Float:
-                        ddpf.Size = Utilities.SizeOf<DDS.DDSPixelFormat>();
+                        ddpf.Size = Unsafe.SizeOf<DDS.DDSPixelFormat>();
                         ddpf.Flags = DDS.PixelFormatFlags.FourCC;
                         ddpf.FourCC = 114; // D3DFMT_R32F
                         break;
                     case PixelFormat.R16_Float:
-                        ddpf.Size = Utilities.SizeOf<DDS.DDSPixelFormat>();
+                        ddpf.Size = Unsafe.SizeOf<DDS.DDSPixelFormat>();
                         ddpf.Flags = DDS.PixelFormatFlags.FourCC;
                         ddpf.FourCC = 111; // D3DFMT_R16F
                         break;
                 }
             }
 
-            required = sizeof (int) + Utilities.SizeOf<DDS.Header>();
+            required = sizeof (int) + Unsafe.SizeOf<DDS.Header>();
 
             if (ddpf.Size == 0)
-                required += Utilities.SizeOf<DDS.HeaderDXT10>();
+                required += Unsafe.SizeOf<DDS.HeaderDXT10>();
 
             if (pDestination == IntPtr.Zero)
                 return;
@@ -561,9 +569,8 @@ namespace Stride.Graphics
             *(uint*)(pDestination) = DDS.MagicHeader;
 
             var header = (DDS.Header*)((byte*)(pDestination) + sizeof (int));
-
-            Utilities.ClearMemory((IntPtr)header, 0, Utilities.SizeOf<DDS.Header>());
-            header->Size = Utilities.SizeOf<DDS.Header>();
+            *header = default;
+            header->Size = Unsafe.SizeOf<DDS.Header>();
             header->Flags = DDS.HeaderFlags.Texture;
             header->SurfaceFlags = DDS.SurfaceFlags.Texture;
 
@@ -626,9 +633,8 @@ namespace Stride.Graphics
             {
                 header->PixelFormat = DDS.DDSPixelFormat.DX10;
 
-                var ext = (DDS.HeaderDXT10*)((byte*)(header) + Utilities.SizeOf<DDS.Header>());
-
-                Utilities.ClearMemory((IntPtr) ext, 0, Utilities.SizeOf<DDS.HeaderDXT10>());
+                var ext = (DDS.HeaderDXT10*)((byte*)(header) + Unsafe.SizeOf<DDS.Header>());
+                *ext = default;
 
                 ext->DXGIFormat = description.Format;
                 switch (description.Dimension)
@@ -930,9 +936,9 @@ namespace Stride.Graphics
             if (!DecodeDDSHeader(pSource, size, flags, out mdata, out convFlags))
                 return null;
 
-            int offset = sizeof (uint) + Utilities.SizeOf<DDS.Header>();
+            int offset = sizeof (uint) + Unsafe.SizeOf<DDS.Header>();
             if ((convFlags & ConversionFlags.DX10) != 0)
-                offset += Utilities.SizeOf<DDS.HeaderDXT10>();
+                offset += Unsafe.SizeOf<DDS.HeaderDXT10>();
 
             var pal8 = (uint*) 0;
             if ((convFlags & ConversionFlags.Pal8) != 0)
@@ -992,20 +998,24 @@ namespace Stride.Graphics
             int index = 0;
             for (int item = 0; item < metadata.ArraySize; ++item)
             {
-                int d = metadata.Depth;
+                int depth = metadata.Depth;
 
                 for (int level = 0; level < metadata.MipLevels; ++level)
                 {
-                    for (int slice = 0; slice < d; ++slice)
+                    for (int slice = 0; slice < depth; ++slice)
                     {
                         int pixsize = pixelBuffers[index].BufferStride;
-                        Utilities.Read(pixelBuffers[index].DataPointer, buffer, 0, pixsize);
+                        Debug.Assert((uint)pixsize <= buffer.Length);
+                        fixed (byte* pinned = buffer)
+                        {
+                            Unsafe.CopyBlockUnaligned(pinned, source: (void*)pixelBuffers[index].DataPointer, (uint)pixsize);
+                        }
                         stream.Write(buffer, 0, pixsize);
                         ++index;
                     }
 
-                    if (d > 1)
-                        d >>= 1;
+                    if (depth > 1)
+                        depth >>= 1;
                 }
             }
         }
@@ -1074,7 +1084,7 @@ namespace Stride.Graphics
 
                         if (metadata.Format.IsCompressed())
                         {
-                            Utilities.CopyMemory(pDest, pSrc, Math.Min(images[index].BufferStride, imagesDst[index].BufferStride));
+                            Unsafe.CopyBlockUnaligned((void*)pDest, (void*)pSrc, (uint)Math.Min(images[index].BufferStride, imagesDst[index].BufferStride));
                         }
                         else
                         {
@@ -1407,7 +1417,7 @@ namespace Stride.Graphics
 
                     //-----------------------------------------------------------------------------
                     case PixelFormat.A8_UNorm:
-                        Utilities.ClearMemory(pDestination, 0xff, outSize);
+                        Unsafe.InitBlock((void*)pDestination, 0xff, (uint)outSize);
                         return;
 
                 #if DIRECTX11_1
@@ -1443,7 +1453,7 @@ namespace Stride.Graphics
             if (pDestination == pSource)
                 return;
 
-            Utilities.CopyMemory(pDestination, pSource, Math.Min(outSize, inSize));
+            Unsafe.CopyBlockUnaligned((void*)pDestination, source: (void*)pSource, (uint)Math.Min(outSize, inSize));
         }
 
         /// <summary>
@@ -1556,7 +1566,7 @@ namespace Stride.Graphics
             if (pDestination == pSource)
                 return;
 
-            Utilities.CopyMemory(pDestination, pSource, Math.Min(outSize, inSize));
+            Unsafe.CopyBlockUnaligned((void*)pDestination, source: (void*)pSource, (uint)Math.Min(outSize, inSize));
         }
 
     }

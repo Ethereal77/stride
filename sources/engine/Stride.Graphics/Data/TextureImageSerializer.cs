@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
 // Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // See the LICENSE.md file in the project root for full license information.
@@ -38,11 +38,10 @@ namespace Stride.Graphics.Data
                     var contentSerializerContext = stream.Context.Get(ContentSerializerContext.ContentSerializerContextProperty);
                     if (contentSerializerContext != null)
                     {
-                        var assetManager = contentSerializerContext.ContentManager;
-                        var url = contentSerializerContext.Url;
-
-                        texture.Reload = (graphicsResource) =>
+                        texture.Reload = static (graphicsResource, services) =>
                         {
+                            var assetManager = services.GetService<ContentManager>();
+                            assetManager.TryGetAssetUrl(graphicsResource, out var url);
                             var textureDataReloaded = assetManager.Load<Image>(url);
                             ((Texture)graphicsResource).Recreate(textureDataReloaded.ToDataBox());
                             assetManager.Unload(textureDataReloaded);

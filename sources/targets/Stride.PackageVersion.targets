@@ -39,7 +39,7 @@
     <Version>$(StridePublicVersion)</Version>
     <InformationalVersion>$(StrideNuGetVersion)</InformationalVersion>
     <PackageVersion Condition="'$(PackageVersion)' == ''">$(StrideNuGetVersion)</PackageVersion>
-
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://stride3d.net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Ethereal77/stride</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/Ethereal77/stride/blob/master/LICENSE.md</PackageLicenseUrl>

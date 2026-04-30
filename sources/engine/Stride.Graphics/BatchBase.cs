@@ -775,7 +775,7 @@ namespace Stride.Graphics
                 if (!IsIndexBufferDynamic)
                 {
                     IndexBuffer = Buffer.Index.New(device, resourceBufferInfo.StaticIndices).DisposeBy(this);
-                    IndexBuffer.Reload = graphicsResource => ((Buffer)graphicsResource).Recreate(resourceBufferInfo.StaticIndices);
+                    IndexBuffer.Reload = (graphicsResource, services) => ((Buffer)graphicsResource).Recreate(resourceBufferInfo.StaticIndices);
                 }
 
                 InputElements = declaration.CreateInputElements();

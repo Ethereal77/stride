@@ -19,6 +19,11 @@ namespace Stride.Core.Assets.Editor.View.TemplateProviders
 
         public override bool MatchNode(NodeViewModel node)
         {
+            if (node.HasList)
+            {
+                return node.NodeValue != null;
+            }
+
             var matchElementType = ElementType == null;
             if (!matchElementType)
             {
@@ -29,7 +34,7 @@ namespace Stride.Core.Assets.Editor.View.TemplateProviders
                     matchElementType = genParam.Length == 1 && genParam[0] == ElementType;
                 }
             }
-            return node.HasCollection && !node.HasDictionary && node.NodeValue != null && matchElementType;
+            return node.HasCollection && !node.HasSet && !node.HasDictionary && node.NodeValue != null && matchElementType;
         }
     }
 }

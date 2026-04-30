@@ -38,7 +38,7 @@ namespace Stride.Physics
             Matrix rotation;
             CapsuleShape shape;
 
-            cachedScaling = Is2D ? new Vector3(1, 1, 0) : Vector3.One; 
+            cachedScaling = Is2D ? new Vector3(1, 1, 0) : Vector3.One;
 
             switch (orientation)
             {
@@ -47,7 +47,7 @@ namespace Stride.Physics
                     {
                         LocalScaling = cachedScaling,
                     };
-                    rotation = Matrix.RotationX((float)Math.PI / 2.0f);
+                    rotation = Matrix.RotationX(MathF.PI / 2.0f);
                     break;
 
                 case ShapeOrientation.UpY:
@@ -63,7 +63,7 @@ namespace Stride.Physics
                     {
                         LocalScaling = cachedScaling,
                     };
-                    rotation = Matrix.RotationZ((float)Math.PI / 2.0f);
+                    rotation = Matrix.RotationZ(MathF.PI / 2.0f);
                     break;
 
                 default:

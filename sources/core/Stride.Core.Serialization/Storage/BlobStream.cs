@@ -4,6 +4,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.IO;
 
 using Stride.Core.IO;
 
@@ -12,11 +13,12 @@ namespace Stride.Core.Storage
     /// <summary>
     /// A read-only <see cref="NativeMemoryStream"/> that will properly keep references on its underlying <see cref="Blob"/>.
     /// </summary>
-    internal class BlobStream : NativeMemoryStream
+    internal class BlobStream : UnmanagedMemoryStream
     {
-        private Blob blob;
+        private readonly Blob blob;
 
-        public BlobStream(Blob blob) : base(blob.Content, blob.Size)
+        public unsafe BlobStream(Blob blob)
+            : base((byte*)blob.Content, blob.Size, capacity: blob.Size, access: FileAccess.Read)
         {
             this.blob = blob;
 
@@ -33,30 +35,16 @@ namespace Stride.Core.Storage
         }
 
         /// <inheritdoc/>
-        public override void WriteByte(byte value)
-        {
-            throw new NotSupportedException();
-        }
+        public override void WriteByte(byte value) => throw new NotSupportedException();
 
         /// <inheritdoc/>
-        public override void Write(IntPtr buffer, int count)
-        {
-            throw new NotSupportedException();
-        }
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
         /// <inheritdoc/>
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new NotSupportedException();
-        }
+        public override void Write(ReadOnlySpan<byte> buffer) => throw new NotSupportedException();
+
 
         /// <inheritdoc/>
-        public override bool CanWrite
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanWrite => false;
     }
 }

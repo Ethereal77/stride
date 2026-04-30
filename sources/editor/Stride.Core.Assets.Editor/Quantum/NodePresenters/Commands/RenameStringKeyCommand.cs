@@ -3,13 +3,15 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // See the LICENSE.md file in the project root for full license information.
 
+using System;
 using System.Linq;
+using System.ComponentModel;
 
 using Stride.Core.Annotations;
-using Stride.Core.Reflection;
 using Stride.Core.Presentation.Quantum;
 using Stride.Core.Presentation.Quantum.Presenters;
 using Stride.Core.Quantum;
+using Stride.Core.Reflection;
 
 namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
 {
@@ -41,9 +43,12 @@ namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
             if (memberCollection?.ReadOnly == true)
                 return false;
 
-            // ... and is indexed by strings...
-            if (dictionaryDescriptor.KeyType != typeof(string))
+            // ... and is indexed by strings, or can be converted from string...
+            if (dictionaryDescriptor.KeyType != typeof(string)
+                && !TypeDescriptor.GetConverter(dictionaryDescriptor.KeyType).CanConvertFrom(typeof(string)))
+            {
                 return false;
+            }
 
             // ... and supports remove and insert
             // TODO: ... and can remove items - we don't have this information yet in DictionaryDescriptor
@@ -55,9 +60,21 @@ namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
         {
             var currentValue = nodePresenter.Value;
             var collectionNode = ((ItemNodePresenter)nodePresenter).OwnerCollection;
-            collectionNode.RemoveItem(nodePresenter.Value, nodePresenter.Index);
-            var newName = AddPrimitiveKeyCommand.GenerateStringKey(collectionNode.Value, collectionNode.Descriptor, (string)parameter);
-            collectionNode.AddItem(currentValue, newName);
+
+            DictionaryDescriptor DictionaryDescriptor = collectionNode.Descriptor as DictionaryDescriptor;
+            Type keyType = DictionaryDescriptor.KeyType;
+            NodeIndex? newName = null;
+            if (TypeDescriptor.GetConverter(keyType).CanConvertFrom(typeof(string)))
+            {
+                newName = AddPrimitiveKeyCommand.GenerateGenericKey(collectionNode.Value, collectionNode.Descriptor, parameter);
+            }
+
+            if (newName != null)
+            {
+                collectionNode.RemoveItem(nodePresenter.Value, nodePresenter.Index);
+
+                collectionNode.AddItem(currentValue, newName.Value);
+            }
         }
     }
 }

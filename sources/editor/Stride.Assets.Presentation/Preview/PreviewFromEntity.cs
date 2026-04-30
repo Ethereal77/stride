@@ -95,7 +95,7 @@ namespace Stride.Assets.Presentation.Preview
 
         protected override GraphicsCompositor GetGraphicsCompositor()
         {
-            var graphicsCompositor = GraphicsCompositorHelper.CreateDefault(RenderingMode == RenderingMode.HDR, modelEffectName, 
+            var graphicsCompositor = GraphicsCompositorHelper.CreateDefault(RenderingMode == RenderingMode.HDR, modelEffectName,
                 camera.Get<CameraComponent>(), RenderingMode == RenderingMode.HDR ? EditorServiceGame.EditorBackgroundColorHdr : EditorServiceGame.EditorBackgroundColorLdr);
 
             var opaqueStage = graphicsCompositor.RenderStages.First(x => x.Name.Equals("Opaque"));
@@ -186,7 +186,7 @@ namespace Stride.Assets.Presentation.Preview
 
             private CameraComponent cameraComponent;
             private BoundingSphere previousBoundingSphere = InvalidBoundingSphere;
-            
+
             public override void Start()
             {
                 cameraComponent = Entity.Get<CameraComponent>();
@@ -222,7 +222,7 @@ namespace Stride.Assets.Presentation.Preview
 
                     // calculate the distance to the target needed in order to see it fully
                     // Note: we want the front face of the element to be fully visible (not only center)
-                    distance = radius + radius / (float)Math.Tan(MathUtil.DegreesToRadians(cameraComponent.VerticalFieldOfView / 2));
+                    distance = radius + radius / MathF.Tan(MathUtil.DegreesToRadians(cameraComponent.VerticalFieldOfView / 2));
                     // Make sure the distance is greater than zero
                     distance = Math.Max(distance, 2*MathUtil.ZeroTolerance);
 
@@ -266,7 +266,7 @@ namespace Stride.Assets.Presentation.Preview
                     var viewMatrixInv = Entity.Transform.WorldMatrix;
                     target -= distance * (translation.X * viewMatrixInv.Row1.XYZ() - translation.Y * viewMatrixInv.Row2.XYZ());
                 }
-                else if (Input.IsMouseButtonDown(MouseButton.Left)) // orbital rotation 
+                else if (Input.IsMouseButtonDown(MouseButton.Left)) // orbital rotation
                 {
                     yaw -= 4 * translation.X;
                     pitch -= 3 * translation.Y;

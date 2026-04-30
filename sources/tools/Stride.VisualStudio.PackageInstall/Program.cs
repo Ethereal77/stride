@@ -27,11 +27,10 @@ namespace Stride.VisualStudio.PackageInstall
                 // We now only deal with VS2019+ which has a unified installer. Still getting latest version of VS possible, in case there is some bugfixes or incompatible changes.
                 var visualStudioVersionByVsixVersion =
                     VisualStudioVersions.AvailableVisualStudioInstances
-                        .Where(x => x.HasVsixInstaller &&
-                                    x.VsixInstallerVersion == VSIXInstallerVersion.VS2019AndFutureVersions);
+                        .Where(x => x.HasVsixInstaller);
 
                 var visualStudioVersion = visualStudioVersionByVsixVersion
-                    .OrderByDescending(x => x.Version)
+                    .OrderByDescending(x => x.InstallationVersion)
                     .FirstOrDefault(x => File.Exists(x.VsixInstallerPath));
 
                 if (visualStudioVersion is null)
@@ -42,14 +41,14 @@ namespace Stride.VisualStudio.PackageInstall
                     case "/install":
                     case "/repair":
                         // Install VSIX
-                        var exitCode = RunVsixInstaller(visualStudioVersion.VsixInstallerPath, "\"" + vsixFile + "\"");
+                        var exitCode = RunVsixInstaller(ideInfo.VsixInstallerPath, "\"" + vsixFile + "\"");
                         if (exitCode != 0)
                             throw new InvalidOperationException($"VSIX Installer didn't run properly: exit code {exitCode}");
                         break;
 
                     case "/uninstall":
                         // NOTE: We allow uninstall to fail (i.e. VSIX was not installed for that specific VIsual Studio version)
-                        RunVsixInstaller(visualStudioVersion.VsixInstallerPath, "/uninstall:248ff1ce-dacd-4404-947a-85e999d3c3ea");
+                        RunVsixInstaller(visualStudioVersion.VsixInstallerPath, "/uninstall:Stride.VisualStudio.Package.2022");
                         break;
                 }
 

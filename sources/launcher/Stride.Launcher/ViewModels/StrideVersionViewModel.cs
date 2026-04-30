@@ -22,6 +22,8 @@ namespace Stride.LauncherApp.ViewModels
     internal abstract class StrideVersionViewModel : PackageVersionViewModel, IComparable<StrideVersionViewModel>, IComparable<Tuple<int, int>>
     {
         public const string MainExecutables = @"lib\net472\Stride.GameStudio.exe,lib\net472\Xenko.GameStudio.exe,Bin\Windows\Xenko.GameStudio.exe,Bin\Windows-Direct3D11\Xenko.GameStudio.exe";
+        private const string StrideGameStudioExe = "Stride.GameStudio.exe";
+        private const string XenkoGameStudioExe = "Xenko.GameStudio.exe";
 
         private bool isVisible;
         private bool canStart;
@@ -43,15 +45,18 @@ namespace Stride.LauncherApp.ViewModels
             Frameworks.Clear();
             if (LocalPackage != null && InstallPath != null)
             {
-                var libDirectory = Path.Combine(InstallPath, "lib");
-                var frameworks = Directory.EnumerateDirectories(libDirectory);
-                foreach (var frameworkPath in frameworks)
+                foreach (var toplevelFolder in new[] { "tools", "lib" })
                 {
-                    var frameworkFolder = new DirectoryInfo(frameworkPath).Name;
-                    if (File.Exists(Path.Combine(frameworkPath, "Stride.GameStudio.exe")) ||
-                        File.Exists(Path.Combine(frameworkPath, "Xenko.GameStudio.exe")))
+                    var libDirectory = Path.Combine(InstallPath, toplevelFolder);
+                    if (Directory.Exists(libDirectory))
                     {
-                        Frameworks.Add(frameworkFolder);
+                        foreach (var frameworkPath in Directory.EnumerateDirectories(libDirectory))
+                        {
+                            if (File.Exists(Path.Combine(frameworkPath, Major >= 4 ? StrideGameStudioExe : XenkoGameStudioExe)))
+                            {
+                                Frameworks.Add(new DirectoryInfo(frameworkPath).Name);
+                            }
+                        }
                     }
                 }
 
@@ -186,12 +191,15 @@ namespace Stride.LauncherApp.ViewModels
             // First, try to use the selected framework
             if (SelectedFramework != null)
             {
-                var gameStudioDirectory = Path.Combine(InstallPath, "lib", SelectedFramework);
-                foreach (var gameStudioExecutable in new[] { "Stride.GameStudio.exe", "Xenko.GameStudio.exe" })
+                foreach (var toplevelFolder in new[] { "tools", "lib" })
                 {
-                    var gameStudioPath = Path.Combine(gameStudioDirectory, gameStudioExecutable);
-                    if (File.Exists(gameStudioPath))
-                        return gameStudioPath;
+                    var gameStudioDirectory = Path.Combine(InstallPath, toplevelFolder, SelectedFramework);
+                    foreach (var gameStudioExecutable in new[] { "Stride.GameStudio.exe", "Xenko.GameStudio.exe" })
+                    {
+                        var gameStudioPath = Path.Combine(gameStudioDirectory, gameStudioExecutable);
+                        if (File.Exists(gameStudioPath))
+                            return gameStudioPath;
+                    }
                 }
             }
 

@@ -4,6 +4,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -19,7 +20,7 @@ namespace Stride.Animations
             var keyFrames = channel.Curve.KeyFrames;
             var currentIndex = channel.CurrentIndex;
 
-            Interop.CopyInline((void*)(location + channel.Offset), ref keyFrames.Items[currentIndex].Value);
+            Unsafe.AsRef<T>((void*)(location + channel.Offset)) = keyFrames.Items[currentIndex].Value;
         }
     }
 }

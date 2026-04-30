@@ -62,7 +62,7 @@
     <StrideAssemblyProcessorTempPath>$(StrideAssemblyProcessorTempBasePath)Stride.Core.AssemblyProcessor.dll</StrideAssemblyProcessorTempPath>
   </PropertyGroup>
 
-  <UsingTask TaskName="AssemblyProcessorTask" AssemblyFile="$(StrideAssemblyProcessorTempPath)" Condition=" '$(StrideAssemblyProcessorTempPath)' != '' And '$(StrideAssemblyProcessorDev)' != 'true' "/>
+  <UsingTask TaskName="AssemblyProcessorTask" AssemblyFile="$(StrideAssemblyProcessorTempPath)" Condition="'$(StrideAssemblyProcessorTempPath)' != '' And '$(StrideAssemblyProcessorDev)' != 'true' "/>
 
   <Target Name="StrideRunAssemblyProcessor" DependsOnTargets="ResolveAssemblyReferences">
     <WriteLinesToFile File="$(IntermediateOutputPath)StrideReferences.cache" Lines="@(ReferencePath)" Overwrite="true" />
@@ -94,13 +94,13 @@
     <Copy SourceFiles="@(StrideAssemblyProcessorFilesToCopy)" DestinationFolder="$(StrideAssemblyProcessorTempBasePath)" Condition="!Exists('$(StrideAssemblyProcessorTempPath)')" />
 
     <!-- Run Assembly Processor -->
-    <Message Condition=" '$(StrideAssemblyProcessorDev)' != 'true' " Importance="low" Text="&quot;$(StrideAssemblyProcessorTempPath)&quot; $(StrideAssemblyProcessorOptions)"/>
-    <AssemblyProcessorTask Condition=" '$(StrideAssemblyProcessorDev)' != 'true' " Arguments="$(StrideAssemblyProcessorOptions)"/>
+    <Message Condition="'$(StrideAssemblyProcessorDev)' != 'true' " Importance="low" Text="&quot;$(StrideAssemblyProcessorTempPath)&quot; $(StrideAssemblyProcessorOptions)"/>
+    <AssemblyProcessorTask Condition="'$(StrideAssemblyProcessorDev)' != 'true' " Arguments="$(StrideAssemblyProcessorOptions)"/>
     <!-- Dev mode: don't use task to avoid locking the file -->
-    <Exec Condition=" '$(StrideAssemblyProcessorDev)' == 'true' " Command="&quot;$(StrideAssemblyProcessorTempPath)&quot; $(StrideAssemblyProcessorOptions)"/>
+    <Exec Condition="'$(StrideAssemblyProcessorDev)' == 'true' " Command="&quot;$(StrideAssemblyProcessorTempPath)&quot; $(StrideAssemblyProcessorOptions)"/>
   </Target>
 
-  <PropertyGroup Condition=" '$(StrideAssemblyProcessor)' == 'true'">
+  <PropertyGroup Condition="'$(StrideAssemblyProcessor)' == 'true'">
     <PrepareForRunDependsOn>
       StrideRunAssemblyProcessor;
       $(PrepareForRunDependsOn)

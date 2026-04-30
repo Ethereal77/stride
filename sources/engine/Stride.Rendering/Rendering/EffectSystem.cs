@@ -160,13 +160,11 @@ namespace Stride.Rendering
 
             if (bytecode.Task != null && !bytecode.Task.IsCompleted)
             {
-                // Result was async, keep it async
-                // NOTE: There was some hangs when doing ContinueWith() (it might switch from EffectPriorityScheduler to TaskScheduler.Default, maybe something doesn't work well in this case?)
-                //       It seems that TaskContinuationOptions.ExecuteSynchronously is helping in this case (also it will force continuation to execute right away on the thread pool, which is probably better)
-                //       Not sure if the probably totally disappeared (esp. if something does a ContinueWith() externally on that) -- might need further investigation.
+                // Ensure the continuation is scheduled on the Thread Pool or we might end up
+                // in a deadlock when then calling thread is already waiting on the result
                 var result = bytecode.Task.ContinueWith(
                     x => CreateEffect(effectName, x.Result, compilerResult),
-                    TaskContinuationOptions.ExecuteSynchronously);
+                    scheduler: TaskScheduler.Default);
                 return result;
             }
             else

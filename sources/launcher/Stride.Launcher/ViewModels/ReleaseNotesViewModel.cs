@@ -5,7 +5,7 @@
 
 using System;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 
 using Stride.Core.Annotations;
@@ -20,6 +20,8 @@ namespace Stride.LauncherApp.ViewModels
     /// </summary>
     internal class ReleaseNotesViewModel : DispatcherViewModel
     {
+        private static readonly HttpClient httpClient = new();
+
         private readonly LauncherViewModel launcher;
         private bool isActive;
         private string markdownContent;
@@ -73,30 +75,32 @@ namespace Stride.LauncherApp.ViewModels
             ToggleCommand = new AnonymousCommand(ServiceProvider, Toggle);
         }
 
+        public string BaseUrl { get { return baseUrl; } }
+
+        public string Version { get; }
+
+        public string MarkdownContent { get { return markdownContent; } private set { SetValue(ref markdownContent, value); } }
+
+        public bool IsActive { get { return isActive; } private set { SetValue(ref isActive, value); } }
+
+        public bool IsLoading { get { return isLoading; } set { SetValue(ref isLoading, value); } }
+
+        public bool IsLoaded { get { return isLoaded; } set { SetValue(ref isLoaded, value); } }
+
+        public bool IsUnavailable { get { return isUnavailable; } set { SetValue(ref isUnavailable, value); } }
+
+        public ICommandBase ToggleCommand { get; private set; }
 
         public async void FetchReleaseNotes()
         {
-            string releaseNotesMarkdown = null;
+            string releaseNotesMarkdown;
 
             try
             {
-                var request = WebRequest.Create($"{BaseUrl}{ReleaseNotesFileName}");
-                using (var response = await request.GetResponseAsync())
+                using (var response = await httpClient.GetAsync($"{BaseUrl}{ReleaseNotesFileName}"))
                 {
-                    using (var str = response.GetResponseStream())
-                    {
-                        if (str != null)
-                        {
-                            using (var reader = new StreamReader(str))
-                            {
-                                releaseNotesMarkdown = reader.ReadToEnd();
-                            }
-                        }
-                    }
-
-                    // Fetch the response Uri and update the base URL
-                    var responseUri = response.ResponseUri.AbsoluteUri;
-                    BaseUrl = responseUri.Remove(responseUri.Length - ReleaseNotesFileName.Length);
+                    response.EnsureSuccessStatusCode();
+                    releaseNotesMarkdown = await response.Content.ReadAsStringAsync();
                 }
             }
             catch (Exception)

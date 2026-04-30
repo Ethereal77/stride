@@ -49,9 +49,9 @@
 //        [Fact]
 //        public void TestDispose()
 //        {
-//            var crossDisposedEngine = AudioEngineFactory.NewAudioEngine(); 
+//            var crossDisposedEngine = AudioEngineFactory.NewAudioEngine();
 //            var engine = AudioEngineFactory.NewAudioEngine();
-//            crossDisposedEngine.Dispose(); // Check there no Dispose problems with sereval cross-disposed instances. 
+//            crossDisposedEngine.Dispose(); // Check there no Dispose problems with sereval cross-disposed instances.
 //
 //            // Create some SoundEffects
 //            SoundEffect soundEffect;
@@ -90,7 +90,7 @@
 //            for (int i = 0; i < 10; i++)
 //            {
 //                engine.Update();
-//                Utilities.Sleep(5);
+//                Thread.Sleep(5);
 //            }
 //
 //            Assert.DoesNotThrow(engine.Dispose, "AudioEngine crashed during disposal.");
@@ -165,7 +165,7 @@
 //
 //            engine.Dispose();
 //        }
-//        
+//
 //        /// <summary>
 //        /// Test the behavior of <see cref="AudioEngine.State"/>
 //        /// </summary>
@@ -202,7 +202,7 @@
 //        public void TestPauseAudio()
 //        {
 //            var engine = AudioEngineFactory.NewAudioEngine();
-//            
+//
 //            // create a sound effect instance
 //            SoundEffect soundEffect;
 //            using (var wavStream = ContentManager.FileProvider.OpenStream("EffectBip", VirtualFileMode.Open, VirtualFileAccess.Read))
@@ -231,7 +231,7 @@
 //            // check that a new instance can not be played
 //            soundEffectStereo.Play();
 //            Assert.Equal(SoundPlayState.Stopped, soundEffectStereo.PlayState);
-//            Utilities.Sleep(1000); // listen that nothing comes out
+//            Thread.Sleep(1000); // listen that nothing comes out
 //
 //            // check that a stopped sound stay stopped
 //            engine.ResumeAudio();
@@ -287,13 +287,13 @@
 //
 //            // create a music instance
 //            var music = SoundMusic.Load(engine, ContentManager.FileProvider.OpenStream("MusicFishLampMp3", VirtualFileMode.Open, VirtualFileAccess.Read));
-//            
+//
 //            // check that resume do not play stopped instances
 //            engine.PauseAudio();
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Stopped, music.PlayState);
 //            Assert.Equal(SoundPlayState.Stopped, wave1Instance.PlayState);
-//            Utilities.Sleep(1000); // listen that nothing comes out
+//            Thread.Sleep(1000); // listen that nothing comes out
 //
 //            // check that user paused music does not resume
 //            wave1Instance.Play();
@@ -301,7 +301,7 @@
 //            engine.PauseAudio();
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Paused, wave1Instance.PlayState);
-//            Utilities.Sleep(1000); // listen that nothing comes out
+//            Thread.Sleep(1000); // listen that nothing comes out
 //
 //            // check that sounds paused by PauseAudio are correctly restarted
 //            wave1Instance.Play();
@@ -320,24 +320,24 @@
 //            wave1Instance.Stop();
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Stopped, wave1Instance.PlayState);
-//            Utilities.Sleep(1000); // listen that nothing comes out
+//            Thread.Sleep(1000); // listen that nothing comes out
 //
 //            // check that a sound played during the pause do not play during the resume
 //            engine.PauseAudio();
 //            wave1Instance.Play();
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Stopped, wave1Instance.PlayState);
-//            Utilities.Sleep(1000); // listen that nothing comes out
+//            Thread.Sleep(1000); // listen that nothing comes out
 //
 //            // check that a two calls to resume do not have side effects (1)
 //            wave1Instance.Play();
 //            engine.PauseAudio();
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Playing, wave1Instance.PlayState);
-//            Utilities.Sleep(2000); // wait that the sound is finished
+//            Thread.Sleep(2000); // wait that the sound is finished
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Stopped, wave1Instance.PlayState);
-//            Utilities.Sleep(1000); // listen that nothing comes out
+//            Thread.Sleep(1000); // listen that nothing comes out
 //
 //            // check that a two calls to resume do not have side effects (2)
 //            wave1Instance.Play();
@@ -347,7 +347,7 @@
 //            wave1Instance.Pause();
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Paused, wave1Instance.PlayState);
-//            Utilities.Sleep(1000); // listen that nothing comes out
+//            Thread.Sleep(1000); // listen that nothing comes out
 //
 //            // check that a several calls to pause/play do not have side effects
 //            wave1Instance.Play();
@@ -356,7 +356,7 @@
 //            engine.PauseAudio();
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Playing, wave1Instance.PlayState);
-//            Utilities.Sleep(2000); // listen that the sound comes out
+//            Thread.Sleep(2000); // listen that the sound comes out
 //
 //            // check that the sound is not played if disposed
 //            wave1Instance.Play();
@@ -364,8 +364,8 @@
 //            wave1Instance.Dispose();
 //            engine.ResumeAudio();
 //            Assert.Equal(SoundPlayState.Stopped, wave1Instance.PlayState);
-//            Utilities.Sleep(1000); // listen that nothing comes out
-//            
+//            Thread.Sleep(1000); // listen that nothing comes out
+//
 //            music.Dispose();
 //            soundEffect.Dispose();
 //        }

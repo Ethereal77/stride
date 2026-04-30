@@ -63,7 +63,7 @@ namespace Stride.Shaders.Tests
                 thread.Start();
             }
         }
-        
+
     }
 
     public class CompilerThread
@@ -81,7 +81,7 @@ namespace Stride.Shaders.Tests
         public void Compile()
         {
             Console.WriteLine(@"Inside Thread");
-            
+
             var parameters = new CompilerParameters();
             parameters.EffectParameters.Platform = GraphicsPlatform.Direct3D11;
             parameters.EffectParameters.Profile = GraphicsProfile.Level_11_0;
@@ -91,7 +91,6 @@ namespace Stride.Shaders.Tests
             var result = effectCompiler.Compile(mixinTree, parameters.EffectParameters, parameters).WaitForResult();
 
             Assert.False(result.CompilationLog.HasErrors);
-            Assert.NotNull(result);
 
             Console.WriteLine(@"Thread end");
         }

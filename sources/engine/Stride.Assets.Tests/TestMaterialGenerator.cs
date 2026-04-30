@@ -69,7 +69,7 @@ Mixins:
 Compositions:
     layers: !ShaderArraySource
         Values:"
-// This is part coming from MaterialDiffuseMapFeature 
+// This is part coming from MaterialDiffuseMapFeature
 + @"
             - !ShaderMixinSource
                 Mixins:
@@ -152,7 +152,7 @@ Mixins:
 Compositions:
     layers: !ShaderArraySource
         Values:"
-// This is the part coming from the 1st MaterialDiffuseMapFeature 
+// This is the part coming from the 1st MaterialDiffuseMapFeature
 + @"
             - !ShaderMixinSource
                 Mixins:
@@ -162,7 +162,7 @@ Compositions:
                     diffuseMap: !ShaderClassSource
                         ClassName: ComputeColorConstantColorLink
                         GenericArguments: [Material.DiffuseValue]"
-// This is the part coming from MaterialBlendLayer 
+// This is the part coming from MaterialBlendLayer
 + @"
             - !ShaderMixinSource
                 Mixins:
@@ -525,8 +525,8 @@ Compositions:
         [Fact]
         public void Test3Layers2ShadingModels()
         {
-            // This test case is more complex as it shows that the change in shading model is triggering 
-            // a blend of shading (and not a blend of attributes) and the blending factor used for blending 
+            // This test case is more complex as it shows that the change in shading model is triggering
+            // a blend of shading (and not a blend of attributes) and the blending factor used for blending
             // the 2 shading models is the first one that appears when the shading model changes (Layer1 in the following case)
 
             // - LayerRoot:
@@ -570,7 +570,8 @@ Compositions:
                     },
                     new MaterialBlendLayer()
                     {
-                        BlendMap = new ComputeFloat(0.8f)                        {
+                        BlendMap = new ComputeFloat(0.8f)
+                        {
                             Key = BlendValueCustom2, // Use custom key in order to see them in the output
                         },
                         Material = context.MapTo(new Material(), new MaterialDescriptor()

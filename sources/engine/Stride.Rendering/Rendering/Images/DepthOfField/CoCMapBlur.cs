@@ -13,7 +13,7 @@ namespace Stride.Rendering.Images
     /// Blurs a Circle of Confusion map.
     /// </summary>
     /// <remarks>
-    /// This is useful to avoid strong CoC changes leading to out-of-focus silhouette outline appearing in 
+    /// This is useful to avoid strong CoC changes leading to out-of-focus silhouette outline appearing in
     /// front of another out-of-focus object.
     /// Internally it uses a special gaussian blur aware of the depth.
     /// </remarks>
@@ -89,7 +89,7 @@ namespace Stride.Rendering.Images
 
             // Blur in one direction
             var blurAngle = 0f;
-            cocBlurEffect.Parameters.Set(CoCMapBlurShaderKeys.Direction, new Vector2((float)Math.Cos(blurAngle), (float)Math.Sin(blurAngle)));
+            cocBlurEffect.Parameters.Set(CoCMapBlurShaderKeys.Direction, new Vector2(MathF.Cos(blurAngle), MathF.Sin(blurAngle)));
 
             var firstBlurTexture = NewScopedRenderTarget2D(originalTexture.Description);
             cocBlurEffect.SetInput(0, originalTexture);
@@ -98,7 +98,7 @@ namespace Stride.Rendering.Images
 
             // Second blur pass to ouput the final result
             blurAngle = MathUtil.PiOverTwo;
-            cocBlurEffect.Parameters.Set(CoCMapBlurShaderKeys.Direction, new Vector2((float)Math.Cos(blurAngle), (float)Math.Sin(blurAngle)));
+            cocBlurEffect.Parameters.Set(CoCMapBlurShaderKeys.Direction, new Vector2(MathF.Cos(blurAngle), MathF.Sin(blurAngle)));
 
             cocBlurEffect.SetInput(0, firstBlurTexture);
             cocBlurEffect.SetOutput(outputTexture);

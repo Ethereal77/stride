@@ -47,6 +47,19 @@ namespace Stride.Assets.Physics
         }
     }
 
+    public class ColliderShapeStaticMeshFactory : AssetFactory<ColliderShapeAsset>
+    {
+        public static ColliderShapeAsset Create()
+        {
+            return new ColliderShapeAsset { ColliderShapes = { new StaticMeshColliderShapeDesc() } };
+        }
+
+        public override ColliderShapeAsset New()
+        {
+            return Create();
+        }
+    }
+
     public class ColliderShapeCylinderFactory : AssetFactory<ColliderShapeAsset>
     {
         public static ColliderShapeAsset Create()

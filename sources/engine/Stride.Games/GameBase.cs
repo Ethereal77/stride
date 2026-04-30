@@ -6,6 +6,7 @@
 
 using System;
 using System.Reflection;
+using System.Threading;
 
 using Stride.Core;
 using Stride.Core.Annotations;
@@ -435,7 +436,7 @@ namespace Stride.Games
                 // If this instance is not active, sleep for an inactive sleep time
                 if (!IsActive)
                 {
-                    Utilities.Sleep(InactiveSleepTime);
+                    Thread.Sleep(InactiveSleepTime);
                     return;
                 }
 

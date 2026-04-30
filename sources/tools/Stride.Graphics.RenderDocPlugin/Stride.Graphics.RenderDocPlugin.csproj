@@ -6,7 +6,7 @@
   <Import Project="..\..\targets\Stride.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
 
     <AssemblyTitle>Stride RenderDoc Frame Analysis Plugin</AssemblyTitle>
   </PropertyGroup>

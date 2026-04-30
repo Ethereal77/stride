@@ -5,6 +5,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 
 namespace Stride.Core.Mathematics
 {
@@ -14,7 +15,7 @@ namespace Stride.Core.Mathematics
      * at this time and not all shapes have a corresponding struct. Only the objects that have
      * a corresponding struct should come first in naming and in parameter order. The order of
      * complexity is as follows:
-     * 
+     *
      * 1. Point
      * 2. Ray
      * 3. Segment
@@ -248,7 +249,7 @@ namespace Stride.Core.Mathematics
             if (point.Z > box.Maximum.Z)
                 distance += (point.Z - box.Maximum.Z) * (point.Z - box.Maximum.Z);
 
-            return (float)Math.Sqrt(distance);
+            return MathF.Sqrt(distance);
         }
 
         /// <summary>
@@ -300,7 +301,7 @@ namespace Stride.Core.Mathematics
                 distance += delta * delta;
             }
 
-            return (float)Math.Sqrt(distance);
+            return MathF.Sqrt(distance);
         }
 
         /// <summary>
@@ -318,7 +319,7 @@ namespace Stride.Core.Mathematics
             Vector3.Distance(ref sphere.Center, ref point, out distance);
             distance -= sphere.Radius;
 
-            return Math.Max(distance, 0f);
+            return MathF.Max(distance, 0f);
         }
 
         /// <summary>
@@ -336,7 +337,7 @@ namespace Stride.Core.Mathematics
             Vector3.Distance(ref sphere1.Center, ref sphere2.Center, out distance);
             distance -= sphere1.Radius + sphere2.Radius;
 
-            return Math.Max(distance, 0f);
+            return MathF.Max(distance, 0f);
         }
 
         /// <summary>
@@ -398,12 +399,12 @@ namespace Stride.Core.Mathematics
             float denominator = cross.Length();
 
             //Lines are parallel.
-            if (Math.Abs(denominator) < MathUtil.ZeroTolerance)
+            if (MathF.Abs(denominator) < MathUtil.ZeroTolerance)
             {
                 //Lines are parallel and on top of each other.
-                if (Math.Abs(ray2.Position.X - ray1.Position.X) < MathUtil.ZeroTolerance &&
-                    Math.Abs(ray2.Position.Y - ray1.Position.Y) < MathUtil.ZeroTolerance &&
-                    Math.Abs(ray2.Position.Z - ray1.Position.Z) < MathUtil.ZeroTolerance)
+                if (MathF.Abs(ray2.Position.X - ray1.Position.X) < MathUtil.ZeroTolerance &&
+                    MathF.Abs(ray2.Position.Y - ray1.Position.Y) < MathUtil.ZeroTolerance &&
+                    MathF.Abs(ray2.Position.Z - ray1.Position.Z) < MathUtil.ZeroTolerance)
                 {
                     point = Vector3.Zero;
                     return true;
@@ -455,9 +456,9 @@ namespace Stride.Core.Mathematics
             Vector3 point2 = ray2.Position + (t * ray2.Direction);
 
             //If the points are not equal, no intersection has occurred.
-            if (Math.Abs(point2.X - point1.X) > MathUtil.ZeroTolerance ||
-                Math.Abs(point2.Y - point1.Y) > MathUtil.ZeroTolerance ||
-                Math.Abs(point2.Z - point1.Z) > MathUtil.ZeroTolerance)
+            if (MathF.Abs(point2.X - point1.X) > MathUtil.ZeroTolerance ||
+                MathF.Abs(point2.Y - point1.Y) > MathUtil.ZeroTolerance ||
+                MathF.Abs(point2.Z - point1.Z) > MathUtil.ZeroTolerance)
             {
                 point = Vector3.Zero;
                 return false;
@@ -483,7 +484,7 @@ namespace Stride.Core.Mathematics
             float direction;
             Vector3.Dot(ref plane.Normal, ref ray.Direction, out direction);
 
-            if (Math.Abs(direction) < MathUtil.ZeroTolerance)
+            if (MathF.Abs(direction) < MathUtil.ZeroTolerance)
             {
                 distance = 0f;
                 return false;
@@ -699,7 +700,7 @@ namespace Stride.Core.Mathematics
             var normalRowStart = normalAxis << 2;
             var plane = new Plane(rectanglePosition, new Vector3(rectangleWorldMatrix[normalRowStart], rectangleWorldMatrix[normalRowStart + 1], rectangleWorldMatrix[normalRowStart + 2]));
 
-            // early exist the planes were parallels 
+            // early exist the planes were parallels
             if (!plane.Intersects(ref ray, out intersectionPoint))
                 return false;
 
@@ -711,8 +712,8 @@ namespace Stride.Core.Mathematics
                 rectangleWorldMatrix.M21 == 0 && rectangleWorldMatrix.M23 == 0 &&
                 rectangleWorldMatrix.M31 == 0 && rectangleWorldMatrix.M32 == 0)
             {
-                var halfSize1 = Math.Abs(rectangleWorldMatrix[(testAxis1 << 2) + testAxis1] * rectangleSize[testAxis1] / 2f);
-                var halfSize2 = Math.Abs(rectangleWorldMatrix[(testAxis2 << 2) + testAxis2] * rectangleSize[testAxis2] / 2f);
+                var halfSize1 = MathF.Abs(rectangleWorldMatrix[(testAxis1 << 2) + testAxis1] * rectangleSize[testAxis1] / 2f);
+                var halfSize2 = MathF.Abs(rectangleWorldMatrix[(testAxis2 << 2) + testAxis2] * rectangleSize[testAxis2] / 2f);
 
                 intersects = -halfSize1 <= intersectionInRectangle[testAxis1] && intersectionInRectangle[testAxis1] <= halfSize1 &&
                              -halfSize2 <= intersectionInRectangle[testAxis2] && intersectionInRectangle[testAxis2] <= halfSize2;
@@ -724,10 +725,10 @@ namespace Stride.Core.Mathematics
                 var normalTestIndex = 0;
                 for (int i = 1; i < 3; i++)
                 {
-                    if (Math.Abs(plane.Normal[i]) > Math.Abs(plane.Normal[normalTestIndex]))
+                    if (MathF.Abs(plane.Normal[i]) > MathF.Abs(plane.Normal[normalTestIndex]))
                         normalTestIndex = i;
                 }
-                var normalSign = Math.Sign(plane.Normal[normalTestIndex]);
+                var normalSign = MathF.Sign(plane.Normal[normalTestIndex]);
 
                 // the base vector
                 var base1 = rectangleSize[testAxis1] * new Vector3(rectangleWorldMatrix[(testAxis1 << 2)], rectangleWorldMatrix[(testAxis1 << 2) + 1], rectangleWorldMatrix[(testAxis1 << 2) + 2]) / 2;
@@ -738,9 +739,9 @@ namespace Stride.Core.Mathematics
                 var v2 = +base1 - base2 - intersectionInRectangle;
                 var v3 = +base1 + base2 - intersectionInRectangle;
 
-                intersects = Math.Sign(Vector3.Cross(v1, v2)[normalTestIndex]) == normalSign &&
-                             Math.Sign(Vector3.Cross(v2, v3)[normalTestIndex]) == normalSign &&
-                             Math.Sign(Vector3.Cross(v3, v1)[normalTestIndex]) == normalSign;
+                intersects = MathF.Sign(Vector3.Cross(v1, v2)[normalTestIndex]) == normalSign &&
+                             MathF.Sign(Vector3.Cross(v2, v3)[normalTestIndex]) == normalSign &&
+                             MathF.Sign(Vector3.Cross(v3, v1)[normalTestIndex]) == normalSign;
 
                 // early exit on success
                 if (intersects)
@@ -751,9 +752,9 @@ namespace Stride.Core.Mathematics
                 v2 = +base1 + base2 - intersectionInRectangle;
                 v3 = -base1 + base2 - intersectionInRectangle;
 
-                intersects = Math.Sign(Vector3.Cross(v1, v2)[normalTestIndex]) == normalSign &&
-                             Math.Sign(Vector3.Cross(v2, v3)[normalTestIndex]) == normalSign &&
-                             Math.Sign(Vector3.Cross(v3, v1)[normalTestIndex]) == normalSign;
+                intersects = MathF.Sign(Vector3.Cross(v1, v2)[normalTestIndex]) == normalSign &&
+                             MathF.Sign(Vector3.Cross(v2, v3)[normalTestIndex]) == normalSign &&
+                             MathF.Sign(Vector3.Cross(v3, v1)[normalTestIndex]) == normalSign;
             }
 
             return intersects;
@@ -775,7 +776,7 @@ namespace Stride.Core.Mathematics
             distance = 0f;
             float tmax = float.MaxValue;
 
-            if (Math.Abs(ray.Direction.X) < MathUtil.ZeroTolerance)
+            if (MathF.Abs(ray.Direction.X) < MathUtil.ZeroTolerance)
             {
                 if (ray.Position.X < box.Minimum.X || ray.Position.X > box.Maximum.X)
                 {
@@ -796,8 +797,8 @@ namespace Stride.Core.Mathematics
                     t2 = temp;
                 }
 
-                distance = Math.Max(t1, distance);
-                tmax = Math.Min(t2, tmax);
+                distance = MathF.Max(t1, distance);
+                tmax = MathF.Min(t2, tmax);
 
                 if (distance > tmax)
                 {
@@ -806,7 +807,7 @@ namespace Stride.Core.Mathematics
                 }
             }
 
-            if (Math.Abs(ray.Direction.Y) < MathUtil.ZeroTolerance)
+            if (MathF.Abs(ray.Direction.Y) < MathUtil.ZeroTolerance)
             {
                 if (ray.Position.Y < box.Minimum.Y || ray.Position.Y > box.Maximum.Y)
                 {
@@ -827,8 +828,8 @@ namespace Stride.Core.Mathematics
                     t2 = temp;
                 }
 
-                distance = Math.Max(t1, distance);
-                tmax = Math.Min(t2, tmax);
+                distance = MathF.Max(t1, distance);
+                tmax = MathF.Min(t2, tmax);
 
                 if (distance > tmax)
                 {
@@ -837,7 +838,7 @@ namespace Stride.Core.Mathematics
                 }
             }
 
-            if (Math.Abs(ray.Direction.Z) < MathUtil.ZeroTolerance)
+            if (MathF.Abs(ray.Direction.Z) < MathUtil.ZeroTolerance)
             {
                 if (ray.Position.Z < box.Minimum.Z || ray.Position.Z > box.Maximum.Z)
                 {
@@ -858,8 +859,8 @@ namespace Stride.Core.Mathematics
                     t2 = temp;
                 }
 
-                distance = Math.Max(t1, distance);
-                tmax = Math.Min(t2, tmax);
+                distance = MathF.Max(t1, distance);
+                tmax = MathF.Min(t2, tmax);
 
                 if (distance > tmax)
                 {
@@ -925,7 +926,7 @@ namespace Stride.Core.Mathematics
                 return false;
             }
 
-            distance = -b - (float)Math.Sqrt(discriminant);
+            distance = -b - MathF.Sqrt(discriminant);
 
             if (distance < 0f)
                 distance = 0f;
@@ -934,7 +935,7 @@ namespace Stride.Core.Mathematics
         }
 
         /// <summary>
-        /// Determines whether there is an intersection between a <see cref="Stride.Core.Mathematics.Ray"/> and a <see cref="Stride.Core.Mathematics.BoundingSphere"/>. 
+        /// Determines whether there is an intersection between a <see cref="Stride.Core.Mathematics.Ray"/> and a <see cref="Stride.Core.Mathematics.BoundingSphere"/>.
         /// </summary>
         /// <param name="ray">The ray to test.</param>
         /// <param name="sphere">The sphere to test.</param>
@@ -991,7 +992,7 @@ namespace Stride.Core.Mathematics
             float denominator;
             Vector3.Dot(ref direction, ref direction, out denominator);
 
-            if (Math.Abs(denominator) < MathUtil.ZeroTolerance)
+            if (MathF.Abs(denominator) < MathUtil.ZeroTolerance)
                 return false;
 
             return true;
@@ -1026,7 +1027,7 @@ namespace Stride.Core.Mathematics
             //We assume the planes are normalized, therefore the denominator
             //only serves as a parallel and coincident check. Otherwise we need
             //to deivide the point by the denominator.
-            if (Math.Abs(denominator) < MathUtil.ZeroTolerance)
+            if (MathF.Abs(denominator) < MathUtil.ZeroTolerance)
             {
                 line = new Ray();
                 return false;
@@ -1470,9 +1471,9 @@ namespace Stride.Core.Mathematics
                     {
                         // Previous code:
                         if (Vector3.Dot(boundingBoxExt.Center, plane->Normal)
-                            + boundingBoxExt.Extent.X * Math.Abs(plane->Normal.X)
-                            + boundingBoxExt.Extent.Y * Math.Abs(plane->Normal.Y)
-                            + boundingBoxExt.Extent.Z * Math.Abs(plane->Normal.Z)
+                            + boundingBoxExt.Extent.X * MathF.Abs(plane->Normal.X)
+                            + boundingBoxExt.Extent.Y * MathF.Abs(plane->Normal.Y)
+                            + boundingBoxExt.Extent.Z * MathF.Abs(plane->Normal.Z)
                             <= -plane->D)
                             return false;
                         plane++;
@@ -1524,6 +1525,41 @@ namespace Stride.Core.Mathematics
                 return true;
             }
  */
+        }
+
+        /// <summary>
+        /// Retrieves the nearest hit object starting from the position of the ray in the direction of the ray.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objects">The objects that get tested for a collision with the ray.</param>
+        /// <param name="ray">The ray.</param>
+        /// <param name="hitObject">The hit object.</param>
+        /// <param name="distance">The distance from the start of the ray.</param>
+        /// <param name="point">The position of the collision.</param>
+        /// <returns>Whether there was a hit.</returns>
+        public static bool GetNearestHit<T>(IEnumerable<T> objects, ref Ray ray, out T hitObject, out float distance, out Vector3 point)
+            where T : IIntersectableWithRay
+        {
+            bool hit = false;
+            distance = float.PositiveInfinity;
+            hitObject = default;
+
+            foreach (var o in objects)
+            {
+                if (o.Intersects(ref ray, out float d) && (d < distance))
+                {
+                    distance = d;
+                    hitObject = o;
+                    hit = true;
+                }
+            }
+
+            if (hit)
+                hitObject.Intersects(ref ray, out point);
+            else
+                point = default;
+
+            return hit;
         }
     }
 }

@@ -12,11 +12,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
+using Xunit;
+
 using Stride.Core.Reflection;
 using Stride.Core.Yaml.Serialization;
 using Stride.Core.Yaml.Serialization.Serializers;
-
-using Xunit;
 
 namespace Stride.Core.Yaml.Tests.Serialization
 {
@@ -435,7 +435,7 @@ Values: [a, b, c]
         /// Tests the serialization of a custom collection with some custom properties.
         /// In this specific case, the collection cannot be serialized as a simple list
         /// so the serializer is serializing the list as a YAML mapping, using the mapping
-        /// to store the usual propertis and using the special member '~Items' to serialzie 
+        /// to store the usual propertis and using the special member '~Items' to serialzie
         /// the real content of the list
         /// </summary>
         [Fact]
@@ -468,7 +468,7 @@ Value: 1
         /// Tests the serialization of a custom dictionary with some custom properties.
         /// In this specific case, the dictionary cannot be serialized as a simple mapping
         /// so the serializer is serializing the dictionary as a YAML !!map, using the mapping
-        /// to store the usual propertis and using the special member '~Items' to serialize 
+        /// to store the usual propertis and using the special member '~Items' to serialize
         /// the real content of the dictionary as a sub YAML !!map
         /// </summary>
         [Fact]
@@ -537,7 +537,7 @@ c: true
 
             /// <summary>
             /// For this property, the deserializer is using the actual
-            /// value of the list stored in this instance instead of 
+            /// value of the list stored in this instance instead of
             /// creating a new List&lt;T&gtl instance.
             /// </summary>
             public List<string> StringListByContent { get; private set; }
@@ -563,7 +563,7 @@ c: true
 
             /// <summary>
             /// For this property, the deserializer is using the actual
-            /// value of the list stored in this instance instead of 
+            /// value of the list stored in this instance instead of
             /// creating a new List&lt;T&gtl instance.
             /// </summary>
             /// <value>The content of the list by.</value>
@@ -574,7 +574,7 @@ c: true
         /// Tests the serialization of a custom dictionary with some custom properties.
         /// In this specific case, the dictionary cannot be serialized as a simple mapping
         /// so the serializer is serializing the dictionary as a YAML !!map, using the mapping
-        /// to store the usual propertis and using the special member '~Items' to serialize 
+        /// to store the usual propertis and using the special member '~Items' to serialize
         /// the real content of the dictionary as a sub YAML !!map
         /// </summary>
         [Fact]
@@ -639,14 +639,14 @@ ListByContent:
             public int First { get; set; }
 
             /// <summary>
-            /// This property will be sorted after 
+            /// This property will be sorted after
             /// the explicit order by alphabetical order
             /// </summary>
             /// <value>The name after.</value>
             public int NameAfter { get; set; }
 
             /// <summary>
-            /// This property will be sorted after 
+            /// This property will be sorted after
             /// the explicit order by alphabetical order
             /// </summary>
             public int Name { get; set; }
@@ -1299,7 +1299,7 @@ Enum: OldValue2
 
             public int Value { get; private set; }
 
-            protected bool Equals(MyClassImmutable other)
+            private bool Equals(MyClassImmutable other)
             {
                 return string.Equals(Name, other.Name) && Value == other.Value;
             }

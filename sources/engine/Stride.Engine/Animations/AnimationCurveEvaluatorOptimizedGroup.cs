@@ -6,6 +6,7 @@
 #pragma warning disable SA1402 // File may only contain a single class
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Collections;
@@ -178,7 +179,7 @@ namespace Stride.Animations
             }
         }
 
-        protected void ProcessChannel(ref Channel channel, CompressedTimeSpan currentTime, IntPtr data)
+        protected unsafe void ProcessChannel(ref Channel channel, CompressedTimeSpan currentTime, nint data)
         {
             if (channel.Offset == -1)
                 return;
@@ -189,7 +190,7 @@ namespace Stride.Animations
             // Sampling before start (should not really happen because we add a keyframe at TimeSpan.Zero, but let's keep it in case it changes later.
             if (currentTime <= startTime)
             {
-                Utilities.UnsafeWrite(data + channel.Offset, ref channel.ValueStart.Value);
+                Unsafe.WriteUnaligned((byte*)data + channel.Offset, channel.ValueStart.Value);
                 return;
             }
 
@@ -199,7 +200,7 @@ namespace Stride.Animations
             // Sampling after end
             if (currentTime >= endTime)
             {
-                Utilities.UnsafeWrite(data + channel.Offset, ref channel.ValueEnd.Value);
+                Unsafe.WriteUnaligned((byte*)data + channel.Offset, channel.ValueEnd.Value);
                 return;
             }
 

@@ -14,8 +14,8 @@ namespace Stride.Shaders.Parser.Utility
         public static readonly MessageCode WarningDeclarationCall                   = new MessageCode("W0201", "The method invocation [{0}] calls the method [{1}] which is only declared, and not defined in class [{2}]");
         public static readonly MessageCode WarningMissingStageKeyword               = new MessageCode("W0202", "The stage keyword is missing in The method declaration [{0}] in class [{1}]");
         public static readonly MessageCode WarningUseSemanticType                   = new MessageCode("W0203", "The generic [{0}] is not of Semantic type but was used as semantic. Change the type or change name of the generic if there is a conflict.");
-                                                                              
-        // analysis errors: E0###                                                   
+
+        // analysis errors: E0###
         public static readonly MessageCode ErrorCyclicDependency                    = new MessageCode("E0201", "Cyclic mixin [{0}] dependency");
         public static readonly MessageCode ErrorFunctionRedefined                   = new MessageCode("E0202", "There is already a function with the same signature as [{0}] in class [{1}]");
         public static readonly MessageCode ErrorFunctionVariableNameConflict        = new MessageCode("E0203", "The function [{0}] has the same name as a variable in class [{1}]");
@@ -44,7 +44,7 @@ namespace Stride.Shaders.Parser.Utility
         public static readonly MessageCode ErrorExternMemberNotFound                = new MessageCode("E0226", "There is no member [{0}] for the type [{1}] in class [{2}]");
         public static readonly MessageCode ErrorStreamNotFound                      = new MessageCode("E0227", "Unable to find stream variable [{0}] in class [{1}]");
         public static readonly MessageCode ErrorStreamUsage                         = new MessageCode("E0228", "the stream [{0}] was read first THEN written in class [{1}]");
-        public static readonly MessageCode ErrorVariableNameAmbiguity               = new MessageCode("E0229", "The name [{0}] is ambiguous within variables in class [{2}]");
+        public static readonly MessageCode ErrorVariableNameAmbiguity               = new MessageCode("E0229", "The name [{0}] is ambiguous within variables in class [{1}]");
         public static readonly MessageCode ErrorMethodNameAmbiguity                 = new MessageCode("E0230", "The name [{0}] is ambiguous within methods in class [{1}]");
         public static readonly MessageCode ErrorMissingMethod                       = new MessageCode("E0231", "The method [{0}] in class [{1}] is not defined");
         public static readonly MessageCode ErrorCyclicMethod                        = new MessageCode("E0232", "Method [{0}] performs a cyclic call, which is not allowed in class [{1}]");
@@ -74,9 +74,9 @@ namespace Stride.Shaders.Parser.Utility
         public static readonly MessageCode UnknownModuleError                       = new MessageCode("E1200", "Unknown module error");
         public static readonly MessageCode ErrorClassNotFound                       = new MessageCode("E1201", "The class [{0}] was not found from the include path");
         public static readonly MessageCode ErrorDependencyNotInModule               = new MessageCode("E1202", "The mixin [{0}] in [{1}] dependency is not in the module");
-        public static readonly MessageCode ErrorClassSourceNotInstantiated          = new MessageCode("E1203", "The class source [{0}] contains generic parameters and is not instantiated");
+        public static readonly MessageCode ErrorClassSourceNotInstantiated          = new MessageCode("E1203", "The type [{0}] has generic parameters defined but only {1}/{2} arguments were passed when creating its instance");
         public static readonly MessageCode ErrorAmbiguousComposition                = new MessageCode("E1204", "The composition behind the variable [{0}] is ambiguous. Several matching variables were found.");
-        
+
         // mix errors: E2###
         public static readonly MessageCode UnknownMixError                          = new MessageCode("E2200", "Unknown mix error");
         public static readonly MessageCode ErrorVariableNotFound                    = new MessageCode("E2201", "Variable [{0}] not found in class [{1}]");

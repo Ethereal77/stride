@@ -138,7 +138,7 @@ namespace Stride.Graphics
             return hashCode == other.hashCode &&
                    VertexStride == other.VertexStride &&
                    InstanceCount == other.InstanceCount &&
-                   Utilities.Compare(VertexElements, other.VertexElements);
+                   VertexElements.SequenceEqualAllowNull(other.VertexElements);
         }
 
         public override bool Equals(object obj)

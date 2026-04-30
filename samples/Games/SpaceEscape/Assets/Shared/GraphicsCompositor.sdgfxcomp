@@ -50,6 +50,7 @@ RenderFeatures:
                     5890e37af0e4bbc2cfdc1de648ff07d4: ~(Deleted)
                     411fdcfb9fc388449a0443173dfa3f27: ~(Deleted)
                 ShadowMapRenderer: null
+            42be209952db58294c9f06c58809b8ca: !Stride.Rendering.InstancingRenderFeature,Stride.Rendering {}
             4e6e32bcbd8f38a663c636bab78dba4a*: !SpaceEscape.Rendering.BendFogRenderFeature,SpaceEscape.Game {}
     28e9bf54a5adbe063f59fb17acb2723e: !Stride.Rendering.Sprites.SpriteRenderFeature,Stride.Rendering
         RenderStageSelectors:

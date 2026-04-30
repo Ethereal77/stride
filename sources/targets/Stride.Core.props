@@ -12,22 +12,26 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Setup this part according to your project if you want your .csproj to compile individually without going through the .sln file -->
   <PropertyGroup>
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)..\..\build\</SolutionDir>
-    <SolutionName Condition=" '$(SolutionName)' == '' ">Stride</SolutionName>
-    <SolutionPath Condition=" '$(SolutionPath)' == '' ">$(SolutionDir)$(SolutionName).sln</SolutionPath>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)..\..\build\</SolutionDir>
+    <SolutionName Condition="'$(SolutionName)' == ''">Stride</SolutionName>
+    <SolutionPath Condition="'$(SolutionPath)' == ''">$(SolutionDir)$(SolutionName).sln</SolutionPath>
   </PropertyGroup>
 
   <!-- Setup StridePlatform according to current TargetFramework -->
   <PropertyGroup>
+    <StrideFramework>net6.0</StrideFramework>
+    <StrideFrameworkWindows>net6.0-windows</StrideFrameworkWindows>
+
     <!-- Default values -->
     <StridePlatformOriginal>$(StridePlatform)</StridePlatformOriginal>
-    <StridePlatform Condition="$(TargetFramework.StartsWith('net'))">Windows</StridePlatform>
+    <StridePlatform Condition=" $(TargetFramework.StartsWith('net')) ">Windows</StridePlatform>
+
     <!-- Default fallback -->
-    <StridePlatform Condition=" '$(StridePlatform)' == '' ">Windows</StridePlatform>
+    <StridePlatform Condition="'$(StridePlatform)' == ''">Windows</StridePlatform>
 
     <StridePlatformFullName Condition="'$(StridePlatformFullName)' == ''">$(StridePlatform)</StridePlatformFullName>
 
-    <StridePlatformDeps Condition="$(TargetFramework.StartsWith('net'))">dotnet</StridePlatformDeps>
+    <StridePlatformDeps Condition="'$(TargetFramework)' == '$(StrideFramework)' Or '$(TargetFramework)' == '$(StrideFrameworkWindows)'">dotnet</StridePlatformDeps>
   </PropertyGroup>
 
   <!-- Import Local Pre-Settings for the solution being loaded -->
@@ -40,8 +44,8 @@
     Platform-specific settings.
   -->
   <PropertyGroup>
-    <!-- Using C# 9 -->
-    <LangVersion>9.0</LangVersion>
+    <!-- Using C# version 10.0 which targets .NET 6.0 -->
+    <LangVersion>10.0</LangVersion>
     <StridePlatformDefines>STRIDE_PLATFORM_DESKTOP;STRIDE_PLATFORM_WINDOWS;STRIDE_PLATFORM_WINDOWS_DESKTOP</StridePlatformDefines>
 
     <!-- NOTE: Ideally we would split using ItemGroup but then PropertyGroup are not properly evaluated if they contain ItemGroup (unless using Targets) -->
@@ -51,10 +55,10 @@
     <_StridePlatforms>;$(StridePlatforms);</_StridePlatforms>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(StrideRuntime)' == 'true' ">
-    <!-- Add net5.0 no matter what (needed for references) -->
-    <StrideRuntimeTargetFrameworks>net5.0</StrideRuntimeTargetFrameworks>
-    <StrideRuntimeTargetFrameworks Condition="$(_StridePlatforms.Contains(';Windows;')) And '$(StrideRuntimeWindowsNet5)' == 'true'">$(StrideRuntimeTargetFrameworks);net5.0-windows</StrideRuntimeTargetFrameworks>
+  <PropertyGroup Condition="'$(StrideRuntime)' == 'true'">
+    <!-- Add net6.0 no matter what (needed for references) -->
+    <StrideRuntimeTargetFrameworks>net6.0</StrideRuntimeTargetFrameworks>
+    <StrideRuntimeTargetFrameworks Condition="$(_StridePlatforms.Contains(';Windows;')) And '$(StrideRuntimeWindowsNet6)' == 'true'">$(StrideRuntimeTargetFrameworks);net6.0-windows</StrideRuntimeTargetFrameworks>
 
     <StrideRuntimeTargetFrameworks>$([MSBuild]::Unescape($(StrideRuntimeTargetFrameworks.Trim(';'))))</StrideRuntimeTargetFrameworks>
 
@@ -77,7 +81,7 @@
   </Target>
 
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <GenerateProjectSpecificOutputFolder>false</GenerateProjectSpecificOutputFolder>
 
     <!-- Defines the language of the project being compiled CSharp or Cpp - defined by default to CSharp, must be overriden to Cpp in a Cpp project -->
@@ -115,16 +119,17 @@
     <StrideCommonDependenciesDir Condition="'$(StrideCommonDependenciesDir)' != '' and !HasTrailingSlash('$(StrideCommonDependenciesDir)')">$(StrideCommonDependenciesDir)\</StrideCommonDependenciesDir>
     <ErrorReport>prompt</ErrorReport>
     <FileAlignment>512</FileAlignment>
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net5')) ">
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(StrideFramework)' Or '$(TargetFramework)' == '$(StrideFrameworkWindows)'">
     <StridePlatformDefines>STRIDE_PLATFORM_DESKTOP</StridePlatformDefines>
   </PropertyGroup>
 
   <!--
     Settings StrideNETRuntime specific.
   -->
-  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp')) Or $(TargetFramework.StartsWith('net5'))">
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net6'))">
     <StrideNETRuntimeDefines>STRIDE_RUNTIME_CORECLR</StrideNETRuntimeDefines>
   </PropertyGroup>
 

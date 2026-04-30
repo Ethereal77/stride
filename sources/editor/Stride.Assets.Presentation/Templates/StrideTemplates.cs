@@ -21,6 +21,7 @@ namespace Stride.Assets.Presentation.Templates
             // Specific asset templates must be registered after AssetFactoryTemplateGenerator
             TemplateManager.RegisterGenerator(HeightmapFactoryTemplateGenerator.Default);
             TemplateManager.RegisterGenerator(ColliderShapeHullFactoryTemplateGenerator.Default);
+            TemplateManager.RegisterGenerator(ColliderShapeStaticMeshFactoryTemplateGenerator.Default);
             TemplateManager.RegisterGenerator(ProceduralModelFactoryTemplateGenerator.Default);
             TemplateManager.RegisterGenerator(SkyboxFactoryTemplateGenerator.Default);
             TemplateManager.RegisterGenerator(GraphicsCompositorTemplateGenerator.Default);

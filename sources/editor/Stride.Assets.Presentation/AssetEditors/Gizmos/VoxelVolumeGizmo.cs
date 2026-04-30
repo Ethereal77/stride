@@ -16,7 +16,7 @@ using Buffer = Stride.Graphics.Buffer;
 namespace Stride.Assets.Presentation.AssetEditors.Gizmos
 {
     /// <summary>
-    ///   A gizmo to display the bounding boxes for voxel volumes inside the editor as a gizmo. 
+    ///   A gizmo to display the bounding boxes for voxel volumes inside the editor as a gizmo.
     ///   This gizmo uses volume scale as the extent of the bounding box and is not affected by rotation.
     /// </summary>
     [GizmoComponent(typeof(VoxelVolumeComponent), false)]
@@ -35,7 +35,7 @@ namespace Stride.Assets.Presentation.AssetEditors.Gizmos
         {
             debugRootEntity = new Entity($"Voxel volume of {Component.Entity.Name}");
 
-            material = GizmoUniformColorMaterial.Create(GraphicsDevice, Color.CornflowerBlue);
+            material = GizmoEmissiveColorMaterial.Create(GraphicsDevice, Color.CornflowerBlue);
 
             box = new BoxMesh(GraphicsDevice);
             box.Build();

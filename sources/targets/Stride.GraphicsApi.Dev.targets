@@ -12,8 +12,8 @@
 
   <!--
     Packages will be built with following layout:
-      lib/net5.0/Direct3D11/MyAssembly.dll
-      lib/net5.0/MyAssembly.dll (placeholder so that we can piggyback on "RuntimeCopyLocalItems" from NET.Sdk)
+      lib/net6.0/Direct3D11/MyAssembly.dll
+      lib/net6.0/MyAssembly.dll (placeholder so that we can piggyback on "RuntimeCopyLocalItems" from NET.Sdk)
   -->
 
   <!--

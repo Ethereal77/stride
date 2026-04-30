@@ -36,7 +36,7 @@ namespace Stride.Particles.Spawners
         /// Referenced parent emitter
         /// </summary>
         [DataMemberIgnore]
-        protected ParticleEmitter Parent;
+        private ParticleEmitter Parent;
 
         /// <summary>
         /// Referenced parent emitter's name
@@ -125,7 +125,7 @@ namespace Stride.Particles.Spawners
         /// Gets a field accessor to the parent emitter's spawn control field, if it exists
         /// </summary>
         /// <returns></returns>
-        protected ParticleFieldAccessor<ParticleChildrenAttribute> GetSpawnControlField()
+        private ParticleFieldAccessor<ParticleChildrenAttribute> GetSpawnControlField()
         {
             var groupIndex = (int)parentControlFlag;
             if (groupIndex >= ParticleFields.ChildrenFlags.Length)
@@ -259,7 +259,7 @@ namespace Stride.Particles.Spawners
             base.InvalidateRelations();
 
             RemoveControlGroup();
-            
+
             Parent = null;
             isParentNameDirty = true;
         }

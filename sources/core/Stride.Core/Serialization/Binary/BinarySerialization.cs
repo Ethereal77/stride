@@ -15,6 +15,7 @@ namespace Stride.Core.Serialization
     /// <remarks>
     /// This class is a simple front end to <see cref="BinarySerializationReader"/> and <see cref="BinarySerializationWriter"/>.
     /// </remarks>
+    [Obsolete] // inefficient, not recommended
     public class BinarySerialization
     {
         /// <summary>
@@ -23,6 +24,7 @@ namespace Stride.Core.Serialization
         /// <typeparam name="T">Type of the object to read</typeparam>
         /// <param name="stream">The stream to read the object instance.</param>
         /// <returns>An object instance of type T.</returns>
+        [Obsolete("Use BinarySerializationReader.Read<T> instead.")]
         public static T Read<T>([NotNull] Stream stream)
         {
             var reader = new BinarySerializationReader(stream);
@@ -35,6 +37,7 @@ namespace Stride.Core.Serialization
         /// <typeparam name="T">Type of the object to read</typeparam>
         /// <param name="buffer">The byte buffer to read the object instance.</param>
         /// <returns>An object instance of type T.</returns>
+        [Obsolete("Use BinarySerializationReader.Read<T> with a MemoryStream instead.")]
         public static T Read<T>([NotNull] byte[] buffer)
         {
             var reader = new BinarySerializationReader(new MemoryStream(buffer));
@@ -47,6 +50,7 @@ namespace Stride.Core.Serialization
         /// <typeparam name="T">Type of the object to write</typeparam>
         /// <param name="stream">The stream to write the object instance to.</param>
         /// <param name="value">The value to write.</param>
+        [Obsolete("Use BinarySerializationWriter.Write<T> instead.")]
         public static void Write<T>([NotNull] Stream stream, T value)
         {
             var writer = new BinarySerializationWriter(stream);

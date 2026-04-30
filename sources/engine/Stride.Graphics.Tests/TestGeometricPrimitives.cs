@@ -7,13 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Xunit;
+
 using Stride.Core.Mathematics;
 using Stride.Rendering;
 using Stride.Games;
 using Stride.Graphics.GeometricPrimitives;
 using Stride.Input;
-
-using Xunit;
 
 namespace Stride.Graphics.Tests
 {
@@ -95,7 +95,7 @@ namespace Stride.Graphics.Tests
             if (Input.IsKeyPressed(Keys.Right))
                 ChangePrimitiveStartOffset(1);
 
-            projection = Matrix.PerspectiveFovRH((float)Math.PI / 4.0f, (float)GraphicsDevice.Presenter.BackBuffer.ViewWidth / GraphicsDevice.Presenter.BackBuffer.ViewHeight, 0.1f, 100.0f);
+            projection = Matrix.PerspectiveFovRH(MathF.PI / 4.0f, (float)GraphicsDevice.Presenter.BackBuffer.ViewWidth / GraphicsDevice.Presenter.BackBuffer.ViewHeight, 0.1f, 100.0f);
 
             if (GraphicsDevice.Presenter.BackBuffer.ViewWidth < GraphicsDevice.Presenter.BackBuffer.ViewHeight)
                 view = Matrix.LookAtRH(new Vector3(0, 0, 10), new Vector3(0, 0, 0), Vector3.UnitX);
@@ -147,7 +147,7 @@ namespace Stride.Graphics.Tests
                 var time = timeSeconds + i;
 
                 // Setup the World matrice for this primitive
-                var world = Matrix.Scaling((float)Math.Sin(time * 1.5f) * 0.2f + 1.0f) * Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f) * Matrix.Translation(x, y, 0);
+                var world = Matrix.Scaling(MathF.Sin(time * 1.5f) * 0.2f + 1.0f) * Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f) * Matrix.Translation(x, y, 0);
 
                 // Disable Cull only for the plane primitive, otherwise use standard culling
                 var defaultRasterizerState = i == 0 ? RasterizerStates.CullNone : RasterizerStates.CullBack;

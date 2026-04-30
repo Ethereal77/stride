@@ -5,6 +5,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Stride.Core
 {
@@ -201,7 +202,7 @@ namespace Stride.Core
                     if (Type == ThrottlerType.PreciseAuto)
                     {
                         var sleepStart = Stopwatch.GetTimestamp();
-                        Utilities.Sleep(1);
+                        Thread.Sleep(1);
 
                         // Include excessive time sleep took on top of the time we specified
                         spinwaitWindow += Stopwatch.GetTimestamp() - sleepStart - ONE_MILLISECOND;
@@ -210,12 +211,12 @@ namespace Stride.Core
                     }
                     else if (Type == ThrottlerType.PreciseManual)
                     {
-                        Utilities.Sleep(1);
+                        Thread.Sleep(1);
                     }
                     else
                     {
                         // Don't let standard spinwait
-                        Utilities.Sleep((int)(idleDuration / ONE_MILLISECOND));
+                        Thread.Sleep((int)(idleDuration / ONE_MILLISECOND));
                         return true;
                     }
                 }
@@ -257,6 +258,6 @@ namespace Stride.Core
     {
         Standard,
         PreciseManual,
-        PreciseAuto,
+        PreciseAuto
     }
 }

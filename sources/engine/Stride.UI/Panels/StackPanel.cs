@@ -61,7 +61,7 @@ namespace Stride.UI.Panels
         private bool itemVirtualizationEnabled;
 
         /// <summary>
-        /// The list of the visible children having the same order as in <see cref="Panel.Children"/>. 
+        /// The list of the visible children having the same order as in <see cref="Panel.Children"/>.
         /// </summary>
         /// <remarks>This list is valid on when <see cref="ItemVirtualizationEnabled"/> is <value>true</value></remarks>
         private readonly FastCollection<UIElement> visibleChildren = new FastCollection<UIElement>();
@@ -298,7 +298,7 @@ namespace Stride.UI.Panels
             // reset the anchor bounds
             elementBounds.Clear();
 
-            // cache the accumulator and maximize indices 
+            // cache the accumulator and maximize indices
             var accumulatorIndex = (int)Orientation;
             var maximizeIndex1 = OrientationToMaximizeIndex1[(int)Orientation];
             var maximizeIndex2 = OrientationToMaximizeIndex2[(int)Orientation];
@@ -523,7 +523,7 @@ namespace Stride.UI.Panels
 
             if (IsArrangeValid)
             {
-                AdjustOffsetsAndVisualChildren((float)(side > 0 ? Math.Floor(scrollPosition + 1) : Math.Ceiling(scrollPosition - 1)));
+                AdjustOffsetsAndVisualChildren(side > 0 ? MathF.Floor(scrollPosition + 1) : MathF.Ceiling(scrollPosition - 1));
             }
             else
             {
@@ -667,7 +667,7 @@ namespace Stride.UI.Panels
             // reset the list
             visibleChildren.Clear();
 
-            // remove all the current visual children 
+            // remove all the current visual children
             while (VisualChildrenCollection.Count > 0)
                 SetVisualParent(VisualChildrenCollection[0], null);
 

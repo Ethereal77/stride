@@ -23,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.9.31025.194" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="Xunit.StaFact" Version="1.0.37" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.0.31902.203" />
+    <PackageReference Include="xunit" Version="2.4.2-pre.12" />
+    <PackageReference Include="Xunit.StaFact" Version="1.1.5-alpha" />
 
     <ProjectReference Include="..\..\core\Stride.Core.Tasks\Stride.Core.Tasks.csproj">
       <Private>false</Private>

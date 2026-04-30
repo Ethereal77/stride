@@ -44,7 +44,7 @@ namespace Stride.Physics
                     {
                         LocalScaling = cachedScaling,
                     };
-                    rotation = Matrix.RotationZ((float)Math.PI / 2.0f);
+                    rotation = Matrix.RotationZ(MathF.PI / 2.0f);
                     break;
                 case ShapeOrientation.UpY:
                     InternalShape = new BulletSharp.CylinderShape(new Vector3(Radius, Height / 2, Radius))
@@ -58,7 +58,7 @@ namespace Stride.Physics
                     {
                         LocalScaling = cachedScaling,
                     };
-                    rotation = Matrix.RotationX((float)Math.PI / 2.0f);
+                    rotation = Matrix.RotationX(MathF.PI / 2.0f);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(Orientation));

@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <Import Project="..\Stride.PrivacyPolicy\Stride.PrivacyPolicy.projitems" Label="Shared" Condition="Exists('..\Stride.PrivacyPolicy\Stride.PrivacyPolicy.projitems')" />
   <Import Project="..\..\shared\Stride.Core.ShellHelper\Stride.Core.ShellHelper.projitems" Label="Shared" />
   <Import Project="..\..\tools\Stride.Core.VisualStudio\Stride.Core.VisualStudio.projitems" Label="Shared" />
@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Include="..\..\core\Stride.Core.IO\TemporaryFile.cs" Link="Debugging\TemporaryFile.cs" />
+    <Compile Include="..\..\shared\LoaderToolLocator\LoaderToolLocator.cs" Link="LoaderToolLocator.cs" />
 
     <None Include="..\..\tools\Stride.PackageInstall\bin\$(Configuration)\*.*" PackagePath="tools\" Pack="true" />
     <None Include="app.config" />
@@ -49,7 +50,7 @@
 
   <ItemGroup>
     <Reference Include="Stride.Core.AssemblyProcessor">
-      <HintPath>..\..\..\deps\AssemblyProcessor\Stride.Core.AssemblyProcessor.dll</HintPath>
+      <HintPath Condition="$(TargetFramework.StartsWith('net6'))">..\..\..\deps\AssemblyProcessor\netstandard2.0\Stride.Core.AssemblyProcessor.dll</HintPath>
     </Reference>
 
     <PackageReference Include="Stride.Metrics" Version="1.0.3" />

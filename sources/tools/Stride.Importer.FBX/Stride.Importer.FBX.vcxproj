@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\targets\Stride.props" />
   <PropertyGroup>
@@ -8,7 +8,7 @@
     <FbxSdkVersion>2019.0</FbxSdkVersion>
     <FbxSdkUrl>https://www.autodesk.com/developer-network/platform-technologies/fbx-sdk-2019-0</FbxSdkUrl>
     <FbxSdkDir>$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\Autodesk FBX SDK $(FbxSdkVersion)', 'Install_Dir', null, RegistryView.Registry32))</FbxSdkDir>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <FbxLibVersionDir>vs2015\</FbxLibVersionDir>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">

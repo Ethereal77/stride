@@ -13,6 +13,7 @@ using Stride.Engine;
 using Stride.Graphics;
 using Stride.Rendering.Shadows;
 using Stride.Shaders;
+
 using Buffer = Stride.Graphics.Buffer;
 
 namespace Stride.Rendering.Lights
@@ -327,7 +328,7 @@ namespace Stride.Rendering.Lights
 
                     movedClusters.Clear();
 
-                    var radius = (float)Math.Sqrt(1.0f / spotLightData.AngleOffsetAndInvSquareRadius.Z);
+                    var radius = MathF.Sqrt(1.0f / spotLightData.AngleOffsetAndInvSquareRadius.Z);
 
                     Vector3 positionVS;
                     Vector3.TransformCoordinate(ref spotLightData.PositionWS, ref renderView.View, out positionVS);
@@ -381,7 +382,7 @@ namespace Stride.Rendering.Lights
 
                     movedClusters.Clear();
 
-                    var radius = (float)Math.Sqrt(1.0f / pointLightData.InvSquareRadius);
+                    var radius = MathF.Sqrt(1.0f / pointLightData.InvSquareRadius);
 
                     Vector3 positionVS;
                     Vector3.TransformCoordinate(ref pointLightData.PositionWS, ref renderView.View, out positionVS);
@@ -669,7 +670,7 @@ namespace Stride.Rendering.Lights
                 if (d > 0)
                 {
                     float a = lightRadius * lc;
-                    float b = (float)Math.Sqrt(d);
+                    float b = MathF.Sqrt(d);
                     float nx0 = (a + b) / lcSqPluslzSq;
                     float nx1 = (a - b) / lcSqPluslzSq;
 

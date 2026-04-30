@@ -22,13 +22,19 @@ namespace Stride.Core.LZ4
     {
         #region fields
 
-        /// <summary>Encoding service.</summary>
+        /// <summary>
+        /// Encoding service.
+        /// </summary>
         private static readonly ILZ4Service encoder;
 
-        /// <summary>Encoding service for HC algorithm.</summary>
+        /// <summary>
+        /// Encoding service for HC algorithm.
+        /// </summary>
         private static readonly ILZ4Service encoderHC;
 
-        /// <summary>Decoding service.</summary>
+        /// <summary>
+        /// Decoding service.
+        /// </summary>
         private static readonly ILZ4Service decoder;
 
         // ReSharper disable InconsistentNaming
@@ -68,7 +74,9 @@ namespace Stride.Core.LZ4
             }
         }
 
-        /// <summary>Tries to execute specified action. Ignores exception if it failed.</summary>
+        /// <summary>
+        /// Tries to execute specified action. Ignores exception if it failed.
+        /// </summary>
         /// <param name="method">The method.</param>
         private static void Try(Action method)
         {
@@ -84,7 +92,9 @@ namespace Stride.Core.LZ4
             // ReSharper restore EmptyGeneralCatchClause
         }
 
-        /// <summary>Tries to create a specified <seealso cref="ILZ4Service"/> and tests it.</summary>
+        /// <summary>
+        /// Tries to create a specified <seealso cref="ILZ4Service"/> and tests it.
+        /// </summary>
         /// <typeparam name="T">Concrete <seealso cref="ILZ4Service"/> type.</typeparam>
         /// <returns>A service if succeeded or <c>null</c> if it failed.</returns>
         private static ILZ4Service Try<T>()
@@ -100,7 +110,9 @@ namespace Stride.Core.LZ4
             }
         }
 
-        /// <summary>Perofrms the quick auto-test on given compression service.</summary>
+        /// <summary>
+        /// Perofrms the quick auto-test on given compression service.
+        /// </summary>
         /// <param name="service">The service.</param>
         /// <returns>A service or <c>null</c> if it failed.</returns>
         private static ILZ4Service AutoTest(ILZ4Service service)
@@ -163,7 +175,9 @@ namespace Stride.Core.LZ4
 
         // ReSharper disable InconsistentNaming
 
-        /// <summary>Initializes codecs from LZ4 native.</summary>
+        /// <summary>
+        /// Initializes codecs from LZ4 native.
+        /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void InitializeLZ4Native()
         {
@@ -176,7 +190,9 @@ namespace Stride.Core.LZ4
 
         #region public interface
 
-        /// <summary>Gets the name of selected codec(s).</summary>
+        /// <summary>
+        /// Gets the name of selected codec(s).
+        /// </summary>
         /// <value>The name of the codec.</value>
         public static string CodecName
         {
@@ -190,7 +206,9 @@ namespace Stride.Core.LZ4
             }
         }
 
-        /// <summary>Get maximum output length.</summary>
+        /// <summary>
+        /// Get maximum output length.
+        /// </summary>
         /// <param name="inputLength">Input length.</param>
         /// <returns>Output length.</returns>
         public static int MaximumOutputLength(int inputLength)
@@ -200,7 +218,9 @@ namespace Stride.Core.LZ4
 
         #region Encode
 
-        /// <summary>Encodes the specified input.</summary>
+        /// <summary>
+        /// Encodes the specified input.
+        /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="inputOffset">The input offset.</param>
         /// <param name="inputLength">Length of the input.</param>
@@ -219,7 +239,9 @@ namespace Stride.Core.LZ4
             return encoder.Encode(input, inputOffset, inputLength, output, outputOffset, outputLength);
         }
 
-        /// <summary>Encodes the specified input.</summary>
+        /// <summary>
+        /// Encodes the specified input.
+        /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="inputOffset">The input offset.</param>
         /// <param name="inputLength">Length of the input.</param>
@@ -246,7 +268,9 @@ namespace Stride.Core.LZ4
             return result;
         }
 
-        /// <summary>Encodes the specified input.</summary>
+        /// <summary>
+        /// Encodes the specified input.
+        /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="inputOffset">The input offset.</param>
         /// <param name="inputLength">Length of the input.</param>
@@ -266,7 +290,9 @@ namespace Stride.Core.LZ4
                 .EncodeHC(input, inputOffset, inputLength, output, outputOffset, outputLength);
         }
 
-        /// <summary>Encodes the specified input.</summary>
+        /// <summary>
+        /// Encodes the specified input.
+        /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="inputOffset">The input offset.</param>
         /// <param name="inputLength">Length of the input.</param>
@@ -297,7 +323,9 @@ namespace Stride.Core.LZ4
 
         #region Decode
 
-        /// <summary>Decodes the specified input.</summary>
+        /// <summary>
+        /// Decodes the specified input.
+        /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="inputOffset">The input offset.</param>
         /// <param name="inputLength">Length of the input.</param>
@@ -318,7 +346,9 @@ namespace Stride.Core.LZ4
             return decoder.Decode(input, inputOffset, inputLength, output, outputOffset, outputLength, knownOutputLength);
         }
 
-        /// <summary>Decodes the specified input.</summary>
+        /// <summary>
+        /// Decodes the specified input.
+        /// </summary>
         /// <param name="input">The input.</param>
         /// <param name="inputOffset">The input offset.</param>
         /// <param name="inputLength">Length of the input.</param>

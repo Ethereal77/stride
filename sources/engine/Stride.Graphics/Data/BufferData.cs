@@ -3,6 +3,10 @@
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // See the LICENSE.md file in the project root for full license information.
 
+using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
 using Stride.Core;
 using Stride.Core.Serialization.Contents;
 
@@ -61,9 +65,10 @@ namespace Stride.Graphics.Data
         /// <returns>The buffer data.</returns>
         public static BufferData New<T>(BufferFlags bufferFlags, T[] content) where T : struct
         {
-            var sizeOf = Utilities.SizeOf(content);
+            var sizeOf = Unsafe.SizeOf<T>() * content.Length;
             var buffer = new byte[sizeOf];
-            Utilities.Write(buffer, content, 0, content.Length);
+            var source = MemoryMarshal.AsBytes(content.AsSpan());
+            source.CopyTo(buffer.AsSpan());
 
             return new BufferData(bufferFlags, buffer);
         }

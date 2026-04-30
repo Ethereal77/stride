@@ -19,8 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="System.Management" Version="5.0.0" />
-    <PackageReference Include="NuGet.Configuration" Version="5.9.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
+    <PackageReference Include="NuGet.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="2.3.2262-g94fae01e" />
 
     <ProjectReference Include="..\Stride.Core.IO\Stride.Core.IO.csproj" />

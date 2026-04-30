@@ -18,6 +18,7 @@
   <ItemGroup>
     <Compile Include="..\..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Include="..\..\shared\AttachedChildProcessJob.cs" Link="AttachedChildProcessJob.cs" />
+    <Compile Include="..\..\shared\LoaderToolLocator\LoaderToolLocator.cs" Link="LoaderToolLocator.cs" />
 
     <None Include="Resources\ConnectionRouter.ico" />
   </ItemGroup>

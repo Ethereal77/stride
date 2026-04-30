@@ -21,7 +21,7 @@ namespace Stride.Graphics.Font
         private readonly List<Texture> cacheTextures = new List<Texture>();
         private readonly LinkedList<CharacterSpecification> cachedCharacters = new LinkedList<CharacterSpecification>();
         private readonly GuillotinePacker packer = new GuillotinePacker();
-        
+
         /// <summary>
         /// The textures containing the cached characters on the GPU.
         /// </summary>
@@ -39,7 +39,7 @@ namespace Stride.Graphics.Font
             ClearCache();
         }
 
-        private void ReloadCache(GraphicsResourceBase graphicsResourceBase)
+        private void ReloadCache(GraphicsResourceBase graphicsResourceBase, IServiceRegistry services)
         {
             foreach (var cacheTexture in cacheTextures)
                 cacheTexture.Recreate();
@@ -58,7 +58,7 @@ namespace Stride.Graphics.Font
 
             packer.Clear(cacheTextures[0].ViewWidth, cacheTextures[0].ViewHeight);
         }
-        
+
         /// <summary>
         /// Upload a character's bitmap into the current cache.
         /// </summary>

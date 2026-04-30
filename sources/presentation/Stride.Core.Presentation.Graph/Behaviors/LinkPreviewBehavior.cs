@@ -11,17 +11,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+
 using GraphX;
+
 using Stride.Core.Presentation.Behaviors;
 using Stride.Core.Presentation.Extensions;
 
 namespace Stride.Core.Presentation.Graph.Behaviors
 {
-    public class LinkPreviewBehavior : DeferredBehaviorBase<GraphAreaBase> //Behavior<GraphAreaBase> 
+    public class LinkPreviewBehavior : DeferredBehaviorBase<GraphAreaBase> //Behavior<GraphAreaBase>
     {
-        /// <summary>
-        /// 
-        /// </summary>
         public sealed class LinkPreviewAdorner : Adorner
         {
             private readonly Pen pen_;
@@ -41,12 +40,13 @@ namespace Stride.Core.Presentation.Graph.Behaviors
                 pen_.DashStyle = new DashStyle(new double[] { 3, 2, 3, 2 }, 0);
                 pen_.DashCap = PenLineCap.Flat;
                 pen_.StartLineCap = PenLineCap.Round;
-                pen_.EndLineCap = PenLineCap.Round;                
-                pen_.Thickness = 4;               
+                pen_.EndLineCap = PenLineCap.Round;
+                pen_.Thickness = 4;
                 pen_.Freeze();
             }
 
-            public Point Start {
+            public Point Start
+            {
                 get { return start_; }
                 set
                 {
@@ -96,7 +96,7 @@ namespace Stride.Core.Presentation.Graph.Behaviors
         #region
         protected override void OnAttachedAndLoaded()
         {
-            graph_area_ = AssociatedObject;            
+            graph_area_ = AssociatedObject;
 
             Dispatcher.InvokeAsync(Register);
         }
@@ -115,7 +115,7 @@ namespace Stride.Core.Presentation.Graph.Behaviors
                 if (adornLayer == null)
                 {
                     throw new InvalidOperationException("Could not find the adorner layer");
-                }                
+                }
                 LinkPreview = new LinkPreviewAdorner(graph_area_);
                 LinkPreview.IsHitTestVisible = false;
                 adornLayer.Add(LinkPreview);

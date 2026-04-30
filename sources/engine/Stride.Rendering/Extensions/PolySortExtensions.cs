@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -34,8 +35,8 @@ namespace Stride.Extensions
                 viewDirectionForSorting = -Vector3.UnitZ;
             }
 
-            const int PolySize = 3; // currently only triangle list are supported
-            var polyIndicesSize = PolySize * Utilities.SizeOf<int>();
+            const uint PolySize = 3; // currently only triangle list are supported
+            var polyIndicesSize = PolySize * sizeof(int);
             var vertexBuffer = meshData.VertexBuffers[0];
             var oldIndexBuffer = meshData.IndexBuffer;
             var vertexStride = vertexBuffer.Declaration.VertexStride;
@@ -46,13 +47,13 @@ namespace Stride.Extensions
             fixed (byte* vertexBufferPointerStart = &vertexBuffer.Buffer.GetSerializationData().Content[vertexBuffer.Offset])
             fixed (byte* indexBufferPointerStart = &oldIndexBuffer.Buffer.GetSerializationData().Content[oldIndexBuffer.Offset])
             {
-                for (var i = 0; i < oldIndexBuffer.Count / PolySize; ++i) 
+                for (var i = 0; i < oldIndexBuffer.Count / PolySize; ++i)
                 {
                     // compute the bary-center
                     var accu = Vector3.Zero;
                     for (var u = 0; u < PolySize; ++u)
                     {
-                        var curIndex = *(int*)(indexBufferPointerStart + Utilities.SizeOf<int>() * (i * PolySize + u));
+                        var curIndex = *(int*)(indexBufferPointerStart + sizeof(int) * (i * PolySize + u));
                         var pVertexPos = (Vector3*)(vertexBufferPointerStart + vertexStride * curIndex);
                         accu += *pVertexPos;
                     }
@@ -66,9 +67,9 @@ namespace Stride.Extensions
 
             // sort the list
             var sortedIndices = sortList.OrderBy(x => Vector3.Dot(x.Value, viewDirectionForSorting)).Select(x => x.Key).ToList();   // TODO have a generic delegate for sorting
-            
+
             // re-write the index buffer
-            var newIndexBufferData = new byte[oldIndexBuffer.Count * Utilities.SizeOf<int>()];
+            var newIndexBufferData = new byte[oldIndexBuffer.Count * sizeof(int)];
             fixed (byte* newIndexDataStart = &newIndexBufferData[0])
             fixed (byte* oldIndexDataStart = &oldIndexBuffer.Buffer.GetSerializationData().Content[0])
             {
@@ -76,7 +77,10 @@ namespace Stride.Extensions
 
                 foreach (var index in sortedIndices)
                 {
-                    Utilities.CopyMemory((IntPtr)(newIndexBufferPointer), (IntPtr)(oldIndexDataStart + index * polyIndicesSize), polyIndicesSize);
+                    Unsafe.CopyBlockUnaligned(
+                        destination: newIndexBufferPointer,
+                        source: oldIndexDataStart + index * polyIndicesSize,
+                        byteCount: polyIndicesSize);
 
                     newIndexBufferPointer += polyIndicesSize;
                 }

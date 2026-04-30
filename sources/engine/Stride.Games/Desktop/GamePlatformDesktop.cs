@@ -22,7 +22,14 @@ namespace Stride.Games
 #endif
         }
 
-        public override string DefaultAppDirectory => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+        public override string DefaultAppDirectory
+        {
+            get
+            {
+                var assemblyUri = new Uri(Assembly.GetEntryAssembly().Location);
+                return Path.GetDirectoryName(assemblyUri.LocalPath);
+            }
+        }
 
         internal override GameWindow GetSupportedGameWindow(AppContextType type)
         {

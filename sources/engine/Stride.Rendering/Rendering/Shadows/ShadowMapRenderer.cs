@@ -33,7 +33,7 @@ namespace Stride.Rendering.Shadows
         private FastListStruct<ShadowMapAtlasTexture> atlases;
 
         private readonly List<LightShadowMapTexture> shadowMaps = new List<LightShadowMapTexture>();
-        
+
         public ShadowMapRenderer()
         {
             atlases = new FastListStruct<ShadowMapAtlasTexture>(16);
@@ -284,7 +284,7 @@ namespace Stride.Rendering.Shadows
         private static float ComputeSizeFactor(LightShadowMapSize shadowMapSize)
         {
             // Then reduce the size based on the shadow map size
-            var factor = (float)Math.Pow(2.0f, (int)shadowMapSize - 3.0f);
+            var factor = MathF.Pow(2.0f, (int)shadowMapSize - 3.0f);
             return factor;
         }
     }

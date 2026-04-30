@@ -11,6 +11,8 @@ using Stride.Core.Diagnostics;
 using Stride.Graphics;
 using Stride.TextureConverter.PvrttWrapper;
 using Stride.TextureConverter.Requests;
+using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace Stride.TextureConverter.TexLibraries
 {
@@ -63,7 +65,7 @@ namespace Stride.TextureConverter.TexLibraries
             }
         }
 
-        
+
         public bool SupportBGRAOrder()
         {
             return false;
@@ -110,7 +112,7 @@ namespace Stride.TextureConverter.TexLibraries
         }
 
 
-        public void StartLibrary(TexImage image)
+        public unsafe void StartLibrary(TexImage image)
         {
             PvrTextureLibraryData libraryData = new PvrTextureLibraryData();
 
@@ -136,7 +138,10 @@ namespace Stride.TextureConverter.TexLibraries
                     {
                         for (uint k = 0; k < image.MipmapCount; ++k)
                         {
-                            Core.Utilities.CopyMemory(libraryData.Texture.GetDataPtr(k, j, i), image.SubImageArray[imageCount].Data, image.SubImageArray[imageCount].DataSize * depth);
+                            Unsafe.CopyBlockUnaligned(
+                                (void*)libraryData.Texture.GetDataPtr(k, j, i),
+                                (void*)image.SubImageArray[imageCount].Data,
+                                (uint)(image.SubImageArray[imageCount].DataSize * depth));
                             imageCount += depth;
 
                             depth = depth > 1 ? depth >>= 1 : depth;
@@ -172,7 +177,7 @@ namespace Stride.TextureConverter.TexLibraries
             // If the data contains more than one face and mipmaps, swap them
             if (image.Dimension == TexImage.TextureDimension.TextureCube &&  image.FaceCount > 1 && image.MipmapCount > 1)
                 TransposeFaceData(image, libraryData);
-            
+
             /*
              * in a 3D texture, the number of sub images will be different than for 2D : with 2D texture, you just have to multiply the mipmap levels with the array size.
              * For 3D, when generating mip map, you generate mip maps for each slice of your texture, but the depth is decreasing by half (like the width and height) at
@@ -307,7 +312,7 @@ namespace Stride.TextureConverter.TexLibraries
             image.Width = (int)libraryData.Header.GetWidth();
             image.Height = (int)libraryData.Header.GetHeight();
             image.Depth = (int)libraryData.Header.GetDepth();
-            
+
             var format = RetrieveFormatFromNativeData(libraryData.Header);
             image.Format = request.LoadAsSRgb? format.ToSRgb(): format.ToNonSRgb();
             image.OriginalAlphaDepth = libraryData.Header.GetAlphaDepth();
@@ -376,7 +381,7 @@ namespace Stride.TextureConverter.TexLibraries
         /// <param name="image">The image.</param>
         /// <param name="libraryData">The library data.</param>
         /// <param name="export">The export request.</param>
-        private void Export(TexImage image, PvrTextureLibraryData libraryData, ExportRequest request)
+        private unsafe void Export(TexImage image, PvrTextureLibraryData libraryData, ExportRequest request)
         {
             Log.Verbose("Exporting to " + request.FilePath + " ...");
 
@@ -404,7 +409,10 @@ namespace Stride.TextureConverter.TexLibraries
                         {
                             for (uint k = 0; k < newMipMapCount; ++k)
                             {
-                                Core.Utilities.CopyMemory(texture.GetDataPtr(k, j, i), libraryData.Texture.GetDataPtr(k, j, i), (int)libraryData.Header.GetDataSize((int)k, false, false));
+                                Unsafe.CopyBlockUnaligned(
+                                    destination: (void*)texture.GetDataPtr(k, j, i),
+                                    source: (void*)libraryData.Texture.GetDataPtr(k, j, i),
+                                    byteCount: libraryData.Header.GetDataSize((int)k, false, false));
                             }
                         }
                     }
@@ -511,14 +519,14 @@ namespace Stride.TextureConverter.TexLibraries
         /// </summary>
         /// <param name="image"></param>
         /// <param name="libraryData"></param>
-        private void TransposeFaceData(TexImage image, PvrTextureLibraryData libraryData)
+        private unsafe void TransposeFaceData(TexImage image, PvrTextureLibraryData libraryData)
         {
-            var destPtr = Marshal.AllocHGlobal(image.DataSize);
+            var temporaryBuffer = (byte*)Marshal.AllocHGlobal(image.DataSize);
 
             var targetRowSize = 0;
 
             // Build an array of slices for each mip levels
-            var slices = new int[image.MipmapCount];
+            var slices = new uint[image.MipmapCount];
             var aggregateSize = new int[image.MipmapCount];
 
             var currWidth = image.Width;
@@ -526,10 +534,9 @@ namespace Stride.TextureConverter.TexLibraries
 
             for (var i = 0; i < image.MipmapCount; ++i)
             {
-                int pitch, slice;
-                Tools.ComputePitch(image.Format, currWidth, currHeight, out pitch, out slice);
-
-                slices[i] = slice;
+                Tools.ComputePitch(image.Format, currWidth, currHeight, rowPitch: out _, slicePitch: out var slice);
+                Debug.Assert(slice >= 0);
+                slices[i] = (uint)slice;
 
                 aggregateSize[i] = targetRowSize;
                 targetRowSize += slice;
@@ -550,24 +557,24 @@ namespace Stride.TextureConverter.TexLibraries
 
                     var destOffset = (targetRowSize * currFace) + aggregateSize[currMip];
 
-                    var source = new IntPtr(image.Data.ToInt64() + sourceOffset);
-                    var dest = new IntPtr(destPtr.ToInt64() + destOffset);
+                    var source = (byte*)image.Data + sourceOffset;
+                    var dest = temporaryBuffer + destOffset;
 
-                    Core.Utilities.CopyMemory(dest, source, slice);
+                    Unsafe.CopyBlockUnaligned(dest, source, slice);
                 }
 
-                sourceRowOffset += slice * image.FaceCount;
+                sourceRowOffset += checked((int)(slice * (uint)image.FaceCount));
             }
 
             // Copy data back to the library
-            Core.Utilities.CopyMemory(
-                                libraryData.Texture.GetDataPtr(),   // Dest
-                                destPtr,                            // Source
-                                image.DataSize);                    // Size
+            Unsafe.CopyBlockUnaligned(
+                destination: (void*)libraryData.Texture.GetDataPtr(),
+                source: temporaryBuffer,
+                byteCount: (uint)image.DataSize);
 
             image.Data = libraryData.Texture.GetDataPtr();
 
-            Marshal.FreeHGlobal(destPtr);
+            Marshal.FreeHGlobal((nint)temporaryBuffer);
         }
         /// <summary>
         /// Decompresses the specified image.
@@ -592,7 +599,7 @@ namespace Stride.TextureConverter.TexLibraries
             Tools.ComputePitch(image.Format, image.Width, image.Height, out pitch, out slice);
             image.RowPitch = pitch;
             image.SlicePitch = slice;
- 
+
             UpdateImage(image, libraryData);
         }
 
@@ -713,7 +720,7 @@ namespace Stride.TextureConverter.TexLibraries
                 throw new TextureToolsException("Failed to premultiply the alpha.");
             }
         }
-        
+
 
         /// <summary>
         /// Updates the image basic information with the native data.

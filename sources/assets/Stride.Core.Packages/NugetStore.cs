@@ -42,8 +42,6 @@ namespace Stride.Core.Packages
     /// </summary>
     public class NugetStore : INugetDownloadProgress
     {
-        public const string DefaultPackageSource = "https://packages.stride3d.net/nuget";
-
         private IPackagesLogger logger;
         private readonly ISettings settings;
         private ProgressReport currentProgressReport;
@@ -67,8 +65,7 @@ namespace Stride.Core.Packages
             RemoveDeletedSources(settings, "Xenko Dev");
             // Note the space: we want to keep "Stride Dev" but not "Stride Dev {PATH}\bin\packages" anymore
             RemoveSources(settings, "Stride Dev ");
-            // Add Stride package store (still used for Xenko up to 3.0)
-            CheckPackageSource("Stride", DefaultPackageSource);
+
             settings.SaveToDisk();
 
             InstallPath = SettingsUtility.GetGlobalPackagesFolder(settings);
@@ -124,7 +121,24 @@ namespace Stride.Core.Packages
             }
         }
 
-        private void CheckPackageSource(string name, string url)
+        public static bool CheckPackageSource(ISettings settings, string name)
+        {
+            var packageSources = settings.GetSection("packageSources");
+            if (packageSources != null)
+            {
+                foreach (var packageSource in packageSources.Items.OfType<SourceItem>().ToList())
+                {
+                    if (packageSource.Key == name)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static void UpdatePackageSource(ISettings settings, string name, string url)
         {
             settings.AddOrUpdate("packageSources", new SourceItem(name, url));
         }
@@ -151,7 +165,30 @@ namespace Stride.Core.Packages
         /// <summary>
         ///   Gets the Package Id of the Visual Studio Integration plugin.
         /// </summary>
-        public string VsixPluginId { get; } = "Stride.VisualStudio.Package";
+        public string VsixPackageId { get; } = "Stride.VisualStudio.Package";
+
+        /// <summary>
+        ///   Defines the different supported versions of Visual Studio.
+        /// </summary>
+        public enum VsixSupportedVsVersion
+        {
+            VS2019,
+            VS2022
+        }
+
+        /// <summary>
+        ///   A mapping of the supported versions of Visual Studio to a Stride release version range.
+        ///   For each supported Visual Studio release, the first Version represents the included earliest Stride version eligible
+        ///   for the VSIX and the second Version is the excluded upper bound.
+        /// </summary>
+        public IReadOnlyDictionary<VsixSupportedVsVersion, (PackageVersion MinVersion, PackageVersion MaxVersion)> VsixVersionToStrideRelease { get; } = new Dictionary<VsixSupportedVsVersion, (PackageVersion, PackageVersion)>
+        {
+            // The VSIX for VS2019 is avaliable in Stride packages of version 4.0.x
+            {VsixSupportedVsVersion.VS2019, (new PackageVersion("4.0"), new PackageVersion("4.1")) },
+
+            // The VSIX for VS2022 is available in Stride packages of version 4.1.x and later.
+            {VsixSupportedVsVersion.VS2022, (new PackageVersion("4.1"), new PackageVersion(int.MaxValue,0,0,0)) }
+        };
 
         /// <summary>
         ///   Gets or sets the logger for all operations of the package manager.
@@ -308,6 +345,10 @@ namespace Stride.Core.Packages
 
                     {
                         var installPath = SettingsUtility.GetGlobalPackagesFolder(settings);
+
+                        // In case it's a package without any TFM (i.e. Visual Studio plugin), we still need to specify one
+                        if (!targetFrameworks.Any())
+                            targetFrameworks = new string[] { "net6.0" };
 
                         // Old version expects to be installed in GamePackages
                         if (packageId == "Xenko" &&

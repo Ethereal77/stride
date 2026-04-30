@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
+// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org)
 // Copyright (c) 2018-2021 Stride and its contributors (https://stride3d.net)
 // Copyright (c) 2011-2018 Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // See the LICENSE.md file in the project root for full license information.
@@ -28,6 +28,7 @@ using Stride.Editor.Engine;
 using Stride.Engine.Processors;
 using Stride.Games;
 using Stride.Shaders.Compiler;
+
 using Point = System.Windows.Point;
 
 namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Services
@@ -390,7 +391,7 @@ namespace Stride.Assets.Presentation.AssetEditors.GameEditor.Services
         protected virtual void InitializeServices([NotNull] EditorGameServiceRegistry services)
         {
             services.Add(new EditorGameDebugService());
-            services.Add(RecoveryService = new EditorGameRecoveryService(Editor) { IsActive = false });
+            services.Add(RecoveryService = new EditorGameRecoveryService(Editor) { IsActive = true });
         }
 
         private void SceneGameRunThread()

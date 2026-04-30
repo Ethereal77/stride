@@ -19,10 +19,13 @@ namespace Stride.Core.Serialization
         /// <inheritdoc/>
         public override unsafe void Serialize(ref string value)
         {
-            fixed (char* bufferStart = value)
-            {
-                Serialize((IntPtr)bufferStart, sizeof(char) * value.Length);
-            }
+            if (string.IsNullOrEmpty(value))
+                return;
+
+            ref var @ref = ref Unsafe.AsRef(in value.GetPinnableReference());
+            var bytes = MemoryMarshal.CreateSpan(ref Unsafe.As<char, byte>(ref @ref), value.Length << 1);
+
+            Serialize(bytes);
         }
     }
 }

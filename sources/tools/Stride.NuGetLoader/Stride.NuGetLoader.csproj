@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType Condition="'$(OutputType)' == ''">Exe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
 
@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NuGet.PackageManagement" Version="5.9.1" />
+    <PackageReference Include="NuGet.PackageManagement" Version="6.0.0" />
+    <PackageReference Include="NuGet.Resolver" Version="6.0.0" />
+    <PackageReference Include="NuGet.Commands" Version="6.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 </Project>

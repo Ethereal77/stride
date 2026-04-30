@@ -19,7 +19,7 @@ namespace Stride.Core.BuildEngine.Tests.Commands
                 await Task.Delay(Delay, CancellationToken);
 
             }
-            catch (TaskCanceledException) {}
+            catch (TaskCanceledException) { }
 
             return CancellationToken.IsCancellationRequested ? ResultStatus.Cancelled : ResultStatus.Successful;
         }

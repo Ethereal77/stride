@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Collections;
@@ -19,7 +20,7 @@ namespace Stride.Animations
     /// </summary>
     public sealed class AnimationBlender
     {
-        private static Stack<AnimationClipEvaluator> evaluatorPool = new Stack<AnimationClipEvaluator>(); 
+        private static Stack<AnimationClipEvaluator> evaluatorPool = new Stack<AnimationClipEvaluator>();
 
         // Pool of available objects for intermediate results.
         private static Stack<AnimationClipResult> availableResultsPool = new Stack<AnimationClipResult>();
@@ -137,7 +138,7 @@ namespace Stride.Animations
                     evaluator = new AnimationClipEvaluator();
                 }
             }
-            
+
             evaluator.Initialize(clip, channels);
             evaluators.Add(evaluator);
 
@@ -181,7 +182,7 @@ namespace Stride.Animations
                     if (factorLeft > 0.0f && factorRight == 0.0f)
                     {
                         *resultData++ = 1.0f;
-                        Utilities.CopyMemory((IntPtr)resultData, (IntPtr)sourceLeftData, channel.Size);
+                        Unsafe.CopyBlockUnaligned(resultData, sourceLeftData, (uint)channel.Size);
                         continue;
                     }
 
@@ -189,7 +190,7 @@ namespace Stride.Animations
                     if (factorRight > 0.0f && factorLeft == 0.0f)
                     {
                         *resultData++ = 1.0f;
-                        Utilities.CopyMemory((IntPtr)resultData, (IntPtr)sourceRightData, channel.Size);
+                        Unsafe.CopyBlockUnaligned(resultData, sourceRightData, (uint)channel.Size);
                         continue;
                     }
 
@@ -204,7 +205,10 @@ namespace Stride.Animations
                             switch (channel.BlendType)
                             {
                                 case BlendType.Blit:
-                                    Utilities.CopyMemory((IntPtr)resultData, (IntPtr)(blendFactor < 0.5f ? sourceLeftData : sourceRightData), channel.Size);
+                                    Unsafe.CopyBlockUnaligned(
+                                        resultData,
+                                        blendFactor < 0.5f ? sourceLeftData : sourceRightData,
+                                        (uint)channel.Size);
                                     break;
                                 case BlendType.Float1:
                                     *resultData = MathUtil.Lerp(*sourceLeftData, *sourceRightData, blendFactor);
@@ -228,7 +232,7 @@ namespace Stride.Animations
                             switch (channel.BlendType)
                             {
                                 case BlendType.Blit:
-                                    Utilities.CopyMemory((IntPtr)resultData, (IntPtr)sourceLeftData, channel.Size);
+                                    Unsafe.CopyBlockUnaligned(resultData, sourceLeftData, (uint)channel.Size);
                                     break;
                                 case BlendType.Float2:
                                     Vector2 rightValue2;
@@ -256,7 +260,7 @@ namespace Stride.Animations
                             switch (channel.BlendType)
                             {
                                 case BlendType.Blit:
-                                    Utilities.CopyMemory((IntPtr)resultData, (IntPtr)sourceLeftData, channel.Size);
+                                    Unsafe.CopyBlockUnaligned(resultData, sourceLeftData, (uint)channel.Size);
                                     break;
                                 case BlendType.Float2:
                                     Vector2 rightValue2;

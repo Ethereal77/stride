@@ -127,7 +127,7 @@
 //            mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 0f }, 1, 1000));
 //            mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 0f }, 1, 1000));
 //            mono8Bits.Play();
-//            Utilities.Sleep(1000);
+//            Thread.Sleep(1000);
 //            Assert.Equal(0, mono8Bits.PendingBufferCount, "PendingBufferCount value is not 0 after play");
 //            mono8Bits.Stop();
 //
@@ -152,7 +152,7 @@
 //                if (!mono8Bits.IsDisposed)
 //                    mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 42400f }, 1, 20000));
 //            }
-//            Utilities.Sleep(100);
+//            Thread.Sleep(100);
 //            //Console.WriteLine("End blocking thread");
 //        }
 //
@@ -168,16 +168,16 @@
 //            ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //            // 1. Check that BufferNeeded is thrown when the user call plays with insufficient number of audio data
 //            mono8Bits.Play();
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            Assert.True(bufferNeededHasBeenCalled, "Buffer Needed has not been called when the user played without any buffers");
 //            bufferNeededHasBeenCalled = false;
 //            mono8Bits.Stop();
 //
 //            mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 0f }, 1, 1000));
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            bufferNeededHasBeenCalled = false;
 //            mono8Bits.Play();
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            Assert.True(bufferNeededHasBeenCalled, "Buffer Needed has not been called when the user played wit one buffers");
 //            bufferNeededHasBeenCalled = false;
 //            mono8Bits.Stop();
@@ -185,12 +185,12 @@
 //            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //            // 2. Check that BufferNeeded is thrown when the user call SubmitBuffer with insufficient number of audio data
 //            mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 0f }, 1, sizeOfOneSubBuffer));
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            Assert.True(bufferNeededHasBeenCalled, "Buffer Needed has not been called when the user submit the first buffer");
 //            bufferNeededHasBeenCalled = false;
 //
 //            mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 0f }, 1, sizeOfOneSubBuffer));
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            Assert.True(bufferNeededHasBeenCalled, "Buffer Needed has not been called when the user submit the second buffer");
 //            bufferNeededHasBeenCalled = false;
 //            mono8Bits.Stop();
@@ -200,14 +200,14 @@
 //            mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 0f }, 1, sizeOfOneSubBuffer));
 //            mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 0f }, 1, sizeOfOneSubBuffer));
 //            mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 0f }, 1, sizeOfOneSubBuffer));
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            bufferNeededHasBeenCalled = false;
 //            mono8Bits.Play();
 //            var lastBufferCount = mono8Bits.PendingBufferCount;
 //            var loopCount = 0;
 //            while (true)
 //            {
-//                Utilities.Sleep(10);
+//                Thread.Sleep(10);
 //
 //                if (lastBufferCount != mono8Bits.PendingBufferCount)
 //                {
@@ -231,7 +231,7 @@
 //            mono8Bits.BufferNeeded += GenerateNextDataAndBlockThead;
 //
 //            mono8Bits.Play();
-//            Utilities.Sleep(2000);
+//            Thread.Sleep(2000);
 //            mono8Bits.Stop();
 //
 //            mono8Bits.BufferNeeded -= GenerateNextDataAndBlockThead;
@@ -284,25 +284,25 @@
 //            // 9. Check that submitting mono-8bits signals does not crash and has the good behaviour
 //            Assert.DoesNotThrow(()=>mono8Bits.SubmitBuffer(generator.Generate(44100, new[] { 40000f }, 1, 88200 )), "SubmitBuffer on mono8Bits crached.");
 //            mono8Bits.Play();
-//            Utilities.Sleep(2500);
+//            Thread.Sleep(2500);
 //
 //            /////////////////////////////////////////////////////////////////////////////////////////
 //            // 10. Check that submitting mono-16bits signals does not crash and has the good behaviour
 //            Assert.DoesNotThrow(() => mono16Bits.SubmitBuffer(generator.Generate(44100, new[] { 40000f }, 2, 176400)), "SubmitBuffer on mono16Bits crached.");
 //            mono16Bits.Play();
-//            Utilities.Sleep(2500);
+//            Thread.Sleep(2500);
 //
 //            ///////////////////////////////////////////////////////////////////////////////////////////
 //            // 11. Check that submitting stereo-8bits signals does not crash and has the good behaviour
 //            Assert.DoesNotThrow(() => stereo8Bits.SubmitBuffer(generator.Generate(44100, new[] { 40000f, 20000f }, 1, 176400)), "SubmitBuffer on stereo8Bits crached.");
 //            stereo8Bits.Play();
-//            Utilities.Sleep(2500);
+//            Thread.Sleep(2500);
 //
 //            ///////////////////////////////////////////////////////////////////////////////////////////
 //            // 12 Check that submitting stereo-16bits signals does not crash and has the good behaviour
 //            Assert.DoesNotThrow(() => stereo16Bits.SubmitBuffer(generator.Generate(44100, new[] { 40000f, 10000f }, 2, 352800)), "SubmitBuffer on stereo16Bits crached.");
 //            stereo16Bits.Play();
-//            Utilities.Sleep(2500);
+//            Thread.Sleep(2500);
 //
 //            /////////////////////////////////////////////////////////////////////
 //            // 13. Check that offset and byte count works in SubmitBuffer method
@@ -316,7 +316,7 @@
 //
 //            Assert.DoesNotThrow(() => mono8Bits.SubmitBuffer(totalBuffer, 44100, 44100), "SubmitBuffer with offset and bytecount crached.");
 //            mono8Bits.Play();
-//            Utilities.Sleep(1500);
+//            Thread.Sleep(1500);
 //
 //            mono8Bits.Dispose();
 //            mono16Bits.Dispose();
@@ -364,25 +364,25 @@
 //            //////////////////
 //            // 1. Test play
 //            dynSEInstance.Play();
-//            Utilities.Sleep(2000);
+//            Thread.Sleep(2000);
 //            Assert.Equal(SoundPlayState.Playing, dynSEInstance.PlayState, "Music is not playing");
 //
 //            //////////////////
 //            // 2. Test Pause
 //            dynSEInstance.Pause();
-//            Utilities.Sleep(600);
+//            Thread.Sleep(600);
 //            Assert.Equal(SoundPlayState.Paused, dynSEInstance.PlayState, "Music is not Paused");
 //            dynSEInstance.Play();
-//            Utilities.Sleep(1000);
+//            Thread.Sleep(1000);
 //
 //            //////////////////
 //            // 2. Test Stop
 //            dynSEInstance.Stop();
 //            bufferCount = 0;
-//            Utilities.Sleep(600);
+//            Thread.Sleep(600);
 //            Assert.Equal(SoundPlayState.Stopped, dynSEInstance.PlayState, "Music is not Stopped");
 //            dynSEInstance.Play();
-//            Utilities.Sleep(9000);
+//            Thread.Sleep(9000);
 //
 //            ///////////////////
 //            // 3. Test ExitLoop
@@ -397,12 +397,12 @@
 //                dynSEInstance.Volume = value;
 //
 //                value += sign * 0.01f;
-//                Utilities.Sleep(30);
+//                Thread.Sleep(30);
 //
 //                if (value < -0.2)
 //                    sign = 1f;
 //            }
-//            Utilities.Sleep(2000);
+//            Thread.Sleep(2000);
 //
 //            //////////////////
 //            // 5.Pan
@@ -413,17 +413,17 @@
 //                dynSEInstance.Pan = value;
 //
 //                value += sign * 0.01f;
-//                Utilities.Sleep(30);
+//                Thread.Sleep(30);
 //
 //                if (value < -1.2)
 //                    sign = 1f;
 //            }
 //            dynSEInstance.Pan = 0;
-//            Utilities.Sleep(2000);
+//            Thread.Sleep(2000);
 //
 //            ////////////////////////////////////////////////////////////////////////////
 //            // 7. Wait until the end of the stream to check that there are not crashes
-//            Utilities.Sleep(50000);
+//            Thread.Sleep(50000);
 //
 //            dynSEInstance.Dispose();
 //        }
@@ -512,7 +512,7 @@
 //            var instance1 = new DynamicSoundEffectInstance(defaultEngine, 44100, AudioChannels.Mono, AudioDataEncoding.PCM_8Bits);
 //            instance1.BufferNeeded += SetBufferNeededHasBeenCalledToTrue;
 //            instance1.Play();
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            Assert.True(bufferNeededHasBeenCalled, "Buffer Needed has not been called with a first single instance.");
 //            bufferNeededHasBeenCalled = false;
 //            instance1.Stop();
@@ -522,7 +522,7 @@
 //            var instance2 = new DynamicSoundEffectInstance(defaultEngine, 44100, AudioChannels.Mono, AudioDataEncoding.PCM_8Bits);
 //            instance2.BufferNeeded += SetBufferNeededHasBeenCalledToTrue;
 //            instance2.Play();
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            Assert.True(bufferNeededHasBeenCalled, "Buffer Needed has not been called with a second instance.");
 //            bufferNeededHasBeenCalled = false;
 //            instance2.Stop();
@@ -531,7 +531,7 @@
 //            // 3. Check that worker process buffer needed requests of the second instance when the first is disposed.
 //            instance1.Dispose();
 //            instance2.Play();
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            Assert.True(bufferNeededHasBeenCalled, "Buffer Needed has not been called with a second single instance.");
 //            bufferNeededHasBeenCalled = false;
 //            instance2.Stop();
@@ -542,7 +542,7 @@
 //            instance1 = new DynamicSoundEffectInstance(defaultEngine, 44100, AudioChannels.Mono, AudioDataEncoding.PCM_8Bits);
 //            instance1.BufferNeeded += SetBufferNeededHasBeenCalledToTrue;
 //            instance1.Play();
-//            Utilities.Sleep(50);
+//            Thread.Sleep(50);
 //            Assert.True(bufferNeededHasBeenCalled, "Buffer Needed has not been called with a single instance after destruct of all instances.");
 //            bufferNeededHasBeenCalled = false;
 //            instance1.Stop();
@@ -571,14 +571,14 @@
 //            sayuriPart.Instance.Play();
 //            dynGenSound.Play();
 //
-//            Utilities.Sleep(5000);
+//            Thread.Sleep(5000);
 //
 //            wave1.Instance.Stop();
 //            stereo.Instance.Stop();
 //            sayuriPart.Instance.Stop();
 //            dynGenSound.Stop();
 //
-//            Utilities.Sleep(100); // avoid crash due to ObjectDisposedException
+//            Thread.Sleep(100); // avoid crash due to ObjectDisposedException
 //
 //            dynGenSound.Dispose();
 //            wave1.Instance.Dispose();

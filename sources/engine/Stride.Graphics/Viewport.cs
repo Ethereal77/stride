@@ -27,19 +27,29 @@ namespace Stride.Graphics
         /// </summary>
         public float X;
 
-        /// <summary>Gets or sets the pixel coordinate of the upper-left corner of the viewport on the render-target surface.</summary>
+        /// <summary>
+        /// Gets or sets the pixel coordinate of the upper-left corner of the viewport on the render-target surface.
+        /// </summary>
         public float Y;
 
-        /// <summary>Gets or sets the width dimension of the viewport on the render-target surface, in pixels.</summary>
+        /// <summary>
+        /// Gets or sets the width dimension of the viewport on the render-target surface, in pixels.
+        /// </summary>
         public float Width;
 
-        /// <summary>Gets or sets the height dimension of the viewport on the render-target surface, in pixels.</summary>
+        /// <summary>
+        /// Gets or sets the height dimension of the viewport on the render-target surface, in pixels.
+        /// </summary>
         public float Height;
 
-        /// <summary>Gets or sets the minimum depth of the clip volume.</summary>
+        /// <summary>
+        /// Gets or sets the minimum depth of the clip volume.
+        /// </summary>
         public float MinDepth;
 
-        /// <summary>Gets or sets the maximum depth of the clip volume.</summary>
+        /// <summary>
+        /// Gets or sets the maximum depth of the clip volume.
+        /// </summary>
         public float MaxDepth;
 
         /// <summary>
@@ -85,12 +95,14 @@ namespace Stride.Graphics
             X = bounds.X;
             Y = bounds.Y;
             Width = bounds.Width;
-            Height = bounds.Height; 
+            Height = bounds.Height;
             MinDepth = 0;
-            MaxDepth = 1;            
+            MaxDepth = 1;
         }
 
-        /// <summary>Gets the size of this resource.</summary>
+        /// <summary>
+        /// Gets the size of this resource.
+        /// </summary>
         public Rectangle Bounds
         {
             get { return new Rectangle((int)X, (int)Y, (int)Width, (int)Height); }
@@ -139,7 +151,9 @@ namespace Stride.Graphics
             return !left.Equals(right);
         }
 
-        /// <summary>Retrieves a string representation of this object.</summary>
+        /// <summary>
+        /// Retrieves a string representation of this object.
+        /// </summary>
         public override string ToString()
         {
             return string.Format(CultureInfo.CurrentCulture, "{{X:{0} Y:{1} Width:{2} Height:{3} MinDepth:{4} MaxDepth:{5}}}", new object[] { X, Y, Width, Height, MinDepth, MaxDepth });
@@ -151,7 +165,9 @@ namespace Stride.Graphics
             return ((num >= -1.401298E-45f) && (num <= float.Epsilon));
         }
 
-        /// <summary>Projects a 3D vector from object space into screen space.</summary>
+        /// <summary>
+        /// Projects a 3D vector from object space into screen space.
+        /// </summary>
         /// <param name="source">The vector to project.</param>
         /// <param name="projection">The projection matrix.</param>
         /// <param name="view">The view matrix.</param>
@@ -171,7 +187,9 @@ namespace Stride.Graphics
             return new Vector3(vector.X, vector.Y, vector.Z);
         }
 
-        /// <summary>Converts a screen space point into a corresponding point in world space.</summary>
+        /// <summary>
+        /// Converts a screen space point into a corresponding point in world space.
+        /// </summary>
         /// <param name="source">The vector to project.</param>
         /// <param name="projection">The projection matrix.</param>
         /// <param name="view">The view matrix.</param>
@@ -182,7 +200,9 @@ namespace Stride.Graphics
             return Unproject(source, ref matrix);
         }
 
-        /// <summary>Converts a screen space point into a corresponding point in world space.</summary>
+        /// <summary>
+        /// Converts a screen space point into a corresponding point in world space.
+        /// </summary>
         /// <param name="source">The vector to project.</param>
         /// <param name="worldViewProjection">The World-View-Projection matrix.</param>
         public Vector3 Unproject(Vector3 source, ref Matrix worldViewProjection)
@@ -201,7 +221,9 @@ namespace Stride.Graphics
             return new Vector3(vector.X, vector.Y, vector.Z);
         }
 
-        /// <summary>Gets the aspect ratio used by the viewport</summary>
+        /// <summary>
+        /// Gets the aspect ratio used by the viewport.
+        /// </summary>
         public float AspectRatio
         {
             get

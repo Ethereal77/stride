@@ -26,8 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NuGet.Protocol" Version="5.9.1" />
-    <PackageReference Include="NuGet.PackageManagement" Version="5.9.1" />
+    <PackageReference Include="NuGet.Protocol" Version="6.0.0" />
+    <PackageReference Include="NuGet.PackageManagement" Version="6.0.0" />
+    <PackageReference Include="NuGet.Resolver" Version="6.0.0" />
+    <PackageReference Include="NuGet.Commands" Version="6.0.0" />
 
     <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
   </ItemGroup>

@@ -9,6 +9,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.VisualStudio.Setup.Configuration;
 
+using Task = Microsoft.Build.Utilities.Task;
+
 namespace Stride.Core.Tasks
 {
     public class LocateDevenv : Task

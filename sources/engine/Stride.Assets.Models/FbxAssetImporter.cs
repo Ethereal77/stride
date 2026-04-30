@@ -18,7 +18,7 @@ namespace Stride.Assets.Models
     {
         static FbxAssetImporter()
         {
-            NativeLibraryHelper.Load("libfbxsdk", typeof(FbxAssetImporter));
+            NativeLibraryHelper.PreloadLibrary("libfbxsdk", typeof(FbxAssetImporter));
         }
 
         // Supported file extensions for this importer

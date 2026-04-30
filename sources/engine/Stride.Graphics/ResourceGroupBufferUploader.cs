@@ -4,8 +4,9 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 using Stride.Core;
 using Stride.Shaders;
@@ -52,13 +53,13 @@ namespace Stride.Graphics
             }
         }
 
-        public void Apply(CommandList commandList, ResourceGroup[] resourceGroups, int resourceGroupsOffset)
+        public unsafe void Apply(CommandList commandList, ResourceGroup[] resourceGroups, int resourceGroupsOffset)
         {
             if (resourceGroupBindings.Length == 0)
                 return;
 
-            var resourceGroupBinding = Interop.Pin(ref resourceGroupBindings[0]);
-            for (int i = 0; i < resourceGroupBindings.Length; i++, resourceGroupBinding = Interop.IncrementPinned(resourceGroupBinding))
+            ref var resourceGroupBinding = ref MemoryMarshal.GetArrayDataReference(resourceGroupBindings);
+            for (int i = 0; i < resourceGroupBindings.Length; i++, resourceGroupBinding = ref Unsafe.Add(ref resourceGroupBinding, 1))
             {
                 var resourceGroup = resourceGroups[resourceGroupsOffset + i];
 
@@ -79,7 +80,7 @@ namespace Stride.Graphics
                         if (hasResourceRenaming)
                         {
                             var mappedConstantBuffer = commandList.MapSubresource(preallocatedBuffer, 0, MapMode.WriteDiscard);
-                            Utilities.CopyMemory(mappedConstantBuffer.DataBox.DataPointer, resourceGroup.ConstantBuffer.Data, resourceGroup.ConstantBuffer.Size);
+                            Unsafe.CopyBlockUnaligned((void*)mappedConstantBuffer.DataBox.DataPointer, (void*)resourceGroup.ConstantBuffer.Data, (uint)resourceGroup.ConstantBuffer.Size);
                             commandList.UnmapSubresource(mappedConstantBuffer);
                         }
                         else
@@ -91,6 +92,20 @@ namespace Stride.Graphics
                     resourceGroup.DescriptorSet.SetConstantBuffer(resourceGroupBinding.ConstantBufferSlot, preallocatedBuffer, resourceGroup.ConstantBuffer.Offset, resourceGroup.ConstantBuffer.Size);
                 }
             }
+        }
+
+        public void Clear()
+        {
+            if (resourceGroupBindings is null)
+                return;
+
+            for (int i = 0; i < resourceGroupBindings.Length; i++)
+            {
+                ref var binding = ref resourceGroupBindings[i];
+                binding.ConstantBufferPreallocated?.Dispose();
+            }
+
+            resourceGroupBindings = null;
         }
 
         internal struct ResourceGroupBinding

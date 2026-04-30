@@ -4,6 +4,7 @@
 // See the LICENSE.md file in the project root for full license information.
 
 using System;
+using System.Runtime.CompilerServices;
 
 using Stride.Core;
 using Stride.Core.Mathematics;
@@ -211,11 +212,11 @@ namespace Stride.Particles.ShapeBuilders
 
                 particleCapacity = requiredCapacity;
 
-                int positionDataSize = Utilities.SizeOf<Vector3>() * particleCapacity;
+                int positionDataSize = Unsafe.SizeOf<Vector3>() * particleCapacity;
                 positionDataSize = (positionDataSize % 4 == 0) ? positionDataSize : (positionDataSize + 4 - (positionDataSize % 4));
                 positionData = Utilities.AllocateMemory(positionDataSize);
 
-                int directionDataSize = Utilities.SizeOf<Vector3>() * particleCapacity;
+                int directionDataSize = Unsafe.SizeOf<Vector3>() * particleCapacity;
                 directionDataSize = (directionDataSize % 4 == 0) ? directionDataSize : (directionDataSize + 4 - (directionDataSize % 4));
                 directionData = Utilities.AllocateMemory(directionDataSize);
             }

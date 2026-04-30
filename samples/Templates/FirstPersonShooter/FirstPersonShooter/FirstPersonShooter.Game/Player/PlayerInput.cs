@@ -97,6 +97,11 @@ namespace FirstPersonShooter.Player
                 else
                     cameraDirection.Normalize();
 
+                // Contrary to a mouse, driving camera rotation from a stick must be scaled by delta time.
+                // The amount of camera rotation with a stick is constant over time based on the tilt of the stick,
+                // Whereas mouse driven rotation is already constrained by time, it is driven by the difference in position from last *time* to this *time*.
+                cameraDirection *= (float)this.Game.UpdateTime.Elapsed.TotalSeconds;
+
                 // Mouse-based camera rotation.
                 //  Only enabled after you click the screen to lock your cursor, pressing escape will cancel it.
                 if (Input.IsMouseButtonDown(MouseButton.Left))
@@ -125,7 +130,7 @@ namespace FirstPersonShooter.Player
 
                 if (Input.PointerEvents.Any(x => x.EventType == PointerEventType.Pressed))
                     didShoot = true;
-                    
+
                 if (Input.HasMouse && Input.IsMouseButtonDown(MouseButton.Left))                  // This will allow for continuous shooting
                     didShoot = true;
 

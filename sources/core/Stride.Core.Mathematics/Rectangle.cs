@@ -204,14 +204,18 @@ namespace Stride.Core.Mathematics
         /// <value>The bottom-right corner of the rectangle.</value>
         public Point BottomRight { get { return new Point(Right, Bottom); } }
 
-        /// <summary>Changes the position of the rectangle.</summary>
+        /// <summary>
+        /// Changes the position of the rectangle.
+        /// </summary>
         /// <param name="amount">The values to adjust the position of the rectangle by.</param>
         public void Offset(Point amount)
         {
             Offset(amount.X, amount.Y);
         }
 
-        /// <summary>Changes the position of the rectangle.</summary>
+        /// <summary>
+        /// Changes the position of the rectangle.
+        /// </summary>
         /// <param name="offsetX">Change in the x-position.</param>
         /// <param name="offsetY">Change in the y-position.</param>
         public void Offset(int offsetX, int offsetY)
@@ -220,7 +224,9 @@ namespace Stride.Core.Mathematics
             Y += offsetY;
         }
 
-        /// <summary>Pushes the edges of the rectangle out by the horizontal and vertical values specified.</summary>
+        /// <summary>
+        /// Pushes the edges of the rectangle out by the horizontal and vertical values specified.
+        /// </summary>
         /// <param name="horizontalAmount">Value to push the sides out by.</param>
         /// <param name="verticalAmount">Value to push the top and bottom out by.</param>
         public void Inflate(int horizontalAmount, int verticalAmount)
@@ -231,7 +237,9 @@ namespace Stride.Core.Mathematics
             Height += verticalAmount * 2;
         }
 
-        /// <summary>Determines whether this rectangle contains a specified point represented by its x- and y-coordinates.</summary>
+        /// <summary>
+        /// Determines whether this rectangle contains a specified point represented by its x- and y-coordinates.
+        /// </summary>
         /// <param name="x">The x-coordinate of the specified point.</param>
         /// <param name="y">The y-coordinate of the specified point.</param>
         public bool Contains(int x, int y)
@@ -239,7 +247,9 @@ namespace Stride.Core.Mathematics
             return (X <= x) && (x < Right) && (Y <= y) && (y < Bottom);
         }
 
-        /// <summary>Determines whether this rectangle contains a specified Point.</summary>
+        /// <summary>
+        /// Determines whether this rectangle contains a specified Point.
+        /// </summary>
         /// <param name="value">The Point to evaluate.</param>
         public bool Contains(Point value)
         {
@@ -248,7 +258,9 @@ namespace Stride.Core.Mathematics
             return result;
         }
 
-        /// <summary>Determines whether this rectangle contains a specified Point.</summary>
+        /// <summary>
+        /// Determines whether this rectangle contains a specified Point.
+        /// </summary>
         /// <param name="value">The Point to evaluate.</param>
         /// <param name="result">[OutAttribute] true if the specified Point is contained within this rectangle; false otherwise.</param>
         public void Contains(ref Point value, out bool result)
@@ -256,7 +268,9 @@ namespace Stride.Core.Mathematics
             result = (X <= value.X) && (value.X < Right) && (Y <= value.Y) && (value.Y < Bottom);
         }
 
-        /// <summary>Determines whether this rectangle entirely contains a specified rectangle.</summary>
+        /// <summary>
+        /// Determines whether this rectangle entirely contains a specified rectangle.
+        /// </summary>
         /// <param name="value">The rectangle to evaluate.</param>
         public bool Contains(Rectangle value)
         {
@@ -265,7 +279,9 @@ namespace Stride.Core.Mathematics
             return result;
         }
 
-        /// <summary>Determines whether this rectangle entirely contains a specified rectangle.</summary>
+        /// <summary>
+        /// Determines whether this rectangle entirely contains a specified rectangle.
+        /// </summary>
         /// <param name="value">The rectangle to evaluate.</param>
         /// <param name="result">[OutAttribute] On exit, is true if this rectangle entirely contains the specified rectangle, or false if not.</param>
         public void Contains(ref Rectangle value, out bool result)
@@ -304,7 +320,9 @@ namespace Stride.Core.Mathematics
             return Contains(int2.X, int2.Y);
         }
 
-        /// <summary>Determines whether a specified rectangle intersects with this rectangle.</summary>
+        /// <summary>
+        /// Determines whether a specified rectangle intersects with this rectangle.
+        /// </summary>
         /// <param name="value">The rectangle to evaluate.</param>
         public bool Intersects(Rectangle value)
         {
@@ -336,7 +354,9 @@ namespace Stride.Core.Mathematics
             return result;
         }
 
-        /// <summary>Creates a rectangle defining the area where one rectangle overlaps with another rectangle.</summary>
+        /// <summary>
+        /// Creates a rectangle defining the area where one rectangle overlaps with another rectangle.
+        /// </summary>
         /// <param name="value1">The first rectangle to compare.</param>
         /// <param name="value2">The second rectangle to compare.</param>
         /// <param name="result">[OutAttribute] The area where the two first parameters overlap.</param>
@@ -355,7 +375,7 @@ namespace Stride.Core.Mathematics
                 result = Empty;
             }
         }
-        
+
         /// <summary>
         /// Creates a new rectangle that incorporate the provided point to the given rectangle.
         /// </summary>

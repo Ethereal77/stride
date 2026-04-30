@@ -11,7 +11,8 @@ using Stride.Core.Packages;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.ViewModel;
-
+using Stride.LauncherApp.Resources;
+using Stride.LauncherApp.Services;
 using Stride.LauncherApp.Resources;
 using Stride.LauncherApp.Services;
 
@@ -375,8 +376,7 @@ namespace Stride.LauncherApp.ViewModels
 
         private void UpdateStatusInternal()
         {
-            CanBeDownloaded = LocalPackage is NugetLocalPackage _ ||
-                              (ServerPackage is NugetServerPackage serverPackage && LocalPackage.Version < serverPackage.Version);
+            CanBeDownloaded = (LocalPackage == null && ServerPackage != null) || (LocalPackage != null && ServerPackage != null && LocalPackage.Version < ServerPackage.Version);
 
             CanDelete = LocalPackage != null;
 

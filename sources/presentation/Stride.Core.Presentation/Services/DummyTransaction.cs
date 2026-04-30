@@ -20,7 +20,7 @@ namespace Stride.Core.Presentation.Services
 
         public Guid Id { get; } = Guid.NewGuid();
 
-        public IReadOnlyList<Operation> Operations { get; } = new Operation[0];
+        public IReadOnlyList<Operation> Operations { get; } = Array.Empty<Operation>();
 
         public bool IsEmpty => true;
 

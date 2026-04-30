@@ -44,7 +44,7 @@ namespace Stride.Navigation
             }
             return ret;
         }
-        
+
         /// <summary>
         /// Snaps a <see cref="BoundingBox"/>'s height according to the given <see cref="NavigationMeshBuildSettings"/>
         /// </summary>
@@ -53,8 +53,8 @@ namespace Stride.Navigation
         public static void SnapBoundingBoxToCellHeight(NavigationMeshBuildSettings settings, ref BoundingBox boundingBox)
         {
             // Snap Y to tile height to avoid height differences between tiles
-            boundingBox.Minimum.Y = (float)Math.Floor(boundingBox.Minimum.Y / settings.CellHeight) * settings.CellHeight;
-            boundingBox.Maximum.Y = (float)Math.Ceiling(boundingBox.Maximum.Y / settings.CellHeight) * settings.CellHeight;
+            boundingBox.Minimum.Y = MathF.Floor(boundingBox.Minimum.Y / settings.CellHeight) * settings.CellHeight;
+            boundingBox.Maximum.Y = MathF.Ceiling(boundingBox.Maximum.Y / settings.CellHeight) * settings.CellHeight;
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Stride.Navigation
         }
 
         /// <summary>
-        /// Generates a random tangent and binormal for a given normal, 
+        /// Generates a random tangent and binormal for a given normal,
         /// usefull for creating plane vertices or orienting objects (lookat) where the rotation along the normal doesn't matter
         /// </summary>
         /// <param name="normal"></param>
@@ -150,7 +150,7 @@ namespace Stride.Navigation
         /// Hashes and entity's transform and it's collider shape settings
         /// </summary>
         /// <param name="collider">The collider to hash</param>
-        /// <param name="includedCollisionGroups">The filter group for active collides, 
+        /// <param name="includedCollisionGroups">The filter group for active collides,
         ///     which is used to hash if this colliders participates in the navigation mesh build</param>
         /// <returns></returns>
         public static int HashEntityCollider(StaticColliderComponent collider, CollisionFilterGroupFlags includedCollisionGroups)

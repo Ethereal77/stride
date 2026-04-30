@@ -18,7 +18,9 @@ using Stride.Rendering;
 
 namespace Stride.Engine
 {
-    /// <summary>Entity processor, triggered on various <see cref="EntityManager"/> events such as Entity and Component additions and removals.</summary>
+    /// <summary>
+    /// Entity processor, triggered on various <see cref="EntityManager"/> events such as Entity and Component additions and removals.
+    /// </summary>
     public abstract class EntityProcessor
     {
         internal ProfilingKey UpdateProfilingKey;
@@ -308,7 +310,9 @@ namespace Stride.Engine
             }
         }
 
-        /// <summary>Generates associated data to the given entity.</summary>
+        /// <summary>
+        /// Generates associated data to the given entity.
+        /// </summary>
         /// Called right before <see cref="OnEntityComponentAdding"/>.
         /// <param name="entity">The entity.</param>
         /// <param name="component"></param>
@@ -316,7 +320,9 @@ namespace Stride.Engine
         [NotNull]
         protected abstract TData GenerateComponentData([NotNull] Entity entity, [NotNull] TComponent component);
 
-        /// <summary>Checks if the current associated data is valid, or if readding the entity is required.</summary>
+        /// <summary>
+        /// Checks if the current associated data is valid, or if readding the entity is required.
+        /// </summary>
         /// <param name="entity">The entity.</param>
         /// <param name="component"></param>
         /// <param name="associatedData">The associated data.</param>
@@ -326,7 +332,9 @@ namespace Stride.Engine
             return GenerateComponentData(entity, component).Equals(associatedData);
         }
 
-        /// <summary>Run when a matching entity is added to this entity processor.</summary>
+        /// <summary>
+        /// Run when a matching entity is added to this entity processor.
+        /// </summary>
         /// <param name="entity">The entity.</param>
         /// <param name="component"></param>
         /// <param name="data">  The associated data.</param>
@@ -334,7 +342,9 @@ namespace Stride.Engine
         {
         }
 
-        /// <summary>Run when a matching entity is removed from this entity processor.</summary>
+        /// <summary>
+        /// Run when a matching entity is removed from this entity processor.
+        /// </summary>
         /// <param name="entity">The entity.</param>
         /// <param name="component"></param>
         /// <param name="data">  The associated data.</param>

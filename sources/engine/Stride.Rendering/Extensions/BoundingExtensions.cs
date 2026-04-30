@@ -38,9 +38,9 @@ namespace Stride.Extensions
 
                     // Prepass calculate the center of the sphere
                     Vector3.Add(ref transformedPosition, ref boundingSphere.Center, out boundingSphere.Center);
-                    
+
                     BoundingBox.Merge(ref boundingBox, ref transformedPosition, out boundingBox);
-                    
+
                     buffer += vertexStride;
                 }
 
@@ -68,7 +68,7 @@ namespace Stride.Extensions
                 }
 
                 //Find the real distance from the DistanceSquared.
-                boundingSphere.Radius = (float)Math.Sqrt(boundingSphere.Radius);
+                boundingSphere.Radius = MathF.Sqrt(boundingSphere.Radius);
             }
 
             return boundingBox;
